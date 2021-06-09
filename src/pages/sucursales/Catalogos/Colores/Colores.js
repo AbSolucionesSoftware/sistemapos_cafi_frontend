@@ -62,7 +62,7 @@ export default function Colores() {
 					</Toolbar>
 				</AppBar>
 				<Box mt={4}>
-					<Container maxWidth="sm">
+					<Container maxWidth="md">
 						<RegistroColores />
 					</Container>
 				</Box>

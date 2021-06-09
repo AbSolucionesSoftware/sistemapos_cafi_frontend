@@ -2,7 +2,7 @@ import React, { Fragment, useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Divider } from '@material-ui/core';
 import { TextField, Typography } from '@material-ui/core';
-import { RegProductoContext } from '../../../../context/CtxRegProducto';
+import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {

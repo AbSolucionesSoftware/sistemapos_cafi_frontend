@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -8,28 +8,12 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { IconButton } from '@material-ui/core';
-import { Delete } from '@material-ui/icons';
+import { Box, Button, Dialog, DialogActions, DialogTitle, IconButton, TextField, Typography } from '@material-ui/core';
+import { Close, Delete, Edit } from '@material-ui/icons';
+import SnackBarMessages from '../../../../components/SnackBarMessages';
 
-function createData(name, calories, fat, carbs, protein) {
-	return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-	createData('Cupcake', 305, 3.7, 67, 4.3),
-	createData('Donut', 452, 25.0, 51, 4.9),
-	createData('Eclair', 262, 16.0, 24, 6.0),
-	createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-	createData('Gingerbread', 356, 16.0, 49, 3.9),
-	createData('Honeycomb', 408, 3.2, 87, 6.5),
-	createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-	createData('Jelly Bean', 375, 0.0, 94, 0.0),
-	createData('KitKat', 518, 26.0, 65, 7.0),
-	createData('Lollipop', 392, 0.2, 98, 0.0),
-	createData('Marshmallow', 318, 0, 81, 2.0),
-	createData('Nougat', 360, 19.0, 9, 37.0),
-	createData('Oreo', 437, 18.0, 63, 4.0)
-];
+import { useMutation } from '@apollo/client';
+import { ELIMINAR_COLOR, OBTENER_COLORES } from '../../../../gql/Catalogos/colores';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -38,13 +22,24 @@ const useStyles = makeStyles((theme) => ({
 	paper: {
 		width: '100%',
 		marginBottom: theme.spacing(2)
+	},
+	color: {
+		display: 'flex',
+		alignItems: 'center'
 	}
 }));
 
-export default function TablaColores() {
+export default function TablaColores({ datos, toUpdate, setToUpdate, setValues }) {
 	const classes = useStyles();
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(8);
+	const [ busqueda, setBusqueda ] = useState('');
+	const [ productosFiltrados, setProductosFiltrados ] = useState([]);
+	const [ alert, setAlert ] = useState({
+		status: '',
+		message: '',
+		open: false
+	});
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
@@ -55,9 +50,29 @@ export default function TablaColores() {
 		setPage(0);
 	};
 
+	useEffect(
+		() => {
+			setProductosFiltrados(
+				datos.filter((datos) => {
+					return datos.nombre.toLowerCase().includes(busqueda.toLowerCase());
+				})
+			);
+		},
+		[ busqueda, datos ]
+	);
+
 	return (
 		<div className={classes.root}>
+			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<Paper className={classes.paper}>
+				<Box display="flex" justifyContent="center" alignItems="center">
+					<TextField
+						fullWidth
+						placeholder="Buscar..."
+						variant="outlined"
+						onChange={(e) => setBusqueda(e.target.value)}
+					/>
+				</Box>
 				<TableContainer>
 					<Table
 						className={classes.table}
@@ -67,30 +82,34 @@ export default function TablaColores() {
 					>
 						<TableHead>
 							<TableRow>
-								<TableCell>Colores</TableCell>
+								<TableCell width={150}>Color</TableCell>
+								<TableCell>Nombre</TableCell>
+								<TableCell padding="default">Editar</TableCell>
 								<TableCell padding="default">Eliminar</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-								return (
-									<TableRow hover role="checkbox" tabIndex={-1} key={row.name}>
-										<TableCell>{row.name}</TableCell>
-										<TableCell padding="checkbox">
-											<IconButton>
-												<Delete />
-											</IconButton>
-										</TableCell>
-									</TableRow>
-								);
-							})}
+							{productosFiltrados
+								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+								.map((row, index) => {
+									return (
+										<RowsRender
+											key={index}
+											row={row}
+											setAlert={setAlert}
+											toUpdate={toUpdate}
+											setToUpdate={setToUpdate}
+											setValues={setValues}
+										/>
+									);
+								})}
 						</TableBody>
 					</Table>
 				</TableContainer>
 				<TablePagination
 					rowsPerPageOptions={[]}
 					component="div"
-					count={rows.length}
+					count={datos.length}
 					rowsPerPage={rowsPerPage}
 					page={page}
 					onChangePage={handleChangePage}
@@ -100,3 +119,105 @@ export default function TablaColores() {
 		</div>
 	);
 }
+
+const RowsRender = ({ row, setAlert, toUpdate, setToUpdate, setValues }) => {
+	const classes = useStyles();
+	const [ openModal, setOpenModal ] = useState(false);
+
+	const handleModal = () => setOpenModal(!openModal);
+
+	const [ eliminarColor ] = useMutation(ELIMINAR_COLOR, {
+		update(cache, { data: { eliminarColor } }) {
+			const { obtenerColores } = cache.readQuery({
+				query: OBTENER_COLORES,
+				variables: { empresa: row.empresa._id }
+			});
+
+			cache.writeQuery({
+				query: OBTENER_COLORES,
+				variables: { empresa: row.empresa._id },
+				data: {
+					obtenerColores: {
+						...obtenerColores,
+						eliminarColor
+					}
+				}
+			});
+		}
+	});
+
+	const handleDelete = async () => {
+		try {
+			await eliminarColor({
+				variables: {
+					id: row._id
+				}
+			});
+			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			handleModal();
+		} catch (error) {
+			setAlert({ message: error.message, status: 'error', open: true });
+		}
+	};
+
+	const onUpdate = (row) => {
+		if (!row) {
+			setToUpdate('');
+			setValues({ nombre: '', hex: '' });
+			return;
+		}
+		setToUpdate(row._id);
+		setValues({ nombre: row.nombre, hex: row.hex });
+	};
+
+	return (
+		<TableRow hover role="checkbox" tabIndex={-1}>
+			<TableCell className={classes.color}>
+				<Box mr={1} width={30} height={25} bgcolor={row.hex} borderRadius="10%" />
+				<Typography>
+					<b>{row.hex}</b>
+				</Typography>
+			</TableCell>
+			<TableCell>
+				<Typography>
+					<b>{row.nombre}</b>
+				</Typography>
+			</TableCell>
+			<TableCell padding="checkbox">
+				{toUpdate === row._id ? (
+					<IconButton onClick={() => onUpdate()}>
+						<Close />
+					</IconButton>
+				) : (
+					<IconButton onClick={() => onUpdate(row)}>
+						<Edit />
+					</IconButton>
+				)}
+			</TableCell>
+			<TableCell padding="checkbox">
+				<Modal handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
+			</TableCell>
+		</TableRow>
+	);
+};
+
+const Modal = ({ handleModal, openModal, handleDelete }) => {
+	return (
+		<div>
+			<IconButton color="secondary" onClick={handleModal}>
+				<Delete />
+			</IconButton>
+			<Dialog open={openModal} onClose={handleModal}>
+				<DialogTitle>{'¿Seguro que quieres eliminar esto?'}</DialogTitle>
+				<DialogActions>
+					<Button onClick={handleModal} color="primary">
+						Cancelar
+					</Button>
+					<Button color="secondary" autoFocus variant="contained" onClick={handleDelete}>
+						Eliminar
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</div>
+	);
+};

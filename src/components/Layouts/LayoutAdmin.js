@@ -1,5 +1,5 @@
 import React from 'react';
-import { RegProductoProvider } from '../../context/CtxRegProducto';
+import { RegProductoProvider } from '../../context/Catalogos/CtxRegProducto';
 import AdminInicio from '../../pages/sucursales/AdminInicio';
 import NavegacionAdmin from '../Navegaciones/NavegacionAdmin';
 

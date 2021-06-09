@@ -4,16 +4,21 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import routes from './config/routes';
 import theme from './config/colors';
 
+import client from './config/apollo';
+import { ApolloProvider } from '@apollo/client';
+
 function App() {
 	return (
-		<div className="App">
-			<ThemeProvider theme={theme}>
-				<CssBaseline />
-				<Router>
-					<Switch>{routes.map((route, index) => <RoutesWithSubRoutes key={index} {...route} />)}</Switch>
-				</Router>
-			</ThemeProvider>
-		</div>
+		<ApolloProvider client={client}>
+			<div className="App">
+				<ThemeProvider theme={theme}>
+					<CssBaseline />
+					<Router>
+						<Switch>{routes.map((route, index) => <RoutesWithSubRoutes key={index} {...route} />)}</Switch>
+					</Router>
+				</ThemeProvider>
+			</div>
+		</ApolloProvider>
 	);
 }
 

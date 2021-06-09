@@ -13,7 +13,7 @@ import tallasColoresIcon from '../../../../icons/tallas-colores.svg';
 import RegistroInfoGenerales from './registrarInfoGeneral';
 import RegistroInfoAdidional from './registrarInfoAdicional';
 import CargarImagenesProducto from './cargarImagenesProducto';
-import { RegProductoContext } from '../../../../context/CtxRegProducto';
+import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
 import RegistroAlmacenInicial from './AlmacenInicial';
 import ColoresTallas from './TallasColores/TallasColores';
 

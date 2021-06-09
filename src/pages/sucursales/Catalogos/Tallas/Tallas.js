@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -9,7 +9,6 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import tallasIcon from '../../../../icons/tallas.svg';
-import generoIcon from '../../../../icons/genero.svg';
 import shirtIcon from '../../../../icons/shirt.svg';
 import shoesIcon from '../../../../icons/shoes.svg';
 import { Box, Container, Tab, Tabs } from '@material-ui/core';
@@ -79,8 +78,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function Tallas() {
 	const classes = useStyles();
-	const [ open, setOpen ] = React.useState(false);
-	const [ value, setValue ] = React.useState(0);
+	const [ open, setOpen ] = useState(false);
+	const [ value, setValue ] = useState(0);
 
 	const handleChange = (event, newValue) => setValue(newValue);
 
@@ -102,7 +101,13 @@ export default function Tallas() {
 						<Typography variant="h6" className={classes.title}>
 							Ropa
 						</Typography>
-						<Button autoFocus color="inherit" size="large" onClick={handleClickOpen} startIcon={<CloseIcon />}>
+						<Button
+							autoFocus
+							color="inherit"
+							size="large"
+							onClick={handleClickOpen}
+							startIcon={<CloseIcon />}
+						>
 							Cerrar
 						</Button>
 					</Toolbar>
@@ -131,28 +136,20 @@ export default function Tallas() {
 									}
 									{...a11yProps(1)}
 								/>
-								<Tab
-									label="Genero"
-									icon={
-										<img src={generoIcon} alt="icono genero" className={classes.iconSvgSecondary} />
-									}
-									{...a11yProps(2)}
-								/>
 							</Tabs>
 						</AppBar>
-						<TabPanel value={value} index={0}>
-							<Container maxWidth="sm">
-								<RegistroTallas tipo="ropa" />
-							</Container>
-						</TabPanel>
-						<TabPanel value={value} index={1}>
-							<Container maxWidth="sm">
-									<RegistroTallas tipo="calzado" />
-							</Container>
-						</TabPanel>
-						<TabPanel value={value} index={2}>
-							Todo lo de Genero
-						</TabPanel>
+						<div>
+							<TabPanel value={value} index={0}>
+								<Container maxWidth="xs">
+									<RegistroTallas tipo="ROPA" />
+								</Container>
+							</TabPanel>
+							<TabPanel value={value} index={1}>
+								<Container maxWidth="xs">
+									<RegistroTallas tipo="CALZADO" />
+								</Container>
+							</TabPanel>
+						</div>
 					</Box>
 				</div>
 			</Dialog>

@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Box, Divider, Avatar } from '@material-ui/core';
 import { TextField, Typography, Grid } from '@material-ui/core';
 import { AccountCircle } from '@material-ui/icons';
-import { RegProductoContext } from '../../../../context/CtxRegProducto';
+import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
 import { useDropzone } from 'react-dropzone';
 
 const useStyles = makeStyles((theme) => ({

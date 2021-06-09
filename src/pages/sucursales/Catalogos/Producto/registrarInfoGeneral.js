@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Box, FormControl, Divider, MenuItem, Select, Container } from '@material-ui/core';
 import { TextField, Typography, Button, Checkbox, FormControlLabel } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
-import { RegProductoContext } from '../../../../context/CtxRegProducto';
+import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {
