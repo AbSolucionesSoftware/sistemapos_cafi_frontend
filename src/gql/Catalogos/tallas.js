@@ -7,7 +7,13 @@ export const CREAR_TALLAS = gql`
 			talla
 			tipo
 			empresa {
-				nombre
+				nombre_empresa
+				correo_empresa
+				nombre_dueno
+				telefono_dueno
+				sucursales_activas
+				limite_sucursales
+				_id
 			}
 		}
 	}
@@ -20,6 +26,12 @@ export const OBTENER_TALLAS = gql`
 			talla
 			tipo
 			empresa {
+				nombre_empresa
+				correo_empresa
+				nombre_dueno
+				telefono_dueno
+				sucursales_activas
+				limite_sucursales
 				_id
 			}
 		}

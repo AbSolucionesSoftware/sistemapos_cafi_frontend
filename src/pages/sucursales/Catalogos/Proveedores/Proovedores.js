@@ -11,6 +11,7 @@ import { Box, Container } from '@material-ui/core';
 import proveedoresIcon from '../../../../icons/distribution.svg';
 import TablaProovedores from './ListaProveedores';
 import CrearCliente from '../Cliente/CrearCliente';
+import { ClienteProvider } from '../../../../context/Catalogos/crearClienteCtx';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -43,7 +44,8 @@ export default function Proveedores() {
 
 	return (
 		<div>
-			<Button fullWidth onClick={handleClickOpen}>
+			<ClienteProvider>
+				<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<img src={proveedoresIcon} alt="icono numero calzado" className={classes.icon} />
@@ -69,6 +71,8 @@ export default function Proveedores() {
 					<TablaProovedores />
 				</Container>
 			</Dialog>
+			</ClienteProvider>
+			
 		</div>
 	);
 }

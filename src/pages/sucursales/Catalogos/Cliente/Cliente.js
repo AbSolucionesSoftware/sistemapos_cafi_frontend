@@ -11,6 +11,7 @@ import { FcManager } from 'react-icons/fc';
 import { Box } from '@material-ui/core';
 import ListaClientes from './ListaClientes';
 import CrearCliente from './CrearCliente';
+import { ClienteProvider } from '../../../../context/Catalogos/crearClienteCtx';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -43,32 +44,40 @@ export default function Cliente() {
 
 	return (
 		<div>
-			<Button fullWidth onClick={handleClickOpen}>
-				<Box display="flex" flexDirection="column">
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<FcManager className={classes.icon} />
+			<ClienteProvider>
+				<Button fullWidth onClick={handleClickOpen}>
+					<Box display="flex" flexDirection="column">
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<FcManager className={classes.icon} />
+						</Box>
+						Cliente
 					</Box>
-					Cliente
-				</Box>
-			</Button>
-			<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-				<AppBar className={classes.appBar}>
-					<Toolbar>
-						<Typography variant="h6" className={classes.title}>
-							Cliente
-						</Typography>
-						<Button autoFocus color="inherit" size="large" onClick={handleClose} startIcon={<CloseIcon />}>
-							Cerrar
-						</Button>
-					</Toolbar>
-				</AppBar>
-				<Box m={3} display="flex" justifyContent="flex-end">
-					<CrearCliente tipo="cliente" />
-				</Box>
-				<Box mx={4}>
-					<ListaClientes />
-				</Box>
-			</Dialog>
+				</Button>
+				<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+					<AppBar className={classes.appBar}>
+						<Toolbar>
+							<Typography variant="h6" className={classes.title}>
+								Cliente
+							</Typography>
+							<Button
+								autoFocus
+								color="inherit"
+								size="large"
+								onClick={handleClose}
+								startIcon={<CloseIcon />}
+							>
+								Cerrar
+							</Button>
+						</Toolbar>
+					</AppBar>
+					<Box m={3} display="flex" justifyContent="flex-end">
+						<CrearCliente tipo="CLIENTE" accion="registrar" />
+					</Box>
+					<Box mx={4}>
+						<ListaClientes />
+					</Box>
+				</Dialog>
+			</ClienteProvider>
 		</div>
 	);
 }

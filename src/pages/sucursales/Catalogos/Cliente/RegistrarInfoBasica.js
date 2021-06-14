@@ -3,14 +3,17 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Box, Divider, Avatar } from '@material-ui/core';
 import { TextField, Typography, Grid } from '@material-ui/core';
 import { AccountCircle } from '@material-ui/icons';
-import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
 import { useDropzone } from 'react-dropzone';
+import { ClienteCtx } from '../../../../context/Catalogos/crearClienteCtx';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {
 		display: 'flex',
 		'& > *': {
 			margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
+		},
+		'& span': {
+			color: 'red'
 		}
 	},
 	formInput: {
@@ -34,36 +37,52 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function RegistrarInfoBasica() {
+export default function RegistrarInfoBasica({ tipo }) {
 	const classes = useStyles();
-	const { datos, setDatos } = useContext(RegProductoContext);
+	const { cliente, setCliente, error } = useContext(ClienteCtx);
 	const [ preview, setPreview ] = useState('');
 
 	//dropzone
-	const onDrop = useCallback((acceptedFiles) => {
-		// Do something with the files
-		// Creamos el objeto de la clase FileReader
-		let reader = new FileReader();
+	const onDrop = useCallback(
+		(acceptedFiles) => {
+			let reader = new FileReader();
+			reader.readAsDataURL(acceptedFiles[0]);
+			reader.onload = function() {
+				let image = reader.result;
+				setPreview(image);
+			};
+			setCliente({
+				...cliente,
+				imagen: acceptedFiles[0]
+			});
+		},
+		[ cliente, setCliente ]
+	);
 
-		// Leemos el archivo subido y se lo pasamos a nuestro fileReader
-		reader.readAsDataURL(acceptedFiles[0]);
-
-		// Le decimos que cuando este listo ejecute el código interno
-		reader.onload = function() {
-			let image = reader.result;
-			setPreview(image);
-		};
-	}, []);
-	const { getRootProps, getInputProps} = useDropzone({
+	const { getRootProps, getInputProps } = useDropzone({
 		accept: 'image/jpeg, image/png',
 		noKeyboard: true,
 		onDrop
 	});
 
 	const obtenerCampos = (e) => {
-		setDatos({
-			...datos,
+		const name = e.target.name;
+		if (name === 'numero_cliente' || name === 'clave_cliente') {
+			setCliente({
+				...cliente,
+				[e.target.name]: parseInt(e.target.value)
+			});
+			return;
+		}
+		setCliente({
+			...cliente,
 			[e.target.name]: e.target.value
+		});
+	};
+	const obtenerCamposDireccion = (e) => {
+		setCliente({
+			...cliente,
+			direccion: { ...cliente.direccion, [e.target.name]: e.target.value }
 		});
 	};
 
@@ -85,35 +104,37 @@ export default function RegistrarInfoBasica() {
 				<Grid item md={9}>
 					<Box display="flex" justifyContent="flex-end" width="100%">
 						<div className={classes.formInputFlex}>
-                            <Box width="100%">
+							{/* <Box width="100%">
 								<Typography>Huella dactilar</Typography>
 								
-							</Box>
+							</Box> */}
 							<Box width="100%">
-								<Typography>Numero de cliente</Typography>
+								<Typography>
+									<span>* </span>Numero de cliente
+								</Typography>
 								<TextField
 									fullWidth
 									size="small"
-									/* error */
-									name="codigo_barras"
-									id="form-producto-codigo-barras"
+									error={error && !cliente.numero_cliente}
+									name="numero_cliente"
 									variant="outlined"
-									value={datos.codigo_barras}
-									/* helperText="Incorrect entry." */
+									value={cliente.numero_cliente ? cliente.numero_cliente : ''}
+									helperText={error ? 'Campo Requerido' : ''}
 									onChange={obtenerCampos}
 								/>
 							</Box>
 							<Box width="100%">
-								<Typography>Clave de cliente</Typography>
+								<Typography>
+									<span>* </span>Clave de cliente
+								</Typography>
 								<TextField
 									fullWidth
 									size="small"
-									/* error */
-									name="codigo_barras"
-									id="form-producto-codigo-barras"
+									error={error && !cliente.clave_cliente}
+									name="clave_cliente"
 									variant="outlined"
-									value={datos.codigo_barras}
-									/* helperText="Incorrect entry." */
+									value={cliente.clave_cliente ? cliente.clave_cliente : ''}
+									helperText={error ? 'Campo Requerido' : ''}
 									onChange={obtenerCampos}
 								/>
 							</Box>
@@ -121,30 +142,32 @@ export default function RegistrarInfoBasica() {
 					</Box>
 					<div className={classes.formInputFlex}>
 						<Box width="100%">
-							<Typography>Nombre Cliente</Typography>
+							<Typography>
+								<span>* </span>Nombre Cliente
+							</Typography>
 							<TextField
 								fullWidth
 								size="small"
-								/* error */
-								name="codigo_barras"
-								id="form-producto-codigo-barras"
+								error={error && !cliente.nombre_cliente}
+								name="nombre_cliente"
 								variant="outlined"
-								value={datos.codigo_barras}
-								/* helperText="Incorrect entry." */
+								value={cliente.nombre_cliente ? cliente.nombre_cliente : ''}
+								helperText={error ? 'Campo Requerido' : ''}
 								onChange={obtenerCampos}
 							/>
 						</Box>
 						<Box width="100%">
-							<Typography>Representante</Typography>
+							<Typography>
+								<span>* </span>Representante
+							</Typography>
 							<TextField
 								fullWidth
 								size="small"
-								/* error */
-								name="codigo_barras"
-								id="form-producto-codigo-barras"
+								error={error && !cliente.representante}
+								name="representante"
 								variant="outlined"
-								value={datos.codigo_barras}
-								/* helperText="Incorrect entry." */
+								value={cliente.representante ? cliente.representante : ''}
+								helperText={error ? 'Campo Requerido' : ''}
 								onChange={obtenerCampos}
 							/>
 						</Box>
@@ -157,179 +180,177 @@ export default function RegistrarInfoBasica() {
 							<TextField
 								fullWidth
 								size="small"
-								/* error */
-								name="codigo_barras"
-								id="form-producto-codigo-barras"
+								name="curp"
 								variant="outlined"
-								value={datos.codigo_barras}
-								/* helperText="Incorrect entry." */
+								value={cliente.curp ? cliente.curp : ''}
 								onChange={obtenerCampos}
 							/>
 						</Box>
 						<Box width="100%">
-							<Typography>Num. Telefono</Typography>
+							<Typography>
+								<span>* </span>Num. Telefono
+							</Typography>
 							<TextField
 								size="small"
-								/* error */
-								name="codigo_barras"
-								id="form-producto-codigo-barras"
+								error={error && !cliente.telefono}
+								name="telefono"
 								variant="outlined"
-								value={datos.codigo_barras}
-								/* helperText="Incorrect entry." */
+								value={cliente.telefono ? cliente.telefono : ''}
+								helperText={error ? 'Campo Requerido' : ''}
 								onChange={obtenerCampos}
 							/>
 						</Box>
-                        <Box width="100%">
+						<Box width="100%">
 							<Typography>Num. Celular</Typography>
 							<TextField
 								size="small"
-								/* error */
-								name="codigo_barras"
-								id="form-producto-codigo-barras"
+								name="celular"
 								variant="outlined"
-								value={datos.codigo_barras}
-								/* helperText="Incorrect entry." */
+								value={cliente.celular ? cliente.celular : ''}
 								onChange={obtenerCampos}
 							/>
 						</Box>
 						<Box width="100%">
-							<Typography>Email</Typography>
+							<Typography>
+								<span>* </span>Email
+							</Typography>
 							<TextField
 								size="small"
-								/* error */
-								name="codigo_barras"
-								id="form-producto-codigo-barras"
+								error={error && !cliente.email}
+								name="email"
 								variant="outlined"
-								value={datos.codigo_barras}
-								/* helperText="Incorrect entry." */
+								value={cliente.email ? cliente.email : ''}
+								helperText={error ? 'Campo Requerido' : ''}
 								onChange={obtenerCampos}
 							/>
 						</Box>
 					</div>
-                    <Box mt={2}>
-                        <Typography><b>Datos domicilio</b></Typography>
-                        <Divider />
-                    </Box>
-                    <div className={classes.formInputFlex}>
+					<Box mt={2}>
+						<Typography>
+							<b>cliente domicilio</b>
+						</Typography>
+						<Divider />
+					</Box>
+					<div className={classes.formInputFlex}>
 						<Box>
-							<Typography>Calle</Typography>
+							<Typography>
+								<span>* </span>Calle
+							</Typography>
 							<TextField
 								size="small"
-								/* error */
-								name="codigo_barras"
-								id="form-producto-codigo-barras"
+								error={error && !cliente.direccion.calle}
+								name="calle"
 								variant="outlined"
-								value={datos.codigo_barras}
-								/* helperText="Incorrect entry." */
-								onChange={obtenerCampos}
+								value={cliente.direccion.calle}
+								helperText={error ? 'Campo Requerido' : ''}
+								onChange={obtenerCamposDireccion}
 							/>
 						</Box>
-                        <Box>
-							<Typography>Colonia</Typography>
+						<Box>
+							<Typography>
+								<span>* </span>Colonia
+							</Typography>
 							<TextField
 								size="small"
-								/* error */
-								name="codigo_barras"
-								id="form-producto-codigo-barras"
+								error={error && !cliente.direccion.colonia}
+								name="colonia"
 								variant="outlined"
-								value={datos.codigo_barras}
-								/* helperText="Incorrect entry." */
-								onChange={obtenerCampos}
+								value={cliente.direccion.colonia}
+								helperText={error ? 'Campo Requerido' : ''}
+								onChange={obtenerCamposDireccion}
 							/>
 						</Box>
 						<Box width="100px">
-							<Typography>Num. Ext</Typography>
+							<Typography>
+								<span>* </span>Num. Ext
+							</Typography>
 							<TextField
-								
 								size="small"
-								/* error */
-								name="codigo_barras"
-								id="form-producto-codigo-barras"
+								error={error && !cliente.direccion.no_ext}
+								name="no_ext"
 								variant="outlined"
-								value={datos.codigo_barras}
-								/* helperText="Incorrect entry." */
-								onChange={obtenerCampos}
+								value={cliente.direccion.no_ext}
+								helperText={error ? 'Campo Requerido' : ''}
+								onChange={obtenerCamposDireccion}
 							/>
 						</Box>
-                        <Box width="100px">
+						<Box width="100px">
 							<Typography>Num. Int</Typography>
 							<TextField
 								size="small"
-								/* error */
-								name="codigo_barras"
-								id="form-producto-codigo-barras"
+								name="no_int"
 								variant="outlined"
-								value={datos.codigo_barras}
-								/* helperText="Incorrect entry." */
-								onChange={obtenerCampos}
+								value={cliente.direccion.no_int}
+								onChange={obtenerCamposDireccion}
 							/>
 						</Box>
 						<Box width="100px">
-							<Typography>CP</Typography>
+							<Typography>
+								<span>* </span>CP
+							</Typography>
 							<TextField
 								size="small"
-								/* error */
-								name="codigo_barras"
-								id="form-producto-codigo-barras"
+								error={error && !cliente.direccion.codigo_postal}
+								name="codigo_postal"
 								variant="outlined"
-								value={datos.codigo_barras}
-								/* helperText="Incorrect entry." */
-								onChange={obtenerCampos}
+								value={cliente.direccion.codigo_postal}
+								helperText={error ? 'Campo Requerido' : ''}
+								onChange={obtenerCamposDireccion}
 							/>
 						</Box>
 					</div>
-                    <div className={classes.formInputFlex}>
+					<div className={classes.formInputFlex}>
 						<Box width="100%">
-							<Typography>Municipio</Typography>
+							<Typography>
+								<span>* </span>Municipio
+							</Typography>
 							<TextField
 								fullWidth
 								size="small"
-								/* error */
-								name="codigo_barras"
-								id="form-producto-codigo-barras"
+								error={error && !cliente.direccion.municipio}
+								name="municipio"
 								variant="outlined"
-								value={datos.codigo_barras}
-								/* helperText="Incorrect entry." */
-								onChange={obtenerCampos}
+								value={cliente.direccion.municipio}
+								helperText={error ? 'Campo Requerido' : ''}
+								onChange={obtenerCamposDireccion}
 							/>
 						</Box>
 						<Box width="100%">
 							<Typography>Localidad</Typography>
 							<TextField
 								size="small"
-								/* error */
-								name="codigo_barras"
-								id="form-producto-codigo-barras"
+								name="localidad"
 								variant="outlined"
-								value={datos.codigo_barras}
-								/* helperText="Incorrect entry." */
-								onChange={obtenerCampos}
-							/>
-						</Box>
-                        <Box width="100%">
-							<Typography>Estado</Typography>
-							<TextField
-								size="small"
-								/* error */
-								name="codigo_barras"
-								id="form-producto-codigo-barras"
-								variant="outlined"
-								value={datos.codigo_barras}
-								/* helperText="Incorrect entry." */
-								onChange={obtenerCampos}
+								value={cliente.direccion.localidad}
+								onChange={obtenerCamposDireccion}
 							/>
 						</Box>
 						<Box width="100%">
-							<Typography>Pais</Typography>
+							<Typography>
+								<span>* </span>Estado
+							</Typography>
 							<TextField
 								size="small"
-								/* error */
-								name="codigo_barras"
-								id="form-producto-codigo-barras"
+								error={error && !cliente.direccion.estado}
+								name="estado"
 								variant="outlined"
-								value={datos.codigo_barras}
-								/* helperText="Incorrect entry." */
-								onChange={obtenerCampos}
+								value={cliente.direccion.estado}
+								helperText={error ? 'Campo Requerido' : ''}
+								onChange={obtenerCamposDireccion}
+							/>
+						</Box>
+						<Box width="100%">
+							<Typography>
+								<span>* </span>Pais
+							</Typography>
+							<TextField
+								size="small"
+								error={error && !cliente.direccion.pais}
+								name="pais"
+								variant="outlined"
+								value={cliente.direccion.pais}
+								helperText={error ? 'Campo Requerido' : ''}
+								onChange={obtenerCamposDireccion}
 							/>
 						</Box>
 					</div>
