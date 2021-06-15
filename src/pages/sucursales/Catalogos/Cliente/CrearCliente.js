@@ -151,27 +151,25 @@ export default function CrearCliente({ tipo, accion, datos }) {
 	});
 
 	const saveData = async () => {
-		const input = cliente;
+		const { numero_cliente, _id, clave_cliente, ...input} = cliente
+
 		if (
-			!input.numero_cliente ||
-			!input.clave_cliente ||
-			!input.nombre_cliente ||
-			!input.representante ||
-			!input.telefono ||
-			!input.email ||
-			!input.direccion.calle ||
-			!input.direccion.colonia ||
-			!input.direccion.no_ext ||
-			!input.direccion.codigo_postal ||
-			!input.direccion.municipio ||
-			!input.direccion.estado ||
-			!input.direccion.pais
+			!cliente.numero_cliente ||
+			!cliente.clave_cliente ||
+			!cliente.nombre_cliente ||
+			!cliente.representante ||
+			!cliente.telefono ||
+			!cliente.email ||
+			!cliente.direccion.calle || 
+			!cliente.direccion.municipio ||
+			!cliente.direccion.estado ||
+			!cliente.direccion.pais
 		) {
 			setError(true);
 			return;
 		}
 		setLoading(true);
-		console.log(input);
+		
 		try {
 			if (accion === 'registrar') {
 				await crearCliente({
@@ -191,7 +189,6 @@ export default function CrearCliente({ tipo, accion, datos }) {
 			setError(false);
 			setLoading(false);
 		} catch (error) {
-			console.log(error.networkError.result.errors);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoading(false);
 		}
@@ -235,10 +232,10 @@ export default function CrearCliente({ tipo, accion, datos }) {
 						</Tabs>
 					</AppBar>
 					<TabPanel value={value} index={0}>
-						<RegistrarInfoBasica tipo={tipo} />
+						<RegistrarInfoBasica tipo={tipo} accion={accion} />
 					</TabPanel>
 					<TabPanel value={value} index={1}>
-						<RegistrarInfoCredito tipo={tipo} />
+						<RegistrarInfoCredito tipo={tipo} accion={accion} />
 					</TabPanel>
 				</div>
 				<DialogActions>

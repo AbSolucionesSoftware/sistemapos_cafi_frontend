@@ -2,7 +2,6 @@ import React, { Fragment, useContext, useCallback, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Divider, Avatar } from '@material-ui/core';
 import { TextField, Typography, Grid } from '@material-ui/core';
-import { AccountCircle } from '@material-ui/icons';
 import { useDropzone } from 'react-dropzone';
 import { ClienteCtx } from '../../../../context/Catalogos/crearClienteCtx';
 
@@ -37,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function RegistrarInfoBasica({ tipo }) {
+export default function RegistrarInfoBasica({ tipo, accion }) {
 	const classes = useStyles();
 	const { cliente, setCliente, error } = useContext(ClienteCtx);
 	const [ preview, setPreview ] = useState('');
@@ -93,11 +92,9 @@ export default function RegistrarInfoBasica({ tipo }) {
 					<Box className={classes.avatarContainer} {...getRootProps()}>
 						<input {...getInputProps()} />
 						{preview ? (
-							<Avatar className={classes.avatar} src={preview} />
+							<Avatar className={classes.avatar} src={`${preview}`} />
 						) : (
-							<Avatar className={classes.avatar}>
-								<AccountCircle className="icon" />
-							</Avatar>
+							<Avatar className={classes.avatar} src={`${cliente.imagen}`} />
 						)}
 					</Box>
 				</Grid>
@@ -108,6 +105,20 @@ export default function RegistrarInfoBasica({ tipo }) {
 								<Typography>Huella dactilar</Typography>
 								
 							</Box> */}
+							<Box width="100%">
+								<Typography>
+									<span>* </span>Tipo
+								</Typography>
+								<TextField
+									fullWidth
+									size="small"
+									name="tipo_cliente"
+									variant="outlined"
+									value={tipo}
+									onChange={obtenerCampos}
+									disabled
+								/>
+							</Box>
 							<Box width="100%">
 								<Typography>
 									<span>* </span>Numero de cliente
@@ -121,6 +132,7 @@ export default function RegistrarInfoBasica({ tipo }) {
 									value={cliente.numero_cliente ? cliente.numero_cliente : ''}
 									helperText={error ? 'Campo Requerido' : ''}
 									onChange={obtenerCampos}
+									disabled={accion !== 'registrar' ? true : false}
 								/>
 							</Box>
 							<Box width="100%">
@@ -136,6 +148,7 @@ export default function RegistrarInfoBasica({ tipo }) {
 									value={cliente.clave_cliente ? cliente.clave_cliente : ''}
 									helperText={error ? 'Campo Requerido' : ''}
 									onChange={obtenerCampos}
+									disabled={accion !== 'registrar' ? true : false}
 								/>
 							</Box>
 						</div>

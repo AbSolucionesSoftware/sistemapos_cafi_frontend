@@ -13,8 +13,8 @@ import CrearCliente from './CrearCliente';
 import { useQuery } from '@apollo/client';
 import { OBTENER_CLIENTES } from '../../../../gql/Catalogos/clientes';
 import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Grid } from '@material-ui/core';
-import { DialogContent, DialogTitle, IconButton, Typography } from '@material-ui/core';
-import { Dehaze, Delete, AccountBox } from '@material-ui/icons';
+import { DialogContent, DialogTitle, IconButton, Typography, Avatar } from '@material-ui/core';
+import { Dehaze, Delete } from '@material-ui/icons';
 
 const columns = [
 	{ id: 1, label: 'No. Cliente', minWidth: 100 },
@@ -35,6 +35,10 @@ const useStyles = makeStyles({
 	},
 	container: {
 		maxHeight: '70vh'
+	},
+	avatar: {
+		width: 130,
+		height: 130,
 	}
 });
 
@@ -104,7 +108,6 @@ export default function ListaClientes() {
 
 const RowsRender = ({ datos }) => {
 	const [ openDetalles, setOpenDetalles ] = useState(false);
-	console.log(datos);
 
 	const handleDetalles = () => setOpenDetalles(!openDetalles);
 
@@ -147,6 +150,7 @@ const RowsRender = ({ datos }) => {
 };
 
 const ModalDetalles = ({ handleDetalles, openDetalles, datos }) => {
+	const classes = useStyles();
 	return (
 		<div>
 			<IconButton onClick={handleDetalles}>
@@ -161,11 +165,7 @@ const ModalDetalles = ({ handleDetalles, openDetalles, datos }) => {
 					</Box>
 					<Box display="flex">
 						<Box mt={3} height={120} width={120} display="flex" justifyContent="center" alignItems="center">
-							{datos.imagen ? (
-								<img alt="imagen_cliente" src={datos.imagen} />
-							) : (
-								<AccountBox style={{ fontSize: 120, color: '#D7D7D7' }} />
-							)}
+							<Avatar className={classes.avatar} src={datos.imagen} />
 						</Box>
 						<ul>
 							<Typography>
