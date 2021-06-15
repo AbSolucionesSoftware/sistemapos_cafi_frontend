@@ -16,6 +16,7 @@ export const ClienteProvider = ({ children }) => {
           pais: '',
         },
         estado_cliente: true,
+        tipo_cliente: 'CLIENTE'
     });
     const [ toUpdate, setToUpdate ] = useState(false);
     const [ error, setError ] = useState(false);
