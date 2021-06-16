@@ -11,7 +11,7 @@ import Tesoreria from './Tesoreria/Tesoreria';
 import facturaIcon from '../../icons/factura.svg';
 import moneyIcon from '../../icons/money.svg';
 import almacenIcon from '../../icons/almacen.svg';
-import Almacenes from './Moviminetos/Movimientos';
+import Almacenes from './Almacenes/Almacenes';
 import cartIcon from '../../icons/ventas/cart-add.svg';
 import { withRouter } from 'react-router';
 
