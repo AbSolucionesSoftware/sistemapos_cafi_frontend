@@ -10,52 +10,63 @@ import { OBTENER_COLORES, CREAR_COLOR, ACTUALIZAR_COLOR } from '../../../../gql/
 
 export default function RegistroColores() {
 	const [ color, setColor ] = useState({});
+	const [ update, setUpdate ] = useState(false);
 	const [ toUpdate, setToUpdate ] = useState('');
-    const [ values, setValues ] = useState({nombre: '', hex: ''})
+	const [ values, setValues ] = useState({ nombre: '', hex: '' });
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-	const empresa = '609eb3b4b995884dc49bbffa';
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
 
 	/* Queries */
 	const { loading, data, error } = useQuery(OBTENER_COLORES, {
-		variables: { empresa }
+		variables: { empresa: sesion.empresa }
 	});
+
 	/* Mutations */
 	const [ crearColor ] = useMutation(CREAR_COLOR, {
 		update(cache, { data: { crearColor } }) {
-			const { obtenerColores } = cache.readQuery({
-				query: OBTENER_COLORES,
-				variables: { empresa }
-			});
+			try {
+				const { obtenerColores } = cache.readQuery({
+					query: OBTENER_COLORES,
+					variables: { empresa: sesion.empresa }
+				});
 
-			cache.writeQuery({
-				query: OBTENER_COLORES,
-				variables: { empresa },
-				data: {
-					obtenerColores: {
-						...obtenerColores,
-						crearColor
+				cache.writeQuery({
+					query: OBTENER_COLORES,
+					variables: { empresa: sesion.empresa },
+					data: {
+						obtenerColores: {
+							...obtenerColores,
+							crearColor
+						}
 					}
-				}
-			});
+				});
+			} catch (error) {
+				console.log(error);
+			}
 		}
 	});
 	const [ actualizarColor ] = useMutation(ACTUALIZAR_COLOR, {
 		update(cache, { data: { actualizarColor } }) {
-			const { obtenerColores } = cache.readQuery({
-				query: OBTENER_COLORES,
-				variables: { empresa }
-			});
+			try {
+				const { obtenerColores } = cache.readQuery({
+					query: OBTENER_COLORES,
+					variables: { empresa: sesion.empresa }
+				});
 
-			cache.writeQuery({
-				query: OBTENER_COLORES,
-				variables: { empresa },
-				data: {
-					obtenerColores: {
-						...obtenerColores,
-						actualizarColor
+				cache.writeQuery({
+					query: OBTENER_COLORES,
+					variables: { empresa: sesion.empresa },
+					data: {
+						obtenerColores: {
+							...obtenerColores,
+							actualizarColor
+						}
 					}
-				}
-			});
+				});
+			} catch (error) {
+				console.log(error);
+			}
 		}
 	});
 
@@ -66,6 +77,10 @@ export default function RegistroColores() {
 			hex: color.hex.toUpperCase()
 		});
 	};
+
+	/* useEffect(() => {
+		refetch();
+	}, [ refetch, update ]) */
 
 	if (loading)
 		return (
@@ -85,34 +100,37 @@ export default function RegistroColores() {
 		}
 		try {
 			const colores = values;
-			if(toUpdate){
+			if (toUpdate) {
 				await actualizarColor({
 					variables: {
 						input: {
 							nombre: colores.nombre,
-							hex: colores.hex,
+							hex: colores.hex
 						},
 						id: toUpdate
 					}
 				});
-			}else{
+			} else {
 				await crearColor({
 					variables: {
 						input: {
 							nombre: colores.nombre,
 							hex: colores.hex,
-							empresa
+							empresa: sesion.empresa,
+							sucursal: sesion.sucursal
 						}
 					}
 				});
 			}
-			setValues({nombre: '', hex: ''});
+			setUpdate(!update);
+			setValues({ nombre: '', hex: '' });
 			setToUpdate('');
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 		} catch (error) {
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 		}
 	};
+	
 
 	return (
 		<Box display="flex" justifyContent="center">
@@ -146,7 +164,14 @@ export default function RegistroColores() {
 					</Box>
 				</Grid>
 				<Grid item md={7}>
-					<TablaColores datos={obtenerColores} toUpdate={toUpdate} setToUpdate={setToUpdate} setValues={setValues} />
+					<TablaColores
+						datos={obtenerColores}
+						toUpdate={toUpdate}
+						setToUpdate={setToUpdate}
+						setValues={setValues}
+						update={update}
+						setUpdate={setUpdate}
+					/>
 				</Grid>
 			</Grid>
 		</Box>

@@ -36,8 +36,8 @@ export const CREAR_CLIENTE = gql`
 `;
 
 export const OBTENER_CLIENTES = gql`
-	query obtenerClientes {
-		obtenerClientes {
+	query obtenerClientes($tipo: String!, $filtro: String) {
+		obtenerClientes(tipo: $tipo, filtro: $filtro) {
 			_id
 			numero_cliente
 			clave_cliente
@@ -66,6 +66,22 @@ export const OBTENER_CLIENTES = gql`
 			imagen
 			estado_cliente
 			tipo_cliente
+			banco
+			numero_cuenta
+			empresa {
+				_id
+				nombre_empresa
+				correo_empresa
+				nombre_dueno
+				telefono_dueno
+				sucursales_activas
+				limite_sucursales
+			}
+			sucursal {
+				_id
+				nombre_sucursal
+				descripcion
+			}
 		}
 	}
 `;

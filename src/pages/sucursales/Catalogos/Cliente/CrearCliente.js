@@ -15,7 +15,7 @@ import BackdropComponent from '../../../../components/Layouts/BackDrop';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 
 import { useMutation } from '@apollo/client';
-import { CREAR_CLIENTE, ACTUALIZAR_CLIENTE, OBTENER_CLIENTES } from '../../../../gql/Catalogos/clientes';
+import { CREAR_CLIENTE, ACTUALIZAR_CLIENTE } from '../../../../gql/Catalogos/clientes';
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -72,11 +72,12 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CrearCliente({ tipo, accion, datos }) {
 	const classes = useStyles();
-	const { cliente, setCliente, setError } = useContext(ClienteCtx);
+	const { cliente, setCliente, setError, update, setUpdate } = useContext(ClienteCtx);
 	const [ open, setOpen ] = useState(false);
 	const [ value, setValue ] = useState(0);
 	const [ loading, setLoading ] = useState(false);
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	const limpiarCampos = useCallback(
 		() => {
@@ -92,8 +93,7 @@ export default function CrearCliente({ tipo, accion, datos }) {
 					estado: '',
 					pais: ''
 				},
-				estado_cliente: true,
-				tipo_cliente: 'CLIENTE'
+				estado_cliente: true
 			});
 		},
 		[ setCliente ]
@@ -115,44 +115,10 @@ export default function CrearCliente({ tipo, accion, datos }) {
 	};
 
 	/* Mutations */
-	const [ crearCliente ] = useMutation(CREAR_CLIENTE, {
-		update(cache, { data: { crearCliente } }) {
-			const { obtenerClientes } = cache.readQuery({
-				query: OBTENER_CLIENTES
-			});
-
-			cache.writeQuery({
-				query: OBTENER_CLIENTES,
-				data: {
-					obtenerClientes: {
-						...obtenerClientes,
-						crearCliente
-					}
-				}
-			});
-		}
-	});
-	const [ actualizarCliente ] = useMutation(ACTUALIZAR_CLIENTE, {
-		update(cache, { data: { actualizarCliente } }) {
-			const { obtenerClientes } = cache.readQuery({
-				query: OBTENER_CLIENTES
-			});
-
-			cache.writeQuery({
-				query: OBTENER_CLIENTES,
-				data: {
-					obtenerClientes: {
-						...obtenerClientes,
-						actualizarCliente
-					}
-				}
-			});
-		}
-	});
+	const [ crearCliente ] = useMutation(CREAR_CLIENTE);
+	const [ actualizarCliente ] = useMutation(ACTUALIZAR_CLIENTE);
 
 	const saveData = async () => {
-		const { numero_cliente, _id, clave_cliente, ...input} = cliente
-
 		if (
 			!cliente.numero_cliente ||
 			!cliente.clave_cliente ||
@@ -160,7 +126,7 @@ export default function CrearCliente({ tipo, accion, datos }) {
 			!cliente.representante ||
 			!cliente.telefono ||
 			!cliente.email ||
-			!cliente.direccion.calle || 
+			!cliente.direccion.calle ||
 			!cliente.direccion.municipio ||
 			!cliente.direccion.estado ||
 			!cliente.direccion.pais
@@ -169,15 +135,21 @@ export default function CrearCliente({ tipo, accion, datos }) {
 			return;
 		}
 		setLoading(true);
-		
 		try {
 			if (accion === 'registrar') {
+				cliente.tipo_cliente = tipo;
+				cliente.empresa = sesion.empresa;
+				if(tipo !== "PROVEEDOR"){
+					cliente.sucursal = sesion.sucursal;
+				}
+				const input = cliente;
 				await crearCliente({
 					variables: {
 						input
 					}
 				});
 			} else {
+				const { numero_cliente, _id, clave_cliente, sucursal, empresa, ...input } = cliente;
 				await actualizarCliente({
 					variables: {
 						input,
@@ -185,10 +157,13 @@ export default function CrearCliente({ tipo, accion, datos }) {
 					}
 				});
 			}
+			setUpdate(!update);
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setError(false);
 			setLoading(false);
+			onCloseModal();
 		} catch (error) {
+			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoading(false);
 		}
@@ -196,6 +171,7 @@ export default function CrearCliente({ tipo, accion, datos }) {
 
 	return (
 		<Fragment>
+			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			{accion === 'registrar' ? (
 				<Button color="primary" variant="contained" size="large" onClick={toggleModal}>
 					<Add /> Nuevo {tipo}
@@ -206,7 +182,6 @@ export default function CrearCliente({ tipo, accion, datos }) {
 				</IconButton>
 			)}
 			<Dialog open={open} onClose={onCloseModal} fullWidth maxWidth="md">
-				<SnackBarMessages alert={alert} setAlert={setAlert} />
 				<div className={classes.root}>
 					<BackdropComponent loading={loading} setLoading={setLoading} />
 					<AppBar position="static" color="default" elevation={0}>
