@@ -15,13 +15,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function LayoutHome(props) {
-	const sesion = localStorage.getItem('sesionCafi');
 	const classes = useStyles();
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
-	if (sesion === 'false') props.history.push('/');
+	if (!sesion) props.history.push('/');
 
     const signOut = () => {
-		localStorage.setItem('sesionCafi', false);
+		localStorage.removeItem('sesionCafi');
 		props.history.push('/');
 	};
 
@@ -48,7 +48,7 @@ export default function LayoutHome(props) {
 							Ventas
 						</Box>
 					</Button>
-                    <Button component={Link} to="/ventas/venta-general" color="secondary" onClick={signOut}>
+                    <Button color="secondary" onClick={signOut}>
 						<Box display="flex" flexDirection="column" textAlign="center">
 							<Box display="flex" justifyContent="center">
 								<PowerSettingsNewRoundedIcon className={classes.icon} />

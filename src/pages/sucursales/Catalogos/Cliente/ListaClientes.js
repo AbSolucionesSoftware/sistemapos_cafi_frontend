@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -9,12 +9,14 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import CrearCliente from './CrearCliente';
+import ErrorPage from '../../../../components/ErrorPage';
 
 import { useQuery } from '@apollo/client';
 import { OBTENER_CLIENTES } from '../../../../gql/Catalogos/clientes';
 import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Grid } from '@material-ui/core';
 import { DialogContent, DialogTitle, IconButton, Typography, Avatar } from '@material-ui/core';
 import { Dehaze, Delete } from '@material-ui/icons';
+import { ClienteCtx } from '../../../../context/Catalogos/crearClienteCtx';
 
 const columns = [
 	{ id: 1, label: 'No. Cliente', minWidth: 100 },
@@ -38,17 +40,27 @@ const useStyles = makeStyles({
 	},
 	avatar: {
 		width: 130,
-		height: 130,
+		height: 130
 	}
 });
 
-export default function ListaClientes() {
+export default function ListaClientes({ tipo, filtro }) {
 	const classes = useStyles();
-	const [ page, setPage ] = React.useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = React.useState(10);
+	const { update } = useContext(ClienteCtx);
+	const [ page, setPage ] = useState(0);
+	const [ rowsPerPage, setRowsPerPage ] = useState(10);
 
 	/* Queries */
-	const { loading, data, error } = useQuery(OBTENER_CLIENTES);
+	const { loading, data, error, refetch } = useQuery(OBTENER_CLIENTES, {
+		variables: { tipo, filtro }
+	});
+
+	useEffect(
+		() => {
+			refetch();
+		},
+		[ update, refetch ]
+	);
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
@@ -66,7 +78,7 @@ export default function ListaClientes() {
 			</Box>
 		);
 	if (error) {
-		return <div>hubo un error</div>;
+		return <ErrorPage error={error} />;
 	}
 
 	const { obtenerClientes } = data;

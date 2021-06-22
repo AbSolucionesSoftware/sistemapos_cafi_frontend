@@ -24,7 +24,7 @@ function NavegacionAdmin(props) {
 	const classes = useStyles();
 
     const signOut = () => {
-		localStorage.setItem('sesionCafi', false);
+		localStorage.removeItem('sesionCafi');
 		props.history.push('/');
 	};
 

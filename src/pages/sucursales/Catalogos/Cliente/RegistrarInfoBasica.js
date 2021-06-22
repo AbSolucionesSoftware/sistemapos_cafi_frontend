@@ -254,7 +254,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
 								error={error && !cliente.direccion.calle}
 								name="calle"
 								variant="outlined"
-								value={cliente.direccion.calle}
+								value={cliente.direccion.calle ? cliente.direccion.calle : ''}
 								helperText={error ? 'Campo Requerido' : ''}
 								onChange={obtenerCamposDireccion}
 							/>
@@ -268,7 +268,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
 								error={error && !cliente.direccion.colonia}
 								name="colonia"
 								variant="outlined"
-								value={cliente.direccion.colonia}
+								value={cliente.direccion.colonia ? cliente.direccion.colonia : ''}
 								helperText={error ? 'Campo Requerido' : ''}
 								onChange={obtenerCamposDireccion}
 							/>
@@ -282,7 +282,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
 								error={error && !cliente.direccion.no_ext}
 								name="no_ext"
 								variant="outlined"
-								value={cliente.direccion.no_ext}
+								value={cliente.direccion.no_ext ? cliente.direccion.no_ext : ''}
 								helperText={error ? 'Campo Requerido' : ''}
 								onChange={obtenerCamposDireccion}
 							/>
@@ -293,7 +293,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
 								size="small"
 								name="no_int"
 								variant="outlined"
-								value={cliente.direccion.no_int}
+								value={cliente.direccion.no_int ? cliente.direccion.no_int : ''}
 								onChange={obtenerCamposDireccion}
 							/>
 						</Box>
@@ -306,7 +306,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
 								error={error && !cliente.direccion.codigo_postal}
 								name="codigo_postal"
 								variant="outlined"
-								value={cliente.direccion.codigo_postal}
+								value={cliente.direccion.codigo_postal ? cliente.direccion.codigo_postal : ''}
 								helperText={error ? 'Campo Requerido' : ''}
 								onChange={obtenerCamposDireccion}
 							/>
@@ -323,7 +323,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
 								error={error && !cliente.direccion.municipio}
 								name="municipio"
 								variant="outlined"
-								value={cliente.direccion.municipio}
+								value={cliente.direccion.municipio ? cliente.direccion.municipio : ''}
 								helperText={error ? 'Campo Requerido' : ''}
 								onChange={obtenerCamposDireccion}
 							/>
@@ -334,7 +334,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
 								size="small"
 								name="localidad"
 								variant="outlined"
-								value={cliente.direccion.localidad}
+								value={cliente.direccion.localidad ? cliente.direccion.localidad : ''}
 								onChange={obtenerCamposDireccion}
 							/>
 						</Box>
@@ -347,7 +347,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
 								error={error && !cliente.direccion.estado}
 								name="estado"
 								variant="outlined"
-								value={cliente.direccion.estado}
+								value={cliente.direccion.estado ? cliente.direccion.estado : ''}
 								helperText={error ? 'Campo Requerido' : ''}
 								onChange={obtenerCamposDireccion}
 							/>
@@ -361,7 +361,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
 								error={error && !cliente.direccion.pais}
 								name="pais"
 								variant="outlined"
-								value={cliente.direccion.pais}
+								value={cliente.direccion.pais ? cliente.direccion.pais : ''}
 								helperText={error ? 'Campo Requerido' : ''}
 								onChange={obtenerCamposDireccion}
 							/>

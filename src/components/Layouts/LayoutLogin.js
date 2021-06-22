@@ -13,10 +13,15 @@ export default function LayoutLogin(props) {
 	const classes = useStyles();
     const sesion = localStorage.getItem('sesionCafi');
 
-    if(sesion === "true") props.history.push('/home');
+    if(sesion) props.history.push('/home');
 
     const signin = () => {
-        localStorage.setItem("sesionCafi", true);
+		const user = {
+			name: "aldo",
+			empresa: "60c120b6a694891f58d32a1d",
+			sucursal: "60c8e180340d5d223432a916"
+		}
+        localStorage.setItem("sesionCafi", JSON.stringify(user));
         props.history.push('/home');
     }
 

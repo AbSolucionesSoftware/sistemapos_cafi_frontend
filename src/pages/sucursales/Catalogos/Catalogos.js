@@ -3,7 +3,7 @@ import { Box, Container, Grid } from '@material-ui/core';
 import Cliente from './Cliente/Cliente';
 import Productos from './Producto/Productos';
 import Tallas from './Tallas/Tallas';
-import UnidadMedida from './UnidadMedida/UnidadMedida';
+/* import UnidadMedida from './UnidadMedida/UnidadMedida'; */
 import Contabilidad from './Contabilidad/Contabilidad';
 import Proveedores from './Proveedores/Proovedores';
 /* import Cajas from './Cajas/Cajas'; */
@@ -32,11 +32,11 @@ export default function Catalogos() {
 						<Tallas />
 					</Box>
 				</Grid>
-				<Grid item lg={2}>
+				{/* <Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<UnidadMedida />
 					</Box>
-				</Grid>
+				</Grid> */}
 				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Contabilidad />

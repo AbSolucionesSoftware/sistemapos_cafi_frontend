@@ -22,7 +22,7 @@ export default function LayoutVentas(props) {
 	const classes = useStyles();
     const sesion = localStorage.getItem("sesionCafi");
 
-    if(sesion === "false") props.history.push('/');
+    if(!sesion) props.history.push('/');
 
 	return (
 		<div className={classes.root}>
