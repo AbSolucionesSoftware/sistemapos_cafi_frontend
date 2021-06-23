@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaTallas({ tipo, datos, toUpdate, setToUpdate, setValue }) {
+export default function TablaTallas({ tipo, datos, toUpdate, setToUpdate, setValue, refetch }) {
 	const classes = useStyles();
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(7);
@@ -87,7 +87,7 @@ export default function TablaTallas({ tipo, datos, toUpdate, setToUpdate, setVal
 							{productosFiltrados
 								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 								.map((row, index) => (
-									<RowsRender key={index} row={row} setAlert={setAlert} tipo={tipo} toUpdate={toUpdate} setToUpdate={setToUpdate} setValue={setValue} />
+									<RowsRender key={index} row={row} setAlert={setAlert} tipo={tipo} toUpdate={toUpdate} setToUpdate={setToUpdate} setValue={setValue} refetch={refetch} />
 								))}
 						</TableBody>
 					</Table>
@@ -106,7 +106,7 @@ export default function TablaTallas({ tipo, datos, toUpdate, setToUpdate, setVal
 	);
 }
 
-const RowsRender = ({ row, setAlert, tipo, toUpdate, setToUpdate, setValue  }) => {
+const RowsRender = ({ row, setAlert, tipo, toUpdate, setToUpdate, setValue, refetch }) => {
 	const [ openModal, setOpenModal ] = useState(false);
 	const handleModal = () => setOpenModal(!openModal);
 
@@ -138,6 +138,7 @@ const RowsRender = ({ row, setAlert, tipo, toUpdate, setToUpdate, setValue  }) =
 				}
 			});
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			refetch();
 			handleModal();
 		} catch (error) {
 			setAlert({ message: error.message, status: 'error', open: true });
