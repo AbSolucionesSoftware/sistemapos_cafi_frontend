@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaColores({ datos, toUpdate, setToUpdate, setValues, update, setUpdate }) {
+export default function TablaColores({ datos, toUpdate, setToUpdate, setValues, refetch }) {
 	const classes = useStyles();
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(8);
@@ -100,8 +100,7 @@ export default function TablaColores({ datos, toUpdate, setToUpdate, setValues, 
 											toUpdate={toUpdate}
 											setToUpdate={setToUpdate}
 											setValues={setValues}
-											update={update}
-											setUpdate={setUpdate}
+											refetch={refetch}
 										/>
 									);
 								})}
@@ -122,7 +121,7 @@ export default function TablaColores({ datos, toUpdate, setToUpdate, setValues, 
 	);
 }
 
-const RowsRender = ({ row, setAlert, toUpdate, setToUpdate, setValues, update, setUpdate }) => {
+const RowsRender = ({ row, setAlert, toUpdate, setToUpdate, setValues, refetch }) => {
 	const classes = useStyles();
 	const [ openModal, setOpenModal ] = useState(false);
 
@@ -159,7 +158,7 @@ const RowsRender = ({ row, setAlert, toUpdate, setToUpdate, setValues, update, s
 					id: row._id
 				}
 			});
-			setUpdate(!update);
+			refetch(refetch);
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			handleModal();
 		} catch (error) {

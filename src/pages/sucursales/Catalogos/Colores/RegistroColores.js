@@ -10,65 +10,19 @@ import { OBTENER_COLORES, CREAR_COLOR, ACTUALIZAR_COLOR } from '../../../../gql/
 
 export default function RegistroColores() {
 	const [ color, setColor ] = useState({});
-	const [ update, setUpdate ] = useState(false);
 	const [ toUpdate, setToUpdate ] = useState('');
 	const [ values, setValues ] = useState({ nombre: '', hex: '' });
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
-
 	/* Queries */
-	const { loading, data, error } = useQuery(OBTENER_COLORES, {
-		variables: { empresa: sesion.empresa }
+	const { loading, data, error, refetch } = useQuery(OBTENER_COLORES, {
+		variables: { sucursal: sesion.sucursal }
 	});
 
 	/* Mutations */
-	const [ crearColor ] = useMutation(CREAR_COLOR, {
-		update(cache, { data: { crearColor } }) {
-			try {
-				const { obtenerColores } = cache.readQuery({
-					query: OBTENER_COLORES,
-					variables: { empresa: sesion.empresa }
-				});
-
-				cache.writeQuery({
-					query: OBTENER_COLORES,
-					variables: { empresa: sesion.empresa },
-					data: {
-						obtenerColores: {
-							...obtenerColores,
-							crearColor
-						}
-					}
-				});
-			} catch (error) {
-				console.log(error);
-			}
-		}
-	});
-	const [ actualizarColor ] = useMutation(ACTUALIZAR_COLOR, {
-		update(cache, { data: { actualizarColor } }) {
-			try {
-				const { obtenerColores } = cache.readQuery({
-					query: OBTENER_COLORES,
-					variables: { empresa: sesion.empresa }
-				});
-
-				cache.writeQuery({
-					query: OBTENER_COLORES,
-					variables: { empresa: sesion.empresa },
-					data: {
-						obtenerColores: {
-							...obtenerColores,
-							actualizarColor
-						}
-					}
-				});
-			} catch (error) {
-				console.log(error);
-			}
-		}
-	});
+	const [ crearColor ] = useMutation(CREAR_COLOR);
+	const [ actualizarColor ] = useMutation(ACTUALIZAR_COLOR);
 
 	const handleChangeComplete = (color) => {
 		setColor(color);
@@ -77,10 +31,6 @@ export default function RegistroColores() {
 			hex: color.hex.toUpperCase()
 		});
 	};
-
-	/* useEffect(() => {
-		refetch();
-	}, [ refetch, update ]) */
 
 	if (loading)
 		return (
@@ -122,7 +72,7 @@ export default function RegistroColores() {
 					}
 				});
 			}
-			setUpdate(!update);
+			refetch();
 			setValues({ nombre: '', hex: '' });
 			setToUpdate('');
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
@@ -169,8 +119,7 @@ export default function RegistroColores() {
 						toUpdate={toUpdate}
 						setToUpdate={setToUpdate}
 						setValues={setValues}
-						update={update}
-						setUpdate={setUpdate}
+						refetch={refetch}
 					/>
 				</Grid>
 			</Grid>
