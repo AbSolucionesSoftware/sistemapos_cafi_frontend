@@ -86,7 +86,7 @@ function AdminInicio(props) {
 					<Tabs value={value} onChange={handleChange} indicatorColor="primary" textColor="primary" centered>
 						<Tab label="Mi empresa" icon={<FcShop className={classes.icon} />} {...a11yProps(0)} />
 						<Tab
-							label="Movimientos"
+							label="Almacenes"
 							icon={<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />}
 							{...a11yProps(1)}
 						/>
