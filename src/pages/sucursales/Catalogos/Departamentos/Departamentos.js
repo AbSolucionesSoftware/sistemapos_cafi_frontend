@@ -65,7 +65,7 @@ export default function Departamentos() {
 					</AppBar>
 					<Box mt={3}>
 						<Container maxWidth="sm">
-							<RegistroDepartamentos />
+							<RegistroDepartamentos accion="registrar" />
 						</Container>
 					</Box>
 				</Dialog>

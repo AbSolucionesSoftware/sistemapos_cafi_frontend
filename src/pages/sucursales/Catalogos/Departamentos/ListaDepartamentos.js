@@ -1,15 +1,26 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
-import { IconButton } from '@material-ui/core';
+import { 
+    Paper, 
+    makeStyles, 
+    Table, 
+    TableBody, 
+    TableCell, 
+    TableContainer, 
+    TableHead, 
+    TableRow, 
+    CircularProgress,
+    Box,
+    Typography,
+	IconButton,
+	TablePagination
+} from '@material-ui/core/';
+
 import { Delete, Edit } from '@material-ui/icons';
+
+import { useQuery } from '@apollo/client';
+import { OBTENER_DEPARTAMENTOS } from '../../../../gql/Catalogos/departamentos';
+import ContainerRegistroAlmacen from './RegistroDepartamento';
+import { CrearAlmacenContext } from '../../../../context/Catalogos/createDepartamentos';
 
 function createData(name, calories, fat, carbs, protein) {
 	return { name, calories, fat, carbs, protein };
@@ -45,6 +56,16 @@ export default function TablaDepartamentos() {
 	const classes = useStyles();
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(8);
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	let obtenerDepartamentos = [];
+
+	/* Queries */
+	const { loading, data, error, refetch } = useQuery(OBTENER_DEPARTAMENTOS,{
+		variables: {
+			empresa: sesion.empresa._id,
+			sucursal: sesion.sucursal._id
+		}
+	});	
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
@@ -54,6 +75,10 @@ export default function TablaDepartamentos() {
 		setRowsPerPage(parseInt(event.target.value, 10));
 		setPage(0);
 	};
+
+	if(data){
+		obtenerDepartamentos = data.obtenerDepartamentos
+	}
 
 	return (
 		<div className={classes.root}>
@@ -73,30 +98,20 @@ export default function TablaDepartamentos() {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-								return (
-									<TableRow hover role="checkbox" tabIndex={-1} key={row.name}>
-										<TableCell>{row.name}</TableCell>
-										<TableCell padding="checkbox">
-											<IconButton>
-												<Edit />
-											</IconButton>
-										</TableCell>
-										<TableCell padding="checkbox">
-											<IconButton>
-												<Delete />
-											</IconButton>
-										</TableCell>
-									</TableRow>
-								);
-							})}
+							{
+							obtenerDepartamentos
+								?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+								?.map((row, index) => {
+									return <RowsRender key={index} datos={row} />;
+								})
+							}
 						</TableBody>
 					</Table>
 				</TableContainer>
 				<TablePagination
 					rowsPerPageOptions={[]}
 					component="div"
-					count={rows.length}
+					count={obtenerDepartamentos.length}
 					rowsPerPage={rowsPerPage}
 					page={page}
 					onChangePage={handleChangePage}
@@ -106,3 +121,22 @@ export default function TablaDepartamentos() {
 		</div>
 	);
 }
+
+
+const RowsRender = ({ datos }) => {
+	return (
+		<TableRow hover role="checkbox" tabIndex={-1}>
+			<TableCell>{datos.nombre_departamentos}</TableCell>
+			<TableCell padding="checkbox">
+				<IconButton>
+					<Edit />
+				</IconButton>
+			</TableCell>
+			<TableCell padding="checkbox">
+				<IconButton>
+					<Delete />
+				</IconButton>
+			</TableCell>
+		</TableRow>
+	);
+};
