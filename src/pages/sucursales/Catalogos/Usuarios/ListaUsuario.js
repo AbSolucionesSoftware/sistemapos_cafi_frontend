@@ -1,30 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import CrearCliente from './CrearCliente';
-import ErrorPage from '../../../../components/ErrorPage';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@material-ui/core';
 import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Grid } from '@material-ui/core';
 import { DialogContent, DialogTitle, IconButton, Typography, Avatar, Switch } from '@material-ui/core';
+import CrearUsario from './CrearUsuario';
+import ErrorPage from '../../../../components/ErrorPage';
 import { Dehaze, Delete } from '@material-ui/icons';
-import { ClienteCtx } from '../../../../context/Catalogos/crearClienteCtx';
+import { UsuarioContext } from '../../../../context/Catalogos/usuarioContext';
 
 import { useQuery, useMutation } from '@apollo/client';
-import { OBTENER_CLIENTES, ACTUALIZAR_CLIENTE } from '../../../../gql/Catalogos/clientes';
+import { OBTENER_USUARIOS, ACTUALIZAR_USUARIO } from '../../../../gql/Catalogos/usuarios';
 
 const columns = [
-	{ id: 1, label: 'No. Cliente', minWidth: 100 },
-	{ id: 2, label: 'Clave', minWidth: 100 },
+	{ id: 1, label: 'No. Usuario', minWidth: 100 },
 	{ id: 3, label: 'Nombre', minWidth: 150 },
-	{ id: 4, label: 'Razon Social', minWidth: 150 },
 	{ id: 5, label: 'Correo', minWidth: 150 },
-	{ id: 6, label: 'Tipo de Cliente', minWidth: 100 },
 	{ id: 7, label: 'Estado', minWidth: 100 },
 	{ id: 8, label: 'Detalles', minWidth: 50, align: 'right' },
 	{ id: 9, label: 'Editar', minWidth: 50, align: 'right' },
@@ -44,15 +35,15 @@ const useStyles = makeStyles({
 	}
 });
 
-export default function ListaClientes({ tipo, filtro }) {
+export default function ListaUsuarios({ sucursal, filtro }) {
 	const classes = useStyles();
-	const { update } = useContext(ClienteCtx);
+	const { update } = useContext(UsuarioContext);
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(10);
 
 	/* Queries */
-	const { loading, data, error, refetch } = useQuery(OBTENER_CLIENTES, {
-		variables: { tipo, filtro }
+	const { loading, data, error, refetch } = useQuery(OBTENER_USUARIOS, {
+		variables: { sucursal, filtro }
 	});
 
 	useEffect(
@@ -81,7 +72,7 @@ export default function ListaClientes({ tipo, filtro }) {
 		return <ErrorPage error={error} />;
 	}
 
-	const { obtenerClientes } = data;
+	const { obtenerUsuarios } = data;
 
 	return (
 		<Paper className={classes.root}>
@@ -97,7 +88,7 @@ export default function ListaClientes({ tipo, filtro }) {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{obtenerClientes
+						{obtenerUsuarios
 							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 							.map((row, index) => {
 								return <RowsRender key={index} datos={row} />;
@@ -108,7 +99,7 @@ export default function ListaClientes({ tipo, filtro }) {
 			<TablePagination
 				rowsPerPageOptions={[]}
 				component="div"
-				count={obtenerClientes.length}
+				count={obtenerUsuarios.length}
 				rowsPerPage={rowsPerPage}
 				page={page}
 				onChangePage={handleChangePage}
@@ -120,21 +111,21 @@ export default function ListaClientes({ tipo, filtro }) {
 
 const RowsRender = ({ datos }) => {
 	const [ openDetalles, setOpenDetalles ] = useState(false);
-	const { update, setUpdate } = useContext(ClienteCtx);
+	const { update, setUpdate } = useContext(UsuarioContext);
 	const [ loading, setLoading ] = useState(false);
 
-	const [ actualizarCliente ] = useMutation(ACTUALIZAR_CLIENTE);
-
 	const handleDetalles = () => setOpenDetalles(!openDetalles);
+
+	const [ actualizarUsuario ] = useMutation(ACTUALIZAR_USUARIO);
 
 	const cambiarEstado = async (e) => {
 		setLoading(true);
 
 		try {
-			await actualizarCliente({
+			await actualizarUsuario({
 				variables: {
 					input: {
-						estado_cliente: e.target.checked
+						estado_usuario: e.target.checked
 					},
 					id: datos._id
 				}
@@ -150,29 +141,20 @@ const RowsRender = ({ datos }) => {
 	return (
 		<TableRow hover role="checkbox" tabIndex={-1}>
 			<TableCell>
-				<Typography>{datos.numero_cliente}</Typography>
+				<Typography>{datos.numero_usuario}</Typography>
 			</TableCell>
 			<TableCell>
-				<Typography>{datos.clave_cliente}</Typography>
-			</TableCell>
-			<TableCell>
-				<Typography>{datos.nombre_cliente}</Typography>
-			</TableCell>
-			<TableCell>
-				<Typography>{datos.razon_social}</Typography>
+				<Typography>{datos.nombre}</Typography>
 			</TableCell>
 			<TableCell>
 				<Typography>{datos.email}</Typography>
-			</TableCell>
-			<TableCell>
-				<Typography>{datos.tipo_cliente}</Typography>
 			</TableCell>
 			<TableCell>
 				{loading ? (
 					<CircularProgress size={30} />
 				) : (
 					<Switch
-						checked={datos.estado_cliente}
+						checked={datos.estado_usuario}
 						onChange={cambiarEstado}
 						color="primary"
 					/>
@@ -182,7 +164,7 @@ const RowsRender = ({ datos }) => {
 				<ModalDetalles openDetalles={openDetalles} handleDetalles={handleDetalles} datos={datos} />
 			</TableCell>
 			<TableCell width={50}>
-				<CrearCliente tipo="CLIENTE" accion="actualizar" datos={datos} />
+				<CrearUsario accion="actualizar" datos={datos} />
 			</TableCell>
 			<TableCell width={50}>
 				<IconButton color="secondary">
@@ -213,35 +195,19 @@ const ModalDetalles = ({ handleDetalles, openDetalles, datos }) => {
 						</Box>
 						<ul>
 							<Typography>
-								<b>Número de cliente: </b>
-								{datos.numero_cliente}
+								<b>Número de usuario: </b>
+								{datos.numero_usuario}
 							</Typography>
 							<Typography>
-								<b>Clave: </b>
-								{datos.clave_cliente}
+								<b>Nombre: </b>
+								{datos.nombre}
 							</Typography>
 							<Typography>
-								<b>Representante: </b>
-								{datos.representante}
-							</Typography>
-							<Typography>
-								<b>Nombre cliente/empresa: </b>
-								{datos.nombre_cliente}
-							</Typography>
-							<Typography>
-								<b>Razon social: </b>
-								{datos.razon_social}
-							</Typography>
-							<Typography>
-								<b>RFC: </b>
-								{datos.rfc ? datos.rfc : ' -'}
+								<b>Correo: </b>
+								{datos.email ? datos.email : ' -'}
 							</Typography>
 						</ul>
 						<ul>
-							<Typography>
-								<b>CURP: </b>
-								{datos.curp ? datos.curp : ' -'}
-							</Typography>
 							<Typography>
 								<b>Telefono: </b>
 								{datos.telefono ? datos.telefono : ' -'}
@@ -251,16 +217,8 @@ const ModalDetalles = ({ handleDetalles, openDetalles, datos }) => {
 								{datos.celular ? datos.celular : ' -'}
 							</Typography>
 							<Typography>
-								<b>Correo: </b>
-								{datos.email ? datos.email : ' -'}
-							</Typography>
-							<Typography>
-								<b>Estado del cliente: </b>
-								{datos.estado_cliente ? 'Activo' : 'Inactivo'}
-							</Typography>
-							<Typography>
-								<b>Tipo: </b>
-								{datos.tipo_cliente}
+								<b>Estado del usuario: </b>
+								{datos.estado_usuario ? 'Activo' : 'Inactivo'}
 							</Typography>
 						</ul>
 					</Box>
@@ -276,11 +234,11 @@ const ModalDetalles = ({ handleDetalles, openDetalles, datos }) => {
 								<ul>
 									<Typography>
 										<b>Calle: </b>
-										{datos.direccion.calle}
+										{datos.direccion.calle ? datos.direccion.calle : ' -'}
 									</Typography>
 									<Typography>
 										<b>No. Exterior: </b>
-										{datos.direccion.no_ext}
+										{datos.direccion.no_ext ? datos.direccion.no_ext : ' -'}
 									</Typography>
 									<Typography>
 										<b>No. Interior: </b>
@@ -288,17 +246,17 @@ const ModalDetalles = ({ handleDetalles, openDetalles, datos }) => {
 									</Typography>
 									<Typography>
 										<b>Código postal: </b>
-										{datos.direccion.codigo_postal}
+										{datos.direccion.codigo_postal ? datos.direccion.codigo_postal : ' -'}
 									</Typography>
 									<Typography>
 										<b>Colonia: </b>
-										{datos.direccion.colonia}
+										{datos.direccion.colonia ? datos.direccion.colonia : ' -'}
 									</Typography>
 								</ul>
 								<ul>
 									<Typography>
 										<b>Municipio: </b>
-										{datos.direccion.municipio}
+										{datos.direccion.municipio ? datos.direccion.municipio : ' -'}
 									</Typography>
 									<Typography>
 										<b>Localidad: </b>
@@ -306,35 +264,11 @@ const ModalDetalles = ({ handleDetalles, openDetalles, datos }) => {
 									</Typography>
 									<Typography>
 										<b>Estado: </b>
-										{datos.direccion.estado}
+										{datos.direccion.estado ? datos.direccion.estado : ' -'}
 									</Typography>
 									<Typography>
 										<b>Pais: </b>
-										{datos.direccion.pais}
-									</Typography>
-								</ul>
-							</Box>
-						</Grid>
-						<Grid item md={6}>
-							<Box mt={3}>
-								<Typography>
-									<b>Información crediticia</b>
-								</Typography>
-								<Divider />
-							</Box>
-							<Box display="flex">
-								<ul>
-									<Typography>
-										<b>Descuento: </b>
-										{datos.numero_credito ? datos.numero_credito : ' -'}
-									</Typography>
-									<Typography>
-										<b>Limite de crédito: </b>
-										{datos.limite_credito ? datos.limite_credito : ' -'}
-									</Typography>
-									<Typography>
-										<b>Días de crédito: </b>
-										{datos.dias_credito ? datos.dias_credito : ' -'}
+										{datos.direccion.pais ? datos.direccion.pais : ' -'}
 									</Typography>
 								</ul>
 							</Box>

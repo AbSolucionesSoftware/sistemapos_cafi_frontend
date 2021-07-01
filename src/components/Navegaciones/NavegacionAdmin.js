@@ -22,9 +22,14 @@ const useStyles = makeStyles((theme) => ({
 
 function NavegacionAdmin(props) {
 	const classes = useStyles();
+	const token = localStorage.getItem('sesionCafi')
+	let usuario;
+	
+	if (token !== null) usuario = JSON.parse(localStorage.getItem('sesionCafi'));
 
     const signOut = () => {
 		localStorage.removeItem('sesionCafi');
+		localStorage.removeItem('tokenCafi');
 		props.history.push('/');
 	};
 
@@ -32,10 +37,9 @@ function NavegacionAdmin(props) {
 		<div>
 			<AppBar position="fixed" className={classes.appbar} elevation={0}>
 				<Toolbar>
-					<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+					<Avatar alt="Remy Sharp" src={usuario.imagen} />
 					<Box className={classes.title}>
-						<Typography variant="h6" color="inherit">Bienvenido Aldo Chagollan</Typography>
-						<Typography variant="subtitle2">Administrador</Typography>
+						<Typography variant="h6" color="inherit">Bienvenido {`${usuario.nombre}`}</Typography>
 					</Box>
 					<Button
 						component={Link}
