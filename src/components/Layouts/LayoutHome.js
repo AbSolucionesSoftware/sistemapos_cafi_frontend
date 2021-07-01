@@ -22,6 +22,7 @@ export default function LayoutHome(props) {
 
     const signOut = () => {
 		localStorage.removeItem('sesionCafi');
+		localStorage.removeItem('tokenCafi');
 		props.history.push('/');
 	};
 
