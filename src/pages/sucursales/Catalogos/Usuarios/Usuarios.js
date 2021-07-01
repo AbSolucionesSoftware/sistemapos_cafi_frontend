@@ -98,7 +98,7 @@ export default function Usuarios() {
 								</IconButton>
 							</Paper>
 						</Box>
-						<CrearUsuario accion="registrar" />
+						<CrearUsuario accion="registrar" datos={undefined} />
 					</Box>
 					<Box mx={4}>
 						<ListaUsuarios sucursal={sesion.sucursal} filtro={filtro} />

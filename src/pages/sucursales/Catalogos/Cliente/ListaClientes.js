@@ -10,13 +10,13 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import CrearCliente from './CrearCliente';
 import ErrorPage from '../../../../components/ErrorPage';
-
-import { useQuery } from '@apollo/client';
-import { OBTENER_CLIENTES } from '../../../../gql/Catalogos/clientes';
 import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Grid } from '@material-ui/core';
-import { DialogContent, DialogTitle, IconButton, Typography, Avatar } from '@material-ui/core';
+import { DialogContent, DialogTitle, IconButton, Typography, Avatar, Switch } from '@material-ui/core';
 import { Dehaze, Delete } from '@material-ui/icons';
 import { ClienteCtx } from '../../../../context/Catalogos/crearClienteCtx';
+
+import { useQuery, useMutation } from '@apollo/client';
+import { OBTENER_CLIENTES, ACTUALIZAR_CLIENTE } from '../../../../gql/Catalogos/clientes';
 
 const columns = [
 	{ id: 1, label: 'No. Cliente', minWidth: 100 },
@@ -120,8 +120,32 @@ export default function ListaClientes({ tipo, filtro }) {
 
 const RowsRender = ({ datos }) => {
 	const [ openDetalles, setOpenDetalles ] = useState(false);
+	const { update, setUpdate } = useContext(ClienteCtx);
+	const [ loading, setLoading ] = useState(false);
+
+	const [ actualizarCliente ] = useMutation(ACTUALIZAR_CLIENTE);
 
 	const handleDetalles = () => setOpenDetalles(!openDetalles);
+
+	const cambiarEstado = async (e) => {
+		setLoading(true);
+
+		try {
+			await actualizarCliente({
+				variables: {
+					input: {
+						estado_cliente: e.target.checked
+					},
+					id: datos._id
+				}
+			});
+			setUpdate(!update);
+			setLoading(false);
+		} catch (error) {
+			console.log(error);
+			setLoading(false);
+		}
+	};
 
 	return (
 		<TableRow hover role="checkbox" tabIndex={-1}>
@@ -144,7 +168,15 @@ const RowsRender = ({ datos }) => {
 				<Typography>{datos.tipo_cliente}</Typography>
 			</TableCell>
 			<TableCell>
-				<Typography>{datos.estado_cliente ? 'Activo' : 'Inactivo'}</Typography>
+				{loading ? (
+					<CircularProgress size={30} />
+				) : (
+					<Switch
+						checked={datos.estado_cliente}
+						onChange={cambiarEstado}
+						color="primary"
+					/>
+				)}
 			</TableCell>
 			<TableCell width={50}>
 				<ModalDetalles openDetalles={openDetalles} handleDetalles={handleDetalles} datos={datos} />

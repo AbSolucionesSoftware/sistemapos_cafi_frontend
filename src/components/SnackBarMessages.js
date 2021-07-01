@@ -6,7 +6,7 @@ import ErrorIcon from '@material-ui/icons/Error';
 
 const useStyles = makeStyles((theme) => ({
 	snack: {
-		zIndex: 10000
+		zIndex: `${999999}!important`
 	}
 }));
 

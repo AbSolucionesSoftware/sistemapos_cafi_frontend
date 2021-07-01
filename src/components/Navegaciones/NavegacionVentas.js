@@ -22,6 +22,7 @@ function NavegacionVentas(props) {
 
 	const signOut = () => {
 		localStorage.removeItem('sesionCafi');
+		localStorage.removeItem('tokenCafi');
 		props.history.push('/');
 	};
 	return (

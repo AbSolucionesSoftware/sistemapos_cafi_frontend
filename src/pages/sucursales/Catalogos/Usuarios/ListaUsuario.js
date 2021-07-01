@@ -3,14 +3,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@material-ui/core';
 import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Grid } from '@material-ui/core';
-import { DialogContent, DialogTitle, IconButton, Typography, Avatar } from '@material-ui/core';
+import { DialogContent, DialogTitle, IconButton, Typography, Avatar, Switch } from '@material-ui/core';
 import CrearUsario from './CrearUsuario';
 import ErrorPage from '../../../../components/ErrorPage';
 import { Dehaze, Delete } from '@material-ui/icons';
 import { UsuarioContext } from '../../../../context/Catalogos/usuarioContext';
 
-import { useQuery } from '@apollo/client';
-import { OBTENER_USUARIOS } from '../../../../gql/Catalogos/usuarios';
+import { useQuery, useMutation } from '@apollo/client';
+import { OBTENER_USUARIOS, ACTUALIZAR_USUARIO } from '../../../../gql/Catalogos/usuarios';
 
 const columns = [
 	{ id: 1, label: 'No. Usuario', minWidth: 100 },
@@ -111,8 +111,32 @@ export default function ListaUsuarios({ sucursal, filtro }) {
 
 const RowsRender = ({ datos }) => {
 	const [ openDetalles, setOpenDetalles ] = useState(false);
+	const { update, setUpdate } = useContext(UsuarioContext);
+	const [ loading, setLoading ] = useState(false);
 
 	const handleDetalles = () => setOpenDetalles(!openDetalles);
+
+	const [ actualizarUsuario ] = useMutation(ACTUALIZAR_USUARIO);
+
+	const cambiarEstado = async (e) => {
+		setLoading(true);
+
+		try {
+			await actualizarUsuario({
+				variables: {
+					input: {
+						estado_usuario: e.target.checked
+					},
+					id: datos._id
+				}
+			});
+			setUpdate(!update);
+			setLoading(false);
+		} catch (error) {
+			console.log(error);
+			setLoading(false);
+		}
+	};
 
 	return (
 		<TableRow hover role="checkbox" tabIndex={-1}>
@@ -126,7 +150,15 @@ const RowsRender = ({ datos }) => {
 				<Typography>{datos.email}</Typography>
 			</TableCell>
 			<TableCell>
-				<Typography>{datos.estado_usuario ? 'Activo' : 'Inactivo'}</Typography>
+				{loading ? (
+					<CircularProgress size={30} />
+				) : (
+					<Switch
+						checked={datos.estado_usuario}
+						onChange={cambiarEstado}
+						color="primary"
+					/>
+				)}
 			</TableCell>
 			<TableCell width={50}>
 				<ModalDetalles openDetalles={openDetalles} handleDetalles={handleDetalles} datos={datos} />
@@ -170,7 +202,7 @@ const ModalDetalles = ({ handleDetalles, openDetalles, datos }) => {
 								<b>Nombre: </b>
 								{datos.nombre}
 							</Typography>
-                            <Typography>
+							<Typography>
 								<b>Correo: </b>
 								{datos.email ? datos.email : ' -'}
 							</Typography>

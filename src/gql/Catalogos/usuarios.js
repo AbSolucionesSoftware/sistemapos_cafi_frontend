@@ -83,6 +83,14 @@ export const ACTUALIZAR_USUARIO = gql`
 		}
 	}
 `;
+
+export const LOGEAR_USUARIO = gql`
+	mutation logearUsuario($input: LogearUsuarioInput) {
+		logearUsuario(input: $input) {
+			token
+		}
+	}
+`;
 /* export const ELIMINAR_USUARIO = gql`
 	
 `;

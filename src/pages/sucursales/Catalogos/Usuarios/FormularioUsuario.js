@@ -1,9 +1,16 @@
 import React, { Fragment, useContext, useCallback, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Divider, Avatar } from '@material-ui/core';
-import { TextField, Typography, Grid } from '@material-ui/core';
+import { Box, Divider, Avatar, IconButton, OutlinedInput, FormHelperText, Button } from '@material-ui/core';
+import { TextField, Typography, Grid, FormControl, InputAdornment } from '@material-ui/core';
+import { Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@material-ui/core';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import { useDropzone } from 'react-dropzone';
 import { UsuarioContext } from '../../../../context/Catalogos/usuarioContext';
+import SnackBarMessages from '../../../../components/SnackBarMessages';
+
+import { useMutation } from '@apollo/client';
+import { ACTUALIZAR_USUARIO } from '../../../../gql/Catalogos/usuarios';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {
@@ -40,6 +47,7 @@ export default function FormularioUsuario({ accion }) {
 	const classes = useStyles();
 	const { usuario, setUsuario, error } = useContext(UsuarioContext);
 	const [ preview, setPreview ] = useState('');
+	const [ showPassword, setShowPassword ] = useState(false);
 
 	//dropzone
 	const onDrop = useCallback(
@@ -100,59 +108,128 @@ export default function FormularioUsuario({ accion }) {
 				</Grid>
 				<Grid item md={9}>
 					<Box>
-						<div className={classes.formInputFlex}>
+						<form autoComplete="off" className={classes.formInputFlex}>
 							<Box width="100%">
 								<Typography>
 									<span>* </span>Nombre usuario
 								</Typography>
 								<TextField
 									fullWidth
+									type="text"
 									size="small"
 									error={error.error && !usuario.nombre}
 									name="nombre"
 									variant="outlined"
 									value={usuario.nombre ? usuario.nombre : ''}
-									helperText={error.message}
+									helperText={
+										error.error && error.message !== 'Las contraseñas no coinciden' ? (
+											error.message
+										) : (
+											''
+										)
+									}
 									onChange={obtenerCampos}
 								/>
 							</Box>
-						</div>
+						</form>
 					</Box>
-					<div className={classes.formInputFlex}>
-						<Box width="100%">
-							<Typography>
-								<span>* </span>Contraseña
-							</Typography>
-							<TextField
-								fullWidth
-								size="small"
-								error={error.error && !usuario.password}
-								name="password"
-								variant="outlined"
-								value={usuario.password ? usuario.password : ''}
-								helperText={error.message}
-								onChange={obtenerCampos}
-							/>
-						</Box>
-						<Box width="100%">
-							<Typography>
-								<span>* </span>Repetir contraseña
-							</Typography>
-							<TextField
-								fullWidth
-								error={error.error && !usuario.repeatPassword}
-								size="small"
-								name="repeatPassword"
-								variant="outlined"
-								value={usuario.repeatPassword ? usuario.repeatPassword : ''}
-								helperText={error.message}
-								onChange={obtenerCampos}
-							/>
-						</Box>
-					</div>
+					{accion === 'registrar' ? (
+						<form autoComplete="off" className={classes.formInputFlex}>
+							<Box width="100%">
+								<Typography>
+									<span>* </span>Contraseña
+								</Typography>
+								<FormControl
+									fullWidth
+									size="small"
+									error={
+										error.error && !usuario.password ? (
+											true
+										) : error.error && error.message === 'Las contraseñas no coinciden' ? (
+											true
+										) : (
+											false
+										)
+									}
+									name="password"
+									variant="outlined"
+								>
+									<OutlinedInput
+										name="password"
+										type={showPassword ? 'text' : 'password'}
+										value={usuario.password ? usuario.password : ''}
+										onChange={obtenerCampos}
+										endAdornment={
+											<InputAdornment position="end">
+												<IconButton
+													size="small"
+													aria-label="toggle password visibility"
+													onClick={() => setShowPassword(!showPassword)}
+													onMouseDown={() => setShowPassword(!showPassword)}
+												>
+													{showPassword ? (
+														<Visibility color="primary" />
+													) : (
+														<VisibilityOff color="primary" />
+													)}
+												</IconButton>
+											</InputAdornment>
+										}
+									/>
+									<FormHelperText>{error.message}</FormHelperText>
+								</FormControl>
+							</Box>
+							<Box width="100%">
+								<Typography>
+									<span>* </span>Repetir contraseña
+								</Typography>
+								<FormControl
+									fullWidth
+									size="small"
+									error={
+										error.error && !usuario.password ? (
+											true
+										) : error.error && error.message === 'Las contraseñas no coinciden' ? (
+											true
+										) : (
+											false
+										)
+									}
+									name="repeatPassword"
+									variant="outlined"
+								>
+									<OutlinedInput
+										name="repeatPassword"
+										type={showPassword ? 'text' : 'password'}
+										value={usuario.repeatPassword ? usuario.repeatPassword : ''}
+										onChange={obtenerCampos}
+										endAdornment={
+											<InputAdornment position="end">
+												<IconButton
+													size="small"
+													aria-label="toggle password visibility"
+													onClick={() => setShowPassword(!showPassword)}
+													onMouseDown={() => setShowPassword(!showPassword)}
+												>
+													{showPassword ? (
+														<Visibility color="primary" />
+													) : (
+														<VisibilityOff color="primary" />
+													)}
+												</IconButton>
+											</InputAdornment>
+										}
+									/>
+									<FormHelperText>{error.message}</FormHelperText>
+								</FormControl>
+							</Box>
+						</form>
+					) : (
+						<ActualizarPasswordModal />
+					)}
 				</Grid>
 				<Grid item md={12}>
-					<div className={classes.formInputFlex}>
+					<form autoComplete="off" className={classes.formInputFlex}>
 						<Box width="100%">
 							<Typography>
 								<span>* </span>Email
@@ -164,7 +241,9 @@ export default function FormularioUsuario({ accion }) {
 								name="email"
 								variant="outlined"
 								value={usuario.email ? usuario.email : ''}
-								helperText={error.message}
+								helperText={
+									error.error && error.message !== 'Las contraseñas no coinciden' ? error.message : ''
+								}
 								onChange={obtenerCampos}
 							/>
 						</Box>
@@ -179,7 +258,9 @@ export default function FormularioUsuario({ accion }) {
 								name="telefono"
 								variant="outlined"
 								value={usuario.telefono ? usuario.telefono : ''}
-								helperText={error.message}
+								helperText={
+									error.error && error.message !== 'Las contraseñas no coinciden' ? error.message : ''
+								}
 								onChange={obtenerCampos}
 							/>
 						</Box>
@@ -194,18 +275,16 @@ export default function FormularioUsuario({ accion }) {
 								onChange={obtenerCampos}
 							/>
 						</Box>
-					</div>
+					</form>
 					<Box mt={2}>
 						<Typography>
 							<b>usuario domicilio</b>
 						</Typography>
 						<Divider />
 					</Box>
-					<div className={classes.formInputFlex}>
+					<form autoComplete="off" className={classes.formInputFlex}>
 						<Box>
-							<Typography>
-								<span>* </span>Calle
-							</Typography>
+							<Typography>Calle</Typography>
 							<TextField
 								size="small"
 								name="calle"
@@ -215,9 +294,7 @@ export default function FormularioUsuario({ accion }) {
 							/>
 						</Box>
 						<Box>
-							<Typography>
-								<span>* </span>Colonia
-							</Typography>
+							<Typography>Colonia</Typography>
 							<TextField
 								size="small"
 								name="colonia"
@@ -227,9 +304,7 @@ export default function FormularioUsuario({ accion }) {
 							/>
 						</Box>
 						<Box width="100px">
-							<Typography>
-								<span>* </span>Num. Ext
-							</Typography>
+							<Typography>Num. Ext</Typography>
 							<TextField
 								size="small"
 								name="no_ext"
@@ -249,9 +324,7 @@ export default function FormularioUsuario({ accion }) {
 							/>
 						</Box>
 						<Box width="100px">
-							<Typography>
-								<span>* </span>CP
-							</Typography>
+							<Typography>CP</Typography>
 							<TextField
 								size="small"
 								name="codigo_postal"
@@ -260,12 +333,10 @@ export default function FormularioUsuario({ accion }) {
 								onChange={obtenerCamposDireccion}
 							/>
 						</Box>
-					</div>
-					<div className={classes.formInputFlex}>
+					</form>
+					<form autoComplete="off" className={classes.formInputFlex}>
 						<Box width="100%">
-							<Typography>
-								<span>* </span>Municipio
-							</Typography>
+							<Typography>Municipio</Typography>
 							<TextField
 								fullWidth
 								size="small"
@@ -286,9 +357,7 @@ export default function FormularioUsuario({ accion }) {
 							/>
 						</Box>
 						<Box width="100%">
-							<Typography>
-								<span>* </span>Estado
-							</Typography>
+							<Typography>Estado</Typography>
 							<TextField
 								size="small"
 								name="estado"
@@ -298,9 +367,7 @@ export default function FormularioUsuario({ accion }) {
 							/>
 						</Box>
 						<Box width="100%">
-							<Typography>
-								<span>* </span>Pais
-							</Typography>
+							<Typography>Pais</Typography>
 							<TextField
 								size="small"
 								name="pais"
@@ -309,9 +376,190 @@ export default function FormularioUsuario({ accion }) {
 								onChange={obtenerCamposDireccion}
 							/>
 						</Box>
-					</div>
+					</form>
 				</Grid>
 			</Grid>
 		</Fragment>
 	);
 }
+
+const ActualizarPasswordModal = () => {
+	const [ open, setOpen ] = useState(false);
+	const { usuario, setUsuario, error, setError, update, setUpdate } = useContext(UsuarioContext);
+	const [ showPassword, setShowPassword ] = useState(false);
+	const [ loading, setLoading ] = useState(false);
+	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+
+	const [ actualizarUsuario ] = useMutation(ACTUALIZAR_USUARIO);
+
+	const handleClickOpen = () => {
+		setOpen(true);
+	};
+
+	const handleClose = () => {
+		setOpen(false);
+		setError({ error: false, message: '' });
+	};
+
+	const obtenerCampos = (e) => {
+		setUsuario({
+			...usuario,
+			[e.target.name]: e.target.value
+		});
+	};
+
+	const confirmarPassowrd = async () => {
+		if (!usuario.password || !usuario.repeatPassword) {
+			setError({ error: true, message: 'Este campo es requerido' });
+			return;
+		}
+		if (usuario.password !== usuario.repeatPassword) {
+			setError({ error: true, message: 'Las contraseñas no coinciden' });
+			return;
+		}
+		setLoading(true);
+
+		try {
+			await actualizarUsuario({
+				variables: {
+					input: {
+						password: usuario.password,
+						repeatPassword: usuario.repeatPassword
+					},
+					id: usuario._id
+				}
+			});
+			setUpdate(!update);
+			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			setLoading(false);
+			handleClose();
+		} catch (error) {
+			console.log(error);
+			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			setLoading(false);
+		}
+	};
+
+	return (
+		<Fragment>
+			<Button color="primary" variant="text" onClick={handleClickOpen}>
+				Cambiar contraseña
+			</Button>
+			<Dialog
+				open={open}
+				onClose={handleClose}
+				aria-labelledby="alert-dialog-title"
+				aria-describedby="alert-dialog-description"
+			>
+				<SnackBarMessages alert={alert} setAlert={setAlert} />
+				<DialogTitle id="alert-dialog-title">{'Cambiar contraseña'}</DialogTitle>
+				<DialogContent>
+					<form autoComplete="off">
+						<Box width="100%">
+							<Typography>
+								<span>* </span>Contraseña
+							</Typography>
+							<FormControl
+								fullWidth
+								size="small"
+								error={
+									error.error && !usuario.password ? (
+										true
+									) : error.error && error.message === 'Las contraseñas no coinciden' ? (
+										true
+									) : (
+										false
+									)
+								}
+								name="password"
+								variant="outlined"
+							>
+								<OutlinedInput
+									name="password"
+									type={showPassword ? 'text' : 'password'}
+									value={usuario.password ? usuario.password : ''}
+									onChange={obtenerCampos}
+									endAdornment={
+										<InputAdornment position="end">
+											<IconButton
+												size="small"
+												aria-label="toggle password visibility"
+												onClick={() => setShowPassword(!showPassword)}
+												onMouseDown={() => setShowPassword(!showPassword)}
+											>
+												{showPassword ? (
+													<Visibility color="primary" />
+												) : (
+													<VisibilityOff color="primary" />
+												)}
+											</IconButton>
+										</InputAdornment>
+									}
+								/>
+								<FormHelperText>{error.message}</FormHelperText>
+							</FormControl>
+						</Box>
+						<Box width="100%">
+							<Typography>
+								<span>* </span>Repetir contraseña
+							</Typography>
+							<FormControl
+								fullWidth
+								size="small"
+								error={
+									error.error && !usuario.password ? (
+										true
+									) : error.error && error.message === 'Las contraseñas no coinciden' ? (
+										true
+									) : (
+										false
+									)
+								}
+								name="repeatPassword"
+								variant="outlined"
+							>
+								<OutlinedInput
+									name="repeatPassword"
+									type={showPassword ? 'text' : 'password'}
+									value={usuario.repeatPassword ? usuario.repeatPassword : ''}
+									onChange={obtenerCampos}
+									endAdornment={
+										<InputAdornment position="end">
+											<IconButton
+												size="small"
+												aria-label="toggle password visibility"
+												onClick={() => setShowPassword(!showPassword)}
+												onMouseDown={() => setShowPassword(!showPassword)}
+											>
+												{showPassword ? (
+													<Visibility color="primary" />
+												) : (
+													<VisibilityOff color="primary" />
+												)}
+											</IconButton>
+										</InputAdornment>
+									}
+								/>
+								<FormHelperText>{error.message}</FormHelperText>
+							</FormControl>
+						</Box>
+					</form>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose} color="primary">
+						Cancelar
+					</Button>
+					<Button
+						onClick={confirmarPassowrd}
+						color="primary"
+						variant="contained"
+						autoFocus
+						endIcon={loading ? <CircularProgress color="inherit" size={25} /> : null}
+					>
+						Confirmar
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</Fragment>
+	);
+};
