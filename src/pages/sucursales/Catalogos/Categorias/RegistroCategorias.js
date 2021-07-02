@@ -1,58 +1,227 @@
-import React from 'react';
+import React, { useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { Box, Button, Divider, IconButton, TextField } from '@material-ui/core';
-import { Add, Delete, Edit } from '@material-ui/icons';
+import { Accordion, AccordionSummary, AccordionDetails, fade } from '@material-ui/core';
+import { Box, Button, Divider, IconButton, TextField, CircularProgress, Typography } from '@material-ui/core';
+import { Add, Delete, Edit, ExpandMore, Close } from '@material-ui/icons';
+import ErrorPage from '../../../../components/ErrorPage';
+import SnackBarMessages from '../../../../components/SnackBarMessages';
+import BackdropComponent from '../../../../components/Layouts/BackDrop';
 
-const useStyles = makeStyles({
+import { useQuery, useMutation } from '@apollo/client';
+import {
+	OBTENER_CATEGORIAS,
+	CREAR_CATEGORIA,
+	CREAR_SUBCATEGORIA,
+	ACTUALIZAR_SUBCATEGORIA,
+	ACTUALIZAR_CATEGORIA
+} from '../../../../gql/Catalogos/categorias';
+
+const useStyles = makeStyles((theme) => ({
 	root: {
 		width: '100%'
 	},
 	flexGrow: {
 		flexGrow: 1
+	},
+	selected: {
+		background: fade(theme.palette.secondary.main, 0.1)
 	}
-});
+}));
 
 export default function RegistroCategorias() {
 	const classes = useStyles();
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	const [ categoria, setCategoria ] = useState('');
+	const [ toUpdateID, setToUpdateID ] = useState('');
+	const [ loadingBackDrop, setLoadingBackDrop ] = useState(false);
+	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+
+	/* Queries */
+	const { loading, data, error, refetch } = useQuery(OBTENER_CATEGORIAS, {
+		variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id }
+	});
+	/*  Categorias Mutations */
+	const [ crearCategoria ] = useMutation(CREAR_CATEGORIA);
+	const [ actualizarCategoria ] = useMutation(ACTUALIZAR_CATEGORIA);
+
+	if (loading)
+		return (
+			<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
+				<CircularProgress />
+			</Box>
+		);
+	if (error) {
+		return <ErrorPage error={error} />;
+	}
+
+	const { obtenerCategorias } = data;
+	const render_categorias = obtenerCategorias.map((categoria, index) => (
+		<RenderCategorias
+			key={index}
+			categoria={categoria}
+			setToUpdateID={setToUpdateID}
+			setCategoria={setCategoria}
+			refetch={refetch}
+			toUpdateID={toUpdateID}
+		/>
+	));
+
+	const obtenerDatos = (e) => {
+		setCategoria(e.target.value);
+	};
+
+	const guardarCategoria = async () => {
+		if (!categoria) return;
+		setLoadingBackDrop(true);
+		try {
+			if (!toUpdateID) {
+				await crearCategoria({
+					variables: {
+						input: {
+							categoria,
+							empresa: sesion.empresa._id,
+							sucursal: sesion.sucursal._id
+						}
+					}
+				});
+			} else {
+				await actualizarCategoria({
+					variables: {
+						input: {
+							categoria
+						},
+						idCategoria: toUpdateID
+					}
+				});
+			}
+			refetch();
+			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			setLoadingBackDrop(false);
+			setCategoria('');
+			setToUpdateID('');
+		} catch (error) {
+			console.log(error);
+			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			setLoadingBackDrop(false);
+		}
+	};
 
 	return (
 		<div className={classes.root}>
+			<SnackBarMessages alert={alert} setAlert={setAlert} />
+			<BackdropComponent loading={loadingBackDrop} setLoading={setLoadingBackDrop} />
 			<Typography variant="h6">Categorias</Typography>
 			<Box display="flex" alignItems="center" mb={2}>
-				<TextField
-					/* error */
-					id="outlined-error-helper-text"
-					defaultValue="Ropa"
-					/* helperText="Incorrect entry." */
-					variant="outlined"
-					size="small"
-				/>
+				<TextField value={categoria} variant="outlined" size="small" onChange={obtenerDatos} />
 				<Box ml={1} />
-				<Button color="primary" variant="contained" size="large" disableElevation>
+				<Button color="primary" variant="contained" size="large" disableElevation onClick={guardarCategoria}>
 					<Add />Guardar
 				</Button>
 			</Box>
+			{render_categorias}
+		</div>
+	);
+}
+
+const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toUpdateID }) => {
+	const classes = useStyles();
+	const [ subcategoria, setSubcategoria ] = useState('');
+	const [ loadingBackDrop, setLoadingBackDrop ] = useState(false);
+	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+
+	/*  Subcategorias Mutations */
+	const [ crearSubcategoria ] = useMutation(CREAR_SUBCATEGORIA);
+	const [ actualizarSubcategoria ] = useMutation(ACTUALIZAR_SUBCATEGORIA);
+
+	const render_subcategorias = categoria.subcategorias.map((subcategoria) => (
+		<RenderSubcategorias
+			key={subcategoria._id}
+			subcategoria={subcategoria}
+			setToUpdateID={setToUpdateID}
+			toUpdateID={toUpdateID}
+			setSubcategoria={setSubcategoria}
+		/>
+	));
+
+	const obtenerCamposParaActualizar = (event) => {
+		event.stopPropagation();
+		setToUpdateID(categoria._id);
+		setCategoria(categoria.categoria);
+	};
+
+	const cancelarUpdate = (event) => {
+		event.stopPropagation();
+		setToUpdateID('');
+		setCategoria('');
+	};
+
+	const obtenerDatos = (e) => {
+		setSubcategoria(e.target.value);
+	};
+
+	const guardarSubcategoria = async () => {
+		if (!subcategoria) return;
+		setLoadingBackDrop(true);
+		try {
+			if (!toUpdateID) {
+				await crearSubcategoria({
+					variables: {
+						input: {
+							subcategoria
+						},
+						idCategoria: categoria._id
+					}
+				});
+			} else {
+				await actualizarSubcategoria({
+					variables: {
+						input: {
+							subcategoria
+						},
+						idCategoria: categoria._id,
+						idSubcategoria: toUpdateID
+					}
+				});
+			}
+			refetch();
+			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			setLoadingBackDrop(false);
+			setSubcategoria('');
+			setToUpdateID('');
+		} catch (error) {
+			console.log(error);
+			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			setLoadingBackDrop(false);
+		}
+	};
+
+	return (
+		<Fragment>
+			<SnackBarMessages alert={alert} setAlert={setAlert} />
+			<BackdropComponent loading={loadingBackDrop} setLoading={setLoadingBackDrop} />
 			<Accordion>
 				<AccordionSummary
-					expandIcon={<ExpandMoreIcon />}
+					className={toUpdateID && toUpdateID === categoria._id ? classes.selected : ''}
+					expandIcon={<ExpandMore />}
 					aria-label="Expand"
-					aria-controls="additional-actions1-content"
-					id="additional-actions1-header"
+					aria-controls={`categoria-action-${categoria._id}`}
+					id={`categoria-${categoria._id}`}
 				>
 					<Box display="flex" alignItems="center" width="100%">
-						<Typography variant="h6">categoria 1</Typography>
+						<Typography variant="h6">{categoria.categoria}</Typography>
 						<div className={classes.flexGrow} />
-						<IconButton
-							onClick={(event) => event.stopPropagation()}
-							onFocus={(event) => event.stopPropagation()}
-						>
-							<Edit />
-						</IconButton>
+						{toUpdateID && toUpdateID === categoria._id ? (
+							<IconButton onClick={cancelarUpdate} onFocus={(event) => event.stopPropagation()}>
+								<Close />
+							</IconButton>
+						) : (
+							<IconButton
+								onClick={obtenerCamposParaActualizar}
+								onFocus={(event) => event.stopPropagation()}
+							>
+								<Edit />
+							</IconButton>
+						)}
 						<IconButton
 							onClick={(event) => event.stopPropagation()}
 							onFocus={(event) => event.stopPropagation()}
@@ -70,76 +239,71 @@ export default function RegistroCategorias() {
 							<Box mr={2} />
 							<Box display="flex" alignItems="center" mb={2}>
 								<TextField
-									/* error */
-									id="outlined-error-helper-text"
-									defaultValue="playeras"
-									/* helperText="Incorrect entry." */
+									value={subcategoria}
 									variant="outlined"
 									size="small"
+									onChange={obtenerDatos}
 								/>
 								<Box ml={1} />
-								<Button color="primary" variant="contained" size="large" disableElevation>
+								<Button
+									color="primary"
+									variant="contained"
+									size="large"
+									disableElevation
+									onClick={guardarSubcategoria}
+								>
 									<Add />Guardar
 								</Button>
 							</Box>
 						</Box>
-						<Box ml={5} >
-							<Box display="flex" alignItems="center">
-								<Typography>Subcategoria 1</Typography>
-								<div className={classes.flexGrow} />
-								<IconButton
-									onClick={(event) => event.stopPropagation()}
-									onFocus={(event) => event.stopPropagation()}
-								>
-									<Edit />
-								</IconButton>
-								<IconButton
-									onClick={(event) => event.stopPropagation()}
-									onFocus={(event) => event.stopPropagation()}
-								>
-									<Delete />
-								</IconButton>
-							</Box>
-                            <Divider />
-                            <Box display="flex" alignItems="center">
-								<Typography>Subcategoria 2</Typography>
-								<div className={classes.flexGrow} />
-								<IconButton
-									onClick={(event) => event.stopPropagation()}
-									onFocus={(event) => event.stopPropagation()}
-								>
-									<Edit />
-								</IconButton>
-								<IconButton
-									onClick={(event) => event.stopPropagation()}
-									onFocus={(event) => event.stopPropagation()}
-								>
-									<Delete />
-								</IconButton>
-							</Box>
-                            <Divider />
-                            <Divider />
-                            <Box display="flex" alignItems="center">
-								<Typography>Subcategoria 3</Typography>
-								<div className={classes.flexGrow} />
-								<IconButton
-									onClick={(event) => event.stopPropagation()}
-									onFocus={(event) => event.stopPropagation()}
-								>
-									<Edit />
-								</IconButton>
-								<IconButton
-									onClick={(event) => event.stopPropagation()}
-									onFocus={(event) => event.stopPropagation()}
-								>
-									<Delete />
-								</IconButton>
-							</Box>
-                            <Divider />
-						</Box>
+						<Box ml={5}>{render_subcategorias}</Box>
 					</Box>
 				</AccordionDetails>
 			</Accordion>
-		</div>
+		</Fragment>
 	);
-}
+};
+
+const RenderSubcategorias = ({ subcategoria, toUpdateID, setToUpdateID, setSubcategoria }) => {
+	const classes = useStyles();
+
+	const obtenerCamposParaActualizar = (event) => {
+		event.stopPropagation();
+		setToUpdateID(subcategoria._id);
+		setSubcategoria(subcategoria.subcategoria);
+	};
+
+	const cancelarUpdate = (event) => {
+		event.stopPropagation();
+		setToUpdateID('');
+		setSubcategoria('');
+	};
+
+	return (
+		<Fragment>
+			<Box
+				display="flex"
+				alignItems="center"
+				borderRadius={3}
+				px={1}
+				className={toUpdateID && toUpdateID === subcategoria._id ? classes.selected : ''}
+			>
+				<Typography>{subcategoria.subcategoria}</Typography>
+				<div className={classes.flexGrow} />
+				{toUpdateID && toUpdateID === subcategoria._id ? (
+					<IconButton onClick={cancelarUpdate} onFocus={(event) => event.stopPropagation()}>
+						<Close />
+					</IconButton>
+				) : (
+					<IconButton onClick={obtenerCamposParaActualizar} onFocus={(event) => event.stopPropagation()}>
+						<Edit />
+					</IconButton>
+				)}
+				<IconButton onClick={(event) => event.stopPropagation()} onFocus={(event) => event.stopPropagation()}>
+					<Delete />
+				</IconButton>
+			</Box>
+			<Divider />
+		</Fragment>
+	);
+};
