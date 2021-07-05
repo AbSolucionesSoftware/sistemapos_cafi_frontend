@@ -10,7 +10,7 @@ import Slide from '@material-ui/core/Slide';
 import { Box, Container } from '@material-ui/core';
 import departamentosIcon from '../../../../icons/departamentos.svg';
 import RegistroDepartamentos from './RegistroDepartamento';
-import { DepartamentosProvider } from '../../../../context/Catalogos/createDepartamentos';
+import { DepartamentosProvider } from '../../../../context/Catalogos/Departamentos';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {

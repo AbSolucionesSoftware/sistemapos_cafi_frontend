@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
     Paper, 
     makeStyles, 
@@ -11,13 +11,10 @@ import {
 	IconButton,
 	TablePagination
 } from '@material-ui/core/';
-
 import { Delete, Edit } from '@material-ui/icons';
-
 import { useQuery } from '@apollo/client';
-import { OBTENER_DEPARTAMENTOS } from '../../../../gql/Catalogos/departamentos';
-// import ContainerRegistroAlmacen from './RegistroDepartamento';
-// import { CreateDepartamentosContext } from '../../../../context/Catalogos/Departamentos';
+import { OBTENER_MARCAS, } from '../../../../gql/Catalogos/marcas';
+
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -29,31 +26,31 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaDepartamentos({ updateData }) {
-	const classes = useStyles();
-	const [ page, setPage ] = useState(0);
+export default function ListaMarcas({updateData}) {
+
+    const classes = useStyles();
+    const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(8);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
-	let obtenerDepartamentos = [];
+	let obtenerMarcas = [];
 
-	// const { update } = useContext(CreateDepartamentosContext);
-
-	/* Queries */
-	const { data, refetch } = useQuery(OBTENER_DEPARTAMENTOS,{
+    const { data, refetch } = useQuery(OBTENER_MARCAS,{
 		variables: {
 			empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id
 		}
 	});	
 
-	useEffect(
-		() => {
-			refetch();
-		},
-		[ updateData, refetch ]
-	);
 
-	const handleChangePage = (event, newPage) => {
+	useEffect(() => {
+		refetch();
+	}, [refetch, updateData])
+
+    if(data){
+		obtenerMarcas = data.obtenerMarcas
+	}
+
+    const handleChangePage = (event, newPage) => {
 		setPage(newPage);
 	};
 
@@ -62,12 +59,8 @@ export default function TablaDepartamentos({ updateData }) {
 		setPage(0);
 	};
 
-	if(data){
-		obtenerDepartamentos = data.obtenerDepartamentos
-	}
-
-	return (
-		<div className={classes.root}>
+    return (
+        <div className={classes.root}>
 			<Paper className={classes.paper}>
 				<TableContainer>
 					<Table
@@ -78,14 +71,14 @@ export default function TablaDepartamentos({ updateData }) {
 					>
 						<TableHead>
 							<TableRow>
-								<TableCell>Departamentos</TableCell>
+								<TableCell>Marca</TableCell>
 								<TableCell padding="default">Editar</TableCell>
 								<TableCell padding="default">Eliminar</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
 							{
-							obtenerDepartamentos
+							obtenerMarcas
 								?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 								?.map((row, index) => {
 									return <RowsRender key={index} datos={row} />;
@@ -97,7 +90,7 @@ export default function TablaDepartamentos({ updateData }) {
 				<TablePagination
 					rowsPerPageOptions={[]}
 					component="div"
-					count={obtenerDepartamentos.length}
+					count={obtenerMarcas.length}
 					rowsPerPage={rowsPerPage}
 					page={page}
 					onChangePage={handleChangePage}
@@ -105,14 +98,13 @@ export default function TablaDepartamentos({ updateData }) {
 				/>
 			</Paper>
 		</div>
-	);
+    )
 }
-
 
 const RowsRender = ({ datos }) => {
 	return (
 		<TableRow hover role="checkbox" tabIndex={-1}>
-			<TableCell>{datos.nombre_departamentos}</TableCell>
+			<TableCell>{datos.nombre_marca}</TableCell>
 			<TableCell padding="checkbox">
 				<IconButton>
 					<Edit />
@@ -126,3 +118,4 @@ const RowsRender = ({ datos }) => {
 		</TableRow>
 	);
 };
+

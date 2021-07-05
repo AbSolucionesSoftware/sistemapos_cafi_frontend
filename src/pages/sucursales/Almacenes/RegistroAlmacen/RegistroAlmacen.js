@@ -6,8 +6,6 @@ import ContainerRegistroAlmacen from './ContainerRegistroAlmacen';
 import ListaAlmacen from './ListaAlmacen';
 import { AlmacenProvider } from '../../../../context/Almacenes/crearAlmacen';
 
-
-
 const useStyles = makeStyles((theme) => ({
 	appBar: {
 		position: 'relative'
