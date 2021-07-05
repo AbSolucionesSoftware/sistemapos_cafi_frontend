@@ -8,7 +8,7 @@ export default function MiEmpresa() {
 		<Container>
 			<ul>
 				<li>
-					mis datos e informacion fiscal
+					mis datos e informacion fiscal Ya le movió MR
 				</li>
 			</ul>
 		</Container>
