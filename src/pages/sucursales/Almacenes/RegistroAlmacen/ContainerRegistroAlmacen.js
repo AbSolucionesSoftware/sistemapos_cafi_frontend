@@ -40,21 +40,19 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ContainerRegistroAlmacen({ accion, datos }) {
 
-    const sucursal = {
+    /* const sucursal = {
         _id: "60c8e180340d5d223432a916",
         nombre_sucursal: "Sucursal 1 editada"
-    };
-
+    }; */
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const [ CrearAlmacen ] = useMutation(REGISTRO_ALMACEN);
     const [ ActualizarAlmacen ] = useMutation(ACTUALIZAR_ALMACEN);
     const { data } = useQuery(OBTENER_USUARIOS,{
 		variables: {
-			sucursal: `${sucursal._id}`
+			sucursal: `${sesion.sucursal._id}`
 		}
 	});	
     let obtenerUsuarios = [];
-
-
 
 	const classes = useStyles();
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
@@ -140,7 +138,7 @@ export default function ContainerRegistroAlmacen({ accion, datos }) {
                         await CrearAlmacen({
                             variables: {
                                 input,
-                                id: sucursal._id
+                                id: sesion.sucursal._id
                             }
                         });
                     }else{
@@ -148,7 +146,7 @@ export default function ContainerRegistroAlmacen({ accion, datos }) {
                         await CrearAlmacen({
                             variables: {
                                 input,
-                                id: sucursal._id
+                                id: sesion.sucursal._id
                             }
                         });
                     } 
@@ -232,7 +230,7 @@ export default function ContainerRegistroAlmacen({ accion, datos }) {
 					</Box>
                     <Box width="100%">
 						<Typography>Sucursal</Typography>
-                        <Typography style={{marginTop:"7px", fontWeight: "bold" }}>{sucursal.nombre_sucursal}</Typography>
+                        <Typography style={{marginTop:"7px", fontWeight: "bold" }}>{sesion.sucursal.nombre_sucursal}</Typography>
 					</Box>
 				</div>
                 <Box mt={2}>
