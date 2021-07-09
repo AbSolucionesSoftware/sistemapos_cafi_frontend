@@ -9,7 +9,8 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { FcInspection } from 'react-icons/fc';
-import { Box } from '@material-ui/core';
+import { Box, TextField } from '@material-ui/core';
+import ListaCompras from './ListaCompras';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -21,6 +22,15 @@ const useStyles = makeStyles((theme) => ({
 	},
     icon: {
 		fontSize: 100
+	},
+	formInputFlex: {
+		display: 'flex',
+		'& > *': {
+			margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
+		}
+	},
+	formInput: {
+		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
 	}
 }));
 
@@ -56,17 +66,41 @@ export default function ComprasRealizadas() {
 						<Typography variant="h6" className={classes.title}>
                         Compras realizadas
 						</Typography>
-						<Box mx={3}>
+						{/* <Box mx={3}>
                             <Button autoFocus color="inherit" size="large" onClick={handleClose}>
                                 save
                             </Button>
-                        </Box>
+                        </Box> */}
                         <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
 							<CloseIcon />
 						</IconButton>
 					</Toolbar>
 				</AppBar>
-				Toda la info de Compras realizadas
+				<Box mx={3} p={2}>
+					<div className={classes.formInputFlex}>
+						<Box width="50%">
+							<Typography>Buscar Venta</Typography>
+							<Box display="flex">
+								<TextField
+									fullWidth
+									size="small"
+									/* error */
+									name="codigo_barras"
+									id="form-producto-codigo-barras"
+									variant="outlined"
+									/* helperText="Incorrect entry." */
+								/>
+								<Button variant="contained" color="primary">
+									Buscar
+								</Button>
+							</Box>
+						</Box>
+					</div>
+				</Box>
+				<Box mx={5}>
+					<ListaCompras/>
+				</Box>
+
 			</Dialog>
 		</div>
 	);
