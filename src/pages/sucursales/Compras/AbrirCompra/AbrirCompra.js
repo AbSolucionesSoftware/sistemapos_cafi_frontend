@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import {Button, Divider} from '@material-ui/core/';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -8,8 +8,16 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
+
+import RegistroProvedor from './RegistroProvedor';
+import DatosProducto from './DatosProducto';
+
+import AddIcon from '@material-ui/icons/Add';
+
 import { FcPlus } from 'react-icons/fc';
 import { Box } from '@material-ui/core';
+import ListaCompras from './ListaCompras';
+import { Grid } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -21,6 +29,18 @@ const useStyles = makeStyles((theme) => ({
 	},
     icon: {
 		fontSize: 100
+	},
+	formInputFlex: {
+		display: 'flex',
+		'& > *': {
+			margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
+		},
+        paddingTop: 3,
+        alignItems: "center",
+        justifyItems: "center"
+	},
+	formInput: {
+		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
 	}
 }));
 
@@ -54,11 +74,21 @@ export default function AbrirCompra() {
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-                        Abrir una compra
+                        	Nueva compra de mercancia
 						</Typography>
+						
+						<RegistroProvedor/>
+
 						<Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClose}>
-                                save
+                            <Button 
+								autoFocus 
+								color="inherit"
+								variant="outlined" 
+								size="large" 
+								onClick={handleClose}
+								startIcon={<AddIcon fontSize="large" />}
+							>
+                                Realizar compra
                             </Button>
                         </Box>
                         <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
@@ -66,7 +96,28 @@ export default function AbrirCompra() {
 						</IconButton>
 					</Toolbar>
 				</AppBar>
-				Toda la info de Abrir una compra
+
+				<DatosProducto />	
+
+				<Box p={1} mx={4}>
+					<Divider />
+				</Box>
+
+				<Box mt={1} mx={4}>
+					<ListaCompras />
+				</Box>
+
+				<Grid container>
+					<Grid item lg={12}>
+						<Box mt={1} mx={4} display="flex" justifyContent="flex-end">
+							<div className={classes.formInputFlex}>
+								<Typography>
+									Total compra: $100,000 Mx
+								</Typography>
+							</div>
+						</Box>
+					</Grid>
+				</Grid>
 			</Dialog>
 		</div>
 	);
