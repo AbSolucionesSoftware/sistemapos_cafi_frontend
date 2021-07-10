@@ -138,9 +138,9 @@ export default function CrearCliente({ tipo, accion, datos }) {
 		try {
 			if (accion === 'registrar') {
 				cliente.tipo_cliente = tipo;
-				cliente.empresa = sesion.empresa;
+				cliente.empresa = sesion.empresa._id;
 				if(tipo !== "PROVEEDOR"){
-					cliente.sucursal = sesion.sucursal;
+					cliente.sucursal = sesion.sucursal._id;
 				}
 				const input = cliente;
 				await crearCliente({
