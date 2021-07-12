@@ -1,9 +1,10 @@
 import React, { forwardRef } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Slide, Button, Box, Dialog } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, IconButton, Slide, Button, Box, Dialog, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 // import { FcPlus } from 'react-icons/fc';
 import inventarioAlmacen from '../../../../icons/warehouse.svg';
 
+import ListaAlmacenes from './ListaAlmacenes'
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -63,7 +64,30 @@ export default function InventariosPorAlmacen() {
 						</IconButton>
 					</Toolbar>
 				</AppBar>
-				Toda la info de Abrir una compra
+				<Box mx={3} p={2}>
+					<div className={classes.formInputFlex}>
+						<Box width="50%">
+							<Typography>Buscar Almacén</Typography>
+							<Box display="flex">
+								<TextField
+									fullWidth
+									size="small"
+									/* error */
+									name="codigo_barras"
+									id="form-producto-codigo-barras"
+									variant="outlined"
+									/* helperText="Incorrect entry." */
+								/>
+								<Button variant="contained" color="primary">
+									Buscar
+								</Button>
+							</Box>
+						</Box>
+					</div>
+				</Box>
+				<Box mx={5}>
+					<ListaAlmacenes/>
+				</Box>
 			</Dialog>
         </div>
     )
