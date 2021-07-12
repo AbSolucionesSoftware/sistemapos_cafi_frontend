@@ -12,7 +12,7 @@ export default function RegistroPrecioNeto() {
 					size="small"
 					/* error */
 					name="precio_neto"
-					id="form-producto-nombre-comercial"
+					/* id="form-producto-nombre-comercial" */
 					variant="outlined"
 					/* value="" */
 					/* helperText="Incorrect entry." */
@@ -27,7 +27,7 @@ export default function RegistroPrecioNeto() {
 					size="small"
 					/* error */
 					name="precio_neto"
-					id="form-producto-nombre-comercial"
+					/* id="form-producto-nombre-comercial" */
 					variant="outlined"
 					/* value="" */
 					/* helperText="Incorrect entry." */
@@ -42,7 +42,7 @@ export default function RegistroPrecioNeto() {
 					size="small"
 					/* error */
 					name="precio_neto"
-					id="form-producto-nombre-comercial"
+					/* id="form-producto-nombre-comercial" */
 					variant="outlined"
 					/* value="" */
 					/* helperText="Incorrect entry." */
@@ -57,7 +57,7 @@ export default function RegistroPrecioNeto() {
 					size="small"
 					/* error */
 					name="precio_neto"
-					id="form-producto-nombre-comercial"
+					/* id="form-producto-nombre-comercial" */
 					variant="outlined"
 					/* value="" */
 					/* helperText="Incorrect entry." */
@@ -72,7 +72,7 @@ export default function RegistroPrecioNeto() {
 					size="small"
 					/* error */
 					name="precio_neto"
-					id="form-producto-nombre-comercial"
+					/* id="form-producto-nombre-comercial" */
 					variant="outlined"
 					/* value="" */
 					/* helperText="Incorrect entry." */
@@ -87,7 +87,7 @@ export default function RegistroPrecioNeto() {
 					size="small"
 					/* error */
 					name="unidad_de_venta"
-					id="form-producto-nombre-generico"
+					/* id="form-producto-nombre-generico" */
 					variant="outlined"
 					/* value="" */
 					/* helperText="Incorrect entry." */

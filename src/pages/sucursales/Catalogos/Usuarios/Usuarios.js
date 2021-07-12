@@ -101,7 +101,7 @@ export default function Usuarios() {
 						<CrearUsuario accion="registrar" datos={undefined} />
 					</Box>
 					<Box mx={4}>
-						<ListaUsuarios sucursal={sesion.sucursal} filtro={filtro} />
+						<ListaUsuarios sucursal={sesion.sucursal._id} filtro={filtro} />
 					</Box>
 				</Dialog>
 			</UsuarioProvider>

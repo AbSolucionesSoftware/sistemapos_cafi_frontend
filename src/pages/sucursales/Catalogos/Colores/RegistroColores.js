@@ -4,6 +4,7 @@ import { Add } from '@material-ui/icons';
 import TablaColores from './ListaColores';
 import { SketchPicker } from 'react-color';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
+import ErrorPage from '../../../../components/ErrorPage';
 
 import { useQuery, useMutation } from '@apollo/client';
 import { OBTENER_COLORES, CREAR_COLOR, ACTUALIZAR_COLOR } from '../../../../gql/Catalogos/colores';
@@ -17,7 +18,7 @@ export default function RegistroColores() {
 
 	/* Queries */
 	const { loading, data, error, refetch } = useQuery(OBTENER_COLORES, {
-		variables: { sucursal: sesion.sucursal }
+		variables: { sucursal: sesion.sucursal._id }
 	});
 
 	/* Mutations */
@@ -39,7 +40,7 @@ export default function RegistroColores() {
 			</Box>
 		);
 	if (error) {
-		return <div>hubo un error</div>;
+		return <ErrorPage error={error} />;
 	}
 
 	const { obtenerColores } = data;
@@ -66,8 +67,8 @@ export default function RegistroColores() {
 						input: {
 							nombre: colores.nombre,
 							hex: colores.hex,
-							empresa: sesion.empresa,
-							sucursal: sesion.sucursal
+							empresa: sesion.empresa._id,
+							sucursal: sesion.sucursal._id
 						}
 					}
 				});
