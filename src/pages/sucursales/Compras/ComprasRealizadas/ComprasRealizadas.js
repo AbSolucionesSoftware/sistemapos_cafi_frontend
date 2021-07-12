@@ -79,7 +79,7 @@ export default function ComprasRealizadas() {
 				<Box mx={3} p={2}>
 					<div className={classes.formInputFlex}>
 						<Box width="50%">
-							<Typography>Buscar Venta</Typography>
+							<Typography>Buscar Compra</Typography>
 							<Box display="flex">
 								<TextField
 									fullWidth
