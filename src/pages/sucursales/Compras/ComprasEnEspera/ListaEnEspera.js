@@ -8,8 +8,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import { Dialog, Typography, Grid, Box, Button } from '@material-ui/core';
+import { Dialog, Typography, Grid, Box } from '@material-ui/core';
 
+import AbrirCompra from '../AbrirCompra/AbrirCompra';
 import DatosDeCompra from '../ComprasRealizadas/DatosDeCompra';
 
 const columns = [
@@ -152,18 +153,9 @@ export default function ListaEnEspera({props}) {
                         </Box>
                     </Grid>
                     <Grid item lg={3}>
-                        <Box mt={3} display="fflex" alignItems="center" textAlign="center">
-                            <Button
-                                size="large"
-                                variant="contained" 
-                                color="primary"
-                                onClick={() => {
-                                    
-                                }}
-                            >
-                                Continuar Compra
-                            </Button>
-                        </Box>
+						<Box mt={2} p={1} textAlign="center">
+							<AbrirCompra status={"enEspera"}/>
+						</Box>
                     </Grid>
                 </Grid>
 
@@ -180,6 +172,8 @@ export default function ListaEnEspera({props}) {
 					</Grid>
 				</Grid>	
 			</Dialog>
+
+		
 		</Paper>
 	);
 }
