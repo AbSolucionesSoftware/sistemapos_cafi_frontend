@@ -48,7 +48,7 @@ export default function RegistroProducto() {
                     startIcon={<AddIcon fontSize="large" />}
                     onClick={toggleModal}
                 >
-                    Agregar producto
+                   Nuevo producto
                 </Button>
             </Box>
 

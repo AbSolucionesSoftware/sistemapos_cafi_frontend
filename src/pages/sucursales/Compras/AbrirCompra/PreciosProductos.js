@@ -11,6 +11,7 @@ import RegistroUtilidades from './PreciosVenta/utilidades';
 import RegistroPrecioNeto from './PreciosVenta/precioNeto';
 import RegistroPrecioMayoreo from './PreciosVenta/precioMayoreo';
 import MostrarPrecioVenta from './PreciosVenta/precioVenta';
+import PreciosCreditos from './PreciosVenta/precioCredito';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -152,6 +153,12 @@ export default function PreciosProductos() {
                                     <b>Precio venta</b>
                                 </Typography>
                                 <MostrarPrecioVenta />
+                            </Box>
+                            <Box mt={2} className={classes.formInputFlex}>
+                                <Typography className={classes.precioTitle}>
+                                    <b>Precios Créditos</b>
+                                </Typography>
+                                <PreciosCreditos />
                             </Box>
                         </Box>
                     </div>

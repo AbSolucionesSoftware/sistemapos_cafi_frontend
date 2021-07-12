@@ -98,6 +98,7 @@ export default function AbrirCompra({status}) {
 						</IconButton>
 					</Toolbar>
 				</AppBar>
+				
 				<DatosProducto />	
 
 				<Box p={1} mx={4}>
