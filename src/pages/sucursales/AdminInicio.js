@@ -4,7 +4,7 @@ import SwipeableViews from 'react-swipeable-views';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { FcShop, FcPaid, FcSurvey, FcNews } from 'react-icons/fc';
 import { Toolbar, Box, Tab, Tabs, AppBar } from '@material-ui/core';
-import MiEmpresa from './Empresa/MiEmpresa';
+import Empresa from './Empresa/Empresa';
 import Compras from './Compras/Compras';
 import Catalogos from './Catalogos/Catalogos';
 import Tesoreria from './Tesoreria/Tesoreria';
@@ -117,7 +117,7 @@ function AdminInicio(props) {
 					onChangeIndex={handleChangeIndex}
 				>
 					<TabPanel value={value} index={0}>
-						<MiEmpresa />
+						<Empresa />
 					</TabPanel>
 					<TabPanel value={value} index={1}>
 						<Almacenes />
