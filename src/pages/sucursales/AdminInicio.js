@@ -4,14 +4,14 @@ import SwipeableViews from 'react-swipeable-views';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { FcShop, FcPaid, FcSurvey, FcNews } from 'react-icons/fc';
 import { Toolbar, Box, Tab, Tabs, AppBar } from '@material-ui/core';
-import MiEmpresa from './Empresa/MiEmpresa';
+import Empresa from './Empresa/Empresa';
 import Compras from './Compras/Compras';
 import Catalogos from './Catalogos/Catalogos';
 import Tesoreria from './Tesoreria/Tesoreria';
 import facturaIcon from '../../icons/factura.svg';
 import moneyIcon from '../../icons/money.svg';
 import almacenIcon from '../../icons/almacen.svg';
-import Almacenes from './Moviminetos/Movimientos';
+import Almacenes from './Almacenes/Almacenes';
 import cartIcon from '../../icons/ventas/cart-add.svg';
 import { withRouter } from 'react-router';
 
@@ -86,7 +86,7 @@ function AdminInicio(props) {
 					<Tabs value={value} onChange={handleChange} indicatorColor="primary" textColor="primary" centered>
 						<Tab label="Mi empresa" icon={<FcShop className={classes.icon} />} {...a11yProps(0)} />
 						<Tab
-							label="Movimientos"
+							label="Almacenes"
 							icon={<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />}
 							{...a11yProps(1)}
 						/>
@@ -117,7 +117,7 @@ function AdminInicio(props) {
 					onChangeIndex={handleChangeIndex}
 				>
 					<TabPanel value={value} index={0}>
-						<MiEmpresa />
+						<Empresa />
 					</TabPanel>
 					<TabPanel value={value} index={1}>
 						<Almacenes />

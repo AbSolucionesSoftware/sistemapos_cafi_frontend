@@ -5,6 +5,17 @@ export default function RegistroPrecioMayoreo() {
 	return (
 		<Fragment>
 			<Box width="100px">
+				{/* <TextField
+					fullWidth
+					type="number"
+					InputProps={{ inputProps: { min: 0 } }}
+					size="small"
+					name="precio_neto"
+					id="form-producto-nombre-comercial"
+					variant="outlined"
+				/> */}
+			</Box>
+			<Box width="100px">
 				<TextField
 					fullWidth
 					type="number"
@@ -12,7 +23,7 @@ export default function RegistroPrecioMayoreo() {
 					size="small"
 					/* error */
 					name="precio_neto"
-					id="form-producto-nombre-comercial"
+					/* id="form-producto-nombre-comercial" */
 					variant="outlined"
 					/* value="" */
 					/* helperText="Incorrect entry." */
@@ -27,7 +38,7 @@ export default function RegistroPrecioMayoreo() {
 					size="small"
 					/* error */
 					name="precio_neto"
-					id="form-producto-nombre-comercial"
+					/* id="form-producto-nombre-comercial" */
 					variant="outlined"
 					/* value="" */
 					/* helperText="Incorrect entry." */
@@ -42,7 +53,7 @@ export default function RegistroPrecioMayoreo() {
 					size="small"
 					/* error */
 					name="precio_neto"
-					id="form-producto-nombre-comercial"
+					/* id="form-producto-nombre-comercial" */
 					variant="outlined"
 					/* value="" */
 					/* helperText="Incorrect entry." */
@@ -57,22 +68,7 @@ export default function RegistroPrecioMayoreo() {
 					size="small"
 					/* error */
 					name="precio_neto"
-					id="form-producto-nombre-comercial"
-					variant="outlined"
-					/* value="" */
-					/* helperText="Incorrect entry." */
-					/* onChange={obtenerCampos} */
-				/>
-			</Box>
-			<Box width="100px">
-				<TextField
-					fullWidth
-					type="number"
-					InputProps={{ inputProps: { min: 0 } }}
-					size="small"
-					/* error */
-					name="precio_neto"
-					id="form-producto-nombre-comercial"
+					/* id="form-producto-nombre-comercial" */
 					variant="outlined"
 					/* value="" */
 					/* helperText="Incorrect entry." */
@@ -87,7 +83,7 @@ export default function RegistroPrecioMayoreo() {
 					size="small"
 					/* error */
 					name="unidad_de_venta"
-					id="form-producto-nombre-generico"
+					/* id="form-producto-nombre-generico" */
 					variant="outlined"
 					/* value="" */
 					/* helperText="Incorrect entry." */

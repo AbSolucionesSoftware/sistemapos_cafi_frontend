@@ -7,19 +7,31 @@ export const CREAR_TALLAS = gql`
 			talla
 			tipo
 			empresa {
-				nombre
+				nombre_empresa
+				correo_empresa
+				nombre_dueno
+				telefono_dueno
+				sucursales_activas
+				limite_sucursales
+				_id
 			}
 		}
 	}
 `;
 
 export const OBTENER_TALLAS = gql`
-	query obtenerTallas($empresa: String!, $tipo: String) {
-		obtenerTallas(empresa: $empresa, tipo: $tipo) {
+	query obtenerTallas($sucursal: String!, $tipo: String! ) {
+		obtenerTallas(sucursal: $sucursal, tipo: $tipo) {
 			_id
 			talla
 			tipo
 			empresa {
+				nombre_empresa
+				correo_empresa
+				nombre_dueno
+				telefono_dueno
+				sucursales_activas
+				limite_sucursales
 				_id
 			}
 		}

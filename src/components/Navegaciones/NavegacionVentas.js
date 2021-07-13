@@ -21,7 +21,8 @@ function NavegacionVentas(props) {
 	const [ value, setValue ] = useState('venta-general');
 
 	const signOut = () => {
-		localStorage.setItem('sesionCafi', false);
+		localStorage.removeItem('sesionCafi');
+		localStorage.removeItem('tokenCafi');
 		props.history.push('/');
 	};
 	return (

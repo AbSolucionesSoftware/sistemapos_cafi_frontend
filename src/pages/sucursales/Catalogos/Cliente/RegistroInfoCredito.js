@@ -2,7 +2,7 @@ import React, { Fragment, useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Divider } from '@material-ui/core';
 import { TextField, Typography } from '@material-ui/core';
-import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
+import { ClienteCtx } from '../../../../context/Catalogos/crearClienteCtx';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {
@@ -16,13 +16,21 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function RegistrarInfoCredito() {
+export default function RegistrarInfoCredito({ tipo }) {
 	const classes = useStyles();
-	const { datos, setDatos } = useContext(RegProductoContext);
+	const { cliente, setCliente } = useContext(ClienteCtx);
 
 	const obtenerCampos = (e) => {
-		setDatos({
-			...datos,
+		const name = e.target.name;
+		if (name === 'numero_descuento' || name === 'limite_credito') {
+			setCliente({
+				...cliente,
+				[e.target.name]: parseInt(e.target.value)
+			});
+			return;
+		}
+		setCliente({
+			...cliente,
 			[e.target.name]: e.target.value
 		});
 	};
@@ -35,12 +43,9 @@ export default function RegistrarInfoCredito() {
 					<TextField
 						fullWidth
 						size="small"
-						/* error */
-						name="codigo_barras"
-						id="form-producto-codigo-barras"
+						name="rfc"
 						variant="outlined"
-						value={datos.codigo_barras}
-						/* helperText="Incorrect entry." */
+						value={cliente.rfc ? cliente.rfc : ''}
 						onChange={obtenerCampos}
 					/>
 				</Box>
@@ -49,28 +54,22 @@ export default function RegistrarInfoCredito() {
 					<TextField
 						fullWidth
 						size="small"
-						/* error */
-						name="codigo_barras"
-						id="form-producto-codigo-barras"
+						name="razon_social"
 						variant="outlined"
-						value={datos.codigo_barras}
-						/* helperText="Incorrect entry." */
+						value={cliente.razon_social ? cliente.razon_social : ''}
 						onChange={obtenerCampos}
 					/>
 				</Box>
 			</div>
-            <div className={classes.formInputFlex}>
+			<div className={classes.formInputFlex}>
 				<Box width="100%">
 					<Typography>Descuento</Typography>
 					<TextField
 						fullWidth
 						size="small"
-						/* error */
-						name="codigo_barras"
-						id="form-producto-codigo-barras"
+						name="numero_descuento"
 						variant="outlined"
-						value={datos.codigo_barras}
-						/* helperText="Incorrect entry." */
+						value={cliente.numero_descuento ? cliente.numero_descuento : ''}
 						onChange={obtenerCampos}
 					/>
 				</Box>
@@ -79,64 +78,58 @@ export default function RegistrarInfoCredito() {
 					<TextField
 						fullWidth
 						size="small"
-						/* error */
-						name="codigo_barras"
-						id="form-producto-codigo-barras"
+						name="limite_credito"
 						variant="outlined"
-						value={datos.codigo_barras}
-						/* helperText="Incorrect entry." */
+						value={cliente.limite_credito ? cliente.limite_credito : ''}
 						onChange={obtenerCampos}
 					/>
 				</Box>
-                <Box width="100%">
+				<Box width="100%">
 					<Typography>Días de crédito</Typography>
 					<TextField
 						fullWidth
 						size="small"
-						/* error */
-						name="codigo_barras"
-						id="form-producto-codigo-barras"
+						name="dias_credito"
 						variant="outlined"
-						value={datos.codigo_barras}
-						/* helperText="Incorrect entry." */
+						value={cliente.dias_credito ? cliente.dias_credito : ''}
 						onChange={obtenerCampos}
 					/>
 				</Box>
 			</div>
-			<Box my={3}>
-				<Typography>Datos bancarios <b>(Para proovedores)</b></Typography>
-				<Divider />
-			</Box>
-			<div className={classes.formInputFlex}>
-				<Box width="100%">
-					<Typography>Banco</Typography>
-					<TextField
-						fullWidth
-						size="small"
-						/* error */
-						name="codigo_barras"
-						id="form-producto-codigo-barras"
-						variant="outlined"
-						value={datos.codigo_barras}
-						/* helperText="Incorrect entry." */
-						onChange={obtenerCampos}
-					/>
-				</Box>
-				<Box width="100%">
-					<Typography>No. de Cuenta Bancaria</Typography>
-					<TextField
-						fullWidth
-						size="small"
-						/* error */
-						name="codigo_barras"
-						id="form-producto-codigo-barras"
-						variant="outlined"
-						value={datos.codigo_barras}
-						/* helperText="Incorrect entry." */
-						onChange={obtenerCampos}
-					/>
-				</Box>
-			</div>
+			{tipo !== 'CLIENTE' ? (
+				<Fragment>
+					<Box my={3}>
+						<Typography>
+							Datos bancarios <b>(Para proovedores)</b>
+						</Typography>
+						<Divider />
+					</Box>
+					<div className={classes.formInputFlex}>
+						<Box width="100%">
+							<Typography>Banco</Typography>
+							<TextField
+								fullWidth
+								size="small"
+								name="banco"
+								variant="outlined"
+								value={cliente.banco ? cliente.banco : ''}
+								onChange={obtenerCampos}
+							/>
+						</Box>
+						<Box width="100%">
+							<Typography>No. de Cuenta Bancaria</Typography>
+							<TextField
+								fullWidth
+								size="small"
+								name="numero_cuenta"
+								variant="outlined"
+								value={cliente.numero_cuenta ? cliente.numero_cuenta : ''}
+								onChange={obtenerCampos}
+							/>
+						</Box>
+					</div>
+				</Fragment>
+			) : null}
 		</Fragment>
 	);
 }
