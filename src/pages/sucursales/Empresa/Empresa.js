@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { EmpresaProvider } from '../../../context/Catalogos/empresaContext';
 import MiEmpresa from './MiEmpresa';
 

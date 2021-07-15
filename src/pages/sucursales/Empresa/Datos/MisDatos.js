@@ -1,6 +1,6 @@
 import React, {  useContext,useState,useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Container, Grid, TextField, Button, Dialog, Avatar } from '@material-ui/core';
+import { Box, Grid, TextField, Button, Dialog, Avatar } from '@material-ui/core';
 import { Slide, Typography, IconButton, Toolbar, AppBar, Divider, DialogActions,CircularProgress  } from '@material-ui/core';
 import { useDropzone } from 'react-dropzone';
 import CloseIcon from '@material-ui/icons/Close';
@@ -8,6 +8,7 @@ import { FcNook } from 'react-icons/fc';
 import { useMutation } from '@apollo/client';
 import { EmpresaContext } from '../../../../context/Catalogos/empresaContext';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
+import BackdropComponent from '../../../../components/Layouts/BackDrop';
 import {  ACTUALIZAR_EMPRESA } from '../../../../gql/Empresa/empresa';
 
 
@@ -124,8 +125,8 @@ export default function MisDatos() {
 				imagen: empresa.imagen
 			})
 			
-		} catch (error) {
-			console.log(error)
+		} catch (errorCatch) {
+			console.log(errorCatch)
 		}
 	}, [empresa])
 
@@ -141,8 +142,9 @@ export default function MisDatos() {
 			console.log(act.data.actualizarEmpresa.message)
 			setUpdate(true);
 			setAlert({ message: 'Se han actualizado correctamente los datos.', status: 'success', open: true });	
-		} catch (error) {
-			console.log("ACtualizar Empresa",error)
+			setError(false);
+		} catch (errorCatch) {
+			console.log("ACtualizar Empresa",errorCatch)
 		}
 	}
 	const handleClickOpen = () => {
@@ -202,6 +204,7 @@ export default function MisDatos() {
 			</Button>
 			<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
 				<SnackBarMessages alert={alert} setAlert={setAlert} />
+				<BackdropComponent loading={loading} setLoading={setLoading} />
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
