@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, Container } from '@material-ui/core';
-import categoriasIcon from '../../../../icons/categorias.svg';
+import costosIcon from '../../../../icons/costos.png';
 import RegistroCentroCostos from './RegistroCentroCostos';
 
 const useStyles = makeStyles((theme) => ({
@@ -45,7 +45,7 @@ export default function CentroCostos() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={categoriasIcon} alt="icono numero calzado" className={classes.icon} />
+						<img src={costosIcon} alt="icono numero calzado" className={classes.icon} />
 					</Box>
 					Centro de costos
 				</Box>
