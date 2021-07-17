@@ -132,14 +132,14 @@ export default function MisDatos() {
 
 	const actEmp = async () =>{
 		try {
-			console.log(empresaDatos, sesion.empresa._id )
-			const act = await actualizarEmpresa({
+			//console.log(empresaDatos, sesion.empresa._id )
+			await actualizarEmpresa({
 				variables: {
 					input: empresaDatos,
 					id: sesion.empresa._id 
 				}
 			});
-			console.log(act.data.actualizarEmpresa.message)
+			//console.log(act.data.actualizarEmpresa.message)
 			setUpdate(true);
 			setAlert({ message: 'Se han actualizado correctamente los datos.', status: 'success', open: true });	
 			setError(false);
@@ -155,7 +155,7 @@ export default function MisDatos() {
 		setOpen(false);
 	};
 	const obtenerCampos = (e) => {
-		console.log(e.target.name, e.target.value)
+		//console.log(e.target.name, e.target.value)
 		setEmpresaDatos({
 			...empresaDatos,
 			[e.target.name]: e.target.value

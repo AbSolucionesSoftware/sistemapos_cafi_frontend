@@ -15,7 +15,7 @@ export default function MiEmpresa() {
 	
 	
 	/* Queries */
-	const {  data, error, refetch } = useQuery(OBTENER_DATOS_EMPRESA, {
+	const {  data, refetch } = useQuery(OBTENER_DATOS_EMPRESA, {
 		variables: { id: sesion.empresa._id }
 	});
 
@@ -23,22 +23,19 @@ export default function MiEmpresa() {
 	useEffect(() => {
 		try {
 			refetch();
-			//console.log("SESSIONREFECT", data)
-			//console.log("DATA " , data.obtenerEmpresa)
-		} catch (errorf) {
-			console.log("SESSIONREFECT",error)
+		
+		} catch (errorCatch) {
+			console.log("SESSIONREFECTUPDATE",errorCatch)
 		}
 	},[update,refetch]);
 
 	useEffect(() => {
 		try {
-			
-			
 			setEmpresa(data.obtenerEmpresa)
-		} catch (errorf) {
-			console.log("SESSIONREFECT",error)
+		} catch (errorCatch) {
+			console.log("SESSIONREFECT",errorCatch)
 		}
-	},[data]);
+	},[data, setEmpresa]);
 	
 
 	return (

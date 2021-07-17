@@ -81,7 +81,7 @@ export default function InformacionFiscal() {
 
 	useEffect(() => {
 		try {
-			console.log(empresa)
+			//console.log(empresa)
 			setEmpresaFiscal({
 				nombre_fiscal: empresa.nombre_fiscal,
 				rfc: empresa.rfc,
@@ -115,14 +115,14 @@ export default function InformacionFiscal() {
 
 	const actEmp = async () =>{
 		try {
-			console.log(empresaFiscal, sesion.empresa._id )
-			const act = await actualizarEmpresa({
+			//console.log(empresaFiscal, sesion.empresa._id )
+			 await actualizarEmpresa({
 				variables: {
 					input: empresaFiscal,
 					id: sesion.empresa._id 
 				}
-			});
-			console.log(act.data.actualizarEmpresa.message)
+			})
+			//console.log(act.data.actualizarEmpresa.message)
 			setUpdate(true);
 			setAlert({ message: 'Se han actualizado correctamente los datos.', status: 'success', open: true });
 			setError(false);
