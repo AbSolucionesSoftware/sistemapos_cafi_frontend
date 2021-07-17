@@ -135,8 +135,8 @@ export default function MisDatos() {
 			//console.log(empresaDatos, sesion.empresa._id )
 			await actualizarEmpresa({
 				variables: {
-					input: empresaDatos,
-					id: sesion.empresa._id 
+					id: sesion.empresa._id,
+					input: empresaDatos
 				}
 			});
 			//console.log(act.data.actualizarEmpresa.message)
@@ -144,6 +144,7 @@ export default function MisDatos() {
 			setAlert({ message: 'Se han actualizado correctamente los datos.', status: 'success', open: true });	
 			setError(false);
 		} catch (errorCatch) {
+			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			console.log("ACtualizar Empresa",errorCatch)
 		}
 	}

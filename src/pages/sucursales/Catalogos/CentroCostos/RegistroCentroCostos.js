@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect } from 'react';
+import React, { useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Accordion, AccordionSummary, AccordionDetails, fade } from '@material-ui/core';
 import { Box, Button, Divider, IconButton, TextField, CircularProgress, Typography } from '@material-ui/core';
@@ -341,6 +341,8 @@ const RenderSubcostos = ({ idCosto,subcosto, toUpdateID, setToUpdateID, setSubco
     
 	return (
 		<Fragment>
+			<SnackBarMessages alert={alert} setAlert={setAlert} />
+			<BackdropComponent loading={loadingBackDrop} setLoading={setLoadingBackDrop} />
 			<Box
 				display="flex"
 				alignItems="center"

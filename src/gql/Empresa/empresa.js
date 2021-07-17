@@ -46,7 +46,7 @@ export const OBTENER_DATOS_EMPRESA = gql`
 `;
 
 export const ACTUALIZAR_EMPRESA = gql`
-	mutation actualizarEmpresa($input: EditarEmpresa, $id: ID!) {
+	mutation actualizarEmpresa( $id: ID!, $input: EditarEmpresa) {
 		actualizarEmpresa(id: $id, input: $input) {
 			message
 		}
