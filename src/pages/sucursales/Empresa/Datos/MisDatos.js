@@ -132,6 +132,7 @@ export default function MisDatos() {
 
 	const actEmp = async () =>{
 		try {
+			setLoading(true)
 			//console.log(empresaDatos, sesion.empresa._id )
 			await actualizarEmpresa({
 				variables: {
@@ -141,6 +142,7 @@ export default function MisDatos() {
 			});
 			//console.log(act.data.actualizarEmpresa.message)
 			setUpdate(true);
+			setLoading(false);
 			setAlert({ message: 'Se han actualizado correctamente los datos.', status: 'success', open: true });	
 			setError(false);
 		} catch (errorCatch) {
