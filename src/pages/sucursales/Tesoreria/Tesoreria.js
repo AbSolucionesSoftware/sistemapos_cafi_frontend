@@ -4,6 +4,7 @@ import Depositos from './Depositos/Depositos';
 import Retiros from './Retiros/Retiros';
 import Egresos from './Egresos/Egresos';
 import AbonosProveedores from './AbonoProveedores/AbonosProovedores';
+import AbonosClientes from './AbonoClientes/AbonosClientes';
 import Transferencias from './Transferencias/Transferencias';
 
 export default function Tesoreria() {
@@ -29,6 +30,11 @@ export default function Tesoreria() {
                 <Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<AbonosProveedores />
+					</Box>
+				</Grid>
+				<Grid item lg={2}>
+					<Box display="flex" justifyContent="center" alignItems="center">
+						<AbonosClientes />
 					</Box>
 				</Grid>
                 <Grid item lg={2}>
