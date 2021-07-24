@@ -1,4 +1,4 @@
-import React from 'react'; 
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -8,8 +8,8 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, Container } from '@material-ui/core';
-import costosIcon from '../../../../icons/costos.svg';
-import RegistroCentroCostos from './RegistroCentroCostos';
+import conceptosAlmacen from '../../../../icons/conceptosAlmacen.svg';
+import RegistroConcepto from './RegistroConcepto';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -28,7 +28,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function CentroCostos() {
+export default function ConceptosAlmacen() {
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
 
@@ -45,25 +45,25 @@ export default function CentroCostos() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={costosIcon} alt="icono numero calzado" className={classes.icon} />
+						<img src={conceptosAlmacen} alt="icono numero calzado" className={classes.icon} />
 					</Box>
-					Centro de costos
+					Conceptos Almacén
 				</Box>
 			</Button>
 			<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-							Centro de costos
+							Conceptos almacén
 						</Typography>
 						<Button autoFocus color="inherit" size="large" onClick={handleClose} startIcon={<CloseIcon />}>
 							Cerrar
 						</Button>
 					</Toolbar>
 				</AppBar>
-				<Box mt={3}>
+				<Box mt={4}>
 					<Container maxWidth="md">
-						<RegistroCentroCostos />
+						<RegistroConcepto />
 					</Container>
 				</Box>
 			</Dialog>
