@@ -2,9 +2,15 @@ import React, { Fragment, useContext, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, FormControl, Divider, MenuItem, Select, Container, FormHelperText } from '@material-ui/core';
 import { TextField, Typography, Button, Checkbox, FormControlLabel } from '@material-ui/core';
-import { Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, DialogTitle, CircularProgress } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
+
+import { useMutation } from '@apollo/client';
+import { CREAR_CATEGORIA, CREAR_SUBCATEGORIA } from '../../../../gql/Catalogos/categorias';
+import { REGISTRAR_DEPARTAMENTO } from '../../../../gql/Catalogos/departamentos';
+import { REGISTRAR_MARCAS } from '../../../../gql/Catalogos/marcas';
+import SnackBarMessages from '../../../../components/SnackBarMessages';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {
@@ -23,11 +29,18 @@ const useStyles = makeStyles((theme) => ({
 
 export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetch }) {
 	const classes = useStyles();
-	const { datos_generales, setDatosGenerales, validacion } = useContext(RegProductoContext);
+	const { datos_generales, setDatosGenerales, validacion, precios, setPrecios } = useContext(RegProductoContext);
 	const { categorias, departamentos, marcas } = obtenerConsultasProducto;
-	const [ subcategorias, setSubcategorias ] = useState([]);
+	const [subcategorias, setSubcategorias] = useState([]);
 
 	const obtenerCampos = (e) => {
+		if (e.target.name === "monedero_electronico") {
+			setPrecios({
+				...precios,
+				[e.target.name]: parseFloat(e.target.value)
+			});
+			return
+		}
 		setDatosGenerales({
 			...datos_generales,
 			[e.target.name]: e.target.value
@@ -38,6 +51,21 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 		setDatosGenerales({
 			...datos_generales,
 			receta_farmacia: e.target.checked
+		});
+	};
+
+	const obtenerChecks = (e) => {
+		if (e.target.name === "monedero" && e.target.checked) {
+			setPrecios({
+				...precios,
+				monedero_electronico: 0,
+				monedero: e.target.checked
+			});
+			return
+		}
+		setPrecios({
+			...precios,
+			[e.target.name]: e.target.checked
 		});
 	};
 
@@ -204,7 +232,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 									<MenuItem value="">
 										<em>Seleccione uno</em>
 									</MenuItem>
-									{categorias.map((res) => {
+									{categorias ? categorias.map((res) => {
 										return (
 											<MenuItem
 												name="id_categoria"
@@ -216,10 +244,10 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 												{res.categoria}
 											</MenuItem>
 										);
-									})}
+									}) : (<MenuItem value="" />)}
 								</Select>
 							</FormControl>
-							<RegistrarNuevoSelect tipo="categoria" refetch={refetch} />
+							<RegistrarNuevoSelect tipo="categoria" name="categoria" refetch={refetch} />
 						</Box>
 					</Box>
 					<Box width="100%">
@@ -228,14 +256,14 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 							<FormControl variant="outlined" fullWidth size="small">
 								<Select
 									id="form-producto-subcategoria"
-									name="sub_categoria"
-									value={datos_generales.sub_categoria ? datos_generales.sub_categoria : ''}
+									name="subcategoria"
+									value={datos_generales.subcategoria ? datos_generales.subcategoria : ''}
 									onChange={(event, child) => obtenerIDs(event, child)}
 								>
 									<MenuItem value="">
 										<em>Seleccione uno</em>
 									</MenuItem>
-									{subcategorias.map((res) => {
+									{subcategorias ? subcategorias.map((res) => {
 										return (
 											<MenuItem
 												name="id_subcategoria"
@@ -246,10 +274,16 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 												{res.subcategoria}
 											</MenuItem>
 										);
-									})}
+									}) : <MenuItem value="" />}
 								</Select>
 							</FormControl>
-							<RegistrarNuevoSelect tipo="subcategoria" refetch={refetch} />
+							<RegistrarNuevoSelect
+								tipo="subcategoria"
+								name="subcategoria"
+								refetch={refetch}
+								subcategorias={subcategorias}
+								setSubcategorias={setSubcategorias}
+							/>
 						</Box>
 					</Box>
 				</div>
@@ -267,7 +301,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 									<MenuItem value="">
 										<em>Seleccione uno</em>
 									</MenuItem>
-									{departamentos.map((res) => {
+									{departamentos ? departamentos.map((res) => {
 										return (
 											<MenuItem
 												name="id_departamento"
@@ -278,10 +312,10 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 												{res.nombre_departamentos}
 											</MenuItem>
 										);
-									})}
+									}) : <MenuItem value="" />}
 								</Select>
 							</FormControl>
-							<RegistrarNuevoSelect tipo="departamento" refetch={refetch} />
+							<RegistrarNuevoSelect tipo="departamento" name="nombre_departamentos" refetch={refetch} />
 						</Box>
 					</Box>
 					<Box width="100%">
@@ -297,7 +331,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 									<MenuItem value="">
 										<em>Seleccione uno</em>
 									</MenuItem>
-									{marcas.map((res) => {
+									{marcas ? marcas.map((res) => {
 										return (
 											<MenuItem
 												name="id_marca"
@@ -308,73 +342,233 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 												{res.nombre_marca}
 											</MenuItem>
 										);
-									})}
+									}) : <MenuItem value="" />}
 								</Select>
 							</FormControl>
-							<RegistrarNuevoSelect tipo="marcas" refetch={refetch} />
+							<RegistrarNuevoSelect tipo="marca" name="nombre_marca" refetch={refetch} />
 						</Box>
 					</Box>
 				</div>
-				<Box>
-					<Typography>
-						<b>Farmacia</b>
-					</Typography>
-					<Divider />
-				</Box>
-				<div className={classes.formInput}>
-					<FormControlLabel
-						control={
-							<Checkbox
-								/* checked={datos_generales.receta_farmacia ? datos_generales.receta_farmacia : false} */
-								value={datos_generales.receta_farmacia ? datos_generales.receta_farmacia : false}
-								onChange={checkFarmacia}
+				<Box display="flex">
+					<Box>
+						<Box>
+							<Typography>
+								<b>Granel</b>
+							</Typography>
+							<Divider />
+						</Box>
+						<div className={classes.formInput}>
+							<FormControlLabel
+								control={<Checkbox value={precios.granel ? precios.granel : false} onChange={obtenerChecks} name="granel" />}
+								label="Vender a granel"
+							/>
+						</div>
+					</Box>
+					<Box>
+						<Box>
+							<Typography>
+								<b>Farmacia</b>
+							</Typography>
+							<Divider />
+						</Box>
+						<div className={classes.formInput}>
+							<FormControlLabel
+								control={
+									<Checkbox
+										/* checked={datos_generales.receta_farmacia ? datos_generales.receta_farmacia : false} */
+										value={datos_generales.receta_farmacia ? datos_generales.receta_farmacia : false}
+										onChange={checkFarmacia}
+										name="receta_farmacia"
+									/>
+								}
+								label="Necesita receta"
 								name="receta_farmacia"
 							/>
-						}
-						label="Necesita receta"
-						name="receta_farmacia"
-					/>
-				</div>
+						</div>
+					</Box>
+					<Box>
+						<Box>
+							<Typography>
+								<b>Monedero eléctronico</b>
+							</Typography>
+							<Divider />
+						</Box>
+						<Box>
+							<Box className={classes.formInput}>
+								<FormControlLabel
+									control={
+										<Checkbox value={precios.monedero ? precios.monedero : false} onChange={obtenerChecks} name="monedero" />
+									}
+									label="Monedero electrónico"
+								/>
+								<TextField
+									type="number"
+									InputProps={{ inputProps: { min: 0 } }}
+									size="small"
+									label="Valor por punto"
+									name="monedero_electronico"
+									id="form-producto-monedero_electronico"
+									variant="outlined"
+									value={precios.monedero_electronico ? precios.monedero_electronico : 0}
+									onChange={obtenerCampos}
+									disabled={precios.monedero ? false : true}
+								/>
+							</Box>
+						</Box>
+					</Box>
+				</Box>
 			</Container>
 		</Fragment>
 	);
 }
 
-const RegistrarNuevoSelect = ({ tipo, refetch }) => {
-	const [ open, setOpen ] = useState(false);
-	const [ value, setalue ] = useState('');
+const RegistrarNuevoSelect = ({ tipo, name, refetch, subcategorias, setSubcategorias }) => {
+	const [open, setOpen] = useState(false);
+	const [validacion, setValidacion] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [value, setValue] = useState('');
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	const { datos_generales, setDatosGenerales } = useContext(RegProductoContext);
+	const [alert, setAlert] = useState({ message: '', status: '', open: false });
+
+	/*  Categorias Mutation */
+	const [crearCategoria] = useMutation(CREAR_CATEGORIA);
+	/*  Subcategorias Mutation */
+	const [crearSubcategoria] = useMutation(CREAR_SUBCATEGORIA);
+	/*  Departamentos Mutation */
+	const [CrearDepartamentos] = useMutation(REGISTRAR_DEPARTAMENTO);
+	/*  Marcas Mutation */
+	const [CrearMarca] = useMutation(REGISTRAR_MARCAS);
 
 	const handleToggle = () => {
 		setOpen(!open);
 	};
 
-	const obtenerDatos = () => {
-		
-	}
+	const obtenerDatos = (e) => {
+		setValue(e.target.value);
+	};
+
+	const guardarDatos = async () => {
+		if (!value) {
+			setValidacion(true);
+			return;
+		}
+		let variables = {
+			input: {
+				[name]: value
+			},
+			empresa: sesion.empresa._id,
+			sucursal: sesion.sucursal._id
+		};
+		if (tipo === 'categoria') {
+			variables = {
+				input: {
+					[name]: value,
+					empresa: sesion.empresa._id,
+					sucursal: sesion.sucursal._id
+				}
+			};
+		}
+		if (tipo === 'subcategoria') {
+			variables = {
+				input: {
+					[name]: value
+				},
+				idCategoria: datos_generales.id_categoria
+			};
+		}
+		setLoading(true);
+		try {
+			switch (tipo) {
+				case 'categoria':
+					const categoria_creada = await crearCategoria({ variables });
+					refetch();
+					const id_categoria = categoria_creada.data.crearCategoria._id;
+					setDatosGenerales({
+						...datos_generales,
+						categoria: value,
+						id_categoria
+					});
+					break;
+				case 'subcategoria':
+					const subcategoria_creada = await crearSubcategoria({ variables });
+					refetch();
+					const id_subcategoria = subcategoria_creada.data.crearSubcategoria.message;
+					setSubcategorias([...subcategorias, { _id: id_subcategoria, subcategoria: value }]);
+					setDatosGenerales({
+						...datos_generales,
+						subcategoria: value,
+						id_subcategoria
+					});
+					break;
+				case 'departamento':
+					const departamento_creado = await CrearDepartamentos({ variables });
+					refetch();
+					const id_departamento = departamento_creado.data.crearDepartamentos.message;
+					setDatosGenerales({
+						...datos_generales,
+						departamento: value,
+						id_departamento
+					});
+					break;
+				case 'marca':
+					const marca_creada = await CrearMarca({ variables });
+					refetch();
+					const id_marca = marca_creada.data.crearMarcas.message;
+					setDatosGenerales({
+						...datos_generales,
+						marcas: value,
+						id_marca
+					});
+					break;
+				default:
+					break;
+			}
+			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			setLoading(false);
+			handleToggle();
+		} catch (error) {
+			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			setLoading(false);
+			console.log(error);
+		}
+	};
 
 	return (
 		<Fragment>
-			<Button color="primary" onClick={handleToggle}>
+			<Button
+				color="primary"
+				onClick={handleToggle}
+				disabled={tipo === 'subcategoria' && !datos_generales.id_categoria}
+			>
 				<Add />
 			</Button>
 			<Dialog open={open} onClose={handleToggle} aria-labelledby={`modal-title-${tipo}`}>
+				<SnackBarMessages alert={alert} setAlert={setAlert} />
 				<DialogTitle id={`modal-title-${tipo}`}>Registrar {tipo}</DialogTitle>
 				<DialogContent>
 					<TextField
+						error={validacion}
+						name={name}
 						autoFocus
 						label={tipo}
-						value={value}
 						fullWidth
 						variant="outlined"
 						onChange={obtenerDatos}
+						helperText={validacion ? 'Campo obligatorio' : ''}
 					/>
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleToggle} color="primary">
-						Cancel
+						Cancelar
 					</Button>
-					<Button onClick={handleToggle} color="primary">
-						Subscribe
+					<Button
+						onClick={guardarDatos}
+						variant="contained"
+						color="primary"
+						endIcon={loading ? <CircularProgress color="inherit" size={18} /> : null}
+					>
+						Guardar
 					</Button>
 				</DialogActions>
 			</Dialog>
