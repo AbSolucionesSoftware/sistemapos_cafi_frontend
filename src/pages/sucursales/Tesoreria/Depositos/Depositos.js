@@ -8,8 +8,10 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { Box } from '@material-ui/core';
-import depositoIcon from '../../../../icons/depositar.svg'
+import { Box, Grid, TextField } from '@material-ui/core';
+import depositoIcon from '../../../../icons/depositar.svg';
+
+import TablaDepositos from './TablaDepositos';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -21,7 +23,16 @@ const useStyles = makeStyles((theme) => ({
 	},
     icon: {
 		width: 100
-	}
+	},
+	formInputFlex: {
+		display: 'flex',
+		'& > *': {
+			margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
+		}
+	},
+	formInput: {
+		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
+	},
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -60,7 +71,35 @@ export default function Depositos() {
 						</IconButton>
 					</Toolbar>
 				</AppBar>
-				Toda la info de Depositos
+
+				<Grid>
+					<div className={classes.formInputFlex}>
+                        <Box width="100%">
+                            <Typography>Nombre de Cliente:</Typography>
+                            <TextField
+								fullWidth
+								size="small"
+								/* error */
+								name="nombre_comercial"
+								id="form-producto-nombre-comercial"
+								variant="outlined"
+								/* value="" */
+								/* helperText="Incorrect entry." */
+								/* onChange={obtenerCampos} */
+							/>
+                        </Box>
+                        <Box width="100%">
+                            <Typography>Total Abonado:</Typography>
+                            <Box mt={1}>
+                                <Typography>
+                                    $15,000
+                                </Typography>
+                            </Box>
+                        </Box>
+					</div>
+				</Grid>
+				
+				<TablaDepositos />
 			</Dialog>
 		</div>
 	);
