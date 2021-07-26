@@ -58,7 +58,7 @@ export default function Depositos() {
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-                        Depositos
+                        	Depositos
 						</Typography>
 						<Box mx={3}>
                             <Button autoFocus color="inherit" variant="outlined" size="large" >

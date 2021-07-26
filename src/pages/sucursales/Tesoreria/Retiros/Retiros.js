@@ -8,8 +8,11 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { Box } from '@material-ui/core';
-import retiroIcon from '../../../../icons/retiro-de-dinero.svg'
+import { Box, Grid, TextField, Select, MenuItem } from '@material-ui/core';
+
+import retiroIcon from '../../../../icons/retiro-de-dinero.svg';
+
+import TablaRetiros from './TablaRetiros'
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -21,7 +24,16 @@ const useStyles = makeStyles((theme) => ({
 	},
     icon: {
 		width: 100
-	}
+	},
+	formInputFlex: {
+		display: 'flex',
+		'& > *': {
+			margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
+		}
+	},
+	formInput: {
+		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
+	},
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -48,11 +60,11 @@ export default function Retiros() {
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-                        Retiros
+                        	Retiros
 						</Typography>
 						<Box mx={3}>
                             <Button autoFocus color="inherit" size="large" onClick={handleClickOpen}>
-                                save
+                                Realizar retiro
                             </Button>
                         </Box>
                         <IconButton edge="start" color="inherit" onClick={handleClickOpen} aria-label="close">
@@ -60,7 +72,86 @@ export default function Retiros() {
 						</IconButton>
 					</Toolbar>
 				</AppBar>
-				Toda la info de Retiros
+				<Grid>
+					<div className={classes.formInputFlex}>
+						<Box width="100%" p={2}>
+							<Typography>Persona que retira</Typography>
+							<TextField
+								fullWidth
+								size="small"
+								/* error */
+								name="nombre_comercial"
+								id="form-producto-nombre-comercial"
+								variant="outlined"
+								/* value="" */
+								/* helperText="Incorrect entry." */
+								/* onChange={obtenerCampos} */
+							/>
+						</Box>
+						<Box width="100%" p={2}>
+							<Typography>Persona que entrega</Typography>
+							<TextField
+								fullWidth
+								size="small"
+								/* error */
+								name="nombre_comercial"
+								id="form-producto-nombre-comercial"
+								variant="outlined"
+								/* value="" */
+								/* helperText="Incorrect entry." */
+								/* onChange={obtenerCampos} */
+							/>
+						</Box>
+                        <Box width="100%" p={2}>
+							<Typography>Caja a Retirar</Typography>
+							<Box mt={1} width="100%">
+								<Select
+									labelId="demo-simple-select-outlined-label"
+									id="demo-simple-select-outlined"
+									// onChange={handleChange}
+									label="Age"
+								>
+									 <MenuItem value="">
+										<em>None</em>
+									</MenuItem>
+									<MenuItem value={10}>Ten</MenuItem>
+									<MenuItem value={20}>Twenty</MenuItem>
+									<MenuItem value={30}>Thirty</MenuItem>
+								</Select>
+							</Box>
+                        </Box>
+						<Box width="100%" p={2}>
+							<Typography>Monto a retirar:</Typography>
+							<TextField
+								fullWidth
+								size="small"
+								/* error */
+								name="nombre_comercial"
+								id="form-producto-nombre-comercial"
+								variant="outlined"
+								/* value="" */
+								/* helperText="Incorrect entry." */
+								/* onChange={obtenerCampos} */
+							/>
+						</Box>
+                        <Box width="100%"  p={2}>
+                            <Typography>Fecha de retiro:</Typography>
+                            <Box mt={1}>
+                                <Typography>
+                                    23/Julio/2021
+                                </Typography>
+                            </Box>
+                        </Box>
+					</div>
+				</Grid>
+				<Box p={2}>
+					<Box p={1}>
+						<Typography variant="h6">
+							Retiros realizados
+						</Typography>
+					</Box>
+					<TablaRetiros />
+				</Box>
 			</Dialog>
 		</div>
 	);
