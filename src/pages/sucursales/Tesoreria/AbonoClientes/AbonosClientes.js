@@ -11,7 +11,8 @@ import Slide from '@material-ui/core/Slide';
 import { Box, TextField, Grid } from '@material-ui/core';
 import abonoIcon from '../../../../icons/salary.svg';
 
-import ListaClientes from './ListaClientes';
+import TablaAbonosClientes from './TablaAbonoClientes';
+import AbonoaRecibir from './Abono_a_Recibir';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {	
@@ -69,7 +70,7 @@ export default function AbonosClientes() {
 				</AppBar>
 				<Grid container>
 					<Box width="50%" p={2}>
-						<Typography>Busqueda de clientes</Typography>
+						<Typography>Busqueda por cliente o por cuenta</Typography>
 						<TextField
 							fullWidth
 							size="small"
@@ -82,6 +83,7 @@ export default function AbonosClientes() {
 							/* onChange={obtenerCampos} */
 						/>
 					</Box>
+					
 					<Box mt={5}>
 						<Button
 							size="large"
@@ -91,9 +93,14 @@ export default function AbonosClientes() {
 							Buscar
 						</Button>
 					</Box>
+					<Grid lg={5}>
+						<Box display="flex" justifyContent="center" mt={4}>
+							<AbonoaRecibir />
+						</Box>
+					</Grid>
 				</Grid>
 				<Box p={2}>
-					<ListaClientes />
+					<TablaAbonosClientes />
 				</Box>
 			</Dialog>
 		</div>

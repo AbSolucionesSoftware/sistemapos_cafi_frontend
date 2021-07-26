@@ -74,7 +74,7 @@ const useStyles  = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaAbonosClientes() {
+export default function TablaAbonos() {
 	const classes = useStyles();
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(5);
