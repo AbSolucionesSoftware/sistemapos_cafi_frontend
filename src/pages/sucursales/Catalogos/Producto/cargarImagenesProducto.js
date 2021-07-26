@@ -31,10 +31,10 @@ export default function CargarImagenesProducto() {
 	const { imagenes, setImagenes, onPreview } = useContext(RegProductoContext);
 
 	const cargarImagen = (e) => {
-		setImagenes({
+		setImagenes([
 			...imagenes,
-			imagenes: [ ...imagenes.imagenes, e.target.files[0] ]
-		});
+			e.target.files[0]
+		]);
 	};
 
 	const render_imagenes = imagenes.map((res, index) => <RenderImagenes key={index} index={index} imagen={res} />);
@@ -42,7 +42,7 @@ export default function CargarImagenesProducto() {
 	return (
 		<Fragment>
 			<Grid container>
-				<Grid item lg={6}>
+				<Grid item md={6}>
 					<Box>
 						<input
 							accept="image/*"
@@ -60,7 +60,7 @@ export default function CargarImagenesProducto() {
 					</Box>
 					{render_imagenes}
 				</Grid>
-				<Grid item lg={6}>
+				<Grid item md={6}>
 					<Box display="flex" minHeight={300}>
 						<Box mx={1}>
 							<Divider orientation="vertical" />
@@ -91,10 +91,9 @@ const RenderImagenes = ({imagen, index}) => {
 		}
 		const array = imagenes;
 		array.splice(index, 1);
-		setImagenes({
-			...imagenes,
-			imagenes: array
-		});
+		setImagenes([
+			...array,
+		]);
 		handleModal();
 	}
 

@@ -9,6 +9,7 @@ import almacenIcon from '../../../../icons/tarea-completada.svg';
 import imagenesIcon from '../../../../icons/imagenes.svg';
 import ventasIcon from '../../../../icons/etiqueta-de-precio.svg';
 import registroIcon from '../../../../icons/portapapeles.svg';
+import costosIcon from '../../../../icons/costos.svg';
 import tallasColoresIcon from '../../../../icons/tallas-colores.svg';
 import RegistroInfoGenerales from './registrarInfoGeneral';
 import RegistroInfoAdidional from '../Producto/PreciosVenta/registrarInfoAdicional';
@@ -20,6 +21,8 @@ import ErrorPage from '../../../../components/ErrorPage';
 
 import { useMutation, useQuery } from '@apollo/client';
 import { CREAR_PRODUCTO, OBTENER_CONSULTAS } from '../../../../gql/Catalogos/productos';
+import validaciones from './validaciones';
+import CentroCostos from './CentroCostos';
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -75,30 +78,55 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function CrearProducto() {
-	const [ open, setOpen ] = useState(false);
-	const { datos_generales, setDatosGenerales, setValidacion } = useContext(RegProductoContext);
+	const [open, setOpen] = useState(false);
+	const { datos_generales,
+		setDatosGenerales,
+		precios,
+		setPrecios,
+		setValidacion,
+		validacion,
+		preciosP,
+		imagenes,
+		unidadesVenta,
+		almacen_inicial
+	} = useContext(RegProductoContext);
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	/* Mutations */
-	const [ crearProducto ] = useMutation(CREAR_PRODUCTO);
+	const [crearProducto] = useMutation(CREAR_PRODUCTO);
 
 	const toggleModal = () => {
 		setOpen(!open);
 		setDatosGenerales({});
 	};
 
-	const saveData = async () => {
-		console.log(datos_generales);
-		if (
-			!datos_generales.clave_alterna ||
-			!datos_generales.tipo_producto ||
-			!datos_generales.nombre_generico ||
-			!datos_generales.nombre_comercial
-		) {
-			setValidacion({ error: true, message: 'Campo obligatorio', vista: 1 });
-		}
-		/* const input = productos;
+	console.log(sesion);
 
-		try {
+	const saveData = async () => {
+		const validate = validaciones(datos_generales, precios);
+
+		/* if (validate.error) {
+			setValidacion(validate);
+			return
+		}
+		setValidacion(validate); */
+
+		precios.precios_producto = preciosP;
+		precios.unidad_de_venta = unidadesVenta;
+
+		const input = {
+			datos_generales,
+			precios,
+			imagenes,
+			almacen_inicial,
+			empresa: sesion.empresa._id,
+			sucursal: sesion.sucursal._id,
+			usuario: sesion._id,
+		};
+
+		console.log(input);
+
+		/* try {
 			await crearProducto({
 				variables: {
 					input
@@ -117,7 +145,7 @@ export default function CrearProducto() {
 			<Button color="primary" variant="contained" size="large" onClick={toggleModal}>
 				Nuevo producto
 			</Button>
-			<Dialog open={open} onClose={toggleModal} fullWidth maxWidth="lg">
+			<Dialog open={open} onClose={toggleModal} fullWidth maxWidth="xl">
 				<ContenidoModal />
 				<DialogActions>
 					<Button
@@ -146,7 +174,7 @@ export default function CrearProducto() {
 
 const ContenidoModal = () => {
 	const classes = useStyles();
-	const [ value, setValue ] = useState(0);
+	const [value, setValue] = useState(0);
 	const { validacion } = useContext(RegProductoContext);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
@@ -162,6 +190,7 @@ const ContenidoModal = () => {
 				<Typography variant="h6">Cargando...</Typography>
 			</Box>
 		);
+
 	if (error) return <ErrorPage error={error} />;
 
 	const { obtenerConsultasProducto } = data;
@@ -192,7 +221,7 @@ const ContenidoModal = () => {
 									vertical: 'bottom',
 									horizontal: 'right'
 								}}
-								invisible={validacion.error && validacion.vista === 1 ? false : true}
+								invisible={validacion.error && validacion.vista1 ? false : true}
 							>
 								<img src={registroIcon} alt="icono registro" className={classes.iconSvg} />
 							</Badge>
@@ -209,7 +238,7 @@ const ContenidoModal = () => {
 									vertical: 'bottom',
 									horizontal: 'right'
 								}}
-								invisible={validacion.error && validacion.vista === 2 ? false : true}
+								invisible={validacion.error && validacion.vista2 ? false : true}
 							>
 								<img src={ventasIcon} alt="icono venta" className={classes.iconSvg} />
 							</Badge>
@@ -217,19 +246,24 @@ const ContenidoModal = () => {
 						{...a11yProps(1)}
 					/>
 					<Tab
-						label="Imagenes"
-						icon={<img src={imagenesIcon} alt="icono imagenes" className={classes.iconSvg} />}
+						label="Inventario y almacen"
+						icon={<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />}
 						{...a11yProps(2)}
 					/>
 					<Tab
-						label="Almacen incial"
-						icon={<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />}
+						label="Centro de costos"
+						icon={<img src={costosIcon} alt="icono almacen" className={classes.iconSvg} />}
 						{...a11yProps(3)}
+					/>
+					<Tab
+						label="Imagenes"
+						icon={<img src={imagenesIcon} alt="icono imagenes" className={classes.iconSvg} />}
+						{...a11yProps(4)}
 					/>
 					<Tab
 						label="Tallas y colores"
 						icon={<img src={tallasColoresIcon} alt="icono colores" className={classes.iconSvg} />}
-						{...a11yProps(4)}
+						{...a11yProps(5)}
 					/>
 				</Tabs>
 			</AppBar>
@@ -240,12 +274,15 @@ const ContenidoModal = () => {
 				<RegistroInfoAdidional />
 			</TabPanel>
 			<TabPanel value={value} index={2}>
-				<CargarImagenesProducto />
+				<RegistroAlmacenInicial obtenerConsultasProducto={obtenerConsultasProducto} />
 			</TabPanel>
 			<TabPanel value={value} index={3}>
-				<RegistroAlmacenInicial />
+				<CentroCostos obtenerConsultasProducto={obtenerConsultasProducto} />
 			</TabPanel>
 			<TabPanel value={value} index={4}>
+				<CargarImagenesProducto />
+			</TabPanel>
+			<TabPanel value={value} index={5}>
 				<ColoresTallas />
 			</TabPanel>
 		</div>
