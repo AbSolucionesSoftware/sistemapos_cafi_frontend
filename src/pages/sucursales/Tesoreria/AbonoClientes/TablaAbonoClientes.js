@@ -12,7 +12,6 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 
 import DetallesClienteCuenta from './DetalleCuenta/DetallesClienteCuenta';
-import AbonoaRecibir from './Abono_a_Recibir';
 import LiquidarCuenta from './LiquidarCuenta';
 
 function createData(name, calories, fat, carbs, protein) {
