@@ -74,7 +74,7 @@ const useStyles  = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaComprasClientes() {
+export default function TablaCompras() {
 	const classes = useStyles();
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(5);
@@ -87,6 +87,7 @@ export default function TablaComprasClientes() {
 		setRowsPerPage(+event.target.value);
 		setPage(0);
 	};
+
 	return (
 		<Paper className={classes.root}>
 			<TableContainer className={classes.container}>
@@ -134,6 +135,7 @@ export default function TablaComprasClientes() {
 				onChangePage={handleChangePage}
 				onChangeRowsPerPage={handleChangeRowsPerPage}
 			/>
+
 		</Paper>
 	);
 }
