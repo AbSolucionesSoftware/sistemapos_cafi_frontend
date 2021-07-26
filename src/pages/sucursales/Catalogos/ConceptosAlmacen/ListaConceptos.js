@@ -172,7 +172,7 @@ const Modal = ({ handleModal, openModal, handleDelete }) => {
 	return (
 		<div>
 			<Dialog open={openModal} onClose={handleModal}>
-				<DialogTitle>{'Eliminar este concepto afectará innventario y cálculos de estados de resultado ,¿Seguro que quieres eliminar esto?'}</DialogTitle>
+				<DialogTitle>{'Eliminar este concepto afectará cálculos de estados de resultado ,¿Seguro que quieres eliminar esto?'}</DialogTitle>
 				<DialogActions>
 					<Button onClick={handleModal} color="primary">
 						Cancelar

@@ -121,7 +121,7 @@ export default function RegistroServicios() {
 	return (
 		<div>
 			<Dialog open={openModal} onClose={handleModal}>
-				<DialogTitle>{'Editar este concepto afectará innventario y cálculos de estados de resultado ,¿Seguro que quieres editar esto?'}</DialogTitle>
+				<DialogTitle>{'Editar este concepto afectará cálculos de estados de resultado ,¿Seguro que quieres editar esto?'}</DialogTitle>
 				<DialogActions>
 					<Button onClick={handleModal} color="primary">
 						Cancelar
