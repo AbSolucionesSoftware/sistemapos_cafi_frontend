@@ -1,6 +1,5 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -8,7 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { Box, Grid, TextField } from '@material-ui/core';
+import { Box, FormControl, Button, Grid, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import depositoIcon from '../../../../icons/depositar.svg';
 
 import TablaDepositos from './TablaDepositos';
@@ -62,8 +61,8 @@ export default function Depositos() {
                         Depositos
 						</Typography>
 						<Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClickOpen}>
-                                save
+                            <Button autoFocus color="inherit" variant="outlined" size="large" >
+                                Realizar Deposito
                             </Button>
                         </Box>
                         <IconButton edge="start" color="inherit" onClick={handleClickOpen} aria-label="close">
@@ -74,9 +73,9 @@ export default function Depositos() {
 
 				<Grid>
 					<div className={classes.formInputFlex}>
-                        <Box width="100%">
-                            <Typography>Nombre de Cliente:</Typography>
-                            <TextField
+						<Box width="100%" p={2}>
+							<Typography>Persona que deposita</Typography>
+							<TextField
 								fullWidth
 								size="small"
 								/* error */
@@ -87,19 +86,72 @@ export default function Depositos() {
 								/* helperText="Incorrect entry." */
 								/* onChange={obtenerCampos} */
 							/>
+						</Box>
+						<Box width="100%" p={2}>
+							<Typography>Persona que recibe</Typography>
+							<TextField
+								fullWidth
+								size="small"
+								/* error */
+								name="nombre_comercial"
+								id="form-producto-nombre-comercial"
+								variant="outlined"
+								/* value="" */
+								/* helperText="Incorrect entry." */
+								/* onChange={obtenerCampos} */
+							/>
+						</Box>
+                        <Box width="100%" p={2}>
+							<Typography>Caja a Depositar</Typography>
+							<Box mt={1} width="100%">
+								<Select
+									labelId="demo-simple-select-outlined-label"
+									id="demo-simple-select-outlined"
+									// onChange={handleChange}
+									label="Age"
+								>
+									 <MenuItem value="">
+										<em>None</em>
+									</MenuItem>
+									<MenuItem value={10}>Ten</MenuItem>
+									<MenuItem value={20}>Twenty</MenuItem>
+									<MenuItem value={30}>Thirty</MenuItem>
+								</Select>
+							</Box>
                         </Box>
-                        <Box width="100%">
-                            <Typography>Total Abonado:</Typography>
+						<Box width="100%" p={2}>
+							<Typography>Monto a depositar:</Typography>
+							<TextField
+								fullWidth
+								size="small"
+								/* error */
+								name="nombre_comercial"
+								id="form-producto-nombre-comercial"
+								variant="outlined"
+								/* value="" */
+								/* helperText="Incorrect entry." */
+								/* onChange={obtenerCampos} */
+							/>
+						</Box>
+                        <Box width="100%"  p={2}>
+                            <Typography>Fecha de deposito:</Typography>
                             <Box mt={1}>
                                 <Typography>
-                                    $15,000
+                                    23/Julio/2021
                                 </Typography>
                             </Box>
                         </Box>
+						
 					</div>
 				</Grid>
-				
-				<TablaDepositos />
+				<Box p={2}>
+					<Box p={1}>
+						<Typography variant="h6">
+							Depositos realizados
+						</Typography>
+					</Box>
+					<TablaDepositos />
+				</Box>
 			</Dialog>
 		</div>
 	);
