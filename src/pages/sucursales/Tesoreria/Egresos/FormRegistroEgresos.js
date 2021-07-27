@@ -1,5 +1,5 @@
-import { Box, makeStyles, TextField, Typography } from '@material-ui/core';
-import React from 'react';
+import { Box, makeStyles, Select,MenuItem , TextField, Typography } from '@material-ui/core';
+import React, { useState } from 'react';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -26,6 +26,12 @@ const useStyles = makeStyles((theme) => ({
 export default function FormRegistroEgresos({tipo}) {
 
     const classes = useStyles();
+
+    const [age, setAge] = useState('');
+
+    const handleChange = (event) => {
+        setAge(event.target.value);
+    };
 
     return (
         <>
@@ -59,7 +65,7 @@ export default function FormRegistroEgresos({tipo}) {
                 />
             </Box>
             <Box width="100%">
-                <Typography>Fecha: </Typography>
+                <Typography>Fecha Pago:</Typography>
                 <TextField
                     fullWidth
                     size="small"
@@ -67,6 +73,11 @@ export default function FormRegistroEgresos({tipo}) {
                     name="nombre_comercial"
                     id="form-producto-nombre-comercial"
                     variant="outlined"
+                    type="date"
+                    defaultValue="2017-05-24"
+                    InputLabelProps={{
+                    shrink: true,
+                    }}
                     /* value="" */
                     /* helperText="Incorrect entry." */
                     /* onChange={obtenerCampos} */
@@ -77,31 +88,31 @@ export default function FormRegistroEgresos({tipo}) {
         <div className={classes.formInputFlex}>
             <Box width="100%">
                 <Typography>Categoria:</Typography>
-                <TextField
-                    fullWidth
+                <Select
                     size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
+                    value={age}
                     variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
+                    fullWidth
+                    onChange={handleChange}
+                >
+                    <MenuItem value={10}>Ten</MenuItem>
+                    <MenuItem value={20}>Twenty</MenuItem>
+                    <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
             </Box>
             <Box width="100%">
                 <Typography>SubCatergoria:</Typography>
-                <TextField
-                    fullWidth
+                <Select
                     size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
+                    value={age}
                     variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
+                    fullWidth
+                    onChange={handleChange}
+                >
+                    <MenuItem value={10}>Ten</MenuItem>
+                    <MenuItem value={20}>Twenty</MenuItem>
+                    <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
             </Box>
             {tipo ==='credito' ? (
                 <Box width="100%">
@@ -113,6 +124,11 @@ export default function FormRegistroEgresos({tipo}) {
                         name="nombre_comercial"
                         id="form-producto-nombre-comercial"
                         variant="outlined"
+                        type="date"
+                        defaultValue="2017-05-24"
+                        InputLabelProps={{
+                        shrink: true,
+                        }}
                         /* value="" */
                         /* helperText="Incorrect entry." */
                         /* onChange={obtenerCampos} */
@@ -121,20 +137,7 @@ export default function FormRegistroEgresos({tipo}) {
             ):(null)}
         </div>
         <div className={classes.formInputFlex}>
-            <Box width="100%">
-                <Typography>Usuario:</Typography>
-                <TextField
-                    fullWidth
-                    size="small" 
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
+            
             <Box width="100%">
                 <Typography>Empresa: </Typography>
                 <TextField
@@ -227,17 +230,17 @@ export default function FormRegistroEgresos({tipo}) {
             ):(null)}
             <Box width="100%">
                 <Typography>Metodo de pago:</Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
+                    <Select
+                        size="small"
+                        value={age}
+                        variant="outlined"
+                        fullWidth
+                        onChange={handleChange}
+                    >
+                        <MenuItem value={10}>Tarjeta</MenuItem>
+                        <MenuItem value={20}>Efectivo</MenuItem>
+                        <MenuItem value={30}>Monedero electronico</MenuItem>
+                    </Select>
             </Box>
         </div>
         <div className={classes.formInputFlex}>
