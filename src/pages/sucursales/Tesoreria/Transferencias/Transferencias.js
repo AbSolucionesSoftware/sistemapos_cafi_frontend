@@ -11,7 +11,9 @@ import Slide from '@material-ui/core/Slide';
 import { Box, Grid, InputBase, Paper } from '@material-ui/core';
 import transferIcon from '../../../../icons/transferencia-bancaria.svg'
 import { Search } from '@material-ui/icons';
+
 import ListaTransferencias from './ListaTransferencias';
+import FormTransferencia from './FormTransferencia';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -62,11 +64,11 @@ export default function Transferencias() {
 						<Typography variant="h6" className={classes.title}>
                         Transferencias
 						</Typography>
-						<Box mx={3}>
+						{/* <Box mx={3}>
                             <Button autoFocus color="inherit" size="large" onClick={handleClickOpen}>
                                 save
                             </Button>
-                        </Box>
+                        </Box> */}
                         <IconButton edge="start" color="inherit" onClick={handleClickOpen} aria-label="close">
 							<CloseIcon />
 						</IconButton>
@@ -88,7 +90,7 @@ export default function Transferencias() {
 								</IconButton>
 							</Paper>
 						</Box>
-						{/* <VistaRegistroEgreso accion='registrar'/> */}
+						<FormTransferencia/>
 					</Box>
 					<Grid item lg={12}>
 						<Box p={2}>

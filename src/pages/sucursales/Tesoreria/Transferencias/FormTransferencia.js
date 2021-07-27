@@ -42,14 +42,124 @@ export default function FormTransferencia() {
 
     return (
         <>
-
         <Button color="primary" variant="contained" size="large" onClick={handleClick}>
             <Add /> Nueva Transferencia
         </Button>
 
-        <Dialog open={open} onClose={handleClick} fullWidth maxWidth="lg">
+        <Dialog open={open} onClose={handleClick} fullWidth maxWidth="xs">
             <div className={classes.root}>
-                
+                <Box p={2}>
+                    <Typography variant="h6">
+                        Nueva Transferencia
+                    </Typography>
+                </Box>
+                <div className={classes.formInputFlex}>
+                    <Box width="100%">
+                        <Typography>Usuario:</Typography>
+                        <TextField
+                            disabled={true}
+                            fullWidth
+                            size="small"
+                            /* error */
+                            name="nombre_comercial"
+                            id="form-producto-nombre-comercial"
+                            variant="outlined"
+                            value="Manuel"
+                            /* helperText="Incorrect entry." */
+                            /* onChange={obtenerCampos} */
+                        />
+                    </Box>
+                    <Box width="100%" pt={3}>
+                            <Button color="primary" variant="outlined" size="large">
+                                Editar usuario
+                            </Button>
+                    </Box>                
+                </div>
+                <div className={classes.formInputFlex}>
+                    <Box width="100%">
+                        <Typography>Fecha:</Typography>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            /* error */
+                            name="nombre_comercial"
+                            id="form-producto-nombre-comercial"
+                            variant="outlined"
+                            type="date"
+                            defaultValue="2017-05-24"
+                            InputLabelProps={{
+                            shrink: true,
+                            }}
+                            /* value="" */
+                            /* helperText="Incorrect entry." */
+                            /* onChange={obtenerCampos} */
+                        />
+                    </Box>
+                    <Box width="100%">
+                        <Typography>Hora:</Typography>
+                        <TextField
+                            id="time"
+                            label="Alarm clock"
+                            type="time"
+                            defaultValue="07:30"
+                            className={classes.textField}
+                            InputLabelProps={{
+                            shrink: true,
+                            }}
+                            inputProps={{
+                            step: 300, // 5 min
+                            }}
+                        />
+                    </Box>                
+                </div>
+                <div className={classes.formInputFlex}>
+                    <Box width="100%">
+                        <Typography>Origen:</Typography>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            /* error */
+                            name="nombre_comercial"
+                            id="form-producto-nombre-comercial"
+                            variant="outlined"
+                            /* value="" */
+                            /* helperText="Incorrect entry." */
+                            /* onChange={obtenerCampos} */
+                        />
+                    </Box>
+                    <Box width="100%">
+                        <Typography>Destino:</Typography>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            /* error */
+                            name="nombre_comercial"
+                            id="form-producto-nombre-comercial"
+                            variant="outlined"
+                            /* value="" */
+                            /* helperText="Incorrect entry." */
+                            /* onChange={obtenerCampos} */
+                        />
+                    </Box>
+                </div>
+                <div className={classes.formInputFlex}>
+                    <Box width="100%">
+                        <Typography>Motivos:</Typography>
+                        <TextField
+                            fullWidth
+                            size="small"
+                            multiline
+                            rows={4}
+                            /* error */
+                            name="nombre_comercial"
+                            id="form-producto-nombre-comercial"
+                            variant="outlined"
+                            /* value="" */
+                            /* helperText="Incorrect entry." */
+                            /* onChange={obtenerCampos} */
+                        />
+                    </Box>
+                </div>
             </div>
 				<DialogActions>
 					<Button
@@ -72,217 +182,6 @@ export default function FormTransferencia() {
 					</Button>
 				</DialogActions>
 			</Dialog>
-        <div className={classes.formInputFlex}>
-            <Box width="100%">
-                <Typography>Folio:</Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
-            <Box width="100%">
-                <Typography>Folio factura:</Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
-            <Box width="100%">
-                <Typography>Fecha: </Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
-        </div>
-        
-        <div className={classes.formInputFlex}>
-            <Box width="100%">
-                <Typography>Categoria:</Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
-            <Box width="100%">
-                <Typography>SubCatergoria:</Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
-            <Box width="100%">
-                <Typography>Fecha Pago:</Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
-        </div>
-        <div className={classes.formInputFlex}>
-            <Box width="100%">
-                <Typography>Usuario:</Typography>
-                <TextField
-                    fullWidth
-                    size="small" 
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
-            <Box width="100%">
-                <Typography>Empresa: </Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
-            <Box width="100%">
-                <Typography>Provedor: </Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
-            <Box width="100%">
-                <Typography>Motivo:</Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
-        </div>
-        <div className={classes.formInputFlex}>
-            <Box width="100%">
-                <Typography>Cantidad:</Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
-            <Box width="100%">
-                <Typography>Metodo de pago:</Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
-        </div>
-        <div className={classes.formInputFlex}>
-            <Box width="100%">
-                <Typography>Concepto:</Typography>
-                <TextField
-                    multiline
-                    rows={3}
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
-            <Box width="100%">
-                <Typography>Observación:</Typography>
-                <TextField
-                    multiline
-                    rows={3}
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
-        </div>
         </>
     )
 }
