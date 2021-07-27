@@ -8,8 +8,10 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { Box } from '@material-ui/core';
+import { Box, Grid, InputBase, Paper } from '@material-ui/core';
 import transferIcon from '../../../../icons/transferencia-bancaria.svg'
+import { Search } from '@material-ui/icons';
+import ListaTransferencias from './ListaTransferencias';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -21,7 +23,17 @@ const useStyles = makeStyles((theme) => ({
 	},
     icon: {
 		width: 100
-	}
+	},
+	root: {
+		flexGrow: 1,
+		width: '100%',
+		height: '100vh',
+		backgroundColor: theme.palette.background.paper
+	},
+	rootBusqueda: {
+		display: 'flex',
+		paddingLeft: theme.spacing(2)
+	},
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -60,7 +72,30 @@ export default function Transferencias() {
 						</IconButton>
 					</Toolbar>
 				</AppBar>
-				Toda la info de Transferencias
+				<div className={classes.root}>
+					<Box m={3} display="flex" justifyContent="space-between">
+						<Box mr={5} minWidth="70%">
+							<Paper className={classes.rootBusqueda}>
+								<InputBase
+									fullWidth
+									placeholder="Buscar transferencia..."
+									// onChange={(e) => setValues(e.target.value)}
+									// onKeyPress={pressEnter}
+									// value={values}
+								/>
+								<IconButton>
+									<Search />
+								</IconButton>
+							</Paper>
+						</Box>
+						{/* <VistaRegistroEgreso accion='registrar'/> */}
+					</Box>
+					<Grid item lg={12}>
+						<Box p={2}>
+							<ListaTransferencias />
+						</Box>
+					</Grid>
+				</div>
 			</Dialog>
 		</div>
 	);
