@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types';
 
-import { AppBar, Box, DialogActions, makeStyles, Tab, Tabs } from '@material-ui/core';
+import { AppBar, Box, DialogActions, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core';
 import { Button, Dialog } from '@material-ui/core';
 
 import { Add } from '@material-ui/icons';
@@ -123,7 +123,14 @@ export default function VistaRegistroEgreso() {
 								icon={<FcDonate className={classes.iconSize} />}
 								{...a11yProps(1)}
 							/>
+							<Grid container justify="flex-end">
+							<Box mt={4} display="flex" >
+								<Typography variant="h6">Usuario: Funalo</Typography> 
+							</Box>
+							</Grid>
+							
 						</Tabs>
+						
 					</AppBar>
 					<TabPanel value={value} index={0}>
 						<FormRegistroEgresos tipo='credito'/>
