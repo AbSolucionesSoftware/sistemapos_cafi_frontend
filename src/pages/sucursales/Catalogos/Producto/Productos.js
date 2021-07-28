@@ -7,10 +7,11 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { FcPlus } from 'react-icons/fc';
+import ProductosIcon from '../../../../icons/productos.svg';
 import { Box } from '@material-ui/core';
 import CrearProducto from './crearProducto';
 import ListaProductos from './ListaProductos';
+import { RegProductoProvider } from '../../../../context/Catalogos/CtxRegProducto';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -22,6 +23,9 @@ const useStyles = makeStyles((theme) => ({
 	},
 	icon: {
 		fontSize: 100
+	},
+	iconSvg: {
+		width: 100
 	}
 }));
 
@@ -46,7 +50,7 @@ export default function Productos() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<FcPlus className={classes.icon} />
+						<img src={ProductosIcon} alt="icono ropa" className={classes.iconSvg} />
 					</Box>
 					Productos
 				</Box>
@@ -62,12 +66,14 @@ export default function Productos() {
 						</Button>
 					</Toolbar>
 				</AppBar>
-				<Box m={3} display="flex" justifyContent="flex-end">
-					<CrearProducto />
-				</Box>
-				<Box mx={4}>
-					<ListaProductos />
-				</Box>
+				<RegProductoProvider>
+					<Box m={3} display="flex" justifyContent="flex-end">
+						<CrearProducto />
+					</Box>
+					<Box mx={4}>
+						<ListaProductos />
+					</Box>
+				</RegProductoProvider>
 			</Dialog>
 		</div>
 	);

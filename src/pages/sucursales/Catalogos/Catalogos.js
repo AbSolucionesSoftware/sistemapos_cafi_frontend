@@ -13,6 +13,8 @@ import Departamentos from './Departamentos/Departamentos';
 import Categorias from './Categorias/Categorias';
 import Colores from './Colores/Colores';
 import Marcas from './Marcas/Marcas';
+import CentroCostos from './CentroCostos/CentroCostos';
+import ConceptosAlmacen from './ConceptosAlmacen/ConceptosAlmacen';
 
 export default function Catalogos() {
 	return (
@@ -81,6 +83,16 @@ export default function Catalogos() {
 				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Marcas />
+					</Box>
+				</Grid>
+				<Grid item lg={2}>
+					<Box display="flex" justifyContent="center" alignItems="center">
+						<CentroCostos />
+					</Box>
+				</Grid>
+				<Grid item lg={2}>
+					<Box display="flex" justifyContent="center" alignItems="center">
+						<ConceptosAlmacen />
 					</Box>
 				</Grid>
 			</Grid>

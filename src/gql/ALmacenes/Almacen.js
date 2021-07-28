@@ -7,7 +7,7 @@ export const REGISTRO_ALMACEN = gql`
         }
     }
 `;
-
+ 
 export const OBTENER_ALMACENES = gql`
     query obtenerAlmacenes( $id: ID! ){
         obtenerAlmacenes(id: $id){

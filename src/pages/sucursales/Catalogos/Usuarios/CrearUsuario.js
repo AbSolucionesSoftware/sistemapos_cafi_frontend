@@ -146,8 +146,8 @@ export default function CrearUsuario({ accion, datos }) {
 		try {
 			if (accion === 'registrar') {
 				usuario.numero_usuario = numerosRandom(100000000, 999999999);
-				usuario.empresa = sesion.empresa;
-				usuario.sucursal = sesion.sucursal;
+				usuario.empresa = sesion.empresa._id;
+				usuario.sucursal = sesion.sucursal._id;
 				const input = usuario;
 				await crearUsuario({
 					variables: {

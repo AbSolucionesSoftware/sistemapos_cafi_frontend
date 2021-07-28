@@ -14,7 +14,7 @@ import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Grid } f
 import { DialogContent, DialogTitle, IconButton, Typography, Avatar, Switch } from '@material-ui/core';
 import { Dehaze, Delete } from '@material-ui/icons';
 import { ClienteCtx } from '../../../../context/Catalogos/crearClienteCtx';
-
+ 
 import { useQuery, useMutation } from '@apollo/client';
 import { OBTENER_CLIENTES, ACTUALIZAR_CLIENTE } from '../../../../gql/Catalogos/clientes';
 

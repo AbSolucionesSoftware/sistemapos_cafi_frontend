@@ -3,6 +3,7 @@ import { Box, Button, TextField, CircularProgress } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 import TablaTallas from './ListaTallas';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
+import ErrorPage from '../../../../components/ErrorPage';
 
 import { useQuery, useMutation } from '@apollo/client';
 import { OBTENER_TALLAS, CREAR_TALLAS, ACTUALIZAR_TALLA } from '../../../../gql/Catalogos/tallas';
@@ -15,7 +16,7 @@ export default function RegistroTallas({ tipo }) {
 
 	/* Queries */
 	const { loading, data, error, refetch } = useQuery(OBTENER_TALLAS, {
-		variables: { sucursal: sesion.sucursal, tipo }
+		variables: { sucursal: sesion.sucursal._id, tipo }
 	});
 	/* Mutations */
 	const [ crearTalla ] = useMutation(CREAR_TALLAS);
@@ -28,10 +29,7 @@ export default function RegistroTallas({ tipo }) {
 			</Box>
 		);
 	if (error) {
-		return <div>
-			
-			hubo un error
-		</div>;
+		return <ErrorPage error={error} />;
 	}
 
 	const { obtenerTallas } = data;
@@ -57,8 +55,8 @@ export default function RegistroTallas({ tipo }) {
 						input: {
 							talla: nueva_talla,
 							tipo,
-							empresa: sesion.empresa,
-							sucursal: sesion.sucursal
+							empresa: sesion.empresa._id,
+							sucursal: sesion.sucursal._id
 						}
 					}
 				});
