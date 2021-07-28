@@ -1,5 +1,6 @@
 import { Box, makeStyles, Select,MenuItem , TextField, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
+import TablaEgresos from './TablaEgresos';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -21,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
 	formInput: {
 		margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
 	},
+    formComboBox:{
+        height: '50%'
+    }
 }));
 
 export default function FormRegistroEgresos({tipo}) {
@@ -51,7 +55,7 @@ export default function FormRegistroEgresos({tipo}) {
                 />
             </Box>
             <Box width="100%">
-                <Typography>Folio factura:</Typography>
+                <Typography>ID Factura:</Typography>
                 <TextField
                     fullWidth
                     size="small"
@@ -65,7 +69,7 @@ export default function FormRegistroEgresos({tipo}) {
                 />
             </Box>
             <Box width="100%">
-                <Typography>Fecha Pago:</Typography>
+                <Typography>Fecha:</Typography>
                 <TextField
                     fullWidth
                     size="small"
@@ -83,40 +87,9 @@ export default function FormRegistroEgresos({tipo}) {
                     /* onChange={obtenerCampos} */
                 />
             </Box>
-        </div>
-        
-        <div className={classes.formInputFlex}>
-            <Box width="100%">
-                <Typography>Categoria:</Typography>
-                <Select
-                    size="small"
-                    value={age}
-                    variant="outlined"
-                    fullWidth
-                    onChange={handleChange}
-                >
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-            </Box>
-            <Box width="100%">
-                <Typography>SubCatergoria:</Typography>
-                <Select
-                    size="small"
-                    value={age}
-                    variant="outlined"
-                    fullWidth
-                    onChange={handleChange}
-                >
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-            </Box>
             {tipo ==='credito' ? (
                 <Box width="100%">
-                    <Typography>Fecha Pago:</Typography>
+                    <Typography>Fecha Vencimiento:</Typography>
                     <TextField
                         fullWidth
                         size="small"
@@ -135,22 +108,67 @@ export default function FormRegistroEgresos({tipo}) {
                     />
                 </Box>
             ):(null)}
+            <Box width="100%">
+                <Typography>Metodo de pago:</Typography>
+                    <Select
+                         className={classes.formComboBox}
+                        size="small"
+                        value={age}
+                        variant="outlined"
+                        fullWidth
+                        onChange={handleChange}
+                    >
+                        <MenuItem value={10}>Tarjeta</MenuItem>
+                        <MenuItem value={20}>Efectivo</MenuItem>
+                        <MenuItem value={30}>Monedero electronico</MenuItem>
+                    </Select>
+            </Box>
         </div>
         <div className={classes.formInputFlex}>
-            
             <Box width="100%">
-                <Typography>Empresa: </Typography>
-                <TextField
-                    fullWidth
+                <Typography>Categoria:</Typography>
+                <Select
+                    className={classes.formComboBox}
                     size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
+                    value={age}
                     variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
+                    fullWidth
+                    onChange={handleChange}
+                >
+                    <MenuItem value={10}>Ten</MenuItem>
+                    <MenuItem value={20}>Twenty</MenuItem>
+                    <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+            </Box>
+            <Box width="100%">
+                <Typography>SubCatergoria:</Typography>
+                <Select
+                    className={classes.formComboBox}
+                    size="small"
+                    value={age}
+                    variant="outlined"
+                    fullWidth
+                    onChange={handleChange}
+                >
+                    <MenuItem value={10}>Ten</MenuItem>
+                    <MenuItem value={20}>Twenty</MenuItem>
+                    <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+            </Box>
+            <Box width="100%">
+                <Typography>Empresa:</Typography>
+                <Select
+                    className={classes.formComboBox}    
+                    size="small"
+                    value={age}
+                    variant="outlined"
+                    fullWidth
+                    onChange={handleChange}
+                >
+                    <MenuItem value={10}>Ten</MenuItem>
+                    <MenuItem value={20}>Twenty</MenuItem>
+                    <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
             </Box>
             <Box width="100%">
                 <Typography>Provedor: </Typography>
@@ -166,23 +184,9 @@ export default function FormRegistroEgresos({tipo}) {
                     /* onChange={obtenerCampos} */
                 />
             </Box>
-            <Box width="100%">
-                <Typography>Motivo:</Typography>
-                <TextField
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
         </div>
         <div className={classes.formInputFlex}>
-            <Box width="100%">
+        <Box width="60%">
                 <Typography>Cantidad:</Typography>
                 <TextField
                     fullWidth
@@ -198,7 +202,7 @@ export default function FormRegistroEgresos({tipo}) {
             </Box>
             {tipo ==='credito' ? (
                 <>
-                    <Box width="100%">
+                    <Box width="60%">
                         <Typography>Anticipo:</Typography>
                         <TextField
                             fullWidth
@@ -212,7 +216,7 @@ export default function FormRegistroEgresos({tipo}) {
                             /* onChange={obtenerCampos} */
                         />
                     </Box>
-                    <Box width="100%">
+                    <Box width="60%">
                         <Typography>Restante:</Typography>
                         <TextField
                             fullWidth
@@ -229,20 +233,21 @@ export default function FormRegistroEgresos({tipo}) {
                 </>
             ):(null)}
             <Box width="100%">
-                <Typography>Metodo de pago:</Typography>
-                    <Select
-                        size="small"
-                        value={age}
-                        variant="outlined"
-                        fullWidth
-                        onChange={handleChange}
-                    >
-                        <MenuItem value={10}>Tarjeta</MenuItem>
-                        <MenuItem value={20}>Efectivo</MenuItem>
-                        <MenuItem value={30}>Monedero electronico</MenuItem>
-                    </Select>
+                <Typography>Motivo:</Typography>
+                <TextField
+                    fullWidth
+                    size="small"
+                    /* error */
+                    name="nombre_comercial"
+                    id="form-producto-nombre-comercial"
+                    variant="outlined"
+                    /* value="" */
+                    /* helperText="Incorrect entry." */
+                    /* onChange={obtenerCampos} */
+                />
             </Box>
         </div>
+        <TablaEgresos />
         <div className={classes.formInputFlex}>
             <Box width="100%">
                 <Typography>Concepto:</Typography>

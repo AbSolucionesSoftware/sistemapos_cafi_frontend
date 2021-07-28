@@ -1,10 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import DoneIcon from '@material-ui/icons/Done';
-import CloseIcon from '@material-ui/icons/Close';
-
-import { Box, Button, Dialog, DialogActions, makeStyles, TextField, Typography } from '@material-ui/core';
-import { Add } from '@material-ui/icons';
+import { Box, Button,  makeStyles, TextField, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -36,17 +32,9 @@ const useStyles = makeStyles((theme) => ({
 export default function FormTransferencia() {
 
     const classes = useStyles();
-    const [open, setOpen] = useState(false);
-
-    const handleClick = () =>{setOpen(!open)};
 
     return (
         <>
-        <Button color="primary" variant="contained" size="large" onClick={handleClick}>
-            <Add /> Nueva Transferencia
-        </Button>
-
-        <Dialog open={open} onClose={handleClick} fullWidth maxWidth="xs">
             <div className={classes.root}>
                 <Box p={2}>
                     <Typography variant="h6">
@@ -161,27 +149,7 @@ export default function FormTransferencia() {
                     </Box>
                 </div>
             </div>
-				<DialogActions>
-					<Button
-						variant="outlined"
-						color="secondary"
-						onClick={handleClick}
-						size="large"
-						startIcon={<CloseIcon />}
-					>
-						Cerrar
-					</Button>
-					<Button
-						variant="contained"
-						color="primary"
-						onClick={handleClick}
-						size="large"
-						startIcon={<DoneIcon />}
-					>
-						Guardar
-					</Button>
-				</DialogActions>
-			</Dialog>
+				
         </>
     )
 }

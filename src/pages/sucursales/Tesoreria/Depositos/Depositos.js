@@ -10,8 +10,6 @@ import Slide from '@material-ui/core/Slide';
 import { Box,  Button, Grid,  MenuItem, Select, TextField } from '@material-ui/core';
 import depositoIcon from '../../../../icons/depositar.svg';
 
-import TablaDepositos from './TablaDepositos';
-
 const useStyles = makeStyles((theme) => ({
 	appBar: {
 		position: 'relative'
@@ -144,14 +142,6 @@ export default function Depositos() {
 						
 					</div>
 				</Grid>
-				<Box p={2}>
-					<Box p={1}>
-						<Typography variant="h6">
-							Depositos realizados
-						</Typography>
-					</Box>
-					<TablaDepositos />
-				</Box>
 			</Dialog>
 		</div>
 	);

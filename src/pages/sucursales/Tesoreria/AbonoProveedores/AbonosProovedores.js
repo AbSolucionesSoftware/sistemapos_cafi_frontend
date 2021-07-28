@@ -4,7 +4,6 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
@@ -53,14 +52,10 @@ export default function AbonosProveedores() {
 						<Typography variant="h6" className={classes.title}>
                         	Abonos a Proveedores
 						</Typography>
-						{/* <Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClickOpen}>
-                                save
-                            </Button>
-                        </Box> */}
-                        <IconButton edge="start" color="inherit" onClick={handleClickOpen} aria-label="close">
+                        <Button variant="outlined" size="large" color="inherit"  onClick={handleClickOpen} aria-label="close">
 							<CloseIcon />
-						</IconButton>
+							Cerrar
+						</Button>
 					</Toolbar>
 				</AppBar>
 				<Grid container>

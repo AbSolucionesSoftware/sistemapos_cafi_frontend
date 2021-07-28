@@ -43,10 +43,9 @@ export default function DetallesClienteCuenta() {
     return (
         <div>
             <Button
-                size="large"
+                size="medium"
                 variant="contained" 
                 color="primary"
-                style={{fontSize: 16}}
                 onClick={handleClick}
             >
                 Detalles

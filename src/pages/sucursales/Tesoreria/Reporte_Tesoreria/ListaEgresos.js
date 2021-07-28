@@ -8,6 +8,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import { Box, Grid, IconButton, InputBase } from '@material-ui/core';
+import { Search } from '@material-ui/icons';
 
 const columns = [
 	{ id: 'name', label: 'Name', minWidth: 170 },
@@ -71,13 +73,17 @@ const useStyles  = makeStyles((theme) => ({
 	title: {
 		marginLeft: theme.spacing(2),
 		flex: 1
-	}
+	},
+	rootBusqueda: {
+		display: 'flex',
+		paddingLeft: theme.spacing(2)
+	},
 }));
 
-export default function TablaDepositos() {
+export default function ListaEgresos() {
 	const classes = useStyles();
 	const [ page, setPage ] = useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = useState(5);
+	const [ rowsPerPage, setRowsPerPage ] = useState(14);
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
@@ -89,9 +95,29 @@ export default function TablaDepositos() {
 	};
 
 	return (
+		<Grid>
+			<div className={classes.root}>
+				<Box m={2} display="flex" justifyContent="space-between">
+					<Box mr={5} minWidth="70%">
+						<Paper className={classes.rootBusqueda}>
+							<InputBase
+								fullWidth
+								placeholder="Buscar egresos..."
+								// onChange={(e) => setValues(e.target.value)}
+								// onKeyPress={pressEnter}
+								// value={values}
+							/>
+							<IconButton>
+								<Search />
+							</IconButton>
+						</Paper>
+					</Box>
+				</Box>
+			</div>
+		<Box p={2}>
 		<Paper className={classes.root}>
 			<TableContainer className={classes.container}>
-				<Table stickyHeader aria-label="sticky table">
+				<Table stickyHeader size="small" aria-label="a dense table">
 					<TableHead>
 						<TableRow>
 							{columns.map((column) => (
@@ -137,5 +163,7 @@ export default function TablaDepositos() {
 			/>
 
 		</Paper>
+		</Box>
+		</Grid>
 	);
 }

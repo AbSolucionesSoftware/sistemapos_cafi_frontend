@@ -14,7 +14,7 @@ export default function LiquidarCuenta() {
     return (
         <div>
             <Button
-                size="large"
+                size="medium"
                 variant="contained" 
                 color="primary"
                 onClick={handleClick}

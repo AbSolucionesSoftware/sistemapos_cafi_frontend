@@ -109,7 +109,7 @@ export default function TablaAbonosClientes() {
 	const classes = useStyles();
 	const [ selected, setSelected ] = useState([]);
 	const [ page, setPage ] = useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = useState(5);
+	const [ rowsPerPage, setRowsPerPage ] = useState(9);
 
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {
@@ -157,8 +157,9 @@ export default function TablaAbonosClientes() {
 					<Table
 						className={classes.table}
 						aria-labelledby="tableTitle"
-						size="medium"
-						aria-label="enhanced table"
+						stickyHeader
+						size="small" 
+						aria-label="a dense table"
 					>
 						<EnhancedTableHead
 							classes={classes}

@@ -2,17 +2,11 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
+import DoneIcon from '@material-ui/icons/Done';
 import Slide from '@material-ui/core/Slide';
-import { Box, Grid, InputBase, Paper } from '@material-ui/core';
+import { Box, DialogActions, Paper } from '@material-ui/core';
 import transferIcon from '../../../../icons/transferencia-bancaria.svg'
-import { Search } from '@material-ui/icons';
-
-import ListaTransferencias from './ListaTransferencias';
 import FormTransferencia from './FormTransferencia';
 
 const useStyles = makeStyles((theme) => ({
@@ -32,10 +26,7 @@ const useStyles = makeStyles((theme) => ({
 		height: '100vh',
 		backgroundColor: theme.palette.background.paper
 	},
-	rootBusqueda: {
-		display: 'flex',
-		paddingLeft: theme.spacing(2)
-	},
+	
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -58,46 +49,36 @@ export default function Transferencias() {
 					Transferencias
 				</Box>
 			</Button>
-			<Dialog fullScreen open={open} onClose={handleClickOpen} TransitionComponent={Transition}>
-				<AppBar className={classes.appBar}>
-					<Toolbar>
-						<Typography variant="h6" className={classes.title}>
-                        Transferencias
-						</Typography>
-						{/* <Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClickOpen}>
-                                save
-                            </Button>
-                        </Box> */}
-                        <IconButton edge="start" color="inherit" onClick={handleClickOpen} aria-label="close">
-							<CloseIcon />
-						</IconButton>
-					</Toolbar>
-				</AppBar>
-				<div className={classes.root}>
-					<Box m={3} display="flex" justifyContent="space-between">
-						<Box mr={5} minWidth="70%">
-							<Paper className={classes.rootBusqueda}>
-								<InputBase
-									fullWidth
-									placeholder="Buscar transferencia..."
-									// onChange={(e) => setValues(e.target.value)}
-									// onKeyPress={pressEnter}
-									// value={values}
-								/>
-								<IconButton>
-									<Search />
-								</IconButton>
+			<Dialog open={open} TransitionComponent={Transition}>
+				{/* <Grid container justify="center"> */}
+					{/* <Grid item lg={3}> */}
+						{/* <Box mt={7}> */}
+							<Paper elevation={3} >
+								<FormTransferencia />
+								<DialogActions>
+									<Button
+										variant="outlined"
+										color="secondary"
+										onClick={handleClickOpen}
+										size="large"
+										startIcon={<CloseIcon />}
+									>
+										Cerrar
+									</Button>
+									<Button
+										variant="contained"	
+										color="primary"
+										onClick={handleClickOpen}
+										size="large"
+										startIcon={<DoneIcon />}
+									>
+										Guardar
+									</Button>
+								</DialogActions>
 							</Paper>
-						</Box>
-						<FormTransferencia/>
-					</Box>
-					<Grid item lg={12}>
-						<Box p={2}>
-							<ListaTransferencias />
-						</Box>
+						{/* </Box>
 					</Grid>
-				</div>
+				</Grid> */}
 			</Dialog>
 		</div>
 	);

@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
-import VistaRegistroEgreso from './VistaRegistroEgreso';
-import ListaEgresos from './ListaEgresos';
+import DoneIcon from '@material-ui/icons/Done';
 
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import egresoIcon from '../../../../icons/income.svg'
-import { Search } from '@material-ui/icons';
-import { Box, Grid, InputBase, Paper} from '@material-ui/core';
+import { Box, DialogActions,Paper} from '@material-ui/core';
+import VistaRegistroEgreso from './VistaRegistroEgreso';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -66,46 +61,30 @@ export default function Egresos() {
 					Egresos
 				</Box>
 			</Button>
-			<Dialog fullScreen open={open} onClose={handleClickOpen} TransitionComponent={Transition}>
-				<AppBar className={classes.appBar}>
-					<Toolbar>
-						<Typography variant="h6" className={classes.title}>
-                        Egresos
-						</Typography>
-						{/* <Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClickOpen}>
-                                save
-                            </Button>
-                        </Box> */}
-                        <IconButton edge="start" color="inherit" onClick={handleClickOpen} aria-label="close">
-							<CloseIcon />
-						</IconButton>
-					</Toolbar>
-				</AppBar>
-				<div className={classes.root}>
-					<Box m={3} display="flex" justifyContent="space-between">
-						<Box mr={5} minWidth="70%">
-							<Paper className={classes.rootBusqueda}>
-								<InputBase
-									fullWidth
-									placeholder="Buscar egreso credito o contado..."
-									// onChange={(e) => setValues(e.target.value)}
-									// onKeyPress={pressEnter}
-									// value={values}
-								/>
-								<IconButton>
-									<Search />
-								</IconButton>
-							</Paper>
-						</Box>
-						<VistaRegistroEgreso accion='registrar'/>
-					</Box>
-					<Grid item lg={12}>
-						<Box p={2}>
-							<ListaEgresos />
-						</Box>
-					</Grid>
-				</div>
+			<Dialog open={open} TransitionComponent={Transition} maxWidth="md">
+				<Paper elevation={3}>
+					<VistaRegistroEgreso />
+					<DialogActions>
+						<Button
+							variant="outlined"
+							color="secondary"
+							onClick={handleClickOpen}
+							size="large"
+							startIcon={<CloseIcon />}
+						>
+							Cerrar
+						</Button>
+						<Button
+							variant="contained"
+							color="primary"
+							onClick={handleClickOpen}
+							size="large"
+							startIcon={<DoneIcon />}
+						>
+							Guardar
+						</Button>
+					</DialogActions>
+				</Paper>
 			</Dialog>
 		</div>
 	);
