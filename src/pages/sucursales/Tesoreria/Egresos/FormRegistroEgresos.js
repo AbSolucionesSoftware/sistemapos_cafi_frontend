@@ -250,22 +250,6 @@ export default function FormRegistroEgresos({tipo}) {
         <TablaEgresos />
         <div className={classes.formInputFlex}>
             <Box width="100%">
-                <Typography>Concepto:</Typography>
-                <TextField
-                    multiline
-                    rows={3}
-                    fullWidth
-                    size="small"
-                    /* error */
-                    name="nombre_comercial"
-                    id="form-producto-nombre-comercial"
-                    variant="outlined"
-                    /* value="" */
-                    /* helperText="Incorrect entry." */
-                    /* onChange={obtenerCampos} */
-                />
-            </Box>
-            <Box width="100%">
                 <Typography>Observación:</Typography>
                 <TextField
                     multiline

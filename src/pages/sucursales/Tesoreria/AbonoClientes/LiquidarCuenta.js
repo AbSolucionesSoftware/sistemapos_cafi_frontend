@@ -1,7 +1,19 @@
 import React, { useState } from 'react'
 
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, makeStyles, TextField, Typography } from '@material-ui/core';
 import { ToggleButtonGroup } from '@material-ui/lab';
+
+const useStyles = makeStyles((theme) => ({
+	formInputFlex: {
+		display: 'flex',
+		'& > *': {
+			margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
+		}
+	},
+	formInput: {
+		margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
+	}
+}));
 
 export default function LiquidarCuenta() {
 
@@ -10,6 +22,7 @@ export default function LiquidarCuenta() {
     const handleClick = () => { 
         setOpen(!open);
     } 
+    const classes = useStyles();
 
     return (
         <div>
@@ -72,18 +85,30 @@ export default function LiquidarCuenta() {
                             /* onChange={obtenerCampos} */
                         />
                     </Box>
-                    <Box width="100%" mt={1}>
-                        <Typography>Total a pagar</Typography>
-                        <Typography>
-                            $150,000
-                        </Typography>
-                    </Box>
-                    <Box width="100%" mt={1}>
-                        <Typography>Cliente:</Typography>
-                        <Typography>
-                            Amenadiel
-                        </Typography>
-                    </Box>
+                    <div className={classes.formInputFlex}>
+                        <Box width="100%">
+                            <Typography>Sub Total: </Typography>
+                        </Box>
+                        <Box width="100%">
+                            <Typography>$150000</Typography>
+                        </Box>
+                    </div>
+                    <div className={classes.formInputFlex}>
+                        <Box width="100%">
+                            <Typography>Descuento: </Typography>
+                        </Box>
+                        <Box width="100%">
+                            <Typography>$150000</Typography>
+                        </Box>
+                    </div>
+                    <div className={classes.formInputFlex}>
+                        <Box width="100%">
+                            <Typography>Total a pagar:</Typography>
+                        </Box>
+                        <Box width="100%">
+                            <Typography>$150000</Typography>
+                        </Box>
+                    </div>
                 </DialogContent>
                 <DialogActions>
                     <Button 
