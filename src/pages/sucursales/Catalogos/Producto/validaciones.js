@@ -6,15 +6,15 @@ export default function validaciones(datos1, datos2) {
         !datos1.nombre_generico ||
         !datos1.nombre_comercial
     ) {
-        if (!datos2.unidad_de_compra.unidad ||
-            !datos2.unidad_de_compra.precio ||
+        if (!datos2.precio_de_compra.precio_con_impuesto ||
+            !datos2.precio_de_compra.precio_sin_impuesto ||
             !datos2.unidad_de_compra.cantidad) {
             return { error: true, message: 'Campo obligatorio', vista1: true, vista2: true };
         }
         return { error: true, message: 'Campo obligatorio', vista1: true };
     } else if (
         /* si solo hay datos1 */
-        !datos2.unidad_de_compra?.unidad || !datos2.unidad_de_compra?.precio || !datos2.unidad_de_compra?.cantidad
+        !datos2.precio_de_compra.precio_con_impuesto || !datos2.precio_de_compra.precio_sin_impuesto || !datos2.unidad_de_compra.cantidad
     ) {
         return { error: true, message: 'Campo obligatorio', vista2: true };
     } else if (

@@ -4,12 +4,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
 import { Button, AppBar, Badge, Typography, CircularProgress } from '@material-ui/core';
-import { Dialog, DialogActions, Tabs, Tab, Box } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, Tabs, Tab, Box } from '@material-ui/core';
 import almacenIcon from '../../../../icons/tarea-completada.svg';
 import imagenesIcon from '../../../../icons/imagenes.svg';
 import ventasIcon from '../../../../icons/etiqueta-de-precio.svg';
 import registroIcon from '../../../../icons/portapapeles.svg';
 import costosIcon from '../../../../icons/costos.svg';
+import calendarIcon from '../../../../icons/calendar.svg';
 import tallasColoresIcon from '../../../../icons/tallas-colores.svg';
 import RegistroInfoGenerales from './registrarInfoGeneral';
 import RegistroInfoAdidional from '../Producto/PreciosVenta/registrarInfoAdicional';
@@ -23,6 +24,7 @@ import { useMutation, useQuery } from '@apollo/client';
 import { CREAR_PRODUCTO, OBTENER_CONSULTAS } from '../../../../gql/Catalogos/productos';
 import validaciones from './validaciones';
 import CentroCostos from './CentroCostos';
+import PrecioPlazos from './PrecioPlazos/PrecioPlazos';
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -36,7 +38,7 @@ function TabPanel(props) {
 			{...other}
 		>
 			{value === index && (
-				<Box p={3} minHeight="70vh">
+				<Box p={3} height="70vh">
 					{children}
 				</Box>
 			)}
@@ -74,21 +76,27 @@ const useStyles = makeStyles((theme) => ({
 	},
 	iconSvg: {
 		width: 50
-	}
+	},
+	dialogContent: {
+		padding: 0
+	},
 }));
 
-export default function CrearProducto() {
+export default function CrearProducto({ accion }) {
+	const classes = useStyles();
 	const [open, setOpen] = useState(false);
-	const { datos_generales,
-		setDatosGenerales,
-		precios,
-		setPrecios,
-		setValidacion,
-		validacion,
+	const [value, setValue] = useState(0);
+	const { 
+		datos_generales, setDatosGenerales,
+		precios, /* setPrecios, */
+		validacion, /* setValidacion, */
 		preciosP,
-		imagenes,
-		unidadesVenta,
-		almacen_inicial
+		imagenes, /* setImagenes, */
+		unidadesVenta, /* setUnidadesVenta, */
+		almacen_inicial, /* setAlmacenInicial, */
+		unidadVentaXDefecto, /* setUnidadVentaXDefecto, */
+		centro_de_costos, /* setCentroDeCostos */
+		preciosPlazos, /* setPreciosPlazos, */
 	} = useContext(RegProductoContext);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
@@ -100,7 +108,9 @@ export default function CrearProducto() {
 		setDatosGenerales({});
 	};
 
-	console.log(sesion);
+	const handleChange = (event, newValue) => {
+		setValue(newValue);
+	};
 
 	const saveData = async () => {
 		const validate = validaciones(datos_generales, precios);
@@ -109,16 +119,21 @@ export default function CrearProducto() {
 			setValidacion(validate);
 			return
 		}
-		setValidacion(validate); */
+		setValidacion(validate);
+ */
+		unidadesVenta.push(unidadVentaXDefecto);
 
 		precios.precios_producto = preciosP;
-		precios.unidad_de_venta = unidadesVenta;
+		/* precios.unidad_de_venta = unidadesVenta; */
 
 		const input = {
 			datos_generales,
 			precios,
 			imagenes,
 			almacen_inicial,
+			centro_de_costos,
+			unidades_venta: unidadesVenta,
+			precio_plazos: preciosPlazos,
 			empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id,
 			usuario: sesion._id,
@@ -142,11 +157,92 @@ export default function CrearProducto() {
 
 	return (
 		<Fragment>
-			<Button color="primary" variant="contained" size="large" onClick={toggleModal}>
-				Nuevo producto
-			</Button>
-			<Dialog open={open} onClose={toggleModal} fullWidth maxWidth="xl">
-				<ContenidoModal />
+			{accion ? (
+				<Button color="primary" variant="contained" size="large" onClick={toggleModal}>
+					Nuevo producto
+				</Button>
+			) : (
+				<Button color="primary" variant="contained" size="large" onClick={toggleModal}>
+					Editar producto
+				</Button>
+			)}
+			<Dialog open={open} onClose={toggleModal} fullWidth maxWidth="lg" scroll="paper">
+				<AppBar position="static" color="default" elevation={0}>
+					<Tabs
+						value={value}
+						onChange={handleChange}
+						variant="scrollable"
+						scrollButtons="on"
+						indicatorColor="primary"
+						textColor="primary"
+						aria-label="scrollable force tabs example"
+					>
+						<Tab
+							label="Datos generales"
+							icon={
+								<Badge
+									color="secondary"
+									badgeContent={<Typography variant="h6">!</Typography>}
+									anchorOrigin={{
+										vertical: 'bottom',
+										horizontal: 'right'
+									}}
+									invisible={validacion.error && validacion.vista1 ? false : true}
+								>
+									<img src={registroIcon} alt="icono registro" className={classes.iconSvg} />
+								</Badge>
+							}
+							{...a11yProps(0)}
+						/>
+						<Tab
+							label="Precios de venta"
+							icon={
+								<Badge
+									color="secondary"
+									badgeContent={<Typography variant="h6">!</Typography>}
+									anchorOrigin={{
+										vertical: 'bottom',
+										horizontal: 'right'
+									}}
+									invisible={validacion.error && validacion.vista2 ? false : true}
+								>
+									<img src={ventasIcon} alt="icono venta" className={classes.iconSvg} />
+								</Badge>
+							}
+							{...a11yProps(1)}
+						/>
+						<Tab
+							label="Inventario y almacen"
+							icon={<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />}
+							{...a11yProps(2)}
+						/>
+						<Tab
+							label="Centro de costos"
+							icon={<img src={costosIcon} alt="icono almacen" className={classes.iconSvg} />}
+							{...a11yProps(3)}
+						/>
+						<Tab
+							label="Precios a plazos"
+							icon={<img src={calendarIcon} alt="icono almacen" className={classes.iconSvg} />}
+							{...a11yProps(4)}
+						/>
+						<Tab
+							label="Imagenes"
+							icon={<img src={imagenesIcon} alt="icono imagenes" className={classes.iconSvg} />}
+							{...a11yProps(5)}
+						/>
+						{!accion ? (
+							<Tab
+								label="Tallas y colores"
+								icon={<img src={tallasColoresIcon} alt="icono colores" className={classes.iconSvg} />}
+								{...a11yProps(6)}
+							/>
+						) : null}
+					</Tabs>
+				</AppBar>
+				<DialogContent className={classes.dialogContent}>
+					<ContenidoModal accion={accion} value={value} />
+				</DialogContent>
 				<DialogActions>
 					<Button
 						variant="outlined"
@@ -172,10 +268,8 @@ export default function CrearProducto() {
 	);
 }
 
-const ContenidoModal = () => {
+const ContenidoModal = ({ accion, value }) => {
 	const classes = useStyles();
-	const [value, setValue] = useState(0);
-	const { validacion } = useContext(RegProductoContext);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	/* Queries */
@@ -195,78 +289,10 @@ const ContenidoModal = () => {
 
 	const { obtenerConsultasProducto } = data;
 
-	const handleChange = (event, newValue) => {
-		setValue(newValue);
-	};
+
 
 	return (
 		<div className={classes.root}>
-			<AppBar position="static" color="default" elevation={0}>
-				<Tabs
-					value={value}
-					onChange={handleChange}
-					variant="scrollable"
-					scrollButtons="on"
-					indicatorColor="primary"
-					textColor="primary"
-					aria-label="scrollable force tabs example"
-				>
-					<Tab
-						label="Datos generales"
-						icon={
-							<Badge
-								color="secondary"
-								badgeContent={<Typography variant="h6">!</Typography>}
-								anchorOrigin={{
-									vertical: 'bottom',
-									horizontal: 'right'
-								}}
-								invisible={validacion.error && validacion.vista1 ? false : true}
-							>
-								<img src={registroIcon} alt="icono registro" className={classes.iconSvg} />
-							</Badge>
-						}
-						{...a11yProps(0)}
-					/>
-					<Tab
-						label="Precios de venta"
-						icon={
-							<Badge
-								color="secondary"
-								badgeContent={<Typography variant="h6">!</Typography>}
-								anchorOrigin={{
-									vertical: 'bottom',
-									horizontal: 'right'
-								}}
-								invisible={validacion.error && validacion.vista2 ? false : true}
-							>
-								<img src={ventasIcon} alt="icono venta" className={classes.iconSvg} />
-							</Badge>
-						}
-						{...a11yProps(1)}
-					/>
-					<Tab
-						label="Inventario y almacen"
-						icon={<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />}
-						{...a11yProps(2)}
-					/>
-					<Tab
-						label="Centro de costos"
-						icon={<img src={costosIcon} alt="icono almacen" className={classes.iconSvg} />}
-						{...a11yProps(3)}
-					/>
-					<Tab
-						label="Imagenes"
-						icon={<img src={imagenesIcon} alt="icono imagenes" className={classes.iconSvg} />}
-						{...a11yProps(4)}
-					/>
-					<Tab
-						label="Tallas y colores"
-						icon={<img src={tallasColoresIcon} alt="icono colores" className={classes.iconSvg} />}
-						{...a11yProps(5)}
-					/>
-				</Tabs>
-			</AppBar>
 			<TabPanel value={value} index={0}>
 				<RegistroInfoGenerales obtenerConsultasProducto={obtenerConsultasProducto} refetch={refetch} />
 			</TabPanel>
@@ -280,9 +306,12 @@ const ContenidoModal = () => {
 				<CentroCostos obtenerConsultasProducto={obtenerConsultasProducto} />
 			</TabPanel>
 			<TabPanel value={value} index={4}>
-				<CargarImagenesProducto />
+				<PrecioPlazos />
 			</TabPanel>
 			<TabPanel value={value} index={5}>
+				<CargarImagenesProducto />
+			</TabPanel>
+			<TabPanel value={value} index={6}>
 				<ColoresTallas />
 			</TabPanel>
 		</div>

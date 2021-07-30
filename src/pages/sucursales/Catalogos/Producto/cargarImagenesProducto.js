@@ -28,13 +28,15 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CargarImagenesProducto() {
 	const classes = useStyles();
-	const { imagenes, setImagenes, onPreview } = useContext(RegProductoContext);
+	const { imagenes, setImagenes, setOnPreview, onPreview } = useContext(RegProductoContext);
 
 	const cargarImagen = (e) => {
+		if (e.target.files.length < 1) return
 		setImagenes([
 			...imagenes,
 			e.target.files[0]
 		]);
+		setOnPreview({image: URL.createObjectURL(e.target.files[0])})
 	};
 
 	const render_imagenes = imagenes.map((res, index) => <RenderImagenes key={index} index={index} imagen={res} />);
@@ -69,7 +71,7 @@ export default function CargarImagenesProducto() {
 							{!onPreview.image ? (
 								<PhotoSizeSelectActualOutlinedIcon style={{ fontSize: 150 }} />
 							) : (<img alt="img-onPreview" src={onPreview.image} className={classes.imagen} />)}
-							
+
 						</Box>
 					</Box>
 				</Grid>
@@ -78,16 +80,16 @@ export default function CargarImagenesProducto() {
 	);
 }
 
-const RenderImagenes = ({imagen, index}) => {
+const RenderImagenes = ({ imagen, index }) => {
 	const classes = useStyles();
 	const preview = URL.createObjectURL(imagen)
-	const { imagenes, setImagenes,  setOnPreview, onPreview } = useContext(RegProductoContext);
-	const [ open, setOpen ] = useState(false);
+	const { imagenes, setImagenes, setOnPreview, onPreview } = useContext(RegProductoContext);
+	const [open, setOpen] = useState(false);
 	const handleModal = () => setOpen(!open);
 
 	const eliminarImagen = () => {
-		if(onPreview.index === index){
-			setOnPreview({index: '', image: ''})
+		if (onPreview.index === index) {
+			setOnPreview({ index: '', image: '' })
 		}
 		const array = imagenes;
 		array.splice(index, 1);
@@ -108,8 +110,8 @@ const RenderImagenes = ({imagen, index}) => {
 						{imagen.name}
 					</Typography>
 					<Typography variant="caption">{imagen.size} bits</Typography>
-					<Box display="flex" justifyContent="flex-end"> 
-						<Button size="small" startIcon={<Visibility />} onClick={() => setOnPreview({index, image: preview})}>
+					<Box display="flex" justifyContent="flex-end">
+						<Button size="small" startIcon={<Visibility />} onClick={() => setOnPreview({ index, image: preview })}>
 							previsualizar
 						</Button>
 						<Box mx={1} />

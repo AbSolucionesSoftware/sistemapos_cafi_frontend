@@ -5,6 +5,8 @@ export const RegProductoContext = createContext();
 export const RegProductoProvider = ({ children }) => {
 	const [datos_generales, setDatosGenerales] = useState({});
 	const [precios, setPrecios] = useState({
+		monedero: false,
+		monedero_electronico: 0,
 		iva_activo: true,
 		ieps_activo: false,
 		ieps: 0,
@@ -27,8 +29,15 @@ export const RegProductoProvider = ({ children }) => {
 			precio_unitario_con_impuesto: 0,
 
 		},
-		unidad_de_venta: []
+		/* unidad_de_venta: [] */
 	});
+
+	const [ unidadVentaXDefecto, setUnidadVentaXDefecto ] = useState({
+		unidad: 'PIEZAS',
+		cantidad: 1,
+		precio: 0,
+		unidad_principal: true
+	})
 
 	const preciosP = [
 		{
@@ -89,6 +98,21 @@ export const RegProductoProvider = ({ children }) => {
 		id_sub_cuenta: '',
 		sub_cuenta: '',
 	})
+
+	const [preciosPlazos, setPreciosPlazos] = useState({
+		precio_piezas:[],
+		precio_cajas:[],
+		precio_costales:[],
+		precio_tarimas:[],
+	});
+
+	/* const preciosPlazos = {
+		precio_piezas:[],
+		precio_cajas:[],
+		precio_costales:[],
+		precio_tarimas:[],
+	} */
+	const [subcategorias, setSubcategorias] = useState([]);
 	const [imagenes, setImagenes] = useState([]);
 	const [onPreview, setOnPreview] = useState({ index: '', image: '' });
 	const [validacion, setValidacion] = useState({ error: false, message: '' });
@@ -103,8 +127,11 @@ export const RegProductoProvider = ({ children }) => {
 				onPreview, setOnPreview,
 				validacion, setValidacion,
 				preciosP,
+				preciosPlazos, setPreciosPlazos,
 				unidadesVenta, setUnidadesVenta,
 				centro_de_costos, setCentroDeCostos,
+				unidadVentaXDefecto, setUnidadVentaXDefecto,
+				subcategorias, setSubcategorias,
 			}}
 		>
 			{children}

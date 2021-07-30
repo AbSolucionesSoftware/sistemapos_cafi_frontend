@@ -29,9 +29,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetch }) {
 	const classes = useStyles();
-	const { datos_generales, setDatosGenerales, validacion, precios, setPrecios } = useContext(RegProductoContext);
+	const { datos_generales, setDatosGenerales, validacion, precios, setPrecios, subcategorias, setSubcategorias } = useContext(RegProductoContext);
 	const { categorias, departamentos, marcas } = obtenerConsultasProducto;
-	const [subcategorias, setSubcategorias] = useState([]);
 
 	const obtenerCampos = (e) => {
 		if (e.target.name === "monedero_electronico") {
@@ -58,7 +57,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 		if (e.target.name === "monedero" && e.target.checked) {
 			setPrecios({
 				...precios,
-				monedero_electronico: 0,
+				monedero_electronico: 1,
 				monedero: e.target.checked
 			});
 			return
@@ -359,7 +358,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 						</Box>
 						<div className={classes.formInput}>
 							<FormControlLabel
-								control={<Checkbox value={precios.granel ? precios.granel : false} onChange={obtenerChecks} name="granel" />}
+								control={<Checkbox checked={precios.granel ? precios.granel : false} onChange={obtenerChecks} name="granel" />}
 								label="Vender a granel"
 							/>
 						</div>
@@ -375,8 +374,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 							<FormControlLabel
 								control={
 									<Checkbox
-										/* checked={datos_generales.receta_farmacia ? datos_generales.receta_farmacia : false} */
-										value={datos_generales.receta_farmacia ? datos_generales.receta_farmacia : false}
+										checked={datos_generales.receta_farmacia ? datos_generales.receta_farmacia : false}
 										onChange={checkFarmacia}
 										name="receta_farmacia"
 									/>
@@ -397,7 +395,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 							<Box className={classes.formInput}>
 								<FormControlLabel
 									control={
-										<Checkbox value={precios.monedero ? precios.monedero : false} onChange={obtenerChecks} name="monedero" />
+										<Checkbox checked={precios.monedero} onChange={obtenerChecks} name="monedero" />
 									}
 									label="Monedero electrónico"
 								/>
@@ -409,7 +407,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 									name="monedero_electronico"
 									id="form-producto-monedero_electronico"
 									variant="outlined"
-									value={precios.monedero_electronico ? precios.monedero_electronico : 0}
+									value={precios.monedero_electronico}
 									onChange={obtenerCampos}
 									disabled={precios.monedero ? false : true}
 								/>
