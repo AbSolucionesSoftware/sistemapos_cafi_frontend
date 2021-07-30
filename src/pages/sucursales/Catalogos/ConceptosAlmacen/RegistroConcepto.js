@@ -74,7 +74,7 @@ export default function RegistroServicios() {
     };
 	const handleSubmit = async () => {
 		try {
-            console.log(data)
+           setOpenModal(false);
 			if(!data.nombre_concepto || !data.tipo ){
 				setError(true);
 			    return;
@@ -106,9 +106,10 @@ export default function RegistroServicios() {
                 setError(false);
 				setUpdateData(!updateData);
 				setIdConcepto("");
+				
 			}
 		} catch (error) {
-			
+			console.log("Guardar",error)
 		}
 	}
 
@@ -120,7 +121,7 @@ export default function RegistroServicios() {
 	return (
 		<div>
 			<Dialog open={openModal} onClose={handleModal}>
-				<DialogTitle>{'Editar este concepto afectará innventario y cálculos de estados de resultado ,¿Seguro que quieres editar esto?'}</DialogTitle>
+				<DialogTitle>{'Editar este concepto afectará cálculos de estados de resultado ,¿Seguro que quieres editar esto?'}</DialogTitle>
 				<DialogActions>
 					<Button onClick={handleModal} color="primary">
 						Cancelar
@@ -141,7 +142,7 @@ export default function RegistroServicios() {
                     <SnackBarMessages alert={alert} setAlert={setAlert} />
                    
                     <Box display="flex" alignItems="center" mb={2}>
-                         <Typography variant="h6">Concepto </Typography>
+                         <Typography>Concepto </Typography>
                         <TextField
                             error={error}
                             id="outlined-error-helper-text"
@@ -174,7 +175,7 @@ export default function RegistroServicios() {
                     </FormControl>
                     <Box display="flex" alignItems="center" mb={2}>
                         <Box ml={5} />
-                        <Button color="primary" variant="contained" size="large" onClick={ () =>(accion) ? handleSubmit: setOpenModal(true)} disableElevation>
+                        <Button color="primary" variant="contained" size="large" onClick={ () =>(accion) ? handleSubmit(): setOpenModal(true)} disableElevation>
                             <Add />Guardar
                         </Button>
                     </Box>
