@@ -84,7 +84,7 @@ export default function ListaCompras() {
 	return (
 		<Paper className={classes.root}>
 			<TableContainer className={classes.container}>
-				<Table stickyHeader aria-label="sticky table">
+				<Table stickyHeader size="small" aria-label="a dense table">
 					<TableHead>
 						<TableRow>
 							{columns.map((column) => (

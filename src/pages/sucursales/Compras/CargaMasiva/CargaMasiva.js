@@ -61,9 +61,10 @@ export default function CargaMasiva() {
                                 save
                             </Button>
                         </Box>
-                        <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+                        <Button variant="outlined" size="large" color="inherit"  onClick={handleClickOpen} aria-label="close">
 							<CloseIcon />
-						</IconButton>
+							Cerrar
+						</Button>
 					</Toolbar>
 				</AppBar>
 				Toda la info de Carga masiva

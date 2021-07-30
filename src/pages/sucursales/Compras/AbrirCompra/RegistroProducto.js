@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react'
 
 import { Button, Dialog, Box, TextField, DialogActions, makeStyles, Typography, 
-    FormControl, Select, MenuItem
+    FormControl, Select, MenuItem, IconButton
     } from '@material-ui/core';
 
 import AddIcon from '@material-ui/icons/Add';
@@ -40,16 +40,13 @@ export default function RegistroProducto() {
 
     return (
         <Fragment>
-            <Box p={1}>
-                <Button
-                    size="large"
-                    variant="contained" 
+            <Box>
+				<IconButton 
+					size="large"
                     color="primary"
-                    startIcon={<AddIcon fontSize="large" />}
-                    onClick={toggleModal}
-                >
-                   Nuevo producto
-                </Button>
+                    onClick={toggleModal}>
+					<AddIcon fontSize="large" />
+				</IconButton>
             </Box>
 
             <Dialog open={open} onClose={toggleModal} fullWidth maxWidth="md">

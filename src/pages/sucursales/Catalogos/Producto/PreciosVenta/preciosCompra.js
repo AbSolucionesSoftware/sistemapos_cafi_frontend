@@ -56,6 +56,7 @@ export default function PreciosDeCompra() {
 			<Box my={1} />
 			<Typography align="center">
 				<b>Unidades de venta</b>
+				
 			</Typography>
 			<Box className={classes.formInputFlex}>
 				<Box width="130px">

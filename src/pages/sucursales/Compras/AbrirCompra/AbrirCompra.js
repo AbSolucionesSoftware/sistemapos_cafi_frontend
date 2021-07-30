@@ -6,16 +6,14 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 
-import RegistroProvedor from './RegistroProvedor';
 import DatosProducto from './DatosProducto';
 
 import { FcPlus } from 'react-icons/fc';
 import { Box } from '@material-ui/core';
-import ListaCompras from './ListaCompras';
+import ListaCompras from './TablaCompras';
 import { Grid } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
@@ -76,30 +74,20 @@ export default function AbrirCompra({status}) {
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-							Nueva compra de mercancia
+							Nueva compra
 						</Typography>
-						
-						<RegistroProvedor/>
 
-						<Box mx={3}>
-							<Button 
-								autoFocus 
-								color="inherit"
-								variant="outlined" 
-								size="large" 
-								onClick={handleClickOpen}
-								startIcon={<AddIcon fontSize="large" />}
-							>
-								Realizar compra
-							</Button>
-						</Box>
-						<IconButton edge="start" color="inherit" onClick={handleClickOpen} aria-label="close">
+						
+						<Button variant="outlined" size="large" color="inherit"  onClick={handleClickOpen} aria-label="close">
 							<CloseIcon />
-						</IconButton>
+							Cerrar
+						</Button>
 					</Toolbar>
 				</AppBar>
 				
-				<DatosProducto />	
+				<DatosProducto />
+				
+
 
 				<Box p={1} mx={4}>
 					<Divider />

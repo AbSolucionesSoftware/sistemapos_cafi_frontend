@@ -75,7 +75,7 @@ export default function ListaProductos() {
 	const [ page, setPage ] = React.useState(0);
 	const [compraSeleccionada, setCompraSeleccionada] = useState([]);
 	const [open, setOpen] = useState(false);
-	const [ rowsPerPage, setRowsPerPage ] = React.useState(10);
+	const [ rowsPerPage, setRowsPerPage ] = React.useState(14);
 
 	const handleOpen = () => {
 		setOpen(!open)
@@ -93,7 +93,7 @@ export default function ListaProductos() {
 	return (
 		<Paper className={classes.root}>
 			<TableContainer className={classes.container}>
-				<Table stickyHeader aria-label="sticky table">
+				<Table stickyHeader size="small" aria-label="a dense table">
 					<TableHead>
 						<TableRow>
 							{columns.map((column) => (

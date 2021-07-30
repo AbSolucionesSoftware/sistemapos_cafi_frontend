@@ -71,9 +71,10 @@ export default function ComprasRealizadas() {
                                 save
                             </Button>
                         </Box> */}
-                        <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+                        <Button variant="outlined" size="large" color="inherit"  onClick={handleClickOpen} aria-label="close">
 							<CloseIcon />
-						</IconButton>
+							Cerrar
+						</Button>
 					</Toolbar>
 				</AppBar>
 				<Box mx={3} p={2}>

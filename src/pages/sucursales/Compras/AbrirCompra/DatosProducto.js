@@ -1,14 +1,15 @@
 import { Grid, Box,Container, Button, 
         TextField, Typography, makeStyles,
-        FormControlLabel, Checkbox
+        FormControlLabel, Checkbox, IconButton, InputBase, Paper
         } from '@material-ui/core';
-
+import RegistroProvedor from './RegistroProvedor';
 import React from 'react';
 
 import AddIcon from '@material-ui/icons/Add';
 
 import PreciosProductos from './PreciosProductos';
 import RegistroProducto from './RegistroProducto';
+import { Search } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {
@@ -22,7 +23,14 @@ const useStyles = makeStyles((theme) => ({
 	},
 	formInput: {
 		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
-	}
+	},
+    root: {
+		width: '100%'
+	},
+    rootBusqueda: {
+		display: 'flex',
+		paddingLeft: theme.spacing(2)
+	},
 }));
 
 export default function DatosProducto() {
@@ -32,39 +40,39 @@ export default function DatosProducto() {
     return (
         <Container maxWidth="xl">
             <Grid container>
-                <Grid item lg={10}>
+                <Grid item lg={12}>
+                <div className={classes.root}>
                     <div className={classes.formInputFlex}>
-                        <Box>
-                            <Typography>
-                                Producto a registrar 
-                            </Typography>
+                        <Box width="80%" m={1} display="flex" justifyContent="space-between">
+                            <Box mr={1} minWidth="100%">
+                                <Paper className={classes.rootBusqueda}>
+                                    <InputBase
+                                        fullWidth
+                                        placeholder="Buscar productos..."
+                                        // onChange={(e) => setValues(e.target.value)}
+                                        // onKeyPress={pressEnter}
+                                        // value={values}
+                                    />
+                                    <IconButton>
+                                        <Search />
+                                    </IconButton>
+                                </Paper>
+                            </Box>
                         </Box>
-                        <Box width="30%">
-                            <TextField
-                                fullWidth
-                                size="small"
-                                /* error */
-                                name="clave_alterna"
-                                id="form-producto-clave-alterna"
-                                variant="outlined"
-                                /* value="" */
-                                /* helperText="Incorrect entry." */
-                                /* onChange={obtenerCampos} */
-                            />
-                        </Box>
-                        <Box>
-                            <Button
-                                size="large"
-                                variant="contained" 
+                        <RegistroProducto />
+                        <RegistroProvedor />
+                        <Box width="100%" mx={3}>
+                            <Button 
+                                autoFocus
                                 color="primary"
+                                variant="contained" 
+                                size="large" 
                             >
-                                Buscar
+                                Realizar compra
                             </Button>
                         </Box>
                     </div>
-                </Grid>
-                <Grid item lg={2}>
-                    <RegistroProducto />
+                </div>
                 </Grid>
             </Grid>
 
@@ -101,6 +109,7 @@ export default function DatosProducto() {
                     <Typography>Cantidad</Typography>
                     <TextField
                         fullWidth
+                        type="number"
                         size="small"
                         /* error */
                         name="producto_cantidad"
@@ -125,14 +134,7 @@ export default function DatosProducto() {
                         /* onChange={obtenerCampos} */
                     />
                 </Box>
-                <Box width="100%">
-                    <FormControlLabel
-                        control={
-                            <Checkbox /* checked={state.checkedA} onChange={handleChange} */ name="iva-activo" />
-                        }
-                        label="I.V.A."
-                    />
-                </Box>
+               
                 <Box width="100%">
                     <Typography>Existencias </Typography>
                     <Typography>
@@ -189,24 +191,26 @@ export default function DatosProducto() {
                         /* onChange={obtenerCampos} */
                     />
                 </Box>
+                <Box width="100%" pt={3}>
+                    <Button
+                        fullWidth
+                        size="large"
+                        /* error */
+                        variant="contained"
+                        color="primary"
+                        /* value="" */
+                        /* helperText="Incorrect entry." */
+                        /* onChange={obtenerCampos} */
+                    >
+                        Agregar a compra
+                    </Button>
+                </Box>
             </div>
 
             <Grid container>
-                <Grid item lg={10}>
+                <Grid item lg={12}>
                     <Box p={2}>
                         <PreciosProductos/>
-                    </Box>
-                </Grid>
-                <Grid item lg={2}>
-                    <Box p={2}>
-                        <Button
-                            size="large"
-                            variant="contained" 
-                            color="primary"
-                            startIcon={<AddIcon fontSize="large" />}
-                        >
-                            Agregar
-                        </Button>
                     </Box>
                 </Grid>
             </Grid>
