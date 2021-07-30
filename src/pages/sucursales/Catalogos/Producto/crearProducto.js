@@ -89,7 +89,7 @@ export default function CrearProducto({ accion }) {
 	const { 
 		datos_generales, setDatosGenerales,
 		precios, /* setPrecios, */
-		validacion, /* setValidacion, */
+		validacion, setValidacion,
 		preciosP,
 		imagenes, /* setImagenes, */
 		unidadesVenta, /* setUnidadesVenta, */
