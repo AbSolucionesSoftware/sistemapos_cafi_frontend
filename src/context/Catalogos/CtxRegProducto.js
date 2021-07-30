@@ -106,12 +106,6 @@ export const RegProductoProvider = ({ children }) => {
 		precio_tarimas:[],
 	});
 
-	/* const preciosPlazos = {
-		precio_piezas:[],
-		precio_cajas:[],
-		precio_costales:[],
-		precio_tarimas:[],
-	} */
 	const [subcategorias, setSubcategorias] = useState([]);
 	const [imagenes, setImagenes] = useState([]);
 	const [onPreview, setOnPreview] = useState({ index: '', image: '' });

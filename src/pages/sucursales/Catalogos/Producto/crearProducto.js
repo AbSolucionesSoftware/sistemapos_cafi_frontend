@@ -115,13 +115,13 @@ export default function CrearProducto({ accion }) {
 	const saveData = async () => {
 		const validate = validaciones(datos_generales, precios);
 
-		/* if (validate.error) {
+		if (validate.error) {
 			setValidacion(validate);
 			return
 		}
 		setValidacion(validate);
- */
-		/* unidadesVenta.push(unidadVentaXDefecto); */
+
+		unidadesVenta.push(unidadVentaXDefecto);
 		precios.precios_producto = preciosP;
 		/* precios.unidad_de_venta = unidadesVenta; */
 
@@ -140,7 +140,7 @@ export default function CrearProducto({ accion }) {
 
 		console.log(input);
 
-		/* try {
+		try {
 			await crearProducto({
 				variables: {
 					input
@@ -148,7 +148,7 @@ export default function CrearProducto({ accion }) {
 			});
 		} catch (error) {
 			console.log(error);
-		} */
+		}
 		/* setProductos({
 			codigo_barras: ''
 		}); */
