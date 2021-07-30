@@ -121,8 +121,7 @@ export default function CrearProducto({ accion }) {
 		}
 		setValidacion(validate);
  */
-		unidadesVenta.push(unidadVentaXDefecto);
-
+		/* unidadesVenta.push(unidadVentaXDefecto); */
 		precios.precios_producto = preciosP;
 		/* precios.unidad_de_venta = unidadesVenta; */
 

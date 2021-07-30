@@ -28,16 +28,22 @@ export default function Precio1({ data }) {
             if (element.numero_precio === data.numero_precio) {
                 preciosP[i].utilidad = parseFloat(value)
                 setUtilidad(parseFloat(value))
-                let utilidad;
+                let utilidad = 1;
+                let ban = false;
 
-                let valor2 = '';
+                let valor2 = value;
 
                 if (parseFloat(value) < 10) valor2 = "0" + value.replace(/[.]/g, '');
-                if ((value % 100) === 0 ) valor2 = (value / 100);
-                
-                valor2 = value;
-                utilidad = "." + valor2.replace(/[.]/g, '');
-             
+                if ((value % 100) === 0 ) {
+                    valor2 = (value / 100);
+                    ban = true
+                }
+
+                if(!ban) {
+                    utilidad = "." + valor2.replace(/[.]/g, '')  
+                } else{
+                    utilidad = parseFloat(valor2)
+                }
 
                 const ganancia_utilidad_sin_impuestos = precios.unidad_de_compra.precio_unitario_sin_impuesto+(precios.unidad_de_compra.precio_unitario_sin_impuesto * utilidad);
                 preciosP[i].precio_venta = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2));

@@ -87,7 +87,7 @@ export default function PrecioPlazos() {
                     <Typography>Plazo</Typography>
                     <Box display="flex">
                         <FormControl variant="outlined" fullWidth size="small" name="plazo">
-                            <Select name="unidad" value={plazo.plazo} onChange={obtenerPlazos}>
+                            <Select name="plazo" value={plazo.plazo} onChange={obtenerPlazos}>
                                 <MenuItem value="1">1 Mes</MenuItem>
                                 <MenuItem value="2">2 Meses</MenuItem>
                                 <MenuItem value="6">6 Meses</MenuItem>
