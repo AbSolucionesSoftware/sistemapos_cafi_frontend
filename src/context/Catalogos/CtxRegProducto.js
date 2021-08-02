@@ -132,9 +132,9 @@ export const RegProductoProvider = ({ children }) => {
 				centro_de_costos, setCentroDeCostos,
 				unidadVentaXDefecto, setUnidadVentaXDefecto,
 				subcategorias, setSubcategorias,
-				precio_venta, setPrecioVenta,
+				/* precio_venta, setPrecioVenta,
 				precio_neto, setPrecioNeto,
-				utilidad, setUtilidad
+				utilidad, setUtilidad */
 			}}
 		>
 			{children}
