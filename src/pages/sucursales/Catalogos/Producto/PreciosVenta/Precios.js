@@ -11,13 +11,14 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function Precio1({ data }) {
+export default function Precio1({ data, index }) {
     const classes = useStyles();
-    const { preciosP, precios, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(RegProductoContext);
+    const { preciosP, precios, setPreciosP, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(RegProductoContext);
     /* const { precio_venta, setPrecioVenta, precio_neto, setPrecioNeto, utilidad, setUtilidad} = useContext(RegProductoContext); */
-    const [precio_venta, setPrecioVenta] = useState(0);
-    const [precio_neto, setPrecioNeto] = useState(0);
-    const [utilidad, setUtilidad] = useState(0);
+    const [precio_venta, setPrecioVenta] = useState(data.precio_venta);
+    const [precio_neto, setPrecioNeto] = useState(data.precio_neto);
+    const [utilidad, setUtilidad] = useState(data.utilidad);
+    console.log(data);
 
     const obtenerUtilidad = (value) => {
         if(!value) {
@@ -26,9 +27,22 @@ export default function Precio1({ data }) {
         }else{
             for (let i = 0; i < preciosP.length; i++) {
             const element = preciosP[i];
+            /* let nuevo_array = []; */
             if (element.numero_precio === data.numero_precio) {
+                /* nuevo_array.push({
+                    numero_precio: element.numero_precio,
+                    utilidad: parseFloat(value),
+                    precio_neto: element.precio_neto,
+                    unidad_mayoreo: element.unidad_mayoreo,
+                    precio_venta: element.precio_venta,
+                })
+                preciosP.splice(index, 1, nuevo_array);
+                setPreciosP([...preciosP ]); */
+
+
                 preciosP[i].utilidad = parseFloat(value)
                 setUtilidad(parseFloat(value))
+                console.log( preciosP[i])
                 let utilidad = 1;
                 let ban = false;
 

@@ -40,7 +40,7 @@ export const RegProductoProvider = ({ children }) => {
 		default: true
 	})
 
-	const preciosP = [
+	const [preciosP, setPreciosP] = useState([
 		{
 			numero_precio: 1,
 			utilidad: 0,
@@ -83,7 +83,7 @@ export const RegProductoProvider = ({ children }) => {
 			unidad_mayoreo: 0,
 			precio_venta: 0
 		}
-	]
+	])
 
 	const [unidadesVenta, setUnidadesVenta] = useState([]);
 
@@ -126,7 +126,7 @@ export const RegProductoProvider = ({ children }) => {
 				imagenes, setImagenes,
 				onPreview, setOnPreview,
 				validacion, setValidacion,
-				preciosP,
+				preciosP, setPreciosP,
 				preciosPlazos, setPreciosPlazos,
 				unidadesVenta, setUnidadesVenta,
 				centro_de_costos, setCentroDeCostos,

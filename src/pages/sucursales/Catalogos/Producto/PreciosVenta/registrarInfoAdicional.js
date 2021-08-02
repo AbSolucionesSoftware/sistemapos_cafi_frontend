@@ -411,7 +411,8 @@ export default function RegistroInfoAdidional() {
 				</Box>
 				<Divider />
 				<Box display="flex">
-					{preciosP.map((res, index) => (<Precio1 key={index} data={res} />))}
+					{console.log(preciosP)}
+					{preciosP.map((res, index) => (<Precio1 key={index} data={res} index={index} />))}
 				</Box>
 				<Box mt={2}>
 					<Typography>
