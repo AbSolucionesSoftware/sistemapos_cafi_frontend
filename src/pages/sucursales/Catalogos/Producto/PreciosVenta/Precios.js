@@ -34,7 +34,7 @@ export default function Precio1({ data }) {
                 let valor2 = value;
 
                 if (parseFloat(value) < 10) valor2 = "0" + value.replace(/[.]/g, '');
-                if ((value % 100) === 0 ) {
+                if (value > 99 ) {
                     valor2 = (value / 100);
                     ban = true
                 }

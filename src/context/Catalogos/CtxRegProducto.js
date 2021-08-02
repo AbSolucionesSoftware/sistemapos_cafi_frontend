@@ -36,7 +36,8 @@ export const RegProductoProvider = ({ children }) => {
 		unidad: 'PIEZAS',
 		cantidad: 1,
 		precio: 0,
-		unidad_principal: true
+		unidad_principal: true,
+		default: true
 	})
 
 	const preciosP = [

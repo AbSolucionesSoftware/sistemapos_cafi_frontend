@@ -15,14 +15,14 @@ const useStyles = makeStyles((theme) => ({
 export default function PrecioPlazos() {
     const classes = useStyles();
     const { precios, preciosPlazos, setPreciosPlazos } = useContext(RegProductoContext);
-    const [ plazo, setPlazo ] = useState({
+    const [plazo, setPlazo] = useState({
         plazo: "1",
         unidad: "PIEZAS",
         precio: 0
     });
 
     const obtenerPlazos = (e) => {
-        if(e.target.name === "precio"){
+        if (e.target.name === "precio") {
             setPlazo({
                 ...plazo,
                 [e.target.name]: parseFloat(e.target.value)
@@ -36,7 +36,7 @@ export default function PrecioPlazos() {
     }
 
     const guardarPlazo = () => {
-        if(!plazo.plazo || !plazo.precio || !plazo.unidad) return
+        if (!plazo.plazo || !plazo.precio || !plazo.unidad) return
         switch (plazo.unidad) {
             case "PIEZAS":
                 setPreciosPlazos({
@@ -129,23 +129,34 @@ export default function PrecioPlazos() {
                 </Box>
             </Box>
             <Box>
-                <Grid container spacing={2}>
-                    <Grid item lg={3}>
-                        <Typography variant="h6" align="center">PIEZAS</Typography>
-                        <TablaPreciosPlazos precios={preciosPlazos.precio_piezas} />
-                    </Grid>
-                    <Grid item lg={3}>
-                        <Typography variant="h6" align="center">CAJAS</Typography>
-                        <TablaPreciosPlazos precios={preciosPlazos.precio_cajas} />
-                    </Grid>
-                    <Grid item lg={3}>
-                        <Typography variant="h6" align="center">COSTALES</Typography>
-                        <TablaPreciosPlazos precios={preciosPlazos.precio_costales} />
-                    </Grid>
-                    <Grid item lg={3}>
-                        <Typography variant="h6" align="center">TARIMAS</Typography>
-                        <TablaPreciosPlazos precios={preciosPlazos.precio_tarimas} />
-                    </Grid>
+                <Grid container spacing={2} justify="center">
+                    {precios.granel ? (
+                        <Fragment>
+                            <Grid item lg={3}>
+                                <Typography variant="h6" align="center">COSTALES</Typography>
+                                <TablaPreciosPlazos precios={preciosPlazos.precio_costales} />
+                            </Grid>
+                            <Grid item lg={3}>
+                                <Typography variant="h6" align="center">TARIMAS</Typography>
+                                <TablaPreciosPlazos precios={preciosPlazos.precio_tarimas} />
+                            </Grid>
+                        </Fragment>
+                    ) :
+                        <Fragment>
+                            <Grid item lg={3}>
+                                <Typography variant="h6" align="center">PIEZAS</Typography>
+                                <TablaPreciosPlazos precios={preciosPlazos.precio_piezas} />
+                            </Grid>
+                            <Grid item lg={3}>
+                                <Typography variant="h6" align="center">CAJAS</Typography>
+                                <TablaPreciosPlazos precios={preciosPlazos.precio_cajas} />
+                            </Grid>
+                            <Grid item lg={3}>
+                                <Typography variant="h6" align="center">TARIMAS</Typography>
+                                <TablaPreciosPlazos precios={preciosPlazos.precio_tarimas} />
+                            </Grid>
+                        </Fragment>}
+
                 </Grid>
             </Box>
         </Fragment>

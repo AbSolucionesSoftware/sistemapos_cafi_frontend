@@ -21,7 +21,7 @@ export default function PreciosDeCompra() {
 	const classes = useStyles();
 	const { datos_generales, precios, unidadesVenta, setUnidadesVenta, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(RegProductoContext);
 	const [unidades, setUnidades] = useState({
-		unidad_de_venta: precios.granel ? 'KILOGRAMOS' : 'PIEZAS',
+		unidad: precios.granel ? 'KILOGRAMOS' : 'PIEZAS',
 		unidad_principal: false
 	});
 
@@ -40,10 +40,10 @@ export default function PreciosDeCompra() {
 	};
 
 	const agregarNuevaUnidad = () => {
-		if (!unidades.unidad_de_venta || !unidades.precio || !unidades.cantidad) return;
+		if (!unidades.unidad || !unidades.precio || !unidades.cantidad) return;
 		setUnidadesVenta([...unidadesVenta, unidades]);
 		setUnidades({
-			unidad_de_venta: 'PIEZAS',
+			unidad: 'PIEZAS',
 			unidad_principal: false
 		});
 	};
@@ -58,7 +58,7 @@ export default function PreciosDeCompra() {
 			for (let i = 0; i < unidadesVenta.length; i++) {
 				const element = unidadesVenta[i];
 				let new_element = {
-					unidad_de_venta: element.unidad_de_venta,
+					unidad: element.unidad,
 					precio: parseFloat(element.precio),
 					cantidad: parseFloat(element.cantidad),
 					unidad_principal: false
@@ -75,10 +75,10 @@ export default function PreciosDeCompra() {
 				<Box>
 					<Typography>Unidad</Typography>
 					<Box display="flex">
-						<FormControl variant="outlined" fullWidth size="small" name="unidad_de_venta">
+						<FormControl variant="outlined" fullWidth size="small" name="unidad">
 							{!precios.granel ? (
 								<Select
-									name="unidad_de_venta" value={unidades.unidad_de_venta}
+									name="unidad" value={unidades.unidad}
 									onChange={obtenerUnidadesVentas}>
 									<MenuItem value="LITROS">LITROS</MenuItem>
 									<MenuItem value="CAJAS">CAJAS</MenuItem>
@@ -87,7 +87,7 @@ export default function PreciosDeCompra() {
 								</Select>
 							) : (
 								<Select
-									name="unidad_de_venta" value={unidades.unidad_de_venta}
+									name="unidad" value={unidades.unidad}
 									onChange={obtenerUnidadesVentas}>
 									<MenuItem value="KILOGRAMOS">KILOGRAMOS</MenuItem>
 									<MenuItem value="COSTALES">COSTALES</MenuItem>
@@ -123,7 +123,7 @@ export default function PreciosDeCompra() {
 				<Box>
 					<Typography>Código de barras</Typography>
 					<TextField
-						disabled={unidades.unidad_de_venta !== "CAJAS"}
+						disabled={unidades.unidad !== "CAJAS"}
 						size="small"
 						name="codigo_barras"
 						variant="outlined"
@@ -164,9 +164,14 @@ export default function PreciosDeCompra() {
 									/>
 								</TableCell>
 							</TableRow>
-							{unidadesVenta.map((unidades, index) => (
-								<RenderUnidadesRows key={index} unidades={unidades} index={index} />
-							))}
+							{unidadesVenta.map((unidades, index) => {
+								if(!unidades.default) return (
+									<RenderUnidadesRows key={index} unidades={unidades} index={index} />
+								)
+								/* return (
+									<RenderUnidadesRows key={index} unidades={unidades} index={index} />
+								) */
+							})}
 						</TableBody>
 					</Table>
 				</TableContainer>
@@ -185,7 +190,7 @@ const RenderUnidadesRows = ({ unidades, index }) => {
 		for (let i = 0; i < unidadesVenta.length; i++) {
 			const element = unidadesVenta[i];
 			let new_element = {
-				unidad_de_venta: element.unidad_de_venta,
+				unidad: element.unidad,
 				precio: parseFloat(element.precio),
 				cantidad: parseFloat(element.cantidad),
 				unidad_principal: i === index ? true : false
@@ -202,7 +207,7 @@ const RenderUnidadesRows = ({ unidades, index }) => {
 	return (
 		<TableRow>
 			<TableCell>{unidades.codigo_barras}</TableCell>
-			<TableCell>{unidades.unidad_de_venta}</TableCell>
+			<TableCell>{unidades.unidad}</TableCell>
 			<TableCell>{unidades.precio}</TableCell>
 			<TableCell>{unidades.cantidad}</TableCell>
 			<TableCell>

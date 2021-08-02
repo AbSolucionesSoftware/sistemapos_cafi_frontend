@@ -86,15 +86,15 @@ export default function CrearProducto({ accion }) {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState(0);
-	const { 
+	const {
 		datos_generales, setDatosGenerales,
 		precios, /* setPrecios, */
 		validacion, setValidacion,
 		preciosP,
 		imagenes, /* setImagenes, */
-		unidadesVenta, /* setUnidadesVenta, */
+		unidadesVenta, setUnidadesVenta,
 		almacen_inicial, /* setAlmacenInicial, */
-		unidadVentaXDefecto, /* setUnidadVentaXDefecto, */
+		unidadVentaXDefecto, setUnidadVentaXDefecto,
 		centro_de_costos, /* setCentroDeCostos */
 		preciosPlazos, /* setPreciosPlazos, */
 	} = useContext(RegProductoContext);
@@ -115,15 +115,20 @@ export default function CrearProducto({ accion }) {
 	const saveData = async () => {
 		const validate = validaciones(datos_generales, precios);
 
-		if (validate.error) {
+		/* if (validate.error) {
 			setValidacion(validate);
 			return
 		}
-		setValidacion(validate);
+		setValidacion(validate); */
 
-		unidadesVenta.push(unidadVentaXDefecto);
+		if (unidadesVenta.length === 0) {
+			unidadesVenta.push(unidadVentaXDefecto);
+		} else {
+			const unidadxdefecto = unidadesVenta.filter(unidades => unidades.default);
+			if (unidadxdefecto.length === 0) unidadesVenta.push(unidadVentaXDefecto);
+		}
+
 		precios.precios_producto = preciosP;
-		/* precios.unidad_de_venta = unidadesVenta; */
 
 		const input = {
 			datos_generales,
@@ -140,7 +145,7 @@ export default function CrearProducto({ accion }) {
 
 		console.log(input);
 
-		try {
+		/* try {
 			await crearProducto({
 				variables: {
 					input
@@ -148,7 +153,7 @@ export default function CrearProducto({ accion }) {
 			});
 		} catch (error) {
 			console.log(error);
-		}
+		} */
 		/* setProductos({
 			codigo_barras: ''
 		}); */
@@ -165,7 +170,7 @@ export default function CrearProducto({ accion }) {
 					Editar producto
 				</Button>
 			)}
-			<Dialog open={open} onClose={toggleModal} fullWidth maxWidth="lg" scroll="paper">
+			<Dialog open={open} onClose={toggleModal} fullWidth maxWidth="lg" scroll="paper" disableEscapeKeyDown disableBackdropClick>
 				<AppBar position="static" color="default" elevation={0}>
 					<Tabs
 						value={value}
