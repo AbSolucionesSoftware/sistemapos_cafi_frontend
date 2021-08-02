@@ -145,7 +145,7 @@ export default function CrearProducto({ accion }) {
 
 		console.log(input);
 
-		/* try {
+		try {
 			await crearProducto({
 				variables: {
 					input
@@ -153,7 +153,7 @@ export default function CrearProducto({ accion }) {
 			});
 		} catch (error) {
 			console.log(error);
-		} */
+		}
 		/* setProductos({
 			codigo_barras: ''
 		}); */

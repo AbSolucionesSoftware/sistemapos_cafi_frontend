@@ -112,6 +112,11 @@ export const RegProductoProvider = ({ children }) => {
 	const [onPreview, setOnPreview] = useState({ index: '', image: '' });
 	const [validacion, setValidacion] = useState({ error: false, message: '' });
 
+	/* perecios de venta */
+	const [precio_venta, setPrecioVenta] = useState(0);
+    const [precio_neto, setPrecioNeto] = useState(0);
+    const [utilidad, setUtilidad] = useState(0);
+
 	return (
 		<RegProductoContext.Provider
 			value={{
@@ -127,6 +132,9 @@ export const RegProductoProvider = ({ children }) => {
 				centro_de_costos, setCentroDeCostos,
 				unidadVentaXDefecto, setUnidadVentaXDefecto,
 				subcategorias, setSubcategorias,
+				precio_venta, setPrecioVenta,
+				precio_neto, setPrecioNeto,
+				utilidad, setUtilidad
 			}}
 		>
 			{children}

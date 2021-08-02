@@ -14,9 +14,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Precio1({ data }) {
     const classes = useStyles();
     const { preciosP, precios, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(RegProductoContext);
-    const [precio_venta, setPrecioVenta] = useState(0);
-    const [precio_neto, setPrecioNeto] = useState(0);
-    const [utilidad, setUtilidad] = useState(0);
+    const { precio_venta, setPrecioVenta, precio_neto, setPrecioNeto, utilidad, setUtilidad} = useContext(RegProductoContext);
 
     const obtenerUtilidad = (value) => {
         if(!value) {
