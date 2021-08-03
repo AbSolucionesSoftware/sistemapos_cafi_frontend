@@ -28,6 +28,13 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 
 	/*ARMAR OBJETO DE INVENTARIO  */
 	const obtenerInventario = (e) => {
+		if (!e.target.value) {
+			setPrecios({
+				...precios,
+				inventario: { ...precios.inventario, [e.target.name]: '' }
+			});
+			return
+		}
 		if (e.target.name === "unidad_de_inventario") {
 			setPrecios({
 				...precios,
@@ -191,7 +198,7 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 								margin="dense"
 								id="date-picker-dialog"
 								placeholder="ex: DD/MM/AAAA"
-        						format="dd/MM/yyyy"
+								format="dd/MM/yyyy"
 								value={selectedDate}
 								onChange={handleDateChange}
 								KeyboardButtonProps={{

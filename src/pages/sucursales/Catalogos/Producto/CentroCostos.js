@@ -18,9 +18,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CentroCostos({ obtenerConsultasProducto }) {
     const classes = useStyles();
-    const { centro_de_costos, setCentroDeCostos } = useContext(RegProductoContext);
+    const { centro_de_costos, setCentroDeCostos, subcostos, setSubcostos } = useContext(RegProductoContext);
     const { centro_costos } = obtenerConsultasProducto;
-    const [subcostos, setSubcostos] = useState([]);
 
     const obtenerAlmacenes = (event, child) => {
         setCentroDeCostos({

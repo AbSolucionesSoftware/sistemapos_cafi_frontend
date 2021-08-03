@@ -29,7 +29,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetch }) {
 	const classes = useStyles();
-	const { datos_generales, setDatosGenerales, validacion, precios, setPrecios, subcategorias, setSubcategorias } = useContext(RegProductoContext);
+	const { datos_generales, setDatosGenerales, validacion, precios, setPrecios } = useContext(RegProductoContext);
+	const { subcategorias, setSubcategorias, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(RegProductoContext);
 	const { categorias, departamentos, marcas } = obtenerConsultasProducto;
 
 	const obtenerCampos = (e) => {
@@ -39,6 +40,12 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 				[e.target.name]: parseFloat(e.target.value)
 			});
 			return
+		}
+		if (e.target.name === 'codigo_barras') {
+			setUnidadVentaXDefecto({
+				...unidadVentaXDefecto,
+				codigo_barras: e.target.value
+			})
 		}
 		setDatosGenerales({
 			...datos_generales,
@@ -62,10 +69,33 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 			});
 			return
 		}
-		setPrecios({
+		/* setPrecios({
 			...precios,
 			[e.target.name]: e.target.checked
-		});
+		}); */
+		if (e.target.name === 'granel' && e.target.checked) {
+			setPrecios({
+				...precios,
+				[e.target.name]: e.target.checked,
+				inventario: { ...precios.inventario, unidad_de_inventario: 'KILOGRAMOS', },
+				unidad_de_compra: { ...precios.unidad_de_compra, unidad: 'KILOGRAMOS', }
+			});
+			setUnidadVentaXDefecto({
+				...unidadVentaXDefecto,
+				unidad: 'KILOGRAMOS',
+			})
+		} else {
+			setPrecios({
+				...precios,
+				[e.target.name]: e.target.checked,
+				inventario: { ...precios.inventario, unidad_de_inventario: 'PIEZAS', },
+				unidad_de_compra: { ...precios.unidad_de_compra, unidad: 'PIEZAS', }
+			});
+			setUnidadVentaXDefecto({
+				...unidadVentaXDefecto,
+				unidad: 'PIEZAS',
+			})
+		}
 	};
 
 	const obtenerIDs = (event, child) => {
@@ -83,11 +113,15 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 	const GenCodigoBarras = () => {
 		const max = 999999999999;
 		const min = 100000000000;
-		const codigo_barras = Math.floor(Math.random() * (max - min + 1) + min);
+		const codigo_barras = Math.floor(Math.random() * (max - min + 1) + min).toString();
 		setDatosGenerales({
 			...datos_generales,
 			codigo_barras
 		});
+		setUnidadVentaXDefecto({
+			...unidadVentaXDefecto,
+			codigo_barras
+		})
 	};
 
 	return (
@@ -323,7 +357,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 							<FormControl variant="outlined" fullWidth size="small">
 								<Select
 									id="form-producto-marca"
-									name="marcas"
+									name="marca"
 									value={datos_generales.marcas ? datos_generales.marcas : ''}
 									onChange={(event, child) => obtenerIDs(event, child)}
 								>

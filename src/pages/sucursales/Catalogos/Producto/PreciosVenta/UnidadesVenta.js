@@ -168,9 +168,7 @@ export default function PreciosDeCompra() {
 								if(!unidades.default) return (
 									<RenderUnidadesRows key={index} unidades={unidades} index={index} />
 								)
-								/* return (
-									<RenderUnidadesRows key={index} unidades={unidades} index={index} />
-								) */
+								return null
 							})}
 						</TableBody>
 					</Table>
@@ -224,7 +222,7 @@ const RenderUnidadesRows = ({ unidades, index }) => {
 	);
 };
 
-const ModalDelete = ({ index }) => {
+const ModalDelete = ({ unidades, index }) => {
 	const [open, setOpen] = useState(false);
 	const { unidadesVenta, setUnidadesVenta, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(RegProductoContext);
 
@@ -234,7 +232,7 @@ const ModalDelete = ({ index }) => {
 
 	const eliminarUnidad = () => {
 		unidadesVenta.splice(index, 1);
-		if (unidadesVenta.length === 0) {
+		if (unidadesVenta.length === 0 || unidades.unidad_principal) {
 			setUnidadVentaXDefecto({
 				...unidadVentaXDefecto,
 				unidad_principal: true

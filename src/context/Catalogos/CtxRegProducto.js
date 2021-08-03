@@ -3,7 +3,9 @@ import React, { createContext, useState } from 'react';
 export const RegProductoContext = createContext();
 
 export const RegProductoProvider = ({ children }) => {
-	const [datos_generales, setDatosGenerales] = useState({});
+	const [datos_generales, setDatosGenerales] = useState({
+		receta_farmacia: false,
+	});
 	const [precios, setPrecios] = useState({
 		monedero: false,
 		monedero_electronico: 0,
@@ -11,6 +13,7 @@ export const RegProductoProvider = ({ children }) => {
 		ieps_activo: false,
 		ieps: 0,
 		iva: 16,
+		granel: false,
 		inventario: {
 			inventario_minimo: 0,
 			inventario_maximo: 0,
@@ -33,6 +36,7 @@ export const RegProductoProvider = ({ children }) => {
 	});
 
 	const [ unidadVentaXDefecto, setUnidadVentaXDefecto ] = useState({
+		codigo_barras: '',
 		unidad: 'PIEZAS',
 		cantidad: 1,
 		precio: 0,
@@ -111,11 +115,7 @@ export const RegProductoProvider = ({ children }) => {
 	const [imagenes, setImagenes] = useState([]);
 	const [onPreview, setOnPreview] = useState({ index: '', image: '' });
 	const [validacion, setValidacion] = useState({ error: false, message: '' });
-
-	/* perecios de venta */
-	const [precio_venta, setPrecioVenta] = useState(0);
-    const [precio_neto, setPrecioNeto] = useState(0);
-    const [utilidad, setUtilidad] = useState(0);
+	const [subcostos, setSubcostos] = useState([]);
 
 	return (
 		<RegProductoContext.Provider
@@ -132,9 +132,7 @@ export const RegProductoProvider = ({ children }) => {
 				centro_de_costos, setCentroDeCostos,
 				unidadVentaXDefecto, setUnidadVentaXDefecto,
 				subcategorias, setSubcategorias,
-				/* precio_venta, setPrecioVenta,
-				precio_neto, setPrecioNeto,
-				utilidad, setUtilidad */
+				subcostos, setSubcostos
 			}}
 		>
 			{children}

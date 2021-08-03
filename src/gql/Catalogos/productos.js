@@ -48,11 +48,7 @@ export const OBTENER_CONSULTAS = gql`
 export const CREAR_PRODUCTO = gql`
 	mutation crearProducto($input: CrearProductoInput) {
 		crearProducto(input: $input) {
-			_id
-			imagenes {
-				url_imagen
-				key_imagen
-			}
+			message
 		}
 	}
 `;

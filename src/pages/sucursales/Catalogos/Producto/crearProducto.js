@@ -136,7 +136,7 @@ export default function CrearProducto({ accion }) {
 			imagenes,
 			almacen_inicial,
 			centro_de_costos,
-			unidades_venta: unidadesVenta,
+			unidades_de_venta: unidadesVenta,
 			precio_plazos: preciosPlazos,
 			empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id,
