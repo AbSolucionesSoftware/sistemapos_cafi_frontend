@@ -98,7 +98,6 @@ export default function ContainerRegistroAlmacen({ accion, datos }) {
 			setDatosAlmacen(input);
 		}
 	};
-
     const onCloseModal = () => {
 		setOpen(false);
 		limpiarCampos();
