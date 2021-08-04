@@ -1,4 +1,4 @@
-export default function validaciones(datos1, datos2) {
+export function validaciones(datos1, datos2) {
     /* si no hay datos1 y datos 2 */
     if (
         !datos1.clave_alterna ||
@@ -26,8 +26,4 @@ export default function validaciones(datos1, datos2) {
         /* si hay todos los datos */
         return { error: false, message: '' };
     }
-
-
-
-
 }

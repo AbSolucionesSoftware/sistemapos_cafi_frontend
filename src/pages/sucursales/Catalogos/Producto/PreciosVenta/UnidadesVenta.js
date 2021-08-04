@@ -83,7 +83,6 @@ export default function PreciosDeCompra() {
 									<MenuItem value="LITROS">LITROS</MenuItem>
 									<MenuItem value="CAJAS">CAJAS</MenuItem>
 									<MenuItem value="PIEZAS">PIEZAS</MenuItem>
-									<MenuItem value="TARIMAS">TARIMAS</MenuItem>
 								</Select>
 							) : (
 								<Select

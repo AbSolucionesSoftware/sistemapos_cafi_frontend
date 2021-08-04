@@ -35,6 +35,13 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 
 	const obtenerCampos = (e) => {
 		if (e.target.name === "monedero_electronico") {
+			if(!e.target.value){
+				setPrecios({
+					...precios,
+					[e.target.name]: ''
+				});
+				return
+			}
 			setPrecios({
 				...precios,
 				[e.target.name]: parseFloat(e.target.value)
@@ -123,6 +130,15 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 			codigo_barras
 		})
 	};
+
+	const verificarCampoVacio = (campo) => {
+		if(!precios.monedero_electronico){
+			setPrecios({
+				...precios,
+				monedero_electronico: 1
+			})
+		}
+	}
 
 	return (
 		<Fragment>
@@ -444,6 +460,9 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 									value={precios.monedero_electronico}
 									onChange={obtenerCampos}
 									disabled={precios.monedero ? false : true}
+									onBlur={() => verificarCampoVacio('monedero_electronico')}
+									error={precios.monedero_electronico === ""}
+									helperText={precios.monedero_electronico === "" ? "Campo necesario" : ''}
 								/>
 							</Box>
 						</Box>

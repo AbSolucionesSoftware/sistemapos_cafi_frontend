@@ -33,6 +33,13 @@ export default function RegistroInfoAdidional() {
 
 	/* CHECKBOX IVA */
 	const obtenerIva = (e) => {
+		if(e.target.name === 'iva' && !e.target.value){
+			setPrecios({
+				...precios,
+				iva: ''
+			})
+			return
+		}
 		let precio_con_impuesto = 0;
 		let precio_sin_impuesto = 0;
 		let iva = 0;
@@ -90,6 +97,13 @@ export default function RegistroInfoAdidional() {
 	/* CHECKBOX IEPS
 	si el checkbox esta true se agrega al precio de venta */
 	const obtenerIeps = (e) => {
+		if(e.target.name === 'ieps' && !e.target.value){
+			setPrecios({
+				...precios,
+				ieps: ''
+			})
+			return
+		}
 		let precio_con_impuesto = 0;
 		let precio_sin_impuesto = 0;
 		let iva = 0;
@@ -244,6 +258,15 @@ export default function RegistroInfoAdidional() {
 
 	};
 
+	const verificarCampoVacio = (name, value) => {
+		if(!value){
+			setPrecios({
+				...precios,
+				[name]: 0
+			})
+		}
+	}
+
 	return (
 		<Box >
 			<div>
@@ -272,6 +295,9 @@ export default function RegistroInfoAdidional() {
 							variant="outlined"
 							value={precios.iva}
 							onChange={obtenerIva}
+							onBlur={() => verificarCampoVacio('iva', precios.iva )}
+							error={precios.iva === ""}
+							helperText={precios.iva === '' ? "Campo necesario" : ''}
 						/>
 					</Box>
 					<Box mx={5} />
@@ -293,6 +319,9 @@ export default function RegistroInfoAdidional() {
 							variant="outlined"
 							value={precios.ieps}
 							onChange={obtenerIeps}
+							onBlur={() => verificarCampoVacio('ieps', precios.ieps )}
+							error={precios.ieps === ""}
+							helperText={precios.ieps === '' ? "Campo necesario" : ''}
 						/>
 					</Box>
 					<Box display="flex" alignItems="center" ml={1}>
@@ -317,7 +346,6 @@ export default function RegistroInfoAdidional() {
 										<MenuItem value="LITROS">LITROS</MenuItem>
 										<MenuItem value="CAJAS">CAJAS</MenuItem>
 										<MenuItem value="PIEZAS">PIEZAS</MenuItem>
-										<MenuItem value="TARIMAS">TARIMAS</MenuItem>
 									</Select>
 								) : (
 									<Select id="form-producto-categoria"

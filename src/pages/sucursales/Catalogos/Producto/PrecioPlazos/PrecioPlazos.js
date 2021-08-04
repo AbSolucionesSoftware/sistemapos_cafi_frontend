@@ -14,10 +14,10 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PrecioPlazos() {
     const classes = useStyles();
-    const { precios, preciosPlazos, setPreciosPlazos } = useContext(RegProductoContext);
+    const { precios, preciosPlazos, setPreciosPlazos, preciosP } = useContext(RegProductoContext);
     const [plazo, setPlazo] = useState({
         plazo: "1",
-        unidad: "PIEZAS",
+        unidad: precios.granel ? "COSTALES" : "PIEZAS",
         precio: 0
     });
 
@@ -56,12 +56,6 @@ export default function PrecioPlazos() {
                     precio_costales: [...preciosPlazos.precio_costales, plazo]
                 })
                 break;
-            case "TARIMAS":
-                setPreciosPlazos({
-                    ...preciosPlazos,
-                    precio_tarimas: [...preciosPlazos.precio_tarimas, plazo]
-                })
-                break;
             default:
                 break;
         }
@@ -75,10 +69,7 @@ export default function PrecioPlazos() {
         <Fragment>
             <Box className={classes.formInputFlex}>
                 <Typography>
-                    Precio venta sin impuestos: <b>{precios.precio_de_compra.precio_sin_impuesto}</b>
-                </Typography>
-                <Typography>
-                    Precio venta con impuestos(NETO): <b>{precios.precio_de_compra.precio_con_impuesto}</b>
+                    Precio venta con impuestos(NETO): <b>{preciosP[0].precio_neto}</b>
                 </Typography>
             </Box>
             <Divider />
@@ -102,13 +93,18 @@ export default function PrecioPlazos() {
                     <Typography>Unidad</Typography>
                     <Box display="flex">
                         <FormControl variant="outlined" fullWidth size="small" name="unidad">
-                            <Select
-                                name="unidad" value={plazo.unidad} onChange={obtenerPlazos}>
-                                <MenuItem value="TARIMAS">TARIMAS</MenuItem>
-                                <MenuItem value="CAJAS">CAJAS</MenuItem>
-                                <MenuItem value="PIEZAS">PIEZAS</MenuItem>
-                                <MenuItem value="COSTALES">COSTALES</MenuItem>
-                            </Select>
+                            {precios.granel ? (
+                                <Select
+                                    name="unidad" value={plazo.unidad} onChange={obtenerPlazos}>
+                                    <MenuItem value="COSTALES">COSTALES</MenuItem>
+                                </Select>
+                            ) : (
+                                <Select
+                                    name="unidad" value={plazo.unidad} onChange={obtenerPlazos}>
+                                    <MenuItem value="CAJAS">CAJAS</MenuItem>
+                                    <MenuItem value="PIEZAS">PIEZAS</MenuItem>
+                                </Select>
+                            )}
                         </FormControl>
                     </Box>
                 </Box>
@@ -136,10 +132,6 @@ export default function PrecioPlazos() {
                                 <Typography variant="h6" align="center">COSTALES</Typography>
                                 <TablaPreciosPlazos precios={preciosPlazos.precio_costales} />
                             </Grid>
-                            <Grid item lg={3}>
-                                <Typography variant="h6" align="center">TARIMAS</Typography>
-                                <TablaPreciosPlazos precios={preciosPlazos.precio_tarimas} />
-                            </Grid>
                         </Fragment>
                     ) :
                         <Fragment>
@@ -150,10 +142,6 @@ export default function PrecioPlazos() {
                             <Grid item lg={3}>
                                 <Typography variant="h6" align="center">CAJAS</Typography>
                                 <TablaPreciosPlazos precios={preciosPlazos.precio_cajas} />
-                            </Grid>
-                            <Grid item lg={3}>
-                                <Typography variant="h6" align="center">TARIMAS</Typography>
-                                <TablaPreciosPlazos precios={preciosPlazos.precio_tarimas} />
                             </Grid>
                         </Fragment>}
 

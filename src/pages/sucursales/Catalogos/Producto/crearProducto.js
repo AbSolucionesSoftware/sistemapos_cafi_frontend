@@ -22,7 +22,7 @@ import ErrorPage from '../../../../components/ErrorPage';
 
 import { useMutation, useQuery } from '@apollo/client';
 import { CREAR_PRODUCTO, OBTENER_CONSULTAS } from '../../../../gql/Catalogos/productos';
-import validaciones from './validaciones';
+import { validaciones } from './validaciones';
 import CentroCostos from './CentroCostos';
 import PrecioPlazos from './PrecioPlazos/PrecioPlazos';
 
@@ -79,29 +79,30 @@ const useStyles = makeStyles((theme) => ({
 	},
 	dialogContent: {
 		padding: 0
-	},
+	}
 }));
 
 export default function CrearProducto({ accion }) {
 	const classes = useStyles();
-	const [open, setOpen] = useState(false);
-	const [value, setValue] = useState(0);
+	const [ open, setOpen ] = useState(false);
+	const [ value, setValue ] = useState(0);
 	const {
-		datos_generales, setDatosGenerales,
-		precios, /* setPrecios, */
+		datos_generales,
+		setDatosGenerales,
+		precios /* setPrecios, */,
 		validacion, setValidacion,
 		preciosP,
-		imagenes, /* setImagenes, */
-		unidadesVenta, setUnidadesVenta,
-		almacen_inicial, /* setAlmacenInicial, */
-		unidadVentaXDefecto, setUnidadVentaXDefecto,
-		centro_de_costos, /* setCentroDeCostos */
-		preciosPlazos, /* setPreciosPlazos, */
+		imagenes /* setImagenes, */,
+		unidadesVenta, /* setUnidadesVenta, */
+		almacen_inicial /* setAlmacenInicial, */,
+		unidadVentaXDefecto, /* setUnidadVentaXDefecto, */
+		centro_de_costos /* setCentroDeCostos */,
+		preciosPlazos /* setPreciosPlazos, */
 	} = useContext(RegProductoContext);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	/* Mutations */
-	const [crearProducto] = useMutation(CREAR_PRODUCTO);
+	const [ crearProducto ] = useMutation(CREAR_PRODUCTO);
 
 	const toggleModal = () => {
 		setOpen(!open);
@@ -115,16 +116,16 @@ export default function CrearProducto({ accion }) {
 	const saveData = async () => {
 		const validate = validaciones(datos_generales, precios);
 
-		/* if (validate.error) {
+		if (validate.error) {
 			setValidacion(validate);
-			return
+			return;
 		}
-		setValidacion(validate); */
+		setValidacion(validate);
 
 		if (unidadesVenta.length === 0) {
 			unidadesVenta.push(unidadVentaXDefecto);
 		} else {
-			const unidadxdefecto = unidadesVenta.filter(unidades => unidades.default);
+			const unidadxdefecto = unidadesVenta.filter((unidades) => unidades.default);
 			if (unidadxdefecto.length === 0) unidadesVenta.push(unidadVentaXDefecto);
 		}
 
@@ -140,7 +141,7 @@ export default function CrearProducto({ accion }) {
 			precio_plazos: preciosPlazos,
 			empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id,
-			usuario: sesion._id,
+			usuario: sesion._id
 		};
 
 		console.log(input);
@@ -170,7 +171,15 @@ export default function CrearProducto({ accion }) {
 					Editar producto
 				</Button>
 			)}
-			<Dialog open={open} onClose={toggleModal} fullWidth maxWidth="lg" scroll="paper" disableEscapeKeyDown disableBackdropClick>
+			<Dialog
+				open={open}
+				onClose={toggleModal}
+				fullWidth
+				maxWidth="lg"
+				scroll="paper"
+				disableEscapeKeyDown
+				disableBackdropClick
+			>
 				<AppBar position="static" color="default" elevation={0}>
 					<Tabs
 						value={value}
@@ -263,6 +272,19 @@ export default function CrearProducto({ accion }) {
 						onClick={saveData}
 						size="large"
 						startIcon={<DoneIcon />}
+						disabled={
+							!datos_generales.clave_alterna ||
+							!datos_generales.tipo_producto ||
+							!datos_generales.nombre_generico ||
+							!datos_generales.nombre_comercial ||
+							!precios.precio_de_compra.precio_con_impuesto ||
+							!precios.precio_de_compra.precio_sin_impuesto ||
+							!precios.unidad_de_compra.cantidad ? (
+								true
+							) : (
+								false
+							)
+						}
 					>
 						Guardar
 					</Button>
@@ -292,8 +314,6 @@ const ContenidoModal = ({ accion, value }) => {
 	if (error) return <ErrorPage error={error} />;
 
 	const { obtenerConsultasProducto } = data;
-
-
 
 	return (
 		<div className={classes.root}>

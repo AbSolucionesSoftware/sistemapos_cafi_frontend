@@ -108,7 +108,6 @@ export const RegProductoProvider = ({ children }) => {
 		precio_piezas:[],
 		precio_cajas:[],
 		precio_costales:[],
-		precio_tarimas:[],
 	});
 
 	const [subcategorias, setSubcategorias] = useState([]);

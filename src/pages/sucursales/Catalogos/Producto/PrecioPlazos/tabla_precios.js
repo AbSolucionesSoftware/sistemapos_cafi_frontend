@@ -9,7 +9,7 @@ import Paper from '@material-ui/core/Paper';
 import IconButton from '@material-ui/core/IconButton'
 import { Dialog, DialogTitle, DialogActions, Button } from '@material-ui/core'
 import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
-import { DeleteOutline, DeleteOutlined } from '@material-ui/icons';
+import { DeleteOutline } from '@material-ui/icons';
 
 export default function TablaPreciosPlazos({ precios }) {
 	/* const { preciosPlazos } = useContext(RegProductoContext); */
@@ -79,13 +79,6 @@ const ModalDeletePlazos = ({ index, unidad }) => {
 				setPreciosPlazos({
                     ...preciosPlazos,
                     precio_costales: [...preciosPlazos.precio_costales]
-                })
-				break;
-			case "TARIMAS":
-				preciosPlazos.precio_tarimas.splice(index, 1);
-				setPreciosPlazos({
-                    ...preciosPlazos,
-                    precio_tarimas: [...preciosPlazos.precio_tarimas]
                 })
 				break;
 			default:

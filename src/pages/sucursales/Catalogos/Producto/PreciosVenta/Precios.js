@@ -17,6 +17,7 @@ export default function Precio1({ data, index }) {
     const [precio_venta, setPrecioVenta] = useState(data.precio_venta);
     const [precio_neto, setPrecioNeto] = useState(data.precio_neto);
     const [utilidad, setUtilidad] = useState(data.utilidad);
+    const [mayoreo, setMayoreo ] = useState(data.unidad_mayoreo);
 
     const obtenerUtilidad = (value) => {
         if (!value) {
@@ -126,6 +127,7 @@ export default function Precio1({ data, index }) {
             const element = preciosP[i];
             if (element.numero_precio === data.numero_precio) {
                 preciosP[i].unidad_mayoreo = parseInt(value)
+                setMayoreo(value);
             }
         }
     }
@@ -289,6 +291,7 @@ export default function Precio1({ data, index }) {
                                 size="small"
                                 name="unidad_mayoreo"
                                 variant="outlined"
+                                value={mayoreo}
                                 onChange={(e) => obtenerMayoreo(e.target.value)}
                             />
                         </Box>) : null}

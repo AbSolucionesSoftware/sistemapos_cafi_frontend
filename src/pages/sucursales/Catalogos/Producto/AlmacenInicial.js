@@ -49,6 +49,13 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 	};
 
 	const obtenerAlmacenInicial = (e) => {
+		if (!e.target.value) {
+			setAlmacenInicial({
+				...almacen_inicial,
+				[e.target.name]: ''
+			});
+			return
+		}
 		if (e.target.name === "almacen") {
 			setAlmacenInicial({
 				...almacen_inicial,
@@ -78,6 +85,24 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 		});
 	};
 
+	const verificarCampoVacio = (tipo, name, value) => {
+		if(tipo === 'inventario'){
+			if(!value){
+				setPrecios({
+					...precios,
+					inventario: { ...precios.inventario, [name]: 0 }
+				});
+			}
+		}else{
+			if(!value){
+				setAlmacenInicial({
+					...almacen_inicial,
+					[name]: 0
+				});
+			}
+		}
+	}
+
 	return (
 		<Fragment>
 			<Box mt={3}>
@@ -98,6 +123,9 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 						variant="outlined"
 						value={precios.inventario.inventario_minimo}
 						onChange={obtenerInventario}
+						onBlur={() => verificarCampoVacio('inventario', 'inventario_minimo', precios.inventario.inventario_minimo )}
+						error={precios.inventario.inventario_minimo === ""}
+						helperText={precios.inventario.inventario_minimo === '' ? "Campo necesario" : ''}
 					/>
 				</Box>
 				<Box width="150px">
@@ -111,6 +139,9 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 						variant="outlined"
 						value={precios.inventario.inventario_maximo}
 						onChange={obtenerInventario}
+						onBlur={() => verificarCampoVacio('inventario', 'inventario_maximo', precios.inventario.inventario_maximo )}
+						error={precios.inventario.inventario_maximo === ""}
+						helperText={precios.inventario.inventario_maximo === '' ? "Campo necesario" : ''}
 					/>
 				</Box>
 				<Box width="150px">
@@ -127,7 +158,6 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 									<MenuItem value="LITROS">LITROS</MenuItem>
 									<MenuItem value="CAJAS">CAJAS</MenuItem>
 									<MenuItem value="PIEZAS">PIEZAS</MenuItem>
-									<MenuItem value="TARIMAS">TARIMAS</MenuItem>
 								</Select>
 							) : (
 								<Select
@@ -163,6 +193,9 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 							variant="outlined"
 							value={almacen_inicial.cantidad}
 							onChange={obtenerAlmacenInicial}
+							onBlur={() => verificarCampoVacio('almacen','cantidad', almacen_inicial.cantidad )}
+							error={almacen_inicial.cantidad === ""}
+							helperText={almacen_inicial.cantidad === '' ? "Campo necesario" : ''}
 						/>
 					</Box>
 				</Box>
