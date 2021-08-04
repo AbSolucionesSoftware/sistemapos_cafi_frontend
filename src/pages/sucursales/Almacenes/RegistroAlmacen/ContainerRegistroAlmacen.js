@@ -73,7 +73,7 @@ export default function ContainerRegistroAlmacen({ accion, datos }) {
                     calle: '',
                     no_ext: '',
                     no_int: '',
-                    codigo_postal: '',
+                    codigo_postal: 0,
                     colonia: '',
                     municipio: '',
                     localidad: '',
@@ -112,17 +112,10 @@ export default function ContainerRegistroAlmacen({ accion, datos }) {
 	};
 
     const obtenerCamposDireccion = (e) => {
-        if(e.target.name === "codigo_postal"){
-            setDatosAlmacen({
-                ...datosAlmacen,
-                direccion: { ...datosAlmacen.direccion, [e.target.name]: parseInt(e.target.value) }
-            });
-        }else{
-            setDatosAlmacen({
-                ...datosAlmacen,
-                direccion: { ...datosAlmacen.direccion, [e.target.name]: e.target.value }
-            });
-        }
+        setDatosAlmacen({
+            ...datosAlmacen,
+            direccion: { ...datosAlmacen.direccion, [e.target.name]: e.target.value }
+        });
 	};
 
     const saveData = async () => {
@@ -155,7 +148,6 @@ export default function ContainerRegistroAlmacen({ accion, datos }) {
                     } 
                 }else{
                     console.log("Editar");
-                    // console.log(datosAlmacen);
                     const { id_sucursal, _id, ...input } = datosAlmacen;
                     console.log(input);
                     await ActualizarAlmacen({
