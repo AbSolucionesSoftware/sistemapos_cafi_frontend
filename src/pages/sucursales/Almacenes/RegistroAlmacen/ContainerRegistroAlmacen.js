@@ -133,20 +133,23 @@ export default function ContainerRegistroAlmacen({ accion, datos }) {
             }else{
                 if(accion === "registrar"){
                     let input = {};
+                    console.log(sesion);
                     if(datosAlmacen.id_usuario_encargado === ""){
                         const { id_usuario_encargado, ...input } = datosAlmacen;
                         await CrearAlmacen({
                             variables: {
                                 input,
-                                id: sesion.sucursal._id
+                                id: sesion.sucursal._id,
+                                empresa: sesion.empresa._id
                             }
                         });
                     }else{
-                        input = datosAlmacen
+                        input = datosAlmacen;
                         await CrearAlmacen({
                             variables: {
                                 input,
-                                id: sesion.sucursal._id
+                                id: sesion.sucursal._id,
+                                empresa: sesion.empresa._id
                             }
                         });
                     } 
