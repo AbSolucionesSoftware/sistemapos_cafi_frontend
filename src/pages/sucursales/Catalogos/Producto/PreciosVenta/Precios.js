@@ -17,7 +17,7 @@ export default function Precio1({ data, index }) {
     const [precio_venta, setPrecioVenta] = useState(data.precio_venta);
     const [precio_neto, setPrecioNeto] = useState(data.precio_neto);
     const [utilidad, setUtilidad] = useState(data.utilidad);
-    const [mayoreo, setMayoreo ] = useState(data.unidad_mayoreo);
+    const [mayoreo, setMayoreo] = useState(data.unidad_mayoreo);
 
     const obtenerUtilidad = (value) => {
         if (!value) {
@@ -161,7 +161,7 @@ export default function Precio1({ data, index }) {
                             })
                         }
                     }
-                    
+
                     let verificacion_entero = false;
                     let new_utilidad = utilidad;
 
@@ -172,7 +172,7 @@ export default function Precio1({ data, index }) {
                     }
 
                     if (!verificacion_entero) {
-                        new_utilidad = "." + new_utilidad.replace(/[.]/g, '')
+                        new_utilidad = "." + new_utilidad.toString().replace(/[.]/g, '')
                     } else {
                         new_utilidad = parseFloat(new_utilidad)
                     }
@@ -210,6 +210,42 @@ export default function Precio1({ data, index }) {
         ],
     )
 
+    const verificarCampoVacio = (name, value) => {
+        switch (name) {
+            case "utilidad":
+                if (!value) {
+                    setUtilidad(0)
+                    setPrecioNeto(precios.unidad_de_compra.precio_unitario_con_impuesto);
+                    for (let i = 0; i < preciosP.length; i++) {
+                        preciosP[i].utilidad = 0
+                        preciosP[i].precio_neto = precios.unidad_de_compra.precio_unitario_con_impuesto
+                    }
+                }
+                break;
+            case "precio_neto":
+                if (!value) {
+                    setUtilidad(0)
+                    setPrecioNeto(precios.unidad_de_compra.precio_unitario_con_impuesto);
+                    for (let i = 0; i < preciosP.length; i++) {
+                        preciosP[i].precio_neto = precios.unidad_de_compra.precio_unitario_con_impuesto
+                        preciosP[i].utilidad = 0
+                    }
+                }
+                break;
+            case "unidad_mayoreo":
+                if (!value) {
+                    setMayoreo(0)
+                    for (let i = 0; i < preciosP.length; i++) {
+                        preciosP[i].unidad_mayoreo = 0
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
+    }
+
     useEffect(() => {
         calculos();
     }, [calculos])
@@ -236,7 +272,8 @@ export default function Precio1({ data, index }) {
                             name="utilidad"
                             variant="outlined"
                             onChange={(e) => obtenerUtilidad(e.target.value)}
-                        /* onChange={obtenerCampos} */
+                            onBlur={() => verificarCampoVacio('utilidad', utilidad)}
+                            error={utilidad === ""}
                         />
                     </Box>
                 </Box>
@@ -271,6 +308,8 @@ export default function Precio1({ data, index }) {
                             variant="outlined"
                             value={precio_neto}
                             onChange={(e) => obtenerPrecioNeto(e.target.value)}
+                            onBlur={() => verificarCampoVacio('precio_neto', precio_neto)}
+                            error={precio_neto === ""}
                         />
                     </Box>
                 </Box>
@@ -293,6 +332,8 @@ export default function Precio1({ data, index }) {
                                 variant="outlined"
                                 value={mayoreo}
                                 onChange={(e) => obtenerMayoreo(e.target.value)}
+                                onBlur={() => verificarCampoVacio('unidad_mayoreo', mayoreo)}
+                                error={mayoreo === ""}
                             />
                         </Box>) : null}
                 </Box>

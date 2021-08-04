@@ -47,7 +47,7 @@ export default function Productos() {
 
 	return (
 		<div>
-			<Button fullWidth onClick={handleClickOpen}>
+			<Button fullWidth onClick={() => handleClickOpen()}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<img src={ProductosIcon} alt="icono ropa" className={classes.iconSvg} />
@@ -61,7 +61,7 @@ export default function Productos() {
 						<Typography variant="h6" className={classes.title}>
 							Productos
 						</Typography>
-						<Button autoFocus color="inherit" size="large" onClick={handleClose} startIcon={<CloseIcon />}>
+						<Button autoFocus color="inherit" size="large" onClick={() => handleClose()} startIcon={<CloseIcon />}>
 							Cerrar
 						</Button>
 					</Toolbar>

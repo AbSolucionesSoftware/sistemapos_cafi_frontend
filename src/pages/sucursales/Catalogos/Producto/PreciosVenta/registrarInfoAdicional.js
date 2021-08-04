@@ -33,7 +33,7 @@ export default function RegistroInfoAdidional() {
 
 	/* CHECKBOX IVA */
 	const obtenerIva = (e) => {
-		if(e.target.name === 'iva' && !e.target.value){
+		if (e.target.name === 'iva' && !e.target.value) {
 			setPrecios({
 				...precios,
 				iva: ''
@@ -97,7 +97,7 @@ export default function RegistroInfoAdidional() {
 	/* CHECKBOX IEPS
 	si el checkbox esta true se agrega al precio de venta */
 	const obtenerIeps = (e) => {
-		if(e.target.name === 'ieps' && !e.target.value){
+		if (e.target.name === 'ieps' && !e.target.value) {
 			setPrecios({
 				...precios,
 				ieps: ''
@@ -259,7 +259,7 @@ export default function RegistroInfoAdidional() {
 	};
 
 	const verificarCampoVacio = (name, value) => {
-		if(!value){
+		if (!value) {
 			setPrecios({
 				...precios,
 				[name]: 0
@@ -295,9 +295,8 @@ export default function RegistroInfoAdidional() {
 							variant="outlined"
 							value={precios.iva}
 							onChange={obtenerIva}
-							onBlur={() => verificarCampoVacio('iva', precios.iva )}
+							onBlur={() => verificarCampoVacio('iva', precios.iva)}
 							error={precios.iva === ""}
-							helperText={precios.iva === '' ? "Campo necesario" : ''}
 						/>
 					</Box>
 					<Box mx={5} />
@@ -319,9 +318,8 @@ export default function RegistroInfoAdidional() {
 							variant="outlined"
 							value={precios.ieps}
 							onChange={obtenerIeps}
-							onBlur={() => verificarCampoVacio('ieps', precios.ieps )}
+							onBlur={() => verificarCampoVacio('ieps', precios.ieps)}
 							error={precios.ieps === ""}
-							helperText={precios.ieps === '' ? "Campo necesario" : ''}
 						/>
 					</Box>
 					<Box display="flex" alignItems="center" ml={1}>
@@ -339,20 +337,25 @@ export default function RegistroInfoAdidional() {
 						<Typography>Unidad de compra</Typography>
 						<Box display="flex">
 							<FormControl variant="outlined" fullWidth size="small" error={validacion.error && !precios.unidad_de_compra.unidad}>
-								{!precios.granel ? (
-									<Select id="form-producto-categoria"
-										name="unidad" value={precios.unidad_de_compra.unidad}
-										onChange={obtenerUnidadCompra}>
-										<MenuItem value="LITROS">LITROS</MenuItem>
-										<MenuItem value="CAJAS">CAJAS</MenuItem>
-										<MenuItem value="PIEZAS">PIEZAS</MenuItem>
-									</Select>
-								) : (
+								{precios.granel ? (
 									<Select id="form-producto-categoria"
 										name="unidad" value={precios.unidad_de_compra.unidad}
 										onChange={obtenerUnidadCompra}>
 										<MenuItem value="KILOGRAMOS">KILOGRAMOS</MenuItem>
 										<MenuItem value="COSTALES">COSTALES</MenuItem>
+									</Select>
+								) : precios.litros ? (
+									<Select id="form-producto-categoria"
+										name="unidad" value={precios.unidad_de_compra.unidad}
+										onChange={obtenerUnidadCompra}>
+										<MenuItem value="LITROS">LITROS</MenuItem>
+									</Select>
+								) : (
+									<Select id="form-producto-categoria"
+										name="unidad" value={precios.unidad_de_compra.unidad}
+										onChange={obtenerUnidadCompra}>
+										<MenuItem value="CAJAS">CAJAS</MenuItem>
+										<MenuItem value="PIEZAS">PIEZAS</MenuItem>
 									</Select>
 								)}
 								<FormHelperText>{validacion.message}</FormHelperText>

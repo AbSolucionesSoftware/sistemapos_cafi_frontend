@@ -22,8 +22,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 	const classes = useStyles();
-	const [selectedDate, setSelectedDate] = useState(null);
-	const { precios, setPrecios, almacen_inicial, setAlmacenInicial } = useContext(RegProductoContext);
+	const { precios, setPrecios, almacen_inicial, setAlmacenInicial, selectedDate, setSelectedDate } = useContext(RegProductoContext);
 	const { almacenes } = obtenerConsultasProducto;
 
 	/*ARMAR OBJETO DE INVENTARIO  */
@@ -125,7 +124,6 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 						onChange={obtenerInventario}
 						onBlur={() => verificarCampoVacio('inventario', 'inventario_minimo', precios.inventario.inventario_minimo )}
 						error={precios.inventario.inventario_minimo === ""}
-						helperText={precios.inventario.inventario_minimo === '' ? "Campo necesario" : ''}
 					/>
 				</Box>
 				<Box width="150px">
@@ -141,25 +139,13 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 						onChange={obtenerInventario}
 						onBlur={() => verificarCampoVacio('inventario', 'inventario_maximo', precios.inventario.inventario_maximo )}
 						error={precios.inventario.inventario_maximo === ""}
-						helperText={precios.inventario.inventario_maximo === '' ? "Campo necesario" : ''}
 					/>
 				</Box>
 				<Box width="150px">
 					<Typography>Unidad de inventario</Typography>
 					<Box display="flex">
 						<FormControl variant="outlined" fullWidth size="small" name="unidad_de_inventario">
-							{!precios.granel ? (
-								<Select
-									name="unidad" value={precios.unidad_de_compra.unidad}
-									onChange={obtenerInventario}>
-									<MenuItem value="">
-										<em>NINGUNA</em>
-									</MenuItem>
-									<MenuItem value="LITROS">LITROS</MenuItem>
-									<MenuItem value="CAJAS">CAJAS</MenuItem>
-									<MenuItem value="PIEZAS">PIEZAS</MenuItem>
-								</Select>
-							) : (
+							{precios.granel ? (
 								<Select
 									name="unidad" value={precios.unidad_de_compra.unidad}
 									onChange={obtenerInventario}>
@@ -168,6 +154,25 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 									</MenuItem>
 									<MenuItem value="KILOGRAMOS">KILOGRAMOS</MenuItem>
 									<MenuItem value="COSTALES">COSTALES</MenuItem>
+								</Select>
+							) : precios.litros ? (
+								<Select
+									name="unidad" value={precios.unidad_de_compra.unidad}
+									onChange={obtenerInventario}>
+									<MenuItem value="">
+										<em>NINGUNA</em>
+									</MenuItem>
+									<MenuItem value="LITROS">LITROS</MenuItem>
+								</Select>
+							) : (
+								<Select
+									name="unidad" value={precios.unidad_de_compra.unidad}
+									onChange={obtenerInventario}>
+									<MenuItem value="">
+										<em>NINGUNA</em>
+									</MenuItem>
+									<MenuItem value="CAJAS">CAJAS</MenuItem>
+									<MenuItem value="PIEZAS">PIEZAS</MenuItem>
 								</Select>
 							)}
 						</FormControl>
@@ -195,7 +200,6 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 							onChange={obtenerAlmacenInicial}
 							onBlur={() => verificarCampoVacio('almacen','cantidad', almacen_inicial.cantidad )}
 							error={almacen_inicial.cantidad === ""}
-							helperText={almacen_inicial.cantidad === '' ? "Campo necesario" : ''}
 						/>
 					</Box>
 				</Box>

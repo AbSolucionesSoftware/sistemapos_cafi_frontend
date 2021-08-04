@@ -127,16 +127,16 @@ const RenderImagenes = ({ imagen, index }) => {
 const ModalDelete = ({ handleModal, open, eliminarImagen }) => {
 	return (
 		<div>
-			<Button size="small" color="secondary" startIcon={<Delete />} onClick={handleModal}>
+			<Button size="small" color="secondary" startIcon={<Delete />} onClick={() => handleModal()}>
 				eliminar
 			</Button>
 			<Dialog open={open} onClose={handleModal}>
 				<DialogTitle>{'¿Seguro que quieres eliminar esto?'}</DialogTitle>
 				<DialogActions>
-					<Button onClick={handleModal} color="primary">
+					<Button onClick={() => handleModal()} color="primary">
 						Cancelar
 					</Button>
-					<Button color="secondary" autoFocus variant="contained" onClick={eliminarImagen}>
+					<Button color="secondary" autoFocus variant="contained" onClick={() => eliminarImagen()}>
 						Eliminar
 					</Button>
 				</DialogActions>

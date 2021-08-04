@@ -26,6 +26,22 @@ import { validaciones } from './validaciones';
 import CentroCostos from './CentroCostos';
 import PrecioPlazos from './PrecioPlazos/PrecioPlazos';
 
+import {
+	initial_state_datos_generales,
+	initial_state_precios,
+	initial_state_unidadVentaXDefecto,
+	initial_state_preciosP,
+	initial_state_unidadesVenta,
+	initial_state_almacen_inicial,
+	initial_state_centro_de_costos,
+	initial_state_preciosPlazos,
+	initial_state_subcategorias,
+	initial_state_imagenes,
+	initial_state_onPreview,
+	initial_state_validacion,
+	initial_state_subcostos
+} from '../../../../context/Catalogos/initialStatesProducto';
+
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
 
@@ -86,19 +102,13 @@ export default function CrearProducto({ accion }) {
 	const classes = useStyles();
 	const [ open, setOpen ] = useState(false);
 	const [ value, setValue ] = useState(0);
-	const {
-		datos_generales,
-		setDatosGenerales,
-		precios /* setPrecios, */,
-		validacion, setValidacion,
-		preciosP,
-		imagenes /* setImagenes, */,
-		unidadesVenta, /* setUnidadesVenta, */
-		almacen_inicial /* setAlmacenInicial, */,
-		unidadVentaXDefecto, /* setUnidadVentaXDefecto, */
-		centro_de_costos /* setCentroDeCostos */,
-		preciosPlazos /* setPreciosPlazos, */
-	} = useContext(RegProductoContext);
+	const { datos_generales, setDatosGenerales, precios, setPrecios, validacion, setValidacion } = useContext(
+		RegProductoContext
+	);
+	const { preciosP, setPreciosP, imagenes, setImagenes, unidadesVenta, setUnidadesVenta } = useContext(RegProductoContext);
+	const { almacen_inicial, setAlmacenInicial, unidadVentaXDefecto } = useContext(RegProductoContext);
+	const { setUnidadVentaXDefecto, centro_de_costos, setCentroDeCostos } = useContext(RegProductoContext);
+	const { preciosPlazos, setPreciosPlazos, setSubcategorias, setOnPreview, setSubcostos } = useContext(RegProductoContext);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	/* Mutations */
@@ -112,6 +122,8 @@ export default function CrearProducto({ accion }) {
 	const handleChange = (event, newValue) => {
 		setValue(newValue);
 	};
+
+	/* ###### GUARDAR LA INFO EN LA BD ###### */
 
 	const saveData = async () => {
 		const validate = validaciones(datos_generales, precios);
@@ -152,22 +164,37 @@ export default function CrearProducto({ accion }) {
 					input
 				}
 			});
+			resetInitialStates();
 		} catch (error) {
 			console.log(error);
 		}
-		/* setProductos({
-			codigo_barras: ''
-		}); */
+	};
+
+	/* ###### RESET STATES ###### */
+	const resetInitialStates = () => {
+		setDatosGenerales(initial_state_datos_generales);
+		setPrecios(initial_state_precios);
+		setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
+		setPreciosP(initial_state_preciosP);
+		setUnidadesVenta(initial_state_unidadesVenta);
+		setAlmacenInicial(initial_state_almacen_inicial);
+		setCentroDeCostos(initial_state_centro_de_costos);
+		setPreciosPlazos(initial_state_preciosPlazos);
+		setSubcategorias(initial_state_subcategorias);
+		setImagenes(initial_state_imagenes);
+		setOnPreview(initial_state_onPreview);
+		setValidacion(initial_state_validacion);
+		setSubcostos(initial_state_subcostos);
 	};
 
 	return (
 		<Fragment>
 			{accion ? (
-				<Button color="primary" variant="contained" size="large" onClick={toggleModal}>
+				<Button color="primary" variant="contained" size="large" onClick={() => toggleModal()}>
 					Nuevo producto
 				</Button>
 			) : (
-				<Button color="primary" variant="contained" size="large" onClick={toggleModal}>
+				<Button color="primary" variant="contained" size="large" onClick={() => toggleModal()}>
 					Editar producto
 				</Button>
 			)}
@@ -260,7 +287,7 @@ export default function CrearProducto({ accion }) {
 					<Button
 						variant="outlined"
 						color="primary"
-						onClick={toggleModal}
+						onClick={() => toggleModal()}
 						size="large"
 						startIcon={<CloseIcon />}
 					>
@@ -269,7 +296,7 @@ export default function CrearProducto({ accion }) {
 					<Button
 						variant="contained"
 						color="primary"
-						onClick={saveData}
+						onClick={() => saveData()}
 						size="large"
 						startIcon={<DoneIcon />}
 						disabled={

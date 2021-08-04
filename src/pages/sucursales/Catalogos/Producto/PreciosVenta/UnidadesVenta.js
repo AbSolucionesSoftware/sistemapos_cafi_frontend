@@ -21,7 +21,7 @@ export default function PreciosDeCompra() {
 	const classes = useStyles();
 	const { datos_generales, precios, unidadesVenta, setUnidadesVenta, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(RegProductoContext);
 	const [unidades, setUnidades] = useState({
-		unidad: precios.granel ? 'KILOGRAMOS' : 'PIEZAS',
+		unidad: precios.granel ? 'KILOGRAMOS' : precios.litros ? 'LITROS' : 'PIEZAS',
 		unidad_principal: false
 	});
 
@@ -58,6 +58,7 @@ export default function PreciosDeCompra() {
 			for (let i = 0; i < unidadesVenta.length; i++) {
 				const element = unidadesVenta[i];
 				let new_element = {
+					codigo_barras: element.codigo_barras,
 					unidad: element.unidad,
 					precio: parseFloat(element.precio),
 					cantidad: parseFloat(element.cantidad),
@@ -76,27 +77,32 @@ export default function PreciosDeCompra() {
 					<Typography>Unidad</Typography>
 					<Box display="flex">
 						<FormControl variant="outlined" fullWidth size="small" name="unidad">
-							{!precios.granel ? (
-								<Select
-									name="unidad" value={unidades.unidad}
-									onChange={obtenerUnidadesVentas}>
-									<MenuItem value="LITROS">LITROS</MenuItem>
-									<MenuItem value="CAJAS">CAJAS</MenuItem>
-									<MenuItem value="PIEZAS">PIEZAS</MenuItem>
-								</Select>
-							) : (
+							{precios.granel ? (
 								<Select
 									name="unidad" value={unidades.unidad}
 									onChange={obtenerUnidadesVentas}>
 									<MenuItem value="KILOGRAMOS">KILOGRAMOS</MenuItem>
 									<MenuItem value="COSTALES">COSTALES</MenuItem>
 								</Select>
+							) : precios.litros ? (
+								<Select
+									name="unidad" value={unidades.unidad}
+									onChange={obtenerUnidadesVentas}>
+									<MenuItem value="LITROS">LITROS</MenuItem>
+								</Select>
+							) : (
+								<Select
+									name="unidad" value={unidades.unidad}
+									onChange={obtenerUnidadesVentas}>
+									<MenuItem value="CAJAS">CAJAS</MenuItem>
+									<MenuItem value="PIEZAS">PIEZAS</MenuItem>
+								</Select>
 							)}
 						</FormControl>
 					</Box>
 				</Box>
 				<Box>
-					<Typography>Cantidad</Typography>
+					<Typography>Cantidad <b>{unidades.unidad === "CAJAS" ? '(piezas)' : unidades.unidad === "COSTALES" ? '(kilos)' : ''}</b></Typography>
 					<TextField
 						type="number"
 						InputProps={{ inputProps: { min: 0 } }}
@@ -131,7 +137,7 @@ export default function PreciosDeCompra() {
 					/>
 				</Box>
 				<Box pt={1}>
-					<IconButton color="primary" onClick={agregarNuevaUnidad}>
+					<IconButton color="primary" onClick={() => agregarNuevaUnidad()}>
 						<Add fontSize="large" />
 					</IconButton>
 				</Box>
@@ -187,6 +193,7 @@ const RenderUnidadesRows = ({ unidades, index }) => {
 		for (let i = 0; i < unidadesVenta.length; i++) {
 			const element = unidadesVenta[i];
 			let new_element = {
+				codigo_barras: element.codigo_barras,
 				unidad: element.unidad,
 				precio: parseFloat(element.precio),
 				cantidad: parseFloat(element.cantidad),
@@ -243,16 +250,16 @@ const ModalDelete = ({ unidades, index }) => {
 
 	return (
 		<div>
-			<IconButton color="primary" onClick={toggleModal}>
+			<IconButton color="primary" onClick={() => toggleModal()}>
 				<DeleteOutline color="primary" />
 			</IconButton>
 			<Dialog open={open} onClose={toggleModal}>
 				<DialogTitle>{'se eliminará esta unidad de venta'}</DialogTitle>
 				<DialogActions>
-					<Button onClick={toggleModal} color="primary">
+					<Button onClick={() => toggleModal()} color="primary">
 						Cancelar
 					</Button>
-					<Button onClick={eliminarUnidad} color="secondary" autoFocus>
+					<Button onClick={() => eliminarUnidad()} color="secondary" autoFocus>
 						Eliminar
 					</Button>
 				</DialogActions>

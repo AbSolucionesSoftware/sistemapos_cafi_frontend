@@ -84,12 +84,25 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 			setPrecios({
 				...precios,
 				[e.target.name]: e.target.checked,
+				litros: false,
 				inventario: { ...precios.inventario, unidad_de_inventario: 'KILOGRAMOS', },
 				unidad_de_compra: { ...precios.unidad_de_compra, unidad: 'KILOGRAMOS', }
 			});
 			setUnidadVentaXDefecto({
 				...unidadVentaXDefecto,
 				unidad: 'KILOGRAMOS',
+			})
+		} else if(e.target.name === 'litros' && e.target.checked){
+			setPrecios({
+				...precios,
+				[e.target.name]: e.target.checked,
+				granel: false,
+				inventario: { ...precios.inventario, unidad_de_inventario: 'LITROS', },
+				unidad_de_compra: { ...precios.unidad_de_compra, unidad: 'LITROS', }
+			});
+			setUnidadVentaXDefecto({
+				...unidadVentaXDefecto,
+				unidad: 'LITROS',
 			})
 		} else {
 			setPrecios({
@@ -156,7 +169,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 								value={datos_generales.codigo_barras ? datos_generales.codigo_barras : ''}
 								onChange={obtenerCampos}
 							/>
-							<Button variant="contained" color="primary" onClick={GenCodigoBarras}>
+							<Button variant="contained" color="primary" onClick={() => GenCodigoBarras()}>
 								Generar
 							</Button>
 						</Box>
@@ -416,6 +429,20 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 					<Box>
 						<Box>
 							<Typography>
+								<b>Litros</b>
+							</Typography>
+							<Divider />
+						</Box>
+						<div className={classes.formInput}>
+							<FormControlLabel
+								control={<Checkbox checked={precios.litros ? precios.litros : false} onChange={obtenerChecks} name="litros" />}
+								label="Vender a litros"
+							/>
+						</div>
+					</Box>
+					<Box>
+						<Box>
+							<Typography>
 								<b>Farmacia</b>
 							</Typography>
 							<Divider />
@@ -462,7 +489,6 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 									disabled={precios.monedero ? false : true}
 									onBlur={() => verificarCampoVacio('monedero_electronico')}
 									error={precios.monedero_electronico === ""}
-									helperText={precios.monedero_electronico === "" ? "Campo necesario" : ''}
 								/>
 							</Box>
 						</Box>
@@ -589,7 +615,7 @@ const RegistrarNuevoSelect = ({ tipo, name, refetch, subcategorias, setSubcatego
 		<Fragment>
 			<Button
 				color="primary"
-				onClick={handleToggle}
+				onClick={() => handleToggle()}
 				disabled={tipo === 'subcategoria' && !datos_generales.id_categoria}
 			>
 				<Add />
@@ -610,11 +636,11 @@ const RegistrarNuevoSelect = ({ tipo, name, refetch, subcategorias, setSubcatego
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleToggle} color="primary">
+					<Button onClick={() => handleToggle()} color="primary">
 						Cancelar
 					</Button>
 					<Button
-						onClick={guardarDatos}
+						onClick={() => guardarDatos()}
 						variant="contained"
 						color="primary"
 						endIcon={loading ? <CircularProgress color="inherit" size={18} /> : null}

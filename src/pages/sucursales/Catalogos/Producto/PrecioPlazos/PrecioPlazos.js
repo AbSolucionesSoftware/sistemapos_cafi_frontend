@@ -8,13 +8,16 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         '& > *': {
             margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
+        },
+        '& > .precios-box': {
+            margin: `${theme.spacing(1)}px ${theme.spacing(3)}px`
         }
     },
 }));
 
 export default function PrecioPlazos() {
     const classes = useStyles();
-    const { precios, preciosPlazos, setPreciosPlazos, preciosP } = useContext(RegProductoContext);
+    const { precios, preciosPlazos, setPreciosPlazos, preciosP, unidadesVenta, unidadVentaXDefecto } = useContext(RegProductoContext);
     const [plazo, setPlazo] = useState({
         plazo: "1",
         unidad: precios.granel ? "COSTALES" : "PIEZAS",
@@ -68,9 +71,17 @@ export default function PrecioPlazos() {
     return (
         <Fragment>
             <Box className={classes.formInputFlex}>
-                <Typography>
-                    Precio venta con impuestos(NETO): <b>{preciosP[0].precio_neto}</b>
+                <Typography className="precios-box">
+                    Precio venta de <b>{unidadVentaXDefecto.unidad}</b> con impuestos(NETO): <b>${unidadVentaXDefecto.precio}</b>
                 </Typography>
+                {unidadesVenta.map((unidades, index) => {
+                    if (!unidades.default) return (
+                        <Typography key={index} className="precios-box">
+                            Precio venta de <b>{unidades.unidad}</b> con impuestos(NETO): <b>${unidades.precio}</b>
+                        </Typography>
+                    )
+                    return null
+                })}
             </Box>
             <Divider />
             <Box className={classes.formInputFlex} justifyContent="center">
@@ -121,7 +132,7 @@ export default function PrecioPlazos() {
                     />
                 </Box>
                 <Box display="flex" alignItems="flex-end">
-                    <Button variant="contained" size="large" color="primary" onClick={guardarPlazo}>Agregar</Button>
+                    <Button variant="contained" size="large" color="primary" onClick={() => guardarPlazo()}>Agregar</Button>
                 </Box>
             </Box>
             <Box>
