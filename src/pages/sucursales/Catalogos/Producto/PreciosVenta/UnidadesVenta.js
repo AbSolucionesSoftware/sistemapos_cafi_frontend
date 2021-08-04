@@ -70,6 +70,16 @@ export default function PreciosDeCompra() {
 		}
 	};
 
+	const GenCodigoBarras = () => {
+		const max = 999999999999;
+		const min = 100000000000;
+		const codigo_barras = Math.floor(Math.random() * (max - min + 1) + min).toString();
+		setUnidades({
+			...unidades,
+			codigo_barras
+		});
+	};
+
 	return (
 		<Fragment>
 			<Box className={classes.formInputFlex} justifyContent="center">
@@ -128,13 +138,16 @@ export default function PreciosDeCompra() {
 				<Box>
 					<Typography>Código de barras</Typography>
 					<TextField
-						disabled={unidades.unidad !== "CAJAS"}
+						/* disabled={unidades.unidad !== "CAJAS"} */
 						size="small"
 						name="codigo_barras"
 						variant="outlined"
 						onChange={obtenerUnidadesVentas}
 						value={unidades.codigo_barras ? unidades.codigo_barras : ''}
 					/>
+					<Button variant="contained" color="primary" onClick={() => GenCodigoBarras()}>
+						Generar
+					</Button>
 				</Box>
 				<Box pt={1}>
 					<IconButton color="primary" onClick={() => agregarNuevaUnidad()}>
@@ -170,7 +183,7 @@ export default function PreciosDeCompra() {
 								</TableCell>
 							</TableRow>
 							{unidadesVenta.map((unidades, index) => {
-								if(!unidades.default) return (
+								if (!unidades.default) return (
 									<RenderUnidadesRows key={index} unidades={unidades} index={index} />
 								)
 								return null

@@ -387,7 +387,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 								<Select
 									id="form-producto-marca"
 									name="marca"
-									value={datos_generales.marcas ? datos_generales.marcas : ''}
+									value={datos_generales.marca ? datos_generales.marca : ''}
 									onChange={(event, child) => obtenerIDs(event, child)}
 								>
 									<MenuItem value="">
