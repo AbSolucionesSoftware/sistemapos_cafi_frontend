@@ -7,12 +7,12 @@ import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
 import { red } from '@material-ui/core/colors';
-import Badge from '@material-ui/core/Badge';
-
+import {Badge, Box} from '@material-ui/core';
+ 
 const StyledBadge = withStyles((theme) => ({
     badge: {
-      backgroundColor: '#44b700',
-      color: '#44b700',
+      color :({props})=> props.color,
+      background: ({props})=> props.color,
       boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
       '&::after': {
         position: 'absolute',
@@ -35,12 +35,15 @@ const StyledBadge = withStyles((theme) => ({
         transform: 'scale(2.4)',
         opacity: 0,
       },
-    },
+    }
   }))(Badge);
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 345,
+    minWidth:230,
+    maxWidth: 230,
+    margin:5,
+    
   },
   media: {
     height: 0,
@@ -57,43 +60,59 @@ const useStyles = makeStyles((theme) => ({
     transform: 'rotate(180deg)',
   },
   avatar: {
-    backgroundColor: red[500],
+    color: red[500],
   },
+  textActive:{
+    position:'relative',
+    bottom:8
+  }
 }));
 
-export default function CardCaja() {
+export default function CardCaja(props) {
+    const styleProps={
+       color: (props.activa)  ? '#44b700' : 'red'
+      
+    }
     const classes = useStyles();
-
+ 
     return (
         <div>
             <Card className={classes.root}>
-                    <CardContent>
-                        <Typography variant="h4" color="textSecondary" component="p">
-                            Caja 1
-                        </Typography>
-                    </CardContent>
+                  
                     <CardHeader
+                      color="secondary"
                         avatar={
-                        <StyledBadge
-                            overlap="circular"
-                            anchorOrigin={{
-                              vertical: 'bottom',
-                              horizontal: 'right',
-                            }}
-                            variant="dot"
-                          >
-                            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                          </StyledBadge>
+                          
+                            <StyledBadge
+                          
+                              overlap="circular"
+                              props={styleProps}
+                              anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'right',
+                              }}
+                              variant="dot"
+                              badgeContent=" "
+                            >
+                            <Avatar alt="Cajero X" src="/static/images/avatar/1.jpg" />
+                            </StyledBadge>
+                          
+                           
                         }
-                        title="Shrimp and Chorizo Paella"
-                        subheader="September 14, 2016"
+                      
+                        
                     />
-                    <CardActions disableSpacing>
-                        <Typography style={{fontWeight: 'bold'}} variant="h6" color="textSecondary" component="p">
-                           Total actual: 
+                    <Box m={1} mb={2}>
+                    <Typography variant="h4" color="textSecondary" component="p" >
+                            Caja {props.name}
+                    </Typography>
+                    </Box>
+                    <CardActions disableSpacing  >
+                        <Typography style={{fontWeight: 'bold'}} variant="h7" color="textSecondary" component="p">
+                           Total en caja: 
                         </Typography>
                         <Typography style={{margin: '0px 10px', color: 'green'}} variant="h6" color="textSecondary" component="p">
-                             $22,300
+                           {parseFloat(props.cantidad_efectivo_actual)}
                         </Typography>
                     </CardActions>
                 </Card>
