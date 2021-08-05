@@ -1,110 +1,71 @@
 import React, { createContext, useState } from 'react';
+import {
+	initial_state_datos_generales,
+	initial_state_precios,
+	initial_state_unidadVentaXDefecto,
+	initial_state_preciosP,
+	initial_state_unidadesVenta,
+	initial_state_almacen_inicial,
+	initial_state_centro_de_costos,
+	initial_state_preciosPlazos,
+	initial_state_subcategorias,
+	initial_state_imagenes,
+	initial_state_onPreview,
+	initial_state_validacion,
+	initial_state_subcostos,
+	initial_state_selectedDate
+
+} from './initialStatesProducto';
 
 export const RegProductoContext = createContext();
 
 export const RegProductoProvider = ({ children }) => {
-	const [datos_generales, setDatosGenerales] = useState({});
-	const [precios, setPrecios] = useState({
-		iva_activo: true,
-		ieps_activo: false,
-		ieps: 0,
-		iva: 16,
-		inventario: {
-			inventario_minimo: 0,
-			inventario_maximo: 0,
-			unidad_de_inventario: 'PIEZAS',
-		},
-		precio_de_compra: {
-			precio_con_impuesto: 0,
-			precio_sin_impuesto: 0,
-			iva: 0,
-			ieps: 0
-		},
-		unidad_de_compra: {
-			unidad: "PIEZAS",
-			cantidad: 1,
-			precio_unitario_sin_impuesto: 0,
-			precio_unitario_con_impuesto: 0,
-
-		},
-		unidad_de_venta: []
-	});
-
-	const preciosP = [
-		{
-			numero_precio: 1,
-			utilidad: 0,
-			precio_neto: 0,
-			unidad_mayoreo: 0,
-			precio_venta: 0
-		},
-		{
-			numero_precio: 2,
-			utilidad: 0,
-			precio_neto: 0,
-			unidad_mayoreo: 0,
-			precio_venta: 0
-		},
-		{
-			numero_precio: 3,
-			utilidad: 0,
-			precio_neto: 0,
-			unidad_mayoreo: 0,
-			precio_venta: 0
-		},
-		{
-			numero_precio: 4,
-			utilidad: 0,
-			precio_neto: 0,
-			unidad_mayoreo: 0,
-			precio_venta: 0
-		},
-		{
-			numero_precio: 5,
-			utilidad: 0,
-			precio_neto: 0,
-			unidad_mayoreo: 0,
-			precio_venta: 0
-		},
-		{
-			numero_precio: 6,
-			utilidad: 0,
-			precio_neto: 0,
-			unidad_mayoreo: 0,
-			precio_venta: 0
-		}
-	]
-
-	const [unidadesVenta, setUnidadesVenta] = useState([]);
-
-	const [almacen_inicial, setAlmacenInicial] = useState({
-		id_almacen: "",
-		almacen: "",
-		cantidad: 0,
-		fecha_de_expiracion: "",
-	})
-	const [ centro_de_costos, setCentroDeCostos ] = useState({
-		id_cuenta: '',
-		cuenta: '',
-		id_sub_cuenta: '',
-		sub_cuenta: '',
-	})
-	const [imagenes, setImagenes] = useState([]);
-	const [onPreview, setOnPreview] = useState({ index: '', image: '' });
-	const [validacion, setValidacion] = useState({ error: false, message: '' });
+	const [datos_generales, setDatosGenerales] = useState(initial_state_datos_generales);
+	const [precios, setPrecios] = useState(initial_state_precios);
+	const [unidadVentaXDefecto, setUnidadVentaXDefecto] = useState(initial_state_unidadVentaXDefecto);
+	const [preciosP, setPreciosP] = useState(initial_state_preciosP);
+	const [unidadesVenta, setUnidadesVenta] = useState(initial_state_unidadesVenta);
+	const [almacen_inicial, setAlmacenInicial] = useState(initial_state_almacen_inicial);
+	const [centro_de_costos, setCentroDeCostos] = useState(initial_state_centro_de_costos);
+	const [preciosPlazos, setPreciosPlazos] = useState(initial_state_preciosPlazos);
+	const [subcategorias, setSubcategorias] = useState(initial_state_subcategorias);
+	const [imagenes, setImagenes] = useState(initial_state_imagenes);
+	const [onPreview, setOnPreview] = useState(initial_state_onPreview);
+	const [validacion, setValidacion] = useState(initial_state_validacion);
+	const [subcostos, setSubcostos] = useState(initial_state_subcostos);
+	const [selectedDate, setSelectedDate] = useState(initial_state_selectedDate);
 
 	return (
 		<RegProductoContext.Provider
 			value={{
-				datos_generales, setDatosGenerales,
-				precios, setPrecios,
-				almacen_inicial, setAlmacenInicial,
-				imagenes, setImagenes,
-				onPreview, setOnPreview,
-				validacion, setValidacion,
+				datos_generales,
+				setDatosGenerales,
+				precios,
+				setPrecios,
+				almacen_inicial,
+				setAlmacenInicial,
+				imagenes,
+				setImagenes,
+				onPreview,
+				setOnPreview,
+				validacion,
+				setValidacion,
 				preciosP,
-				unidadesVenta, setUnidadesVenta,
-				centro_de_costos, setCentroDeCostos,
+				setPreciosP,
+				preciosPlazos,
+				setPreciosPlazos,
+				unidadesVenta,
+				setUnidadesVenta,
+				centro_de_costos,
+				setCentroDeCostos,
+				unidadVentaXDefecto,
+				setUnidadVentaXDefecto,
+				subcategorias,
+				setSubcategorias,
+				subcostos,
+				setSubcostos,
+				selectedDate,
+				setSelectedDate
 			}}
 		>
 			{children}

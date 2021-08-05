@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState } from 'react';
+import React, { Fragment, useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider } from '@material-ui/core';
 import { Box, FormControl, MenuItem, Select, Typography } from '@material-ui/core';
@@ -18,9 +18,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CentroCostos({ obtenerConsultasProducto }) {
     const classes = useStyles();
-    const { centro_de_costos, setCentroDeCostos } = useContext(RegProductoContext);
+    const { centro_de_costos, setCentroDeCostos, subcostos, setSubcostos } = useContext(RegProductoContext);
     const { centro_costos } = obtenerConsultasProducto;
-    const [subcostos, setSubcostos] = useState([]);
 
     const obtenerAlmacenes = (event, child) => {
         setCentroDeCostos({

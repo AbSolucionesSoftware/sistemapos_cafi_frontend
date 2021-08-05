@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const REGISTRO_ALMACEN = gql`
-    mutation CrearAlmacen($input: CrearAlmacen, $id: ID! ){
-        crearAlmacen(input: $input, id: $id){
+    mutation CrearAlmacen($input: CrearAlmacen, $id: ID!, $empresa: ID! ){
+        crearAlmacen(input: $input, id: $id, empresa: $empresa){
             message
         }
     }

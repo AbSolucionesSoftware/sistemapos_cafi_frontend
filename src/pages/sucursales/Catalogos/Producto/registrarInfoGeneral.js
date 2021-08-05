@@ -30,16 +30,29 @@ const useStyles = makeStyles((theme) => ({
 export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetch }) {
 	const classes = useStyles();
 	const { datos_generales, setDatosGenerales, validacion, precios, setPrecios } = useContext(RegProductoContext);
+	const { subcategorias, setSubcategorias, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(RegProductoContext);
 	const { categorias, departamentos, marcas } = obtenerConsultasProducto;
-	const [subcategorias, setSubcategorias] = useState([]);
 
 	const obtenerCampos = (e) => {
 		if (e.target.name === "monedero_electronico") {
+			if(!e.target.value){
+				setPrecios({
+					...precios,
+					[e.target.name]: ''
+				});
+				return
+			}
 			setPrecios({
 				...precios,
 				[e.target.name]: parseFloat(e.target.value)
 			});
 			return
+		}
+		if (e.target.name === 'codigo_barras') {
+			setUnidadVentaXDefecto({
+				...unidadVentaXDefecto,
+				codigo_barras: e.target.value
+			})
 		}
 		setDatosGenerales({
 			...datos_generales,
@@ -58,15 +71,51 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 		if (e.target.name === "monedero" && e.target.checked) {
 			setPrecios({
 				...precios,
-				monedero_electronico: 0,
+				monedero_electronico: 1,
 				monedero: e.target.checked
 			});
 			return
 		}
-		setPrecios({
+		/* setPrecios({
 			...precios,
 			[e.target.name]: e.target.checked
-		});
+		}); */
+		if (e.target.name === 'granel' && e.target.checked) {
+			setPrecios({
+				...precios,
+				[e.target.name]: e.target.checked,
+				litros: false,
+				inventario: { ...precios.inventario, unidad_de_inventario: 'KILOGRAMOS', },
+				unidad_de_compra: { ...precios.unidad_de_compra, unidad: 'KILOGRAMOS', }
+			});
+			setUnidadVentaXDefecto({
+				...unidadVentaXDefecto,
+				unidad: 'KILOGRAMOS',
+			})
+		} else if(e.target.name === 'litros' && e.target.checked){
+			setPrecios({
+				...precios,
+				[e.target.name]: e.target.checked,
+				granel: false,
+				inventario: { ...precios.inventario, unidad_de_inventario: 'LITROS', },
+				unidad_de_compra: { ...precios.unidad_de_compra, unidad: 'LITROS', }
+			});
+			setUnidadVentaXDefecto({
+				...unidadVentaXDefecto,
+				unidad: 'LITROS',
+			})
+		} else {
+			setPrecios({
+				...precios,
+				[e.target.name]: e.target.checked,
+				inventario: { ...precios.inventario, unidad_de_inventario: 'PIEZAS', },
+				unidad_de_compra: { ...precios.unidad_de_compra, unidad: 'PIEZAS', }
+			});
+			setUnidadVentaXDefecto({
+				...unidadVentaXDefecto,
+				unidad: 'PIEZAS',
+			})
+		}
 	};
 
 	const obtenerIDs = (event, child) => {
@@ -84,12 +133,25 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 	const GenCodigoBarras = () => {
 		const max = 999999999999;
 		const min = 100000000000;
-		const codigo_barras = Math.floor(Math.random() * (max - min + 1) + min);
+		const codigo_barras = Math.floor(Math.random() * (max - min + 1) + min).toString();
 		setDatosGenerales({
 			...datos_generales,
 			codigo_barras
 		});
+		setUnidadVentaXDefecto({
+			...unidadVentaXDefecto,
+			codigo_barras
+		})
 	};
+
+	const verificarCampoVacio = (campo) => {
+		if(!precios.monedero_electronico){
+			setPrecios({
+				...precios,
+				monedero_electronico: 1
+			})
+		}
+	}
 
 	return (
 		<Fragment>
@@ -107,7 +169,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 								value={datos_generales.codigo_barras ? datos_generales.codigo_barras : ''}
 								onChange={obtenerCampos}
 							/>
-							<Button variant="contained" color="primary" onClick={GenCodigoBarras}>
+							<Button variant="contained" color="primary" onClick={() => GenCodigoBarras()}>
 								Generar
 							</Button>
 						</Box>
@@ -324,8 +386,8 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 							<FormControl variant="outlined" fullWidth size="small">
 								<Select
 									id="form-producto-marca"
-									name="marcas"
-									value={datos_generales.marcas ? datos_generales.marcas : ''}
+									name="marca"
+									value={datos_generales.marca ? datos_generales.marca : ''}
 									onChange={(event, child) => obtenerIDs(event, child)}
 								>
 									<MenuItem value="">
@@ -359,8 +421,22 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 						</Box>
 						<div className={classes.formInput}>
 							<FormControlLabel
-								control={<Checkbox value={precios.granel ? precios.granel : false} onChange={obtenerChecks} name="granel" />}
+								control={<Checkbox checked={precios.granel ? precios.granel : false} onChange={obtenerChecks} name="granel" />}
 								label="Vender a granel"
+							/>
+						</div>
+					</Box>
+					<Box>
+						<Box>
+							<Typography>
+								<b>Litros</b>
+							</Typography>
+							<Divider />
+						</Box>
+						<div className={classes.formInput}>
+							<FormControlLabel
+								control={<Checkbox checked={precios.litros ? precios.litros : false} onChange={obtenerChecks} name="litros" />}
+								label="Vender a litros"
 							/>
 						</div>
 					</Box>
@@ -375,8 +451,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 							<FormControlLabel
 								control={
 									<Checkbox
-										/* checked={datos_generales.receta_farmacia ? datos_generales.receta_farmacia : false} */
-										value={datos_generales.receta_farmacia ? datos_generales.receta_farmacia : false}
+										checked={datos_generales.receta_farmacia ? datos_generales.receta_farmacia : false}
 										onChange={checkFarmacia}
 										name="receta_farmacia"
 									/>
@@ -397,7 +472,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 							<Box className={classes.formInput}>
 								<FormControlLabel
 									control={
-										<Checkbox value={precios.monedero ? precios.monedero : false} onChange={obtenerChecks} name="monedero" />
+										<Checkbox checked={precios.monedero} onChange={obtenerChecks} name="monedero" />
 									}
 									label="Monedero electrónico"
 								/>
@@ -409,9 +484,11 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 									name="monedero_electronico"
 									id="form-producto-monedero_electronico"
 									variant="outlined"
-									value={precios.monedero_electronico ? precios.monedero_electronico : 0}
+									value={precios.monedero_electronico}
 									onChange={obtenerCampos}
 									disabled={precios.monedero ? false : true}
+									onBlur={() => verificarCampoVacio('monedero_electronico')}
+									error={precios.monedero_electronico === ""}
 								/>
 							</Box>
 						</Box>
@@ -538,7 +615,7 @@ const RegistrarNuevoSelect = ({ tipo, name, refetch, subcategorias, setSubcatego
 		<Fragment>
 			<Button
 				color="primary"
-				onClick={handleToggle}
+				onClick={() => handleToggle()}
 				disabled={tipo === 'subcategoria' && !datos_generales.id_categoria}
 			>
 				<Add />
@@ -559,11 +636,11 @@ const RegistrarNuevoSelect = ({ tipo, name, refetch, subcategorias, setSubcatego
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleToggle} color="primary">
+					<Button onClick={() => handleToggle()} color="primary">
 						Cancelar
 					</Button>
 					<Button
-						onClick={guardarDatos}
+						onClick={() => guardarDatos()}
 						variant="contained"
 						color="primary"
 						endIcon={loading ? <CircularProgress color="inherit" size={18} /> : null}
