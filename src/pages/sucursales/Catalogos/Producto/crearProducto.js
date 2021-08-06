@@ -100,8 +100,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CrearProducto({ accion }) {
 	const classes = useStyles();
-	const [ open, setOpen ] = useState(false);
-	const [ value, setValue ] = useState(0);
+	const [open, setOpen] = useState(false);
+	const [value, setValue] = useState(0);
 	const { datos_generales, setDatosGenerales, precios, setPrecios, validacion, setValidacion } = useContext(
 		RegProductoContext
 	);
@@ -112,7 +112,7 @@ export default function CrearProducto({ accion }) {
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	/* Mutations */
-	const [ crearProducto ] = useMutation(CREAR_PRODUCTO);
+	const [crearProducto] = useMutation(CREAR_PRODUCTO);
 
 	const toggleModal = () => {
 		setOpen(!open);
@@ -126,7 +126,7 @@ export default function CrearProducto({ accion }) {
 	/* ###### GUARDAR LA INFO EN LA BD ###### */
 
 	const saveData = async () => {
-		const validate = validaciones(datos_generales, precios);
+		const validate = validaciones(datos_generales, precios, almacen_inicial);
 
 		if (validate.error) {
 			setValidacion(validate);
@@ -253,7 +253,17 @@ export default function CrearProducto({ accion }) {
 						/>
 						<Tab
 							label="Inventario y almacen"
-							icon={<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />}
+							icon={<Badge
+								color="secondary"
+								badgeContent={<Typography variant="h6">!</Typography>}
+								anchorOrigin={{
+									vertical: 'bottom',
+									horizontal: 'right'
+								}}
+								invisible={validacion.error && validacion.vista3 ? false : true}
+							>
+								<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />
+							</Badge>}
 							{...a11yProps(2)}
 						/>
 						<Tab
@@ -301,12 +311,12 @@ export default function CrearProducto({ accion }) {
 						startIcon={<DoneIcon />}
 						disabled={
 							!datos_generales.clave_alterna ||
-							!datos_generales.tipo_producto ||
-							!datos_generales.nombre_generico ||
-							!datos_generales.nombre_comercial ||
-							!precios.precio_de_compra.precio_con_impuesto ||
-							!precios.precio_de_compra.precio_sin_impuesto ||
-							!precios.unidad_de_compra.cantidad ? (
+								!datos_generales.tipo_producto ||
+								!datos_generales.nombre_generico ||
+								!datos_generales.nombre_comercial ||
+								!precios.precio_de_compra.precio_con_impuesto ||
+								!precios.precio_de_compra.precio_sin_impuesto ||
+								!precios.unidad_de_compra.cantidad ? (
 								true
 							) : (
 								false

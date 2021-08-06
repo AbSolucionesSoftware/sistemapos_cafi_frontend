@@ -1,6 +1,6 @@
 import React, { Fragment, useContext, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, FormControl, Divider, MenuItem, Select, Container, FormHelperText } from '@material-ui/core';
+import { Box, FormControl, Divider, MenuItem, Select, Container, FormHelperText, OutlinedInput, InputAdornment } from '@material-ui/core';
 import { TextField, Typography, Button, Checkbox, FormControlLabel } from '@material-ui/core';
 import { Dialog, DialogActions, DialogContent, DialogTitle, CircularProgress } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
@@ -35,7 +35,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 
 	const obtenerCampos = (e) => {
 		if (e.target.name === "monedero_electronico") {
-			if(!e.target.value){
+			if (!e.target.value) {
 				setPrecios({
 					...precios,
 					[e.target.name]: ''
@@ -92,7 +92,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 				...unidadVentaXDefecto,
 				unidad: 'KILOGRAMOS',
 			})
-		} else if(e.target.name === 'litros' && e.target.checked){
+		} else if (e.target.name === 'litros' && e.target.checked) {
 			setPrecios({
 				...precios,
 				[e.target.name]: e.target.checked,
@@ -145,7 +145,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 	};
 
 	const verificarCampoVacio = (campo) => {
-		if(!precios.monedero_electronico){
+		if (!precios.monedero_electronico) {
 			setPrecios({
 				...precios,
 				monedero_electronico: 1
@@ -158,21 +158,27 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 			<Container maxWidth="lg">
 				<div className={classes.formInputFlex}>
 					<Box width="100%">
-						<Typography>Código de barras</Typography>
-						<Box display="flex">
-							<TextField
-								fullWidth
-								size="small"
-								name="codigo_barras"
+						<FormControl variant="outlined" size="small" name="codigo_barras" fullWidth>
+							<Typography>Código de barras</Typography>
+							<OutlinedInput
 								id="form-producto-codigo-barras"
-								variant="outlined"
+								name="codigo_barras"
 								value={datos_generales.codigo_barras ? datos_generales.codigo_barras : ''}
 								onChange={obtenerCampos}
+								endAdornment={
+									<InputAdornment position="end">
+										<Button
+											onClick={() => GenCodigoBarras()}
+											/* edge="end" */
+											color="primary"
+											variant="outlined"
+										>
+											Generar
+										</Button>
+									</InputAdornment>
+								}
 							/>
-							<Button variant="contained" color="primary" onClick={() => GenCodigoBarras()}>
-								Generar
-							</Button>
-						</Box>
+						</FormControl>
 					</Box>
 					<Box width="100%">
 						<Typography>
