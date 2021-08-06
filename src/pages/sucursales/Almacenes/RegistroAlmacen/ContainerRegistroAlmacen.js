@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 		},
         '& span': {
 			color: 'red'
-		}
+		} 
 	},
 	formInput: {
 		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
