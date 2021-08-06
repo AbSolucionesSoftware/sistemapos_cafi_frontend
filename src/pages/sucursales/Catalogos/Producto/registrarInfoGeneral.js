@@ -169,8 +169,9 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 									<InputAdornment position="end">
 										<Button
 											onClick={() => GenCodigoBarras()}
-											edge="end"
+											/* edge="end" */
 											color="primary"
+											variant="outlined"
 										>
 											Generar
 										</Button>

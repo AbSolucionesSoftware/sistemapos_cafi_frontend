@@ -92,12 +92,7 @@ export const initial_state_almacen_inicial = {
     cantidad: 0,
     fecha_de_expiracion: "",
 }
-export const initial_state_centro_de_costos = {
-    id_cuenta: '',
-    cuenta: '',
-    id_sub_cuenta: '',
-    sub_cuenta: '',
-}
+export const initial_state_centro_de_costos = {}
 
 export const initial_state_preciosPlazos = {
     precio_piezas: [],

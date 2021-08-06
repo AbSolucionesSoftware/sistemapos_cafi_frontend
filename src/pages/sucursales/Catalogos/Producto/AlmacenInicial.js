@@ -206,7 +206,7 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 				<Box width="100%">
 					<Typography>Almacen</Typography>
 					<Box display="flex">
-						<FormControl variant="outlined" fullWidth size="small" name="almacen">
+						<FormControl variant="outlined" fullWidth size="small" name="almacen" error={almacen_inicial.cantidad > 0 && !almacen_inicial.almacen}>
 							<Select name="almacen" value={almacen_inicial.almacen} onChange={obtenerAlmacenes}>
 								<MenuItem value="">
 									<em>Seleccione uno</em>
