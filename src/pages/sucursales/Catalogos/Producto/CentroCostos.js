@@ -43,7 +43,7 @@ export default function CentroCostos({ obtenerConsultasProducto }) {
             </Box>
             <div className={classes.formInputFlex}>
                 <Box width="100%">
-                    <Typography>Costos</Typography>
+                    <Typography>Cuenta</Typography>
                     <Box display="flex">
                         <FormControl variant="outlined" fullWidth size="small" name="cuenta">
                             <Select name="cuenta" value={centro_de_costos.cuenta ? centro_de_costos.cuenta : ''} onChange={obtenerAlmacenes}>
@@ -68,7 +68,7 @@ export default function CentroCostos({ obtenerConsultasProducto }) {
                     </Box>
                 </Box>
                 <Box width="100%">
-                    <Typography>Subcostos</Typography>
+                    <Typography>Subcuenta</Typography>
                     <Box display="flex">
                         <FormControl variant="outlined" fullWidth size="small" name="sub_cuenta">
                             <Select name="sub_cuenta" value={centro_de_costos.sub_cuenta ? centro_de_costos.sub_cuenta : ''} onChange={obtenerAlmacenes}>
