@@ -52,7 +52,7 @@ export default function ActionCaja(props) {
     const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
      const [ cajaSelected, setCajaSelected ] = React.useState('');
      const [ nameCajaSelected, setNameCajaSelected ] = React.useState('');
-      const [ cantidad, setCantidad ] = React.useState('');
+    
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const theme = useTheme();
     const classes = useStyles();
@@ -60,41 +60,19 @@ export default function ActionCaja(props) {
     const handleChange = (event) => {
        props.setCajaDestino(event.target.value)
     };
-
+    const setCant = (value) => {
+        const onlyNums = value.toString().replace(/()^0-9]/g, '');
+    
+        props.setCantidadMovimiento(onlyNums)
+     };
     const textoButton = (props.action.depositar) ? 'DEPOSITAR' : (props.action.retirar) ? 'RETIRAR' :'TRANSFERIR';
     return (
         <React.Fragment>
             {
             (props.action.depositar || props.action.retirar || props.action.transferir) ?
                 <Box display="flex" mr={5}  flexDirection="row" ml={5} m={5} mb={1}>
-             
-                   {
-                (props.action.transferir) ? 
-                <FormControl className={classes.formControl}>
-                    <InputLabel id="caja-label">Caja destino</InputLabel>
-                    <Select
-                    labelId="caja-label"
-                    id="caja-name"
-                    value={props.cajaDestino}
-                    onChange={handleChange}
-                    input={<Input />}
-                    MenuProps={MenuProps}
-                    >
-                    {props.cajas?.map((caja, index) => {
-                    
-                        return(
-                            <MenuItem key={caja} value={caja}style={getStyles(caja.numero_caja, (cajaSelected.numero_caja) ? "" + cajaSelected.numero_caja : '', theme)} >
-                            Caja {caja.numero_caja}
-                            </MenuItem>
-                        )	
-                    })} 
+            
                 
-                    </Select>
-                </FormControl>
-                : 
-                
-                <div/>
-            }
                     
                     
                     <Box width="250px"  ml={5}>
@@ -109,10 +87,40 @@ export default function ActionCaja(props) {
                             name="nombreQuien"
                             variant="outlined"
                             value={props.cantidadMovimiento}
-                            
-                            onChange={(e) => props.setCantidadMovimiento(e.target.value)}
+                            error={props.errorCantidad}
+                            onChange={(e) => setCant(e.target.value)}
                         />
                     </Box>
+                    {
+                (props.action.transferir) ? 
+                <FormControl className={classes.formControl} error={props.errorCajaDestino} ml={1}>
+                    <InputLabel id="caja-label">Caja destino</InputLabel>
+                    <Select
+                    labelId="caja-label"
+                    id="caja-name"
+                    value={props.cajaDestino}
+                    onChange={handleChange}
+                    input={<Input />}
+                    MenuProps={MenuProps}
+                   
+                    >
+                    {props.cajas?.map((caja, index) => {
+                        console.log(caja._id, props.idCaja)
+                        if(caja._id !== props.idCaja){
+                            return(
+                                <MenuItem key={caja} value={caja}style={getStyles(caja.numero_caja, (cajaSelected.numero_caja) ? "" + cajaSelected.numero_caja : '', theme)} >
+                                Caja {caja.numero_caja}
+                                </MenuItem>
+                            )
+                        }	
+                    })} 
+                
+                    </Select>
+                </FormControl>
+                : 
+                
+                <div/>
+            }
                     <Box width="250px"  ml={8} mt={2} >	
                     <FormControl className={classes.formControl}>
                         <Button
