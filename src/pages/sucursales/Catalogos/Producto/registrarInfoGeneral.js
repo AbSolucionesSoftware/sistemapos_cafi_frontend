@@ -84,25 +84,12 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 			setPrecios({
 				...precios,
 				[e.target.name]: e.target.checked,
-				litros: false,
 				inventario: { ...precios.inventario, unidad_de_inventario: 'KILOGRAMOS', },
 				unidad_de_compra: { ...precios.unidad_de_compra, unidad: 'KILOGRAMOS', }
 			});
 			setUnidadVentaXDefecto({
 				...unidadVentaXDefecto,
 				unidad: 'KILOGRAMOS',
-			})
-		} else if (e.target.name === 'litros' && e.target.checked) {
-			setPrecios({
-				...precios,
-				[e.target.name]: e.target.checked,
-				granel: false,
-				inventario: { ...precios.inventario, unidad_de_inventario: 'LITROS', },
-				unidad_de_compra: { ...precios.unidad_de_compra, unidad: 'LITROS', }
-			});
-			setUnidadVentaXDefecto({
-				...unidadVentaXDefecto,
-				unidad: 'LITROS',
 			})
 		} else {
 			setPrecios({
@@ -160,7 +147,8 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 					<Box width="100%">
 						<FormControl variant="outlined" size="small" name="codigo_barras" fullWidth>
 							<Typography>Código de barras</Typography>
-							<OutlinedInput
+							<OutlinedInput	
+								style={{padding: 0}}
 								id="form-producto-codigo-barras"
 								name="codigo_barras"
 								value={datos_generales.codigo_barras ? datos_generales.codigo_barras : ''}
@@ -172,6 +160,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 											/* edge="end" */
 											color="primary"
 											variant="outlined"
+											size="large"
 										>
 											Generar
 										</Button>
@@ -435,20 +424,6 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 					<Box>
 						<Box>
 							<Typography>
-								<b>Litros</b>
-							</Typography>
-							<Divider />
-						</Box>
-						<div className={classes.formInput}>
-							<FormControlLabel
-								control={<Checkbox checked={precios.litros ? precios.litros : false} onChange={obtenerChecks} name="litros" />}
-								label="Vender a litros"
-							/>
-						</div>
-					</Box>
-					<Box>
-						<Box>
-							<Typography>
 								<b>Farmacia</b>
 							</Typography>
 							<Divider />
@@ -600,7 +575,7 @@ const RegistrarNuevoSelect = ({ tipo, name, refetch, subcategorias, setSubcatego
 					const id_marca = marca_creada.data.crearMarcas.message;
 					setDatosGenerales({
 						...datos_generales,
-						marcas: value,
+						marca: value,
 						id_marca
 					});
 					break;

@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PrecioPlazos() {
     const classes = useStyles();
-    const { precios, preciosPlazos, setPreciosPlazos, preciosP, unidadesVenta, unidadVentaXDefecto } = useContext(RegProductoContext);
+    const { precios, preciosPlazos, setPreciosPlazos, unidadesVenta, unidadVentaXDefecto } = useContext(RegProductoContext);
     const [plazo, setPlazo] = useState({
         plazo: "1",
         unidad: precios.granel ? "COSTALES" : "PIEZAS",
