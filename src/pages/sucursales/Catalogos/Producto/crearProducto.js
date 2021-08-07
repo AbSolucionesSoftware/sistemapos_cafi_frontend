@@ -100,8 +100,13 @@ const useStyles = makeStyles((theme) => ({
 	},
 	backdrop: {
 		zIndex: theme.zIndex.drawer + 1,
-		color: '#fff',
+		color: '#fff'
 	},
+	buttons: {
+		'& > *': {
+			margin: `0px ${theme.spacing(1)}px`
+		}
+	}
 }));
 
 export default function CrearProducto({ accion }) {
@@ -320,33 +325,12 @@ export default function CrearProducto({ accion }) {
 					</Box>
 				</AppBar>
 				<DialogContent className={classes.dialogContent}>
-				<Backdrop className={classes.backdrop} open={loading}>
-					<CircularProgress color="inherit" />
-				</Backdrop>
+					<Backdrop className={classes.backdrop} open={loading}>
+						<CircularProgress color="inherit" />
+					</Backdrop>
 					<ContenidoModal accion={accion} value={value} />
 				</DialogContent>
-				<DialogActions>
-					<Button
-						variant="outlined"
-						color="primary"
-						onClick={() => setValue( value - 1)}
-						size="large"
-						startIcon={<NavigateBefore />}
-						disabled={value === 0}
-					>
-						Anterior
-					</Button>
-					<Button
-						variant="contained"
-						color="primary"
-						onClick={() => setValue( value + 1)}
-						size="large"
-						endIcon={<NavigateNext />}
-						disabled={value === 5}
-						disableElevation
-					>
-						Siguiente
-					</Button>
+				<DialogActions style={{ display: 'flex', justifyContent: 'space-between' }}>
 					<Button
 						variant="contained"
 						color="primary"
@@ -369,6 +353,29 @@ export default function CrearProducto({ accion }) {
 					>
 						Guardar
 					</Button>
+					<Box className={classes.buttons}>
+						<Button
+							variant="outlined"
+							color="primary"
+							onClick={() => setValue(value - 1)}
+							size="large"
+							startIcon={<NavigateBefore />}
+							disabled={value === 0}
+						>
+							Anterior
+						</Button>
+						<Button
+							variant="contained"
+							color="primary"
+							onClick={() => setValue(value + 1)}
+							size="large"
+							endIcon={<NavigateNext />}
+							disabled={value === 5}
+							disableElevation
+						>
+							Siguiente
+						</Button>
+					</Box>
 				</DialogActions>
 			</Dialog>
 		</Fragment>
