@@ -1,12 +1,22 @@
 import React, { Fragment, useContext, useState } from 'react';
-import { IconButton, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
+import {
+	IconButton,
+	InputAdornment,
+	OutlinedInput,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow
+} from '@material-ui/core';
 import { Box, TextField, Typography, Table, Checkbox, Select, MenuItem, Button } from '@material-ui/core';
 import { Dialog, DialogActions, DialogTitle } from '@material-ui/core';
-import { Add, DeleteOutline } from '@material-ui/icons';
+import { Add, Close, DeleteOutline, EditOutlined } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core';
 import { FormControl } from '@material-ui/core';
 import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
 import { useEffect } from 'react';
+import Done from '@material-ui/icons/Done';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {
@@ -14,24 +24,33 @@ const useStyles = makeStyles((theme) => ({
 		'& > *': {
 			margin: `5px 5px`
 		}
-	},
+	}
 }));
 
 export default function PreciosDeCompra() {
 	const classes = useStyles();
-	const { datos_generales, precios, unidadesVenta, setUnidadesVenta, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(RegProductoContext);
-	const [unidades, setUnidades] = useState({
-		unidad: precios.granel ? 'KILOGRAMOS' : precios.litros ? 'LITROS' : 'PIEZAS',
+	const {
+		datos_generales,
+		precios,
+		unidadesVenta,
+		setUnidadesVenta,
+		unidadVentaXDefecto,
+		setUnidadVentaXDefecto,
+		setDatosGenerales
+	} = useContext(RegProductoContext);
+	const [ unidades, setUnidades ] = useState({
+		unidad: precios.granel ? 'KILOGRAMOS' : 'PIEZAS',
 		unidad_principal: false
 	});
+	const [ actualizarUnidad, setActualizarUnidad ] = useState(false);
 
 	const obtenerUnidadesVentas = (e) => {
-		if (e.target.name === "cantidad" || e.target.name === "precio") {
+		if (e.target.name === 'cantidad' || e.target.name === 'precio') {
 			setUnidades({
 				...unidades,
 				[e.target.name]: parseFloat(e.target.value)
 			});
-			return
+			return;
 		}
 		setUnidades({
 			...unidades,
@@ -41,7 +60,17 @@ export default function PreciosDeCompra() {
 
 	const agregarNuevaUnidad = () => {
 		if (!unidades.unidad || !unidades.precio || !unidades.cantidad) return;
-		setUnidadesVenta([...unidadesVenta, unidades]);
+
+		if (actualizarUnidad) {
+			setUnidadVentaXDefecto(unidades);
+			setDatosGenerales({
+				...datos_generales,
+				codigo_barras: unidades.codigo_barras
+			});
+			setActualizarUnidad(false);
+		} else {
+			setUnidadesVenta([ ...unidadesVenta, unidades ]);
+		}
 		setUnidades({
 			unidad: 'PIEZAS',
 			unidad_principal: false
@@ -52,7 +81,7 @@ export default function PreciosDeCompra() {
 		setUnidadVentaXDefecto({
 			...unidadVentaXDefecto,
 			unidad_principal: checked
-		})
+		});
 		if (checked) {
 			let nuevo_array = [];
 			for (let i = 0; i < unidadesVenta.length; i++) {
@@ -66,8 +95,28 @@ export default function PreciosDeCompra() {
 				};
 				nuevo_array.push(new_element);
 			}
-			setUnidadesVenta([...nuevo_array]);
+			setUnidadesVenta([ ...nuevo_array ]);
 		}
+	};
+
+	const updateUnidadPrincipal = () => {
+		setActualizarUnidad(true);
+		setUnidades({
+			codigo_barras: unidadVentaXDefecto.codigo_barras,
+			unidad: unidadVentaXDefecto.unidad,
+			cantidad: unidadVentaXDefecto.cantidad,
+			precio: unidadVentaXDefecto.precio,
+			unidad_principal: unidadVentaXDefecto.unidad_principal,
+			default: true
+		});
+	};
+
+	const cancelarUpdate = () => {
+		setActualizarUnidad(false);
+		setUnidades({
+			unidad: 'PIEZAS',
+			unidad_principal: false
+		});
 	};
 
 	const GenCodigoBarras = () => {
@@ -88,22 +137,13 @@ export default function PreciosDeCompra() {
 					<Box display="flex">
 						<FormControl variant="outlined" fullWidth size="small" name="unidad">
 							{precios.granel ? (
-								<Select
-									name="unidad" value={unidades.unidad}
-									onChange={obtenerUnidadesVentas}>
+								<Select name="unidad" value={unidades.unidad} onChange={obtenerUnidadesVentas}>
 									<MenuItem value="KILOGRAMOS">KILOGRAMOS</MenuItem>
 									<MenuItem value="COSTALES">COSTALES</MenuItem>
-								</Select>
-							) : precios.litros ? (
-								<Select
-									name="unidad" value={unidades.unidad}
-									onChange={obtenerUnidadesVentas}>
 									<MenuItem value="LITROS">LITROS</MenuItem>
 								</Select>
 							) : (
-								<Select
-									name="unidad" value={unidades.unidad}
-									onChange={obtenerUnidadesVentas}>
+								<Select name="unidad" value={unidades.unidad} onChange={obtenerUnidadesVentas}>
 									<MenuItem value="CAJAS">CAJAS</MenuItem>
 									<MenuItem value="PIEZAS">PIEZAS</MenuItem>
 								</Select>
@@ -112,7 +152,18 @@ export default function PreciosDeCompra() {
 					</Box>
 				</Box>
 				<Box>
-					<Typography>Cantidad <b>{unidades.unidad === "CAJAS" ? '(piezas)' : unidades.unidad === "COSTALES" ? '(kilos)' : ''}</b></Typography>
+					<Typography>
+						Cantidad{' '}
+						<b>
+							{unidades.unidad === 'CAJAS' ? (
+								'(piezas por caja)'
+							) : unidades.unidad === 'COSTALES' ? (
+								'(kilos por costal)'
+							) : (
+								''
+							)}
+						</b>
+					</Typography>
 					<TextField
 						type="number"
 						InputProps={{ inputProps: { min: 0 } }}
@@ -124,7 +175,9 @@ export default function PreciosDeCompra() {
 					/>
 				</Box>
 				<Box>
-					<Typography>Precio</Typography>
+					<Typography>
+						Precio por <b>{unidades.unidad}</b>
+					</Typography>
 					<TextField
 						type="number"
 						InputProps={{ inputProps: { min: 0 } }}
@@ -136,23 +189,33 @@ export default function PreciosDeCompra() {
 					/>
 				</Box>
 				<Box>
-					<Typography>Código de barras</Typography>
-					<TextField
-						/* disabled={unidades.unidad !== "CAJAS"} */
-						size="small"
-						name="codigo_barras"
-						variant="outlined"
-						onChange={obtenerUnidadesVentas}
-						value={unidades.codigo_barras ? unidades.codigo_barras : ''}
-					/>
-					<Button variant="contained" color="primary" onClick={() => GenCodigoBarras()}>
-						Generar
-					</Button>
+					<FormControl variant="outlined" size="small" name="codigo_barras">
+						<Typography>Código de barras</Typography>
+						<OutlinedInput
+							id="input-codigo-barras"
+							name="codigo_barras"
+							value={unidades.codigo_barras ? unidades.codigo_barras : ''}
+							onChange={obtenerUnidadesVentas}
+							endAdornment={
+								<InputAdornment position="end">
+									<Button onClick={() => GenCodigoBarras()} edge="end" color="primary">
+										Generar
+									</Button>
+								</InputAdornment>
+							}
+						/>
+					</FormControl>
 				</Box>
-				<Box pt={1}>
-					<IconButton color="primary" onClick={() => agregarNuevaUnidad()}>
-						<Add fontSize="large" />
-					</IconButton>
+				<Box display="flex" alignItems="flex-end">
+					<Button
+						color="primary"
+						onClick={() => agregarNuevaUnidad()}
+						startIcon={actualizarUnidad ? <Done fontSize="large" /> : <Add fontSize="large" />}
+						variant="outlined"
+						size="large"
+					>
+						Guardar
+					</Button>
 				</Box>
 			</Box>
 			<Box>
@@ -165,13 +228,22 @@ export default function PreciosDeCompra() {
 								<TableCell>Precio</TableCell>
 								<TableCell>Cantidad</TableCell>
 								<TableCell>Unidad Principal</TableCell>
+								<TableCell>Acciones</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							<TableRow>
+							<TableRow selected={actualizarUnidad ? true : false}>
 								<TableCell>{datos_generales.codigo_barras}</TableCell>
-								<TableCell>{unidadVentaXDefecto.unidad}</TableCell>
-								<TableCell>{unidadVentaXDefecto.precio}</TableCell>
+								<TableCell>
+									{unidadVentaXDefecto.unidad === 'CAJAS' ? (
+										'PIEZAS'
+									) : unidadVentaXDefecto.unidad === 'COSTALES' ? (
+										'KILOGRAMOS'
+									) : (
+										unidadVentaXDefecto.unidad
+									)}
+								</TableCell>
+								<TableCell>$ {unidadVentaXDefecto.precio}</TableCell>
 								<TableCell>{unidadVentaXDefecto.cantidad}</TableCell>
 								<TableCell>
 									<Checkbox
@@ -181,12 +253,22 @@ export default function PreciosDeCompra() {
 										disabled={unidadesVenta.length === 0}
 									/>
 								</TableCell>
+								<TableCell>
+									{actualizarUnidad ? (
+										<IconButton color="primary" onClick={() => cancelarUpdate()}>
+											<Close color="primary" />
+										</IconButton>
+									) : (
+										<IconButton color="primary" onClick={() => updateUnidadPrincipal()}>
+											<EditOutlined color="primary" />
+										</IconButton>
+									)}
+								</TableCell>
 							</TableRow>
 							{unidadesVenta.map((unidades, index) => {
-								if (!unidades.default) return (
-									<RenderUnidadesRows key={index} unidades={unidades} index={index} />
-								)
-								return null
+								if (!unidades.default)
+									return <RenderUnidadesRows key={index} unidades={unidades} index={index} />;
+								return null;
 							})}
 						</TableBody>
 					</Table>
@@ -197,9 +279,11 @@ export default function PreciosDeCompra() {
 }
 
 const RenderUnidadesRows = ({ unidades, index }) => {
-	const { unidadesVenta, setUnidadesVenta, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(RegProductoContext);
+	const { unidadesVenta, setUnidadesVenta, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(
+		RegProductoContext
+	);
 
-	useEffect(() => { }, []);
+	useEffect(() => {}, []);
 
 	const checkUnidadPrincipal = () => {
 		let nuevo_array = [];
@@ -210,22 +294,23 @@ const RenderUnidadesRows = ({ unidades, index }) => {
 				unidad: element.unidad,
 				precio: parseFloat(element.precio),
 				cantidad: parseFloat(element.cantidad),
-				unidad_principal: i === index ? true : false
+				unidad_principal: i === index ? true : false,
+				default: element.default
 			};
 			nuevo_array.push(new_element);
 		}
-		setUnidadesVenta([...nuevo_array]);
+		setUnidadesVenta([ ...nuevo_array ]);
 		setUnidadVentaXDefecto({
 			...unidadVentaXDefecto,
 			unidad_principal: false
-		})
+		});
 	};
 
 	return (
 		<TableRow>
 			<TableCell>{unidades.codigo_barras}</TableCell>
 			<TableCell>{unidades.unidad}</TableCell>
-			<TableCell>{unidades.precio}</TableCell>
+			<TableCell>$ {unidades.precio}</TableCell>
 			<TableCell>{unidades.cantidad}</TableCell>
 			<TableCell>
 				<Checkbox
@@ -242,8 +327,10 @@ const RenderUnidadesRows = ({ unidades, index }) => {
 };
 
 const ModalDelete = ({ unidades, index }) => {
-	const [open, setOpen] = useState(false);
-	const { unidadesVenta, setUnidadesVenta, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(RegProductoContext);
+	const [ open, setOpen ] = useState(false);
+	const { unidadesVenta, setUnidadesVenta, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(
+		RegProductoContext
+	);
 
 	const toggleModal = () => {
 		setOpen(!open);
@@ -255,9 +342,9 @@ const ModalDelete = ({ unidades, index }) => {
 			setUnidadVentaXDefecto({
 				...unidadVentaXDefecto,
 				unidad_principal: true
-			})
+			});
 		}
-		setUnidadesVenta([...unidadesVenta]);
+		setUnidadesVenta([ ...unidadesVenta ]);
 		toggleModal();
 	};
 

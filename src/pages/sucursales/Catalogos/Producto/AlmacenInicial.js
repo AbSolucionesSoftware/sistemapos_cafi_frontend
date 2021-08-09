@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState } from 'react';
+import React, { Fragment, useContext, } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider } from '@material-ui/core';
 import { Box, FormControl, MenuItem, Select, TextField, Typography, Grid } from '@material-ui/core';
@@ -7,6 +7,8 @@ import local from 'date-fns/locale/es';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
+import ContainerRegistroAlmacen from '../../Almacenes/RegistroAlmacen/ContainerRegistroAlmacen';
+import { AlmacenProvider } from '../../../../context/Almacenes/crearAlmacen';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {
@@ -20,9 +22,11 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
+export default function RegistroAlmacenInicial({ obtenerConsultasProducto, refetch }) {
 	const classes = useStyles();
-	const { precios, setPrecios, almacen_inicial, setAlmacenInicial, selectedDate, setSelectedDate } = useContext(RegProductoContext);
+	const { precios, setPrecios, almacen_inicial, setAlmacenInicial, selectedDate, setSelectedDate } = useContext(
+		RegProductoContext
+	);
 	const { almacenes } = obtenerConsultasProducto;
 
 	/*ARMAR OBJETO DE INVENTARIO  */
@@ -32,14 +36,14 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 				...precios,
 				inventario: { ...precios.inventario, [e.target.name]: '' }
 			});
-			return
+			return;
 		}
-		if (e.target.name === "unidad_de_inventario") {
+		if (e.target.name === 'unidad_de_inventario') {
 			setPrecios({
 				...precios,
 				inventario: { ...precios.inventario, [e.target.name]: e.target.value }
 			});
-			return
+			return;
 		}
 		setPrecios({
 			...precios,
@@ -53,14 +57,14 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 				...almacen_inicial,
 				[e.target.name]: ''
 			});
-			return
+			return;
 		}
-		if (e.target.name === "almacen") {
+		if (e.target.name === 'almacen') {
 			setAlmacenInicial({
 				...almacen_inicial,
 				[e.target.name]: e.target.value
 			});
-			return
+			return;
 		}
 		setAlmacenInicial({
 			...almacen_inicial,
@@ -72,7 +76,7 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 		setAlmacenInicial({
 			...almacen_inicial,
 			[event.target.name]: event.target.value,
-			[child.props.name]: child.props.id,
+			[child.props.name]: child.props.id
 		});
 	};
 
@@ -85,22 +89,22 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 	};
 
 	const verificarCampoVacio = (tipo, name, value) => {
-		if(tipo === 'inventario'){
-			if(!value){
+		if (tipo === 'inventario') {
+			if (!value) {
 				setPrecios({
 					...precios,
 					inventario: { ...precios.inventario, [name]: 0 }
 				});
 			}
-		}else{
-			if(!value){
+		} else {
+			if (!value) {
 				setAlmacenInicial({
 					...almacen_inicial,
 					[name]: 0
 				});
 			}
 		}
-	}
+	};
 
 	return (
 		<Fragment>
@@ -122,8 +126,13 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 						variant="outlined"
 						value={precios.inventario.inventario_minimo}
 						onChange={obtenerInventario}
-						onBlur={() => verificarCampoVacio('inventario', 'inventario_minimo', precios.inventario.inventario_minimo )}
-						error={precios.inventario.inventario_minimo === ""}
+						onBlur={() =>
+							verificarCampoVacio(
+								'inventario',
+								'inventario_minimo',
+								precios.inventario.inventario_minimo
+							)}
+						error={precios.inventario.inventario_minimo === ''}
 					/>
 				</Box>
 				<Box width="150px">
@@ -137,8 +146,13 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 						variant="outlined"
 						value={precios.inventario.inventario_maximo}
 						onChange={obtenerInventario}
-						onBlur={() => verificarCampoVacio('inventario', 'inventario_maximo', precios.inventario.inventario_maximo )}
-						error={precios.inventario.inventario_maximo === ""}
+						onBlur={() =>
+							verificarCampoVacio(
+								'inventario',
+								'inventario_maximo',
+								precios.inventario.inventario_maximo
+							)}
+						error={precios.inventario.inventario_maximo === ''}
 					/>
 				</Box>
 				<Box width="150px">
@@ -147,27 +161,23 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 						<FormControl variant="outlined" fullWidth size="small" name="unidad_de_inventario">
 							{precios.granel ? (
 								<Select
-									name="unidad" value={precios.unidad_de_compra.unidad}
-									onChange={obtenerInventario}>
+									name="unidad"
+									value={precios.unidad_de_compra.unidad}
+									onChange={obtenerInventario}
+								>
 									<MenuItem value="">
 										<em>NINGUNA</em>
 									</MenuItem>
 									<MenuItem value="KILOGRAMOS">KILOGRAMOS</MenuItem>
 									<MenuItem value="COSTALES">COSTALES</MenuItem>
-								</Select>
-							) : precios.litros ? (
-								<Select
-									name="unidad" value={precios.unidad_de_compra.unidad}
-									onChange={obtenerInventario}>
-									<MenuItem value="">
-										<em>NINGUNA</em>
-									</MenuItem>
 									<MenuItem value="LITROS">LITROS</MenuItem>
 								</Select>
 							) : (
 								<Select
-									name="unidad" value={precios.unidad_de_compra.unidad}
-									onChange={obtenerInventario}>
+									name="unidad"
+									value={precios.unidad_de_compra.unidad}
+									onChange={obtenerInventario}
+								>
 									<MenuItem value="">
 										<em>NINGUNA</em>
 									</MenuItem>
@@ -187,7 +197,9 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 			</Box>
 			<div className={classes.formInputFlex}>
 				<Box width="100%">
-					<Typography>Cantidad inicial en <b>{precios.unidad_de_compra.unidad}</b></Typography>
+					<Typography>
+						Cantidad inicial en <b>{precios.unidad_de_compra.unidad}</b>
+					</Typography>
 					<Box display="flex">
 						<TextField
 							fullWidth
@@ -198,33 +210,46 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto }) {
 							variant="outlined"
 							value={almacen_inicial.cantidad}
 							onChange={obtenerAlmacenInicial}
-							onBlur={() => verificarCampoVacio('almacen','cantidad', almacen_inicial.cantidad )}
-							error={almacen_inicial.cantidad === ""}
+							onBlur={() => verificarCampoVacio('almacen', 'cantidad', almacen_inicial.cantidad)}
+							error={almacen_inicial.cantidad === ''}
 						/>
 					</Box>
 				</Box>
 				<Box width="100%">
 					<Typography>Almacen</Typography>
 					<Box display="flex">
-						<FormControl variant="outlined" fullWidth size="small" name="almacen">
+						<FormControl
+							variant="outlined"
+							fullWidth
+							size="small"
+							name="almacen"
+							error={almacen_inicial.cantidad > 0 && !almacen_inicial.almacen}
+						>
 							<Select name="almacen" value={almacen_inicial.almacen} onChange={obtenerAlmacenes}>
 								<MenuItem value="">
 									<em>Seleccione uno</em>
 								</MenuItem>
-								{almacenes ? almacenes.map((res) => {
-									return (
-										<MenuItem
-											name="id_almacen"
-											key={res._id}
-											value={res.nombre_almacen}
-											id={res._id}
-										>
-											{res.nombre_almacen}
-										</MenuItem>
-									);
-								}) : <MenuItem value="" />}
-							</Select >
+								{almacenes ? (
+									almacenes.map((res) => {
+										return (
+											<MenuItem
+												name="id_almacen"
+												key={res._id}
+												value={res.nombre_almacen}
+												id={res._id}
+											>
+												{res.nombre_almacen}
+											</MenuItem>
+										);
+									})
+								) : (
+									<MenuItem value="" />
+								)}
+							</Select>
 						</FormControl>
+						<AlmacenProvider>
+							<ContainerRegistroAlmacen accion="registrar" refetch={refetch} />
+						</AlmacenProvider>
 					</Box>
 				</Box>
 				<Box width="100%">

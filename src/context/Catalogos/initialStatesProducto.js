@@ -9,7 +9,6 @@ export const initial_state_precios = {
     ieps: 0,
     iva: 16,
     granel: false,
-    litros: false,
     inventario: {
         inventario_minimo: 0,
         inventario_maximo: 0,
@@ -92,12 +91,7 @@ export const initial_state_almacen_inicial = {
     cantidad: 0,
     fecha_de_expiracion: "",
 }
-export const initial_state_centro_de_costos = {
-    id_cuenta: '',
-    cuenta: '',
-    id_sub_cuenta: '',
-    sub_cuenta: '',
-}
+export const initial_state_centro_de_costos = {}
 
 export const initial_state_preciosPlazos = {
     precio_piezas: [],
