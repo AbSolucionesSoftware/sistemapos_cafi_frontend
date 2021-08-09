@@ -187,7 +187,7 @@ export default function Cajas() {
             </Grid> 
 			
 		</Container>
-		<HistorialCaja open={open} handleClickOpen={handleClickOpen} cajaSelected={cajaSelected} handleClose={handleClose} obtenerCajasSucursal={obtenerCajasSucursal} />
+		<HistorialCaja open={open} fetchCajas={refetch} handleClickOpen={handleClickOpen} cajaSelected={cajaSelected} handleClose={handleClose} obtenerCajasSucursal={obtenerCajasSucursal} />
 		</Fragment>	
     )
 }

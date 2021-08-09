@@ -112,7 +112,7 @@ export default function CardCaja(props) {
                            Total en caja: 
                         </Typography>
                         <Typography style={{margin: '0px 10px', color: 'green'}} variant="h6" color="textSecondary" component="p">
-                           {parseFloat(props.cantidad_efectivo_actual)}
+                           $ {parseFloat(props.cantidad_efectivo_actual)}
                         </Typography>
                     </CardActions>
                 </Card>

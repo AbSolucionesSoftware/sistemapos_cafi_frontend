@@ -46,11 +46,16 @@ const useStyles = makeStyles((theme) => ({
 
 	},
 	container: {
-		minHeight: 650,
-        minWidth:800
+		minHeight: '100%',
+        height:'100%',
+        width:900, 
+        minWidth:1000,
+      
 	}, 
     table: {
      minWidth: 650,
+     minHeight:300,
+     maxHeight:300
     },
 }));
 
@@ -78,8 +83,10 @@ export default function HistorialCaja(props) {
 	const [cantidadMovimiento, setCantidadMovimiento] = React.useState(0);
     const [ cajaDestino, setCajaDestino] = React.useState('')
 	const [ page, setPage ] = useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = useState(10);
+	const [ rowsPerPage, setRowsPerPage ] = useState(5);
     //const [ error, setError ] = useState({error: false, message: ''});
+    const [ errorCantidad, setErrorCantidad ] = useState(false);
+    const [ errorCajaDestino, setErrorCajaDestino ] = useState(false);
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
@@ -98,7 +105,7 @@ export default function HistorialCaja(props) {
    
     useEffect(
 		() => {
-            console.log(props.cajaSelected._id,sesion.empresa._id,  sesion.sucursal._id)
+           
             if(props.open){
                 setLoading(true);
                 refetch();
@@ -118,10 +125,32 @@ export default function HistorialCaja(props) {
 	const nuevoHistorial = async () => {
 		try {
             let tipo_movimiento =  (action.depositar) ? "DEPOSITO" : (action.retirar)  ? "RETIRO" : "TRANSFERENCIA";
-          
+            let cajaDes = (action.transferir) ?  cajaDestino._id : undefined;
+            
+            if(cantidadMovimiento > 0 && cantidadMovimiento !== '' ){
+                setErrorCantidad(false)
+               
+            }else{
+                setErrorCantidad(true)
+                return;
+            }
+            if(action.transferir){
+                if(cajaDestino !== ''){
+                    setErrorCajaDestino(false);
+                    
+                   
+                }else{
+                    console.log('ENTRA')
+                    setErrorCajaDestino(true)
+                    return;
+                }
+            }
+           
+            
             setLoading(true);
-            console.log("nuevoHistorial",crearHistorialCaja)
-				await crearHistorialCaja({
+            
+			const respCrearHistorial= 
+                await crearHistorialCaja({
 					variables: {
 						input:{ 
                             id_User:  sesion._id,
@@ -129,26 +158,33 @@ export default function HistorialCaja(props) {
                             id_Caja: props.cajaSelected._id,
                             cantidad_movimiento: parseFloat(cantidadMovimiento),
                             tipo_movimiento : tipo_movimiento,
-                            id_caja_destino: (cajaDestino._id != undefined) ? cajaDestino._id : ''
+                            id_caja_destino: cajaDes
                             },
 						empresa: sesion.empresa._id,
 						sucursal: sesion.sucursal._id
 		
 					}
 				});
-			
+               
             refetch();
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
+            props.fetchCajas();
+            setAction({depositar:false, retirar:false, transferir:false});
+            setCantidadMovimiento(0);
+            setErrorCantidad(false);
+            setErrorCajaDestino(false);
+            setCajaDestino('')
+			setAlert({ message: 'Listo.', status: 'success', open: true });
 			setLoading(false);
 		
 			
 		} catch (error) {
 			console.log("nuevoHistorial",error);
-			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			setAlert({ message: error.message, status: 'error', open: true });
 			setLoading(false);
 		}
 	};
-    
+  
+
     const handleChangePage = (event, newPage) => {
 		setPage(newPage);
 	};
@@ -167,15 +203,14 @@ export default function HistorialCaja(props) {
 	};
     return (
 		
-        <Dialog  fullWidth fullHeight  maxWidth="l" maxHeight="xl" open={props.open} onClose={props.handleClose}   TransitionComponent={Transition} >
+        <Dialog  fullWidth fullHeight  maxWidth="l" maxHeight="xl" open={props.open} onClose={()=>{props.handleClose(); handleCloseAction();}}   TransitionComponent={Transition} >
             <SnackBarMessages alert={alert} setAlert={setAlert} />	
 			<BackdropComponent loading={loading} setLoading={setLoading} />
             <Toolbar >
                 <Typography variant="h5" className={classes.title}>
                     Caja {props.cajaSelected.numero_caja}
                 </Typography>
-                <Button autoFocus color="inherit"size="large" onClick={()=>{props.handleClose(); props.handleCloseAction();
-                } } startIcon={<CloseIcon />}>
+                <Button autoFocus color="inherit"size="large" onClick={()=>{props.handleClose();handleCloseAction();} } startIcon={<CloseIcon />}>
                     Cerrar
                 </Button>
             </Toolbar>
@@ -225,7 +260,7 @@ export default function HistorialCaja(props) {
         </Grid>
         <Box>
         <Box>
-            <ActionCaja  action={action} cajas={props.obtenerCajasSucursal} handleClose={handleCloseAction} nuevoHistorial={nuevoHistorial} cajaDestino={cajaDestino} setCajaDestino={setCajaDestino}  setCantidadMovimiento={setCantidadMovimiento} cantidadMovimiento={cantidadMovimiento} />
+            <ActionCaja  idCaja= {props.cajaSelected._id} errorCantidad={errorCantidad} errorCajaDestino={errorCajaDestino} action={action} cajas={props.obtenerCajasSucursal} handleClose={handleCloseAction} nuevoHistorial={nuevoHistorial} cajaDestino={cajaDestino} setCajaDestino={setCajaDestino}  setCantidadMovimiento={setCantidadMovimiento} cantidadMovimiento={cantidadMovimiento} />
         </Box>
             
         </Box>
