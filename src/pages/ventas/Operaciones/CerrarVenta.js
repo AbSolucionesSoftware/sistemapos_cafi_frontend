@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import useStyles from '../styles';
 
-import { Box, Button, Dialog, DialogActions, DialogContent, Divider, Grid,  Paper,  Slide,  TextField, Typography } from '@material-ui/core'
+import { Box, Button, Dialog, DialogActions, DialogContent, Divider, Grid,  IconButton,  Paper,  Slide,  TextField, Typography } from '@material-ui/core'
 import cartIcon from '../../../icons/ventas/cart.svg'
 import money from '../../../icons/ventas/money.svg';
 import tarjeta from '../../../icons/ventas/tarjeta-de-credito.svg';
 import transfer from '../../../icons/transferencia-bancaria.svg';
-import { FcDonate } from 'react-icons/fc';
+import { FcDonate, FcShop } from 'react-icons/fc';
+import { Search } from '@material-ui/icons';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -55,7 +56,7 @@ export default function CerrarVenta({handleClickOpen}) {
                             </Box>
                         </div>
                         <div className={classes.formInputFlex}>
-                            <Box width="50%" textAlign="center">
+                            <Box width="25%" textAlign="center">
                                 <Box>
                                     <img src={money} alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
                                 </Box>
@@ -72,7 +73,7 @@ export default function CerrarVenta({handleClickOpen}) {
                                     />
                                 </Box>
                             </Box>
-                            <Box width="50%" textAlign="center">
+                            <Box width="25%" textAlign="center">
                                 <Box>
                                     <img src={tarjeta} alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
                                 </Box>
@@ -89,7 +90,24 @@ export default function CerrarVenta({handleClickOpen}) {
                                     />
                                 </Box>
                             </Box>
-                            <Box width="50%" textAlign="center">
+                            <Box width="25%" textAlign="center">
+                                <Box> 
+                                    <FcShop style={{fontSize: 40}} />
+                                </Box>
+                                <Typography variant='caption'>
+                                    Puntos
+                                </Typography>
+                                <Box display="flex">
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        name="codigo_barras"
+                                        id="form-producto-codigo-barras"
+                                        variant="outlined"
+                                    />
+                                </Box>
+                            </Box>
+                            <Box width="25%" textAlign="center">
                                 <Box p={0}>
                                     <img src={transfer} alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
                                 </Box>
@@ -110,8 +128,31 @@ export default function CerrarVenta({handleClickOpen}) {
                         <Paper elevation={3} >
                             <div className={classes.formInputFlex}>
                                 <Box width="40%">
-                                    <Typography variant='subtitle1'>
-                                        <b>Puntos:</b>
+                                    <Typography variant='caption'>
+                                        <b>Puntos Generados:</b>
+                                    </Typography>
+                                    <Box>
+                                        <Typography variant='subtitle1'>
+                                        800
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                                <Box width="100%">
+                                    <Typography variant='caption'>
+                                        <b>Cliente:</b>
+                                    </Typography>
+                                    <Box display="flex" alignItems="center">
+                                        <Typography variant='caption'>
+                                            Jerusalen Martinez
+                                        </Typography>
+                                        <IconButton>
+                                            <Search />
+                                        </IconButton>
+                                    </Box>
+                                </Box>
+                                <Box width="40%">
+                                    <Typography variant='caption'>
+                                        <b>Puntos Dsiponibles:</b>
                                     </Typography>
                                     <Box>
                                         <Typography variant='subtitle1'>

@@ -89,19 +89,7 @@ export default function Cotizacion({handleClickOpen}) {
                                 />
                             </Box>
                         </Box>
-                        {/* <Box width="100%">
-                            <Typography>
-                                Fecha Inicio:
-                            </Typography>
-                            <Box display="flex">
-                                <TextField
-                                    fullWidth
-                                    type='number'
-                                    size="small"
-                                    variant="outlined"
-                                />
-                            </Box>
-                        </Box> */}
+                        
                         <Box width="100%">
                             <Typography>
                                 Fecha Vencimiento:

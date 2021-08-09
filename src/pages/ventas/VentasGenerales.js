@@ -132,12 +132,6 @@ export default function VentasGenerales() {
                                 </Typography>
                             </Box>
                             <Box p={1} display='flex' justifySelf='center' alignItems='center'>
-                                <Typography> 
-                                    Monedero
-                                </Typography>
-                                <Switch />
-                            </Box>
-                            <Box p={1} display='flex' justifySelf='center' alignItems='center'>
                                 <Typography variant="subtitle1">
                                     Descuento: 25%
                                 </Typography>

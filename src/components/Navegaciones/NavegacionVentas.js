@@ -4,7 +4,7 @@ import { CssBaseline, Avatar, Box, Typography } from '@material-ui/core';
 import { withRouter } from 'react-router';
 import { FaPowerOff } from 'react-icons/fa';
 import { FcDonate, FcExpired } from 'react-icons/fc';
-import { FcBusinessman, FcCurrencyExchange, FcPaid } from 'react-icons/fc';
+import { FcBusinessman,FcServices, FcCurrencyExchange, FcPaid } from 'react-icons/fc';
 import useStyles from './styles';
 import addIcon from '../../icons/ventas/add.svg'
 import articuloRapido from '../../icons/ventas/tiempo-rapido.svg'
@@ -35,6 +35,8 @@ import ConsultarPrecio from '../../pages/ventas/Operaciones/ConsultarPrecio';
 import Cotizacion from '../../pages/ventas/Cotizacion/Cotizacion';
 import ArticuloRapido from '../../pages/ventas/ArticuloRapido/ArticuloRapido';
 import VentaEnEspera from '../../pages/ventas/Operaciones/VentaEnEspera';
+import ListaApartados from '../../pages/ventas/Apartados/ListaApartados';
+import CrearApartado from '../../pages/ventas/Apartados/CrearApartado';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -84,6 +86,10 @@ function NavegacionVentas(props) {
 				return <ArticuloRapido handleClickOpen={handleClickOpen} />
 			case 'ventaEnEspera':
 				return <VentaEnEspera handleClickOpen={handleClickOpen} />
+			case 'listaApartados':
+				return <ListaApartados handleClickOpen={handleClickOpen} />
+			case 'crearApartado':
+				return <CrearApartado handleClickOpen={handleClickOpen} />
 			default:
 				break;
 		}
@@ -95,7 +101,7 @@ function NavegacionVentas(props) {
 	// 		handleClickOpen();
 	// 		return setVentana('cerrarVenta');
 	// 	}
-	// }
+	// } CODIGO PARA PODER EJECUTAR LAS VENTANAS A BASE DE LAS TECLAS
 
 	// window.onkeydown = funcion_tecla;
 
@@ -111,6 +117,12 @@ function NavegacionVentas(props) {
 					showLabels
 					className={classes.navigationTop}
 				>
+					<BottomNavigationAction
+						value="servicios"
+						label={<Typography variant="subtitle2">Servicios</Typography>}
+						icon={<FcServices className={classes.iconSizeSuperior} />}
+					/>
+					<Divider orientation="vertical" />
 					<BottomNavigationAction
 						onClick={() =>{
 							setVentana('articuloRapido');
@@ -237,13 +249,19 @@ function NavegacionVentas(props) {
 								</Box>
 							</Box>
 						</Button>
-						<Button className={classes.borderBoton}>
+						<Button 
+							className={classes.borderBoton}
+							onClick={() =>{
+								setVentana('crearApartado');
+								handleClickOpen();
+							}}
+						>
 							<Box>
 								<Box>
 									<img src={tagIcon} alt="icono apartados" className={classes.iconSizeSecondInferiorGrande} />
 								</Box>
 								<Box>
-									Apartados
+									Apartar Producto
 								</Box>
 							</Box>
 						</Button>
@@ -399,6 +417,22 @@ function NavegacionVentas(props) {
 								</Box>
 								<Box>
 									Precios
+								</Box>
+							</Box>
+						</Button>
+						<Button 
+							className={classes.borderBotonChico}
+							onClick={() =>{
+								setVentana('listaApartados');
+								handleClickOpen();
+							}}
+						>
+							<Box>
+								<Box>
+									<img src={tagIcon} alt="icono apartados" className={classes.iconSizeSecondInferior} />
+								</Box>
+								<Box>
+									Lista Apartados
 								</Box>
 							</Box>
 						</Button>
