@@ -8,18 +8,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
-// const useStyles = makeStyles((theme) => ({
-// 	formInputFlex: {
-// 		display: 'flex',
-// 		'& > *': {
-// 			margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
-// 		}
-// 	},
-// 	formInput: {
-// 		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
-// 	},
-// }));
-
 export default function AbonoaRecibir() {
     
     const [open, setOpen] = useState(false);
