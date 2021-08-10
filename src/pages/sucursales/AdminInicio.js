@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { FcShop, FcPaid, FcSurvey, FcNews } from 'react-icons/fc';
+import { FcShop, FcPaid, FcSurvey, FcNews,FcPrint } from 'react-icons/fc';
 import { Toolbar, Box, Tab, Tabs, AppBar } from '@material-ui/core';
 import Empresa from './Empresa/Empresa';
 import Compras from './Compras/Compras';
@@ -14,7 +14,8 @@ import almacenIcon from '../../icons/almacen.svg';
 import Almacenes from './Almacenes/Almacenes';
 import cartIcon from '../../icons/ventas/cart-add.svg';
 import { withRouter } from 'react-router';
-
+import cajaIcon from '../../icons/cajas.svg';
+import Cajas from './Cajas/Cajas';
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
 
@@ -83,32 +84,34 @@ function AdminInicio(props) {
 			<Toolbar />
 			<Box>
 				<AppBar position="static" color="default" elevation={0}>
-					<Tabs value={value} onChange={handleChange} indicatorColor="primary" textColor="primary" centered>
+					<Tabs value={value} onChange={handleChange} indicatorColor="primary" textColor="primary" centered variant="scrollable" scrollButtons="on">
 						<Tab label="Mi empresa" icon={<FcShop className={classes.icon} />} {...a11yProps(0)} />
 						<Tab
 							label="Almacenes"
 							icon={<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />}
 							{...a11yProps(1)}
 						/>
-						<Tab label="Compras" icon={<FcPaid className={classes.icon} />} {...a11yProps(2)} />
-						<Tab label="Catalogos" icon={<FcNews className={classes.icon} />} {...a11yProps(3)} />
+						<Tab label="Cajas" icon={<FcPrint className={classes.icon} />} {...a11yProps(2)} />
+						<Tab label="Compras" icon={<FcPaid className={classes.icon} />} {...a11yProps(3)} />
+						<Tab label="Catalogos" icon={<FcNews className={classes.icon} />} {...a11yProps(4)} />
 						<Tab
 							label="Tesoreria"
 							icon={<img src={moneyIcon} alt="icono money" className={classes.iconSvg} />}
-							{...a11yProps(4)}
+							{...a11yProps(5)}
 						/>
-						<Tab label="Reportes" icon={<FcSurvey className={classes.icon} />} {...a11yProps(5)} />
-						<Tab
-							label="Facturación"
-							icon={<img src={facturaIcon} alt="icono factura" className={classes.iconSvg} />}
-							{...a11yProps(6)}
-						/>
+						<Tab label="Reportes" icon={<FcSurvey className={classes.icon} />} {...a11yProps(6)} />
 						<Tab
 							label="Ventas"
 							icon={<img src={cartIcon} alt="icono ventas" className={classes.iconSvg} />}
-							{...a11yProps(7)}
+							{...a11yProps(8)}
 							onClick={() => props.history.push('/ventas/venta-general')}
 						/>
+						<Tab
+							label="Facturación"
+							icon={<img src={facturaIcon} alt="icono factura" className={classes.iconSvg} />}
+							{...a11yProps(7)}
+						/>
+						
 					</Tabs>
 				</AppBar>
 				<SwipeableViews
@@ -123,21 +126,24 @@ function AdminInicio(props) {
 						<Almacenes />
 					</TabPanel>
 					<TabPanel value={value} index={2}>
-						<Compras />
+						<Cajas />
 					</TabPanel>
 					<TabPanel value={value} index={3}>
-						<Catalogos />
+						<Compras />
 					</TabPanel>
 					<TabPanel value={value} index={4}>
-						<Tesoreria />
+						<Catalogos />
 					</TabPanel>
 					<TabPanel value={value} index={5}>
-						Item Five
+						<Tesoreria />
 					</TabPanel>
 					<TabPanel value={value} index={6}>
-						Item Six
+						Item Five
 					</TabPanel>
 					<TabPanel value={value} index={7}>
+						Item Six
+					</TabPanel>
+					<TabPanel value={value} index={8}>
 						Ventas
 					</TabPanel>
 				</SwipeableViews>
