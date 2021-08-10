@@ -32,7 +32,12 @@ export default function VentaEnEspera({handleClickOpen}) {
                     </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClickOpen} variant="outlined" color="primary" autoFocus>
+                <Button 
+                    onClick={handleClickOpen} 
+                    variant="contained" 
+                    color="primary"
+                    size="large"
+                >
                     Aceptar
                 </Button>
             </DialogActions>

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { AppBar, Box, Button, Dialog, InputBase, makeStyles, Paper, Slide, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Typography } from '@material-ui/core';
 
 import moneda from '../../../icons/ventas/peso.svg';
+import CloseIcon from '@material-ui/icons/Close';
 
 const columns = [
 	{ id: 'icono', label: 'Icono', minWidth: 50 },
@@ -80,15 +81,9 @@ export default function MonedaCambio() {
 						<Typography variant="h6" className={classes.title}>
 							Tipo de Moneda
 						</Typography>
-						<Button
-							autoFocus
-                            variant='outlined'
-							color="inherit"
-							size="large"
-							onClick={handleClickOpen}
-						>
-							Cerrar
-						</Button>
+						<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                            <CloseIcon />
+                        </Button>
 					</Toolbar>
 				</AppBar>
 				<div className={classes.root}>

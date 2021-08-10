@@ -38,7 +38,11 @@ export default function AbrirCajon({handleClickOpen}) {
                     </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClickOpen} variant="outlined" color="primary" autoFocus>
+                <Button 
+                    onClick={handleClickOpen} 
+                    variant="contained" 
+                    color="primary"
+                >
                     Aceptar
                 </Button>
             </DialogActions>

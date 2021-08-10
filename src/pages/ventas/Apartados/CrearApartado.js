@@ -5,6 +5,7 @@ import tagIcon from '../../../icons/ventas/tag.svg'
 import { Box, Button, DialogActions, Divider, Grid, IconButton,  Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@material-ui/core'
 import { Search } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
+import CloseIcon from '@material-ui/icons/Close';
 
 
 const columns = [
@@ -47,7 +48,7 @@ export default function CrearApartado({handleClickOpen}) {
     return (
         <div>
             <Grid container>
-                <Grid item lg={8}>
+                <Grid item lg={12}>
                     <Box
                         p={2}
                         display="flex" 
@@ -59,29 +60,36 @@ export default function CrearApartado({handleClickOpen}) {
                         <Box m={2} >
                             <Divider orientation="vertical" />
                         </Box>
-                        <Box mt={2}>
-                            <Typography variant="h6">
-                                Generar nuevo apartado
-                            </Typography>
+                        <Box flexGrow={1} textAlign="left"mt={2}>
+                            <Box>
+                                <Typography variant="h6">
+                                    Generar nuevo apartado
+                                </Typography>
+                            </Box>
+                            <Box display="flex" >
+                                <Box >
+                                    <Typography variant="caption">
+                                        31/12/2021 - 08:00 hrs.
+                                    </Typography>
+                                </Box>
+                                <Box  ml={2}>
+                                    <Typography variant="caption">
+                                        Caja 3
+                                    </Typography>
+                                </Box>
+                                <Box  ml={2}>
+                                    <Typography variant="caption">
+                                        <b>Atiende:</b> Luis Flores
+                                    </Typography>
+                                </Box>
+                            </Box>
                         </Box>
-                    </Box>
-                </Grid>
-                <Grid item lg={4}>
-                    <Box textAlign="right" p={3}>
                         <Box textAlign="right">
-                            <Typography variant="caption">
-                                31/12/2021 - 08:00 hrs.
-                            </Typography>
-                        </Box>
-                        <Box textAlign="right">
-                            <Typography variant="caption">
-                                Caja 3
-                            </Typography>
-                        </Box>
-                        <Box textAlign="right">
-                            <Typography variant="caption">
-                                <b>Atiende:</b> Luis Flores
-                            </Typography>
+                            <Box>
+                                <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                                    <CloseIcon />
+                                </Button>
+                            </Box>
                         </Box>
                     </Box>
                 </Grid>
@@ -201,10 +209,7 @@ export default function CrearApartado({handleClickOpen}) {
             </div>
 
             <DialogActions>
-                <Button onClick={handleClickOpen} color="secondary" variant="outlined">
-                    Cancelar
-                </Button>
-                <Button onClick={handleClickOpen} color="primary" variant="outlined" autoFocus>
+                <Button onClick={handleClickOpen} color="primary" variant="contained" size="large">
                     Generar Apartado
                 </Button>
             </DialogActions>

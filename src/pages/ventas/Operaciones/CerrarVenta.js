@@ -8,6 +8,7 @@ import tarjeta from '../../../icons/ventas/tarjeta-de-credito.svg';
 import transfer from '../../../icons/transferencia-bancaria.svg';
 import { FcDonate, FcShop } from 'react-icons/fc';
 import { Search } from '@material-ui/icons';
+import CloseIcon from '@material-ui/icons/Close';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -24,10 +25,7 @@ export default function CerrarVenta({handleClickOpen}) {
         <div>
             <DialogContent>
                     <Grid container item lg={12} justify="center">
-                        <Box
-                            display="flex" 
-                            textAlign="center" 
-                        >
+                        <Box display="flex" justifyContent="center" flexGrow={1}>
                             <Box>
                                 <img src={cartIcon} alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
                             </Box>
@@ -39,6 +37,11 @@ export default function CerrarVenta({handleClickOpen}) {
                                     Ticket
                                 </Typography>
                             </Box>
+                        </Box>
+                        <Box>
+                            <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                                <CloseIcon />
+                            </Button>
                         </Box>
                     </Grid>
                     <Grid>
@@ -190,19 +193,11 @@ export default function CerrarVenta({handleClickOpen}) {
                     onClick={() => {
                         abrirCajon()
                     }}
-                    variant="outlined" 
+                    variant="contained" 
                     color="primary" 
                     autoFocus
                 >
-                    Aceptar
-                </Button>
-                <Button 
-                    onClick={handleClickOpen} 
-                    variant="outlined" 
-                    color="secondary"
-                    size="large"
-                >
-                    Cancelar
+                    Terminar
                 </Button>
             </DialogActions>
 
@@ -238,21 +233,13 @@ export default function CerrarVenta({handleClickOpen}) {
 
                 <DialogActions>
                     <Button 
-                        size="large"
                         onClick={handleClickOpen}
-                        variant="outlined" 
+                        variant="contained" 
+                        size="large"
                         color="primary" 
                         autoFocus
                     >
                         Aceptar
-                    </Button>
-                    <Button 
-                        onClick={handleClickOpen} 
-                        variant="outlined" 
-                        color="secondary"
-                        size="large"
-                    >
-                        Cancelar
                     </Button>
                 </DialogActions>
 			</Dialog>

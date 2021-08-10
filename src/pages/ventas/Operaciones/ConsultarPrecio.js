@@ -3,6 +3,7 @@ import React from 'react';
 import { Box, Button,  DialogActions, DialogContent, Divider, Grid,  IconButton,  InputBase,  Paper,  Typography } from '@material-ui/core'
 
 import ProductosIcon from '../../../icons/productos.svg';
+import CloseIcon from '@material-ui/icons/Close';
 
 import useStyles from '../styles';
 import { Search } from '@material-ui/icons';
@@ -18,7 +19,8 @@ export default function ConsultarPrecio({handleClickOpen}) {
                 <Grid container item lg={12}>
                     <Box
                         display="flex" 
-                        textAlign="center" 
+                        textAlign="center"
+                        flexGrow={1}
                     >
                         <Box>
                             <img src={ProductosIcon} alt="icono caja" className={classes.iconSizeDialogs} />
@@ -31,6 +33,11 @@ export default function ConsultarPrecio({handleClickOpen}) {
                                 Inoformación Producto
                             </Typography>
                         </Box>
+                    </Box>
+                    <Box displa="flex" justifyContent="center">
+                        <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                            <CloseIcon />
+                        </Button>
                     </Box>
                 </Grid>
                 <div className={classes.formInputFlex}>
@@ -112,10 +119,12 @@ export default function ConsultarPrecio({handleClickOpen}) {
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClickOpen} variant="outlined" color="secondary">
-                    Cancelar
-                </Button>
-                <Button onClick={handleClickOpen} variant="outlined" color="primary" autoFocus>
+                <Button 
+                    onClick={handleClickOpen} 
+                    variant="contained" 
+                    color="primary" 
+                    size="large"
+                >
                     Aceptar
                 </Button>
             </DialogActions>

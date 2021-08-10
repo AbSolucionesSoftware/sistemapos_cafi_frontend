@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import { AppBar, Box, Button, DialogActions, DialogContent, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core'
 import shiftIcon from '../../../icons/ventas/shift.svg'
+import CloseIcon from '@material-ui/icons/Close';
 
 import AbrirTurno from './AbrirTurno';
 import CerrarTurno from './CerrarTurno';
@@ -112,7 +113,13 @@ export default function Turnos({handleClickOpen}) {
 									</Typography>
 								</Box>
 							</Box>
+							
 						</Grid>
+						<Box mt={3} ml={3}>
+							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="medium">
+								<CloseIcon />
+							</Button>
+						</Box>
 					</Tabs>
 				</AppBar>
 
@@ -125,10 +132,7 @@ export default function Turnos({handleClickOpen}) {
                     </TabPanel>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClickOpen} variant="outlined" color="secondary">
-						Cancelar
-					</Button>
-					<Button onClick={handleClickOpen} variant="outlined" color="primary" autoFocus>
+					<Button onClick={handleClickOpen} variant="contained" color="primary" size="large">
 						Aceptar
 					</Button>
 				</DialogActions>

@@ -5,6 +5,7 @@ import { Box, Button, DialogActions, DialogContent, Divider,Grid, IconButton, In
 import listaEspera from '../../../icons/ventas/lista-de-espera.svg'
 import { Search } from '@material-ui/icons';
 import ListaVentas from './ListaVentas';
+import CloseIcon from '@material-ui/icons/Close';
 
 export default function VentasEspera({handleClickOpen}) {
 
@@ -15,12 +16,8 @@ export default function VentasEspera({handleClickOpen}) {
             <DialogContent>
                 <Grid container item lg={12}>
                     <Box
-                        display="flex" 
-                        textAlign="center" 
-                        justifyContent="center" 
-                        alignContent="center" 
-                        alignSelf="center"
-                        justifySelf="center"
+                        display="flex"
+                        flexGrow={1}
                     >
                         <Box>
                             <img src={listaEspera} alt="icono caja" className={classes.iconSizeDialogs} />
@@ -28,12 +25,16 @@ export default function VentasEspera({handleClickOpen}) {
                         <Box m={2} >
                             <Divider orientation="vertical" />
                         </Box>
-                        <Box mt={3}>
+                        <Box mt={3} >
                             <Typography variant="h6">
                                 Ventas en espera
                             </Typography>
-                            
                         </Box>
+                    </Box>
+                    <Box>
+                        <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                            <CloseIcon />
+                        </Button>
                     </Box>
                     </Grid>
                     <Grid>
@@ -54,10 +55,7 @@ export default function VentasEspera({handleClickOpen}) {
                     </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClickOpen} variant="outlined" color="secondary">
-                    Cancelar
-                </Button>
-                <Button onClick={handleClickOpen} variant="outlined" color="primary" autoFocus>
+                <Button onClick={handleClickOpen} variant="contained" color="primary" size="large">
                     Aceptar
                 </Button>
             </DialogActions>

@@ -1,11 +1,10 @@
-import { Box, FormControl, Grid, IconButton, InputBase, MenuItem, Paper, Select, Switch,  Typography } from '@material-ui/core'
+import { Box, FormControl, Grid, IconButton, InputBase, MenuItem, Paper, Select, Typography } from '@material-ui/core'
 import { Search } from '@material-ui/icons';
 
 import React from 'react';
 
 import useStyles from './styles';
 import TablaVentas from './TablaVentas';
-
 
 import usuario from '../../icons/usuarios.svg';
 import codigo from '../../icons/ventas/busqueda-de-codigos-de-barras.svg';

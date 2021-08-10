@@ -3,6 +3,7 @@ import React from 'react';
 import { Box, Button, DialogActions, DialogContent, Divider, Grid,   Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core'
 
 import moneyIcon from '../../../icons/money.svg';
+import CloseIcon from '@material-ui/icons/Close';
 
 import useStyles from '../styles';
 
@@ -35,22 +36,25 @@ export default function PreciosProductos({handleClickOpen}) {
                 <Grid container item lg={12}>
                     <Box 
                         display="flex" 
-                        textAlign="center" 
                         justifyContent="center" 
-                        alignContent="center" 
-                        alignSelf="center"
-                        justifySelf="center"
                     >
-                        <Box>
+                        <Box mt={3}>
                             <img src={moneyIcon} alt="icono caja" className={classes.iconSizeDialogs} />
                         </Box>
                         <Box m={2} >
                             <Divider orientation="vertical" />
                         </Box>
-                        <Box mt={3}>
-                            <Typography variant="h6">
-                                Precios de Producto
-                            </Typography>
+                        <Box>
+                            <Box textAlign="right" mb={1}>
+                                <Button variant="contained" color="secondary" onClick={handleClickOpen} size="medium">
+                                    <CloseIcon />
+                                </Button>
+                            </Box>
+                            <Box mt={2}>
+                                <Typography variant="h6">
+                                    Precios de Producto
+                                </Typography>
+                            </Box>
                         </Box>
                     </Box>
                     </Grid>
@@ -105,10 +109,7 @@ export default function PreciosProductos({handleClickOpen}) {
                     </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClickOpen} variant="outlined" color="secondary">
-                    Cancelar
-                </Button>
-                <Button onClick={handleClickOpen} variant="outlined" color="primary" autoFocus>
+                <Button onClick={handleClickOpen} variant="contained" color="primary" size="large">
                     Aceptar
                 </Button>
             </DialogActions>

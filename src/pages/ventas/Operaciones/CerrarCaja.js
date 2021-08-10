@@ -1,8 +1,9 @@
 import React from 'react'
 import useStyles from '../styles';
 
-import { Box, Button, DialogActions, DialogContent, Divider, FormControl, Grid, MenuItem, Select, TextField, Typography } from '@material-ui/core'
+import { Box, Button, DialogActions, DialogContent,  FormControl, Grid, MenuItem, Select, TextField, Typography } from '@material-ui/core'
 import cashregisterIcon from '../../../icons/ventas/cash-register.svg'
+import CloseIcon from '@material-ui/icons/Close';
 
 export default function CerrarCaja({handleClickOpen}) {
 
@@ -11,55 +12,52 @@ export default function CerrarCaja({handleClickOpen}) {
     return (
         <div>
             <DialogContent>
+               
                 <Grid container>
-                    <Grid item lg={8}>
+                    <Grid item lg={10}>
                         <Box
                             display="flex" 
-                            textAlign="center" 
+                            alignItems="center"
                         >
                             <Box>
                                 <img src={cashregisterIcon} alt="icono caja" className={classes.iconSizeDialogs} />
                             </Box>
-                            <Box m={2} >
-                                <Divider orientation="vertical" />
-                            </Box>
-                            <Box mt={3}>
-                                <Typography variant="h6">
-                                    Corte Caja
-                                </Typography>
+                            <Box ml={2}>
+                                <Box textAlign="left">
+                                    <Typography variant="h6">
+                                        Corte de Caja
+                                    </Typography>
+                                </Box>
+                                <Box display="flex">
+                                    <Box textAlign="right">
+                                        <Typography variant="caption">
+                                            31/12/2021
+                                        </Typography>
+                                    </Box>
+                                    <Box textAlign="right" ml={2}>
+                                        <Typography variant="caption">
+                                            08:00 hrs.
+                                        </Typography>
+                                    </Box>
+                                    <Box textAlign="right" ml={2}>
+                                        <Typography variant="caption">
+                                            Caja 3
+                                        </Typography>
+                                    </Box>
+                                </Box>
                             </Box>
                         </Box>
                     </Grid>
-                    <Grid item lg={4}>
-                        <Box textAlign="right">
-                            <Box textAlign="right">
-                                <Typography variant="caption">
-                                    31/12/2021
-                                </Typography>
-                            </Box>
-                            <Box textAlign="right">
-                                <Typography variant="caption">
-                                    08:00 hrs.
-                                </Typography>
-                            </Box>
-                            <Box textAlign="right">
-                                <Typography variant="caption">
-                                    Caja 3
-                                </Typography>
-                            </Box>
+                    <Grid item lg={2}>
+                        <Box ml={4} display="flex" alignItems="center" justifyContent="flex-end">
+                            <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                                <CloseIcon />
+                            </Button>
                         </Box>
                     </Grid>
                 </Grid>
                 <Grid>
                     <div className={classes.formInputFlex}>
-                        {/* <Box width="100%">
-                            <Typography>
-                                Monto en Corte:
-                            </Typography>
-                            <Typography variant='h4' style={{color: 'green'}}>
-                                $150.000
-                            </Typography>
-                        </Box> */}
                         <Box width="100%">
                             <Typography>
                                 Turno:
@@ -127,10 +125,13 @@ export default function CerrarCaja({handleClickOpen}) {
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClickOpen} color="primary">
-                    Cancelar
-                </Button>
-                <Button onClick={handleClickOpen} color="primary" autoFocus>
+                <Button 
+                    onClick={handleClickOpen} 
+                    color="primary"
+                    variant="contained"
+                    size="large"
+                    autoFocus
+                >
                     Aceptar
                 </Button>
             </DialogActions>

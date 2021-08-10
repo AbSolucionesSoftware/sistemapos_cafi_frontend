@@ -5,6 +5,7 @@ import { Box, Button, DialogActions, DialogContent, Divider, FormControl, Grid, 
 import { FcCurrencyExchange } from 'react-icons/fc';
 import ListaCotizacion from './ListaCotizacion';
 import { Search } from '@material-ui/icons';
+import CloseIcon from '@material-ui/icons/Close';
 
 export default function Cotizacion({handleClickOpen}) {
 
@@ -14,7 +15,7 @@ export default function Cotizacion({handleClickOpen}) {
         <>
             <DialogContent style={{width: 800}}>
                 <Grid container>
-                    <Grid item lg={8}>
+                    <Grid item lg={12}>
                         <Box
                             display="flex" 
                             textAlign="center" 
@@ -25,40 +26,47 @@ export default function Cotizacion({handleClickOpen}) {
                             <Box m={2} >
                                 <Divider orientation="vertical" />
                             </Box>
-                            <Box mt={3}>
-                                <Typography variant="h6">
-                                    Cotizacion
-                                </Typography>
+                            <Box  flexGrow={1}>
+                                <Box display="flex">
+                                    <Box mt={2}>
+                                        <Typography variant="h6">
+                                            Cotizacion
+                                        </Typography>
+                                    </Box>
+                                    <Box ml={2} mt={1}  display="flex" justifyContent="flex-end">
+                                        <Paper className={classes.rootBusqueda}>
+                                            <InputBase
+                                                fullWidth
+                                                placeholder="Buscar cotizacion..."
+                                            />
+                                            <IconButton>
+                                                <Search />
+                                            </IconButton>
+                                        </Paper>
+                                    </Box>
+                                </Box>
+                                <Box  mt={1} display="flex" textAlign="right">
+                                    <Box textAlign="right">
+                                        <Typography variant="caption">
+                                            31/12/2021
+                                        </Typography>
+                                    </Box>
+                                    <Box textAlign="right" ml={2}>
+                                        <Typography variant="caption">
+                                            08:00 hrs.
+                                        </Typography>
+                                    </Box>
+                                    <Box textAlign="right" ml={2}>
+                                        <Typography variant="caption">
+                                            Caja 3
+                                        </Typography>
+                                    </Box>
+                                </Box>
                             </Box>
-                            <Box mt={2} width="100%" display="flex" justifyContent="flex-end">
-                                <Paper className={classes.rootBusqueda}>
-                                    <InputBase
-                                        fullWidth
-                                        placeholder="Buscar cotizacion..."
-                                    />
-                                    <IconButton>
-                                        <Search />
-                                    </IconButton>
-                                </Paper>
-                            </Box>
-                        </Box>
-                    </Grid>
-                    <Grid item lg={4}>
-                        <Box textAlign="right">
-                            <Box textAlign="right">
-                                <Typography variant="caption">
-                                    31/12/2021
-                                </Typography>
-                            </Box>
-                            <Box textAlign="right">
-                                <Typography variant="caption">
-                                    08:00 hrs.
-                                </Typography>
-                            </Box>
-                            <Box textAlign="right">
-                                <Typography variant="caption">
-                                    Caja 3
-                                </Typography>
+                            <Box>
+                                <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                                    <CloseIcon />
+                                </Button>
                             </Box>
                         </Box>
                     </Grid>
@@ -170,10 +178,7 @@ export default function Cotizacion({handleClickOpen}) {
                 </div>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClickOpen} color="primary">
-                    Cancelar
-                </Button>
-                <Button onClick={handleClickOpen} color="primary" autoFocus>
+                <Button onClick={handleClickOpen} variant="contained" color="primary" size="large">
                     Aceptar
                 </Button>
             </DialogActions>

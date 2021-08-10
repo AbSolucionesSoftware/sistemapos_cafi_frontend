@@ -4,6 +4,7 @@ import { Box, Button, DialogActions, DialogContent, Divider, Grid, Typography } 
 
 import useStyles from '../styles';
 import shoppingcartIcon from '../../../icons/ventas/shopping-cart.svg'
+import CloseIcon from '@material-ui/icons/Close';
 
 export default function CancelarVenta({handleClickOpen}) {
 
@@ -12,14 +13,16 @@ export default function CancelarVenta({handleClickOpen}) {
     return (
         <div>
             <DialogContent>
+                <Box display="flex" alignItems="center" justifyContent="flex-end">
+                    <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                        <CloseIcon />
+                    </Button>
+                </Box>
                 <Grid container item lg={12}>
                     <Box
-                        display="flex" 
-                        textAlign="center" 
-                        justifyContent="center" 
-                        alignContent="center" 
-                        alignSelf="center"
-                        justifySelf="center"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
                     >
                         <Box>
                             <img src={shoppingcartIcon} alt="icono caja" className={classes.iconSizeDialogs} />
@@ -27,7 +30,7 @@ export default function CancelarVenta({handleClickOpen}) {
                         <Box m={2} >
                             <Divider orientation="vertical" />
                         </Box>
-                        <Box mt={3}>
+                        <Box>
                             <Typography variant="h5">
                                 Cancelar Venta
                             </Typography>
@@ -36,15 +39,18 @@ export default function CancelarVenta({handleClickOpen}) {
                 </Grid>
                 <Box p={2}>
                     <Typography variant='h5'>
-                        Esta seguro que desea cancelar esta venta?
+                        ¿Esta seguro que desea cancelar esta venta?
                     </Typography>
-                </Box>
+                </Box> 
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClickOpen} variant="outlined" color="secondary">
-                    Cancelar
-                </Button>
-                <Button onClick={handleClickOpen} variant="outlined" color="primary" autoFocus>
+                <Button 
+                    onClick={handleClickOpen} 
+                    variant="contained" 
+                    color="primary"
+                    size="large"
+                    autoFocus
+                >
                     Aceptar
                 </Button>
             </DialogActions>

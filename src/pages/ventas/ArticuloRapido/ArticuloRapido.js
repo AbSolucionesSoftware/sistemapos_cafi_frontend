@@ -1,5 +1,6 @@
 import React from 'react'
 import useStyles from '../styles';
+import CloseIcon from '@material-ui/icons/Close';
 
 import { Box, Button, DialogActions, DialogContent, Divider, FormControl, Grid, MenuItem, Select, TextField, Typography } from '@material-ui/core'
 import articuloRapido from '../../../icons/ventas/tiempo-rapido.svg'
@@ -12,10 +13,10 @@ export default function ArticuloRapido({handleClickOpen}) {
         <>
             <DialogContent style={{width: 800}}>
                 <Grid container>
-                    <Grid item lg={8}>
+                    <Grid item lg={12}>
                         <Box
                             display="flex" 
-                            textAlign="center" 
+                            textAlign="center"
                         >
                             <Box>
                                 <img src={articuloRapido} alt="icono caja2" className={classes.iconSizeDialogs} />
@@ -23,31 +24,37 @@ export default function ArticuloRapido({handleClickOpen}) {
                             <Box m={2} >
                                 <Divider orientation="vertical" />
                             </Box>
-                            <Box mt={3}>
-                                <Typography variant="h6">
-                                    Articulo Rapido
-                                </Typography>
+                            <Box textAlign="left" flexGrow={1}>
+                                <Box mt={1}>
+                                    <Typography variant="h6">
+                                        Articulo Rapido
+                                    </Typography>
+                                </Box>
+                                <Box display="flex" textAlign="right">
+                                    <Box textAlign="right">
+                                        <Typography variant="caption">
+                                            31/12/2021
+                                        </Typography>
+                                    </Box>
+                                    <Box textAlign="right" ml={2}>
+                                        <Typography variant="caption">
+                                            08:00 hrs.
+                                        </Typography>
+                                    </Box>
+                                    <Box textAlign="right" ml={2}>
+                                        <Typography variant="caption">
+                                            Caja 3
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </Box>
+                            <Box>
+                                <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                                    <CloseIcon />
+                                </Button>
                             </Box>
                         </Box>
-                    </Grid>
-                    <Grid item lg={4}>
-                        <Box textAlign="right">
-                            <Box textAlign="right">
-                                <Typography variant="caption">
-                                    31/12/2021
-                                </Typography>
-                            </Box>
-                            <Box textAlign="right">
-                                <Typography variant="caption">
-                                    08:00 hrs.
-                                </Typography>
-                            </Box>
-                            <Box textAlign="right">
-                                <Typography variant="caption">
-                                    Caja 3
-                                </Typography>
-                            </Box>
-                        </Box>
+                        
                     </Grid>
                 </Grid>
                 <Grid item lg={12}>
@@ -155,10 +162,7 @@ export default function ArticuloRapido({handleClickOpen}) {
                 </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClickOpen} color="primary">
-                    Cancelar
-                </Button>
-                <Button onClick={handleClickOpen} color="primary" autoFocus>
+                <Button onClick={handleClickOpen} variant="contained" color="primary" size="large">
                     Agregar
                 </Button>
             </DialogActions>

@@ -3,6 +3,7 @@ import React from 'react';
 import { Box, Button,  DialogActions, DialogContent, Divider, FormControl, Grid,  MenuItem, Select, TextField, Typography } from '@material-ui/core'
 
 import cashregister2Icon from '../../../icons/ventas/cash-register2.svg'
+import CloseIcon from '@material-ui/icons/Close';
 
 import useStyles from '../styles';
 
@@ -21,7 +22,8 @@ export default function DepositoRetiroCaja({handleClickOpen}) {
                     >
                         <Box
                             display="flex" 
-                            textAlign="center" 
+                            justifyContent="center"
+                            flexGrow={1} 
                         >
                             <Box>
                                 <img src={cashregister2Icon} alt="icono caja" className={classes.iconSizeDialogs} />
@@ -29,28 +31,35 @@ export default function DepositoRetiroCaja({handleClickOpen}) {
                             <Box m={2} >
                                 <Divider orientation="vertical" />
                             </Box>
-                            <Box mt={3}>
-                                <Typography variant="h6">
-                                    Deposito / Retiro Caja
-                                </Typography>
+                            <Box mt={1} >
+                                <Box>
+                                    <Typography variant="h6">
+                                        Deposito / Retiro Caja
+                                    </Typography>
+                                </Box>
+                                <Box display="flex" textAlign="right">
+                                    <Box textAlign="right">
+                                        <Typography variant="caption">
+                                            31/12/2021
+                                        </Typography>
+                                    </Box>
+                                    <Box textAlign="right" ml={2}>
+                                        <Typography variant="caption">
+                                            08:00 hrs.
+                                        </Typography>
+                                    </Box>
+                                    <Box textAlign="right" ml={2}>
+                                        <Typography variant="caption">
+                                            Caja 3
+                                        </Typography>
+                                    </Box>
+                                </Box>
                             </Box>
                         </Box>
-                        <Box ml={7} textAlign="right">
-                            <Box textAlign="right">
-                                <Typography variant="caption">
-                                    31/12/2021
-                                </Typography>
-                            </Box>
-                            <Box textAlign="right">
-                                <Typography variant="caption">
-                                    08:00 hrs.
-                                </Typography>
-                            </Box>
-                            <Box textAlign="right">
-                                <Typography variant="caption">
-                                    Caja 3
-                                </Typography>
-                            </Box>
+                        <Box ml={10} mb={7} display="flex" alignItems="center">
+                                <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                                <CloseIcon />
+                            </Button>
                         </Box>
                     </Box>
                     </Grid>
@@ -146,10 +155,12 @@ export default function DepositoRetiroCaja({handleClickOpen}) {
                     </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClickOpen} variant="outlined" color="secondary">
-                    Cancelar
-                </Button>
-                <Button onClick={handleClickOpen} variant="outlined" color="primary" autoFocus>
+                <Button 
+                    onClick={handleClickOpen} 
+                    variant="contained" 
+                    color="primary" 
+                    size="large"
+                >
                     Aceptar
                 </Button>
             </DialogActions>

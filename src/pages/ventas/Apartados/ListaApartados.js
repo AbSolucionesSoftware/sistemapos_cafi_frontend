@@ -5,6 +5,7 @@ import { Box, Button, DialogActions, DialogContent, Divider, Grid,   IconButton,
         TablePagination, TableRow, Typography 
     } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete';
+import CloseIcon from '@material-ui/icons/Close';
 
 import tagIcon from '../../../icons/ventas/tag.svg'
 
@@ -56,11 +57,7 @@ export default function ListaApartados({handleClickOpen}) {
                 <Grid container item lg={12}>
                     <Box 
                         display="flex" 
-                        textAlign="center" 
-                        justifyContent="center" 
-                        alignContent="center" 
-                        alignSelf="center"
-                        justifySelf="center"
+                        flexGrow={1}
                     >
                         <Box>
                             <img src={tagIcon} alt="icono apartados" className={classes.iconSizeDialogs} />
@@ -74,20 +71,14 @@ export default function ListaApartados({handleClickOpen}) {
                             </Typography>
                         </Box>
                     </Box>
-                    </Grid>
+                    <Box>
+                        <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                            <CloseIcon />
+                        </Button>
+                    </Box>
+                </Grid>
                     <Grid>
-
-                        <Box display="flex" justifyContent="flex-end">
-                            <Box>
-                                <Button
-                                    color="primary"
-                                    variant="outlined"
-                                    size="large"
-                                >
-                                    Continuar Compra
-                                </Button>
-                            </Box>
-                        </Box>
+                        
                         <Paper className={classes.root}>
                             <TableContainer className={classes.container}>
                                 <Table stickyHeader size="small" aria-label="a dense table">
@@ -144,9 +135,17 @@ export default function ListaApartados({handleClickOpen}) {
                     </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClickOpen} variant="outlined" color="secondary">
-                    Cancelar
-                </Button>
+                <Box display="flex" justifyContent="flex-end">
+                    <Box>
+                        <Button
+                            color="primary"
+                            variant="contained"
+                            size="large"
+                        >
+                            Continuar Compra
+                        </Button>
+                    </Box>
+                </Box>
             </DialogActions>
         </div>
     )
