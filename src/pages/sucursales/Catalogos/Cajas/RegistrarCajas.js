@@ -29,10 +29,11 @@ export default function RegistroCajas() {
 	});	
 	const nuevaCaja = async () => {
 		try {
+			console.log(sesion.numero_usuario, sesion.nombre)
             setLoading(true);
 				await crearCaja({
 					variables: {
-						input:{usuario_creador:  sesion._id},
+						input:{usuario_creador:  sesion._id, numero_usuario_creador: sesion.numero_usuario, nombre_usuario_creador: sesion.nombre},
 						empresa: sesion.empresa._id,
 						sucursal: sesion.sucursal._id
 		
