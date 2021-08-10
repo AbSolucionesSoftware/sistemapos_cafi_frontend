@@ -3,7 +3,7 @@ import { AppBar, Toolbar, Typography, IconButton, Slide, Button, Box, Dialog, Te
 import { makeStyles } from '@material-ui/core/styles';
 // import { FcPlus } from 'react-icons/fc';
 import inventarioAlmacen from '../../../../icons/warehouse.svg';
-
+import CloseIcon from '@material-ui/icons/Close';
 import ListaAlmacenes from './ListaAlmacenes'
 
 const useStyles = makeStyles((theme) => ({
@@ -55,9 +55,11 @@ export default function InventariosPorAlmacen() {
                                 Almacenes
 						</Typography>
 						<Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClose}>
-                                Cerrar
-                            </Button>
+							<Box m={1}>
+								<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+									<CloseIcon style={{ fontSize: 30}}/>
+								</Button>
+							</Box>
                         </Box>
                         <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
 							
