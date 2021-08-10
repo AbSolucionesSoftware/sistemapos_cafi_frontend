@@ -54,17 +54,13 @@ export default function CargaMasiva() {
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-                        Carga masiva
+                        	Carga masiva
 						</Typography>
-						<Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClose}>
-                                save
-                            </Button>
-                        </Box>
-                        <Button variant="outlined" size="large" color="inherit"  onClick={handleClickOpen} aria-label="close">
-							<CloseIcon />
-							Cerrar
-						</Button>
+                        <Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
 				Toda la info de Carga masiva

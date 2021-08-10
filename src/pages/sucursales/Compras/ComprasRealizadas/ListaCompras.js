@@ -8,7 +8,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import { Dialog, Typography, Grid, Box } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+
+import { Dialog, Typography, Grid, Box, Button } from '@material-ui/core';
 
 import DatosDeCompra from './DatosDeCompra';
 
@@ -148,6 +150,11 @@ export default function ListaProductos() {
 						<Typography variant="h6">
 							Datos de compra
 						</Typography>
+					</Box>
+					<Box m={1}>
+						<Button variant="contained" color="secondary" onClick={handleOpen} size="large">
+							<CloseIcon style={{fontSize: 30}} />
+						</Button>
 					</Box>
 				</Grid>
 				<Grid container>

@@ -76,19 +76,16 @@ export default function AbrirCompra({status}) {
 						<Typography variant="h6" className={classes.title}>
 							Nueva compra
 						</Typography>
-
-						
-						<Button variant="outlined" size="large" color="inherit"  onClick={handleClickOpen} aria-label="close">
-							<CloseIcon />
-							Cerrar
-						</Button>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
 				
 				<DatosProducto />
 				
-
-
 				<Box p={1} mx={4}>
 					<Divider />
 				</Box>
@@ -100,11 +97,21 @@ export default function AbrirCompra({status}) {
 				<Grid container>
 					<Grid item lg={12}>
 						<Box mt={1} mx={4} display="flex" justifyContent="flex-end">
-							<div className={classes.formInputFlex}>
+							<Box mr={2}>
 								<Typography>
-									Total compra: $100,000 Mx
+									Subtotal: $100,000 Mx
 								</Typography>
-							</div>
+							</Box>
+							<Box mr={2}>
+								<Typography>
+									Impuestos: $100,000 Mx
+								</Typography>
+							</Box>
+							<Box mr={2}>
+								<Typography variant="h6">
+									Total: $100,000 Mx
+								</Typography>
+							</Box>
 						</Box>
 					</Grid>
 				</Grid>

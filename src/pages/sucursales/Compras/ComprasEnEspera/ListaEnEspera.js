@@ -8,7 +8,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import { Dialog, Typography, Grid, Box } from '@material-ui/core';
+import { Dialog, Typography, Grid, Box, Button } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 
 import AbrirCompra from '../AbrirCompra/AbrirCompra';
 import DatosDeCompra from '../ComprasRealizadas/DatosDeCompra';
@@ -144,21 +145,20 @@ export default function ListaEnEspera({props}) {
 			/>
 
 			<Dialog open={open} onClose={handleOpen} fullWidth maxWidth="lg">
-                <Grid container>
-                    <Grid item lg={9}>
-                        <Box p={3} textAlign="center">
-                            <Typography variant="h6">
-                                Datos de compra
-                            </Typography>
-                        </Box>
-                    </Grid>
-                    <Grid item lg={3}>
-						<Box mt={2} p={1} textAlign="center">
-							<AbrirCompra status={"enEspera"}/>
+				<Grid item lg={12}>
+					<Box display="flex"  alignItems="center" p={2} textAlign="center">
+						<Box flexGrow={1}>
+							<Typography variant="h6">
+								Datos de compra
+							</Typography>
 						</Box>
-                    </Grid>
-                </Grid>
-
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleOpen} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
+					</Box>
+				</Grid>
 				<Grid container>
 					<Grid item lg={12}>
 						<Box p={3} textAlign="center">
@@ -170,7 +170,12 @@ export default function ListaEnEspera({props}) {
 							<DatosDeCompra datosCompra={compraSeleccionada}/>
 						</Box>
 					</Grid>
-				</Grid>	
+				</Grid>
+				<Grid item lg={12}>
+					<Box display="flex" flexDirection="row-reverse" p={2} textAlign="center">
+						<AbrirCompra status={"enEspera"}/>
+					</Box>
+				</Grid>
 			</Dialog>
 
 		
