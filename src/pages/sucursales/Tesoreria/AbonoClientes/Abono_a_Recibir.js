@@ -9,7 +9,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   });
 
 export default function AbonoaRecibir() {
-    
+    //listo
     const [open, setOpen] = useState(false);
 
     const handleClick = () => { 
