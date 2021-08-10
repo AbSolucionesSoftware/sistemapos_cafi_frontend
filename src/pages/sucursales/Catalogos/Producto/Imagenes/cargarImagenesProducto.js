@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Dialog, DialogActions, DialogTitle } from '@material-ui/core';
 import { Box, Typography, Button, Divider, Grid } from '@material-ui/core';
 import { AddPhotoAlternate, Visibility, Delete } from '@material-ui/icons';
-import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
+import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
 
 import PhotoSizeSelectActualOutlinedIcon from '@material-ui/icons/PhotoSizeSelectActualOutlined';
 const useStyles = makeStyles((theme) => ({

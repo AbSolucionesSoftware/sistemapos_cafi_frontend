@@ -6,9 +6,9 @@ import 'date-fns';
 import local from 'date-fns/locale/es';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
-import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
-import ContainerRegistroAlmacen from '../../Almacenes/RegistroAlmacen/ContainerRegistroAlmacen';
-import { AlmacenProvider } from '../../../../context/Almacenes/crearAlmacen';
+import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
+import ContainerRegistroAlmacen from '../../../Almacenes/RegistroAlmacen/ContainerRegistroAlmacen';
+import { AlmacenProvider } from '../../../../../context/Almacenes/crearAlmacen';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {

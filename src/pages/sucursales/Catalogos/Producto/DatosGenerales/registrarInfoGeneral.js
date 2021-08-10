@@ -4,13 +4,13 @@ import { Box, FormControl, Divider, MenuItem, Select, Container, FormHelperText,
 import { TextField, Typography, Button, Checkbox, FormControlLabel } from '@material-ui/core';
 import { Dialog, DialogActions, DialogContent, DialogTitle, CircularProgress } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
-import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
+import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
 
 import { useMutation } from '@apollo/client';
-import { CREAR_CATEGORIA, CREAR_SUBCATEGORIA } from '../../../../gql/Catalogos/categorias';
-import { REGISTRAR_DEPARTAMENTO } from '../../../../gql/Catalogos/departamentos';
-import { REGISTRAR_MARCAS } from '../../../../gql/Catalogos/marcas';
-import SnackBarMessages from '../../../../components/SnackBarMessages';
+import { CREAR_CATEGORIA, CREAR_SUBCATEGORIA } from '../../../../../gql/Catalogos/categorias';
+import { REGISTRAR_DEPARTAMENTO } from '../../../../../gql/Catalogos/departamentos';
+import { REGISTRAR_MARCAS } from '../../../../../gql/Catalogos/marcas';
+import SnackBarMessages from '../../../../../components/SnackBarMessages';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {

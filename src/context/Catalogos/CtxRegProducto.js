@@ -34,6 +34,7 @@ export const RegProductoProvider = ({ children }) => {
 	const [validacion, setValidacion] = useState(initial_state_validacion);
 	const [subcostos, setSubcostos] = useState(initial_state_subcostos);
 	const [selectedDate, setSelectedDate] = useState(initial_state_selectedDate);
+	const [ update, setUpdate ] = useState(false);
 
 	return (
 		<RegProductoContext.Provider
@@ -65,7 +66,9 @@ export const RegProductoProvider = ({ children }) => {
 				subcostos,
 				setSubcostos,
 				selectedDate,
-				setSelectedDate
+				setSelectedDate,
+				update, 
+				setUpdate
 			}}
 		>
 			{children}

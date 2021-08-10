@@ -68,7 +68,7 @@ export default function Productos() {
 				</AppBar>
 				<RegProductoProvider>
 					<Box m={3} display="flex" justifyContent="flex-end">
-						<CrearProducto accion={true} />
+						<CrearProducto accion={false} />
 					</Box>
 					<Box mx={4}>
 						<ListaProductos />
