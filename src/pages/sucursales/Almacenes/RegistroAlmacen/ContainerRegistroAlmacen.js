@@ -1,13 +1,13 @@
 import React, { useState, Fragment, useContext, useCallback } from 'react';
-import { 
-    Button, 
-    Dialog, 
-    TextField, 
-    Container, 
-    Typography, 
-    Box, 
-    IconButton, 
-    DialogTitle, 
+import {
+    Button,
+    Dialog,
+    TextField,
+    Container,
+    Typography,
+    Box,
+    IconButton,
+    DialogTitle,
     Divider,
     FormControl,
     Select,
@@ -22,130 +22,145 @@ import BackdropComponent from '../../../../components/Layouts/BackDrop';
 import { OBTENER_USUARIOS } from '../../../../gql/Catalogos/usuarios';
 
 import { Edit } from '@material-ui/icons';
+import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
+import Add from '@material-ui/icons/Add';
 
 const useStyles = makeStyles((theme) => ({
-	formInputFlex: {
-		display: 'flex',
-		'& > *': {
-			margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
-		},
+    formInputFlex: {
+        display: 'flex',
+        '& > *': {
+            margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
+        },
         '& span': {
-			color: 'red'
-		}
-	},
-	formInput: {
-		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
-	}
+            color: 'red'
+        }
+    },
+    formInput: {
+        margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
+    }
 }));
 
-export default function ContainerRegistroAlmacen({ accion, datos }) {
+export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
 
     /* const sucursal = {
         _id: "60c8e180340d5d223432a916",
         nombre_sucursal: "Sucursal 1 editada"
     }; */
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
-    const [ CrearAlmacen ] = useMutation(REGISTRO_ALMACEN);
-    const [ ActualizarAlmacen ] = useMutation(ACTUALIZAR_ALMACEN);
-    const { data } = useQuery(OBTENER_USUARIOS,{
-		variables: {
-			sucursal: `${sesion.sucursal._id}`
-		}
-	});	
+    const [CrearAlmacen] = useMutation(REGISTRO_ALMACEN);
+    const [ActualizarAlmacen] = useMutation(ACTUALIZAR_ALMACEN);
+    const { data } = useQuery(OBTENER_USUARIOS, {
+        variables: {
+            sucursal: `${sesion.sucursal._id}`
+        }
+    });
     let obtenerUsuarios = [];
 
-	const classes = useStyles();
-	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-	// const empresa = '609eb3b4b995884dc49bbffa';
-	const [ open, setOpen ] = useState(false);
-	const { datosAlmacen, setDatosAlmacen, error, setError, update, setUpdate } = useContext(CrearAlmacenContext);
-    const [ loading, setLoading ] = useState(false);
-    
+    const classes = useStyles();
+    const [alert, setAlert] = useState({ message: '', status: '', open: false });
+    // const empresa = '609eb3b4b995884dc49bbffa';
+    const [open, setOpen] = useState(false);
+    const { datosAlmacen, setDatosAlmacen, error, setError, update, setUpdate } = useContext(CrearAlmacenContext);
+    const { almacen_inicial, setAlmacenInicial } = useContext(RegProductoContext);
+    const [loading, setLoading] = useState(false);
+
 
     // const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
     const limpiarCampos = useCallback(
-		() => {
-			setDatosAlmacen({
+        () => {
+            setDatosAlmacen({
                 nombre_almacen: '',
                 id_usuario_encargado: '',
                 direccion: {
                     calle: '',
                     no_ext: '',
                     no_int: '',
-                    codigo_postal: 0,
+                    codigo_postal: '',
                     colonia: '',
                     municipio: '',
                     localidad: '',
                     estado: '',
                     pais: ''
                 }
-			});
-		},
-		[ setDatosAlmacen ]
-	);
+            });
+        },
+        [setDatosAlmacen]
+    );
     const toggleModal = () => {
-		setOpen(true);
-		if (datos) {
+        setOpen(true);
+        if (datos) {
             let input = {};
-            if(datos.id_usuario_encargado){
-                const {id_usuario_encargado, ...datosNew} = datos;
+            if (datos.id_usuario_encargado) {
+                const { id_usuario_encargado, ...datosNew } = datos;
                 input = datosNew;
                 input.id_usuario_encargado = id_usuario_encargado._id;
-            }else{
+            } else {
                 input = datos;
             }
-			setDatosAlmacen(input);
-		}
-	};
+            setDatosAlmacen(input);
+        }
+    };
     const onCloseModal = () => {
-		setOpen(false);
-		limpiarCampos();
-	};
+        setOpen(false);
+        limpiarCampos();
+    };
 
     const obtenerCampos = (e) => {
-		setDatosAlmacen({
-			...datosAlmacen,
-			[e.target.name]: e.target.value
-		});
-	};
+        setDatosAlmacen({
+            ...datosAlmacen,
+            [e.target.name]: e.target.value
+        });
+    };
 
     const obtenerCamposDireccion = (e) => {
         setDatosAlmacen({
             ...datosAlmacen,
             direccion: { ...datosAlmacen.direccion, [e.target.name]: e.target.value }
         });
-	};
+    };
 
     const saveData = async () => {
+        console.log(datosAlmacen);
         try {
-            if(!datosAlmacen.nombre_almacen){
+            if (!datosAlmacen.nombre_almacen) {
                 setError(true);
-			    return;
-            }else{
-                if(accion === "registrar"){
+                return;
+            } else {
+                if (accion === "registrar") {
                     let input = {};
-                    console.log(sesion);
-                    if(datosAlmacen.id_usuario_encargado === ""){
+                    let almacen_creado;
+                    if (datosAlmacen.id_usuario_encargado === "") {
                         const { id_usuario_encargado, ...input } = datosAlmacen;
-                        await CrearAlmacen({
+                        almacen_creado = await CrearAlmacen({
                             variables: {
                                 input,
                                 id: sesion.sucursal._id,
                                 empresa: sesion.empresa._id
                             }
                         });
-                    }else{
+                    } else {
                         input = datosAlmacen;
-                        await CrearAlmacen({
+                        almacen_creado = await CrearAlmacen({
                             variables: {
                                 input,
                                 id: sesion.sucursal._id,
                                 empresa: sesion.empresa._id
                             }
                         });
-                    } 
-                }else{
+                    }
+
+                    console.log(almacen_creado);
+                    const id_almacen = almacen_creado.data.crearAlmacen._id;
+                    if (refetch) {
+                        setAlmacenInicial({
+                            ...almacen_inicial,
+                            id_almacen,
+                            almacen: datosAlmacen.nombre_almacen,
+                        })
+                        refetch();
+                    }
+                } else {
                     console.log("Editar");
                     const { id_sucursal, _id, ...input } = datosAlmacen;
                     console.log(input);
@@ -164,205 +179,201 @@ export default function ContainerRegistroAlmacen({ accion, datos }) {
             }
         } catch (error) {
             console.log(error);
-			setAlert({ message: 'Hubo un error', status: 'error', open: true });
-			setLoading(false);
+            setAlert({ message: 'Hubo un error', status: 'error', open: true });
+            setLoading(false);
         }
     }
 
-    if(data){
+    if (data) {
         obtenerUsuarios = data.obtenerUsuarios;
     }
 
     return (
         <Fragment>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
-            {accion === 'registrar' ? (
-				<Button color="primary" variant="contained" size="large" onClick={toggleModal}>
+            {accion === 'registrar' ? refetch ? (
+                <Button color="primary" onClick={toggleModal}>
+                    <Add />
+                </Button>
+            ) : (
+                <Button color="primary" variant="contained" size="large" onClick={toggleModal}>
                     Nuevo almacen
                 </Button>
-			) : (
-				<IconButton onClick={toggleModal}>
-					<Edit />
-				</IconButton>
-			)}
-			<Dialog open={open} onClose={onCloseModal} fullWidth maxWidth="md">
-            <BackdropComponent loading={loading} setLoading={setLoading} />
-            <DialogTitle id="form-dialog-title">Registro almacen</DialogTitle>
-				<Container maxWidth="md">
-                <div className={classes.formInputFlex}>
-					<Box width="100%">
-						<Typography><span>* </span>Nombre Almacen</Typography>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            error={error}
-                            name="nombre_almacen"
-                            id="form-producto-codigo-barras"
-                            variant="outlined"
-                            value={datosAlmacen.nombre_almacen}
-                            /* helperText="Incorrect entry." */
-                            onChange={obtenerCampos}
-                        />
-					</Box>
-					<Box width="100%">
-						<Typography>Encargado de almacen</Typography>
-                        <FormControl fullWidth size="small"  variant="outlined">
-                            <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            name="id_usuario_encargado"
-                            value={datosAlmacen.id_usuario_encargado ? datosAlmacen.id_usuario_encargado : ""}
-                            onChange={obtenerCampos}
-                            >
-                                {
-                                    obtenerUsuarios?.map((user, index) => (
-                                        <MenuItem key={index} value={user._id}>{user.nombre}</MenuItem>
-                                    ))
-                                }
-                            </Select>
-                        </FormControl>
-					</Box>
-                    <Box width="100%">
-						<Typography>Sucursal</Typography>
-                        <Typography style={{marginTop:"7px", fontWeight: "bold" }}>{sesion.sucursal.nombre_sucursal}</Typography>
-					</Box>
-				</div>
-                <Box mt={2}>
-                    <Typography>
-                        <b>Domicilio</b>
-                    </Typography>
-                    <Divider />
-                </Box>
-                <div className={classes.formInputFlex}>
-                    <Box width="100%">
-						<Typography>Calle</Typography>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            // error={error && !datosAlmacen.direccion.calle}
-                            name="calle"
-                            variant="outlined"
-                            value={datosAlmacen.direccion.calle}
-                            onChange={obtenerCamposDireccion}
-                        />
-					</Box>
-					<Box width="100%">
-						<Typography>No. exterior</Typography>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            // error={error && !datosAlmacen.direccion.no_ext}
-                            name="no_ext"
-                            id="form-producto-codigo-barras"
-                            variant="outlined"
-                            value={datosAlmacen.direccion.no_ext}
-                            onChange={obtenerCamposDireccion}
-                        />
-					</Box>
-                    <Box width="100%">
-						<Typography>No. interior</Typography>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            // error={error && !datosAlmacen.direccion.no_int}
-                            name="no_int"
-                            id="form-producto-codigo-barras"
-                            variant="outlined"
-                            value={datosAlmacen.direccion.no_int}
-                            onChange={obtenerCamposDireccion}
-                        />
-					</Box>
-                </div>
-                <div className={classes.formInputFlex}>
-                    <Box width="100%">
-						<Typography>Codigo Postal</Typography>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            type="number"
-                            // error={error && !datosAlmacen.direccion.codigo_postal}
-                            name="codigo_postal"
-                            id="form-producto-codigo-barras"
-                            variant="outlined"
-                            value={datosAlmacen.direccion.codigo_postal}
-                            onChange={obtenerCamposDireccion}
-                        />
-					</Box>
-					<Box width="100%">
-						<Typography>Colonia</Typography>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            // error={error && !datosAlmacen.direccion.colonia}
-                            name="colonia"
-                            id="form-producto-codigo-barras"
-                            variant="outlined"
-                            value={datosAlmacen.direccion.colonia}
-                            onChange={obtenerCamposDireccion}
-                        />
-					</Box>
-                    <Box width="100%">
-						<Typography>Municipio</Typography>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            // error={error && !datosAlmacen.direccion.municipio}
-                            name="municipio"
-                            id="form-producto-codigo-barras"
-                            variant="outlined"
-                            value={datosAlmacen.direccion.municipio}
-                            onChange={obtenerCamposDireccion}
-                        />
-					</Box>
-                </div>  
-                <div className={classes.formInputFlex}>
-                    <Box width="100%">
-						<Typography>Localidad</Typography>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            // error={error && !datosAlmacen.direccion.localidad}
-                            name="localidad"
-                            id="form-producto-codigo-barras"
-                            variant="outlined"
-                            value={datosAlmacen.direccion.localidad}
-                            onChange={obtenerCamposDireccion}
-                        />
-					</Box>
-					<Box width="100%">
-						<Typography>Estado</Typography>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            // error={error && !datosAlmacen.direccion.estado}
-                            name="estado"
-                            id="form-producto-codigo-barras"
-                            variant="outlined"
-                            value={datosAlmacen.direccion.estado}
-                            onChange={obtenerCamposDireccion}
-                        />
-					</Box>
-                    <Box width="100%">
-						<Typography>Pais</Typography>
-                        <TextField
-                            fullWidth
-                            size="small"    
-                            //  error={error && !datosAlmacen.direccion.pais}
-                            name="pais"
-                            id="form-producto-codigo-barras"
-                            variant="outlined"
-                            value={datosAlmacen.direccion.pais}
-                            onChange={obtenerCamposDireccion}
-                        />
-					</Box>
-                </div>
-                <Box m={1} display="flex" justifyContent="flex-end">
-                    <Button color="primary" variant="contained" size="large" onClick={saveData} >
-                        Guardar
-                    </Button>
-                </Box>                
+            ) : (
+                <IconButton onClick={toggleModal}>
+                    <Edit />
+                </IconButton>
+            )}
+            <Dialog open={open} onClose={onCloseModal} fullWidth maxWidth="md">
+                <BackdropComponent loading={loading} setLoading={setLoading} />
+                <DialogTitle id="form-dialog-title">Registro almacen</DialogTitle>
+                <Container maxWidth="md">
+                    <div className={classes.formInputFlex}>
+                        <Box width="100%">
+                            <Typography><span>* </span>Nombre Almacen</Typography>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                error={error}
+                                name="nombre_almacen"
+                                id="form-producto-codigo-barras"
+                                variant="outlined"
+                                value={datosAlmacen.nombre_almacen}
+                                /* helperText="Incorrect entry." */
+                                onChange={obtenerCampos}
+                            />
+                        </Box>
+                        <Box width="100%">
+                            <Typography>Encargado de almacen</Typography>
+                            <FormControl fullWidth size="small" variant="outlined">
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    name="id_usuario_encargado"
+                                    value={datosAlmacen.id_usuario_encargado ? datosAlmacen.id_usuario_encargado : ""}
+                                    onChange={obtenerCampos}
+                                >
+                                    {
+                                        obtenerUsuarios?.map((user, index) => (
+                                            <MenuItem key={index} value={user._id}>{user.nombre}</MenuItem>
+                                        ))
+                                    }
+                                </Select>
+                            </FormControl>
+                        </Box>
+                        <Box width="100%">
+                            <Typography>Sucursal</Typography>
+                            <Typography style={{ marginTop: "7px", fontWeight: "bold" }}>{sesion.sucursal.nombre_sucursal}</Typography>
+                        </Box>
+                    </div>
+                    <Box mt={2}>
+                        <Typography>
+                            <b>Domicilio</b>
+                        </Typography>
+                        <Divider />
+                    </Box>
+                    <div className={classes.formInputFlex}>
+                        <Box width="100%">
+                            <Typography>Calle</Typography>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                // error={error && !datosAlmacen.direccion.calle}
+                                name="calle"
+                                variant="outlined"
+                                value={datosAlmacen.direccion.calle}
+                                onChange={obtenerCamposDireccion}
+                            />
+                        </Box>
+                        <Box width="100%">
+                            <Typography>No. exterior</Typography>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                // error={error && !datosAlmacen.direccion.no_ext}
+                                name="no_ext"
+                                variant="outlined"
+                                value={datosAlmacen.direccion.no_ext}
+                                onChange={obtenerCamposDireccion}
+                            />
+                        </Box>
+                        <Box width="100%">
+                            <Typography>No. interior</Typography>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                // error={error && !datosAlmacen.direccion.no_int}
+                                name="no_int"
+                                variant="outlined"
+                                value={datosAlmacen.direccion.no_int}
+                                onChange={obtenerCamposDireccion}
+                            />
+                        </Box>
+                    </div>
+                    <div className={classes.formInputFlex}>
+                        <Box width="100%">
+                            <Typography>Codigo Postal</Typography>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                type="number"
+                                // error={error && !datosAlmacen.direccion.codigo_postal}
+                                name="codigo_postal"
+                                variant="outlined"
+                                value={datosAlmacen.direccion.codigo_postal}
+                                onChange={obtenerCamposDireccion}
+                            />
+                        </Box>
+                        <Box width="100%">
+                            <Typography>Colonia</Typography>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                // error={error && !datosAlmacen.direccion.colonia}
+                                name="colonia"
+                                variant="outlined"
+                                value={datosAlmacen.direccion.colonia}
+                                onChange={obtenerCamposDireccion}
+                            />
+                        </Box>
+                        <Box width="100%">
+                            <Typography>Municipio</Typography>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                // error={error && !datosAlmacen.direccion.municipio}
+                                name="municipio"
+                                variant="outlined"
+                                value={datosAlmacen.direccion.municipio}
+                                onChange={obtenerCamposDireccion}
+                            />
+                        </Box>
+                    </div>
+                    <div className={classes.formInputFlex}>
+                        <Box width="100%">
+                            <Typography>Localidad</Typography>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                // error={error && !datosAlmacen.direccion.localidad}
+                                name="localidad"
+                                variant="outlined"
+                                value={datosAlmacen.direccion.localidad}
+                                onChange={obtenerCamposDireccion}
+                            />
+                        </Box>
+                        <Box width="100%">
+                            <Typography>Estado</Typography>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                // error={error && !datosAlmacen.direccion.estado}
+                                name="estado"
+                                variant="outlined"
+                                value={datosAlmacen.direccion.estado}
+                                onChange={obtenerCamposDireccion}
+                            />
+                        </Box>
+                        <Box width="100%">
+                            <Typography>Pais</Typography>
+                            <TextField
+                                fullWidth
+                                size="small"
+                                //  error={error && !datosAlmacen.direccion.pais}
+                                name="pais"
+                                variant="outlined"
+                                value={datosAlmacen.direccion.pais}
+                                onChange={obtenerCamposDireccion}
+                            />
+                        </Box>
+                    </div>
+                    <Box m={1} display="flex" justifyContent="flex-end">
+                        <Button color="primary" variant="contained" size="large" onClick={saveData} >
+                            Guardar
+                        </Button>
+                    </Box>
                 </Container>
-			</Dialog>
-		</Fragment>
+            </Dialog>
+        </Fragment>
     )
 }

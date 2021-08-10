@@ -9,7 +9,6 @@ export const initial_state_precios = {
     ieps: 0,
     iva: 16,
     granel: false,
-    litros: false,
     inventario: {
         inventario_minimo: 0,
         inventario_maximo: 0,

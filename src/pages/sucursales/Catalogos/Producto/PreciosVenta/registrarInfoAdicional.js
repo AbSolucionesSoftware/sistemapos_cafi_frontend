@@ -262,12 +262,8 @@ export default function RegistroInfoAdidional() {
 				unidad_de_compra: {
 					...precios.unidad_de_compra,
 					[e.target.name]: parseFloat(e.target.value),
-					precio_unitario_sin_impuesto: Math.round(
-						precios.precio_de_compra.precio_sin_impuesto / parseFloat(e.target.value)
-					),
-					precio_unitario_con_impuesto: Math.round(
-						precios.precio_de_compra.precio_sin_impuesto / parseFloat(e.target.value)
-					)
+					precio_unitario_sin_impuesto: parseFloat((precios.precio_de_compra.precio_sin_impuesto / e.target.value).toFixed(2)),
+					precio_unitario_con_impuesto: parseFloat((precios.precio_de_compra.precio_sin_impuesto / e.target.value).toFixed(2))
 				}
 			});
 			setUnidadVentaXDefecto({
@@ -281,12 +277,8 @@ export default function RegistroInfoAdidional() {
 			unidad_de_compra: {
 				...precios.unidad_de_compra,
 				[e.target.name]: parseFloat(e.target.value),
-				precio_unitario_sin_impuesto: Math.round(
-					precios.precio_de_compra.precio_sin_impuesto / parseFloat(e.target.value)
-				),
-				precio_unitario_con_impuesto: Math.round(
-					precios.precio_de_compra.precio_con_impuesto / parseFloat(e.target.value)
-				)
+				precio_unitario_sin_impuesto: parseFloat((precios.precio_de_compra.precio_sin_impuesto / e.target.value).toFixed(2)),
+				precio_unitario_con_impuesto: parseFloat((precios.precio_de_compra.precio_con_impuesto / e.target.value).toFixed(2))
 			}
 		});
 		setUnidadVentaXDefecto({
@@ -390,17 +382,9 @@ export default function RegistroInfoAdidional() {
 									>
 										<MenuItem value="KILOGRAMOS">KILOGRAMOS</MenuItem>
 										<MenuItem value="COSTALES">COSTALES</MenuItem>
-									</Select>
-								) : precios.litros ? (
-									<Select
-										id="form-producto-categoria"
-										name="unidad"
-										value={precios.unidad_de_compra.unidad}
-										onChange={obtenerUnidadCompra}
-									>
 										<MenuItem value="LITROS">LITROS</MenuItem>
 									</Select>
-								) : (
+								): (
 									<Select
 										id="form-producto-categoria"
 										name="unidad"
