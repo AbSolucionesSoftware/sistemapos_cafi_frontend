@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState } from 'react';
+import React, { Fragment, useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider } from '@material-ui/core';
 import { Box, FormControl, MenuItem, Select, Typography } from '@material-ui/core';
@@ -18,9 +18,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CentroCostos({ obtenerConsultasProducto }) {
     const classes = useStyles();
-    const { centro_de_costos, setCentroDeCostos } = useContext(RegProductoContext);
+    const { centro_de_costos, setCentroDeCostos, subcostos, setSubcostos } = useContext(RegProductoContext);
     const { centro_costos } = obtenerConsultasProducto;
-    const [subcostos, setSubcostos] = useState([]);
 
     const obtenerAlmacenes = (event, child) => {
         setCentroDeCostos({
@@ -44,7 +43,7 @@ export default function CentroCostos({ obtenerConsultasProducto }) {
             </Box>
             <div className={classes.formInputFlex}>
                 <Box width="100%">
-                    <Typography>Costos</Typography>
+                    <Typography>Cuenta</Typography>
                     <Box display="flex">
                         <FormControl variant="outlined" fullWidth size="small" name="cuenta">
                             <Select name="cuenta" value={centro_de_costos.cuenta ? centro_de_costos.cuenta : ''} onChange={obtenerAlmacenes}>
@@ -69,7 +68,7 @@ export default function CentroCostos({ obtenerConsultasProducto }) {
                     </Box>
                 </Box>
                 <Box width="100%">
-                    <Typography>Subcostos</Typography>
+                    <Typography>Subcuenta</Typography>
                     <Box display="flex">
                         <FormControl variant="outlined" fullWidth size="small" name="sub_cuenta">
                             <Select name="sub_cuenta" value={centro_de_costos.sub_cuenta ? centro_de_costos.sub_cuenta : ''} onChange={obtenerAlmacenes}>
