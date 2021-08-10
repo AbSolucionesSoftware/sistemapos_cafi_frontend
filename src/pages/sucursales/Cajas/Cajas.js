@@ -90,7 +90,7 @@ export default function Cajas() {
     //const [ error, setError ] = useState({error: false, message: ''});
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
-    let obtenerCajasSucursal = [];
+    let obtenerCajasSucursal = []; 
 	let obteneHistorialCaja = [];
 	
 	
@@ -191,3 +191,4 @@ export default function Cajas() {
 		</Fragment>	
     )
 }
+ 
