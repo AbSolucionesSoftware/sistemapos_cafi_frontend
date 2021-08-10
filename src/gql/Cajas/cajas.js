@@ -63,3 +63,11 @@ export const OBTENER_HISTORIAL_CAJA = gql`
         }
     }
 `;
+
+export const ELIMINAR_CAJA = gql`
+	mutation eliminarCaja($id: ID!) {
+		eliminarCaja(id: $id) {
+			message
+		}
+	}
+`; 
