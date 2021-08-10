@@ -57,9 +57,11 @@ export default function DetallesClienteCuenta() {
                         	Detalle de cuenta
 						</Typography>
 						
-                        <IconButton edge="start" color="inherit" onClick={handleClick} aria-label="close">
-							<CloseIcon />
-						</IconButton>
+                        <Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClick} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
                 <div className={classes.formInputFlex}>

@@ -5,7 +5,6 @@ import DoneIcon from '@material-ui/icons/Done';
 
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import egresoIcon from '../../../../icons/income.svg'
 import { Box, DialogActions,Paper} from '@material-ui/core';
@@ -63,23 +62,15 @@ export default function Egresos() {
 			</Button>
 			<Dialog open={open} TransitionComponent={Transition} maxWidth="md">
 				<Paper elevation={3}>
-					<VistaRegistroEgreso />
+					<VistaRegistroEgreso handleClickOpen={handleClickOpen} />
 					<DialogActions>
-						<Button
-							variant="outlined"
-							color="secondary"
-							onClick={handleClickOpen}
-							size="large"
-							startIcon={<CloseIcon />}
-						>
-							Cerrar
-						</Button>
 						<Button
 							variant="contained"
 							color="primary"
 							onClick={handleClickOpen}
 							size="large"
 							startIcon={<DoneIcon />}
+							disableElevation
 						>
 							Guardar
 						</Button>

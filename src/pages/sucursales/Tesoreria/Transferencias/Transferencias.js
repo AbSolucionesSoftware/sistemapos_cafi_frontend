@@ -2,7 +2,6 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
 import Slide from '@material-ui/core/Slide';
 import { Box, DialogActions, Paper } from '@material-ui/core';
@@ -50,35 +49,20 @@ export default function Transferencias() {
 				</Box>
 			</Button>
 			<Dialog open={open} TransitionComponent={Transition}>
-				{/* <Grid container justify="center"> */}
-					{/* <Grid item lg={3}> */}
-						{/* <Box mt={7}> */}
-							<Paper elevation={3} >
-								<FormTransferencia />
-								<DialogActions>
-									<Button
-										variant="outlined"
-										color="secondary"
-										onClick={handleClickOpen}
-										size="large"
-										startIcon={<CloseIcon />}
-									>
-										Cerrar
-									</Button>
-									<Button
-										variant="contained"	
-										color="primary"
-										onClick={handleClickOpen}
-										size="large"
-										startIcon={<DoneIcon />}
-									>
-										Guardar
-									</Button>
-								</DialogActions>
-							</Paper>
-						{/* </Box>
-					</Grid>
-				</Grid> */}
+				<Paper elevation={3} >
+					<FormTransferencia handleClickOpen={handleClickOpen} />
+					<DialogActions>
+						<Button
+							variant="contained"	
+							color="primary"
+							onClick={handleClickOpen}
+							size="large"
+							startIcon={<DoneIcon />}
+						>
+							Registrar
+						</Button>
+					</DialogActions>
+				</Paper>
 			</Dialog>
 		</div>
 	);

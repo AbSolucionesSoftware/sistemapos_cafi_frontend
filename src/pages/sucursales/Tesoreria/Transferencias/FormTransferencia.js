@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Box, Button,  makeStyles, TextField, Typography } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -29,17 +30,24 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function FormTransferencia() {
+export default function FormTransferencia({handleClickOpen}) {
 
     const classes = useStyles();
 
     return (
         <>
             <div className={classes.root}>
-                <Box p={2}>
-                    <Typography variant="h6">
-                        Nueva Transferencia
-                    </Typography>
+                <Box p={2} display="flex" alignItems="center"> 
+                    <Box flexGrow={1}>
+                        <Typography variant="h6">
+                            Nueva Transferencia
+                        </Typography>
+                    </Box>
+                    <Box m={1} >
+                        <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                            <CloseIcon />
+                        </Button>
+                    </Box>
                 </Box>
                 <div className={classes.formInputFlex}>
                     <Box width="100%">

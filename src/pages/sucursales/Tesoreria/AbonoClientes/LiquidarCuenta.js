@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, makeStyles, TextField, Typography } from '@material-ui/core';
+import { AppBar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, makeStyles, TextField, Toolbar, Typography } from '@material-ui/core';
 import { ToggleButtonGroup } from '@material-ui/lab';
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {
@@ -12,7 +13,10 @@ const useStyles = makeStyles((theme) => ({
 	},
 	formInput: {
 		margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
-	}
+	},
+    appBar: {
+		position: 'relative'
+	},
 }));
 
 export default function LiquidarCuenta() {
@@ -40,9 +44,16 @@ export default function LiquidarCuenta() {
                 onClose={handleClick}
                 aria-labelledby="draggable-dialog-title"
             >
-                <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-                    Liquidar Cuenta
-                </DialogTitle>
+                <Box display="flex" alignItems="center" m={1}>
+                    <Typography variant="h6" className={classes.title}>
+                        Abonos a Proveedores
+                    </Typography>
+                    <Box m={1} ml={8} >
+                        <Button variant="contained" color="secondary" onClick={handleClick} size="large">
+                            <CloseIcon  />
+                        </Button>
+                    </Box>
+				</Box>
                 <DialogContent>
                     <Box width="100%" textAlign="center">
                         <Typography>Descuento por pronto pago</Typography>
@@ -112,17 +123,10 @@ export default function LiquidarCuenta() {
                 </DialogContent>
                 <DialogActions>
                     <Button 
-                        autoFocus 
-                        onClick={handleClick} 
-                        color="secondary"
-                        variant="contained"
-                    >
-                        Cancelar
-                    </Button>
-                    <Button 
                         onClick={handleClick} 
                         color="primary"
                         variant="contained"
+                        size="large"
                     >
                         Liquidar
                     </Button>

@@ -34,6 +34,12 @@ const useStyles = makeStyles((theme) => ({
 	formInput: {
 		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
 	},
+	buttons: {
+		'& > *': {
+			margin: `0px ${theme.spacing(1)}px`
+		}
+	}
+
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -57,21 +63,11 @@ export default function RetirosDepositos() {
 				</Box>
 			</Button>
 			<Dialog open={open} TransitionComponent={Transition} maxWidth="xs">
-				{/* <AppBar className={classes.appBar}>
-					<Toolbar>
-						<Typography variant="h6" className={classes.title}>
-                        	Retiros
-						</Typography>
-						<Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClickOpen}>
-                                Realizar retiro
-                            </Button>
-                        </Box>
-                        <IconButton edge="start" color="inherit" onClick={handleClickOpen} aria-label="close">
-							<CloseIcon />
-						</IconButton>
-					</Toolbar>
-				</AppBar> */}
+				<Box m={1} display="flex" justifyContent="flex-end">
+					<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+						<CloseIcon />
+					</Button>
+				</Box>
 				<Paper elevation={3} >
 					<Box p={2}>
 						<Typography variant="h6" className={classes.title}>
@@ -80,24 +76,18 @@ export default function RetirosDepositos() {
 					</Box>
 					<FormRetiroDeposito />
 					<DialogActions>
-						<Button
-							variant="outlined"
-							color="secondary"
-							onClick={handleClickOpen}
-							size="large"
-							startIcon={<CloseIcon />}
-						>
-							Cerrar
-						</Button>
-						<Button
-							variant="contained"	
-							color="primary"
-							onClick={handleClickOpen}
-							size="large"
-							startIcon={<DoneIcon />}
-						>
-							Guardar
-						</Button>
+						<Box className={classes.buttons}>
+							<Button
+								variant="contained"	
+								color="primary"
+								onClick={handleClickOpen}
+								size="large"
+								startIcon={<DoneIcon />}
+								disableElevation
+							>
+								Guardar
+							</Button>
+						</Box>
 					</DialogActions>
 				</Paper>
 			</Dialog>

@@ -1,6 +1,8 @@
-import { Box, Button, Dialog,  DialogContent,  DialogTitle, Slide, TextField, Typography } from '@material-ui/core'
+import React, { useState } from 'react';
+
+import CloseIcon from '@material-ui/icons/Close';
 import { Alert } from '@material-ui/lab';
-import React, { useState } from 'react'
+import { Box, Button, Dialog,  DialogContent,  DialogTitle, Slide, TextField, Typography } from '@material-ui/core'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -44,7 +46,19 @@ export default function AbonoaRecibir() {
                 aria-labelledby="alert-dialog-slide-title"
                 aria-describedby="alert-dialog-slide-description"
             >
-                <DialogTitle id="alert-dialog-slide-title">{"Abono a recibir por cuenta"}</DialogTitle>
+                <DialogTitle id="alert-dialog-slide-title">
+                    <Box display="flex">
+                        <Box display="flex" justifyContent="flex-start">
+                            Abono a recibir por cuenta
+                        </Box>
+                        <Box ml={3} display="flex" justifyContent="flex-end">
+                            <Button variant="contained" color="secondary" onClick={handleClick} size="large">
+								<CloseIcon />
+							</Button>
+                        </Box>
+                    </Box>
+                    
+                </DialogTitle>
                 <DialogContent>
                     <Box width="100%">
                         <Typography>Cuenta No. 2501265</Typography>

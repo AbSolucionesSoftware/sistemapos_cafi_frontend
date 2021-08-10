@@ -1,9 +1,10 @@
 import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types';
 
-import { AppBar, Box, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core';
+import { AppBar, Box, Button, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core';
 import addIcon from '../../../../icons/ventas/add.svg'
 import { FcDonate } from 'react-icons/fc';
+import CloseIcon from '@material-ui/icons/Close';
 
 import FormRegistroEgresos from './FormRegistroEgresos';
 
@@ -63,9 +64,15 @@ const useStyles = makeStyles((theme) => ({
 		fontSize: 40,
         color: theme.palette.info.main
 	},
+	buttons: {
+		'& > *': {
+			margin: `0px ${theme.spacing(1)}px`
+		}
+	}
+
 }));
 
-export default function VistaRegistroEgreso() {
+export default function VistaRegistroEgreso({handleClickOpen}) {
     
     const classes = useStyles();
     const [ value, setValue ] = useState(0);
@@ -102,9 +109,15 @@ export default function VistaRegistroEgreso() {
 								<Typography variant="h6">Usuario: Funalo</Typography> 
 							</Box>
 						</Grid>
-						
+						<Grid>
+							<Box mt={3} ml={5} display="flex" justifyContent="flex-end">
+								<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+									<CloseIcon />
+								</Button>
+							</Box>
+						</Grid>
 					</Tabs>
-					
+										
 				</AppBar>
 				<TabPanel value={value} index={0}>
 					<FormRegistroEgresos tipo='credito'/>

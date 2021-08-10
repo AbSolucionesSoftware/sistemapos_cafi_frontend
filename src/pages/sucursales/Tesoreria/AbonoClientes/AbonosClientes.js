@@ -62,10 +62,11 @@ export default function AbonosClientes() {
                         	Abonos de Clientes
 						</Typography>
 						
-                        <Button variant="outlined" size="large" color="inherit"  onClick={handleClickOpen} aria-label="close">
-							<CloseIcon />
-							Cerrar
-						</Button>
+                        <Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
 				<Grid container>
