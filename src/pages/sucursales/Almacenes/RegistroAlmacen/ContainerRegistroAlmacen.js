@@ -20,7 +20,7 @@ import { REGISTRO_ALMACEN, ACTUALIZAR_ALMACEN } from '../../../../gql/ALmacenes/
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
 import { OBTENER_USUARIOS } from '../../../../gql/Catalogos/usuarios';
-
+import CloseIcon from '@material-ui/icons/Close';
 import { Edit } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
@@ -177,18 +177,29 @@ export default function ContainerRegistroAlmacen({ accion, datos }) {
     return (
         <Fragment>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
-            {accion === 'registrar' ? (
-				<Button color="primary" variant="contained" size="large" onClick={toggleModal}>
-                    Nuevo almacen
-                </Button>
-			) : (
-				<IconButton onClick={toggleModal}>
-					<Edit />
-				</IconButton>
-			)}
+                {accion === 'registrar' ? (
+                    <Button color="primary" variant="contained" size="large" onClick={toggleModal}>
+                        Nuevo almacen
+                    </Button>
+                ) : (
+                    <IconButton onClick={toggleModal}>
+                        <Edit />
+                    </IconButton>
+                )}
 			<Dialog open={open} onClose={onCloseModal} fullWidth maxWidth="md">
             <BackdropComponent loading={loading} setLoading={setLoading} />
-            <DialogTitle id="form-dialog-title">Registro almacen</DialogTitle>
+            <DialogTitle id="form-dialog-title">
+                <Box display="flex">
+                    <Box flexGrow={1}>
+                        Registro almacen
+                    </Box>
+                    <Box m={1}>
+                        <Button variant="contained" color="secondary" onClick={onCloseModal} size="large">
+                            <CloseIcon />
+                        </Button>
+                    </Box>
+                </Box>
+            </DialogTitle>
 				<Container maxWidth="md">
                 <div className={classes.formInputFlex}>
 					<Box width="100%">
