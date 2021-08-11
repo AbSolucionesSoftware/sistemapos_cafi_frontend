@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { 
     Paper, 
     makeStyles, 
@@ -9,18 +9,22 @@ import {
     TableHead, 
     TableRow,
 	IconButton,
-	TablePagination
+	TablePagination,
+	Dialog,
+	DialogTitle,
+	DialogActions,
+	Button
 } from '@material-ui/core/';
+ 
+import { Delete, Edit, Close } from '@material-ui/icons';
 
-import { Delete, Edit } from '@material-ui/icons';
-
-import { useQuery } from '@apollo/client';
-import { OBTENER_DEPARTAMENTOS } from '../../../../gql/Catalogos/departamentos';
+import { useQuery, useMutation } from '@apollo/client';
+import { OBTENER_DEPARTAMENTOS, ELIMINAR_DEPARTAMENTO } from '../../../../gql/Catalogos/departamentos';
 // import ContainerRegistroAlmacen from './RegistroDepartamento';
-// import { CreateDepartamentosContext } from '../../../../context/Catalogos/Departamentos';
+ import { CreateDepartamentosContext } from '../../../../context/Catalogos/Departamentos';
 
 const useStyles = makeStyles((theme) => ({
-	root: {
+	root: { 
 		width: '100%'
 	},
 	paper: {
@@ -29,15 +33,16 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaDepartamentos({ updateData }) {
+export default function TablaDepartamentos() {
 	const classes = useStyles();
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(8);
+	const [open, setOpen] = useState(false);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	let obtenerDepartamentos = [];
 
-	// const { update } = useContext(CreateDepartamentosContext);
-
+	const { update, setAccion, idDepartamento,setIdDepartamento, setData, setAlert, setLoading } = useContext(CreateDepartamentosContext);
+	const [ eliminarDepartamento ] = useMutation(ELIMINAR_DEPARTAMENTO);
 	/* Queries */
 	const { data, refetch } = useQuery(OBTENER_DEPARTAMENTOS,{
 		variables: {
@@ -46,12 +51,37 @@ export default function TablaDepartamentos({ updateData }) {
 		}
 	});	
 
+	const handleModal = () => setOpen(!open);
 	useEffect(
 		() => {
 			refetch();
 		},
-		[ updateData, refetch ]
+		[ update, refetch ]
 	);
+
+	const handleDelete = async () => {
+   
+		setLoading(true);
+		try {
+			
+            await eliminarDepartamento({
+                variables: {
+                    id: idDepartamento
+                }
+            });
+		
+			refetch();
+			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			setLoading(false);
+			setOpen(false)
+			setIdDepartamento('');
+		
+		} catch (error) {
+			console.log(error);
+			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			setLoading(false);
+		}
+	};
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
@@ -84,13 +114,45 @@ export default function TablaDepartamentos({ updateData }) {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{
-							obtenerDepartamentos
-								?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-								?.map((row, index) => {
-									return <RowsRender key={index} datos={row} />;
-								})
-							}
+							{obtenerDepartamentos?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)?.map((row, index) => {
+									return (
+										<TableRow hover role="checkbox" tabIndex={-1} key={row._id}selected={idDepartamento === row._id ? true : false}>
+											<TableCell>{row.nombre_departamentos}</TableCell>
+											<TableCell padding="checkbox">
+											{idDepartamento === row._id ? (
+												<IconButton onClick={() => {
+													setIdDepartamento("");
+													setData({
+														nombre_departamentos: ""
+													}); 
+													}}>
+													<Close />
+												</IconButton>
+											) : (
+												<IconButton onClick={() => {
+													setAccion(false)
+													setData({
+														nombre_departamentos: row.nombre_departamentos
+													});
+													setIdDepartamento(row._id);
+												}}>
+													<Edit />
+												</IconButton>
+											)}
+											
+											</TableCell>
+											<TableCell padding="checkbox">
+												<IconButton onClick={() => {
+														setIdDepartamento(row._id);
+														handleModal();
+												}}>
+													<Delete />
+												</IconButton>
+											</TableCell>
+										</TableRow>
+									);
+								})}
+							
 						</TableBody>
 					</Table>
 				</TableContainer>
@@ -104,25 +166,26 @@ export default function TablaDepartamentos({ updateData }) {
 					onChangeRowsPerPage={handleChangeRowsPerPage}
 				/>
 			</Paper>
+			<Modal handleModal={handleModal} openModal={open} handleDelete={handleDelete} />
 		</div>
 	);
 }
 
 
-const RowsRender = ({ datos }) => {
+const Modal = ({ handleModal, openModal, handleDelete }) => {
 	return (
-		<TableRow hover role="checkbox" tabIndex={-1}>
-			<TableCell>{datos.nombre_departamentos}</TableCell>
-			<TableCell padding="checkbox">
-				<IconButton>
-					<Edit />
-				</IconButton>
-			</TableCell>
-			<TableCell padding="checkbox">
-				<IconButton>
-					<Delete />
-				</IconButton>
-			</TableCell>
-		</TableRow>
+		<div>
+			<Dialog open={openModal} onClose={handleModal}>
+				<DialogTitle>{'¿Seguro que quieres eliminar esto?'}</DialogTitle>
+				<DialogActions>
+					<Button onClick={handleModal} color="primary">
+						Cancelar
+					</Button>
+					<Button color="secondary" autoFocus variant="contained" onClick={handleDelete}>
+						OK
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</div>
 	);
 };
