@@ -132,6 +132,7 @@ export default function MisDatos() {
 
 	const actEmp = async () =>{
 		try {
+			setLoading(true)
 			//console.log(empresaDatos, sesion.empresa._id )
 			await actualizarEmpresa({
 				variables: {
@@ -141,6 +142,7 @@ export default function MisDatos() {
 			});
 			//console.log(act.data.actualizarEmpresa.message)
 			setUpdate(true);
+			setLoading(false);
 			setAlert({ message: 'Se han actualizado correctamente los datos.', status: 'success', open: true });	
 			setError(false);
 		} catch (errorCatch) {
@@ -211,14 +213,11 @@ export default function MisDatos() {
 						<Typography variant="h6" className={classes.title}>
 							Datos
 						</Typography>
-						<Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClose}>
-                                Cerrar
-                            </Button>
-                        </Box>
-                        <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-							<CloseIcon />
-						</IconButton>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
 
@@ -439,13 +438,11 @@ export default function MisDatos() {
 				</Grid>
 				<Grid>
 				<DialogActions>
-					<Button onClick={handleClose} color="primary">
-						Cancelar
-					</Button>
 					<Button
 						onClick={()=>actEmp()}
 						color="primary"
 						variant="contained"
+						size="large"
 						autoFocus
 						endIcon={loading ? <CircularProgress color="inherit" size={25} /> : null}
 					>

@@ -1,10 +1,11 @@
 import React, {  useContext,useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, Grid, TextField, Button, Dialog,  } from '@material-ui/core';
+import { Box, Grid, TextField, Button, Dialog } from '@material-ui/core';
 import { Slide, Typography, IconButton, Toolbar, AppBar, Divider, DialogActions,CircularProgress  } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
+import ErrorPage from '../../../../components/ErrorPage';
 import { FcDocument } from 'react-icons/fc';
 import { useMutation } from '@apollo/client';
 
@@ -81,7 +82,7 @@ export default function InformacionFiscal() {
 
 	useEffect(() => {
 		try {
-			//console.log(empresa)
+			
 			setEmpresaFiscal({
 				nombre_fiscal: empresa.nombre_fiscal,
 				rfc: empresa.rfc,
@@ -115,6 +116,7 @@ export default function InformacionFiscal() {
 
 	const actEmp = async () =>{
 		try {
+			setLoading(true)
 			//console.log(empresaFiscal, sesion.empresa._id )
 			 await actualizarEmpresa({
 				variables: {
@@ -125,7 +127,9 @@ export default function InformacionFiscal() {
 			})
 			//console.log(act.data.actualizarEmpresa.message)
 			setUpdate(true);
+			setLoading(false);
 			setAlert({ message: 'Se han actualizado correctamente los datos.', status: 'success', open: true });
+			
 			setError(false);
 		} catch (errorCatch) {
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
@@ -158,6 +162,8 @@ export default function InformacionFiscal() {
 			datosBancarios: { ...empresaFiscal.datosBancarios, [e.target.name]: e.target.value }
 		});
 	};
+
+	
 	return (
 		<div>
 			<Button fullWidth onClick={handleClickOpen}>
@@ -176,14 +182,11 @@ export default function InformacionFiscal() {
 						<Typography variant="h6" className={classes.title}>
 							Información fiscal
 						</Typography>
-						<Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClose}>
-                                Cerrar
-                            </Button>
-                        </Box>
-						<IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-							<CloseIcon />
-						</IconButton>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
 
@@ -414,12 +417,10 @@ export default function InformacionFiscal() {
 					</Box>
 				</form>
 				<DialogActions>
-					<Button onClick={handleClose} color="primary">
-						Cancelar
-					</Button>
 					<Button
 						onClick={()=>actEmp()}
 						color="primary"
+						size="large"
 						variant="contained"
 						autoFocus
 						endIcon={loading ? <CircularProgress color="inherit" size={25} /> : null}

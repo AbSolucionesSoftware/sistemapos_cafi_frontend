@@ -29,6 +29,18 @@ export const OBTENER_CONSULTAS = gql`
 				talla
 				tipo
 			}
+			almacenes {
+				_id
+				nombre_almacen
+			}
+			centro_costos {
+				_id
+				costo
+				subcostos {
+					_id
+					subcosto
+				}
+    		}
 		}
 	}
 `;
@@ -36,11 +48,7 @@ export const OBTENER_CONSULTAS = gql`
 export const CREAR_PRODUCTO = gql`
 	mutation crearProducto($input: CrearProductoInput) {
 		crearProducto(input: $input) {
-			_id
-			imagenes {
-				url_imagen
-				key_imagen
-			}
+			message
 		}
 	}
 `;
