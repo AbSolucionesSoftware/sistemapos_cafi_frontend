@@ -1,7 +1,7 @@
-import React, { forwardRef, useState } from 'react';
-import { AppBar, Box, Button, Dialog, makeStyles, Slide, Toolbar, Typography } from '@material-ui/core';
+import React, {useState } from 'react';
+import {  Box, Button, Dialog, Divider, Grid, IconButton, makeStyles, TextField,  Typography } from '@material-ui/core';
 import sello from '../../../../icons/Facturacion/validacion.svg'
-import CloseIcon from '@material-ui/icons/Close';
+import { Search } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -18,12 +18,17 @@ const useStyles = makeStyles((theme) => ({
 	},
 	iconSvgVenta: {
 		width: 90
-	}
+	},
+    formInputFlex: {
+		display: 'flex',
+		'& > *': {
+			margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
+		}
+	},
+	formInput: {
+		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
+	},
 }));
-
-const Transition = forwardRef(function Transition(props, ref) {
-	return <Slide direction="up" ref={ref} {...props} />;
-});
 
 export default function RegistroSellos() {
 
@@ -34,33 +39,132 @@ export default function RegistroSellos() {
     
     return (
         <div>
-            <Button fullWidth onClick={handleClickOpen}>
-                <Box display="flex" flexDirection="column">
-                    <Box display="flex" justifyContent="center" alignItems="center" mb={2}>
-                        <img src={sello} alt="icono Factura" style={{width: 100}} />
-                    </Box>
-                    Registrar Sellos CDFI
-                </Box>
+            <Button 
+                onClick={handleClickOpen}
+                color="primary" 
+                variant="contained"
+                size="large"
+            >
+                Registrar Sellos CDFI
             </Button>
-            <Dialog fullScreen open={open} onClose={handleClickOpen} TransitionComponent={Transition}>
-                <AppBar className={classes.appBar}>
-                    <Toolbar>
-                        <Typography variant="h6" className={classes.title}>
-                                Agregar almacen
-                        </Typography>
-                        <Box m={1}>
-							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
-								<CloseIcon />
-							</Button>
-						</Box>
-                    </Toolbar>
-                </AppBar>
-                <Box m={3} display="flex" justifyContent="flex-end">
-
-                </Box>
-                <Box mx={4}>
-
-                </Box>
+            <Dialog
+                maxWidth='lg'
+                open={open}
+                onClose={handleClickOpen}
+                aria-labelledby="max-width-dialog-title"
+            >
+                <Grid item lg={12}>
+                    <Box m={3} display="flex" justifyContent="center">
+                        <Box display="flex" alignItems='center'>
+                            <img src={sello} alt="icono Factura" style={{width: 70}} />
+                        </Box>
+                        <Box mr={3} ml={3}>
+                            <Divider orientation='vertical' />
+                        </Box>
+                        <Box display="flex" alignItems='center'>
+                            <Typography variant="h5">
+                                <b> Registrar Sello Digital</b>
+                            </Typography>
+                        </Box>
+                    </Box>
+                    <Box p={2}>
+                        <div className={classes.formInputFlex}>
+                            <Box width="100%">
+                                <Typography>
+                                    Archivo *.cer correspondiente al Certificado de Sello Digital:
+                                </Typography>
+                                <Box display="flex" alignItems="center">
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        variant="outlined"
+                                    />
+                                    <IconButton>
+                                        <Search />
+                                    </IconButton>
+                                </Box>
+                            </Box>
+                        </div>
+                        <div className={classes.formInputFlex}>
+                            <Box width="100%">
+                                <Typography>
+                                    Fecha Solicitud:
+                                </Typography>
+                                <Box display="flex">
+                                    <TextField
+                                        fullWidth
+                                        type="date"
+                                        size="small"
+                                        variant="outlined"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                    />
+                                </Box>
+                            </Box>
+                            <Box width="100%">
+                                <Typography>
+                                    Fecha de Vencimiento:
+                                </Typography>
+                                <Box display="flex">
+                                    <TextField
+                                        fullWidth
+                                        type="date"
+                                        size="small"
+                                        variant="outlined"
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                    />
+                                </Box>
+                            </Box>
+                        </div>
+                        <div className={classes.formInputFlex}>
+                            <Box width="100%">
+                                <Typography>
+                                    Archivo *.key correspondiente a la <b>Llave Privada de Sello Digital</b>:
+                                </Typography>
+                                <Box display="flex" alignItems="center">
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        variant="outlined"
+                                    />
+                                    <IconButton>
+                                        <Search />
+                                    </IconButton>
+                                </Box>
+                            </Box>
+                        </div>
+                        <div className={classes.formInputFlex}>
+                            <Box width="100%">
+                                <Typography>
+                                    Contrasena de la Lalave Privada de Sello Digital:
+                                </Typography>
+                                <Box display="flex" alignItems="center">
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        variant="outlined"
+                                    />
+                                    <IconButton>
+                                        <Search />
+                                    </IconButton>
+                                </Box>
+                            </Box>
+                        </div>
+                    </Box>
+                    <Box p={2} display="flex" justifyContent="center" alignItems="center">
+                        <Button
+                            color="primary"
+                            variant="contained"
+                            size="large"
+                        >
+                            Guardar
+                        </Button>
+                    </Box>
+                </Grid>
+                
             </Dialog>
         </div>
     )

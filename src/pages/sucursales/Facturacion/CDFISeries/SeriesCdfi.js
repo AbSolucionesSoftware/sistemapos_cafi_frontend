@@ -1,23 +1,19 @@
 import React, { forwardRef, useState } from 'react';
-import { AppBar, Box, Button, Dialog, makeStyles, Slide, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Box, Button, Dialog, Grid, makeStyles, Slide, Toolbar, Typography } from '@material-ui/core';
 import serie from '../../../../icons/Facturacion/numero-de-serie.svg'
 import CloseIcon from '@material-ui/icons/Close';
-
+import RegistroSeries from './RegistroSeries';
+import ListaSellosCDFI from './ListaSellos';
 const useStyles = makeStyles((theme) => ({
-	root: {
-		flexGrow: 1,
-		width: '100%',
-		height: '100vh',
-		backgroundColor: theme.palette.background.paper
+	appBar: {
+		position: 'relative'
 	},
-	icon: {
-		fontSize: 100
+	title: {
+		marginLeft: theme.spacing(2),
+		flex: 1
 	},
-	iconSvg: {
+    icon: {
 		width: 100
-	},
-	iconSvgVenta: {
-		width: 90
 	}
 }));
 
@@ -25,7 +21,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function RegistroSeries() {
+export default function SeriesCDFI() {
 
     const classes = useStyles();
     const [open, setOpen] = useState(false);
@@ -46,7 +42,7 @@ export default function RegistroSeries() {
                 <AppBar className={classes.appBar}>
                     <Toolbar>
                         <Typography variant="h6" className={classes.title}>
-                                Agregar almacen
+                            Series CDFI
                         </Typography>
                         <Box m={1}>
 							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
@@ -55,12 +51,21 @@ export default function RegistroSeries() {
 						</Box>
                     </Toolbar>
                 </AppBar>
-                <Box m={3} display="flex" justifyContent="flex-end">
-
-                </Box>
-                <Box mx={4}>
-
-                </Box>
+                <Grid item lg={12}>
+                    <Box m={3} display="flex" justifyContent="center">
+                        <Box ml={1} flexGrow={1}>
+                            <Typography variant="h5" >
+                                <b>Seleccion de Series CDFI</b>
+                            </Typography>
+                        </Box>
+                        <Box>
+                           <RegistroSeries />
+                        </Box>
+                    </Box>
+                    <Box m={3}>
+                        <ListaSellosCDFI />
+                    </Box>
+                </Grid>
             </Dialog>
         </div>
     )

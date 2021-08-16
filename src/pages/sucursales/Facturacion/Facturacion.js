@@ -3,8 +3,8 @@ import React from 'react'
 import { Box, Container, Grid } from '@material-ui/core'
 
 import NuevaFactura from './NuevaFactura/NuevaFactura';
-import RegistroSellos from './CDFISellos/RegistrarSellos';
-import RegistroSeries from './CDFISeries/RegistrarSeries';
+import SeriesCDFI from './CDFISeries/SeriesCdfi';
+import SellosCDFI from './CDFISellos/SellosCdfi';
 
 export default function Facturacion() {
     return (
@@ -18,12 +18,12 @@ export default function Facturacion() {
                     </Grid>
                     <Grid item lg={2}>
                         <Box display="flex" justifyContent="center" alignItems="center">
-                            <RegistroSellos />
+                            <SellosCDFI />
                         </Box>
                     </Grid>
                     <Grid item lg={2}>
                         <Box display="flex" justifyContent="center" alignItems="center">
-                            <RegistroSeries />
+                            <SeriesCDFI />
                         </Box>
                     </Grid>
                 </Grid>

@@ -1,17 +1,16 @@
-import React from 'react'; 
+import React, { forwardRef, useState } from 'react'; 
 
-import { Box, Grid, IconButton, InputBase, makeStyles, Paper, TextField, Typography } from '@material-ui/core';
+import { Box, Dialog, FormControl, IconButton,  makeStyles, MenuItem, Select, Slide, TextField, Typography } from '@material-ui/core';
 import { Search } from '@material-ui/icons';
+import TipoCDFI from './Operaciones/TipoCDFI.js';
+import ListaClientes from './Operaciones/ListaClientesFactura.js';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {
 		display: 'flex',
 		'& > *': {
-			margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
+			margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
 		}
-	},
-	formInput: {
-		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
 	},
 	root: {
 		flexGrow: 1,
@@ -23,91 +22,165 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
+const Transition = forwardRef(function Transition(props, ref) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});
+
 export default function RegistroFactura() {
+
+    const [open, setOpen] = useState(false);
+    const [ventana, setVentana] = useState('');
+
+    const handleClickOpen = () => {
+        setOpen(!open)
+    };
+
+    const ventanas = () => {
+		switch (ventana) {
+			case 'tipocdfi':
+				return <TipoCDFI handleClickOpen={handleClickOpen} />
+            case 'clientes':
+				return <ListaClientes handleClickOpen={handleClickOpen} />
+			default:
+				break;
+		}
+	};
 
     const classes = useStyles();
 
     return (
         <div>
-            <Box p={2} display="flex" width="100%">
-                <div className={classes.formInputFlex}>
-                    <Box width="100%">
-                        <Typography>
-                            <b>Fecha</b>
-                        </Typography>
+            <div className={classes.formInputFlex}>
+                <Box width="100%">
+                    <Typography>
+                        Folio:
+                    </Typography>
+                    <Box display="flex">
+                        <TextField
+                            fullWidth
+                            type='number'
+                            size="small"
+                            variant="outlined"
+                        />
+                    </Box>
+                </Box>
+                <Box width="100%">
+                    <Typography>
+                        Fecha:
+                    </Typography>
+                    <Box display="flex">
+                        <TextField
+                            fullWidth
+                            type="date"
+                            size="small"
+                            variant="outlined"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                    </Box>
+                </Box>
+                <Box width="100%">
+                    <Typography>
+                        Serie:
+                    </Typography>
+                    <Box display="flex">
                         <TextField
                             fullWidth
                             size="small"
-                            name="tipo_cliente"
                             variant="outlined"
-                            disabled
                         />
                     </Box>
-                    <Box width="100%">
-                        <Typography>
-                            <b>Folio:</b>
-                        </Typography>
+                </Box>
+                <Box width="100%">
+                    <Typography>
+                        Moneda:
+                    </Typography>
+                    <Box display="flex">
                         <TextField
                             fullWidth
                             size="small"
-                            name="tipo_cliente"
                             variant="outlined"
-                            disabled
                         />
                     </Box>
-                    <Box width="100%">
-                        <Typography>
-                            <b>Serie:</b>
-                        </Typography>
+                </Box>
+            </div>
+            <div className={classes.formInputFlex}>
+                <Box width="100%">
+                    <Typography>
+                        Forma de pago:
+                    </Typography>
+                    <Box display="flex">
+                        <FormControl variant="outlined" style={{width: '100%'}} >
+                            <Select
+                                value={10}
+                                label="Age"
+                                style={{ height: '75%', width: '100%' }}
+                            >
+                                <MenuItem value="">
+                                    <em>None</em>
+                                </MenuItem>
+                                <MenuItem value={10}>Efectivo</MenuItem>
+                                <MenuItem value={20}>Tarjeta Credito</MenuItem>
+                                <MenuItem value={30}>Tarjeta Debito</MenuItem>
+                                <MenuItem value={40}>Credito</MenuItem>
+                                <MenuItem value={50}>Modenedero Electronico</MenuItem>
+                                <MenuItem value={60}>Vales despensa</MenuItem>
+
+                            </Select>
+                        </FormControl>
+                    </Box>
+                </Box>
+                <Box width="100%">
+                    <Typography>
+                        Cliente:
+                    </Typography>
+                    <Box display="flex" alignItems="center">
                         <TextField
                             fullWidth
                             size="small"
-                            name="tipo_cliente"
                             variant="outlined"
-                            disabled
                         />
+                        <IconButton
+                            onClick={() =>{
+                                setVentana('clientes')
+                                handleClickOpen()
+                            }}
+                        >
+                            <Search />
+                        </IconButton>
                     </Box>
-                    <Box width="100%">
-                        <Typography>
-                            <b>Tipo pago:</b>
-                        </Typography>
+                </Box>
+                <Box width="100%">
+                    <Typography>
+                        Uso de CDFI:
+                    </Typography>
+                    <Box display="flex" alignItems="center">
                         <TextField
                             fullWidth
                             size="small"
-                            name="tipo_cliente"
                             variant="outlined"
-                            disabled
                         />
+                        <IconButton
+                            onClick={() =>{
+                                setVentana('tipocdfi')
+                                handleClickOpen()
+                            }}
+                        >
+                            <Search />
+                        </IconButton>
                     </Box>
-                    <Box width="100%">
-                        <Typography>
-                            <b>Moneda:</b>
-                        </Typography>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            name="tipo_cliente"
-                            variant="outlined"
-                            disabled
-                        />
-                    </Box>
-                </div>
-            </Box>
-            <Box p={2}>
-                <div className={classes.formInputFlex}>
-                    <Box width="100%">
-                        <Paper className={classes.rootBusqueda}>
-                            <InputBase
-                                fullWidth
-                                placeholder="Buscar producto..."
-                            />
-                            <IconButton >
-                                <Search />
-                            </IconButton>
-                        </Paper>
-                    </Box>
-                </div>
-            </Box>
+                </Box>
+            </div>
+            
+            <Dialog
+				maxWidth='lg'
+				open={open} 
+				onClose={handleClickOpen} 
+				TransitionComponent={Transition}
+			>
+				{ventanas()}
+			</Dialog>
             
         </div>
     )
