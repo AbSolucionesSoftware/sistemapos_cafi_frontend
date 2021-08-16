@@ -91,19 +91,19 @@ function AdminInicio(props) {
 							icon={<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />}
 							{...a11yProps(1)}
 						/>
-						<Tab label="Cajas" icon={<FcPrint className={classes.icon} />} {...a11yProps(2)} />
-						<Tab label="Compras" icon={<FcPaid className={classes.icon} />} {...a11yProps(3)} />
-						<Tab label="Catalogos" icon={<FcNews className={classes.icon} />} {...a11yProps(4)} />
+						
+						<Tab label="Compras" icon={<FcPaid className={classes.icon} />} {...a11yProps(2)} />
+						<Tab label="Catalogos" icon={<FcNews className={classes.icon} />} {...a11yProps(3)} />
 						<Tab
 							label="Tesoreria"
 							icon={<img src={moneyIcon} alt="icono money" className={classes.iconSvg} />}
-							{...a11yProps(5)}
+							{...a11yProps(4)}
 						/>
-						<Tab label="Reportes" icon={<FcSurvey className={classes.icon} />} {...a11yProps(6)} />
+						<Tab label="Reportes" icon={<FcSurvey className={classes.icon} />} {...a11yProps(5)} />
 						<Tab
 							label="Ventas"
 							icon={<img src={cartIcon} alt="icono ventas" className={classes.iconSvg} />}
-							{...a11yProps(8)}
+							{...a11yProps(6)}
 							onClick={() => props.history.push('/ventas/venta-general')}
 						/>
 						<Tab
@@ -126,24 +126,21 @@ function AdminInicio(props) {
 						<Almacenes />
 					</TabPanel>
 					<TabPanel value={value} index={2}>
-						<Cajas />
-					</TabPanel>
-					<TabPanel value={value} index={3}>
 						<Compras />
 					</TabPanel>
-					<TabPanel value={value} index={4}>
+					<TabPanel value={value} index={3}>
 						<Catalogos />
 					</TabPanel>
-					<TabPanel value={value} index={5}>
+					<TabPanel value={value} index={4}>
 						<Tesoreria />
 					</TabPanel>
-					<TabPanel value={value} index={6}>
+					<TabPanel value={value} index={5}>
 						Item Five
 					</TabPanel>
-					<TabPanel value={value} index={7}>
+					<TabPanel value={value} index={6}>
 						Item Six
 					</TabPanel>
-					<TabPanel value={value} index={8}>
+					<TabPanel value={value} index={7}>
 						Ventas
 					</TabPanel>
 				</SwipeableViews>
