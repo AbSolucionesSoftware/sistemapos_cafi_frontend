@@ -58,11 +58,9 @@ export default function Departamentos() {
 							<Typography variant="h6" className={classes.title}>
 								Departamentos
 							</Typography>
-							<Box m={1}>
-								<Button variant="contained" color="secondary" onClick={handleClose} size="large">
-									<CloseIcon style={{fontSize: 30}} />
-								</Button>
-							</Box>
+							<Button autoFocus color="inherit" size="large" onClick={handleClose} startIcon={<CloseIcon />}>
+								Cerrar
+							</Button>
 						</Toolbar>
 					</AppBar>
 					<Box mt={3}>

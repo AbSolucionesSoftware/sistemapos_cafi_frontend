@@ -92,7 +92,7 @@ function AdminInicio(props) {
 							icon={<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />}
 							{...a11yProps(1)}
 						/>
-						
+					
 						<Tab label="Compras" icon={<FcPaid className={classes.icon} />} {...a11yProps(2)} />
 						<Tab label="Catalogos" icon={<FcNews className={classes.icon} />} {...a11yProps(3)} />
 						<Tab
@@ -100,11 +100,16 @@ function AdminInicio(props) {
 							icon={<img src={moneyIcon} alt="icono money" className={classes.iconSvg} />}
 							{...a11yProps(4)}
 						/>
-						<Tab label="Reportes" icon={<FcSurvey className={classes.icon} />} {...a11yProps(5)} />
+						<Tab
+							label="Reportes"
+							icon={<FcSurvey className={classes.icon} />}
+							{...a11yProps(5)}
+						
+						/>
 						<Tab
 							label="Ventas"
 							icon={<img src={cartIcon} alt="icono ventas" className={classes.iconSvg} />}
-							{...a11yProps(6)}
+							{...a11yProps(8)}
 							onClick={() => props.history.push('/ventas/venta-general')}
 						/>
 						<Tab
@@ -137,7 +142,7 @@ function AdminInicio(props) {
 						<Tesoreria />
 					</TabPanel>
 					<TabPanel value={value} index={5}>
-						Item Five
+						<Reportes />
 					</TabPanel>
 					<TabPanel value={value} index={6}>
 						Item Six

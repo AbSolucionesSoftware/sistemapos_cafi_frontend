@@ -70,11 +70,15 @@ export default function Cliente() {
 							<Typography variant="h6" className={classes.title}>
 								Cliente
 							</Typography>
-							<Box m={1}>
-								<Button variant="contained" color="secondary" onClick={handleClose} size="large">
-									<CloseIcon style={{fontSize: 30}} />
-								</Button>
-							</Box>
+							<Button
+								autoFocus
+								color="inherit"
+								size="large"
+								onClick={handleClose}
+								startIcon={<CloseIcon />}
+							>
+								Cerrar
+							</Button>
 						</Toolbar>
 					</AppBar>
 					<Box m={3} display="flex" justifyContent="space-between">

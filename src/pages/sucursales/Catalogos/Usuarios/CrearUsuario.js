@@ -210,13 +210,6 @@ export default function CrearUsuario({ accion, datos }) {
 								icon={<img src={permisosIcon} alt="icono factura" className={classes.iconSvg} />}
 								{...a11yProps(1)}
 							/>
-							<Box ml={58} mt={3} >
-								<Box>
-									<Button variant="contained" color="secondary" onClick={onCloseModal} size="large">
-										<CloseIcon />
-									</Button>
-								</Box>
-							</Box>
 						</Tabs>
 					</AppBar>
 					<TabPanel value={value} index={0}>
@@ -227,7 +220,15 @@ export default function CrearUsuario({ accion, datos }) {
 					</TabPanel>
 				</Box>
 				<DialogActions>
-					
+					<Button
+						variant="outlined"
+						color="secondary"
+						onClick={onCloseModal}
+						size="large"
+						startIcon={<CloseIcon />}
+					>
+						Cerrar
+					</Button>
 					<Button
 						variant="contained"
 						color="primary"
