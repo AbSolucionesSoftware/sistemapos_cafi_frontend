@@ -14,8 +14,9 @@ import almacenIcon from '../../icons/almacen.svg';
 import Almacenes from './Almacenes/Almacenes';
 import cartIcon from '../../icons/ventas/cart-add.svg';
 import { withRouter } from 'react-router';
-import cajaIcon from '../../icons/cajas.svg';
-import Cajas from './Cajas/Cajas';
+//import cajaIcon from '../../icons/cajas.svg';
+//import Cajas from './Cajas/Cajas';
+import Reportes from './Reportes/Reportes';
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
 
@@ -109,7 +110,7 @@ function AdminInicio(props) {
 						<Tab
 							label="Facturación"
 							icon={<img src={facturaIcon} alt="icono factura" className={classes.iconSvg} />}
-							{...a11yProps(7)}
+							{...a11yProps(6)}
 						/>
 						
 					</Tabs>
@@ -125,6 +126,7 @@ function AdminInicio(props) {
 					<TabPanel value={value} index={1}>
 						<Almacenes />
 					</TabPanel>
+				
 					<TabPanel value={value} index={2}>
 						<Compras />
 					</TabPanel>

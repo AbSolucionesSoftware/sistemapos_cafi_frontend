@@ -1,4 +1,4 @@
-/* import React from 'react';
+import React from 'react';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -119,4 +119,3 @@ export default function CardCaja(props) {
         </div>
     )
 }
- */
