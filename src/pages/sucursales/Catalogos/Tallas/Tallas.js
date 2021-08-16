@@ -101,15 +101,11 @@ export default function Tallas() {
 						<Typography variant="h6" className={classes.title}>
 							Ropa
 						</Typography>
-						<Button
-							autoFocus
-							color="inherit"
-							size="large"
-							onClick={handleClickOpen}
-							startIcon={<CloseIcon />}
-						>
-							Cerrar
-						</Button>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
 				<div className={classes.root}>
