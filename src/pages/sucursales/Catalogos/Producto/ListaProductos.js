@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -8,55 +8,20 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-
-const columns = [
-	{ id: 'name', label: 'Name', minWidth: 170 },
-	{ id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-	{
-		id: 'population',
-		label: 'Population',
-		minWidth: 170,
-		align: 'right',
-		format: (value) => value.toLocaleString('en-US')
-	},
-	{
-		id: 'size',
-		label: 'Size\u00a0(km\u00b2)',
-		minWidth: 170,
-		align: 'right',
-		format: (value) => value.toLocaleString('en-US')
-	},
-	{
-		id: 'density',
-		label: 'Density',
-		minWidth: 170,
-		align: 'right',
-		format: (value) => value.toFixed(2)
-	}
-];
-
-function createData(name, code, population, size) {
-	const density = population / size;
-	return { name, code, population, size, density };
-}
-
-const rows = [
-	createData('India', 'IN', 1324171354, 3287263),
-	createData('China', 'CN', 1403500365, 9596961),
-	createData('Italy', 'IT', 60483973, 301340),
-	createData('United States', 'US', 327167434, 9833520),
-	createData('Canada', 'CA', 37602103, 9984670),
-	createData('Australia', 'AU', 25475400, 7692024),
-	createData('Germany', 'DE', 83019200, 357578),
-	createData('Ireland', 'IE', 4857000, 70273),
-	createData('Mexico', 'MX', 126577691, 1972550),
-	createData('Japan', 'JP', 126317000, 377973),
-	createData('France', 'FR', 67022000, 640679),
-	createData('United Kingdom', 'GB', 67545757, 242495),
-	createData('Russia', 'RU', 146793744, 17098246),
-	createData('Nigeria', 'NG', 200962417, 923768),
-	createData('Brazil', 'BR', 210147125, 8515767)
-];
+import {
+	Box,
+	IconButton,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	Typography,
+	Divider,
+	DialogActions,
+	Button,
+	Avatar
+} from '@material-ui/core';
+import { CropOriginal, Dehaze } from '@material-ui/icons';
+import CrearProducto from './crearProducto';
 
 const useStyles = makeStyles({
 	root: {
@@ -64,14 +29,17 @@ const useStyles = makeStyles({
 	},
 	container: {
 		maxHeight: '70vh'
+	},
+	avatar: {
+		width: 130,
+		height: 130
 	}
 });
 
-export default function ListaProductos() {
+export default function ListaProductos({obtenerProductos}) {
 	const classes = useStyles();
-	const [ page, setPage ] = React.useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = React.useState(10);
-
+	const [ page, setPage ] = useState(0);
+	const [ rowsPerPage, setRowsPerPage ] = useState(10);
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
 	};
@@ -87,39 +55,46 @@ export default function ListaProductos() {
 				<Table stickyHeader aria-label="sticky table">
 					<TableHead>
 						<TableRow>
-							{columns.map((column) => (
-								<TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
-									{column.label}
-								</TableCell>
-							))}
+							<TableCell>Codigo barras</TableCell>
+							<TableCell>Clave alterna</TableCell>
+							<TableCell>Nombre comercial</TableCell>
+							<TableCell>Nombre genérico</TableCell>
+							<TableCell>Descripción</TableCell>
+							<TableCell>Tipo</TableCell>
+							<TableCell>Más información</TableCell>
+							<TableCell>Editar</TableCell>
+							{/* <TableCell>Eliminar</TableCell> */}
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-							return (
-								<TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-									{columns.map((column) => {
-										const value = row[column.id];
-										return (
-											<TableCell key={column.id} align={column.align}>
-												{column.format && typeof value === 'number' ? (
-													column.format(value)
-												) : (
-													value
-												)}
-											</TableCell>
-										);
-									})}
-								</TableRow>
-							);
-						})}
+						{obtenerProductos
+							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+							.map((producto, index) => {
+								return (
+									<TableRow hover key={index}>
+										<TableCell>{producto.datos_generales.codigo_barras}</TableCell>
+										<TableCell>{producto.datos_generales.clave_alterna}</TableCell>
+										<TableCell>{producto.datos_generales.nombre_comercial}</TableCell>
+										<TableCell>{producto.datos_generales.nombre_generico}</TableCell>
+										<TableCell>{producto.datos_generales.descripcion}</TableCell>
+										<TableCell>{producto.datos_generales.tipo_producto}</TableCell>
+										<TableCell align="center">
+											<ModalDetalles producto={producto} />
+										</TableCell>
+										<TableCell align="center">
+											<CrearProducto accion={true} datos={producto} />
+										</TableCell>
+										{/* <TableCell align="center">Eliminar</TableCell> */}
+									</TableRow>
+								);
+							})}
 					</TableBody>
 				</Table>
 			</TableContainer>
 			<TablePagination
-				rowsPerPageOptions={[ 10, 25, 100 ]}
+				rowsPerPageOptions={[]}
 				component="div"
-				count={rows.length}
+				count={obtenerProductos.length}
 				rowsPerPage={rowsPerPage}
 				page={page}
 				onChangePage={handleChangePage}
@@ -128,3 +103,115 @@ export default function ListaProductos() {
 		</Paper>
 	);
 }
+
+const ModalDetalles = ({ producto }) => {
+	const classes = useStyles();
+	const { datos_generales, imagenes } = producto;
+	const [ openDetalles, setOpenDetalles ] = useState(false);
+
+	const handleDetalles = () => setOpenDetalles(!openDetalles);
+
+	return (
+		<div>
+			<IconButton onClick={handleDetalles}>
+				<Dehaze />
+			</IconButton>
+			<Dialog open={openDetalles} onClose={handleDetalles} fullWidth maxWidth="md">
+				<DialogTitle>{'Información completa del producto'}</DialogTitle>
+				<DialogContent>
+					<Box mt={1}>
+						<Typography variant="h6">Datos generales</Typography>
+						<Divider />
+					</Box>
+					<Box display="flex">
+						<Box mt={3} height={120} width={120} display="flex" justifyContent="center" alignItems="center">
+							{imagenes.length > 0 ? (
+								<Avatar className={classes.avatar} src={imagenes[0].url_imagen} />
+							) : (
+								<Avatar className={classes.avatar}>
+									<CropOriginal />
+								</Avatar>
+							)}
+						</Box>
+						<ul>
+							<Typography>
+								<b>Código de barras: </b>
+								{datos_generales.codigo_barras ? datos_generales.codigo_barras : '-'}
+							</Typography>
+							<Typography>
+								<b>Clave alterna: </b>
+								{datos_generales.clave_alterna ? datos_generales.clave_alterna : '-'}
+							</Typography>
+							<Typography>
+								<b>Clave producto del SAT: </b>
+								{datos_generales.clave_producto_sat ? datos_generales.clave_producto_sat : '-'}
+							</Typography>
+							<Typography>
+								<b>Nombre comercial: </b>
+								{datos_generales.nombre_comercial ? datos_generales.nombre_comercial : '-'}
+							</Typography>
+							<Typography>
+								<b>Nombre genérico: </b>
+								{datos_generales.nombre_generico ? datos_generales.nombre_generico : '-'}
+							</Typography>
+							<Typography>
+								<b>Descripción: </b>
+								{datos_generales.descripcion ? datos_generales.descripcion : '-'}
+							</Typography>
+						</ul>
+						<ul>
+							<Typography>
+								<b>Tipo de producto: </b>
+								{datos_generales.tipo_producto ? datos_generales.tipo_producto : '-'}
+							</Typography>
+							<Typography>
+								<b>Categoria: </b>
+								{datos_generales.categoria ? datos_generales.categoria : '-'}
+							</Typography>
+							<Typography>
+								<b>Subcategoria: </b>
+								{datos_generales.subcategoria ? datos_generales.subcategoria : '-'}
+							</Typography>
+							<Typography>
+								<b>Departamento: </b>
+								{datos_generales.departamento ? datos_generales.departamento : '-'}
+							</Typography>
+							<Typography>
+								<b>Marca: </b>
+								{datos_generales.marca ? datos_generales.marca : '-'}
+							</Typography>
+						</ul>
+					</Box>
+					{imagenes.length > 1 ? (
+						<Fragment>
+							<Box mt={1}>
+								<Typography variant="h6">Más imagenes</Typography>
+								<Divider />
+							</Box>
+							{imagenes.map((res, index) => {
+								return (
+									<Box
+										mt={1}
+										key={index}
+										height={120}
+										width={120}
+										display="flex"
+										justifyContent="center"
+										alignItems="center"
+									>
+										<Avatar className={classes.avatar} src={res.url_imagen} />
+									</Box>
+								);
+							})}
+						</Fragment>
+					) : null}
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleDetalles} color="primary" variant="contained" size="large">
+						Cerrar
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</div>
+	);
+};

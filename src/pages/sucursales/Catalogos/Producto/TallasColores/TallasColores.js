@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Box, Button, FormControl, Grid, Select, Typography, MenuItem, Divider } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core';
 
 import { Add, Done } from '@material-ui/icons';
 import TablaPresentaciones from './TablaPresentaciones';
+import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
+import { AlmacenProvider } from '../../../../../context/Almacenes/crearAlmacen';
+import ContainerRegistroAlmacen from '../../../Almacenes/RegistroAlmacen/ContainerRegistroAlmacen';
 
 const useStyles = makeStyles((theme) => ({
 	colorContainer: {
@@ -14,12 +17,22 @@ const useStyles = makeStyles((theme) => ({
 		width: 50,
 		margin: 1,
 		borderRadius: '100%',
-		cursor: "pointer"
+		cursor: 'pointer'
 	}
 }));
 
-export default function ColoresTallas() {
-	const colores = ["#452299", '#1ADA12', '#D712DA', '#DA3D12', '#12DAB9', '#F5DD0C']
+export default function ColoresTallas({ obtenerConsultasProducto, refetch }) {
+	const colores = [ '#452299', '#1ADA12', '#D712DA', '#DA3D12', '#12DAB9', '#F5DD0C' ];
+	const { almacen_inicial, setAlmacenInicial } = useContext(RegProductoContext);
+	const { almacenes } = obtenerConsultasProducto;
+
+	const obtenerAlmacenes = (event, child) => {
+		setAlmacenInicial({
+			...almacen_inicial,
+			[event.target.name]: event.target.value,
+			[child.props.name]: child.props.id
+		});
+	};
 
 	return (
 		<div>
@@ -28,7 +41,45 @@ export default function ColoresTallas() {
 					<TablaPresentaciones />
 				</Grid>
 				<Grid item md={3}>
-					<Box width="100%">
+					<Box width="100%" mb={2}>
+						<Typography>Almacen</Typography>
+						<Box display="flex">
+							<FormControl
+								variant="outlined"
+								fullWidth
+								size="small"
+								name="almacen"
+								error={almacen_inicial.cantidad > 0 && !almacen_inicial.almacen}
+							>
+								<Select name="almacen" value={almacen_inicial.almacen} onChange={obtenerAlmacenes}>
+									<MenuItem value="">
+										<em>Seleccione uno</em>
+									</MenuItem>
+									{almacenes ? (
+										almacenes.map((res) => {
+											return (
+												<MenuItem
+													name="id_almacen"
+													key={res._id}
+													value={res.nombre_almacen}
+													id={res._id}
+												>
+													{res.nombre_almacen}
+												</MenuItem>
+											);
+										})
+									) : (
+										<MenuItem value="" />
+									)}
+								</Select>
+							</FormControl>
+							<AlmacenProvider>
+								<ContainerRegistroAlmacen accion="registrar" refetch={refetch} />
+							</AlmacenProvider>
+						</Box>
+					</Box>
+					<Divider />
+					<Box width="100%" mt={1}>
 						<Typography>Talla</Typography>
 						<Box display="flex">
 							<FormControl variant="outlined" fullWidth size="small">
@@ -59,9 +110,7 @@ export default function ColoresTallas() {
 								<Add />crear
 							</Button>
 						</Box>
-						<Grid container>
-							{colores.map((color, index) => <Colores key={index} color={color}  />)}
-						</Grid>
+						<Grid container>{colores.map((color, index) => <Colores key={index} color={color} />)}</Grid>
 					</Box>
 					<Box mb={5} mt={1}>
 						<Button fullWidth color="primary" variant="contained" startIcon={<Done />}>
@@ -74,7 +123,7 @@ export default function ColoresTallas() {
 	);
 }
 
-const Colores = ({color}) => {
+const Colores = ({ color }) => {
 	const classes = useStyles();
 	const theme = useTheme();
 
@@ -90,9 +139,7 @@ const Colores = ({color}) => {
 				}}
 				onClick={() => setSelected(!selected)}
 			>
-				{selected ? (
-					<Done />
-				) : null}
+				{selected ? <Done /> : null}
 			</div>
 		</Grid>
 	);

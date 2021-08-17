@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, } from 'react';
+import React, { Fragment, useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider } from '@material-ui/core';
 import { Box, FormControl, MenuItem, Select, TextField, Typography, Grid } from '@material-ui/core';
@@ -6,9 +6,9 @@ import 'date-fns';
 import local from 'date-fns/locale/es';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
-import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
-import ContainerRegistroAlmacen from '../../Almacenes/RegistroAlmacen/ContainerRegistroAlmacen';
-import { AlmacenProvider } from '../../../../context/Almacenes/crearAlmacen';
+import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
+import ContainerRegistroAlmacen from '../../../Almacenes/RegistroAlmacen/ContainerRegistroAlmacen';
+import { AlmacenProvider } from '../../../../../context/Almacenes/crearAlmacen';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {
@@ -24,9 +24,16 @@ const useStyles = makeStyles((theme) => ({
 
 export default function RegistroAlmacenInicial({ obtenerConsultasProducto, refetch }) {
 	const classes = useStyles();
-	const { precios, setPrecios, almacen_inicial, setAlmacenInicial, selectedDate, setSelectedDate } = useContext(
-		RegProductoContext
-	);
+	const {
+		datos_generales,
+		precios,
+		setPrecios,
+		almacen_inicial,
+		setAlmacenInicial,
+		selectedDate,
+		setSelectedDate,
+		update
+	} = useContext(RegProductoContext);
 	const { almacenes } = obtenerConsultasProducto;
 
 	/*ARMAR OBJETO DE INVENTARIO  */
@@ -168,9 +175,9 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto, refet
 									<MenuItem value="">
 										<em>NINGUNA</em>
 									</MenuItem>
-									<MenuItem value="KILOGRAMOS">KILOGRAMOS</MenuItem>
-									<MenuItem value="COSTALES">COSTALES</MenuItem>
-									<MenuItem value="LITROS">LITROS</MenuItem>
+									<MenuItem value="Kg">Kg</MenuItem>
+									<MenuItem value="Costal">Costal</MenuItem>
+									<MenuItem value="Lt">Lt</MenuItem>
 								</Select>
 							) : (
 								<Select
@@ -181,96 +188,100 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto, refet
 									<MenuItem value="">
 										<em>NINGUNA</em>
 									</MenuItem>
-									<MenuItem value="CAJAS">CAJAS</MenuItem>
-									<MenuItem value="PIEZAS">PIEZAS</MenuItem>
+									<MenuItem value="Caja">Caja</MenuItem>
+									<MenuItem value="Pz">Pz</MenuItem>
 								</Select>
 							)}
 						</FormControl>
 					</Box>
 				</Box>
 			</Box>
-			<Box mt={3}>
-				<Typography>
-					<b>Almacen incial</b>
-				</Typography>
-				<Divider />
-			</Box>
-			<div className={classes.formInputFlex}>
-				<Box width="100%">
-					<Typography>
-						Cantidad inicial en <b>{precios.unidad_de_compra.unidad}</b>
-					</Typography>
-					<Box display="flex">
-						<TextField
-							fullWidth
-							type="number"
-							InputProps={{ inputProps: { min: 0 } }}
-							size="small"
-							name="cantidad"
-							variant="outlined"
-							value={almacen_inicial.cantidad}
-							onChange={obtenerAlmacenInicial}
-							onBlur={() => verificarCampoVacio('almacen', 'cantidad', almacen_inicial.cantidad)}
-							error={almacen_inicial.cantidad === ''}
-						/>
+			{update ? null : datos_generales.tipo_producto === 'OTROS' ? (
+				<Fragment>
+					<Box mt={3}>
+						<Typography>
+							<b>Almacen incial</b>
+						</Typography>
+						<Divider />
 					</Box>
-				</Box>
-				<Box width="100%">
-					<Typography>Almacen</Typography>
-					<Box display="flex">
-						<FormControl
-							variant="outlined"
-							fullWidth
-							size="small"
-							name="almacen"
-							error={almacen_inicial.cantidad > 0 && !almacen_inicial.almacen}
-						>
-							<Select name="almacen" value={almacen_inicial.almacen} onChange={obtenerAlmacenes}>
-								<MenuItem value="">
-									<em>Seleccione uno</em>
-								</MenuItem>
-								{almacenes ? (
-									almacenes.map((res) => {
-										return (
-											<MenuItem
-												name="id_almacen"
-												key={res._id}
-												value={res.nombre_almacen}
-												id={res._id}
-											>
-												{res.nombre_almacen}
-											</MenuItem>
-										);
-									})
-								) : (
-									<MenuItem value="" />
-								)}
-							</Select>
-						</FormControl>
-						<AlmacenProvider>
-							<ContainerRegistroAlmacen accion="registrar" refetch={refetch} />
-						</AlmacenProvider>
-					</Box>
-				</Box>
-				<Box width="100%">
-					<Typography>Fecha de expiración</Typography>
-					<MuiPickersUtilsProvider utils={DateFnsUtils} locale={local}>
-						<Grid container justify="space-around">
-							<KeyboardDatePicker
-								margin="dense"
-								id="date-picker-dialog"
-								placeholder="ex: DD/MM/AAAA"
-								format="dd/MM/yyyy"
-								value={selectedDate}
-								onChange={handleDateChange}
-								KeyboardButtonProps={{
-									'aria-label': 'change date'
-								}}
-							/>
-						</Grid>
-					</MuiPickersUtilsProvider>
-				</Box>
-			</div>
+					<div className={classes.formInputFlex}>
+						<Box width="100%">
+							<Typography>
+								Cantidad inicial en <b>{precios.unidad_de_compra.unidad}</b>
+							</Typography>
+							<Box display="flex">
+								<TextField
+									fullWidth
+									type="number"
+									InputProps={{ inputProps: { min: 0 } }}
+									size="small"
+									name="cantidad"
+									variant="outlined"
+									value={almacen_inicial.cantidad}
+									onChange={obtenerAlmacenInicial}
+									onBlur={() => verificarCampoVacio('almacen', 'cantidad', almacen_inicial.cantidad)}
+									error={almacen_inicial.cantidad === ''}
+								/>
+							</Box>
+						</Box>
+						<Box width="100%">
+							<Typography>Almacen</Typography>
+							<Box display="flex">
+								<FormControl
+									variant="outlined"
+									fullWidth
+									size="small"
+									name="almacen"
+									error={almacen_inicial.cantidad > 0 && !almacen_inicial.almacen}
+								>
+									<Select name="almacen" value={almacen_inicial.almacen} onChange={obtenerAlmacenes}>
+										<MenuItem value="">
+											<em>Seleccione uno</em>
+										</MenuItem>
+										{almacenes ? (
+											almacenes.map((res) => {
+												return (
+													<MenuItem
+														name="id_almacen"
+														key={res._id}
+														value={res.nombre_almacen}
+														id={res._id}
+													>
+														{res.nombre_almacen}
+													</MenuItem>
+												);
+											})
+										) : (
+											<MenuItem value="" />
+										)}
+									</Select>
+								</FormControl>
+								<AlmacenProvider>
+									<ContainerRegistroAlmacen accion="registrar" refetch={refetch} />
+								</AlmacenProvider>
+							</Box>
+						</Box>
+						<Box width="100%">
+							<Typography>Fecha de expiración</Typography>
+							<MuiPickersUtilsProvider utils={DateFnsUtils} locale={local}>
+								<Grid container justify="space-around">
+									<KeyboardDatePicker
+										margin="dense"
+										id="date-picker-dialog"
+										placeholder="ex: DD/MM/AAAA"
+										format="dd/MM/yyyy"
+										value={selectedDate}
+										onChange={handleDateChange}
+										KeyboardButtonProps={{
+											'aria-label': 'change date'
+										}}
+									/>
+								</Grid>
+							</MuiPickersUtilsProvider>
+						</Box>
+					</div>
+				</Fragment>
+			) : null}
 		</Fragment>
 	);
 }

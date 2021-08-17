@@ -70,10 +70,10 @@ function EnhancedTableHead(props) {
 EnhancedTableHead.propTypes = {
 	classes: PropTypes.object.isRequired,
 	numSelected: PropTypes.number.isRequired,
-	onRequestSort: PropTypes.func.isRequired,
+	/* onRequestSort: PropTypes.func.isRequired, */
 	onSelectAllClick: PropTypes.func.isRequired,
-	order: PropTypes.oneOf([ 'asc', 'desc' ]).isRequired,
-	orderBy: PropTypes.string.isRequired,
+	/* order: PropTypes.oneOf([ 'asc', 'desc' ]).isRequired, */
+	/* orderBy: PropTypes.string.isRequired, */
 	rowCount: PropTypes.number.isRequired
 };
 
@@ -105,7 +105,7 @@ export default function TablaPresentaciones() {
 	const classes = useStyles();
 	const [ selected, setSelected ] = useState([]);
 	const [ page, setPage ] = useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = useState(6);
+	const [ rowsPerPage, setRowsPerPage ] = useState(7);
 
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {

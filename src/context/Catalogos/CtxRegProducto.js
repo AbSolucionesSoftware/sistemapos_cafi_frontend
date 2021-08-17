@@ -10,6 +10,7 @@ import {
 	initial_state_preciosPlazos,
 	initial_state_subcategorias,
 	initial_state_imagenes,
+	initial_state_imagenes_eliminadas,
 	initial_state_onPreview,
 	initial_state_validacion,
 	initial_state_subcostos,
@@ -30,10 +31,12 @@ export const RegProductoProvider = ({ children }) => {
 	const [preciosPlazos, setPreciosPlazos] = useState(initial_state_preciosPlazos);
 	const [subcategorias, setSubcategorias] = useState(initial_state_subcategorias);
 	const [imagenes, setImagenes] = useState(initial_state_imagenes);
+	const [imagenes_eliminadas, setImagenesEliminadas] = useState(initial_state_imagenes_eliminadas);
 	const [onPreview, setOnPreview] = useState(initial_state_onPreview);
 	const [validacion, setValidacion] = useState(initial_state_validacion);
 	const [subcostos, setSubcostos] = useState(initial_state_subcostos);
 	const [selectedDate, setSelectedDate] = useState(initial_state_selectedDate);
+	const [ update, setUpdate ] = useState(false);
 
 	return (
 		<RegProductoContext.Provider
@@ -46,6 +49,8 @@ export const RegProductoProvider = ({ children }) => {
 				setAlmacenInicial,
 				imagenes,
 				setImagenes,
+				imagenes_eliminadas,
+				setImagenesEliminadas,
 				onPreview,
 				setOnPreview,
 				validacion,
@@ -65,7 +70,9 @@ export const RegProductoProvider = ({ children }) => {
 				subcostos,
 				setSubcostos,
 				selectedDate,
-				setSelectedDate
+				setSelectedDate,
+				update, 
+				setUpdate
 			}}
 		>
 			{children}
