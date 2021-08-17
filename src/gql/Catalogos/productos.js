@@ -35,10 +35,10 @@ export const OBTENER_CONSULTAS = gql`
 			}
 			centro_costos {
 				_id
-				costo
-				subcostos {
+				cuenta
+				subcuentas {
 					_id
-					subcosto
+					subcuenta
 				}
 			}
 		}
@@ -62,6 +62,15 @@ export const OBTENER_PRODUCTOS = gql`
 				cuenta
 				id_sub_cuenta
 				sub_cuenta
+			}
+			unidades_de_venta {
+				_id
+				precio
+				cantidad
+				unidad_principal
+				codigo_barras
+				id_producto
+				default
 			}
 			datos_generales {
 				codigo_barras
@@ -130,6 +139,11 @@ export const OBTENER_PRODUCTOS = gql`
 					precio_unitario_con_impuesto
 					precio_unitario_sin_impuesto
 					unidad
+				}
+				inventario {
+					inventario_minimo
+					inventario_maximo
+					unidad_de_inventario
 				}
 				granel
 			}

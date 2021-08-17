@@ -39,7 +39,8 @@ import {
 	initial_state_imagenes,
 	initial_state_onPreview,
 	initial_state_validacion,
-	initial_state_subcostos
+	initial_state_subcostos,
+	initial_state_imagenes_eliminadas
 } from '../../../../context/Catalogos/initialStatesProducto';
 import { Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
@@ -109,23 +110,40 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function CrearProducto({ accion, datos }) {
+export default function CrearProducto({ accion, datos, productosRefetch }) {
 	const classes = useStyles();
 	const [ open, setOpen ] = useState(false);
 	const [ value, setValue ] = useState(0);
-	const { datos_generales, setDatosGenerales, precios, setPrecios, validacion, setValidacion } = useContext(
-		RegProductoContext
-	);
-	const { preciosP, setPreciosP, imagenes, setImagenes, unidadesVenta, setUnidadesVenta } = useContext(
-		RegProductoContext
-	);
-	const { almacen_inicial, setAlmacenInicial, unidadVentaXDefecto } = useContext(RegProductoContext);
-	const { setUnidadVentaXDefecto, centro_de_costos, setCentroDeCostos, update, setUpdate } = useContext(
-		RegProductoContext
-	);
-	const { preciosPlazos, setPreciosPlazos, setSubcategorias, setOnPreview, setSubcostos } = useContext(
-		RegProductoContext
-	);
+	const {
+		datos_generales,
+		setDatosGenerales,
+		precios,
+		setPrecios,
+		validacion,
+		setValidacion,
+		preciosP,
+		setPreciosP,
+		imagenes,
+		setImagenes,
+		unidadesVenta,
+		setUnidadesVenta,
+		almacen_inicial,
+		setAlmacenInicial,
+		unidadVentaXDefecto,
+		setUnidadVentaXDefecto,
+		centro_de_costos,
+		setCentroDeCostos,
+		update,
+		setUpdate,
+		preciosPlazos,
+		setPreciosPlazos,
+		setSubcategorias,
+		setOnPreview,
+		setSubcostos,
+		imagenes_eliminadas,
+		setImagenesEliminadas
+	} = useContext(RegProductoContext);
+
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
@@ -147,7 +165,7 @@ export default function CrearProducto({ accion, datos }) {
 
 	const saveData = async () => {
 		const validate = validaciones(datos_generales, precios, almacen_inicial);
-
+		
 		if (validate.error) {
 			setValidacion(validate);
 			return;
@@ -163,10 +181,16 @@ export default function CrearProducto({ accion, datos }) {
 
 		precios.precios_producto = preciosP;
 
-		const input = {
+		let imagenes_without_aws = imagenes;
+		if (update) {
+			imagenes_without_aws = imagenes.filter((res) => !res.key_imagen);
+		}
+
+		let input = {
 			datos_generales,
 			precios,
-			imagenes,
+			imagenes: imagenes_without_aws,
+			imagenes_eliminadas,
 			almacen_inicial,
 			centro_de_costos,
 			unidades_de_venta: unidadesVenta,
@@ -177,17 +201,22 @@ export default function CrearProducto({ accion, datos }) {
 		};
 
 		console.log(input);
+
 		setLoading(true);
 		try {
-			await crearProducto({
-				variables: {
-					input
-				}
-			});
-			resetInitialStates();
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
-			setLoading(false);
-			toggleModal();
+			if (update) {
+			} else {
+				await crearProducto({
+					variables: {
+						input
+					}
+				});
+				resetInitialStates();
+				productosRefetch();
+				setAlert({ message: '¡Listo!', status: 'success', open: true });
+				setLoading(false);
+				toggleModal();
+			}
 		} catch (error) {
 			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
@@ -210,33 +239,49 @@ export default function CrearProducto({ accion, datos }) {
 		setOnPreview(initial_state_onPreview);
 		setValidacion(initial_state_validacion);
 		setSubcostos(initial_state_subcostos);
+		setImagenesEliminadas(initial_state_imagenes_eliminadas);
 	};
 
 	/* SET STATES WHEN UPDATING */
 	const setInitialStates = () => {
+		const { precios_producto, ...new_precios } = datos.precios;
+		const unidadxdefecto = datos.unidades_de_venta.filter((res) => res.default);
+
 		setDatosGenerales(datos.datos_generales);
-		setPrecios(datos.precios);
-		setPreciosP(datos.precios.precios_producto); /*  */
-		/* setUnidadesVenta(datos.unidadesVenta); */
-		setCentroDeCostos(datos.centro_de_costos); /*  */
-		setPreciosPlazos(datos.precios_plazos); /*  */
-		setImagenes(datos.imagenes); /*  */
+		setPrecios(new_precios);
+		setCentroDeCostos(datos.centro_de_costos);
+		setImagenes(datos.imagenes);
+		setPreciosPlazos(datos.precio_plazos);
+		setUnidadesVenta(datos.unidades_de_venta);
+		setPreciosP(datos.precios.precios_producto);
+		setUnidadVentaXDefecto(unidadxdefecto[0]);
 	};
-console.log(update);
-	useEffect(() => {
-		if(update){
-			setInitialStates();
-			console.log("entra");
-		}else{
-			resetInitialStates();
-		}
-	}, [ update ])
+
+	useEffect(
+		() => {
+			if (update && datos) {
+				setInitialStates();
+			} else {
+				resetInitialStates();
+			}
+		},
+		[ update ]
+	);
+
+	 function funcion_tecla(event) {
+	 	const {keyCode} = event;
+	 	if(keyCode === 114){
+			document.getElementById('modal-registro-product').click(); 
+	 	}
+	 } /* CODIGO PARA PODER EJECUTAR LAS VENTANAS A BASE DE LAS TECLAS */
+
+	 window.onkeydown = funcion_tecla;
 
 	return (
 		<Fragment>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			{!accion ? (
-				<Button color="primary" variant="contained" size="large" onClick={() => toggleModal()}>
+				<Button id="modal-registro-product" color="primary" variant="contained" size="large" onClick={() => toggleModal()}>
 					Nuevo producto
 				</Button>
 			) : (
@@ -426,6 +471,8 @@ const ContenidoModal = ({ value }) => {
 
 	const { obtenerConsultasProducto } = data;
 
+	console.log(obtenerConsultasProducto);
+
 	return (
 		<div className={classes.root}>
 			<TabPanel value={value} index={0}>
@@ -438,7 +485,7 @@ const ContenidoModal = ({ value }) => {
 				<RegistroAlmacenInicial obtenerConsultasProducto={obtenerConsultasProducto} refetch={refetch} />
 			</TabPanel>
 			<TabPanel value={value} index={3}>
-				<CentroCostos obtenerConsultasProducto={obtenerConsultasProducto} />
+				<CentroCostos obtenerConsultasProducto={obtenerConsultasProducto} refetch={refetch} />
 			</TabPanel>
 			<TabPanel value={value} index={4}>
 				<PrecioPlazos />
@@ -447,7 +494,7 @@ const ContenidoModal = ({ value }) => {
 				<CargarImagenesProducto />
 			</TabPanel>
 			<TabPanel value={value} index={6}>
-				<ColoresTallas />
+				<ColoresTallas obtenerConsultasProducto={obtenerConsultasProducto} refetch={refetch} />
 			</TabPanel>
 		</div>
 	);

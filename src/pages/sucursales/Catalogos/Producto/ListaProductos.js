@@ -8,10 +8,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import { OBTENER_PRODUCTOS } from '../../../../gql/Catalogos/productos';
-import { useQuery } from '@apollo/client';
 import {
-	CircularProgress,
 	Box,
 	IconButton,
 	Dialog,
@@ -19,12 +16,10 @@ import {
 	DialogContent,
 	Typography,
 	Divider,
-	Grid,
 	DialogActions,
 	Button,
 	Avatar
 } from '@material-ui/core';
-import ErrorPage from '../../../../components/ErrorPage';
 import { CropOriginal, Dehaze } from '@material-ui/icons';
 import CrearProducto from './crearProducto';
 
@@ -41,20 +36,10 @@ const useStyles = makeStyles({
 	}
 });
 
-export default function ListaProductos() {
+export default function ListaProductos({obtenerProductos}) {
 	const classes = useStyles();
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(10);
-	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
-	const [ filtro, setFiltro ] = useState('');
-
-	/* Queries */
-	const { loading, data, error, refetch } = useQuery(OBTENER_PRODUCTOS, {
-		variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id, filtro }
-	});
-
-	
-
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
 	};
@@ -63,20 +48,6 @@ export default function ListaProductos() {
 		setRowsPerPage(+event.target.value);
 		setPage(0);
 	};
-
-	if (loading)
-		return (
-			<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
-				<CircularProgress />
-			</Box>
-		);
-	if (error) {
-		return <ErrorPage error={error} />;
-	}
-
-	const { obtenerProductos } = data;
-
-	console.log(obtenerProductos);
 
 	return (
 		<Paper className={classes.root}>
