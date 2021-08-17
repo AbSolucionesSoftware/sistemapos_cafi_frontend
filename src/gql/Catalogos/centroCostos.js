@@ -1,10 +1,10 @@
 import { gql } from '@apollo/client';
 
-export const CREAR_COSTO = gql`
-	mutation crearCosto($input: CrearCostosInput) {
-		crearCosto(input: $input) {
+export const CREAR_CUENTA = gql`
+	mutation crearCuenta($input: CrearCuentasInput) {
+		crearCuenta(input: $input) {
 			_id
-			costo
+			cuenta
 			empresa {
 				_id
 				nombre_empresa
@@ -20,37 +20,37 @@ export const CREAR_COSTO = gql`
 		}
 	}
 `;
-export const CREAR_SUBCOSTO= gql`
-	mutation crearSubcosto($idCosto: ID!, $input: CrearSubcostosInput) {
-		crearSubcosto(idCosto: $idCosto, input: $input) {
+export const CREAR_SUBCUENTA= gql`
+	mutation crearSubcuenta($idCuenta: ID!, $input: CrearSubcuentasInput) {
+		crearSubcuenta(idCuenta: $idCuenta, input: $input) {
 			message
 		}
 	}
 `;
 
-export const ACTUALIZAR_COSTO= gql`
-	mutation actualizarCosto($idCosto: ID!, $input: ActualizarCostosInput) {
-		actualizarCosto(idCosto: $idCosto, input: $input) {
+export const ACTUALIZAR_CUENTA= gql`
+	mutation actualizarCuenta($idCuenta: ID!, $input: ActualizarCuentasInput) {
+		actualizarCuenta(idCuenta: $idCuenta, input: $input) {
 			message
 		}
 	}
 `;
-export const ACTUALIZAR_SUBCOSTO = gql`
-	mutation actualizarSubcosto($idCosto: ID!, $idSubcosto: ID!, $input: ActualizarSubcostosInput) {
-		actualizarSubcosto(idCosto: $idCosto, idSubcosto: $idSubcosto, input: $input) {
+export const ACTUALIZAR_SUBCUENTA = gql`
+	mutation actualizarSubcuenta($idCuenta: ID!, $idSubcuenta: ID!, $input: ActualizarSubcuentasInput) {
+		actualizarSubcosto(idCosto: $idCuenta, idSubcuenta: $idSubcuenta, input: $input) {
 			message
 		}
 	}
 `;
 
-export const OBTENER_COSTOS = gql`
-	query obtenerCostos($empresa: ID!, $sucursal: ID!) {
-		obtenerCostos(empresa: $empresa, sucursal: $sucursal) {
+export const OBTENER_CUENTAS = gql`
+	query obtenerCuentas($empresa: ID!, $sucursal: ID!) {
+		obtenerCuentas(empresa: $empresa, sucursal: $sucursal) {
 			_id
-			costo
-			subcostos {
+			cuenta
+			subcuentas {
 				_id
-				subcosto
+				subcuenta
 			}
 			empresa {
 				_id
@@ -68,16 +68,16 @@ export const OBTENER_COSTOS = gql`
 	}
 `;
 
-export const ELIMINAR_COSTO = gql`
-	mutation eliminarCosto($id: ID!) {
-		eliminarCosto(id: $id) {
+export const ELIMINAR_CUENTA = gql`
+	mutation eliminarCuenta($id: ID!) {
+		eliminarCuenta(id: $id) {
 			message
 		}
 	}
 `; 
-export const ELIMINAR_SUBCOSTO = gql`
-	mutation eliminarSubcosto($idCosto: ID!, $idSubcosto: ID!) {
-		eliminarSubcosto(idCosto: $idCosto, idSubcosto: $idSubcosto) {
+export const ELIMINAR_SUBCUENTA = gql`
+	mutation eliminarSubcuenta($idCuenta: ID!, $idSubcuenta: ID!) {
+		eliminarSubcuenta(idCuenta: $idCuenta, idSubcuenta: $idSubcuenta) {
 			message
 		}
 	}

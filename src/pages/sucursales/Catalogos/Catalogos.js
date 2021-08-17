@@ -6,7 +6,7 @@ import Tallas from './Tallas/Tallas';
 /* import UnidadMedida from './UnidadMedida/UnidadMedida'; */
 import Contabilidad from './Contabilidad/Contabilidad';
 import Proveedores from './Proveedores/Proovedores';
-/* import Cajas from './Cajas/Cajas'; */
+import Cajas from './Cajas/Cajas'; 
 import Descuentos from './Descuentos/Descuentos';
 import Usuarios from './Usuarios/Usuarios';
 import Departamentos from './Departamentos/Departamentos';
@@ -50,11 +50,11 @@ export default function Catalogos() {
 						<Proveedores />
 					</Box>
 				</Grid>
-				{/* <Grid item lg={2}>
+				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Cajas />
 					</Box>
-				</Grid> */}
+				</Grid>
 				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Descuentos />

@@ -56,9 +56,11 @@ export default function ConceptosAlmacen() {
 						<Typography variant="h6" className={classes.title}>
 							Conceptos almacén
 						</Typography>
-						<Button autoFocus color="inherit" size="large" onClick={handleClose} startIcon={<CloseIcon />}>
-							Cerrar
-						</Button>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
 				<Box mt={4}>
