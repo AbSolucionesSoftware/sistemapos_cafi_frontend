@@ -182,14 +182,11 @@ export default function InformacionFiscal() {
 						<Typography variant="h6" className={classes.title}>
 							Información fiscal
 						</Typography>
-						<Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClose}>
-                                Cerrar
-                            </Button>
-                        </Box>
-						<IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-							<CloseIcon />
-						</IconButton>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
 
@@ -420,12 +417,10 @@ export default function InformacionFiscal() {
 					</Box>
 				</form>
 				<DialogActions>
-					<Button onClick={handleClose} color="primary">
-						Cancelar
-					</Button>
 					<Button
 						onClick={()=>actEmp()}
 						color="primary"
+						size="large"
 						variant="contained"
 						autoFocus
 						endIcon={loading ? <CircularProgress color="inherit" size={25} /> : null}
