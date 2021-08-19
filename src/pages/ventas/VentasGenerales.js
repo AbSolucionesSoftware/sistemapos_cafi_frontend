@@ -23,7 +23,7 @@ export default function VentasGenerales() {
             <Grid container>
                 <Grid item lg={2}>
                     <Box className={classes.containerImage}>
-                        <img alt="imagen de empresa" src={"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fintrepidplan.com%2Fwp-content%2Fuploads%2F2020%2F02%2Fcropped-favicon-150x150_op.png&f=1&nofb=1"} className={classes.imagen} />
+                        <img alt="imagen de empresa" src={"https://duckduckgo.com/?q=fotos+150x150&atb=v255-1&iax=images&ia=images&iai=https%3A%2F%2Fintrepidplan.com%2Fwp-content%2Fuploads%2F2020%2F02%2Fcropped-favicon-150x150_op.png"} className={classes.imagen} />
                     </Box>
                 </Grid>
                 <Grid item lg={8}>
@@ -111,7 +111,7 @@ export default function VentasGenerales() {
                     <Box display='flex' justifyContent="flex-end"
                     >
                         <Box className={classes.containerImage} >
-                            <img alt="imagen de empresa" src={"https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fintrepidplan.com%2Fwp-content%2Fuploads%2F2020%2F02%2Fcropped-favicon-150x150_op.png&f=1&nofb=1"} className={classes.imagen} />
+                            <img alt="imagen de empresa" src={"https://duckduckgo.com/?q=fotos+150x150&atb=v255-1&iax=images&ia=images&iai=https%3A%2F%2Fintrepidplan.com%2Fwp-content%2Fuploads%2F2020%2F02%2Fcropped-favicon-150x150_op.png"} className={classes.imagen} />
                         </Box>
                     </Box>
                 </Grid>
