@@ -76,8 +76,8 @@ export const ELIMINAR_CUENTA = gql`
 	}
 `; 
 export const ELIMINAR_SUBCUENTA = gql`
-	mutation eliminarSubcosto($idCosto: ID!, $idSubcosto: ID!) {
-		eliminarSubcosto(idCosto: $idCosto, idSubcosto: $idSubcosto) {
+	mutation eliminarSubcuenta($idCuenta: ID!, $idSubcuenta: ID!) {
+		eliminarSubcuenta(idCuenta: $idCuenta, idSubcuenta: $idSubcuenta) {
 			message
 		}
 	}
