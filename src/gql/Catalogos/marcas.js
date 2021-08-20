@@ -17,6 +17,18 @@ export const REGISTRAR_MARCAS = gql`
     }
 `;
 
-/* export const ACTUALIZAR_MARCAS = gql`
+export const ACTUALIZAR_MARCAS = gql`
+    mutation actualzarMarcas($input: MarcasInput, $id: ID!, $empresa: ID!, $sucursal: ID! ) {
+		actualzarMarcas(id: $id, input: $input, empresa: $empresa, sucursal: $sucursal) {
+			message
+		}
+	}
+`;
 
-`; */
+export const ELIMINAR_MARCAS = gql`
+	mutation eliminarMarca($id: ID!, $empresa: ID!, $sucursal: ID!) {
+		eliminarMarca(id: $id, empresa: $empresa, sucursal: $sucursal) {
+			message
+		}
+	}
+`;
