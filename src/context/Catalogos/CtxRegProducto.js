@@ -14,8 +14,8 @@ import {
 	initial_state_onPreview,
 	initial_state_validacion,
 	initial_state_subcostos,
-	initial_state_selectedDate
-
+	initial_state_selectedDate,
+	initial_state_presentaciones,
 } from './initialStatesProducto';
 
 export const RegProductoContext = createContext();
@@ -37,6 +37,7 @@ export const RegProductoProvider = ({ children }) => {
 	const [subcostos, setSubcostos] = useState(initial_state_subcostos);
 	const [selectedDate, setSelectedDate] = useState(initial_state_selectedDate);
 	const [ update, setUpdate ] = useState(false);
+	const [ presentaciones, setPresentaciones ] = useState(initial_state_presentaciones);
 
 	return (
 		<RegProductoContext.Provider
@@ -72,7 +73,9 @@ export const RegProductoProvider = ({ children }) => {
 				selectedDate,
 				setSelectedDate,
 				update, 
-				setUpdate
+				setUpdate,
+				presentaciones, 
+				setPresentaciones
 			}}
 		>
 			{children}

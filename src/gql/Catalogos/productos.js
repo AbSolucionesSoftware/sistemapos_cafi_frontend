@@ -29,6 +29,11 @@ export const OBTENER_CONSULTAS = gql`
 				talla
 				tipo
 			}
+			calzados {
+				_id
+				talla
+				tipo
+			}
 			almacenes {
 				_id
 				nombre_almacen
@@ -60,8 +65,8 @@ export const OBTENER_PRODUCTOS = gql`
 			centro_de_costos {
 				id_cuenta
 				cuenta
-				id_sub_cuenta
-				sub_cuenta
+				id_subcuenta
+				subcuenta
 			}
 			unidades_de_venta {
 				_id
@@ -153,13 +158,15 @@ export const OBTENER_PRODUCTOS = gql`
 	}
 `;
 
-/* export const ACTUALIZAR_TALLA = gql`
-	mutation actualizarTalla($input: ActualizarTallaInput, $id: ID!) {
-		actualizarTalla(id: $id, input: $input) {
+export const ACTUALIZAR_PRODUCTO = gql`
+	mutation actualizarProducto($id: ID!, $input: ActualizarProductoInput) {
+		actualizarProducto(id: $id, input: $input) {
 			message
 		}
 	}
-`; */
+`;
+
+
 /* export const ELIMINAR_TALLA = gql`
 	mutation eliminarTalla($id: ID!) {
 		eliminarTalla(id: $id) {

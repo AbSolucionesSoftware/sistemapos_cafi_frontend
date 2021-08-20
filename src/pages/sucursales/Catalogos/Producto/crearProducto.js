@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useContext, useEffect } from 'react';
+import React, { useState, Fragment, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
@@ -21,7 +21,7 @@ import ColoresTallas from './TallasColores/TallasColores';
 import ErrorPage from '../../../../components/ErrorPage';
 
 import { useMutation, useQuery } from '@apollo/client';
-import { CREAR_PRODUCTO, OBTENER_CONSULTAS } from '../../../../gql/Catalogos/productos';
+import { CREAR_PRODUCTO, OBTENER_CONSULTAS, ACTUALIZAR_PRODUCTO } from '../../../../gql/Catalogos/productos';
 import { validaciones } from './validaciones';
 import CentroCostos from './CentroCostos/CentroCostos';
 import PrecioPlazos from './PrecioPlazos/PrecioPlazos';
@@ -150,11 +150,16 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 	const [ loading, setLoading ] = useState(false);
 
 	/* Mutations */
-	const [ crearProducto ] = useMutation(CREAR_PRODUCTO);
+	const [ crearProducto, actualizarProducto ] = useMutation(CREAR_PRODUCTO, ACTUALIZAR_PRODUCTO);
 
-	const toggleModal = () => {
+	const toggleModal = (producto) => {
 		setOpen(!open);
 		setUpdate(accion);
+		if(producto && accion){
+			setInitialStates(producto)
+		}else{
+			resetInitialStates();
+		}
 	};
 
 	const handleChange = (event, newValue) => {
@@ -205,18 +210,24 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setLoading(true);
 		try {
 			if (update) {
+				await actualizarProducto({
+					variables: {
+						input,
+						id: datos._id
+					}
+				});
 			} else {
 				await crearProducto({
 					variables: {
 						input
 					}
 				});
-				resetInitialStates();
-				productosRefetch();
-				setAlert({ message: '¡Listo!', status: 'success', open: true });
-				setLoading(false);
-				toggleModal();
 			}
+			resetInitialStates();
+			productosRefetch();
+			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			setLoading(false);
+			toggleModal();
 		} catch (error) {
 			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
@@ -243,30 +254,19 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 	};
 
 	/* SET STATES WHEN UPDATING */
-	const setInitialStates = () => {
-		const { precios_producto, ...new_precios } = datos.precios;
-		const unidadxdefecto = datos.unidades_de_venta.filter((res) => res.default);
+	const setInitialStates = (producto) => {
+		const { precios_producto, ...new_precios } = producto.precios;
+		const unidadxdefecto = producto.unidades_de_venta.filter((res) => res.default);
 
-		setDatosGenerales(datos.datos_generales);
+		setDatosGenerales(producto.datos_generales);
 		setPrecios(new_precios);
-		setCentroDeCostos(datos.centro_de_costos);
-		setImagenes(datos.imagenes);
-		setPreciosPlazos(datos.precio_plazos);
-		setUnidadesVenta(datos.unidades_de_venta);
-		setPreciosP(datos.precios.precios_producto);
+		setCentroDeCostos(producto.centro_de_costos ? producto.centro_de_costos : initial_state_centro_de_costos);
+		setImagenes(producto.imagenes);
+		setPreciosPlazos(producto.precio_plazos);
+		setUnidadesVenta(producto.unidades_de_venta);
+		setPreciosP(producto.precios.precios_producto);
 		setUnidadVentaXDefecto(unidadxdefecto[0]);
 	};
-
-	useEffect(
-		() => {
-			if (update && datos) {
-				setInitialStates();
-			} else {
-				resetInitialStates();
-			}
-		},
-		[ update ]
-	);
 
 	 function funcion_tecla(event) {
 	 	const {keyCode} = event;
@@ -285,7 +285,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 					Nuevo producto
 				</Button>
 			) : (
-				<IconButton color="primary" variant="contained" onClick={() => toggleModal()}>
+				<IconButton color="primary" variant="contained" onClick={() => toggleModal(datos)}>
 					<Edit />
 				</IconButton>
 			)}
@@ -375,7 +375,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 								icon={<img src={imagenesIcon} alt="icono imagenes" className={classes.iconSvg} />}
 								{...a11yProps(5)}
 							/>
-							{accion ? (
+							{accion ? datos_generales.tipo_producto !== "OTROS" ? (
 								<Tab
 									label="Tallas y colores"
 									icon={
@@ -383,7 +383,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 									}
 									{...a11yProps(6)}
 								/>
-							) : null}
+							) : null : null}
 						</Tabs>
 						<Box m={1}>
 							<Button variant="contained" color="secondary" onClick={() => toggleModal()} size="large">
@@ -396,7 +396,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 					<Backdrop className={classes.backdrop} open={loading}>
 						<CircularProgress color="inherit" />
 					</Backdrop>
-					<ContenidoModal value={value} />
+					<ContenidoModal value={value} datos={datos} />
 				</DialogContent>
 				<DialogActions style={{ display: 'flex', justifyContent: 'space-between' }}>
 					<Button
@@ -450,7 +450,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 	);
 }
 
-const ContenidoModal = ({ value }) => {
+const ContenidoModal = ({ value, datos }) => {
 	const classes = useStyles();
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
@@ -470,8 +470,6 @@ const ContenidoModal = ({ value }) => {
 	if (error) return <ErrorPage error={error} />;
 
 	const { obtenerConsultasProducto } = data;
-
-	console.log(obtenerConsultasProducto);
 
 	return (
 		<div className={classes.root}>
@@ -494,7 +492,7 @@ const ContenidoModal = ({ value }) => {
 				<CargarImagenesProducto />
 			</TabPanel>
 			<TabPanel value={value} index={6}>
-				<ColoresTallas obtenerConsultasProducto={obtenerConsultasProducto} refetch={refetch} />
+				<ColoresTallas obtenerConsultasProducto={obtenerConsultasProducto} refetch={refetch} datos={datos} />
 			</TabPanel>
 		</div>
 	);

@@ -71,21 +71,7 @@ export default function ListaProductos({obtenerProductos}) {
 							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 							.map((producto, index) => {
 								return (
-									<TableRow hover key={index}>
-										<TableCell>{producto.datos_generales.codigo_barras}</TableCell>
-										<TableCell>{producto.datos_generales.clave_alterna}</TableCell>
-										<TableCell>{producto.datos_generales.nombre_comercial}</TableCell>
-										<TableCell>{producto.datos_generales.nombre_generico}</TableCell>
-										<TableCell>{producto.datos_generales.descripcion}</TableCell>
-										<TableCell>{producto.datos_generales.tipo_producto}</TableCell>
-										<TableCell align="center">
-											<ModalDetalles producto={producto} />
-										</TableCell>
-										<TableCell align="center">
-											<CrearProducto accion={true} datos={producto} />
-										</TableCell>
-										{/* <TableCell align="center">Eliminar</TableCell> */}
-									</TableRow>
+									<RenderTableRows key={index} producto={producto} />
 								);
 							})}
 					</TableBody>
@@ -101,6 +87,27 @@ export default function ListaProductos({obtenerProductos}) {
 				onChangeRowsPerPage={handleChangeRowsPerPage}
 			/>
 		</Paper>
+	);
+}
+
+const RenderTableRows = ({producto}) => {
+
+	return (
+		<TableRow hover>
+			<TableCell>{producto.datos_generales.codigo_barras}</TableCell>
+			<TableCell>{producto.datos_generales.clave_alterna}</TableCell>
+			<TableCell>{producto.datos_generales.nombre_comercial}</TableCell>
+			<TableCell>{producto.datos_generales.nombre_generico}</TableCell>
+			<TableCell>{producto.datos_generales.descripcion}</TableCell>
+			<TableCell>{producto.datos_generales.tipo_producto}</TableCell>
+			<TableCell align="center">
+				<ModalDetalles producto={producto} />
+			</TableCell>
+			<TableCell align="center">
+				<CrearProducto accion={true} datos={producto} />
+			</TableCell>
+			{/* <TableCell align="center">Eliminar</TableCell> */}
+		</TableRow>
 	);
 }
 

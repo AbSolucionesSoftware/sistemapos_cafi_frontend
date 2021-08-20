@@ -83,7 +83,7 @@ export default function CentroCostos({ obtenerConsultasProducto, refetch }) {
                                 {subcostos ? subcostos.map((res) => {
                                     return (
                                         <MenuItem
-                                            name="id_sub_cuenta"
+                                            name="id_subcuenta"
                                             key={res._id}
                                             value={res.subcuenta}
                                             id={res._id}
@@ -162,12 +162,12 @@ const RegistrarNuevoSelect = ({ tipo, name, refetch }) => {
 				case 'subcuenta':
 					const subcuenta_creada = await crearSubcuenta({ variables });
 					refetch();
-					const id_sub_cuenta = subcuenta_creada.data.crearSubcuenta._id;
-					setSubcostos([...subcostos, { _id: id_sub_cuenta, subcuenta: value }]);
+					const id_subcuenta = subcuenta_creada.data.crearSubcuenta._id;
+					setSubcostos([...subcostos, { _id: id_subcuenta, subcuenta: value }]);
 					setCentroDeCostos({
 						...centro_de_costos,
 						subcuenta: value,
-						id_sub_cuenta
+						id_subcuenta
 					});
 					break;
 				default:
