@@ -150,7 +150,8 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 	const [ loading, setLoading ] = useState(false);
 
 	/* Mutations */
-	const [ crearProducto, actualizarProducto ] = useMutation(CREAR_PRODUCTO, ACTUALIZAR_PRODUCTO);
+	const [ crearProducto] = useMutation(CREAR_PRODUCTO);
+	const [ actualizarProducto ] = useMutation( ACTUALIZAR_PRODUCTO);
 
 	const toggleModal = (producto) => {
 		setOpen(!open);
