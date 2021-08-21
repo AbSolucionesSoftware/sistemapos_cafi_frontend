@@ -66,6 +66,7 @@ export default function Cajas() {
 	if(data){
 		obtenerCajasSucursal = data.obtenerCajasSucursal;
 	}
+	
 	const handleClickOpen = () => {
 		setOpen(true);
 	};

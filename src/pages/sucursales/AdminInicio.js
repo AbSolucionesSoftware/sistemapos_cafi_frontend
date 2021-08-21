@@ -85,7 +85,7 @@ function AdminInicio(props) {
 			<Toolbar />
 			<Box>
 				<AppBar position="static" color="default" elevation={0}>
-					<Tabs value={value} onChange={handleChange} indicatorColor="primary" textColor="primary" centered variant="scrollable" scrollButtons="on">
+					<Tabs value={value} onChange={handleChange} indicatorColor="primary" textColor="primary" /* centered */ variant="scrollable" scrollButtons="on">
 						<Tab label="Mi empresa" icon={<FcShop className={classes.icon} />} {...a11yProps(0)} />
 						<Tab
 							label="Almacenes"

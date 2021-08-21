@@ -39,7 +39,7 @@ export default function PreciosDeCompra() {
 		setDatosGenerales
 	} = useContext(RegProductoContext);
 	const [ unidades, setUnidades ] = useState({
-		unidad: precios.granel ? 'KILOGRAMOS' : 'PIEZAS',
+		unidad: precios.granel ? 'Kg' : 'Pz',
 		unidad_principal: false
 	});
 	const [ actualizarUnidad, setActualizarUnidad ] = useState(false);
@@ -72,7 +72,7 @@ export default function PreciosDeCompra() {
 			setUnidadesVenta([ ...unidadesVenta, unidades ]);
 		}
 		setUnidades({
-			unidad: 'PIEZAS',
+			unidad: 'Pz',
 			unidad_principal: false
 		});
 	};
@@ -114,7 +114,7 @@ export default function PreciosDeCompra() {
 	const cancelarUpdate = () => {
 		setActualizarUnidad(false);
 		setUnidades({
-			unidad: 'PIEZAS',
+			unidad: 'Pz',
 			unidad_principal: false
 		});
 	};
@@ -129,6 +129,10 @@ export default function PreciosDeCompra() {
 		});
 	};
 
+	useEffect(() => {
+		
+	}, [])
+
 	return (
 		<Fragment>
 			<Box className={classes.formInputFlex} justifyContent="center">
@@ -138,14 +142,14 @@ export default function PreciosDeCompra() {
 						<FormControl variant="outlined" fullWidth size="small" name="unidad">
 							{precios.granel ? (
 								<Select name="unidad" value={unidades.unidad} onChange={obtenerUnidadesVentas}>
-									<MenuItem value="KILOGRAMOS">KILOGRAMOS</MenuItem>
-									<MenuItem value="COSTALES">COSTALES</MenuItem>
-									<MenuItem value="LITROS">LITROS</MenuItem>
+									<MenuItem value="Kg">Kg</MenuItem>
+									<MenuItem value="Costal">Costal</MenuItem>
+									<MenuItem value="Lt">Lt</MenuItem>
 								</Select>
 							) : (
 								<Select name="unidad" value={unidades.unidad} onChange={obtenerUnidadesVentas}>
-									<MenuItem value="CAJAS">CAJAS</MenuItem>
-									<MenuItem value="PIEZAS">PIEZAS</MenuItem>
+									<MenuItem value="Caja">Caja</MenuItem>
+									<MenuItem value="Pz">Pz</MenuItem>
 								</Select>
 							)}
 						</FormControl>
@@ -155,10 +159,10 @@ export default function PreciosDeCompra() {
 					<Typography>
 						Cantidad{' '}
 						<b>
-							{unidades.unidad === 'CAJAS' ? (
-								'(piezas por caja)'
-							) : unidades.unidad === 'COSTALES' ? (
-								'(kilos por costal)'
+							{unidades.unidad === 'Caja' ? (
+								'(pz por caja)'
+							) : unidades.unidad === 'Costal' ? (
+								'(kg por costal)'
 							) : (
 								''
 							)}
@@ -235,13 +239,7 @@ export default function PreciosDeCompra() {
 							<TableRow selected={actualizarUnidad ? true : false}>
 								<TableCell>{datos_generales.codigo_barras}</TableCell>
 								<TableCell>
-									{unidadVentaXDefecto.unidad === 'CAJAS' ? (
-										'PIEZAS'
-									) : unidadVentaXDefecto.unidad === 'COSTALES' ? (
-										'KILOGRAMOS'
-									) : (
-										unidadVentaXDefecto.unidad
-									)}
+									{unidadVentaXDefecto.unidad}
 								</TableCell>
 								<TableCell>$ {unidadVentaXDefecto.precio}</TableCell>
 								<TableCell>{unidadVentaXDefecto.cantidad}</TableCell>

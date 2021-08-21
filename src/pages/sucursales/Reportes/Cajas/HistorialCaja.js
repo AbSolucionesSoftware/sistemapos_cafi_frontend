@@ -1,11 +1,16 @@
 import React, {  useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Dialog, useTheme, Paper,  Slide, Box, Button, Toolbar, Typography, FormControl, MenuItem, InputLabel, Input, Select} from '@material-ui/core';
-import {Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel} from '@material-ui/core';
+import { Dialog, useTheme, Paper,  Slide, Box, Button, Toolbar, CircularProgress,
+ Typography, FormControl, MenuItem, InputLabel, TextField, Input, Select} from '@material-ui/core';
+import {Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow} from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { useQuery, useMutation } from '@apollo/client';
-
-
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
+import BackdropComponent from '../../../../components/Layouts/BackDrop';
 import {formatoHora, formatoFecha} from '../../../../config/reuserFunctions'
 
 
@@ -19,7 +24,8 @@ const useStyles = makeStyles((theme) => ({
 
 	},
 	input:{
-		width:'100%'	
+		width:'100%',
+       
 	},
 	dialog:{width:'100%'},
 	subtitle: {
@@ -47,16 +53,30 @@ const useStyles = makeStyles((theme) => ({
         minWidth:1000,
       
 	}, 
+    buttonBuscar:{
+        marginTop:15
+    },
     table: {
      minWidth: 650,
-     minHeight:300,
-     maxHeight:300
+     minHeight:100,
+     maxHeight:600
     },
     formControl: {
         margin: theme.spacing(1),
         minWidth: 200,
         maxWidth: 200,
     },
+    formPicker: {
+        margin: theme.spacing(2),
+        minWidth: 250,
+        maxWidth: 250,
+        marginTop:0,
+        marginBottom:15
+    },
+    datePicker: {
+        minWidth: 250,
+        maxWidth: 250,
+    }
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -91,6 +111,10 @@ const tipos = [
     'RETIRO',
     'TRANSFERENCIA'
 ];
+const origens = [
+    'ADMIN',
+    'CAJA'
+];
 
 function getStyles(almacen, almacenName, theme) {
   return {
@@ -100,6 +124,7 @@ function getStyles(almacen, almacenName, theme) {
         : theme.typography.fontWeightMedium,
   };
 }
+
 export default function HistorialCaja(props) {
     const classes = useStyles();
     const theme = useTheme();
@@ -108,8 +133,8 @@ export default function HistorialCaja(props) {
 	 const [ action, setAction ] = React.useState({depositar:false, retirar:false, transferir:false});
 	const [cantidadMovimiento, setCantidadMovimiento] = React.useState(0);
     const [ cajaDestino, setCajaDestino] = React.useState('');
-    const [ tipoState, setTipoState ] = React.useState('');
-	const [ page, setPage ] = useState(0);
+    const [ filterInput, setFilterInput] = React.useState({tipo_movimiento: '', nombre_usuario_creador:'', origen_movimiento:'',createdAt:null});
+    const [ page, setPage ] = React.useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(5);
     //const [ error, setError ] = useState({error: false, message: ''});
     const [ errorCantidad, setErrorCantidad ] = useState(false);
@@ -118,38 +143,34 @@ export default function HistorialCaja(props) {
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	let obtenerHistorialCaja = [];
-
+   
     /* Queries */
 	const {  data, error, refetch } = useQuery(OBTENER_HISTORIAL_CAJA,{
 		variables: {
+            input: filterInput,
             id_Caja: props.cajaSelected._id,
             empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id
 		}
 	});	
+
 	  /* Mutation */
     const [ crearHistorialCaja ] = useMutation(CREAR_HISTORIAL_CAJA);
    
-   
+
     useEffect(
 		() => {
-           
-            if(props.open){
-                setLoading(true);
-                refetch();
-                setLoading(false);
-                console.log("DATA",data)
-            }
-              
+            setLoading(true);
+            refetch();
+            setLoading(false);
 		},
-		[  props.open, data, refetch ]
+		[   data, refetch ]
 	); 
 	
 	if(data){
-      
 		obtenerHistorialCaja = data.obtenerHistorialCaja;
 	}
-	
+
 	const nuevoHistorial = async () => {
 		try {
             let tipo_movimiento =  (action.depositar) ? "DEPOSITO" : (action.retirar)  ? "RETIRO" : "TRANSFERENCIA";
@@ -190,7 +211,6 @@ export default function HistorialCaja(props) {
                             },
 						empresa: sesion.empresa._id,
 						sucursal: sesion.sucursal._id
-		
 					}
 				});
                
@@ -211,9 +231,17 @@ export default function HistorialCaja(props) {
 			setLoading(false);
 		}
 	};
-    
+    const handleDateChange = (date) => {
+        //console.log("%cUrielinho!", "color: green; font-family: sans-serif; font-size: 4.5em; font-weight: bolder; text-shadow: #000 1px 1px;");
+         setFilterInput({...filterInput,createdAt:date});
+    };
+    const handleChangeOrigen = (event) => {
+         setFilterInput({...filterInput,origen_movimiento:event.target.value})
+      
+    };
      const handleChange = (event) => {
-        setTipoState(event.target.value);
+         setFilterInput({...filterInput,tipo_movimiento:event.target.value})
+     
     };
 
     const handleChangePage = (event, newPage) => {
@@ -232,10 +260,11 @@ export default function HistorialCaja(props) {
     const handleCloseAction = () => {
 		setAction({depositar:false, retirar:false, transferir:false});
 	};
+   
     return (
 		
         <Dialog  fullWidth fullHeight  maxWidth="l" maxHeight="xl" open={props.open} onClose={()=>{props.handleClose(); handleCloseAction();}}   TransitionComponent={Transition} >
-         
+         <BackdropComponent loading={loading} setLoading={setLoading} />
             <Toolbar >
                 <Typography variant="h5" className={classes.title}>
                     Caja {props.cajaSelected.numero_caja}
@@ -257,22 +286,114 @@ export default function HistorialCaja(props) {
                 <Select
                 labelId="tipo-label"
                 id="tipo-name"
-                value={tipoState}
+                value={filterInput.tipo_movimiento}
                 onChange={handleChange}
                 input={<Input />}
                 MenuProps={MenuProps}
                 >
                 {tipos.map((tipo) => (
-                    <MenuItem key={tipo} value={tipo} style={getStyles(tipo, tipoState, theme)}>
+                    <MenuItem key={tipo} value={tipo} style={getStyles(tipo, filterInput.tipo_movimiento, theme)}>
                     {tipo}
                     </MenuItem>
                 ))}
                 </Select>
             </FormControl>
-        </Box>	
+            <FormControl  style={{marginTop:0}}>
+                <Box width="250px" ml={5} mr={2}  >
+                    <Typography   >
+                        Usuario que lo realizó
+                    </Typography>
+                    <TextField
+                        fullWidth
+                        className={classes.input}
+                        type="text"
+                        size="small"
+                        name="usuarioRealizo"
+                        variant="outlined"
+                        value={filterInput.nombre_usuario_creador}
+                        
+                        onChange={(e) =>  setFilterInput({...filterInput, nombre_usuario_creador: e.target.value})}
+                    />
+                </Box>
+            </FormControl>
+        
+            <FormControl className={classes.formControl}>
+                
+                <InputLabel id="tipo-label">Origen</InputLabel>
+                <Select
+                labelId="tipo-label"
+                id="tipo-name"
+                value={filterInput.origen_movimiento}
+                onChange={handleChangeOrigen}
+                input={<Input />}
+                MenuProps={MenuProps}
+                >
+                {origens.map((ori) => (
+                    <MenuItem key={ori} value={ori} style={getStyles(ori, filterInput.origen_movimiento, theme)}>
+                    {ori}
+                    </MenuItem>
+                ))}
+                </Select>
+                
+            </FormControl>
+            <FormControl >
+                <MuiPickersUtilsProvider utils={DateFnsUtils} >
+            
+                    <Box flexDirection={'row'}>
+                    <FormControl className={classes.formPicker} >
+                    <Box width="200px" ml={2} >
+                    
+                        <KeyboardDatePicker
+                        margin="normal"
+                         style={{marginTop:8}}
+                        id="date-picker-dialog"
+                        label="Fecha de movimiento"
+                        format="MM/dd/yyyy"
+                        value={filterInput.createdAt}
+                        onChange={handleDateChange}
+                        KeyboardButtonProps={{
+                            'aria-label': 'change date',
+                        }}
+                        />
+                    </Box>
+                    </FormControl >
+                    {/* <FormControl > 
+                    <Box width="200px" ml={2} >
+                    <KeyboardTimePicker
+                        style={{marginTop:8}}
+                        margin="normal"
+                        id="time-picker"
+                        label="Hora movimiento"
+                        value={filterInput.createdAt}
+                        onChange={handleDateChange}
+                        KeyboardButtonProps={{
+                            'aria-label': 'change time',
+                        }}
+                    />
+                    </Box>
+                    </FormControl>   */}
+                    </Box> 
+                </MuiPickersUtilsProvider>
+            </FormControl >
+            <FormControl className={classes.buttonBuscar}>
+      
+            <Button
+                style={{width:"200px"}}
+                onClick={()=> refetch()}
+                color="primary"
+                variant="contained"
+                autoFocus
+                endIcon={loading ? <CircularProgress color="inherit" size={25} /> : null}
+            >
+                Buscar
+            </Button>
+           
+            </FormControl>
+        </Box>
+        	
             <Paper className={classes.root} m={2}>
                 <TableContainer >
-                    <Table className={classes.table} stickyHeader aria-label="sticky table">
+                    <Table className={classes.table} options = {{filtering:true}} stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>
                                 {columns.map((column) => (

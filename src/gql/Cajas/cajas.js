@@ -39,8 +39,8 @@ export const CREAR_HISTORIAL_CAJA = gql`
 `;
 
 export const OBTENER_HISTORIAL_CAJA = gql`
-    query ObtenerHistorialCaja($id_Caja: ID!,$empresa: ID!, $sucursal: ID!){
-        obtenerHistorialCaja(id_Caja: $id_Caja,empresa: $empresa, sucursal: $sucursal){
+    query ObtenerHistorialCaja($input: HistorialCajasInput!, $id_Caja: ID!,$empresa: ID!, $sucursal: ID!){
+        obtenerHistorialCaja(input: $input, id_Caja: $id_Caja,empresa: $empresa, sucursal: $sucursal){
             _id
             tipo_movimiento
             cantidad_movimiento
