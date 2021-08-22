@@ -149,9 +149,6 @@ function AdminInicio(props) {
 						Reportes
 					</TabPanel>
 					<TabPanel value={value} index={7}>
-						Item Six
-					</TabPanel>
-					<TabPanel value={value} index={8}>
 						<Facturacion />
 					</TabPanel>
 				</SwipeableViews>
