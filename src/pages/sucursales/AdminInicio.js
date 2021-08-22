@@ -8,6 +8,7 @@ import Empresa from './Empresa/Empresa';
 import Compras from './Compras/Compras';
 import Catalogos from './Catalogos/Catalogos';
 import Tesoreria from './Tesoreria/Tesoreria';
+import Facturacion from './Facturacion/Facturacion';
 import facturaIcon from '../../icons/factura.svg';
 import moneyIcon from '../../icons/money.svg';
 import almacenIcon from '../../icons/almacen.svg';
@@ -145,10 +146,13 @@ function AdminInicio(props) {
 						<Reportes />
 					</TabPanel>
 					<TabPanel value={value} index={6}>
-						Item Six
+						Reportes
 					</TabPanel>
 					<TabPanel value={value} index={7}>
-						Ventas
+						Item Six
+					</TabPanel>
+					<TabPanel value={value} index={8}>
+						<Facturacion />
 					</TabPanel>
 				</SwipeableViews>
 			</Box>
