@@ -7,14 +7,14 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { Box, Grid, TextField } from '@material-ui/core';
-import abonoIcon from '../../../../icons/salary.svg'
+import { Box, TextField, Grid } from '@material-ui/core';
+import abonoIcon from '../../../../icons/salary.svg';
 
-import TablaAbonosClientes from '../AbonoClientes/TablaAbonoClientes';
-import AbonoaRecibir from '../AbonoClientes/Abono_a_Recibir';
+import TablaAbonosClientes from './TablaAbonoClientes';
+import AbonoaRecibir from './Abono_a_Recibir';
 
 const useStyles = makeStyles((theme) => ({
-	appBar: {
+	appBar: {	
 		position: 'relative'
 	},
 	title: {
@@ -23,14 +23,23 @@ const useStyles = makeStyles((theme) => ({
 	},
     icon: {
 		width: 100
-	}
+	},
+	formInputFlex: {
+		display: 'flex',
+		'& > *': {
+			margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
+		}
+	},
+	formInput: {
+		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
+	},
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AbonosProveedores() {
+export default function AbonosClientes() {
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
 
@@ -43,15 +52,16 @@ export default function AbonosProveedores() {
 					<Box display="flex" justifyContent="center" alignItems="center">
                         <img src={abonoIcon} alt="icono abono" className={classes.icon} />
 					</Box>
-					Abonos de proveedores
+					Abonos de Clientes
 				</Box>
 			</Button>
 			<Dialog fullScreen open={open} onClose={handleClickOpen} TransitionComponent={Transition}>
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-                        	Abonos a Proveedores
+                        	Abonos de Clientes
 						</Typography>
+						
                         <Box m={1}>
 							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
 								<CloseIcon style={{fontSize: 30}} />
@@ -61,7 +71,7 @@ export default function AbonosProveedores() {
 				</AppBar>
 				<Grid container>
 					<Box width="50%" p={2}>
-						<Typography>Busqueda por provedor o por cuenta</Typography>
+						<Typography>Busqueda por cliente o por cuenta</Typography>
 						<TextField
 							fullWidth
 							size="small"
@@ -74,6 +84,7 @@ export default function AbonosProveedores() {
 							/* onChange={obtenerCampos} */
 						/>
 					</Box>
+					
 					<Box mt={5}>
 						<Button
 							size="large"
