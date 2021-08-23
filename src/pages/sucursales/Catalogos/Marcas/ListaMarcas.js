@@ -43,6 +43,7 @@ export default function ListaMarcas({updateData, toUpdate, setToUpdate, setData}
 	});
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	let obtenerMarcas = [];
+	
 
     const { data, refetch } = useQuery(OBTENER_MARCAS,{
 		variables: {
@@ -50,6 +51,7 @@ export default function ListaMarcas({updateData, toUpdate, setToUpdate, setData}
 			sucursal: sesion.sucursal._id
 		}
 	});	
+
 
 
 	useEffect(() => {
