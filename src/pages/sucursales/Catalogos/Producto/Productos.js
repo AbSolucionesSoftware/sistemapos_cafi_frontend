@@ -53,7 +53,7 @@ export default function Productos() {
 			<Button fullWidth onClick={() => handleClickOpen()}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={ProductosIcon} alt="icono ropa" className={classes.iconSvg} />
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/productos.svg' alt="icono ropa" className={classes.iconSvg} />
 					</Box>
 					Productos
 				</Box>

@@ -59,7 +59,7 @@ export default function Proveedores() {
 				<Button fullWidth onClick={handleClickOpen}>
 					<Box display="flex" flexDirection="column">
 						<Box display="flex" justifyContent="center" alignItems="center">
-							<img src={proveedoresIcon} alt="icono numero calzado" className={classes.icon} />
+							<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/distribution.svg' alt="icono numero calzado" className={classes.icon} />
 						</Box>
 						Proveedores
 					</Box>

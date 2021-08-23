@@ -30,7 +30,7 @@ export default function VentasGenerales() {
                     <div className={classes.formInputFlex}>
                         <Box width="100%" display="flex" justifyItems="center" alignSelf="center" justifySelf="center" alignItems="center">
                             <Box mt={2} mr={1}>
-                                <img src={codigo} alt="iconoBander" className={classes.iconSize} /> 
+                                <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/busqueda-de-codigos-de-barras.svg' alt="iconoBander" className={classes.iconSize} /> 
                             </Box>
                             <Box>
                                 <Paper className={classes.rootBusqueda}>
@@ -46,7 +46,7 @@ export default function VentasGenerales() {
                         </Box>
                         <Box width="100%" display="flex" justifyItems="center" alignSelf="center" justifySelf="center" alignItems="center">
                             <Box mt={2} mr={1}>
-                                <img src={usuario} alt="iconoBander" className={classes.iconSize} /> 
+                                <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/usuarios.svg' alt="iconoBander" className={classes.iconSize} /> 
                             </Box>
                             <Box>
                                 <Paper className={classes.rootBusqueda}>
@@ -62,7 +62,7 @@ export default function VentasGenerales() {
                         </Box>
                         <Box width="100%" display="flex" justifyItems="center" alignSelf="center" justifySelf="center" alignItems="center">
                             <Box mt={2} mr={1}>
-                                <img src={vendedor} alt="iconoBander" className={classes.iconSize} /> 
+                                <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/admin.svg' alt="iconoBander" className={classes.iconSize} /> 
                             </Box>
                             <Box>
                                 <Paper className={classes.rootBusqueda}>
@@ -83,7 +83,7 @@ export default function VentasGenerales() {
                         </Box>
                         <Box width="100%" display="flex">
                             <Box mr={1}>
-                                <img src={ticket} alt="iconoBander" className={classes.iconSize} /> 
+                                <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/publicalo.svg' alt="iconoBander" className={classes.iconSize} /> 
                             </Box>
                             <Box>
                                 <FormControl

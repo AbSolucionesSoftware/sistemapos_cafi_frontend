@@ -43,7 +43,7 @@ export default function Transferencias() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-                        <img src={transferIcon} alt="icono tranferencia" className={classes.icon} />
+                        <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/transferencia-bancaria.svg' alt="icono tranferencia" className={classes.icon} />
 					</Box>
 					Transferencias
 				</Box>

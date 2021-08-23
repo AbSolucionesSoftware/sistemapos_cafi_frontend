@@ -42,7 +42,7 @@ export default function InventariosPorAlmacen() {
             <Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={inventarioAlmacen} alt="icono almacen" className={classes.imagen}/>
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/conceptosAlmacen.svg' alt="icono almacen" className={classes.imagen}/>
 					</Box>
 					Inventario por almacen
 				</Box>
