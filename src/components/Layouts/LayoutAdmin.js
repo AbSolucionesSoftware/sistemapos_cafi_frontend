@@ -7,7 +7,7 @@ import NavegacionAdmin from '../Navegaciones/NavegacionAdmin';
 export default function LayoutAdmin(props) {
     const sesion = localStorage.getItem("sesionCafi");
 
-    if(sesion === "false") props.history.push('/');
+    if(!sesion) props.history.push('/');
 
 	return (
 		<div>

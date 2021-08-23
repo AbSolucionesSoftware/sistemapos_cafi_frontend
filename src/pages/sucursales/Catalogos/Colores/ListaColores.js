@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaColores({ datos, toUpdate, setToUpdate, setValues }) {
+export default function TablaColores({ datos, toUpdate, setToUpdate, setValues, refetch }) {
 	const classes = useStyles();
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(8);
@@ -100,6 +100,7 @@ export default function TablaColores({ datos, toUpdate, setToUpdate, setValues }
 											toUpdate={toUpdate}
 											setToUpdate={setToUpdate}
 											setValues={setValues}
+											refetch={refetch}
 										/>
 									);
 								})}
@@ -120,7 +121,7 @@ export default function TablaColores({ datos, toUpdate, setToUpdate, setValues }
 	);
 }
 
-const RowsRender = ({ row, setAlert, toUpdate, setToUpdate, setValues }) => {
+const RowsRender = ({ row, setAlert, toUpdate, setToUpdate, setValues, refetch }) => {
 	const classes = useStyles();
 	const [ openModal, setOpenModal ] = useState(false);
 
@@ -128,21 +129,25 @@ const RowsRender = ({ row, setAlert, toUpdate, setToUpdate, setValues }) => {
 
 	const [ eliminarColor ] = useMutation(ELIMINAR_COLOR, {
 		update(cache, { data: { eliminarColor } }) {
-			const { obtenerColores } = cache.readQuery({
-				query: OBTENER_COLORES,
-				variables: { empresa: row.empresa._id }
-			});
+			try {
+				const { obtenerColores } = cache.readQuery({
+					query: OBTENER_COLORES,
+					variables: { empresa: row.empresa._id }
+				});
 
-			cache.writeQuery({
-				query: OBTENER_COLORES,
-				variables: { empresa: row.empresa._id },
-				data: {
-					obtenerColores: {
-						...obtenerColores,
-						eliminarColor
+				cache.writeQuery({
+					query: OBTENER_COLORES,
+					variables: { empresa: row.empresa._id },
+					data: {
+						obtenerColores: {
+							...obtenerColores,
+							eliminarColor
+						}
 					}
-				}
-			});
+				});
+			} catch (error) {
+				console.log(error);
+			}
 		}
 	});
 
@@ -153,6 +158,7 @@ const RowsRender = ({ row, setAlert, toUpdate, setToUpdate, setValues }) => {
 					id: row._id
 				}
 			});
+			refetch(refetch);
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			handleModal();
 		} catch (error) {
@@ -171,7 +177,7 @@ const RowsRender = ({ row, setAlert, toUpdate, setToUpdate, setValues }) => {
 	};
 
 	return (
-		<TableRow hover role="checkbox" tabIndex={-1}>
+		<TableRow hover role="checkbox" tabIndex={-1} selected={toUpdate === row._id ? true : false}>
 			<TableCell className={classes.color}>
 				<Box mr={1} width={30} height={25} bgcolor={row.hex} borderRadius="10%" />
 				<Typography>

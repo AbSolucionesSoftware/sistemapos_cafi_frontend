@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -6,9 +6,13 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
+import { Search } from '@material-ui/icons';
 import Slide from '@material-ui/core/Slide';
-import { Box } from '@material-ui/core';
+import { Box, Paper, InputBase, IconButton } from '@material-ui/core';
 import usuariosIcon from '../../../../icons/usuarios.svg';
+import ListaUsuarios from './ListaUsuario';
+import CrearUsuario from './CrearUsuario';
+import { UsuarioProvider } from '../../../../context/Catalogos/usuarioContext';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -20,6 +24,10 @@ const useStyles = makeStyles((theme) => ({
 	},
 	icon: {
 		width: 100
+	},
+	root: {
+		display: 'flex',
+		paddingLeft: theme.spacing(2)
 	}
 }));
 
@@ -30,6 +38,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function Usuarios() {
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
+	const [ filtro, setFiltro ] = useState('');
+	const [ values, setValues ] = useState('');
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	const handleClickOpen = () => {
 		setOpen(true);
@@ -39,29 +50,57 @@ export default function Usuarios() {
 		setOpen(false);
 	};
 
+	const pressEnter = (e) => {
+		if (e.key === 'Enter') setFiltro(e.target.defaultValue);
+	};
+
 	return (
 		<div>
-			<Button fullWidth onClick={handleClickOpen}>
-				<Box display="flex" flexDirection="column">
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={usuariosIcon} alt="icono numero calzado" className={classes.icon} />
+			<UsuarioProvider>
+				<Button fullWidth onClick={handleClickOpen}>
+					<Box display="flex" flexDirection="column">
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<img src={usuariosIcon} alt="icono numero calzado" className={classes.icon} />
+						</Box>
+						Usuarios
 					</Box>
-					Usuarios
-				</Box>
-			</Button>
-			<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-				<AppBar className={classes.appBar}>
-					<Toolbar>
-						<Typography variant="h6" className={classes.title}>
-							Usuarios
-						</Typography>
-						<Button autoFocus color="inherit" size="large" onClick={handleClose} startIcon={<CloseIcon />}>
-							Cerrar
-						</Button>
-					</Toolbar>
-				</AppBar>
-				Toda la info de Usuarios
-			</Dialog>
+				</Button>
+				<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+					<AppBar className={classes.appBar}>
+						<Toolbar>
+							<Typography variant="h6" className={classes.title}>
+								Usuarios
+							</Typography>
+							<Box m={1}>
+								<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+									<CloseIcon style={{fontSize: 30}} />
+								</Button>
+							</Box>
+						</Toolbar>
+					</AppBar>
+
+					<Box m={3} display="flex" justifyContent="space-between">
+						<Box mr={5} minWidth="70%">
+							<Paper className={classes.root}>
+								<InputBase
+									fullWidth
+									placeholder="Buscar cliente..."
+									onChange={(e) => setValues(e.target.value)}
+									onKeyPress={pressEnter}
+									value={values}
+								/>
+								<IconButton onClick={() => setFiltro(values)}>
+									<Search />
+								</IconButton>
+							</Paper>
+						</Box>
+						<CrearUsuario accion="registrar" datos={undefined} />
+					</Box>
+					<Box mx={4}>
+						<ListaUsuarios sucursal={sesion.sucursal._id} filtro={filtro} />
+					</Box>
+				</Dialog>
+			</UsuarioProvider>
 		</div>
 	);
 }

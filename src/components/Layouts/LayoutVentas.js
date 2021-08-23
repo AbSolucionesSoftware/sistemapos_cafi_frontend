@@ -1,8 +1,10 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
 import { BrowserRouter as Switch, Route } from 'react-router-dom';
 import NavegacionVentas from '../Navegaciones/NavegacionVentas';
+import { Grid, Toolbar } from '@material-ui/core';
+
+const drawerWidth = '30%';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -10,11 +12,14 @@ const useStyles = makeStyles((theme) => ({
 	},
 	content: {
 		flexGrow: 1,
-		padding: theme.spacing(3)
+		// padding: theme.spacing(1)
 	},
     toolbar: {
-		height: theme.spacing(11)
+		height: theme.spacing(8)
 	},
+	// drawerPaper: {
+	// 	width: drawerWidth,
+	// },
 }));
 
 export default function LayoutVentas(props) {
@@ -22,15 +27,15 @@ export default function LayoutVentas(props) {
 	const classes = useStyles();
     const sesion = localStorage.getItem("sesionCafi");
 
-    if(sesion === "false") props.history.push('/');
+    if(!sesion) props.history.push('/');
 
 	return (
 		<div className={classes.root}>
-			<NavegacionVentas />
-			<main className={classes.content}>
+			<Grid style={{ width: `calc(100% - ${drawerWidth})`}}>
 				<Toolbar className={classes.toolbar} />
 				<LoadRoutes routes={routes} />
-			</main>
+			</Grid>
+			<NavegacionVentas />
 		</div>
 	);
 }

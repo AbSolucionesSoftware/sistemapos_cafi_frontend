@@ -1,14 +1,20 @@
-import React, { useState, Fragment } from 'react';
-import { Drawer, AppBar, Toolbar, Divider, BottomNavigation, BottomNavigationAction } from '@material-ui/core';
+import React, { useState, Fragment} from 'react';
+import { Drawer, AppBar, Dialog, Toolbar, Divider, BottomNavigation, BottomNavigationAction, Button, Grid, Slide, Badge } from '@material-ui/core';
 import { CssBaseline, Avatar, Box, Typography } from '@material-ui/core';
 import { withRouter } from 'react-router';
 import { FaPowerOff } from 'react-icons/fa';
 import { FcDonate, FcExpired } from 'react-icons/fc';
-import { FcBusinessman, FcCurrencyExchange, FcPaid } from 'react-icons/fc';
+import { FcBusinessman,FcServices, FcCurrencyExchange, FcPaid } from 'react-icons/fc';
 import useStyles from './styles';
 import addIcon from '../../icons/ventas/add.svg'
+import articuloRapido from '../../icons/ventas/tiempo-rapido.svg'
+import listaEspera from '../../icons/ventas/lista-de-espera.svg'
+import calendario from '../../icons/ventas/calendario.svg'
+import buscarPrecio from '../../icons/ventas/precios.svg'
 import cartIcon from '../../icons/ventas/cart.svg'
+import moneyIcon from '../../icons/money.svg';
 import cartaddIcon from '../../icons/ventas/cart-add.svg'
+import cajon from '../../icons/ventas/cajon.svg'
 import cashregisterIcon from '../../icons/ventas/cash-register.svg'
 import cashregister2Icon from '../../icons/ventas/cash-register2.svg'
 import adminIcon from '../../icons/ventas/admin.svg'
@@ -16,14 +22,89 @@ import shiftIcon from '../../icons/ventas/shift.svg'
 import tagIcon from '../../icons/ventas/tag.svg'
 import shoppingcartIcon from '../../icons/ventas/shopping-cart.svg'
 
+import DepositoRetiroCaja from '../../pages/ventas/Operaciones/DepositoRetiroCaja';
+import Turnos from '../../pages/ventas/AbrirCerrarTurno/Turnos';
+import CerrarCaja from '../../pages/ventas/Operaciones/CerrarCaja';
+import VentasEspera from '../../pages/ventas/VentasEspera/VentasEspera';
+import AbrirCajon from '../../pages/ventas/Operaciones/AbrirCajon';
+import VentasRealizadas from '../../pages/ventas/VentasRealizadas/VentasRealizadas';
+import PreciosProductos from '../../pages/ventas/Operaciones/PreciosProducto';
+import CancelarVenta from '../../pages/ventas/Operaciones/CancelarVenta';
+import CerrarVenta from '../../pages/ventas/Operaciones/CerrarVenta';
+import ConsultarPrecio from '../../pages/ventas/Operaciones/ConsultarPrecio';
+import Cotizacion from '../../pages/ventas/Cotizacion/Cotizacion';
+import ArticuloRapido from '../../pages/ventas/ArticuloRapido/ArticuloRapido';
+import VentaEnEspera from '../../pages/ventas/Operaciones/VentaEnEspera';
+import ListaApartados from '../../pages/ventas/Apartados/ListaApartados';
+import CrearApartado from '../../pages/ventas/Apartados/CrearApartado';
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});
+
 function NavegacionVentas(props) {
 	const classes = useStyles();
 	const [ value, setValue ] = useState('venta-general');
+	const [open, setOpen] = useState(false);
+	const [ventana, setVentana] = useState('');
 
 	const signOut = () => {
-		localStorage.setItem('sesionCafi', false);
+		localStorage.removeItem('sesionCafi');
+		localStorage.removeItem('tokenCafi');
 		props.history.push('/');
 	};
+
+	const handleClickOpen = () => {
+		setOpen(!open);
+	};
+
+	const ventanas = () => {
+		switch (ventana) {
+			case 'retiroDepositoCaja':
+				return <DepositoRetiroCaja handleClickOpen={handleClickOpen} />
+			case 'abrirCerrarTurno':
+				return <Turnos handleClickOpen={handleClickOpen} />
+			case 'cerrarCaja':
+				return <CerrarCaja handleClickOpen={handleClickOpen} />
+			case 'ventasEspera':
+				return <VentasEspera handleClickOpen={handleClickOpen} />
+			case 'ventasRealizadas':
+				return <VentasRealizadas handleClickOpen={handleClickOpen} />
+			case 'abrirCajon':
+				return <AbrirCajon handleClickOpen={handleClickOpen} />
+			case 'cancelarVenta':
+				return <CancelarVenta handleClickOpen={handleClickOpen} />
+			case 'preciosProductos':
+				return <PreciosProductos handleClickOpen={handleClickOpen} />
+			case 'consultarPrecio':
+				return <ConsultarPrecio handleClickOpen={handleClickOpen} />
+			case 'cerrarVenta':
+				return <CerrarVenta handleClickOpen={handleClickOpen} />
+			case 'cotizacion':
+				return <Cotizacion handleClickOpen={handleClickOpen} />
+			case 'articuloRapido':
+				return <ArticuloRapido handleClickOpen={handleClickOpen} />
+			case 'ventaEnEspera':
+				return <VentaEnEspera handleClickOpen={handleClickOpen} />
+			case 'listaApartados':
+				return <ListaApartados handleClickOpen={handleClickOpen} />
+			case 'crearApartado':
+				return <CrearApartado handleClickOpen={handleClickOpen} />
+			default:
+				break;
+		}
+	};
+
+	// function funcion_tecla(event) {
+	// 	const tecla_escape = event.keyCode;
+	// 	if(tecla_escape === 27){
+	// 		handleClickOpen();
+	// 		return setVentana('cerrarVenta');
+	// 	}
+	// } CODIGO PARA PODER EJECUTAR LAS VENTANAS A BASE DE LAS TECLAS
+
+	// window.onkeydown = funcion_tecla;
+
 	return (
 		<Fragment>
 			<CssBaseline />
@@ -37,60 +118,89 @@ function NavegacionVentas(props) {
 					className={classes.navigationTop}
 				>
 					<BottomNavigationAction
-						value="venta-general"
-						label={<Typography variant="subtitle2">Venta General</Typography>}
-                        icon={<img src={cartaddIcon} alt="icono general" className={classes.iconSizeSecond} />}
+						value="servicios"
+						label={<Typography variant="subtitle2">Servicios</Typography>}
+						icon={<FcServices className={classes.iconSizeSuperior} />}
 					/>
 					<Divider orientation="vertical" />
 					<BottomNavigationAction
-						value="venta-credito"
-						label={<Typography variant="subtitle2">Venta a credito</Typography>}
-                        icon={<img src={addIcon} alt="icono credito" className={classes.iconSizeSecond} />}
+						onClick={() =>{
+							setVentana('articuloRapido');
+							handleClickOpen();
+						}}
+						value="articulo-rapido"
+						label={<Typography variant="subtitle2">Articulo Rapido</Typography>}
+						icon={<img src={articuloRapido} alt="icono caja2" className={classes.iconSizeSecondSuperior} />}
 					/>
 					<Divider orientation="vertical" />
 					<BottomNavigationAction
-						value="abonos"
-						label={<Typography variant="subtitle2">Abonos</Typography>}
-						icon={<FcDonate className={classes.iconSize} />}
+						onClick={() =>{
+							setVentana('cotizacion');
+							handleClickOpen();
+						}}
+						value="cotizacion"
+						label={<Typography variant="subtitle2">Cotización</Typography>}
+						icon={<FcCurrencyExchange className={classes.iconSizeSuperior} />}
 					/>
+					
 					<Divider orientation="vertical" />
 					<BottomNavigationAction
-						value="apartados"
-						label={<Typography variant="subtitle2">Apartados</Typography>}
-						icon={<img src={tagIcon} alt="icono apartados" className={classes.iconSizeSecond} />}
-					/>
-					<Divider orientation="vertical" />
-					<BottomNavigationAction
+						onClick={() =>{
+							setVentana('retiroDepositoCaja');
+							handleClickOpen();
+						}}
 						value="retiro-caja"
 						label={<Typography variant="subtitle2">Deposito/Retiro</Typography>}
-						icon={<img src={cashregister2Icon} alt="icono caja" className={classes.iconSizeSecond} />}
+						icon={<img src={cashregister2Icon} alt="icono caja" className={classes.iconSizeSecondSuperior} />}
 					/>
 					<Divider orientation="vertical" />
 					<BottomNavigationAction
 						value="abrir-turno"
+						onClick={() =>{
+							setVentana('abrirCerrarTurno');
+							handleClickOpen();
+						}}
 						label={<Typography variant="subtitle2">Abrir/Cerrar turno</Typography>}
-						icon={<img src={shiftIcon} alt="icono turno" className={classes.iconSizeSecond} />}
-					/>
-					<Divider orientation="vertical" />
-					<BottomNavigationAction
-						value="cancelar-editar"
-						label={<Typography variant="subtitle2">Cancelar venta</Typography>}
-						icon={<img src={shoppingcartIcon} alt="icono cancelarventa" className={classes.iconSizeSecond} />}
+						icon={<img src={shiftIcon} alt="icono turno" className={classes.iconSizeSecondSuperior} />}
 					/>
 					<Divider orientation="vertical" />
 					<BottomNavigationAction
 						value="corte-caja"
+						onClick={() =>{
+							setVentana('cerrarCaja');
+							handleClickOpen();
+						}}
 						label={<Typography variant="subtitle2">Corte de caja</Typography>}
-						icon={<img src={cashregisterIcon} alt="icono caja2" className={classes.iconSizeSecond} />}
+						icon={<img src={cashregisterIcon} alt="icono caja2" className={classes.iconSizeSecondSuperior} />}
+					/>
+					<Divider orientation="vertical" />
+					<BottomNavigationAction
+						value="en-espera"
+						onClick={() =>{
+							setVentana('ventaEnEspera');
+							handleClickOpen();
+						}}
+						label={<Typography variant="subtitle2">En espera</Typography>}
+						icon={<FcExpired className={classes.iconSizeSuperior} />}
 					/>
 					<Divider orientation="vertical" />
 					<BottomNavigationAction
 						value="regresar"
 						onClick={() => props.history.push('/admin')}
 						label={<Typography variant="subtitle2">Administrador</Typography>}
-						icon={<img src={adminIcon} alt="icono admin" className={classes.iconSizeSecond} />}
+						icon={<img src={adminIcon} alt="icono admin" className={classes.iconSizeSecondSuperior} />}
 					/>
-					<Box width="250px" display="flex" justifyContent="flex-end">
+					<Divider orientation="vertical" />
+					<BottomNavigationAction
+						value="salir"
+						onClick={() =>{
+							props.history.push('/')
+							signOut()
+						}}
+						label={<Typography variant="subtitle2">Salir</Typography>}
+						icon={<FaPowerOff className={classes.iconSizeSuperior} style={{color: 'red'}} />}
+					/>
+					<Box width="350px" display="flex" justifyContent="flex-end">
 						<Box display="flex" alignItems="center">
 							<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" className={classes.avatar} />
 							<div>
@@ -102,63 +212,244 @@ function NavegacionVentas(props) {
 								</Box>
 							</div>
 						</Box>
+						<Box display="flex" alignItems="center">
+							<img src={calendario} alt="icono admin" className={classes.avatar} />
+							<div>
+								<Box mr={2}>
+									<Typography color="textSecondary">29/Julio/2021</Typography>
+									<Typography color="textSecondary">
+										<b>08:00 hrs.</b>
+									</Typography>
+								</Box>
+							</div>
+						</Box>
 					</Box>
 				</BottomNavigation>
 			</AppBar>
 			<Drawer
 				className={classes.drawer}
 				variant="permanent"
+				anchor= 'right'
 				classes={{
 					paper: classes.drawerPaper
 				}}
 			>
 				<Toolbar className={classes.navigationTop} />
-				<BottomNavigation
-					value={value}
-					onChange={(event, newValue) => {
-						setValue(newValue);
-					}}
-					showLabels
-					className={classes.root}
-				>
-					<BottomNavigationAction
-						value="cerrar-venta"
-						label={<Typography variant="subtitle2">Cerrar venta</Typography>}
-						icon={<img src={cartIcon} alt="icono ventas" className={classes.iconSizeSecond} />}
-					/>
-					<Divider orientation="horizontal" />
-					<BottomNavigationAction
-						value="cliente"
-						label={<Typography variant="subtitle2">Cliente</Typography>}
-						icon={<FcBusinessman className={classes.iconSize} />}
-					/>
-					<Divider orientation="horizontal" />
-					<BottomNavigationAction
-						value="en-espera"
-						label={<Typography variant="subtitle2">En espera</Typography>}
-						icon={<FcExpired className={classes.iconSize} />}
-					/>
-					<Divider orientation="horizontal" />
-					<BottomNavigationAction
-						value="compras"
-						label={<Typography variant="subtitle2">Compras</Typography>}
-						icon={<FcPaid className={classes.iconSize} />}
-					/>
-					<Divider orientation="horizontal" />
-					<BottomNavigationAction
-						value="cotizacion"
-						label={<Typography variant="subtitle2">Cotización</Typography>}
-						icon={<FcCurrencyExchange className={classes.iconSize} />}
-					/>
-					<Divider orientation="horizontal" />
-					<BottomNavigationAction
-						onClick={signOut}
-						value="salir"
-						label={<Typography variant="subtitle2">Salir</Typography>}
-						icon={<FaPowerOff className={classes.iconSize} style={{color: 'red'}} />}
-					/>
-				</BottomNavigation>
+				<Grid container className={classes.drawerColor}>
+					<Grid item lg={6}>
+						<Button 
+							className={classes.borderBoton}
+						>
+							<Box>
+								<Box>
+									<img src={addIcon} alt="icono credito" className={classes.iconSizeSecondInferiorGrande} />
+								</Box>
+								<Box>
+									Venta Credito
+								</Box>
+							</Box>
+						</Button>
+						<Button 
+							className={classes.borderBoton}
+							onClick={() =>{
+								setVentana('crearApartado');
+								handleClickOpen();
+							}}
+						>
+							<Box>
+								<Box>
+									<img src={tagIcon} alt="icono apartados" className={classes.iconSizeSecondInferiorGrande} />
+								</Box>
+								<Box>
+									Apartar Producto
+								</Box>
+							</Box>
+						</Button>
+					</Grid>
+					<Grid item lg={6}>
+						<Button className={classes.borderBoton}>
+							<Box>
+								<Box>
+									<img src={cartaddIcon} alt="icono general" className={classes.iconSizeSecondInferiorGrande} />
+								</Box>
+								<Box>
+									Venta General
+								</Box>
+							</Box>
+						</Button>
+						<Button className={classes.borderBoton}>
+							<Box>
+								<Box>
+									<FcDonate className={classes.iconSizeInferiorGrande} />
+								</Box>
+								<Box>
+									Abonos
+								</Box>
+							</Box>
+						</Button>
+					</Grid>
+				</Grid>
+				{/* <Box mt={4} /> */}
+				<Grid container className={classes.drawerColor}>
+					<Grid item lg={4}>
+						<Button 
+							className={classes.borderBotonChico}
+							onClick={() =>{
+								setVentana('cancelarVenta');
+								handleClickOpen();
+							}}
+						>
+							<Box>
+								<Box>
+									<img src={shoppingcartIcon} alt="icono cancelarventa" className={classes.iconSizeSecondInferior} />
+								</Box>
+								<Box>
+									Cancelar Venta
+								</Box>
+							</Box>
+						</Button>
+						<Button 
+							className={classes.borderBotonChico}
+							onClick={() =>{
+								setVentana('abrirCajon');
+								handleClickOpen();
+							}}
+						>
+							<Box>
+								<Box>
+									<img src={cajon} alt="icono ventas" className={classes.iconSizeSecondInferior} />
+								</Box>
+								<Box>
+									Cajon
+								</Box>
+							</Box>
+						</Button>
+						<Button 
+							className={classes.borderBotonChico}
+							onClick={() =>{
+								setVentana('consultarPrecio');
+								handleClickOpen();
+							}}
+						>
+							<Box>
+								<Box>
+									<img src={buscarPrecio} alt="icono ventas" className={classes.iconSizeSecondInferior} />
+								</Box>
+								<Box>
+									Consultar Precio
+								</Box>
+							</Box>
+						</Button>
+					</Grid>
+					<Grid item lg={4}>
+						<Button 
+							className={classes.borderBotonChico}
+							onClick={() =>{
+								setVentana('cerrarVenta');
+								handleClickOpen();
+							}}
+						>
+							<Box>
+								<Box>
+									<img src={cartIcon} alt="icono ventas" className={classes.iconSizeSecondInferior} />
+								</Box>
+								<Box>
+									Pagar
+								</Box>
+							</Box>
+						</Button>
+						<Button className={classes.borderBotonChico}>
+							<Box>
+								<Box>
+								<FcBusinessman className={classes.iconSizeInferior} />
+								</Box>
+								<Box>
+									Clientes
+								</Box>
+							</Box>
+						</Button>
+						<Button 
+							className={classes.borderBotonChico}
+							onClick={() =>{
+								setVentana('ventasEspera');
+								handleClickOpen();
+							}}
+						>
+							<Box>
+								<Box>
+									<Badge badgeContent={4} color="primary">
+										<img src={listaEspera} alt="icono caja2" className={classes.iconSizeSecondInferior} />
+									</Badge>
+								</Box>
+								<Box>
+									Lista Espera
+								</Box>
+							</Box>
+						</Button>
+					</Grid>
+					<Grid item lg={4}>
+						<Button 
+							className={classes.borderBotonChico}
+							onClick={() =>{
+								setVentana('ventasRealizadas');
+								handleClickOpen();
+							}}
+						>
+							<Box>
+								<Box>
+								<FcPaid className={classes.iconSizeInferior} />
+								</Box>
+								<Box>
+									Ventas Realizadas
+								</Box>
+							</Box>
+						</Button>
+						<Button 
+							className={classes.borderBotonChico}
+							onClick={() =>{
+								setVentana('preciosProductos');
+								handleClickOpen();
+							}}
+						>
+							<Box>
+								<Box>
+									<img src={moneyIcon} alt="icono money" className={classes.iconSizeSecondInferior} />
+								</Box>
+								<Box>
+									Precios
+								</Box>
+							</Box>
+						</Button>
+						<Button 
+							className={classes.borderBotonChico}
+							onClick={() =>{
+								setVentana('listaApartados');
+								handleClickOpen();
+							}}
+						>
+							<Box>
+								<Box>
+									<img src={tagIcon} alt="icono apartados" className={classes.iconSizeSecondInferior} />
+								</Box>
+								<Box>
+									Lista Apartados
+								</Box>
+							</Box>
+						</Button>
+					</Grid>
+				</Grid>
 			</Drawer>
+
+
+			<Dialog
+				maxWidth='lg'
+				open={open} 
+				onClose={handleClickOpen} 
+				TransitionComponent={Transition}
+			>
+				{ventanas()}
+			</Dialog>
+
 		</Fragment>
 	);
 }

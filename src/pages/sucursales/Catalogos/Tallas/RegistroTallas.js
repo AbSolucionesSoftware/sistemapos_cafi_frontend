@@ -3,6 +3,7 @@ import { Box, Button, TextField, CircularProgress } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 import TablaTallas from './ListaTallas';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
+import ErrorPage from '../../../../components/ErrorPage';
 
 import { useQuery, useMutation } from '@apollo/client';
 import { OBTENER_TALLAS, CREAR_TALLAS, ACTUALIZAR_TALLA } from '../../../../gql/Catalogos/tallas';
@@ -11,51 +12,15 @@ export default function RegistroTallas({ tipo }) {
 	const [ value, setValue ] = useState('');
 	const [ toUpdate, setToUpdate ] = useState('');
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-	const empresa = '609eb3b4b995884dc49bbffa';
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	/* Queries */
-	const { loading, data, error } = useQuery(OBTENER_TALLAS, {
-		variables: { empresa, tipo }
+	const { loading, data, error, refetch } = useQuery(OBTENER_TALLAS, {
+		variables: { sucursal: sesion.sucursal._id, tipo }
 	});
 	/* Mutations */
-	const [ crearTalla ] = useMutation(CREAR_TALLAS, {
-		update(cache, { data: { crearTalla } }) {
-			const { obtenerTallas } = cache.readQuery({
-				query: OBTENER_TALLAS,
-				variables: { empresa, tipo }
-			});
-
-			cache.writeQuery({
-				query: OBTENER_TALLAS,
-				variables: { empresa, tipo },
-				data: {
-					obtenerTallas: {
-						...obtenerTallas,
-						crearTalla
-					}
-				}
-			});
-		}
-	});
-	const [ actualizarTalla ] = useMutation(ACTUALIZAR_TALLA, {
-		update(cache, { data: { actualizarTalla } }) {
-			const { obtenerTallas } = cache.readQuery({
-				query: OBTENER_TALLAS,
-				variables: { empresa, tipo }
-			});
-
-			cache.writeQuery({
-				query: OBTENER_TALLAS,
-				variables: { empresa, tipo },
-				data: {
-					obtenerTallas: {
-						...obtenerTallas,
-						actualizarTalla
-					}
-				}
-			});
-		}
-	});
+	const [ crearTalla ] = useMutation(CREAR_TALLAS);
+	const [ actualizarTalla ] = useMutation(ACTUALIZAR_TALLA);
 
 	if (loading)
 		return (
@@ -64,10 +29,7 @@ export default function RegistroTallas({ tipo }) {
 			</Box>
 		);
 	if (error) {
-		return <div>
-			
-			hubo un error
-		</div>;
+		return <ErrorPage error={error} />;
 	}
 
 	const { obtenerTallas } = data;
@@ -83,7 +45,6 @@ export default function RegistroTallas({ tipo }) {
 					variables: {
 						input: {
 							talla: nueva_talla,
-							tipo,
 						},
 						id: toUpdate
 					}
@@ -94,11 +55,13 @@ export default function RegistroTallas({ tipo }) {
 						input: {
 							talla: nueva_talla,
 							tipo,
-							empresa
+							empresa: sesion.empresa._id,
+							sucursal: sesion.sucursal._id
 						}
 					}
 				});
 			}
+			refetch();
 			setValue('');
 			setToUpdate('');
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
@@ -124,7 +87,7 @@ export default function RegistroTallas({ tipo }) {
 					<Add />Guardar
 				</Button>
 			</Box>
-			<TablaTallas datos={obtenerTallas} tipo={tipo} toUpdate={toUpdate} setToUpdate={setToUpdate} setValue={setValue} />
+			<TablaTallas datos={obtenerTallas} tipo={tipo} toUpdate={toUpdate} setToUpdate={setToUpdate} setValue={setValue} refetch={refetch} />
 		</Box>
 	);
 }

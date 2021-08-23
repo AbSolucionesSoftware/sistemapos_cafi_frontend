@@ -4,6 +4,7 @@ import { Add } from '@material-ui/icons';
 import TablaColores from './ListaColores';
 import { SketchPicker } from 'react-color';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
+import ErrorPage from '../../../../components/ErrorPage';
 
 import { useQuery, useMutation } from '@apollo/client';
 import { OBTENER_COLORES, CREAR_COLOR, ACTUALIZAR_COLOR } from '../../../../gql/Catalogos/colores';
@@ -11,53 +12,18 @@ import { OBTENER_COLORES, CREAR_COLOR, ACTUALIZAR_COLOR } from '../../../../gql/
 export default function RegistroColores() {
 	const [ color, setColor ] = useState({});
 	const [ toUpdate, setToUpdate ] = useState('');
-    const [ values, setValues ] = useState({nombre: '', hex: ''})
+	const [ values, setValues ] = useState({ nombre: '', hex: '' });
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-	const empresa = '609eb3b4b995884dc49bbffa';
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	/* Queries */
-	const { loading, data, error } = useQuery(OBTENER_COLORES, {
-		variables: { empresa }
+	const { loading, data, error, refetch } = useQuery(OBTENER_COLORES, {
+		variables: { sucursal: sesion.sucursal._id }
 	});
+
 	/* Mutations */
-	const [ crearColor ] = useMutation(CREAR_COLOR, {
-		update(cache, { data: { crearColor } }) {
-			const { obtenerColores } = cache.readQuery({
-				query: OBTENER_COLORES,
-				variables: { empresa }
-			});
-
-			cache.writeQuery({
-				query: OBTENER_COLORES,
-				variables: { empresa },
-				data: {
-					obtenerColores: {
-						...obtenerColores,
-						crearColor
-					}
-				}
-			});
-		}
-	});
-	const [ actualizarColor ] = useMutation(ACTUALIZAR_COLOR, {
-		update(cache, { data: { actualizarColor } }) {
-			const { obtenerColores } = cache.readQuery({
-				query: OBTENER_COLORES,
-				variables: { empresa }
-			});
-
-			cache.writeQuery({
-				query: OBTENER_COLORES,
-				variables: { empresa },
-				data: {
-					obtenerColores: {
-						...obtenerColores,
-						actualizarColor
-					}
-				}
-			});
-		}
-	});
+	const [ crearColor ] = useMutation(CREAR_COLOR);
+	const [ actualizarColor ] = useMutation(ACTUALIZAR_COLOR);
 
 	const handleChangeComplete = (color) => {
 		setColor(color);
@@ -74,7 +40,7 @@ export default function RegistroColores() {
 			</Box>
 		);
 	if (error) {
-		return <div>hubo un error</div>;
+		return <ErrorPage error={error} />;
 	}
 
 	const { obtenerColores } = data;
@@ -85,34 +51,37 @@ export default function RegistroColores() {
 		}
 		try {
 			const colores = values;
-			if(toUpdate){
+			if (toUpdate) {
 				await actualizarColor({
 					variables: {
 						input: {
 							nombre: colores.nombre,
-							hex: colores.hex,
+							hex: colores.hex
 						},
 						id: toUpdate
 					}
 				});
-			}else{
+			} else {
 				await crearColor({
 					variables: {
 						input: {
 							nombre: colores.nombre,
 							hex: colores.hex,
-							empresa
+							empresa: sesion.empresa._id,
+							sucursal: sesion.sucursal._id
 						}
 					}
 				});
 			}
-			setValues({nombre: '', hex: ''});
+			refetch();
+			setValues({ nombre: '', hex: '' });
 			setToUpdate('');
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 		} catch (error) {
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 		}
 	};
+	
 
 	return (
 		<Box display="flex" justifyContent="center">
@@ -146,7 +115,13 @@ export default function RegistroColores() {
 					</Box>
 				</Grid>
 				<Grid item md={7}>
-					<TablaColores datos={obtenerColores} toUpdate={toUpdate} setToUpdate={setToUpdate} setValues={setValues} />
+					<TablaColores
+						datos={obtenerColores}
+						toUpdate={toUpdate}
+						setToUpdate={setToUpdate}
+						setValues={setValues}
+						refetch={refetch}
+					/>
 				</Grid>
 			</Grid>
 		</Box>

@@ -7,20 +7,37 @@ export const CREAR_COLOR = gql`
 			nombre
 			hex
 			empresa {
-				nombre
+				nombre_empresa
+				correo_empresa
+				nombre_dueno
+				telefono_dueno
+				sucursales_activas
+				limite_sucursales
+				_id
 			}
 		}
 	}
 `;
 
 export const OBTENER_COLORES = gql`
-	query obtenerColores($empresa: String!) {
-		obtenerColores(empresa: $empresa) {
+	query obtenerColores($sucursal: String!) {
+		obtenerColores(sucursal: $sucursal) {
 			_id
 			nombre
 			hex
 			empresa {
+				nombre_empresa
+				correo_empresa
+				nombre_dueno
+				telefono_dueno
+				sucursales_activas
+				limite_sucursales
 				_id
+			}
+			sucursal {
+				_id
+				nombre_sucursal
+				descripcion
 			}
 		}
 	}

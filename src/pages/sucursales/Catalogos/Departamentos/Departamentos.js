@@ -10,6 +10,7 @@ import Slide from '@material-ui/core/Slide';
 import { Box, Container } from '@material-ui/core';
 import departamentosIcon from '../../../../icons/departamentos.svg';
 import RegistroDepartamentos from './RegistroDepartamento';
+import { DepartamentosProvider } from '../../../../context/Catalogos/Departamentos';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -42,31 +43,35 @@ export default function Departamentos() {
 
 	return (
 		<div>
-			<Button fullWidth onClick={handleClickOpen}>
-				<Box display="flex" flexDirection="column">
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={departamentosIcon} alt="icono numero calzado" className={classes.icon} />
+			<DepartamentosProvider>
+				<Button fullWidth onClick={handleClickOpen}>
+					<Box display="flex" flexDirection="column">
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<img src={departamentosIcon} alt="icono numero calzado" className={classes.icon} />
+						</Box>
+						Departamentos
 					</Box>
-					Departamentos
-				</Box>
-			</Button>
-			<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-				<AppBar className={classes.appBar}>
-					<Toolbar>
-						<Typography variant="h6" className={classes.title}>
-							Departamentos
-						</Typography>
-						<Button autoFocus color="inherit" size="large" onClick={handleClose} startIcon={<CloseIcon />}>
-							Cerrar
-						</Button>
-					</Toolbar>
-				</AppBar>
-				<Box mt={3}>
-					<Container maxWidth="sm">
-						<RegistroDepartamentos />
-					</Container>
-				</Box>
-			</Dialog>
+				</Button>
+				<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+					<AppBar className={classes.appBar}>
+						<Toolbar>
+							<Typography variant="h6" className={classes.title}>
+								Departamentos
+							</Typography>
+							<Box m={1}>
+								<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+									<CloseIcon style={{fontSize: 30}} />
+								</Button>
+							</Box>
+						</Toolbar>
+					</AppBar>
+					<Box mt={3}>
+						<Container maxWidth="sm">
+							<RegistroDepartamentos accion="registrar" />
+						</Container>
+					</Box>
+				</Dialog>
+			</DepartamentosProvider>
 		</div>
 	);
 }
