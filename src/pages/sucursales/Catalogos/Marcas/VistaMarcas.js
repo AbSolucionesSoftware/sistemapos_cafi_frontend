@@ -76,6 +76,10 @@ export default function VistaMarcas() {
         }
     }
 
+    const pressEnter = (e) => {
+		if (e.key === 'Enter') saveData();
+	};
+
     return (
         <div>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
@@ -90,6 +94,7 @@ export default function VistaMarcas() {
                     fullWidth
                     onChange={obtenerDatos}
                     error={error}
+                    onKeyPress={pressEnter}
                 />
                 <Box ml={1} />
                 <Button 

@@ -131,8 +131,12 @@ const RowsRender = ({ datos, updateData, toUpdate, setAlert, setToUpdate, setDat
 					sucursal: sesion.sucursal._id
 				}
 			});
+			if(resultado.data.eliminarMarca.message === 'false'){
+				setAlert({ message: 'Marca eliminada con exito', status: 'success', open: true });
+			}else{
+				setAlert({ message: resultado.data.eliminarMarca.message, status: 'error', open: true });
+			};
 			refetch();
-			setAlert({ message: resultado.data.eliminarMarca.message, status: 'success', open: true });
 			handleModal();
 		} catch (error) {
 			setAlert({ message: error.message, status: 'error', open: true });
