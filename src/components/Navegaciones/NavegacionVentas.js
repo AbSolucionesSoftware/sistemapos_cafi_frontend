@@ -130,7 +130,7 @@ function NavegacionVentas(props) {
 						}}
 						value="articulo-rapido"
 						label={<Typography variant="subtitle2">Articulo Rapido</Typography>}
-						icon={<img src={articuloRapido} alt="icono caja2" className={classes.iconSizeSecondSuperior} />}
+						icon={<img src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tiempo-rapido.svg" alt="icono caja2" className={classes.iconSizeSecondSuperior} />}
 					/>
 					<Divider orientation="vertical" />
 					<BottomNavigationAction
