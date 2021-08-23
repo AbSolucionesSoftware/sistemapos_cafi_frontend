@@ -20,7 +20,7 @@ export default function PrecioPlazos() {
     const { precios, preciosPlazos, setPreciosPlazos, unidadesVenta, unidadVentaXDefecto } = useContext(RegProductoContext);
     const [plazo, setPlazo] = useState({
         plazo: "1",
-        unidad: precios.granel ? "COSTALES" : "PIEZAS",
+        unidad: precios.granel ? "Costal" : "Pz",
         precio: 0
     });
 
@@ -41,19 +41,19 @@ export default function PrecioPlazos() {
     const guardarPlazo = () => {
         if (!plazo.plazo || !plazo.precio || !plazo.unidad) return
         switch (plazo.unidad) {
-            case "PIEZAS":
+            case "Pz":
                 setPreciosPlazos({
                     ...preciosPlazos,
                     precio_piezas: [...preciosPlazos.precio_piezas, plazo]
                 })
                 break;
-            case "CAJAS":
+            case "Caja":
                 setPreciosPlazos({
                     ...preciosPlazos,
                     precio_cajas: [...preciosPlazos.precio_cajas, plazo]
                 })
                 break;
-            case "COSTALES":
+            case "Costal":
                 setPreciosPlazos({
                     ...preciosPlazos,
                     precio_costales: [...preciosPlazos.precio_costales, plazo]
@@ -107,13 +107,13 @@ export default function PrecioPlazos() {
                             {precios.granel ? (
                                 <Select
                                     name="unidad" value={plazo.unidad} onChange={obtenerPlazos}>
-                                    <MenuItem value="COSTALES">COSTALES</MenuItem>
+                                    <MenuItem value="Costal">Costal</MenuItem>
                                 </Select>
                             ) : (
                                 <Select
                                     name="unidad" value={plazo.unidad} onChange={obtenerPlazos}>
-                                    <MenuItem value="CAJAS">CAJAS</MenuItem>
-                                    <MenuItem value="PIEZAS">PIEZAS</MenuItem>
+                                    <MenuItem value="Caja">Caja</MenuItem>
+                                    <MenuItem value="Pz">Pz</MenuItem>
                                 </Select>
                             )}
                         </FormControl>
@@ -140,18 +140,18 @@ export default function PrecioPlazos() {
                     {precios.granel ? (
                         <Fragment>
                             <Grid item lg={3}>
-                                <Typography variant="h6" align="center">COSTALES</Typography>
+                                <Typography variant="h6" align="center">Costal</Typography>
                                 <TablaPreciosPlazos precios={preciosPlazos.precio_costales} />
                             </Grid>
                         </Fragment>
                     ) :
                         <Fragment>
                             <Grid item lg={3}>
-                                <Typography variant="h6" align="center">PIEZAS</Typography>
+                                <Typography variant="h6" align="center">Piezas</Typography>
                                 <TablaPreciosPlazos precios={preciosPlazos.precio_piezas} />
                             </Grid>
                             <Grid item lg={3}>
-                                <Typography variant="h6" align="center">CAJAS</Typography>
+                                <Typography variant="h6" align="center">Cajas</Typography>
                                 <TablaPreciosPlazos precios={preciosPlazos.precio_cajas} />
                             </Grid>
                         </Fragment>}

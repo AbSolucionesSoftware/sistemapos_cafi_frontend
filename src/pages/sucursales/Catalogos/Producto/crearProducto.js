@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
-import { Button, AppBar, Badge, Typography, CircularProgress, Backdrop } from '@material-ui/core';
+import { Button, AppBar, Badge, Typography, CircularProgress, Backdrop, IconButton } from '@material-ui/core';
 import { Dialog, DialogActions, DialogContent, Tabs, Tab, Box } from '@material-ui/core';
 import almacenIcon from '../../../../icons/tarea-completada.svg';
 import imagenesIcon from '../../../../icons/imagenes.svg';
@@ -12,18 +12,18 @@ import registroIcon from '../../../../icons/portapapeles.svg';
 import costosIcon from '../../../../icons/costos.svg';
 import calendarIcon from '../../../../icons/calendar.svg';
 import tallasColoresIcon from '../../../../icons/tallas-colores.svg';
-import RegistroInfoGenerales from './registrarInfoGeneral';
+import RegistroInfoGenerales from './DatosGenerales/registrarInfoGeneral';
 import RegistroInfoAdidional from '../Producto/PreciosVenta/registrarInfoAdicional';
-import CargarImagenesProducto from './cargarImagenesProducto';
+import CargarImagenesProducto from './Imagenes/cargarImagenesProducto';
 import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
-import RegistroAlmacenInicial from './AlmacenInicial';
+import RegistroAlmacenInicial from './Inventario&Almacen/AlmacenInicial';
 import ColoresTallas from './TallasColores/TallasColores';
 import ErrorPage from '../../../../components/ErrorPage';
 
 import { useMutation, useQuery } from '@apollo/client';
-import { CREAR_PRODUCTO, OBTENER_CONSULTAS } from '../../../../gql/Catalogos/productos';
+import { CREAR_PRODUCTO, OBTENER_CONSULTAS, ACTUALIZAR_PRODUCTO } from '../../../../gql/Catalogos/productos';
 import { validaciones } from './validaciones';
-import CentroCostos from './CentroCostos';
+import CentroCostos from './CentroCostos/CentroCostos';
 import PrecioPlazos from './PrecioPlazos/PrecioPlazos';
 
 import {
@@ -39,9 +39,10 @@ import {
 	initial_state_imagenes,
 	initial_state_onPreview,
 	initial_state_validacion,
-	initial_state_subcostos
+	initial_state_subcostos,
+	initial_state_imagenes_eliminadas
 } from '../../../../context/Catalogos/initialStatesProducto';
-import { NavigateBefore, NavigateNext } from '@material-ui/icons';
+import { Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 
 function TabPanel(props) {
@@ -109,31 +110,56 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function CrearProducto({ accion }) {
+export default function CrearProducto({ accion, datos, productosRefetch }) {
 	const classes = useStyles();
 	const [ open, setOpen ] = useState(false);
 	const [ value, setValue ] = useState(0);
-	const { datos_generales, setDatosGenerales, precios, setPrecios, validacion, setValidacion } = useContext(
-		RegProductoContext
-	);
-	const { preciosP, setPreciosP, imagenes, setImagenes, unidadesVenta, setUnidadesVenta } = useContext(
-		RegProductoContext
-	);
-	const { almacen_inicial, setAlmacenInicial, unidadVentaXDefecto } = useContext(RegProductoContext);
-	const { setUnidadVentaXDefecto, centro_de_costos, setCentroDeCostos } = useContext(RegProductoContext);
-	const { preciosPlazos, setPreciosPlazos, setSubcategorias, setOnPreview, setSubcostos } = useContext(
-		RegProductoContext
-	);
+	const {
+		datos_generales,
+		setDatosGenerales,
+		precios,
+		setPrecios,
+		validacion,
+		setValidacion,
+		preciosP,
+		setPreciosP,
+		imagenes,
+		setImagenes,
+		unidadesVenta,
+		setUnidadesVenta,
+		almacen_inicial,
+		setAlmacenInicial,
+		unidadVentaXDefecto,
+		setUnidadVentaXDefecto,
+		centro_de_costos,
+		setCentroDeCostos,
+		update,
+		setUpdate,
+		preciosPlazos,
+		setPreciosPlazos,
+		setSubcategorias,
+		setOnPreview,
+		setSubcostos,
+		imagenes_eliminadas,
+		setImagenesEliminadas
+	} = useContext(RegProductoContext);
+
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 	const [ loading, setLoading ] = useState(false);
 
 	/* Mutations */
-	const [ crearProducto ] = useMutation(CREAR_PRODUCTO);
+	const [ crearProducto, actualizarProducto ] = useMutation(CREAR_PRODUCTO, ACTUALIZAR_PRODUCTO);
 
-	const toggleModal = () => {
+	const toggleModal = (producto) => {
 		setOpen(!open);
+		setUpdate(accion);
+		if(producto && accion){
+			setInitialStates(producto)
+		}else{
+			resetInitialStates();
+		}
 	};
 
 	const handleChange = (event, newValue) => {
@@ -144,7 +170,7 @@ export default function CrearProducto({ accion }) {
 
 	const saveData = async () => {
 		const validate = validaciones(datos_generales, precios, almacen_inicial);
-
+		
 		if (validate.error) {
 			setValidacion(validate);
 			return;
@@ -160,10 +186,16 @@ export default function CrearProducto({ accion }) {
 
 		precios.precios_producto = preciosP;
 
-		const input = {
+		let imagenes_without_aws = imagenes;
+		if (update) {
+			imagenes_without_aws = imagenes.filter((res) => !res.key_imagen);
+		}
+
+		let input = {
 			datos_generales,
 			precios,
-			imagenes,
+			imagenes: imagenes_without_aws,
+			imagenes_eliminadas,
 			almacen_inicial,
 			centro_de_costos,
 			unidades_de_venta: unidadesVenta,
@@ -174,14 +206,25 @@ export default function CrearProducto({ accion }) {
 		};
 
 		console.log(input);
+
 		setLoading(true);
 		try {
-			await crearProducto({
-				variables: {
-					input
-				}
-			});
+			if (update) {
+				await actualizarProducto({
+					variables: {
+						input,
+						id: datos._id
+					}
+				});
+			} else {
+				await crearProducto({
+					variables: {
+						input
+					}
+				});
+			}
 			resetInitialStates();
+			productosRefetch();
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setLoading(false);
 			toggleModal();
@@ -207,19 +250,44 @@ export default function CrearProducto({ accion }) {
 		setOnPreview(initial_state_onPreview);
 		setValidacion(initial_state_validacion);
 		setSubcostos(initial_state_subcostos);
+		setImagenesEliminadas(initial_state_imagenes_eliminadas);
 	};
+
+	/* SET STATES WHEN UPDATING */
+	const setInitialStates = (producto) => {
+		const { precios_producto, ...new_precios } = producto.precios;
+		const unidadxdefecto = producto.unidades_de_venta.filter((res) => res.default);
+
+		setDatosGenerales(producto.datos_generales);
+		setPrecios(new_precios);
+		setCentroDeCostos(producto.centro_de_costos ? producto.centro_de_costos : initial_state_centro_de_costos);
+		setImagenes(producto.imagenes);
+		setPreciosPlazos(producto.precio_plazos);
+		setUnidadesVenta(producto.unidades_de_venta);
+		setPreciosP(producto.precios.precios_producto);
+		setUnidadVentaXDefecto(unidadxdefecto[0]);
+	};
+
+	 function funcion_tecla(event) {
+	 	const {keyCode} = event;
+	 	if(keyCode === 114){
+			document.getElementById('modal-registro-product').click(); 
+	 	}
+	 } /* CODIGO PARA PODER EJECUTAR LAS VENTANAS A BASE DE LAS TECLAS */
+
+	 window.onkeydown = funcion_tecla;
 
 	return (
 		<Fragment>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
-			{accion ? (
-				<Button color="primary" variant="contained" size="large" onClick={() => toggleModal()}>
+			{!accion ? (
+				<Button id="modal-registro-product" color="primary" variant="contained" size="large" onClick={() => toggleModal()}>
 					Nuevo producto
 				</Button>
 			) : (
-				<Button color="primary" variant="contained" size="large" onClick={() => toggleModal()}>
-					Editar producto
-				</Button>
+				<IconButton color="primary" variant="contained" onClick={() => toggleModal(datos)}>
+					<Edit />
+				</IconButton>
 			)}
 			<Dialog
 				open={open}
@@ -307,7 +375,7 @@ export default function CrearProducto({ accion }) {
 								icon={<img src={imagenesIcon} alt="icono imagenes" className={classes.iconSvg} />}
 								{...a11yProps(5)}
 							/>
-							{!accion ? (
+							{accion ? datos_generales.tipo_producto !== "OTROS" ? (
 								<Tab
 									label="Tallas y colores"
 									icon={
@@ -315,7 +383,7 @@ export default function CrearProducto({ accion }) {
 									}
 									{...a11yProps(6)}
 								/>
-							) : null}
+							) : null : null}
 						</Tabs>
 						<Box m={1}>
 							<Button variant="contained" color="secondary" onClick={() => toggleModal()} size="large">
@@ -328,7 +396,7 @@ export default function CrearProducto({ accion }) {
 					<Backdrop className={classes.backdrop} open={loading}>
 						<CircularProgress color="inherit" />
 					</Backdrop>
-					<ContenidoModal accion={accion} value={value} />
+					<ContenidoModal value={value} datos={datos} />
 				</DialogContent>
 				<DialogActions style={{ display: 'flex', justifyContent: 'space-between' }}>
 					<Button
@@ -382,7 +450,7 @@ export default function CrearProducto({ accion }) {
 	);
 }
 
-const ContenidoModal = ({ accion, value }) => {
+const ContenidoModal = ({ value, datos }) => {
 	const classes = useStyles();
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
@@ -415,7 +483,7 @@ const ContenidoModal = ({ accion, value }) => {
 				<RegistroAlmacenInicial obtenerConsultasProducto={obtenerConsultasProducto} refetch={refetch} />
 			</TabPanel>
 			<TabPanel value={value} index={3}>
-				<CentroCostos obtenerConsultasProducto={obtenerConsultasProducto} />
+				<CentroCostos obtenerConsultasProducto={obtenerConsultasProducto} refetch={refetch} />
 			</TabPanel>
 			<TabPanel value={value} index={4}>
 				<PrecioPlazos />
@@ -424,7 +492,7 @@ const ContenidoModal = ({ accion, value }) => {
 				<CargarImagenesProducto />
 			</TabPanel>
 			<TabPanel value={value} index={6}>
-				<ColoresTallas />
+				<ColoresTallas obtenerConsultasProducto={obtenerConsultasProducto} refetch={refetch} datos={datos} />
 			</TabPanel>
 		</div>
 	);
