@@ -121,14 +121,14 @@ export default function Tallas() {
 								<Tab
 									label="Tallas"
 									icon={
-										<img src={shirtIcon} alt="icono tallas" className={classes.iconSvgSecondary} />
+										<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/shirt.svg' alt="icono tallas" className={classes.iconSvgSecondary} />
 									}
 									{...a11yProps(0)}
 								/>
 								<Tab
 									label="Numeros"
 									icon={
-										<img src={shoesIcon} alt="icono numeros" className={classes.iconSvgSecondary} />
+										<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/shoes.svg' alt="icono numeros" className={classes.iconSvgSecondary} />
 									}
 									{...a11yProps(1)}
 								/>

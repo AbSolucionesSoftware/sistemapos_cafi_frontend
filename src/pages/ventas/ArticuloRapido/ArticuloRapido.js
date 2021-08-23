@@ -19,7 +19,7 @@ export default function ArticuloRapido({handleClickOpen}) {
                             textAlign="center"
                         >
                             <Box>
-                                <img src={articuloRapido} alt="icono caja2" className={classes.iconSizeDialogs} />
+                                <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tiempo-rapido.svg' alt="icono caja2" className={classes.iconSizeDialogs} />
                             </Box>
                             <Box m={2} >
                                 <Divider orientation="vertical" />

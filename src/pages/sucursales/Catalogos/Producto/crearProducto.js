@@ -321,7 +321,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 										}}
 										invisible={validacion.error && validacion.vista1 ? false : true}
 									>
-										<img src={registroIcon} alt="icono registro" className={classes.iconSvg} />
+										<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/portapapeles.svg' alt="icono registro" className={classes.iconSvg} />
 									</Badge>
 								}
 								{...a11yProps(0)}
@@ -338,7 +338,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 										}}
 										invisible={validacion.error && validacion.vista2 ? false : true}
 									>
-										<img src={ventasIcon} alt="icono venta" className={classes.iconSvg} />
+										<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/etiqueta-de-precio.svg' alt="icono venta" className={classes.iconSvg} />
 									</Badge>
 								}
 								{...a11yProps(1)}
@@ -355,31 +355,31 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 										}}
 										invisible={validacion.error && validacion.vista3 ? false : true}
 									>
-										<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />
+										<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tarea-completada.svg' alt="icono almacen" className={classes.iconSvg} />
 									</Badge>
 								}
 								{...a11yProps(2)}
 							/>
 							<Tab
 								label="Centro de costos"
-								icon={<img src={costosIcon} alt="icono almacen" className={classes.iconSvg} />}
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/costos.svg' alt="icono almacen" className={classes.iconSvg} />}
 								{...a11yProps(3)}
 							/>
 							<Tab
 								label="Precios a plazos"
-								icon={<img src={calendarIcon} alt="icono almacen" className={classes.iconSvg} />}
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/calendar.svg' alt="icono almacen" className={classes.iconSvg} />}
 								{...a11yProps(4)}
 							/>
 							<Tab
 								label="Imagenes"
-								icon={<img src={imagenesIcon} alt="icono imagenes" className={classes.iconSvg} />}
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/imagenes.svg' alt="icono imagenes" className={classes.iconSvg} />}
 								{...a11yProps(5)}
 							/>
 							{accion ? datos_generales.tipo_producto !== "OTROS" ? (
 								<Tab
 									label="Tallas y colores"
 									icon={
-										<img src={tallasColoresIcon} alt="icono colores" className={classes.iconSvg} />
+										<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tallas-colores.svg' alt="icono colores" className={classes.iconSvg} />
 									}
 									{...a11yProps(6)}
 								/>

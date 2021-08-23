@@ -6,21 +6,21 @@ import { FaPowerOff } from 'react-icons/fa';
 import { FcDonate, FcExpired } from 'react-icons/fc';
 import { FcBusinessman,FcServices, FcCurrencyExchange, FcPaid } from 'react-icons/fc';
 import useStyles from './styles';
-import addIcon from '../../icons/ventas/add.svg'
-import articuloRapido from '../../icons/ventas/tiempo-rapido.svg'
-import listaEspera from '../../icons/ventas/lista-de-espera.svg'
-import calendario from '../../icons/ventas/calendario.svg'
-import buscarPrecio from '../../icons/ventas/precios.svg'
-import cartIcon from '../../icons/ventas/cart.svg'
-import moneyIcon from '../../icons/money.svg';
-import cartaddIcon from '../../icons/ventas/cart-add.svg'
-import cajon from '../../icons/ventas/cajon.svg'
-import cashregisterIcon from '../../icons/ventas/cash-register.svg'
-import cashregister2Icon from '../../icons/ventas/cash-register2.svg'
-import adminIcon from '../../icons/ventas/admin.svg'
-import shiftIcon from '../../icons/ventas/shift.svg'
-import tagIcon from '../../icons/ventas/tag.svg'
-import shoppingcartIcon from '../../icons/ventas/shopping-cart.svg'
+// import addIcon from '../../icons/ventas/add.svg'
+// import articuloRapido from '../../icons/ventas/tiempo-rapido.svg'
+// import listaEspera from '../../icons/ventas/lista-de-espera.svg'
+// import calendario from '../../icons/ventas/calendario.svg'
+// import buscarPrecio from '../../icons/ventas/precios.svg'
+// import cartIcon from '../../icons/ventas/cart.svg'
+// import moneyIcon from '../../icons/money.svg';
+// import cartaddIcon from '../../icons/ventas/cart-add.svg'
+// import cajon from '../../icons/ventas/cajon.svg'
+// import cashregisterIcon from '../../icons/ventas/cash-register.svg'
+// import cashregister2Icon from '../../icons/ventas/cash-register2.svg'
+// import adminIcon from '../../icons/ventas/admin.svg'
+// import shiftIcon from '../../icons/ventas/shift.svg'
+// import tagIcon from '../../icons/ventas/tag.svg'
+// import shoppingcartIcon from '../../icons/ventas/shopping-cart.svg'
 
 import DepositoRetiroCaja from '../../pages/ventas/Operaciones/DepositoRetiroCaja';
 import Turnos from '../../pages/ventas/AbrirCerrarTurno/Turnos';
