@@ -146,8 +146,8 @@ export default function CrearUsuario({ accion, datos }) {
 		try {
 			if (accion === 'registrar') {
 				usuario.numero_usuario = numerosRandom(100000000, 999999999);
-				usuario.empresa = sesion.empresa;
-				usuario.sucursal = sesion.sucursal;
+				usuario.empresa = sesion.empresa._id;
+				usuario.sucursal = sesion.sucursal._id;
 				const input = usuario;
 				await crearUsuario({
 					variables: {
@@ -210,6 +210,13 @@ export default function CrearUsuario({ accion, datos }) {
 								icon={<img src={permisosIcon} alt="icono factura" className={classes.iconSvg} />}
 								{...a11yProps(1)}
 							/>
+							<Box ml={58} mt={3} >
+								<Box>
+									<Button variant="contained" color="secondary" onClick={onCloseModal} size="large">
+										<CloseIcon />
+									</Button>
+								</Box>
+							</Box>
 						</Tabs>
 					</AppBar>
 					<TabPanel value={value} index={0}>
@@ -220,15 +227,7 @@ export default function CrearUsuario({ accion, datos }) {
 					</TabPanel>
 				</Box>
 				<DialogActions>
-					<Button
-						variant="outlined"
-						color="secondary"
-						onClick={onCloseModal}
-						size="large"
-						startIcon={<CloseIcon />}
-					>
-						Cerrar
-					</Button>
+					
 					<Button
 						variant="contained"
 						color="primary"

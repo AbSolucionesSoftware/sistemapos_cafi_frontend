@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Slide, Button, Box, Dialog } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 // import { FcPlus } from 'react-icons/fc';
-import inventarioAlmacen from '../../../../icons/warehouse.svg';
+import inventarioAlmacen from '../../../../icons/conceptosAlmacen.svg';
 
 
 const useStyles = makeStyles((theme) => ({

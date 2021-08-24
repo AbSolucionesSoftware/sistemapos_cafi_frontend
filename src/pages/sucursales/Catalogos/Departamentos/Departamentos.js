@@ -10,7 +10,7 @@ import Slide from '@material-ui/core/Slide';
 import { Box, Container } from '@material-ui/core';
 import departamentosIcon from '../../../../icons/departamentos.svg';
 import RegistroDepartamentos from './RegistroDepartamento';
-import { DepartamentosProvider } from '../../../../context/Catalogos/createDepartamentos';
+import { DepartamentosProvider } from '../../../../context/Catalogos/Departamentos';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -58,9 +58,11 @@ export default function Departamentos() {
 							<Typography variant="h6" className={classes.title}>
 								Departamentos
 							</Typography>
-							<Button autoFocus color="inherit" size="large" onClick={handleClose} startIcon={<CloseIcon />}>
-								Cerrar
-							</Button>
+							<Box m={1}>
+								<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+									<CloseIcon style={{fontSize: 30}} />
+								</Button>
+							</Box>
 						</Toolbar>
 					</AppBar>
 					<Box mt={3}>

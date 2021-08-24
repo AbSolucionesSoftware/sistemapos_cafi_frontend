@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'; 
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -56,9 +56,11 @@ export default function Categorias() {
 						<Typography variant="h6" className={classes.title}>
 							Categorias
 						</Typography>
-						<Button autoFocus color="inherit" size="large" onClick={handleClose} startIcon={<CloseIcon />}>
-							Cerrar
-						</Button>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
 				<Box mt={3}>

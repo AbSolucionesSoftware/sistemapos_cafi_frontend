@@ -3,19 +3,48 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
-import { Button, AppBar } from '@material-ui/core';
-import { Dialog, DialogActions, Tabs, Tab, Box } from '@material-ui/core';
+import { Button, AppBar, Badge, Typography, CircularProgress, Backdrop, IconButton } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, Tabs, Tab, Box } from '@material-ui/core';
 import almacenIcon from '../../../../icons/tarea-completada.svg';
 import imagenesIcon from '../../../../icons/imagenes.svg';
 import ventasIcon from '../../../../icons/etiqueta-de-precio.svg';
 import registroIcon from '../../../../icons/portapapeles.svg';
+import costosIcon from '../../../../icons/costos.svg';
+import calendarIcon from '../../../../icons/calendar.svg';
 import tallasColoresIcon from '../../../../icons/tallas-colores.svg';
-import RegistroInfoGenerales from './registrarInfoGeneral';
-import RegistroInfoAdidional from './registrarInfoAdicional';
-import CargarImagenesProducto from './cargarImagenesProducto';
+import RegistroInfoGenerales from './DatosGenerales/registrarInfoGeneral';
+import RegistroInfoAdidional from '../Producto/PreciosVenta/registrarInfoAdicional';
+import CargarImagenesProducto from './Imagenes/cargarImagenesProducto';
 import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
-import RegistroAlmacenInicial from './AlmacenInicial';
+import RegistroAlmacenInicial from './Inventario&Almacen/AlmacenInicial';
 import ColoresTallas from './TallasColores/TallasColores';
+import ErrorPage from '../../../../components/ErrorPage';
+
+import { useMutation, useQuery } from '@apollo/client';
+import { CREAR_PRODUCTO, OBTENER_CONSULTAS, ACTUALIZAR_PRODUCTO } from '../../../../gql/Catalogos/productos';
+import { validaciones } from './validaciones';
+import CentroCostos from './CentroCostos/CentroCostos';
+import PrecioPlazos from './PrecioPlazos/PrecioPlazos';
+
+import {
+	initial_state_datos_generales,
+	initial_state_precios,
+	initial_state_unidadVentaXDefecto,
+	initial_state_preciosP,
+	initial_state_unidadesVenta,
+	initial_state_almacen_inicial,
+	initial_state_centro_de_costos,
+	initial_state_preciosPlazos,
+	initial_state_subcategorias,
+	initial_state_imagenes,
+	initial_state_onPreview,
+	initial_state_validacion,
+	initial_state_subcostos,
+	initial_state_imagenes_eliminadas,
+	initial_state_presentaciones
+} from '../../../../context/Catalogos/initialStatesProducto';
+import { Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
+import SnackBarMessages from '../../../../components/SnackBarMessages';
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -28,7 +57,11 @@ function TabPanel(props) {
 			aria-labelledby={`reg-product-tab-${index}`}
 			{...other}
 		>
-			{value === index && <Box p={3} minHeight="65vh">{children}</Box>}
+			{value === index && (
+				<Box p={3} height="70vh">
+					{children}
+				</Box>
+			)}
 		</div>
 	);
 }
@@ -63,36 +96,215 @@ const useStyles = makeStyles((theme) => ({
 	},
 	iconSvg: {
 		width: 50
+	},
+	dialogContent: {
+		padding: 0
+	},
+	backdrop: {
+		zIndex: theme.zIndex.drawer + 1,
+		color: '#fff'
+	},
+	buttons: {
+		'& > *': {
+			margin: `0px ${theme.spacing(1)}px`
+		}
 	}
 }));
 
-export default function CrearProducto() {
+export default function CrearProducto({ accion, datos, productosRefetch }) {
 	const classes = useStyles();
 	const [ open, setOpen ] = useState(false);
 	const [ value, setValue ] = useState(0);
-	const { datos, setDatos } = useContext(RegProductoContext);
+	const {
+		datos_generales,
+		setDatosGenerales,
+		precios,
+		setPrecios,
+		validacion,
+		setValidacion,
+		preciosP,
+		setPreciosP,
+		imagenes,
+		setImagenes,
+		unidadesVenta,
+		setUnidadesVenta,
+		almacen_inicial,
+		setAlmacenInicial,
+		unidadVentaXDefecto,
+		setUnidadVentaXDefecto,
+		centro_de_costos,
+		setCentroDeCostos,
+		setUpdate,
+		preciosPlazos,
+		setPreciosPlazos,
+		setSubcategorias,
+		setOnPreview,
+		setSubcostos,
+		imagenes_eliminadas,
+		setImagenesEliminadas,
+		presentaciones,
+		setPresentaciones
+	} = useContext(RegProductoContext);
+
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
+	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+	const [ loading, setLoading ] = useState(false);
+
+	/* Mutations */
+	const [ crearProducto ] = useMutation(CREAR_PRODUCTO);
+	const [ actualizarProducto ] = useMutation(ACTUALIZAR_PRODUCTO);
+
+	const toggleModal = (producto) => {
+		setOpen(!open);
+		setUpdate(accion);
+		if(producto && accion){
+			setInitialStates(producto)
+		}else{
+			resetInitialStates();
+		}
+	};
 
 	const handleChange = (event, newValue) => {
 		setValue(newValue);
 	};
 
-	const toggleModal = () => setOpen(!open);
+	/* ###### GUARDAR LA INFO EN LA BD ###### */
 
-	const saveData = () => {
-		console.log(datos);
-		setDatos({
-			codigo_barras: ''
-		});
+	const saveData = async () => {
+		const validate = validaciones(datos_generales, precios, almacen_inicial);
+		
+		if (validate.error) {
+			setValidacion(validate);
+			return;
+		}
+		setValidacion(validate);
+
+		if (unidadesVenta.length === 0) {
+			unidadesVenta.push(unidadVentaXDefecto);
+		} else {
+			const unidadxdefecto = unidadesVenta.filter((unidades) => unidades.default);
+			if (unidadxdefecto.length === 0) unidadesVenta.push(unidadVentaXDefecto);
+		}
+
+		precios.precios_producto = preciosP;
+
+		let imagenes_without_aws = imagenes;
+		if (accion) {
+			imagenes_without_aws = imagenes.filter((res) => !res.key_imagen);
+		}
+
+		let input = {
+			datos_generales,
+			precios,
+			imagenes: imagenes_without_aws,
+			imagenes_eliminadas,
+			almacen_inicial,
+			centro_de_costos,
+			unidades_de_venta: unidadesVenta,
+			presentaciones,
+			precio_plazos: preciosPlazos,
+			empresa: sesion.empresa._id,
+			sucursal: sesion.sucursal._id,
+			usuario: sesion._id
+		};
+
+		console.log(input);
+
+		/*setLoading(true);
+		 try {
+			if (accion) {
+				await actualizarProducto({
+					variables: {
+						input,
+						id: datos._id
+					}
+				});
+			} else {
+				await crearProducto({
+					variables: {
+						input
+					}
+				});
+			}
+			resetInitialStates();
+			productosRefetch();
+			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			setLoading(false);
+			toggleModal();
+		} catch (error) {
+			console.log(error);
+			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			setLoading(false);
+		} */
 	};
+
+	/* ###### RESET STATES ###### */
+	const resetInitialStates = () => {
+		setDatosGenerales(initial_state_datos_generales);
+		setPrecios(initial_state_precios);
+		setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
+		setPreciosP(initial_state_preciosP);
+		setUnidadesVenta(initial_state_unidadesVenta);
+		setAlmacenInicial(initial_state_almacen_inicial);
+		setCentroDeCostos(initial_state_centro_de_costos);
+		setPreciosPlazos(initial_state_preciosPlazos);
+		setSubcategorias(initial_state_subcategorias);
+		setImagenes(initial_state_imagenes);
+		setOnPreview(initial_state_onPreview);
+		setValidacion(initial_state_validacion);
+		setSubcostos(initial_state_subcostos);
+		setImagenesEliminadas(initial_state_imagenes_eliminadas);
+		setPresentaciones(initial_state_presentaciones);
+	};
+
+	/* SET STATES WHEN UPDATING */
+	const setInitialStates = (producto) => {
+		const { precios_producto, ...new_precios } = producto.precios;
+		const unidadxdefecto = producto.unidades_de_venta.filter((res) => res.default);
+
+		setDatosGenerales(producto.datos_generales);
+		setPrecios(new_precios);
+		setCentroDeCostos(producto.centro_de_costos ? producto.centro_de_costos : initial_state_centro_de_costos);
+		setImagenes(producto.imagenes);
+		setPreciosPlazos(producto.precio_plazos);
+		setUnidadesVenta(producto.unidades_de_venta);
+		setPreciosP(producto.precios.precios_producto);
+		setUnidadVentaXDefecto(unidadxdefecto[0]);
+	};
+
+	 function funcion_tecla(event) {
+	 	const {keyCode} = event;
+	 	if(keyCode === 114){
+			document.getElementById('modal-registro-product').click(); 
+	 	}
+	 } /* CODIGO PARA PODER EJECUTAR LAS VENTANAS A BASE DE LAS TECLAS */
+
+	 window.onkeydown = funcion_tecla;
 
 	return (
 		<Fragment>
-			<Button color="primary" variant="contained" size="large" onClick={toggleModal}>
-				Nuevo producto
-			</Button>
-			<Dialog open={open} onClose={toggleModal} fullWidth maxWidth="lg">
-				<div className={classes.root}>
-					<AppBar position="static" color="default" elevation={0}>
+			<SnackBarMessages alert={alert} setAlert={setAlert} />
+			{!accion ? (
+				<Button id="modal-registro-product" color="primary" variant="contained" size="large" onClick={() => toggleModal()}>
+					Nuevo producto
+				</Button>
+			) : (
+				<IconButton color="primary" variant="contained" onClick={() => toggleModal(datos)}>
+					<Edit />
+				</IconButton>
+			)}
+			<Dialog
+				open={open}
+				onClose={toggleModal}
+				fullWidth
+				maxWidth="lg"
+				scroll="paper"
+				disableEscapeKeyDown
+				disableBackdropClick
+			>
+				<AppBar position="static" color="default" elevation={0}>
+					<Box display="flex" justifyContent="space-between">
 						<Tabs
 							value={value}
 							onChange={handleChange}
@@ -102,50 +314,191 @@ export default function CrearProducto() {
 							textColor="primary"
 							aria-label="scrollable force tabs example"
 						>
-							<Tab label="Datos generales" icon={<img src={registroIcon} alt="icono registro" className={classes.iconSvg} />} {...a11yProps(0)} />
-							<Tab label="Precios de venta" icon={<img src={ventasIcon} alt="icono venta" className={classes.iconSvg} />} {...a11yProps(1)} />
-							<Tab label="Imagenes" icon={<img src={imagenesIcon} alt="icono imagenes" className={classes.iconSvg} />} {...a11yProps(2)} />
-							<Tab label="Almacen incial" icon={<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />} {...a11yProps(3)} />
-							<Tab label="Tallas y colores" icon={<img src={tallasColoresIcon} alt="icono colores" className={classes.iconSvg} />} {...a11yProps(4)} />
+							<Tab
+								label="Datos generales"
+								icon={
+									<Badge
+										color="secondary"
+										badgeContent={<Typography variant="h6">!</Typography>}
+										anchorOrigin={{
+											vertical: 'bottom',
+											horizontal: 'right'
+										}}
+										invisible={validacion.error && validacion.vista1 ? false : true}
+									>
+										<img src={registroIcon} alt="icono registro" className={classes.iconSvg} />
+									</Badge>
+								}
+								{...a11yProps(0)}
+							/>
+							<Tab
+								label="Precios de venta"
+								icon={
+									<Badge
+										color="secondary"
+										badgeContent={<Typography variant="h6">!</Typography>}
+										anchorOrigin={{
+											vertical: 'bottom',
+											horizontal: 'right'
+										}}
+										invisible={validacion.error && validacion.vista2 ? false : true}
+									>
+										<img src={ventasIcon} alt="icono venta" className={classes.iconSvg} />
+									</Badge>
+								}
+								{...a11yProps(1)}
+							/>
+							<Tab
+								label="Inventario y almacen"
+								icon={
+									<Badge
+										color="secondary"
+										badgeContent={<Typography variant="h6">!</Typography>}
+										anchorOrigin={{
+											vertical: 'bottom',
+											horizontal: 'right'
+										}}
+										invisible={validacion.error && validacion.vista3 ? false : true}
+									>
+										<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />
+									</Badge>
+								}
+								{...a11yProps(2)}
+							/>
+							<Tab
+								label="Centro de costos"
+								icon={<img src={costosIcon} alt="icono almacen" className={classes.iconSvg} />}
+								{...a11yProps(3)}
+							/>
+							<Tab
+								label="Precios a plazos"
+								icon={<img src={calendarIcon} alt="icono almacen" className={classes.iconSvg} />}
+								{...a11yProps(4)}
+							/>
+							<Tab
+								label="Imagenes"
+								icon={<img src={imagenesIcon} alt="icono imagenes" className={classes.iconSvg} />}
+								{...a11yProps(5)}
+							/>
+							{accion ? datos_generales.tipo_producto !== "OTROS" ? (
+								<Tab
+									label="Tallas y colores"
+									icon={
+										<img src={tallasColoresIcon} alt="icono colores" className={classes.iconSvg} />
+									}
+									{...a11yProps(6)}
+								/>
+							) : null : null}
 						</Tabs>
-					</AppBar>
-					<TabPanel value={value} index={0}>
-						<RegistroInfoGenerales />
-					</TabPanel>
-					<TabPanel value={value} index={1}>
-						<RegistroInfoAdidional />
-					</TabPanel>
-					<TabPanel value={value} index={2}>
-						<CargarImagenesProducto />
-					</TabPanel>
-					<TabPanel value={value} index={3}>
-						<RegistroAlmacenInicial />
-					</TabPanel>
-					<TabPanel value={value} index={4}>
-						<ColoresTallas />
-					</TabPanel>
-				</div>
-				<DialogActions>
-					<Button
-						variant="outlined"
-						color="secondary"
-						onClick={toggleModal}
-						size="large"
-						startIcon={<CloseIcon />}
-					>
-						Cerrar
-					</Button>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={() => toggleModal()} size="large">
+								<CloseIcon />
+							</Button>
+						</Box>
+					</Box>
+				</AppBar>
+				<DialogContent className={classes.dialogContent}>
+					<Backdrop className={classes.backdrop} open={loading}>
+						<CircularProgress color="inherit" />
+					</Backdrop>
+					<ContenidoModal value={value} datos={datos} />
+				</DialogContent>
+				<DialogActions style={{ display: 'flex', justifyContent: 'space-between' }}>
 					<Button
 						variant="contained"
 						color="primary"
-						onClick={saveData}
+						onClick={() => saveData()}
 						size="large"
 						startIcon={<DoneIcon />}
+						disabled={
+							!datos_generales.clave_alterna ||
+							!datos_generales.tipo_producto ||
+							!datos_generales.nombre_generico ||
+							!datos_generales.nombre_comercial ||
+							!precios.precio_de_compra.precio_con_impuesto ||
+							!precios.precio_de_compra.precio_sin_impuesto ||
+							!precios.unidad_de_compra.cantidad ? (
+								true
+							) : (
+								false
+							)
+						}
 					>
 						Guardar
 					</Button>
+					<Box className={classes.buttons}>
+						<Button
+							variant="outlined"
+							color="primary"
+							onClick={() => setValue(value - 1)}
+							size="large"
+							startIcon={<NavigateBefore />}
+							disabled={value === 0}
+						>
+							Anterior
+						</Button>
+						<Button
+							variant="contained"
+							color="primary"
+							onClick={() => setValue(value + 1)}
+							size="large"
+							endIcon={<NavigateNext />}
+							disabled={accion && value === 6 ? true : value === 5 ? true : false}
+							disableElevation
+						>
+							Siguiente
+						</Button>
+					</Box>
 				</DialogActions>
 			</Dialog>
 		</Fragment>
 	);
 }
+
+const ContenidoModal = ({ value, datos }) => {
+	const classes = useStyles();
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
+	/* Queries */
+	const { loading, data, error, refetch } = useQuery(OBTENER_CONSULTAS, {
+		variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id }
+	});
+
+	if (loading)
+		return (
+			<Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" height="80vh">
+				<CircularProgress />
+				<Typography variant="h6">Cargando...</Typography>
+			</Box>
+		);
+
+	if (error) return <ErrorPage error={error} />;
+
+	const { obtenerConsultasProducto } = data;
+
+	return (
+		<div className={classes.root}>
+			<TabPanel value={value} index={0}>
+				<RegistroInfoGenerales obtenerConsultasProducto={obtenerConsultasProducto} refetch={refetch} />
+			</TabPanel>
+			<TabPanel value={value} index={1}>
+				<RegistroInfoAdidional />
+			</TabPanel>
+			<TabPanel value={value} index={2}>
+				<RegistroAlmacenInicial obtenerConsultasProducto={obtenerConsultasProducto} refetch={refetch} />
+			</TabPanel>
+			<TabPanel value={value} index={3}>
+				<CentroCostos obtenerConsultasProducto={obtenerConsultasProducto} refetch={refetch} />
+			</TabPanel>
+			<TabPanel value={value} index={4}>
+				<PrecioPlazos />
+			</TabPanel>
+			<TabPanel value={value} index={5}>
+				<CargarImagenesProducto />
+			</TabPanel>
+			<TabPanel value={value} index={6}>
+				<ColoresTallas obtenerConsultasProducto={obtenerConsultasProducto} refetch={refetch} datos={datos} />
+			</TabPanel>
+		</div>
+	);
+};

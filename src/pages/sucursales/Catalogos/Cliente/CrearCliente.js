@@ -138,9 +138,9 @@ export default function CrearCliente({ tipo, accion, datos }) {
 		try {
 			if (accion === 'registrar') {
 				cliente.tipo_cliente = tipo;
-				cliente.empresa = sesion.empresa;
+				cliente.empresa = sesion.empresa._id;
 				if(tipo !== "PROVEEDOR"){
-					cliente.sucursal = sesion.sucursal;
+					cliente.sucursal = sesion.sucursal._id;
 				}
 				const input = cliente;
 				await crearCliente({
@@ -204,7 +204,15 @@ export default function CrearCliente({ tipo, accion, datos }) {
 								icon={<img src={fiscalIcon} alt="icono factura" className={classes.iconSvg} />}
 								{...a11yProps(1)}
 							/>
+							<Box ml={58} mt={3} >
+								<Box>
+									<Button variant="contained" color="secondary" onClick={onCloseModal} size="large">
+										<CloseIcon />
+									</Button>
+								</Box>
+							</Box>
 						</Tabs>
+						
 					</AppBar>
 					<TabPanel value={value} index={0}>
 						<RegistrarInfoBasica tipo={tipo} accion={accion} />
@@ -214,15 +222,6 @@ export default function CrearCliente({ tipo, accion, datos }) {
 					</TabPanel>
 				</div>
 				<DialogActions>
-					<Button
-						variant="outlined"
-						color="secondary"
-						onClick={onCloseModal}
-						size="large"
-						startIcon={<CloseIcon />}
-					>
-						Cerrar
-					</Button>
 					<Button
 						variant="contained"
 						color="primary"
