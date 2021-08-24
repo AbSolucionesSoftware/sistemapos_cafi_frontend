@@ -109,27 +109,9 @@ export default function TablaTallas({ tipo, datos, toUpdate, setToUpdate, setVal
 const RowsRender = ({ row, setAlert, tipo, toUpdate, setToUpdate, setValue, refetch }) => {
 	const [ openModal, setOpenModal ] = useState(false);
 	const handleModal = () => setOpenModal(!openModal);
+	const [ eliminarTalla ] = useMutation(ELIMINAR_TALLA);
 
-	const [ eliminarTalla ] = useMutation(ELIMINAR_TALLA, {
-		update(cache, { data: { eliminarTalla } }) {
-			const { obtenerTallas } = cache.readQuery({
-				query: OBTENER_TALLAS,
-				variables: { empresa: row.empresa._id, tipo }
-			});
-
-			cache.writeQuery({
-				query: OBTENER_TALLAS,
-				variables: { empresa: row.empresa._id, tipo },
-				data: {
-					obtenerTallas: {
-						...obtenerTallas,
-						eliminarTalla
-					}
-				}
-			});
-		}
-	});
-
+ 
 	const handleDelete = async () => {
 		try {
 			await eliminarTalla({

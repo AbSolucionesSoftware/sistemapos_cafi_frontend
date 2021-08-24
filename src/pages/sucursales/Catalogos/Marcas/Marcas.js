@@ -70,7 +70,7 @@ export default function Marcas() {
 					</AppBar>
 					<Box mt={4}>
 						<Container maxWidth="md">
-							<VistaMarcas accion="registrar" />
+							<VistaMarcas />
 						</Container>
 					</Box>
 				</Dialog>
