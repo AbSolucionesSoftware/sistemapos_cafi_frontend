@@ -22,6 +22,14 @@ export default function RegistroTallas({ tipo }) {
 	const [ crearTalla ] = useMutation(CREAR_TALLAS);
 	const [ actualizarTalla ] = useMutation(ACTUALIZAR_TALLA);
 
+	React.useEffect(
+		() => {
+			
+			refetch();
+		
+		},
+		[ refetch ]
+	);
 	if (loading)
 		return (
 			<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
@@ -31,6 +39,7 @@ export default function RegistroTallas({ tipo }) {
 	if (error) {
 		return <ErrorPage error={error} />;
 	}
+
 
 	const { obtenerTallas } = data;
 
