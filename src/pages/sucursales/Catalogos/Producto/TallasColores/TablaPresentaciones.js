@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import Input from '@material-ui/core/Input';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -11,38 +11,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
-
-function EnhancedTableHead(props) {
-	const { onSelectAllClick, numSelected, rowCount } = props;
-
-	return (
-		<TableHead>
-			<TableRow>
-				<TableCell padding="checkbox">
-					<Checkbox
-						indeterminate={numSelected > 0 && numSelected < rowCount}
-						checked={rowCount > 0 && numSelected === rowCount}
-						onChange={onSelectAllClick}
-						inputProps={{ 'aria-label': 'select all desserts' }}
-					/>
-				</TableCell>
-				<TableCell>Código de barras</TableCell>
-				<TableCell>Nombre</TableCell>
-				<TableCell>Medida</TableCell>
-				<TableCell>Color</TableCell>
-				<TableCell>Precio</TableCell>
-				<TableCell>Cantidad</TableCell>
-			</TableRow>
-		</TableHead>
-	);
-}
-
-EnhancedTableHead.propTypes = {
-	classes: PropTypes.object.isRequired,
-	numSelected: PropTypes.number.isRequired,
-	onSelectAllClick: PropTypes.func.isRequired,
-	rowCount: PropTypes.number.isRequired
-};
+import { Chip, Tooltip, Zoom } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -65,52 +34,30 @@ const useStyles = makeStyles((theme) => ({
 		position: 'absolute',
 		top: 20,
 		width: 1
+	},
+	colorContainer: {
+		height: 30,
+		width: 30,
+		borderRadius: '15%'
 	}
 }));
 
 export default function TablaPresentaciones() {
 	const classes = useStyles();
-	const { presentaciones, setPresentaciones } = useContext(RegProductoContext);
-	const [ selected, setSelected ] = useState([]);
+	const { presentaciones } = useContext(RegProductoContext);
 	const [ page, setPage ] = useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = useState(7);
-
-	const handleSelectAllClick = (event) => {
-		if (event.target.checked) {
-			const newSelecteds = presentaciones.map((n) => n.nombre_comercial);
-			setSelected(newSelecteds);
-			return;
-		}
-		setSelected([]);
-	};
-
-	const handleClick = (event, name) => {
-		const selectedIndex = selected.indexOf(name);
-		let newSelected = [];
-
-		if (selectedIndex === -1) {
-			newSelected = newSelected.concat(selected, name);
-		} else if (selectedIndex === 0) {
-			newSelected = newSelected.concat(selected.slice(1));
-		} else if (selectedIndex === selected.length - 1) {
-			newSelected = newSelected.concat(selected.slice(0, -1));
-		} else if (selectedIndex > 0) {
-			newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-		}
-
-		setSelected(newSelected);
-	};
+	const rowsPerPage = 10;
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
 	};
 
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(parseInt(event.target.value, 10));
-		setPage(0);
-	};
-
-	const isSelected = (name) => selected.indexOf(name) !== -1;
+	useEffect(
+		() => {
+			if (presentaciones.length <= rowsPerPage) setPage(0);
+		},
+		[ presentaciones.length ]
+	);
 
 	const emptyRows = rowsPerPage - Math.min(rowsPerPage, presentaciones.length - page * rowsPerPage);
 
@@ -124,44 +71,23 @@ export default function TablaPresentaciones() {
 						size="medium"
 						aria-label="enhanced table"
 					>
-						<EnhancedTableHead
-							classes={classes}
-							numSelected={selected.length}
-							onSelectAllClick={handleSelectAllClick}
-							rowCount={presentaciones.length}
-						/>
+						<TableHead>
+							<TableRow>
+								<TableCell>Existencia</TableCell>
+								<TableCell>Código de barras</TableCell>
+								<TableCell>Nombre</TableCell>
+								<TableCell>Medida</TableCell>
+								<TableCell>Color</TableCell>
+								<TableCell>Precio</TableCell>
+								<TableCell>Cantidad</TableCell>
+							</TableRow>
+						</TableHead>
 						<TableBody>
-							{presentaciones.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-								const isItemSelected = isSelected(row.nombre_comercial);
-								const labelId = `enhanced-table-checkbox-${index}`;
-
-								return (
-									<TableRow
-										hover
-										onClick={(event) => handleClick(event, row.nombre_comercial)}
-										role="checkbox"
-										aria-checked={isItemSelected}
-										tabIndex={-1}
-										key={index}
-										selected={isItemSelected}
-									>
-										<TableCell padding="checkbox">
-											<Checkbox
-												checked={isItemSelected}
-												inputProps={{ 'aria-labelledby': labelId }}
-											/>
-										</TableCell>
-										<TableCell id={labelId} scope="row">
-											{row.codigo_barras}
-										</TableCell>
-										<TableCell>{row.nombre_comercial}</TableCell>
-										<TableCell>{row.medida}</TableCell>
-										<TableCell>{row.color}</TableCell>
-										<TableCell>{row.precio}</TableCell>
-										<TableCell>{row.cantidad}</TableCell>
-									</TableRow>
-								);
-							})}
+							{presentaciones
+								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+								.map((producto, index) => {
+									return <RenderPresentacionesRows key={index} producto={producto} index={index} />;
+								})}
 							{emptyRows > 0 && (
 								<TableRow style={{ height: 53 * emptyRows }}>
 									<TableCell colSpan={6} />
@@ -177,9 +103,85 @@ export default function TablaPresentaciones() {
 					rowsPerPage={rowsPerPage}
 					page={page}
 					onChangePage={handleChangePage}
-					onChangeRowsPerPage={handleChangeRowsPerPage}
 				/>
 			</Paper>
 		</div>
 	);
 }
+
+const RenderPresentacionesRows = ({ producto, index }) => {
+	const { presentaciones, setPresentaciones } = useContext(RegProductoContext);
+	const [ disabledInput, setDisabledInput ] = useState(true);
+	const [ cantidad, setCantidad ] = useState(0);
+	const classes = useStyles();
+	const textfield = useRef(null);
+
+	const handleClick = (value) => {
+		presentaciones[index].existencia = value;
+		setPresentaciones([...presentaciones])
+	};
+
+	const handleOnBlurInput = () => {
+		if (!producto.cantidad) {
+			presentaciones[index].cantidad = 0;
+			setPresentaciones([...presentaciones])
+		}
+		setDisabledInput(true);
+	};
+
+	const obtenerCantidad = (value) => {
+		if (!value) {
+			presentaciones[index].cantidad = '';
+			setPresentaciones([...presentaciones])
+			return;
+		}
+		/* setCantidad(parseFloat(value)); */
+		presentaciones[index].cantidad = parseFloat(value);
+		setPresentaciones([...presentaciones])
+	};
+
+	const handleDoubleClick = () => {
+		setDisabledInput(!disabledInput);
+		setTimeout(() => {
+			textfield.current.focus();
+		}, 100);
+		
+	}
+
+	return (
+		<TableRow hover role="checkbox" /* aria-checked={isItemSelected} */ /* tabIndex={-1} */ /* selected={isItemSelected} */>
+			<TableCell padding="checkbox" >
+				<Checkbox checked={producto.existencia} onChange={() => handleClick(!producto.existencia)} />
+			</TableCell>
+			<TableCell scope="row">
+				{producto.codigo_barras}
+			</TableCell>
+			<TableCell>{producto.nombre_comercial}</TableCell>
+			<TableCell>
+				{producto.medida ? (<Chip label={producto.medida} color="primary" />) : ''}
+			</TableCell>
+			<TableCell>
+				<Tooltip title={producto.color.nombre} placement="top" arrow TransitionComponent={Zoom}>
+					<div
+						className={classes.colorContainer}
+						style={{
+							backgroundColor: producto.color.hex
+						}}
+					/>
+				</Tooltip>
+			</TableCell>
+			<TableCell>{producto.precio}</TableCell>
+			<TableCell>
+				<Input
+					inputRef={textfield}
+					onDoubleClick={() => producto.existencia ? handleDoubleClick() : null}
+					onChange={(e) => obtenerCantidad(e.target.value)}
+					onBlur={handleOnBlurInput}
+					disabled={disabledInput}
+					value={producto.cantidad}
+					type="text"
+				/>
+			</TableCell>
+		</TableRow>
+	);
+};
