@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react';
-import { Typography, MenuItem, Divider, ListItemText } from '@material-ui/core';
-import { Box, Button, FormControl, Grid, Select, Checkbox } from '@material-ui/core';
+import { Typography, MenuItem, Divider, ListItemText, Tooltip } from '@material-ui/core';
+import { Box, FormControl, Grid, Select, Checkbox } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core';
+import Zoom from '@material-ui/core/Zoom';
 
 import { Done } from '@material-ui/icons';
 import TablaPresentaciones from './TablaPresentaciones';
@@ -19,25 +20,19 @@ const useStyles = makeStyles((theme) => ({
 		height: 50,
 		width: 50,
 		margin: 1,
-		borderRadius: '100%',
+		borderRadius: '15%',
 		cursor: 'pointer'
 	}
 }));
 
 export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos }) {
-	const {
-		almacen_inicial,
-		setAlmacenInicial,
-		presentaciones,
-		setPresentaciones,
-		datos_generales,
-		preciosP
-	} = useContext(RegProductoContext);
+	const { almacen_inicial, setAlmacenInicial, setPresentaciones, datos_generales, preciosP } = useContext(
+		RegProductoContext
+	);
 	const { almacenes, colores, tallas, calzados } = obtenerConsultasProducto;
 	const [ medidasSeleccionadas, setMedidasSeleccionadas ] = useState([]);
 	const [ coloresSeleccionados, setColoresSeleccionados ] = useState([]);
-	const [ medida, setMedida ] = useState('');
-	const medidas = datos_generales.tipo_producto === "ROPA" ? tallas : calzados;
+	const medidas = datos_generales.tipo_producto === 'ROPA' ? tallas : calzados;
 
 	const obtenerAlmacenes = (event, child) => {
 		setAlmacenInicial({
@@ -47,26 +42,68 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 		});
 	};
 
-	const addPresentacionConTalla = () => {
-		setPresentaciones([
-			...presentaciones,
-			{
-				codigo_barras: datos_generales.codigo_barras,
-				nombre_comercial: datos_generales.nombre_comercial,
-				medida: 12,
-				color: 'BLANCO',
-				precio: preciosP[0].precio_neto,
-				cantidad: 1
-			}
-		]);
-	};
-
 	const handleAddTallas = (event) => {
-		setMedidasSeleccionadas(event.target.value);
-	};
+		const medidas = event.target.value;
+		let presentacion = [];
 
-	const addColoresList = () => {
-		console.log(coloresSeleccionados);
+		if (!coloresSeleccionados.length) {
+			/* SI NO HAY COLORES SE AGREGAN SOLO TALLLAS */
+			for (let i = 0; i < medidas.length; i++) {
+				const producto_medida = medidas[i];
+				let producto = {
+					existencia: true,
+					codigo_barras: datos_generales.codigo_barras,
+					nombre_comercial: datos_generales.nombre_comercial,
+					medida: producto_medida,
+					color: {nombre: '', hex: ''},
+					precio: preciosP[0].precio_neto,
+					cantidad: 0
+				};
+				presentacion.push(producto);
+			}
+		} else {
+			/* SI HAY COLORES SE AGREGARA LA TALLA A LOS COLORES EXISTENTES SI AGREGA MAS DE UN COLOR SE DEBE MULTIPLICAR ESA PRESENTACION */
+			if (medidas.length) {
+				console.log(medidas);
+				for (let i = 0; i < medidas.length; i++) {
+					const producto_medida = medidas[i];
+
+					for (let k = 0; k < coloresSeleccionados.length; k++) {
+						const producto_color = coloresSeleccionados[k];
+
+						let producto = {
+							existencia: true,
+							codigo_barras: datos_generales.codigo_barras,
+							nombre_comercial: datos_generales.nombre_comercial,
+							medida: producto_medida,
+							color: producto_color,
+							precio: preciosP[0].precio_neto,
+							cantidad: 0
+						};
+						presentacion.push(producto);
+					}
+				}
+			} else {
+				console.log('entro a que no hay tallas');
+				/* si no hay tallas se vulven a listar las presentaciones originales si tenian colores */
+				for (let k = 0; k < coloresSeleccionados.length; k++) {
+					const producto_color = coloresSeleccionados[k];
+					let producto = {
+						existencia: true,
+						codigo_barras: datos_generales.codigo_barras,
+						nombre_comercial: datos_generales.nombre_comercial,
+						medida: '',
+						color: producto_color,
+						precio: preciosP[0].precio_neto,
+						cantidad: 0
+					};
+					presentacion.push(producto);
+				}
+			}
+		}
+
+		setMedidasSeleccionadas(medidas);
+		setPresentaciones(presentacion);
 	};
 
 	return (
@@ -114,7 +151,7 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 						</Box>
 					</Box>
 					<Divider />
-					<Box width="100%" mt={1}>
+					<Box width="100%" my={2}>
 						<Typography>{datos_generales.tipo_producto === 'ROPA' ? 'Talla' : 'Número'}</Typography>
 						<Box display="flex">
 							<FormControl fullWidth size="small" variant="outlined">
@@ -136,17 +173,6 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 							<CrearTallasProducto setMedidasSeleccionadas={setMedidasSeleccionadas} refetch={refetch} />
 						</Box>
 					</Box>
-					<Box mb={5} mt={1}>
-						<Button
-							fullWidth
-							color="primary"
-							variant="contained"
-							startIcon={<Done />}
-							onClick={() => addPresentacionConTalla()}
-						>
-							Guardar
-						</Button>
-					</Box>
 					<Divider />
 					<Box width="100%" mt={1}>
 						<Typography>Color</Typography>
@@ -155,18 +181,13 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 							{colores.map((color, index) => (
 								<Colores
 									key={index}
-									index={index}
 									color={color}
 									coloresSeleccionados={coloresSeleccionados}
 									setColoresSeleccionados={setColoresSeleccionados}
+									medidasSeleccionadas={medidasSeleccionadas}
 								/>
 							))}
 						</Grid>
-					</Box>
-					<Box mb={5} mt={1}>
-						<Button fullWidth color="primary" variant="contained" startIcon={<Done />} onClick={() => addColoresList()}>
-							Guardar
-						</Button>
 					</Box>
 				</Grid>
 			</Grid>
@@ -174,35 +195,99 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 	);
 }
 
-const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, index }) => {
+const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidasSeleccionadas }) => {
 	const classes = useStyles();
 	const theme = useTheme();
+	const { setPresentaciones, datos_generales, preciosP } = useContext(RegProductoContext);
 
 	const [ selected, setSelected ] = useState(false);
 
 	const obtenerColores = () => {
-		if(!selected){
+		if (!selected) {
 			coloresSeleccionados.push(color);
-			setSelected(true)
-		}else{
-			coloresSeleccionados.splice(index, 1)
-			setSelected(false)
+			setSelected(true);
+		} else {
+			coloresSeleccionados.forEach((res, index) => {
+				if (res._id === color._id) {
+					coloresSeleccionados.splice(index, 1);
+					setSelected(false);
+				}
+			});
 		}
-		setColoresSeleccionados([...coloresSeleccionados]);
-	}
+		let presentacion = [];
+
+		if (!medidasSeleccionadas.length) {
+			/* SI NO HAY MEDIDAS SE AGREGAN COLORES */
+			for (let i = 0; i < coloresSeleccionados.length; i++) {
+				const producto_color = coloresSeleccionados[i];
+				let producto = {
+					existencia: true,
+					codigo_barras: datos_generales.codigo_barras,
+					nombre_comercial: datos_generales.nombre_comercial,
+					medida: '',
+					color: producto_color,
+					precio: preciosP[0].precio_neto,
+					cantidad: 0
+				};
+				presentacion.push(producto);
+			}
+		} else {
+			/* SI HAY MEDIDAS SE AGREGARA EL COLOR A LA MEDIDA SI AGREGA MAS DE UN COLOR SE DEBE MULTIPLICAR ESA PRESENTACION */
+			if (coloresSeleccionados.length) {
+				for (let i = 0; i < coloresSeleccionados.length; i++) {
+					const producto_color = coloresSeleccionados[i];
+
+					for (let k = 0; k < medidasSeleccionadas.length; k++) {
+						const producto_medida = medidasSeleccionadas[k];
+
+						let producto = {
+							existencia: true,
+							codigo_barras: datos_generales.codigo_barras,
+							nombre_comercial: datos_generales.nombre_comercial,
+							medida: producto_medida,
+							color: producto_color,
+							precio: preciosP[0].precio_neto,
+							cantidad: 0
+						};
+						presentacion.push(producto);
+					}
+				}
+			} else {
+				/* si no hay colores se vulven a listar las presentaciones originales si tenian medidas */
+				for (let k = 0; k < medidasSeleccionadas.length; k++) {
+					const producto_medida = medidasSeleccionadas[k];
+
+					let producto = {
+						existencia: true,
+						codigo_barras: datos_generales.codigo_barras,
+						nombre_comercial: datos_generales.nombre_comercial,
+						medida: producto_medida,
+						color: {nombre: '', hex: ''},
+						precio: preciosP[0].precio_neto,
+						cantidad: 0
+					};
+					presentacion.push(producto);
+				}
+			}
+		}
+		setColoresSeleccionados([ ...coloresSeleccionados ]);
+		setPresentaciones(presentacion);
+	};
 
 	return (
 		<Grid item>
-			<div
-				className={classes.colorContainer}
-				style={{
-					backgroundColor: color.hex,
-					color: theme.palette.getContrastText(color.hex)
-				}}
-				onClick={() => obtenerColores()}
-			>
-				{selected ? <Done /> : null}
-			</div>
+			<Tooltip title={color.nombre} placement="top" arrow TransitionComponent={Zoom}>
+				<div
+					className={classes.colorContainer}
+					style={{
+						backgroundColor: color.hex,
+						color: theme.palette.getContrastText(color.hex)
+					}}
+					onClick={() => obtenerColores()}
+				>
+					{selected ? <Done /> : null}
+				</div>
+			</Tooltip>
 		</Grid>
 	);
 };

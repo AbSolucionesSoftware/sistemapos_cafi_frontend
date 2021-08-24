@@ -2,14 +2,11 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
+import DoneIcon from '@material-ui/icons/Done';
 import Slide from '@material-ui/core/Slide';
-import { Box } from '@material-ui/core';
+import { Box, DialogActions, Paper } from '@material-ui/core';
 import transferIcon from '../../../../icons/transferencia-bancaria.svg'
+import FormTransferencia from './FormTransferencia';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -21,7 +18,14 @@ const useStyles = makeStyles((theme) => ({
 	},
     icon: {
 		width: 100
-	}
+	},
+	root: {
+		flexGrow: 1,
+		width: '100%',
+		height: '100vh',
+		backgroundColor: theme.palette.background.paper
+	},
+	
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -44,23 +48,21 @@ export default function Transferencias() {
 					Transferencias
 				</Box>
 			</Button>
-			<Dialog fullScreen open={open} onClose={handleClickOpen} TransitionComponent={Transition}>
-				<AppBar className={classes.appBar}>
-					<Toolbar>
-						<Typography variant="h6" className={classes.title}>
-                        Transferencias
-						</Typography>
-						<Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClickOpen}>
-                                save
-                            </Button>
-                        </Box>
-                        <IconButton edge="start" color="inherit" onClick={handleClickOpen} aria-label="close">
-							<CloseIcon />
-						</IconButton>
-					</Toolbar>
-				</AppBar>
-				Toda la info de Transferencias
+			<Dialog open={open} TransitionComponent={Transition}>
+				<Paper elevation={3} >
+					<FormTransferencia handleClickOpen={handleClickOpen} />
+					<DialogActions>
+						<Button
+							variant="contained"	
+							color="primary"
+							onClick={handleClickOpen}
+							size="large"
+							startIcon={<DoneIcon />}
+						>
+							Registrar
+						</Button>
+					</DialogActions>
+				</Paper>
 			</Dialog>
 		</div>
 	);

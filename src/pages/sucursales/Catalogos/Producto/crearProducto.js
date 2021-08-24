@@ -40,7 +40,8 @@ import {
 	initial_state_onPreview,
 	initial_state_validacion,
 	initial_state_subcostos,
-	initial_state_imagenes_eliminadas
+	initial_state_imagenes_eliminadas,
+	initial_state_presentaciones
 } from '../../../../context/Catalogos/initialStatesProducto';
 import { Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
@@ -133,7 +134,6 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setUnidadVentaXDefecto,
 		centro_de_costos,
 		setCentroDeCostos,
-		update,
 		setUpdate,
 		preciosPlazos,
 		setPreciosPlazos,
@@ -141,7 +141,9 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setOnPreview,
 		setSubcostos,
 		imagenes_eliminadas,
-		setImagenesEliminadas
+		setImagenesEliminadas,
+		presentaciones,
+		setPresentaciones
 	} = useContext(RegProductoContext);
 
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
@@ -150,8 +152,8 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 	const [ loading, setLoading ] = useState(false);
 
 	/* Mutations */
-	const [ crearProducto] = useMutation(CREAR_PRODUCTO);
-	const [ actualizarProducto ] = useMutation( ACTUALIZAR_PRODUCTO);
+	const [ crearProducto ] = useMutation(CREAR_PRODUCTO);
+	const [ actualizarProducto ] = useMutation(ACTUALIZAR_PRODUCTO);
 
 	const toggleModal = (producto) => {
 		setOpen(!open);
@@ -188,7 +190,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		precios.precios_producto = preciosP;
 
 		let imagenes_without_aws = imagenes;
-		if (update) {
+		if (accion) {
 			imagenes_without_aws = imagenes.filter((res) => !res.key_imagen);
 		}
 
@@ -200,6 +202,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 			almacen_inicial,
 			centro_de_costos,
 			unidades_de_venta: unidadesVenta,
+			presentaciones,
 			precio_plazos: preciosPlazos,
 			empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id,
@@ -208,9 +211,9 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 
 		console.log(input);
 
-		setLoading(true);
-		try {
-			if (update) {
+		/*setLoading(true);
+		 try {
+			if (accion) {
 				await actualizarProducto({
 					variables: {
 						input,
@@ -233,7 +236,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoading(false);
-		}
+		} */
 	};
 
 	/* ###### RESET STATES ###### */
@@ -252,6 +255,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setValidacion(initial_state_validacion);
 		setSubcostos(initial_state_subcostos);
 		setImagenesEliminadas(initial_state_imagenes_eliminadas);
+		setPresentaciones(initial_state_presentaciones);
 	};
 
 	/* SET STATES WHEN UPDATING */
@@ -439,7 +443,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 							onClick={() => setValue(value + 1)}
 							size="large"
 							endIcon={<NavigateNext />}
-							disabled={value === 5}
+							disabled={accion && value === 6 ? true : value === 5 ? true : false}
 							disableElevation
 						>
 							Siguiente

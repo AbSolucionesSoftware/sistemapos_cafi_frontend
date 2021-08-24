@@ -36,7 +36,7 @@ const useStyles = makeStyles({
 	}
 });
 
-export default function ListaProductos({obtenerProductos}) {
+export default function ListaProductos({obtenerProductos, productosRefetch}) {
 	const classes = useStyles();
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(10);
@@ -71,7 +71,7 @@ export default function ListaProductos({obtenerProductos}) {
 							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 							.map((producto, index) => {
 								return (
-									<RenderTableRows key={index} producto={producto} />
+									<RenderTableRows key={index} producto={producto} productosRefetch={productosRefetch} />
 								);
 							})}
 					</TableBody>
@@ -90,7 +90,7 @@ export default function ListaProductos({obtenerProductos}) {
 	);
 }
 
-const RenderTableRows = ({producto}) => {
+const RenderTableRows = ({producto, productosRefetch}) => {
 
 	return (
 		<TableRow hover>
@@ -104,7 +104,7 @@ const RenderTableRows = ({producto}) => {
 				<ModalDetalles producto={producto} />
 			</TableCell>
 			<TableCell align="center">
-				<CrearProducto accion={true} datos={producto} />
+				<CrearProducto accion={true} datos={producto} productosRefetch={productosRefetch} />
 			</TableCell>
 			{/* <TableCell align="center">Eliminar</TableCell> */}
 		</TableRow>
