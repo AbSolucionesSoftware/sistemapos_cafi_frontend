@@ -4,12 +4,14 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { Box } from '@material-ui/core';
+import { Box, Grid, TextField } from '@material-ui/core';
 import abonoIcon from '../../../../icons/salary.svg'
+
+import TablaAbonosClientes from '../AbonoClientes/TablaAbonoClientes';
+import AbonoaRecibir from '../AbonoClientes/Abono_a_Recibir';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -48,19 +50,48 @@ export default function AbonosProveedores() {
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-                        AbonosProveedores
+                        	Abonos a Proveedores
 						</Typography>
-						<Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClickOpen}>
-                                save
-                            </Button>
-                        </Box>
-                        <IconButton edge="start" color="inherit" onClick={handleClickOpen} aria-label="close">
-							<CloseIcon />
-						</IconButton>
+                        <Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
-				Toda la info de AbonosProveedores
+				<Grid container>
+					<Box width="50%" p={2}>
+						<Typography>Busqueda por provedor o por cuenta</Typography>
+						<TextField
+							fullWidth
+							size="small"
+							/* error */
+							name="nombre_comercial"
+							id="form-producto-nombre-comercial"
+							variant="outlined"
+							/* value="" */
+							/* helperText="Incorrect entry." */
+							/* onChange={obtenerCampos} */
+						/>
+					</Box>
+					<Box mt={5}>
+						<Button
+							size="large"
+							variant="contained" 
+							color="primary"
+						>
+							Buscar
+						</Button>
+					</Box>
+					<Grid lg={5}>
+						<Box display="flex" justifyContent="center" mt={4}>
+							<AbonoaRecibir />
+						</Box>
+					</Grid>
+				</Grid>
+				<Box p={2}>
+					<TablaAbonosClientes />
+				</Box>
 			</Dialog>
 		</div>
 	);
