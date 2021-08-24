@@ -211,7 +211,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 
 		console.log(input);
 
-		/*setLoading(true);
+		setLoading(true);
 		 try {
 			if (accion) {
 				await actualizarProducto({
@@ -236,7 +236,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoading(false);
-		} */
+		}
 	};
 
 	/* ###### RESET STATES ###### */
