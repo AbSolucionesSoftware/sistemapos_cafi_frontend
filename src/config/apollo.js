@@ -2,7 +2,7 @@ import { ApolloClient, /* createHttpLink, */ InMemoryCache } from '@apollo/clien
 import { createUploadLink } from 'apollo-upload-client';
 
 const httpLink = createUploadLink({
-	uri: 'https://sistemapos-cafi-backend.herokuapp.com/'
+	uri: 'http://localhost:4000/'
 });
 
 const client = new ApolloClient({
