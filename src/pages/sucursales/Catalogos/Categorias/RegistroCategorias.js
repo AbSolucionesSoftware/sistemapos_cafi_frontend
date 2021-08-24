@@ -6,7 +6,7 @@ import { Add, Delete, Edit, ExpandMore, Close } from '@material-ui/icons';
 import ErrorPage from '../../../../components/ErrorPage';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
-
+ 
 import { useQuery, useMutation } from '@apollo/client';
 import {
 	OBTENER_CATEGORIAS,
