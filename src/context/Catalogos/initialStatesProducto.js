@@ -106,4 +106,4 @@ export const initial_state_onPreview = { index: '', image: '' };
 export const initial_state_validacion = { error: false, message: '' };
 export const initial_state_subcostos = [];
 export const initial_state_selectedDate = null;
-export const initial_state_presentaciones = [{_id: "234gh45h32j423g4h23234", codigo_barras: "34534435454", nombre_comercial: "Tenis NIKE", medida: "27.5", color: "NEGRO", precio: "$350.00", cantidad: 1}];
+export const initial_state_presentaciones = [/* {_id: "234gh45h32j423g4h23234", codigo_barras: "34534435454", nombre_comercial: "Tenis NIKE", medida: "27.5", color: "NEGRO", precio: "$350.00", cantidad: 1} */];
