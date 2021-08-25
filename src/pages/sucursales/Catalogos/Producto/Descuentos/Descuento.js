@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
-import { Button, Dialog, makeStyles, DialogTitle, DialogContent, DialogActions, Grid, Box, Typography, TextField, Slider } from '@material-ui/core'
+import { Button, Dialog, makeStyles, DialogTitle, DialogContent,  Grid, Box, Typography, TextField, Slider } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
 
 import TablaPreciosDescuentos from './ListaPrecios';
@@ -22,14 +22,37 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function DescuentoProductos({datos}) {
-    console.log(datos);
+
     const [openDescuento, setOpenDescuento] = useState(false);
+    const [precioProducto, setPrecioProducto] = useState(0);
+    const [inputValue, setInputValue] = useState(0);
+    const [precioPromocion, setPrecioPromocion] = useState(0);
 
     const classes = useStyles();
+
+    // console.log(porcientoDescuento);
 
     const handleDescuentos = () => {
         setOpenDescuento(!openDescuento);
     }
+
+    const obtenerPrecio = (e) => { //PRECIO DENTRO DEL INPUT
+        // console.log(e.target.value);
+        setPrecioPromocion(e.target.value)
+        // var porcentaje = ((e.target.value / precioProducto) * 100 );
+        // var descuento = (100 - porcentaje);
+    };
+
+    const obtenerPorciento = (value) => {
+        setInputValue(value);
+        console.log(value);
+        var porcentaje  = 100 - value;
+        var descuento = (precioProducto * porcentaje / 100);
+        setPrecioPromocion(descuento);
+    };
+
+    // console.log(inputValue);
+
 
     return (
         <div>
@@ -68,7 +91,9 @@ export default function DescuentoProductos({datos}) {
                     </Box>
                     <Grid container>
                         <Grid item lg={6}>
-                            <TablaPreciosDescuentos />
+                            <Box p={1}>
+                                <TablaPreciosDescuentos precios={datos.unidades_de_venta} setPrecioProducto={setPrecioProducto} />
+                            </Box>
                         </Grid>
                         <Grid item lg={6}>
                             <Box mt={5} display="flex" justifyContent="center">
@@ -78,11 +103,10 @@ export default function DescuentoProductos({datos}) {
                                     </Typography>
                                     <Box my={5} />
                                     <Slider
-                                        defaultValue={50}
-                                        // getAriaValueText={valuetext}
+                                        getAriaValueText={inputValue}
                                         aria-labelledby="discrete-slider-always"
-                                        // marks={marks}
                                         valueLabelDisplay="on"
+                                        getAriaValueText={(e) => obtenerPorciento(e)}
                                     />
                                 </div>
                             </Box>
@@ -95,12 +119,13 @@ export default function DescuentoProductos({datos}) {
                                         InputProps={{ inputProps: { min: 0 } }}
                                         size="small"
                                         /* error */
-                                        /* name="precio_neto" */
+                                        /* name="precio_neto"
                                         /* id="form-producto-nombre-comercial" */
                                         variant="outlined"
-                                        /* value="" */
+                                        // defaultValue={ precioPromocion ? precioPromocion : precioProducto }
+                                        value={precioPromocion}
                                         /* helperText="Incorrect entry." */
-                                        /* onChange={obtenerCampos} */
+                                        onChange={obtenerPrecio}
                                     />
                                 </div>
                             </Box>
