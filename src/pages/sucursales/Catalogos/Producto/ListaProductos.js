@@ -22,6 +22,7 @@ import {
 } from '@material-ui/core';
 import { CropOriginal, Dehaze } from '@material-ui/icons';
 import CrearProducto from './crearProducto';
+import DescuentoProductos from './Descuentos/Descuento';
 
 const useStyles = makeStyles({
 	root: {
@@ -63,6 +64,7 @@ export default function ListaProductos({obtenerProductos, productosRefetch}) {
 							<TableCell>Tipo</TableCell>
 							<TableCell>Más información</TableCell>
 							<TableCell>Editar</TableCell>
+							<TableCell>Descuento</TableCell>
 							{/* <TableCell>Eliminar</TableCell> */}
 						</TableRow>
 					</TableHead>
@@ -105,6 +107,9 @@ const RenderTableRows = ({producto, productosRefetch}) => {
 			</TableCell>
 			<TableCell align="center">
 				<CrearProducto accion={true} datos={producto} productosRefetch={productosRefetch} />
+			</TableCell>
+			<TableCell align="center">
+				<DescuentoProductos datos={producto} productosRefetch={productosRefetch} />
 			</TableCell>
 			{/* <TableCell align="center">Eliminar</TableCell> */}
 		</TableRow>
