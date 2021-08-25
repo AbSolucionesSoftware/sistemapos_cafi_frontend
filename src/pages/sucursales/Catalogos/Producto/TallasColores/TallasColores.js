@@ -26,13 +26,19 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos }) {
-	const { almacen_inicial, setAlmacenInicial, setPresentaciones, datos_generales, preciosP } = useContext(
-		RegProductoContext
-	);
+	const {
+		almacen_inicial,
+		setAlmacenInicial,
+		setPresentaciones,
+		presentaciones,
+		datos_generales,
+		preciosP
+	} = useContext(RegProductoContext);
 	const { almacenes, colores, tallas, calzados } = obtenerConsultasProducto;
 	const [ medidasSeleccionadas, setMedidasSeleccionadas ] = useState([]);
 	const [ coloresSeleccionados, setColoresSeleccionados ] = useState([]);
 	const medidas = datos_generales.tipo_producto === 'ROPA' ? tallas : calzados;
+	const array_presentaciones = [];
 
 	const obtenerAlmacenes = (event, child) => {
 		setAlmacenInicial({
@@ -42,67 +48,97 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 		});
 	};
 
-	const handleAddTallas = (event) => {
-		const medidas = event.target.value;
+	const handleAddTallas = (event, child) => {
+		const medidas_seleccionadas_temp = event.target.value;
 		let presentacion = [];
 
 		if (!coloresSeleccionados.length) {
 			/* SI NO HAY COLORES SE AGREGAN SOLO TALLLAS */
-			for (let i = 0; i < medidas.length; i++) {
-				const producto_medida = medidas[i];
-				let producto = {
-					existencia: true,
-					codigo_barras: datos_generales.codigo_barras,
-					nombre_comercial: datos_generales.nombre_comercial,
-					medida: producto_medida,
-					color: {nombre: '', hex: ''},
-					precio: preciosP[0].precio_neto,
-					cantidad: 0
-				};
-				presentacion.push(producto);
-			}
-		} else {
-			/* SI HAY COLORES SE AGREGARA LA TALLA A LOS COLORES EXISTENTES SI AGREGA MAS DE UN COLOR SE DEBE MULTIPLICAR ESA PRESENTACION */
-			if (medidas.length) {
-				console.log(medidas);
-				for (let i = 0; i < medidas.length; i++) {
-					const producto_medida = medidas[i];
-
-					for (let k = 0; k < coloresSeleccionados.length; k++) {
-						const producto_color = coloresSeleccionados[k];
-
+			if (!presentaciones.length) {
+				/* SI NO HAY PRESENTACIONES AGREGAR LA PRIMERA */
+				for (let i = 0; i < medidas_seleccionadas_temp.length; i++) {
+					const producto_medida = medidas_seleccionadas_temp[i];
+					let producto = {
+						existencia: false,
+						codigo_barras: datos_generales.codigo_barras,
+						nombre_comercial: datos_generales.nombre_comercial,
+						medida: producto_medida,
+						color: { nombre: '', hex: '' },
+						precio: preciosP[0].precio_neto,
+						cantidad: 0
+					};
+					presentacion.push(producto);
+				}
+			} else {
+				/* SI SI HAY PRESENTACIONES.. DUPLICAR */
+				for (let i = 0; i < medidas_seleccionadas_temp.length; i++) {
+					const producto_medida = medidas_seleccionadas_temp[i];
+					const result = presentaciones.filter((res) => res.medida._id === producto_medida._id);
+					if (result.length) {
+						presentacion.push(result[0]);
+					} else {
 						let producto = {
-							existencia: true,
+							existencia: false,
 							codigo_barras: datos_generales.codigo_barras,
 							nombre_comercial: datos_generales.nombre_comercial,
 							medida: producto_medida,
-							color: producto_color,
+							color: { nombre: '', hex: '' },
 							precio: preciosP[0].precio_neto,
 							cantidad: 0
 						};
 						presentacion.push(producto);
 					}
 				}
+			}
+		} else {
+			/* SI HAY COLORES SE AGREGARA LA TALLA A LOS COLORES EXISTENTES SI AGREGA MAS DE UN COLOR SE DEBE MULTIPLICAR ESA PRESENTACION */
+			if (medidas_seleccionadas_temp.length) {
+				for (let i = 0; i < medidas_seleccionadas_temp.length; i++) {
+					const producto_medida = medidas_seleccionadas_temp[i];
+					for (let k = 0; k < coloresSeleccionados.length; k++) {
+						const producto_color = coloresSeleccionados[k];
+						const presentacion_existente = presentaciones.filter(
+							(producto) =>
+								producto.medida._id === producto_medida._id && producto_color._id === producto.color._id
+						);
+						if (!presentacion_existente.length) {
+							console.log('no hay existencia');
+							let producto = {
+								existencia: false,
+								codigo_barras: datos_generales.codigo_barras,
+								nombre_comercial: datos_generales.nombre_comercial,
+								medida: producto_medida,
+								color: producto_color,
+								precio: preciosP[0].precio_neto,
+								cantidad: 0
+							};
+							presentacion.push(producto);
+						} else {
+							presentacion.push(presentacion_existente[0]);
+						}
+					}
+				}
 			} else {
-				console.log('entro a que no hay tallas');
 				/* si no hay tallas se vulven a listar las presentaciones originales si tenian colores */
-				for (let k = 0; k < coloresSeleccionados.length; k++) {
-					const producto_color = coloresSeleccionados[k];
-					let producto = {
-						existencia: true,
-						codigo_barras: datos_generales.codigo_barras,
-						nombre_comercial: datos_generales.nombre_comercial,
-						medida: '',
-						color: producto_color,
-						precio: preciosP[0].precio_neto,
-						cantidad: 0
-					};
-					presentacion.push(producto);
+				const presentaciones_existentes = presentaciones.filter((producto) => producto.medida._id);
+				if (presentaciones_existentes.length) {
+					for (let x = 0; x < presentaciones.length; x++) {
+						const objeto_presentaciones_final = presentaciones[x];
+						presentacion.push({
+							existencia: objeto_presentaciones_final.existencia,
+							codigo_barras: objeto_presentaciones_final.codigo_barras,
+							nombre_comercial: objeto_presentaciones_final.nombre_comercial,
+							medida: {},
+							color: objeto_presentaciones_final.color,
+							precio: objeto_presentaciones_final.precio,
+							cantidad: objeto_presentaciones_final.cantidad
+						});
+					}
 				}
 			}
 		}
 
-		setMedidasSeleccionadas(medidas);
+		setMedidasSeleccionadas(medidas_seleccionadas_temp);
 		setPresentaciones(presentacion);
 	};
 
@@ -160,11 +196,11 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 									multiple
 									value={medidasSeleccionadas}
 									onChange={handleAddTallas}
-									renderValue={(selected) => selected.join(', ')}
+									renderValue={(selected) => selected.map((select) => `${select.talla}, `)}
 								>
 									{medidas.map((talla, index) => (
-										<MenuItem key={index} value={talla.talla} name="id_talla" talla={talla}>
-											<Checkbox checked={medidasSeleccionadas.indexOf(talla.talla) > -1} />
+										<MenuItem key={index} value={talla} name="id_talla">
+											<Checkbox checked={medidasSeleccionadas.indexOf(talla) > -1} />
 											<ListItemText primary={talla.talla} />
 										</MenuItem>
 									))}
@@ -198,7 +234,7 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidasSeleccionadas }) => {
 	const classes = useStyles();
 	const theme = useTheme();
-	const { setPresentaciones, datos_generales, preciosP } = useContext(RegProductoContext);
+	const { presentaciones, setPresentaciones, datos_generales, preciosP } = useContext(RegProductoContext);
 
 	const [ selected, setSelected ] = useState(false);
 
@@ -220,14 +256,18 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 			/* SI NO HAY MEDIDAS SE AGREGAN COLORES */
 			for (let i = 0; i < coloresSeleccionados.length; i++) {
 				const producto_color = coloresSeleccionados[i];
+				const presentacion_actual = presentaciones.filter(
+					(producto) => producto.color._id === producto_color._id
+				);
+				console.log(presentacion_actual);
 				let producto = {
-					existencia: true,
+					existencia: presentacion_actual.length ? presentacion_actual[0].existencia : false,
 					codigo_barras: datos_generales.codigo_barras,
 					nombre_comercial: datos_generales.nombre_comercial,
 					medida: '',
 					color: producto_color,
-					precio: preciosP[0].precio_neto,
-					cantidad: 0
+					precio: presentacion_actual.length ? presentacion_actual[0].precio : preciosP[0].precio_neto,
+					cantidad: presentacion_actual.length ? presentacion_actual[0].cantidad : 0
 				};
 				presentacion.push(producto);
 			}
@@ -239,15 +279,21 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 
 					for (let k = 0; k < medidasSeleccionadas.length; k++) {
 						const producto_medida = medidasSeleccionadas[k];
+						const presentacion_actual = presentaciones.filter(
+							(producto) =>
+								producto.color._id === producto_color._id || producto.medida._id === producto_medida._id
+						);
 
 						let producto = {
-							existencia: true,
+							existencia: presentacion_actual.length ? presentacion_actual[0].existencia : false,
 							codigo_barras: datos_generales.codigo_barras,
 							nombre_comercial: datos_generales.nombre_comercial,
 							medida: producto_medida,
 							color: producto_color,
-							precio: preciosP[0].precio_neto,
-							cantidad: 0
+							precio: presentacion_actual.length
+								? presentacion_actual[0].precio
+								: preciosP[0].precio_neto,
+							cantidad: presentacion_actual.length ? presentacion_actual[0].cantidad : 0
 						};
 						presentacion.push(producto);
 					}
@@ -256,15 +302,18 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 				/* si no hay colores se vulven a listar las presentaciones originales si tenian medidas */
 				for (let k = 0; k < medidasSeleccionadas.length; k++) {
 					const producto_medida = medidasSeleccionadas[k];
+					const presentacion_actual = presentaciones.filter(
+						(producto) => producto.medida._id === producto_medida._id
+					);
 
 					let producto = {
-						existencia: true,
+						existencia: presentacion_actual.length ? presentacion_actual[0].existencia : false,
 						codigo_barras: datos_generales.codigo_barras,
 						nombre_comercial: datos_generales.nombre_comercial,
 						medida: producto_medida,
-						color: {nombre: '', hex: ''},
-						precio: preciosP[0].precio_neto,
-						cantidad: 0
+						color: { nombre: '', hex: '' },
+						precio: presentacion_actual.length ? presentacion_actual[0].precio : preciosP[0].precio_neto,
+						cantidad: presentacion_actual.length ? presentacion_actual[0].cantidad : 0
 					};
 					presentacion.push(producto);
 				}

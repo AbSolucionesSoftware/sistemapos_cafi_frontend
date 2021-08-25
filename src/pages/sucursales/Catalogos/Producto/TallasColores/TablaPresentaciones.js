@@ -116,11 +116,11 @@ const RenderPresentacionesRows = ({ producto, index }) => {
 	const classes = useStyles();
 	const textfield = useRef(null);
 
-	const handleClick = (value) => {
+	/* const handleClick = (value) => {
 		presentaciones[index].existencia = value;
 		setPresentaciones([...presentaciones])
 	};
-
+ */
 	const handleOnBlurInput = () => {
 		if (!producto.cantidad) {
 			presentaciones[index].cantidad = 0;
@@ -132,11 +132,13 @@ const RenderPresentacionesRows = ({ producto, index }) => {
 	const obtenerCantidad = (value) => {
 		if (!value) {
 			presentaciones[index].cantidad = '';
+			presentaciones[index].existencia = false;
 			setPresentaciones([...presentaciones])
 			return;
 		}
 		/* setCantidad(parseFloat(value)); */
 		presentaciones[index].cantidad = parseFloat(value);
+		presentaciones[index].existencia = true;
 		setPresentaciones([...presentaciones])
 	};
 
@@ -151,14 +153,14 @@ const RenderPresentacionesRows = ({ producto, index }) => {
 	return (
 		<TableRow hover role="checkbox" /* aria-checked={isItemSelected} */ /* tabIndex={-1} */ /* selected={isItemSelected} */>
 			<TableCell padding="checkbox" >
-				<Checkbox checked={producto.existencia} onChange={() => handleClick(!producto.existencia)} />
+				<Checkbox checked={producto.existencia} /* onChange={() => handleClick(!producto.existencia)} */ />
 			</TableCell>
 			<TableCell scope="row">
 				{producto.codigo_barras}
 			</TableCell>
 			<TableCell>{producto.nombre_comercial}</TableCell>
 			<TableCell>
-				{producto.medida ? (<Chip label={producto.medida} color="primary" />) : ''}
+				{producto.medida._id ? (<Chip label={producto.medida.talla} color="primary" />) : ''}
 			</TableCell>
 			<TableCell>
 				<Tooltip title={producto.color.nombre} placement="top" arrow TransitionComponent={Zoom}>
@@ -174,7 +176,7 @@ const RenderPresentacionesRows = ({ producto, index }) => {
 			<TableCell>
 				<Input
 					inputRef={textfield}
-					onDoubleClick={() => producto.existencia ? handleDoubleClick() : null}
+					onDoubleClick={() => handleDoubleClick()}
 					onChange={(e) => obtenerCantidad(e.target.value)}
 					onBlur={handleOnBlurInput}
 					disabled={disabledInput}
