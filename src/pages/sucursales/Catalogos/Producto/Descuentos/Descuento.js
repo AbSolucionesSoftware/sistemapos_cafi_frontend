@@ -23,35 +23,41 @@ const useStyles = makeStyles((theme) => ({
 
 export default function DescuentoProductos({datos}) {
 
-    const [openDescuento, setOpenDescuento] = useState(false);
-    const [precioProducto, setPrecioProducto] = useState(0);
-    const [inputValue, setInputValue] = useState(0);
-    const [precioPromocion, setPrecioPromocion] = useState(0);
+    const [ openDescuento, setOpenDescuento ] = useState(false);
+    const [ activePorcentaje, setActivePorcentaje ] = useState(false);
+
+    const [ preciosProductos, setPreciosProductos ] = useState([]);
+
+    const [preciosDescuentos, setPreciosDescuentos] = useState([]);
+
+    const [ inputValue, setInputValue] = useState(0);
 
     const classes = useStyles();
-
-    // console.log(porcientoDescuento);
 
     const handleDescuentos = () => {
         setOpenDescuento(!openDescuento);
     }
 
-    const obtenerPrecio = (e) => { //PRECIO DENTRO DEL INPUT
-        // console.log(e.target.value);
-        setPrecioPromocion(e.target.value)
-        // var porcentaje = ((e.target.value / precioProducto) * 100 );
-        // var descuento = (100 - porcentaje);
-    };
-
+    console.log(preciosProductos);
+    
     const obtenerPorciento = (value) => {
         setInputValue(value);
-        console.log(value);
-        var porcentaje  = 100 - value;
-        var descuento = (precioProducto * porcentaje / 100);
-        setPrecioPromocion(descuento);
+        setPreciosDescuentos([]);
+        for (let i = 0; i < preciosProductos.length; i++) {
+            var porcentaje  = 100 - value;
+            var descuento = ( preciosProductos[i].precio * porcentaje / 100);
+            let arrayDescuento = 
+            {
+                "porciento": '',
+                "costoDescontado": '',
+                "precioConDescuento": descuento,
+                "descuentoActivo": false
+            }
+            return preciosDescuentos.push(arrayDescuento);
+            // setPreciosDescuentos({ ...preciosDescuentos, precioConDescuento: descuento})
+        }
     };
-
-    // console.log(inputValue);
+    console.log(preciosDescuentos);
 
 
     return (
@@ -92,7 +98,13 @@ export default function DescuentoProductos({datos}) {
                     <Grid container>
                         <Grid item lg={6}>
                             <Box p={1}>
-                                <TablaPreciosDescuentos precios={datos.unidades_de_venta} setPrecioProducto={setPrecioProducto} />
+                                <TablaPreciosDescuentos 
+                                    activePorcentaje={activePorcentaje} 
+                                    setActivePorcentaje={setActivePorcentaje} 
+                                    precios={datos.unidades_de_venta} 
+                                    preciosProductos={preciosProductos} 
+                                    setPreciosProductos={setPreciosProductos} 
+                                />
                             </Box>
                         </Grid>
                         <Grid item lg={6}>
@@ -106,28 +118,34 @@ export default function DescuentoProductos({datos}) {
                                         getAriaValueText={inputValue}
                                         aria-labelledby="discrete-slider-always"
                                         valueLabelDisplay="on"
-                                        getAriaValueText={(e) => obtenerPorciento(e)}
+                                        getAriaValueText={obtenerPorciento}
                                     />
                                 </div>
                             </Box>
                             <Box mt={5} display="flex" justifyContent="center">
-                                <div>
-                                    <Typography>Precio con Descuento</Typography>
-                                    <TextField
-                                        /* fullWidth */
-                                        type="number"
-                                        InputProps={{ inputProps: { min: 0 } }}
-                                        size="small"
-                                        /* error */
-                                        /* name="precio_neto"
-                                        /* id="form-producto-nombre-comercial" */
-                                        variant="outlined"
-                                        // defaultValue={ precioPromocion ? precioPromocion : precioProducto }
-                                        value={precioPromocion}
-                                        /* helperText="Incorrect entry." */
-                                        onChange={obtenerPrecio}
-                                    />
-                                </div>
+                                {activePorcentaje ? ( 
+                                    null
+                                ) : (
+                                    <div>
+                                        <Typography>Precio con Descuento</Typography>
+                                        <TextField
+                                            /* fullWidth */
+                                            type="number"
+                                            InputProps={{ inputProps: { min: 0 } }}
+                                            size="small"
+                                            disabled={true}
+                                            /* error */
+                                            /* name="precio_neto"
+                                            /* id="form-producto-nombre-comercial" */
+                                            variant="outlined"
+                                            // defaultValue={ precioPromocion ? precioPromocion : precioProducto }
+                                            // value={precioPromocion}
+                                            /* helperText="Incorrect entry." */
+                                            // onChange={obtenerPrecio}
+                                        />
+                                    </div>
+                                )}
+
                             </Box>
                             <Box p={2} display="flex" justifyContent="center">
                                 <Button variant="contained" color="primary" size="large">
