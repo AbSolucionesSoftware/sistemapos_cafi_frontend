@@ -18,8 +18,8 @@ export const REGISTRAR_MARCAS = gql`
 `;
 
 export const ACTUALIZAR_MARCAS = gql`
-    mutation actualzarMarcas($input: MarcasInput, $id: ID!, $empresa: ID!, $sucursal: ID! ) {
-		actualzarMarcas(id: $id, input: $input, empresa: $empresa, sucursal: $sucursal) {
+    mutation actualzarMarcas($input: MarcasInput, $id: ID! ) {
+		actualzarMarcas(id: $id, input: $input) {
 			message
 		}
 	}

@@ -48,8 +48,6 @@ export default function VistaMarcas() {
                             input: {
                                 nombre_marca: input.nombre_marca,
                             },
-                            empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id,
                             id: toUpdate
                         }
                     });
