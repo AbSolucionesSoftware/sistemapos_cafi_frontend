@@ -29,7 +29,7 @@ export function validaciones(datos1, datos2, datos3, datos7) {
         return { error: true, message: 'Campo obligatorio', vista3: true };
     } else if(
         /* si no hay colo */
-        datos7.presentaciones.length > 0 && !datos3.almacen
+        datos7.length > 0 && !datos3.almacen
     ){
         return { error: true, message: 'Campo obligatorio', vista7: true };
     } else {
