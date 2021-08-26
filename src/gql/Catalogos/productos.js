@@ -45,7 +45,7 @@ export const OBTENER_CONSULTAS = gql`
 					_id
 					subcuenta
 				}
-			}
+			},
 		}
 	}
 `;
@@ -152,6 +152,7 @@ export const OBTENER_PRODUCTOS = gql`
 				}
 				granel
 			}
+			medidas_registradas
 			sucursal
 			usuario
 		}

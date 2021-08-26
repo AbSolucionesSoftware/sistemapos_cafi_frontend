@@ -43,7 +43,7 @@ import {
 	initial_state_imagenes_eliminadas,
 	initial_state_presentaciones
 } from '../../../../context/Catalogos/initialStatesProducto';
-import { Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
+import { Close, Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 
 function TabPanel(props) {
@@ -103,11 +103,6 @@ const useStyles = makeStyles((theme) => ({
 	backdrop: {
 		zIndex: theme.zIndex.drawer + 1,
 		color: '#fff'
-	},
-	buttons: {
-		'& > *': {
-			margin: `0px ${theme.spacing(1)}px`
-		}
 	}
 }));
 
@@ -158,9 +153,10 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 	const toggleModal = (producto) => {
 		setOpen(!open);
 		setUpdate(accion);
-		if(producto && accion){
-			setInitialStates(producto)
-		}else{
+		if (producto && accion) {
+			setInitialStates(producto);
+		} else {
+			console.log('enrtro');
 			resetInitialStates();
 		}
 	};
@@ -173,7 +169,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 
 	const saveData = async () => {
 		const validate = validaciones(datos_generales, precios, almacen_inicial);
-		
+
 		if (validate.error) {
 			setValidacion(validate);
 			return;
@@ -211,7 +207,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 
 		console.log(input);
 
-		setLoading(true);
+		/* setLoading(true);
 		 try {
 			if (accion) {
 				await actualizarProducto({
@@ -227,7 +223,6 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 					}
 				});
 			}
-			resetInitialStates();
 			productosRefetch();
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setLoading(false);
@@ -236,7 +231,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoading(false);
-		}
+		} */
 	};
 
 	/* ###### RESET STATES ###### */
@@ -273,20 +268,26 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setUnidadVentaXDefecto(unidadxdefecto[0]);
 	};
 
-	 function funcion_tecla(event) {
-	 	const {keyCode} = event;
-	 	if(keyCode === 114){
-			document.getElementById('modal-registro-product').click(); 
-	 	}
-	 } /* CODIGO PARA PODER EJECUTAR LAS VENTANAS A BASE DE LAS TECLAS */
+	function funcion_tecla(event) {
+		const { keyCode } = event;
+		if (keyCode === 114) {
+			document.getElementById('modal-registro-product').click();
+		}
+	} /* CODIGO PARA PODER EJECUTAR LAS VENTANAS A BASE DE LAS TECLAS */
 
-	 window.onkeydown = funcion_tecla;
+	window.onkeydown = funcion_tecla;
 
 	return (
 		<Fragment>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			{!accion ? (
-				<Button id="modal-registro-product" color="primary" variant="contained" size="large" onClick={() => toggleModal()}>
+				<Button
+					id="modal-registro-product"
+					color="primary"
+					variant="contained"
+					size="large"
+					onClick={() => toggleModal()}
+				>
 					Nuevo producto
 				</Button>
 			) : (
@@ -380,21 +381,35 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 								icon={<img src={imagenesIcon} alt="icono imagenes" className={classes.iconSvg} />}
 								{...a11yProps(5)}
 							/>
-							{accion ? datos_generales.tipo_producto !== "OTROS" ? (
+							{accion ? datos_generales.tipo_producto !== 'OTROS' ? (
 								<Tab
 									label="Tallas y colores"
 									icon={
-										<img src={tallasColoresIcon} alt="icono colores" className={classes.iconSvg} />
+										<Badge
+											color="secondary"
+											badgeContent={<Typography variant="h6">!</Typography>}
+											anchorOrigin={{
+												vertical: 'bottom',
+												horizontal: 'right'
+											}}
+											invisible={validacion.error && validacion.vista7 ? false : true}
+										>
+											<img
+												src={tallasColoresIcon}
+												alt="icono colores"
+												className={classes.iconSvg}
+											/>
+										</Badge>
 									}
 									{...a11yProps(6)}
 								/>
 							) : null : null}
 						</Tabs>
-						<Box m={1}>
+						{/* <Box m={1}>
 							<Button variant="contained" color="secondary" onClick={() => toggleModal()} size="large">
 								<CloseIcon />
 							</Button>
-						</Box>
+						</Box> */}
 					</Box>
 				</AppBar>
 				<DialogContent className={classes.dialogContent}>
@@ -403,52 +418,86 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 					</Backdrop>
 					<ContenidoModal value={value} datos={datos} />
 				</DialogContent>
-				<DialogActions style={{ display: 'flex', justifyContent: 'space-between' }}>
+				<DialogActions style={{ display: 'flex', justifyContent: 'center' }}>
 					<Button
-						variant="contained"
+						variant="outlined"
 						color="primary"
-						onClick={() => saveData()}
+						onClick={() => setValue(value - 1)}
 						size="large"
-						startIcon={<DoneIcon />}
-						disabled={
-							!datos_generales.clave_alterna ||
-							!datos_generales.tipo_producto ||
-							!datos_generales.nombre_generico ||
-							!datos_generales.nombre_comercial ||
-							!precios.precio_de_compra.precio_con_impuesto ||
-							!precios.precio_de_compra.precio_sin_impuesto ||
-							!precios.unidad_de_compra.cantidad ? (
-								true
-							) : (
-								false
-							)
-						}
+						startIcon={<NavigateBefore />}
+						disabled={value === 0}
 					>
-						Guardar
+						Anterior
 					</Button>
-					<Box className={classes.buttons}>
+					<Button
+						variant="outlined"
+						color="inherit"
+						onClick={() => toggleModal()}
+						size="large"
+						startIcon={<Close />}
+						disableElevation
+					>
+						Cancelar
+					</Button>
+					{accion && value > 5 ? (
 						<Button
-							variant="outlined"
+							variant="contained"
 							color="primary"
-							onClick={() => setValue(value - 1)}
+							onClick={() => saveData()}
 							size="large"
-							startIcon={<NavigateBefore />}
-							disabled={value === 0}
+							startIcon={<DoneIcon />}
+							disabled={
+								!datos_generales.clave_alterna ||
+								!datos_generales.tipo_producto ||
+								!datos_generales.nombre_generico ||
+								!datos_generales.nombre_comercial ||
+								!precios.precio_de_compra.precio_con_impuesto ||
+								!precios.precio_de_compra.precio_sin_impuesto ||
+								!precios.unidad_de_compra.cantidad ? (
+									true
+								) : (
+									false
+								)
+							}
 						>
-							Anterior
+							Guardar
 						</Button>
+					) : !accion && value > 4 ? (
+						<Button
+							variant="contained"
+							color="primary"
+							onClick={() => saveData()}
+							size="large"
+							startIcon={<DoneIcon />}
+							disabled={
+								!datos_generales.clave_alterna ||
+								!datos_generales.tipo_producto ||
+								!datos_generales.nombre_generico ||
+								!datos_generales.nombre_comercial ||
+								!precios.precio_de_compra.precio_con_impuesto ||
+								!precios.precio_de_compra.precio_sin_impuesto ||
+								!precios.unidad_de_compra.cantidad ? (
+									true
+								) : (
+									false
+								)
+							}
+						>
+							Guardar
+						</Button>
+					) : (
 						<Button
 							variant="contained"
 							color="primary"
 							onClick={() => setValue(value + 1)}
 							size="large"
 							endIcon={<NavigateNext />}
-							disabled={accion && value === 6 ? true : value === 5 ? true : false}
+							/* disabled={accion && value === 6 ? true : value === 5 ? true : false} */
 							disableElevation
 						>
 							Siguiente
 						</Button>
-					</Box>
+					)}
 				</DialogActions>
 			</Dialog>
 		</Fragment>

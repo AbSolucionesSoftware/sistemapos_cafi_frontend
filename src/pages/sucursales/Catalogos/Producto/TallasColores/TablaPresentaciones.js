@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 import Table from '@material-ui/core/Table';
@@ -6,12 +6,13 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
-import { Chip, Tooltip, Zoom } from '@material-ui/core';
+import { Box, Chip, IconButton, Tooltip, Zoom } from '@material-ui/core';
+import { Cached, Close, Edit } from '@material-ui/icons';
+import { fade } from '@material-ui/core/styles/colorManipulator';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -23,6 +24,14 @@ const useStyles = makeStyles((theme) => ({
 	},
 	table: {
 		minWidth: 750
+	},
+	container: {
+		maxHeight: '65vh'
+	},
+	tableRow: {
+		'&.Mui-selected, &.Mui-selected:hover': {
+			backgroundColor: fade(theme.palette.primary.main, 0.1)
+		}
 	},
 	visuallyHidden: {
 		border: 0,
@@ -42,127 +51,133 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaPresentaciones() {
+const compareFunction = (a, b) => {
+	if (a.color.nombre && b.color.nombre) {
+		return a.color.nombre.localeCompare(b.color.nombre);
+	}
+};
+
+export default function TablaPresentaciones({ datos }) {
 	const classes = useStyles();
 	const { presentaciones } = useContext(RegProductoContext);
-	const [ page, setPage ] = useState(0);
-	const rowsPerPage = 10;
-
-	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
-
-	useEffect(
-		() => {
-			if (presentaciones.length <= rowsPerPage) setPage(0);
-		},
-		[ presentaciones.length ]
-	);
-
-	const emptyRows = rowsPerPage - Math.min(rowsPerPage, presentaciones.length - page * rowsPerPage);
 
 	return (
 		<div className={classes.root}>
 			<Paper className={classes.paper}>
-				<TableContainer>
+				<TableContainer className={classes.container}>
 					<Table
 						className={classes.table}
 						aria-labelledby="tableTitle"
-						size="medium"
+						size="small"
 						aria-label="enhanced table"
+						stickyHeader
 					>
 						<TableHead>
 							<TableRow>
 								<TableCell>Existencia</TableCell>
 								<TableCell>Código de barras</TableCell>
-								<TableCell>Nombre</TableCell>
-								<TableCell>Medida</TableCell>
-								<TableCell>Color</TableCell>
+								<TableCell width={200}>Nombre</TableCell>
+								<TableCell padding="checkbox">Medida</TableCell>
+								<TableCell padding="checkbox">Color</TableCell>
 								<TableCell>Precio</TableCell>
-								<TableCell>Cantidad</TableCell>
+								<TableCell padding="checkbox">Cantidad</TableCell>
+								<TableCell padding="checkbox">Editar</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{presentaciones
-								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-								.map((producto, index) => {
-									return <RenderPresentacionesRows key={index} producto={producto} index={index} />;
-								})}
-							{emptyRows > 0 && (
-								<TableRow style={{ height: 53 * emptyRows }}>
-									<TableCell colSpan={6} />
-								</TableRow>
-							)}
+							{presentaciones.sort((a, b) => compareFunction(a, b)).map((producto, index) => {
+								return (
+									<RenderPresentacionesRows
+										key={index}
+										producto={producto}
+										index={index}
+										datos={datos}
+									/>
+								);
+							})}
 						</TableBody>
 					</Table>
 				</TableContainer>
-				<TablePagination
-					rowsPerPageOptions={[]}
-					component="div"
-					count={presentaciones.length}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onChangePage={handleChangePage}
-				/>
 			</Paper>
 		</div>
 	);
 }
 
-const RenderPresentacionesRows = ({ producto, index }) => {
-	const { presentaciones, setPresentaciones } = useContext(RegProductoContext);
+const RenderPresentacionesRows = ({ producto, index, datos }) => {
+	const { presentaciones, setPresentaciones, preciosP } = useContext(RegProductoContext);
 	const [ disabledInput, setDisabledInput ] = useState(true);
-	const [ cantidad, setCantidad ] = useState(0);
 	const classes = useStyles();
 	const textfield = useRef(null);
 
-	/* const handleClick = (value) => {
-		presentaciones[index].existencia = value;
-		setPresentaciones([...presentaciones])
-	};
- */
-	const handleOnBlurInput = () => {
+	const handleEditCancel = () => {
 		if (!producto.cantidad) {
 			presentaciones[index].cantidad = 0;
-			setPresentaciones([...presentaciones])
+			setPresentaciones([ ...presentaciones ]);
+		}
+		if (!producto.precio) {
+			presentaciones[index].precio = preciosP[0].precio_neto;
+			setPresentaciones([ ...presentaciones ]);
 		}
 		setDisabledInput(true);
 	};
 
-	const obtenerCantidad = (value) => {
-		if (!value) {
-			presentaciones[index].cantidad = '';
-			presentaciones[index].existencia = false;
-			setPresentaciones([...presentaciones])
-			return;
+	const obtenerDatos = (event) => {
+		if (event.target.name === 'cantidad') {
+			if (!event.target.value) {
+				presentaciones[index].cantidad = '';
+				presentaciones[index].existencia = false;
+				setPresentaciones([ ...presentaciones ]);
+				return;
+			}
+			presentaciones[index].cantidad = parseFloat(event.target.value);
+			presentaciones[index].existencia = true;
+		} else if (event.target.name === 'precio') {
+			if (!event.target.value) {
+				presentaciones[index].precio = '';
+				setPresentaciones([ ...presentaciones ]);
+				return;
+			}
+			presentaciones[index].precio = parseFloat(event.target.value);
+		} else {
 		}
-		/* setCantidad(parseFloat(value)); */
-		presentaciones[index].cantidad = parseFloat(value);
-		presentaciones[index].existencia = true;
-		setPresentaciones([...presentaciones])
+		setPresentaciones([ ...presentaciones ]);
 	};
 
-	const handleDoubleClick = () => {
-		setDisabledInput(!disabledInput);
-		setTimeout(() => {
-			textfield.current.focus();
-		}, 100);
-		
-	}
+	const GenCodigoBarras = () => {
+		const max = 999999999999;
+		const min = 100000000000;
+		const codigo_barras = Math.floor(Math.random() * (max - min + 1) + min).toString();
+		presentaciones[index].codigo_barras = codigo_barras;
+		setPresentaciones([ ...presentaciones ]);
+	};
 
 	return (
-		<TableRow hover role="checkbox" /* aria-checked={isItemSelected} */ /* tabIndex={-1} */ /* selected={isItemSelected} */>
-			<TableCell padding="checkbox" >
-				<Checkbox checked={producto.existencia} /* onChange={() => handleClick(!producto.existencia)} */ />
+		<TableRow hover selected={!disabledInput} className={classes.tableRow}>
+			<TableCell align="center">
+				<Checkbox checked={producto.existencia} color="primary" />
 			</TableCell>
-			<TableCell scope="row">
-				{producto.codigo_barras}
+			<TableCell width={220}>
+				<Box display="flex">
+					<Input
+						inputRef={textfield}
+						onChange={(e) => obtenerDatos(e)}
+						disabled={disabledInput}
+						value={producto.codigo_barras}
+						type="number"
+						name="precio"
+					/>
+					{datos.medidas_registradas ? (
+						<IconButton color="primary" size="small" onClick={() => GenCodigoBarras()}>
+							<Cached />
+						</IconButton>
+					) : null}
+				</Box>
 			</TableCell>
-			<TableCell>{producto.nombre_comercial}</TableCell>
-			<TableCell>
-				{producto.medida._id ? (<Chip label={producto.medida.talla} color="primary" />) : ''}
+			<TableCell width={200}>{producto.nombre_comercial}</TableCell>
+			<TableCell padding="checkbox">
+				{producto.medida._id ? <Chip label={producto.medida.talla} color="primary" /> : ''}
 			</TableCell>
-			<TableCell>
+			<TableCell padding="checkbox">
 				<Tooltip title={producto.color.nombre} placement="top" arrow TransitionComponent={Zoom}>
 					<div
 						className={classes.colorContainer}
@@ -172,17 +187,33 @@ const RenderPresentacionesRows = ({ producto, index }) => {
 					/>
 				</Tooltip>
 			</TableCell>
-			<TableCell>{producto.precio}</TableCell>
-			<TableCell>
+			<TableCell width={110}>
 				<Input
 					inputRef={textfield}
-					onDoubleClick={() => handleDoubleClick()}
-					onChange={(e) => obtenerCantidad(e.target.value)}
-					onBlur={handleOnBlurInput}
+					onChange={(e) => obtenerDatos(e)}
+					disabled={disabledInput}
+					value={producto.precio}
+					type="tel"
+					name="precio"
+				/>
+			</TableCell>
+			<TableCell padding="checkbox">
+				<Input
+					inputRef={textfield}
+					onChange={(e) => obtenerDatos(e)}
 					disabled={disabledInput}
 					value={producto.cantidad}
-					type="text"
+					type="tel"
+					name="cantidad"
 				/>
+			</TableCell>
+			<TableCell padding="checkbox">
+				<IconButton
+					size="small"
+					onClick={() => (!disabledInput ? handleEditCancel() : setDisabledInput(!disabledInput))}
+				>
+					{!disabledInput ? <Close /> : <Edit />}
+				</IconButton>
 			</TableCell>
 		</TableRow>
 	);
