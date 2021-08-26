@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function TablaPreciosDescuentos({setPreciosProductos, precios, activePorcentaje, setActivePorcentaje}) {
 	const classes = useStyles();
-
+	
 	const [ selected, setSelected ] = useState([]);
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(5);

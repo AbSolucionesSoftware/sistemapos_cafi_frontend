@@ -38,27 +38,34 @@ export default function DescuentoProductos({datos}) {
         setOpenDescuento(!openDescuento);
     }
 
-    console.log(preciosProductos);
-    
+    let arrayDescuento = [];
+
     const obtenerPorciento = (value) => {
         setInputValue(value);
-        setPreciosDescuentos([]);
+        // setPreciosDescuentos([]);
+        
+    };
+
+    const obtenerValores = () => {
+
+        arrayDescuento.splice(0, arrayDescuento.length);
+        preciosDescuentos.splice(0, preciosDescuentos.length);
         for (let i = 0; i < preciosProductos.length; i++) {
-            var porcentaje  = 100 - value;
+            var porcentaje  = 100 - inputValue;
             var descuento = ( preciosProductos[i].precio * porcentaje / 100);
-            let arrayDescuento = 
-            {
-                "porciento": '',
-                "costoDescontado": '',
-                "precioConDescuento": descuento,
-                "descuentoActivo": false
-            }
-            return preciosDescuentos.push(arrayDescuento);
+            arrayDescuento = 
+                {
+                    "porciento": '',
+                    "costoDescontado": '',
+                    "precioConDescuento": descuento,
+                    "descuentoActivo": false
+                }
+            preciosDescuentos.push(arrayDescuento);
             // setPreciosDescuentos({ ...preciosDescuentos, precioConDescuento: descuento})
         }
-    };
-    console.log(preciosDescuentos);
+    }
 
+    console.log(preciosDescuentos);
 
     return (
         <div>
@@ -118,6 +125,7 @@ export default function DescuentoProductos({datos}) {
                                         getAriaValueText={inputValue}
                                         aria-labelledby="discrete-slider-always"
                                         valueLabelDisplay="on"
+                                        onChange={obtenerValores}
                                         getAriaValueText={obtenerPorciento}
                                     />
                                 </div>
