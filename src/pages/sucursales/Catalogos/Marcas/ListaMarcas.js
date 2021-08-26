@@ -122,7 +122,7 @@ const RowsRender = ({ datos, updateData, toUpdate, setAlert, setToUpdate, setDat
 
 	const handleDelete = async () => {
 		try {
-			const resultado = await eliminarMarca({
+			const res = await eliminarMarca({
 				variables: {
 					id: datos._id,
 					empresa: sesion.empresa._id,
@@ -130,7 +130,8 @@ const RowsRender = ({ datos, updateData, toUpdate, setAlert, setToUpdate, setDat
 				}
 			});
 			refetch();
-			setAlert({ message: resultado.data.eliminarMarca.message, status: 'success', open: true });
+			let msgAlert = ( res.data.eliminarMarca.message !== 'false' ) ? { message: '¡Listo!', status: 'success', open: true }: { message: res.data.eliminarMarca.message, status: 'success', open: false }
+			setAlert();
 			handleModal();
 		} catch (error) {
 			setAlert({ message: error.message, status: 'error', open: true });
