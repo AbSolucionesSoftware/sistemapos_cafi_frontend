@@ -30,21 +30,58 @@ import {
 	initial_state_datos_generales,
 	initial_state_precios,
 	initial_state_unidadVentaXDefecto,
-	initial_state_preciosP,
 	initial_state_unidadesVenta,
 	initial_state_almacen_inicial,
 	initial_state_centro_de_costos,
-	initial_state_preciosPlazos,
-	initial_state_subcategorias,
-	initial_state_imagenes,
-	initial_state_onPreview,
-	initial_state_validacion,
-	initial_state_subcostos,
-	initial_state_imagenes_eliminadas,
-	initial_state_presentaciones
+	initial_state_preciosPlazos
 } from '../../../../context/Catalogos/initialStatesProducto';
 import { Close, Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
+
+export const initial_state_preciosP = [
+    {
+        numero_precio: 1,
+        utilidad: 0,
+        precio_neto: 0,
+        unidad_mayoreo: 0,
+        precio_venta: 0
+    },
+    {
+        numero_precio: 2,
+        utilidad: 0,
+        precio_neto: 0,
+        unidad_mayoreo: 0,
+        precio_venta: 0
+    },
+    {
+        numero_precio: 3,
+        utilidad: 0,
+        precio_neto: 0,
+        unidad_mayoreo: 0,
+        precio_venta: 0
+    },
+    {
+        numero_precio: 4,
+        utilidad: 0,
+        precio_neto: 0,
+        unidad_mayoreo: 0,
+        precio_venta: 0
+    },
+    {
+        numero_precio: 5,
+        utilidad: 0,
+        precio_neto: 0,
+        unidad_mayoreo: 0,
+        precio_venta: 0
+    },
+    {
+        numero_precio: 6,
+        utilidad: 0,
+        precio_neto: 0,
+        unidad_mayoreo: 0,
+        precio_venta: 0
+    }
+]
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -156,7 +193,6 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		if (producto && accion) {
 			setInitialStates(producto);
 		} else {
-			console.log('enrtro');
 			resetInitialStates();
 		}
 	};
@@ -240,17 +276,18 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setPrecios(initial_state_precios);
 		setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
 		setPreciosP(initial_state_preciosP);
-		setUnidadesVenta(initial_state_unidadesVenta);
+		setUnidadesVenta([]);
 		setAlmacenInicial(initial_state_almacen_inicial);
-		setCentroDeCostos(initial_state_centro_de_costos);
+		setCentroDeCostos({});
 		setPreciosPlazos(initial_state_preciosPlazos);
-		setSubcategorias(initial_state_subcategorias);
-		setImagenes(initial_state_imagenes);
-		setOnPreview(initial_state_onPreview);
-		setValidacion(initial_state_validacion);
-		setSubcostos(initial_state_subcostos);
-		setImagenesEliminadas(initial_state_imagenes_eliminadas);
-		setPresentaciones(initial_state_presentaciones);
+		setSubcategorias([]);
+		setImagenes([]);
+		setOnPreview({ index: '', image: '' });
+		setValidacion({ error: false, message: '' });
+		setSubcostos([]);
+		setImagenesEliminadas([]);
+		setPresentaciones([]);
+		setValue(0);
 	};
 
 	/* SET STATES WHEN UPDATING */
@@ -276,20 +313,6 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 	} /* CODIGO PARA PODER EJECUTAR LAS VENTANAS A BASE DE LAS TECLAS */
 
 	window.onkeydown = funcion_tecla;
-
-	/* console.log(
-		datos_generales,
-		precios,
-		preciosP,
-		imagenes,
-		unidadesVenta,
-		almacen_inicial,
-		unidadVentaXDefecto,
-		centro_de_costos,
-		preciosPlazos,
-		imagenes_eliminadas,
-		presentaciones
-	); */
 
 	return (
 		<Fragment>
