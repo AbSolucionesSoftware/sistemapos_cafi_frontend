@@ -328,7 +328,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 					Nuevo producto
 				</Button>
 			) : (
-				<IconButton color="primary" variant="contained" onClick={() => toggleModal(datos)}>
+				<IconButton color="default" variant="contained" onClick={() => toggleModal(datos)}>
 					<Edit />
 				</IconButton>
 			)}
