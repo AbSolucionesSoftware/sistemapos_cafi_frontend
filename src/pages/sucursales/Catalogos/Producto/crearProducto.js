@@ -540,6 +540,29 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 						>
 							Guardar
 						</Button>
+					) : accion && value > 4 ? (
+						<Button
+							variant="contained"
+							color="primary"
+							onClick={() => saveData()}
+							size="large"
+							startIcon={<DoneIcon />}
+							disabled={
+								!datos_generales.clave_alterna ||
+								!datos_generales.tipo_producto ||
+								!datos_generales.nombre_generico ||
+								!datos_generales.nombre_comercial ||
+								!precios.precio_de_compra.precio_con_impuesto ||
+								!precios.precio_de_compra.precio_sin_impuesto ||
+								!precios.unidad_de_compra.cantidad ? (
+									true
+								) : (
+									false
+								)
+							}
+						>
+							Guardar
+						</Button>
 					) : !accion && value > 4 ? (
 						<Button
 							variant="contained"
