@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 export default function DescuentoProductos({datos}) {
 
     const [ openDescuento, setOpenDescuento ] = useState(false);
-    const [ activePorcentaje, setActivePorcentaje ] = useState(false);
+    const [ activeDescount, setActiveDescount ] = useState(false);
 
     const [ preciosProductos, setPreciosProductos ] = useState([]);
 
@@ -42,13 +42,6 @@ export default function DescuentoProductos({datos}) {
 
     const obtenerPorciento = (value) => {
         setInputValue(value);
-        // setPreciosDescuentos([]);
-        
-    };
-
-    const obtenerValores = () => {
-
-        arrayDescuento.splice(0, arrayDescuento.length);
         preciosDescuentos.splice(0, preciosDescuentos.length);
         for (let i = 0; i < preciosProductos.length; i++) {
             var porcentaje  = 100 - inputValue;
@@ -56,16 +49,13 @@ export default function DescuentoProductos({datos}) {
             arrayDescuento = 
                 {
                     "porciento": '',
-                    "costoDescontado": '',
+                    "dineroDescontado": '',
                     "precioConDescuento": descuento,
                     "descuentoActivo": false
                 }
             preciosDescuentos.push(arrayDescuento);
-            // setPreciosDescuentos({ ...preciosDescuentos, precioConDescuento: descuento})
         }
-    }
-
-    console.log(preciosDescuentos);
+     };
 
     return (
         <div>
@@ -106,8 +96,8 @@ export default function DescuentoProductos({datos}) {
                         <Grid item lg={6}>
                             <Box p={1}>
                                 <TablaPreciosDescuentos 
-                                    activePorcentaje={activePorcentaje} 
-                                    setActivePorcentaje={setActivePorcentaje} 
+                                    activeDescount={activeDescount}
+                                    setActiveDescount={setActiveDescount}
                                     precios={datos.unidades_de_venta} 
                                     preciosProductos={preciosProductos} 
                                     setPreciosProductos={setPreciosProductos} 
@@ -125,15 +115,12 @@ export default function DescuentoProductos({datos}) {
                                         getAriaValueText={inputValue}
                                         aria-labelledby="discrete-slider-always"
                                         valueLabelDisplay="on"
-                                        onChange={obtenerValores}
                                         getAriaValueText={obtenerPorciento}
                                     />
                                 </div>
                             </Box>
                             <Box mt={5} display="flex" justifyContent="center">
-                                {activePorcentaje ? ( 
-                                    null
-                                ) : (
+                                {preciosProductos.length === 1 ? ( 
                                     <div>
                                         <Typography>Precio con Descuento</Typography>
                                         <TextField
@@ -152,6 +139,8 @@ export default function DescuentoProductos({datos}) {
                                             // onChange={obtenerPrecio}
                                         />
                                     </div>
+                                ) : (
+                                    null
                                 )}
 
                             </Box>

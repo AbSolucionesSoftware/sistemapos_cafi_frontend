@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaPreciosDescuentos({setPreciosProductos, precios, activePorcentaje, setActivePorcentaje}) {
+export default function TablaPreciosDescuentos({activeDescount, setActiveDescount, setPreciosProductos, precios}) {
 	const classes = useStyles();
 	
 	const [ selected, setSelected ] = useState([]);
@@ -89,14 +89,12 @@ export default function TablaPreciosDescuentos({setPreciosProductos, precios, ac
 
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {
-			setActivePorcentaje(!activePorcentaje);
 			const newSelecteds = precios.map((n) => n);
 			setSelected(newSelecteds);
 			setPreciosProductos(newSelecteds);
 			return;
 		}
 		setPreciosProductos([]); 
-		setActivePorcentaje(!activePorcentaje);
 		setSelected([]);
 	};
 
