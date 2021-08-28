@@ -226,8 +226,6 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 			imagenes_without_aws = imagenes.filter((res) => !res.key_imagen);
 		}
 
-		
-
 		let input = {
 			datos_generales: await validateJsonEdit(datos_generales,"datos_generales"),
 			precios,
@@ -301,7 +299,8 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 					cantidad: data[i].cantidad,
 					id_producto: data[i].id_producto,
 					precio: data[i].precio,
-					unidad_principal: data[i].unidad_principal
+					unidad_principal: data[i].unidad_principal,
+					unidad: data[i].unidad
 				};
 				if(data[i].codigo_barras !== null && data[i].codigo_barras !== '') object = {...object, codigo_barras: data[i].codigo_barras}
 				if(data[i].default !== null && data[i].default !== '') object = {...object, default: data[i].default}

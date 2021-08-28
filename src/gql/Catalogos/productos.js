@@ -72,6 +72,7 @@ export const OBTENER_PRODUCTOS = gql`
 				_id
 				precio
 				cantidad
+				unidad
 				unidad_principal
 				codigo_barras
 				id_producto
