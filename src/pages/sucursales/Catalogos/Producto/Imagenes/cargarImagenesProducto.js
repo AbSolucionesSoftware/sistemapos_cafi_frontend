@@ -98,7 +98,7 @@ const RenderImagenes = ({ imagen, index }) => {
 		if (onPreview.index === index) {
 			setOnPreview({ index: '', image: '' })
 		}
-		const array = imagenes;
+		const array = [...imagenes];
 		array.splice(index, 1);
 		setImagenes([
 			...array,
