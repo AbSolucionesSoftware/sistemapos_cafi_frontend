@@ -6,6 +6,10 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import TablaPreciosDescuentos from './ListaPrecios';
 
+import {  ACTUALIZAR_DESCUENTOS, REGISTRAR_DESCUENTOS } from '../../../../../gql/Catalogos/descuentos';
+import { useMutation } from '@apollo/client';
+import SnackBarMessages from '../../../../../components/SnackBarMessages';
+
 const useStyles = makeStyles((theme) => ({
 	avatarGroup: {
 		'& > .MuiAvatarGroup-avatar': {
@@ -24,44 +28,108 @@ const useStyles = makeStyles((theme) => ({
 export default function DescuentoProductos({datos}) {
 
     const [ openDescuento, setOpenDescuento ] = useState(false);
-    const [ activeDescount, setActiveDescount ] = useState(false);
+	// const [ loading,  setLoading ] = useState(false);
+    const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 
     const [ preciosProductos, setPreciosProductos ] = useState([]);
+    const [ preciosDescuentos, setPreciosDescuentos] = useState([]);
 
-    const [preciosDescuentos, setPreciosDescuentos] = useState([]);
+    const [ value, setValue] =  useState(0);
 
-    const [ inputValue, setInputValue] = useState(0);
+    const [ precioPrueba, setPrecioPrueba ] = useState(0);
 
     const classes = useStyles();
 
     const handleDescuentos = () => {
         setOpenDescuento(!openDescuento);
+        setPrecioPrueba(0);
+        setValue(0);
+        setPreciosDescuentos([]);
+        preciosDescuentos.splice(0, preciosDescuentos.length);
+    };
+    
+    const guardarDatos = () => {
+        setValue(0);
+        setOpenDescuento(!openDescuento);
+        setPrecioPrueba(0);
+        setPreciosDescuentos([]);
+        preciosDescuentos.splice(0, preciosDescuentos.length);
     }
 
     let arrayDescuento = [];
 
-    const obtenerPorciento = (value) => {
-        setInputValue(value);
+    const obtenerPorciento = (event, newValue) => {
+        setValue(newValue);
         preciosDescuentos.splice(0, preciosDescuentos.length);
         for (let i = 0; i < preciosProductos.length; i++) {
-            var porcentaje  = 100 - inputValue;
-            var descuento = ( preciosProductos[i].precio * porcentaje / 100);
-            arrayDescuento = 
-                {
-                    "porciento": '',
-                    "dineroDescontado": '',
-                    "precioConDescuento": descuento,
-                    "descuentoActivo": false
-                }
+            var porcentaje  =  Math.round(100 - value);
+            var descuento = Math.round(preciosProductos[i].precio * porcentaje / 100);
+            var dineroDescontado = preciosProductos[i].precio - descuento;
+            arrayDescuento = {
+                "porciento": value,
+                "dineroDescontado": dineroDescontado,
+                "precioConDescuento": descuento,
+                "descuentoActivo": true
+            }
+            setPrecioPrueba(descuento);
             preciosDescuentos.push(arrayDescuento);
         }
-     };
+    };
+    
+    const obtenerPrecio = (e) => {
+        if (preciosProductos.length === 1) {
+            setPrecioPrueba(e.target.value);
+            var porcentaje  = Math.round((e.target.value / preciosProductos[0].precio) * 100);
+            var descuento =  Math.round(100 - porcentaje);
+            var dineroDescontado = preciosProductos[0].precio - e.target.value;
+            arrayDescuento = {
+                "porciento": porcentaje,
+                "dineroDescontado": dineroDescontado,
+                "precioConDescuento": e.target.value,
+                "descuentoActivo": true
+            };
+            setValue(descuento);
+            setPreciosDescuentos([arrayDescuento]);
+        }
+    };
+
+    function valuetext(e) {
+        return `${e}°C`;
+    };
+
+    const [ CrearDescuentoUnidad ] = useMutation(REGISTRAR_DESCUENTOS);
+
+    const saveData = async () => {
+		try {
+            // if(){
+                const input = preciosDescuentos
+                await CrearDescuentoUnidad({
+                    variables: {
+                        input,
+                    }
+                });
+            // }else{
+                /* await ActualzarDepartamentos({
+                    variables: {
+                        
+                    }
+                }) */
+            // }
+            // setUpdateData(!updateData);
+            // setUpdate(!update);
+            setAlert({ message: '¡Listo!', status: 'success', open: true });
+            // setError(false);
+		} catch (error) {
+			console.log(error);
+		}
+	}
 
     return (
         <div>
+            <SnackBarMessages alert={alert} setAlert={setAlert} />
             <Button
                 size="small"
-                color="primary"
+                color="default"
                 onClick={handleDescuentos}
             >
                <LocalOfferIcon />
@@ -95,9 +163,9 @@ export default function DescuentoProductos({datos}) {
                     <Grid container>
                         <Grid item lg={6}>
                             <Box p={1}>
-                                <TablaPreciosDescuentos 
-                                    activeDescount={activeDescount}
-                                    setActiveDescount={setActiveDescount}
+                                <TablaPreciosDescuentos
+                                    value={value}
+                                    setPrecioPrueba={setPrecioPrueba}
                                     precios={datos.unidades_de_venta} 
                                     preciosProductos={preciosProductos} 
                                     setPreciosProductos={setPreciosProductos} 
@@ -112,10 +180,11 @@ export default function DescuentoProductos({datos}) {
                                     </Typography>
                                     <Box my={5} />
                                     <Slider
-                                        getAriaValueText={inputValue}
-                                        aria-labelledby="discrete-slider-always"
-                                        valueLabelDisplay="on"
-                                        getAriaValueText={obtenerPorciento}
+                                        getAriaValueText={valuetext}
+                                        value={value}
+                                        aria-labelledby="discrete-slider-small-steps"
+                                        valueLabelDisplay="auto"
+                                        onChange={obtenerPorciento} 
                                     />
                                 </div>
                             </Box>
@@ -128,15 +197,14 @@ export default function DescuentoProductos({datos}) {
                                             type="number"
                                             InputProps={{ inputProps: { min: 0 } }}
                                             size="small"
-                                            disabled={true}
                                             /* error */
                                             /* name="precio_neto"
                                             /* id="form-producto-nombre-comercial" */
                                             variant="outlined"
-                                            // defaultValue={ precioPromocion ? precioPromocion : precioProducto }
-                                            // value={precioPromocion}
+                                            // defaultValue={ precioPrueba }
+                                            value={ precioPrueba }
                                             /* helperText="Incorrect entry." */
-                                            // onChange={obtenerPrecio}
+                                            onChange={(e) => obtenerPrecio(e)}
                                         />
                                     </div>
                                 ) : (
@@ -145,7 +213,12 @@ export default function DescuentoProductos({datos}) {
 
                             </Box>
                             <Box p={2} display="flex" justifyContent="center">
-                                <Button variant="contained" color="primary" size="large">
+                                <Button 
+                                    variant="contained" 
+                                    color="primary" 
+                                    size="large"
+                                    onClick={guardarDatos}
+                                >
                                     Guardar 
                                 </Button>
                             </Box>

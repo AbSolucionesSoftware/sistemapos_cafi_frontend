@@ -80,9 +80,9 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaPreciosDescuentos({activeDescount, setActiveDescount, setPreciosProductos, precios}) {
+export default function TablaPreciosDescuentos({ value, setPrecioPrueba, setPreciosProductos, precios}) {
 	const classes = useStyles();
-	
+	var porcentaje  =  Math.round(100 - value);
 	const [ selected, setSelected ] = useState([]);
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(5);
@@ -90,7 +90,7 @@ export default function TablaPreciosDescuentos({activeDescount, setActiveDescoun
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {
 			const newSelecteds = precios.map((n) => n);
-			setSelected(newSelecteds);
+			setSelected(newSelecteds); 
 			setPreciosProductos(newSelecteds);
 			return;
 		}
@@ -110,9 +110,11 @@ export default function TablaPreciosDescuentos({activeDescount, setActiveDescoun
 		} else if (selectedIndex > 0) {
 			newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
 		}
+		setPrecioPrueba(newSelected.length === 0 ? 0 : newSelected[0].precio);
 		setPreciosProductos(newSelected);
 		setSelected(newSelected);
 	};
+	
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
@@ -164,7 +166,11 @@ export default function TablaPreciosDescuentos({activeDescount, setActiveDescoun
 												inputProps={{ 'aria-labelledby': labelId }}
 											/>
 										</TableCell>
-										<TableCell align="center">{row.precio}</TableCell>
+										{selected.length  <= 1 ? (
+											<TableCell align="center">{row.precio}</TableCell>
+										):(
+											<TableCell align="center">{Math.round((row.precio * porcentaje / 100))}</TableCell>
+										)}
 										<TableCell align="center">{row.cantidad}</TableCell>
 										<TableCell align="center">{row.cantidad > 1 ? "Cajas" : "Pieza"}</TableCell>
 										<TableCell align="center">Act.</TableCell>
