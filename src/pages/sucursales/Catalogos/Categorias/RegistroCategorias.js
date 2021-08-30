@@ -46,27 +46,7 @@ export default function RegistroCategorias() {
 	const [ crearCategoria ] = useMutation(CREAR_CATEGORIA);
 	const [ actualizarCategoria ] = useMutation(ACTUALIZAR_CATEGORIA);
 
-	if (loading)
-		return (
-			<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
-				<CircularProgress />
-			</Box>
-		);
-	if (error) {
-		return <ErrorPage error={error} />;
-	}
-
-	const { obtenerCategorias } = data;
-	const render_categorias = obtenerCategorias.map((categoria, index) => (
-		<RenderCategorias
-			key={index}
-			categoria={categoria}
-			setToUpdateID={setToUpdateID}
-			setCategoria={setCategoria}
-			refetch={refetch}
-			toUpdateID={toUpdateID}
-		/>
-	));
+	
 
 	const obtenerDatos = (e) => {
 		setCategoria(e.target.value);
@@ -107,9 +87,29 @@ export default function RegistroCategorias() {
 			setLoadingBackDrop(false);
 		}
 	};
+	if (loading)
+		return (
+			<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
+				<CircularProgress />
+			</Box>
+		);
+	if (error) {
+		return <ErrorPage error={error} />;
+	}
 
+	const { obtenerCategorias } = data;
+	const render_categorias = obtenerCategorias.map((categoria, index) => (
+		<RenderCategorias
+			key={index}
+			categoria={categoria}
+			setToUpdateID={setToUpdateID}
+			setCategoria={setCategoria}
+			refetch={refetch}
+			toUpdateID={toUpdateID}
+		/>
+	));
 	return (
-		<div className={classes.root}>
+		<div className={classes.root} >
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<BackdropComponent loading={loadingBackDrop} setLoading={setLoadingBackDrop} />
 			<Typography variant="h6">Categorias</Typography>
@@ -151,6 +151,8 @@ const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toU
 	));
 
 	const obtenerCamposParaActualizar = (event) => {
+	
+		window.scrollTo(0,0);
 		event.stopPropagation();
 		setToUpdateID(categoria._id);
 		setCategoria(categoria.categoria);
@@ -299,7 +301,7 @@ const RenderSubcategorias = ({ subcategoria,idCategoria, toUpdateID, setToUpdate
 	const classes = useStyles();
 	const [ eliminarSubcategoria ] = useMutation(ELIMINAR_SUBCATEGORIA);
 	const obtenerCamposParaActualizar = (event) => {
-		window.scrollTo();
+
 		event.stopPropagation();
 		setToUpdateID(subcategoria._id);
 		setSubcategoria(subcategoria.subcategoria);
