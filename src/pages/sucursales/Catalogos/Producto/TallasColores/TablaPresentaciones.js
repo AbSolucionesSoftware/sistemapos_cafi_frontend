@@ -1,81 +1,18 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import Input from '@material-ui/core/Input';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-
-function createData(name, calories, fat, carbs, protein) {
-	return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-	createData('Cupcake', 305, 3.7, 67, 4.3),
-	createData('Donut', 452, 25.0, 51, 4.9),
-	createData('Eclair', 262, 16.0, 24, 6.0),
-	createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-	createData('Gingerbread', 356, 16.0, 49, 3.9),
-	createData('Honeycomb', 408, 3.2, 87, 6.5),
-	createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-	createData('Jelly Bean', 375, 0.0, 94, 0.0),
-	createData('KitKat', 518, 26.0, 65, 7.0),
-	createData('Lollipop', 392, 0.2, 98, 0.0),
-	createData('Marshmallow', 318, 0, 81, 2.0),
-	createData('Nougat', 360, 19.0, 9, 37.0),
-	createData('Oreo', 437, 18.0, 63, 4.0)
-];
-
-const headCells = [
-	{ id: 'name', numeric: false, disablePadding: true, label: 'Dessert (100g serving)' },
-	{ id: 'calories', numeric: true, disablePadding: false, label: 'Calories' },
-	{ id: 'fat', numeric: true, disablePadding: false, label: 'Fat (g)' },
-	{ id: 'carbs', numeric: true, disablePadding: false, label: 'Carbs (g)' },
-	{ id: 'protein', numeric: true, disablePadding: false, label: 'Protein (g)' }
-];
-
-function EnhancedTableHead(props) {
-	const { onSelectAllClick, numSelected, rowCount } = props;
-
-	return (
-		<TableHead>
-			<TableRow>
-				<TableCell padding="checkbox">
-					<Checkbox
-						indeterminate={numSelected > 0 && numSelected < rowCount}
-						checked={rowCount > 0 && numSelected === rowCount}
-						onChange={onSelectAllClick}
-						inputProps={{ 'aria-label': 'select all desserts' }}
-					/>
-				</TableCell>
-				{headCells.map((headCell) => (
-					<TableCell
-						key={headCell.id}
-						align={headCell.numeric ? 'right' : 'left'}
-						padding={headCell.disablePadding ? 'none' : 'default'}
-					>
-						{headCell.label}
-					</TableCell>
-				))}
-			</TableRow>
-		</TableHead>
-	);
-}
-
-EnhancedTableHead.propTypes = {
-	classes: PropTypes.object.isRequired,
-	numSelected: PropTypes.number.isRequired,
-	onRequestSort: PropTypes.func.isRequired,
-	onSelectAllClick: PropTypes.func.isRequired,
-	order: PropTypes.oneOf([ 'asc', 'desc' ]).isRequired,
-	orderBy: PropTypes.string.isRequired,
-	rowCount: PropTypes.number.isRequired
-};
+import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
+import { Box, Chip, IconButton, Tooltip, Zoom } from '@material-ui/core';
+import { Cached, Close, Edit } from '@material-ui/icons';
+import { fade } from '@material-ui/core/styles/colorManipulator';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -88,6 +25,14 @@ const useStyles = makeStyles((theme) => ({
 	table: {
 		minWidth: 750
 	},
+	container: {
+		maxHeight: '65vh'
+	},
+	tableRow: {
+		'&.Mui-selected, &.Mui-selected:hover': {
+			backgroundColor: fade(theme.palette.primary.main, 0.1)
+		}
+	},
 	visuallyHidden: {
 		border: 0,
 		clip: 'rect(0 0 0 0)',
@@ -98,119 +43,178 @@ const useStyles = makeStyles((theme) => ({
 		position: 'absolute',
 		top: 20,
 		width: 1
+	},
+	colorContainer: {
+		height: 30,
+		width: 30,
+		borderRadius: '15%'
 	}
 }));
 
-export default function TablaPresentaciones() {
+const compareFunction = (a, b) => {
+	if (a.color.nombre && b.color.nombre) {
+		return a.color.nombre.localeCompare(b.color.nombre);
+	}
+};
+
+export default function TablaPresentaciones({ datos }) {
 	const classes = useStyles();
-	const [ selected, setSelected ] = useState([]);
-	const [ page, setPage ] = useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = useState(6);
-
-	const handleSelectAllClick = (event) => {
-		if (event.target.checked) {
-			const newSelecteds = rows.map((n) => n.name);
-			setSelected(newSelecteds);
-			return;
-		}
-		setSelected([]);
-	};
-
-	const handleClick = (event, name) => {
-		const selectedIndex = selected.indexOf(name);
-		let newSelected = [];
-
-		if (selectedIndex === -1) {
-			newSelected = newSelected.concat(selected, name);
-		} else if (selectedIndex === 0) {
-			newSelected = newSelected.concat(selected.slice(1));
-		} else if (selectedIndex === selected.length - 1) {
-			newSelected = newSelected.concat(selected.slice(0, -1));
-		} else if (selectedIndex > 0) {
-			newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-		}
-
-		setSelected(newSelected);
-	};
-
-	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
-
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(parseInt(event.target.value, 10));
-		setPage(0);
-	};
-
-	const isSelected = (name) => selected.indexOf(name) !== -1;
-
-	const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+	const { presentaciones } = useContext(RegProductoContext);
 
 	return (
 		<div className={classes.root}>
 			<Paper className={classes.paper}>
-				<TableContainer>
+				<TableContainer className={classes.container}>
 					<Table
 						className={classes.table}
 						aria-labelledby="tableTitle"
-						size="medium"
+						size="small"
 						aria-label="enhanced table"
+						stickyHeader
 					>
-						<EnhancedTableHead
-							classes={classes}
-							numSelected={selected.length}
-							onSelectAllClick={handleSelectAllClick}
-							rowCount={rows.length}
-						/>
+						<TableHead>
+							<TableRow>
+								<TableCell>Existencia</TableCell>
+								<TableCell>Código de barras</TableCell>
+								<TableCell width={200}>Nombre</TableCell>
+								<TableCell padding="checkbox">Medida</TableCell>
+								<TableCell padding="checkbox">Color</TableCell>
+								<TableCell>Precio</TableCell>
+								<TableCell padding="checkbox">Cantidad</TableCell>
+								<TableCell padding="checkbox">Editar</TableCell>
+							</TableRow>
+						</TableHead>
 						<TableBody>
-							{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-								const isItemSelected = isSelected(row.name);
-								const labelId = `enhanced-table-checkbox-${index}`;
-
+							{presentaciones.sort((a, b) => compareFunction(a, b)).map((producto, index) => {
 								return (
-									<TableRow
-										hover
-										onClick={(event) => handleClick(event, row.name)}
-										role="checkbox"
-										aria-checked={isItemSelected}
-										tabIndex={-1}
-										key={row.name}
-										selected={isItemSelected}
-									>
-										<TableCell padding="checkbox">
-											<Checkbox
-												checked={isItemSelected}
-												inputProps={{ 'aria-labelledby': labelId }}
-											/>
-										</TableCell>
-										<TableCell component="th" id={labelId} scope="row" padding="none">
-											{row.name}
-										</TableCell>
-										<TableCell align="right">{row.calories}</TableCell>
-										<TableCell align="right">{row.fat}</TableCell>
-										<TableCell align="right">{row.carbs}</TableCell>
-										<TableCell align="right">{row.protein}</TableCell>
-									</TableRow>
+									<RenderPresentacionesRows
+										key={index}
+										producto={producto}
+										index={index}
+										datos={datos}
+									/>
 								);
 							})}
-							{emptyRows > 0 && (
-								<TableRow style={{ height: 53 * emptyRows }}>
-									<TableCell colSpan={6} />
-								</TableRow>
-							)}
 						</TableBody>
 					</Table>
 				</TableContainer>
-				<TablePagination
-                    rowsPerPageOptions={[]}
-					component="div"
-					count={rows.length}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onChangePage={handleChangePage}
-					onChangeRowsPerPage={handleChangeRowsPerPage}
-				/>
 			</Paper>
 		</div>
 	);
 }
+
+const RenderPresentacionesRows = ({ producto, index, datos }) => {
+	const { presentaciones, setPresentaciones, preciosP } = useContext(RegProductoContext);
+	const [ disabledInput, setDisabledInput ] = useState(true);
+	const classes = useStyles();
+	const textfield = useRef(null);
+
+	const handleEditCancel = () => {
+		if (!producto.cantidad) {
+			presentaciones[index].cantidad = 0;
+			setPresentaciones([ ...presentaciones ]);
+		}
+		if (!producto.precio) {
+			presentaciones[index].precio = preciosP[0].precio_neto;
+			setPresentaciones([ ...presentaciones ]);
+		}
+		setDisabledInput(true);
+	};
+
+	const obtenerDatos = (event) => {
+		if (event.target.name === 'cantidad') {
+			if (!event.target.value) {
+				presentaciones[index].cantidad = '';
+				presentaciones[index].existencia = false;
+				setPresentaciones([ ...presentaciones ]);
+				return;
+			}
+			presentaciones[index].cantidad = parseFloat(event.target.value);
+			presentaciones[index].existencia = true;
+		} else if (event.target.name === 'precio') {
+			if (!event.target.value) {
+				presentaciones[index].precio = '';
+				setPresentaciones([ ...presentaciones ]);
+				return;
+			}
+			presentaciones[index].precio = parseFloat(event.target.value);
+		} else {
+		}
+		setPresentaciones([ ...presentaciones ]);
+	};
+
+	const GenCodigoBarras = () => {
+		const max = 999999999999;
+		const min = 100000000000;
+		const codigo_barras = Math.floor(Math.random() * (max - min + 1) + min).toString();
+		presentaciones[index].codigo_barras = codigo_barras;
+		setPresentaciones([ ...presentaciones ]);
+	};
+
+	return (
+		<TableRow hover selected={!disabledInput} className={classes.tableRow}>
+			<TableCell align="center">
+				<Checkbox checked={producto.existencia} color="primary" />
+			</TableCell>
+			<TableCell width={220}>
+				<Box display="flex">
+					<Input
+						inputRef={textfield}
+						onChange={(e) => obtenerDatos(e)}
+						disabled={disabledInput}
+						value={producto.codigo_barras}
+						type="number"
+						name="precio"
+					/>
+					{datos.medidas_registradas ? (
+						<IconButton color="primary" size="small" onClick={() => GenCodigoBarras()}>
+							<Cached />
+						</IconButton>
+					) : null}
+				</Box>
+			</TableCell>
+			<TableCell width={200}>{producto.nombre_comercial}</TableCell>
+			<TableCell padding="checkbox">
+				{producto.medida._id ? <Chip label={producto.medida.talla} color="primary" /> : ''}
+			</TableCell>
+			<TableCell padding="checkbox">
+				<Tooltip title={producto.color.nombre} placement="top" arrow TransitionComponent={Zoom}>
+					<div
+						className={classes.colorContainer}
+						style={{
+							backgroundColor: producto.color.hex
+						}}
+					/>
+				</Tooltip>
+			</TableCell>
+			<TableCell width={110}>
+				<Input
+					inputRef={textfield}
+					onChange={(e) => obtenerDatos(e)}
+					disabled={disabledInput}
+					value={producto.precio}
+					type="tel"
+					name="precio"
+				/>
+			</TableCell>
+			<TableCell padding="checkbox">
+				<Input
+					inputRef={textfield}
+					onChange={(e) => obtenerDatos(e)}
+					disabled={disabledInput}
+					value={producto.cantidad}
+					type="tel"
+					name="cantidad"
+				/>
+			</TableCell>
+			<TableCell padding="checkbox">
+				<IconButton
+					size="small"
+					onClick={() => (!disabledInput ? handleEditCancel() : setDisabledInput(!disabledInput))}
+				>
+					{!disabledInput ? <Close /> : <Edit />}
+				</IconButton>
+			</TableCell>
+		</TableRow>
+	);
+};

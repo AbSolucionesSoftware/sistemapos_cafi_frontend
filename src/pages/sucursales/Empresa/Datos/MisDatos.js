@@ -265,14 +265,11 @@ export default function MisDatos() {
 						<Typography variant="h6" className={classes.title}>
 							Datos
 						</Typography>
-						<Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClose}>
-                                Cerrar
-                            </Button>
-                        </Box>
-                        <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-							<CloseIcon />
-						</IconButton>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
 				{
@@ -516,6 +513,123 @@ export default function MisDatos() {
 					
 				}
 				
+				<Box mt={2} >
+					<Typography className={classes.subtitle}>
+						<b>Domicilio empresa</b>
+					</Typography>
+					<Divider />
+				</Box>
+				<Grid container  justifyContent="space-evenly">
+				<form autoComplete="off" className={classes.formInputFlex} >
+					<Box>
+						<Typography>Calle</Typography>
+						<TextField
+							size="small"
+							name="calle"
+							variant="outlined"
+							value={empresaDatos.direccion.calle ? empresaDatos.direccion.calle : ''}
+							onChange={obtenerCamposDireccion}
+						/>
+					</Box>
+					<Box>
+						<Typography>Colonia</Typography>
+						<TextField
+							size="small"
+							name="colonia"
+							variant="outlined"
+							value={empresaDatos.direccion.colonia ? empresaDatos.direccion.colonia : ''}
+							onChange={obtenerCamposDireccion}
+						/>
+					</Box>
+					<Box width="100px">
+						<Typography>Num. Ext</Typography>
+						<TextField
+							size="small"
+							name="no_ext"
+							variant="outlined"
+							value={empresaDatos.direccion.no_ext ? empresaDatos.direccion.no_ext : ''}
+							onChange={obtenerCamposDireccion}
+						/>
+					</Box>
+					<Box width="100px">
+						<Typography>Num. Int</Typography>
+						<TextField
+							size="small"
+							name="no_int"
+							variant="outlined"
+							value={empresaDatos.direccion.no_int ? empresaDatos.direccion.no_int : ''}
+							onChange={obtenerCamposDireccion}
+						/>
+					</Box>
+					<Box width="100px">
+						<Typography>C.P. </Typography>
+						<TextField
+							size="small"
+							name="codigo_postal"
+							variant="outlined"
+							value={empresaDatos.direccion.codigo_postal ? empresaDatos.direccion.codigo_postal : ''}
+							onChange={obtenerCamposDireccion}
+						/>
+					</Box>
+				</form>
+				<form autoComplete="off" className={classes.formInputFlex}>
+					<Box width="100%">
+						<Typography>Municipio</Typography>
+						<TextField
+							fullWidth
+							size="small"
+							name="municipio"
+							variant="outlined"
+							value={empresaDatos.direccion.municipio ? empresaDatos.direccion.municipio : ''}
+							onChange={obtenerCamposDireccion}
+						/>
+					</Box>
+					<Box width="100%">
+						<Typography>Localidad</Typography>
+						<TextField
+							size="small"
+							name="localidad"
+							variant="outlined"
+							value={empresaDatos.direccion.localidad ? empresaDatos.direccion.localidad : ''}
+							onChange={obtenerCamposDireccion}
+						/>
+					</Box>
+					<Box width="100%">
+						<Typography>Estado</Typography>
+						<TextField
+							size="small"
+							name="estado"
+							variant="outlined"
+							value={empresaDatos.direccion.estado ? empresaDatos.direccion.estado : ''}
+							onChange={obtenerCamposDireccion}
+						/>
+					</Box>
+					<Box width="100%">
+						<Typography>Pais</Typography>
+						<TextField
+							size="small"
+							name="pais"
+							variant="outlined"
+							value={empresaDatos.direccion.pais ? empresaDatos.direccion.pais : ''}
+							onChange={obtenerCamposDireccion}
+						/>
+					</Box>
+				</form>
+				</Grid>
+				<Grid>
+				<DialogActions>
+					<Button
+						onClick={()=>actEmp()}
+						color="primary"
+						variant="contained"
+						size="large"
+						autoFocus
+						endIcon={loading ? <CircularProgress color="inherit" size={25} /> : null}
+					>
+						Guardar
+					</Button>
+				</DialogActions>
+				</Grid>
 			</Dialog>
 		</div>
 	);

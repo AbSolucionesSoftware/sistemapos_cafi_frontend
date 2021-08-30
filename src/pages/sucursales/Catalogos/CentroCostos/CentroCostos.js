@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, Container } from '@material-ui/core';
-import costosIcon from '../../../../icons/costos.png';
+import costosIcon from '../../../../icons/costos.svg';
 import RegistroCentroCostos from './RegistroCentroCostos';
 
 const useStyles = makeStyles((theme) => ({
@@ -56,9 +56,11 @@ export default function CentroCostos() {
 						<Typography variant="h6" className={classes.title}>
 							Centro de costos
 						</Typography>
-						<Button autoFocus color="inherit" size="large" onClick={handleClose} startIcon={<CloseIcon />}>
-							Cerrar
-						</Button>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
 				<Box mt={3}>
