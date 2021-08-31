@@ -36,7 +36,8 @@ export default function PreciosDeCompra() {
 		setUnidadesVenta,
 		unidadVentaXDefecto,
 		setUnidadVentaXDefecto,
-		setDatosGenerales
+		setDatosGenerales, 
+		update
 	} = useContext(RegProductoContext);
 	const [ unidades, setUnidades ] = useState({
 		unidad: precios.granel ? 'Kg' : 'Pz',
@@ -196,13 +197,14 @@ export default function PreciosDeCompra() {
 					<FormControl variant="outlined" size="small" name="codigo_barras">
 						<Typography>Código de barras</Typography>
 						<OutlinedInput
+							disabled={update}
 							id="input-codigo-barras"
 							name="codigo_barras"
 							value={unidades.codigo_barras ? unidades.codigo_barras : ''}
 							onChange={obtenerUnidadesVentas}
 							endAdornment={
 								<InputAdornment position="end">
-									<Button onClick={() => GenCodigoBarras()} edge="end" color="primary">
+									<Button onClick={() => GenCodigoBarras()} edge="end" color="primary" disabled={update}>
 										Generar
 									</Button>
 								</InputAdornment>

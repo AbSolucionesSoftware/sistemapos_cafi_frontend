@@ -56,8 +56,8 @@ export default function InfoProductoDrawer({producto }) {
 							<Grid item md={6}>
 								<Grid container>
 									{imagenes.map((res, index) => {
-										return (
-											<Grid item>
+										return index > 0 ? (
+											<Grid item key={index}>
 												<Box
 													m={1}
 													key={index}
@@ -67,10 +67,10 @@ export default function InfoProductoDrawer({producto }) {
 													justifyContent="center"
 													alignItems="center"
 												>
-													<img width="100%" alt="img producto" src={imagenes[0].url_imagen} />
+													<img width="100%" alt="img producto" src={res.url_imagen} />
 												</Box>
 											</Grid>
-										);
+										) : null;
 									})}
 								</Grid>
 							</Grid>
