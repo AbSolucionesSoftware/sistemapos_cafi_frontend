@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const REGISTRAR_DESCUENTOS = gql`
-	mutation CrearDescuentoUnidad($input: DescuentoUnidadesInput){
+	mutation CrearDescuentoUnidad($input: DescuentoUnidadesInput!){
         crearDescuentoUnidad(input: $input){
             message
         }
@@ -9,7 +9,7 @@ export const REGISTRAR_DESCUENTOS = gql`
 `;
 
 export const ACTUALIZAR_DESCUENTOS = gql`
-	mutation ActualizarDescuentoUnidad($input: DescuentoUnidadesInput){
+	mutation ActualizarDescuentoUnidad($input: [DescuentoUnidadesInput]){
         actualizarDescuentoUnidad(input: $input){
             message
         }

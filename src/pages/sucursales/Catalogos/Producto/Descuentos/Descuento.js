@@ -64,7 +64,7 @@ export default function DescuentoProductos({datos}) {
         for (let i = 0; i < preciosProductos.length; i++) {
             var porcentaje  =  Math.round(100 - value);
             var descuento = Math.round(preciosProductos[i].precio * porcentaje / 100);
-            var dineroDescontado = preciosProductos[i].precio - descuento;
+            var dineroDescontado = Math.round(preciosProductos[i].precio - descuento);
             arrayDescuento = {
                 "porciento": value,
                 "dineroDescontado": dineroDescontado,
@@ -81,7 +81,7 @@ export default function DescuentoProductos({datos}) {
             setPrecioPrueba(e.target.value);
             var porcentaje  = Math.round((e.target.value / preciosProductos[0].precio) * 100);
             var descuento =  Math.round(100 - porcentaje);
-            var dineroDescontado = preciosProductos[0].precio - e.target.value;
+            var dineroDescontado = Math.round(preciosProductos[0].precio - e.target.value);
             arrayDescuento = {
                 "porciento": porcentaje,
                 "dineroDescontado": dineroDescontado,
@@ -99,27 +99,40 @@ export default function DescuentoProductos({datos}) {
 
     const [ CrearDescuentoUnidad ] = useMutation(REGISTRAR_DESCUENTOS);
 
+    console.log(preciosDescuentos);
+    
+    let arrayDePrueba  = 
+        [
+            {
+                _id: 1,
+                descuentoActivo: false,
+                descuento: {
+                    porciento: 1,
+                    dinero_descontado: 1,
+                    precio_con_descuento: 1,
+                }
+            }
+        ];
+
+    console.log(arrayDePrueba);
+
     const saveData = async () => {
 		try {
-            // if(){
-                const input = preciosDescuentos
-                await CrearDescuentoUnidad({
-                    variables: {
-                        input,
+            const input = arrayDePrueba;
+            console.log('entra en la condicion');
+            await CrearDescuentoUnidad({
+                variables: {
+                    input: {
+                        _id: '',
+                        descuentoActivo: false,
+                        descuento: {}
                     }
-                });
-            // }else{
-                /* await ActualzarDepartamentos({
-                    variables: {
-                        
-                    }
-                }) */
-            // }
-            // setUpdateData(!updateData);
-            // setUpdate(!update);
+                }
+            });
+            console.log( 'truena');
             setAlert({ message: '¡Listo!', status: 'success', open: true });
-            // setError(false);
 		} catch (error) {
+            console.log('mandando error');
 			console.log(error);
 		}
 	}
@@ -217,7 +230,7 @@ export default function DescuentoProductos({datos}) {
                                     variant="contained" 
                                     color="primary" 
                                     size="large"
-                                    onClick={guardarDatos}
+                                    onClick={saveData}
                                 >
                                     Guardar 
                                 </Button>
