@@ -13,82 +13,82 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Precio1({ data, index }) {
 	const classes = useStyles();
-	const { preciosP, precios, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(RegProductoContext);
+	const { preciosP, precios, unidadVentaXDefecto, setUnidadVentaXDefecto, setPreciosP } = useContext(
+		RegProductoContext
+	);
 	const [ precio_venta, setPrecioVenta ] = useState(data.precio_venta);
 	const [ precio_neto, setPrecioNeto ] = useState(data.precio_neto);
 	const [ utilidad, setUtilidad ] = useState(data.utilidad);
 	const [ mayoreo, setMayoreo ] = useState(data.unidad_mayoreo);
+
+	//creamos variables para trabajar con ellas, no causar errores y afectar las originales
+	let preciosVenta = { ...preciosP[index] };
+	let newPreciosP = [ ...preciosP ];
 
 	const obtenerUtilidad = (value) => {
 		if (!value) {
 			setUtilidad('');
 			return;
 		} else {
-			for (let i = 0; i < preciosP.length; i++) {
-				const element = preciosP[i];
-				if (element.numero_precio === data.numero_precio) {
-					preciosP[i].utilidad = parseFloat(value);
-					setUtilidad(parseFloat(value));
+			//se agrega la utilidad
+			preciosVenta.utilidad = parseFloat(value);
+			setUtilidad(parseFloat(value));
 
-					let utilidad = 1;
-					let verificacion_entero = false;
-					let valor2 = value;
+			//apartir de aqui se hacen los calculos para meter datos a precios de venta y precios netos
+			let utilidad = 1;
+			let verificacion_entero = false;
+			let valor2 = value;
 
-					if (parseFloat(value) < 10) valor2 = '0' + value.replace(/[.]/g, '');
-					if (value > 99) {
-						valor2 = value / 100;
-						verificacion_entero = true;
+			if (parseFloat(value) < 10) valor2 = '0' + value.replace(/[.]/g, '');
+			if (value > 99) {
+				valor2 = value / 100;
+				verificacion_entero = true;
+			}
+
+			if (!verificacion_entero) {
+				utilidad = '.' + valor2.replace(/[.]/g, '');
+			} else {
+				utilidad = parseFloat(valor2);
+			}
+
+			const ganancia_utilidad_sin_impuestos =
+				precios.unidad_de_compra.precio_unitario_sin_impuesto +
+				precios.unidad_de_compra.precio_unitario_sin_impuesto * utilidad;
+			preciosVenta.precio_venta = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2));
+			setPrecioVenta(parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2)));
+
+			if (precios.iva_activo || precios.ieps_activo) {
+				const ganancia_utilidad_con_impuestos =
+					precios.unidad_de_compra.precio_unitario_con_impuesto +
+					precios.unidad_de_compra.precio_unitario_con_impuesto * utilidad;
+				preciosVenta.precio_neto = parseFloat(ganancia_utilidad_con_impuestos.toFixed(2));
+				setPrecioNeto(parseFloat(ganancia_utilidad_con_impuestos.toFixed(2)));
+				if (preciosVenta.numero_precio === 1) {
+					let precio = parseFloat(ganancia_utilidad_con_impuestos.toFixed(2));
+					if (unidadVentaXDefecto.unidad === 'Caja' || unidadVentaXDefecto.unidad === 'Costal') {
+						precio = unidadVentaXDefecto.cantidad * parseFloat(ganancia_utilidad_con_impuestos.toFixed(2));
 					}
-
-					if (!verificacion_entero) {
-						utilidad = '.' + valor2.replace(/[.]/g, '');
-					} else {
-						utilidad = parseFloat(valor2);
+					setUnidadVentaXDefecto({
+						...unidadVentaXDefecto,
+						precio: parseFloat(precio.toFixed(2))
+					});
+				}
+			} else {
+				setPrecioNeto(parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2)));
+				if (preciosVenta.numero_precio === 1) {
+					let precio = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2));
+					if (unidadVentaXDefecto.unidad === 'Caja' || unidadVentaXDefecto.unidad === 'Costal') {
+						precio = unidadVentaXDefecto.cantidad * parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2));
 					}
-
-					const ganancia_utilidad_sin_impuestos =
-						precios.unidad_de_compra.precio_unitario_sin_impuesto +
-						precios.unidad_de_compra.precio_unitario_sin_impuesto * utilidad;
-					preciosP[i].precio_venta = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2));
-					setPrecioVenta(parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2)));
-
-					if (precios.iva_activo || precios.ieps_activo) {
-						const ganancia_utilidad_con_impuestos =
-							precios.unidad_de_compra.precio_unitario_con_impuesto +
-							precios.unidad_de_compra.precio_unitario_con_impuesto * utilidad;
-						preciosP[i].precio_neto = parseFloat(ganancia_utilidad_con_impuestos.toFixed(2));
-						setPrecioNeto(parseFloat(ganancia_utilidad_con_impuestos.toFixed(2)));
-						if (element.numero_precio === 1) {
-							let precio = parseFloat(ganancia_utilidad_con_impuestos.toFixed(2));
-							if (unidadVentaXDefecto.unidad === 'Caja' || unidadVentaXDefecto.unidad === 'Costal') {
-								precio =
-									unidadVentaXDefecto.cantidad *
-									parseFloat(ganancia_utilidad_con_impuestos.toFixed(2));
-							}
-							setUnidadVentaXDefecto({
-								...unidadVentaXDefecto,
-								precio: parseFloat(precio.toFixed(2))
-							});
-						}
-					} else {
-						/* const ganancia_utilidad_con_impuestos = (parseFloat(precios.unidad_de_compra.precio_unitario_con_impuesto) * utilidad);
-                        preciosP[i].precio_neto = parseFloat(ganancia_utilidad_con_impuestos.toFixed(2)); */
-						setPrecioNeto(parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2)));
-						if (element.numero_precio === 1) {
-							let precio = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2))
-							if (unidadVentaXDefecto.unidad === 'Caja' || unidadVentaXDefecto.unidad === 'Costal') {
-								precio =
-									unidadVentaXDefecto.cantidad *
-									parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2))
-							}
-							setUnidadVentaXDefecto({
-								...unidadVentaXDefecto,
-								precio: parseFloat(precio.toFixed(2))
-							});
-						}
-					}
+					setUnidadVentaXDefecto({
+						...unidadVentaXDefecto,
+						precio: parseFloat(precio.toFixed(2))
+					});
 				}
 			}
+
+			newPreciosP.splice(index, 1, preciosVenta);
+			setPreciosP(newPreciosP);
 		}
 	};
 
@@ -97,97 +97,96 @@ export default function Precio1({ data, index }) {
 			setPrecioNeto('');
 			return;
 		} else {
-			for (let i = 0; i < preciosP.length; i++) {
-				const element = preciosP[i];
-				if (element.numero_precio === data.numero_precio) {
-					preciosP[i].precio_neto = parseFloat(value);
-					setPrecioNeto(value);
-					if (element.numero_precio === 1) {
-						let precio = parseFloat(value)
-						if (unidadVentaXDefecto.unidad === 'Caja' || unidadVentaXDefecto.unidad === 'Costal') {
-							precio =
-								unidadVentaXDefecto.cantidad *
-								parseFloat(value)
-						}
-						setUnidadVentaXDefecto({
-							...unidadVentaXDefecto,
-							precio: parseFloat(precio.toFixed(2))
-						});
-					}
+			//obtenermos el precio neto
+			preciosVenta.precio_neto = parseFloat(value);
+			setPrecioNeto(value);
 
-					let new_utilidad;
-
-					if (precios.iva_activo || precios.ieps_activo) {
-						new_utilidad =
-							parseFloat(value) / parseFloat(precios.unidad_de_compra.precio_unitario_con_impuesto);
-					} else {
-						new_utilidad =
-							parseFloat(value) / parseFloat(precios.unidad_de_compra.precio_unitario_sin_impuesto);
-					}
-
-					let porcent = parseFloat(((new_utilidad - 1) * 100).toFixed(2));
-					preciosP[i].utilidad = porcent;
-					setUtilidad(porcent);
-
-					let utilidad;
-					const valor = porcent.toString().replace(/[.]/g, '');
-
-					utilidad = '.' + valor;
-					if (valor < 10) utilidad = '.0' + valor;
-					if (valor % 100 === 0) utilidad = valor / 100;
-					const precio = (precios.unidad_de_compra.precio_unitario_sin_impuesto +
-						precios.unidad_de_compra.precio_unitario_sin_impuesto * utilidad).toFixed(2);
-					preciosP[i].precio_venta = parseFloat(precio);
-					setPrecioVenta(precio);
+			//si es el primer precio ponerlo en la unidad de venta por defecto
+			if (preciosVenta.numero_precio === 1) {
+				let precio = parseFloat(value);
+				if (unidadVentaXDefecto.unidad === 'Caja' || unidadVentaXDefecto.unidad === 'Costal') {
+					precio = unidadVentaXDefecto.cantidad * parseFloat(value);
 				}
+				setUnidadVentaXDefecto({
+					...unidadVentaXDefecto,
+					precio: parseFloat(precio.toFixed(2))
+				});
 			}
+
+			//calculamos el precio de venta y la utilidad
+			let new_utilidad;
+
+			if (precios.iva_activo || precios.ieps_activo) {
+				new_utilidad = parseFloat(value) / parseFloat(precios.unidad_de_compra.precio_unitario_con_impuesto);
+			} else {
+				new_utilidad = parseFloat(value) / parseFloat(precios.unidad_de_compra.precio_unitario_sin_impuesto);
+			}
+
+			let porcent = parseFloat(((new_utilidad - 1) * 100).toFixed(2));
+			preciosVenta.utilidad = porcent;
+			setUtilidad(porcent);
+
+			let utilidad;
+			const valor = porcent.toString().replace(/[.]/g, '');
+
+			utilidad = '.' + valor;
+			if (valor < 10) utilidad = '.0' + valor;
+			if (valor % 100 === 0) utilidad = valor / 100;
+			const precio = (precios.unidad_de_compra.precio_unitario_sin_impuesto +
+				precios.unidad_de_compra.precio_unitario_sin_impuesto * utilidad).toFixed(2);
+			preciosVenta.precio_venta = parseFloat(precio);
+			setPrecioVenta(precio);
+
+			//se agrega al array original
+			newPreciosP.splice(index, 1, preciosVenta);
+			setPreciosP(newPreciosP);
 		}
 	};
 
 	const obtenerMayoreo = (value) => {
-		for (let i = 0; i < preciosP.length; i++) {
-			const element = preciosP[i];
-			if (element.numero_precio === data.numero_precio) {
-				preciosP[i].unidad_mayoreo = parseInt(value);
-				setMayoreo(value);
-			}
-		}
+		preciosVenta.unidad_mayoreo = parseInt(value);
+		newPreciosP.splice(index, 1, preciosVenta);
+
+		setPreciosP(newPreciosP);
+		setMayoreo(value);
 	};
+
+	console.log(preciosP);
 
 	const calculos = useCallback(
 		() => {
 			if (!precios.unidad_de_compra.precio_unitario_sin_impuesto) return;
 			for (let i = 0; i < preciosP.length; i++) {
-				const element = preciosP[i];
+				const preciosVenta = { ...preciosP[i] };
 
 				let nuevo_array = {
-					numero_precio: element.numero_precio,
-					utilidad: element.utilidad,
-					precio_neto: element.precio_neto,
-					unidad_mayoreo: element.unidad_mayoreo,
-					precio_venta: element.precio_venta
+					numero_precio: preciosVenta.numero_precio,
+					utilidad: preciosVenta.utilidad,
+					precio_neto: preciosVenta.precio_neto,
+					unidad_mayoreo: preciosVenta.unidad_mayoreo,
+					precio_venta: preciosVenta.precio_venta
 				};
 
-				if (element.numero_precio === data.numero_precio) {
+				if (preciosVenta.numero_precio === data.numero_precio) {
 					if (!data.utilidad) {
-						/* preciosP[i].precio_venta = precios.unidad_de_compra.precio_unitario_sin_impuesto; */
+						/* preciosVenta.precio_venta = precios.unidad_de_compra.precio_unitario_sin_impuesto; */
 						nuevo_array.precio_venta = precios.unidad_de_compra.precio_unitario_sin_impuesto;
 						preciosP.slice(i, 1, nuevo_array);
 
 						setPrecioVenta(precios.unidad_de_compra.precio_unitario_sin_impuesto);
 					}
 					if (!precios.iva_activo && !precios.ieps_activo) {
-						/* preciosP[i].precio_neto = precios.unidad_de_compra.precio_unitario_sin_impuesto; */
+						/* preciosVenta.precio_neto = precios.unidad_de_compra.precio_unitario_sin_impuesto; */
 						nuevo_array.precio_neto = precios.unidad_de_compra.precio_unitario_sin_impuesto;
 						preciosP.slice(i, 1, nuevo_array);
 
 						setPrecioNeto(precios.unidad_de_compra.precio_unitario_sin_impuesto);
-						if (element.numero_precio === 1) {
-							let precio = precios.unidad_de_compra.precio_unitario_sin_impuesto
+						if (preciosVenta.numero_precio === 1) {
+							let precio = precios.unidad_de_compra.precio_unitario_sin_impuesto;
 							if (unidadVentaXDefecto.unidad === 'Caja' || unidadVentaXDefecto.unidad === 'Costal') {
 								precio =
 									unidadVentaXDefecto.cantidad *
-									precios.unidad_de_compra.precio_unitario_sin_impuesto
+									precios.unidad_de_compra.precio_unitario_sin_impuesto;
 							}
 							setUnidadVentaXDefecto({
 								...unidadVentaXDefecto,
@@ -197,14 +196,14 @@ export default function Precio1({ data, index }) {
 					} else {
 						nuevo_array.precio_neto = precios.unidad_de_compra.precio_unitario_con_impuesto;
 						preciosP.slice(i, 1, nuevo_array);
-						/* preciosP[i].precio_neto = precios.unidad_de_compra.precio_unitario_con_impuesto */
+						/* preciosVenta.precio_neto = precios.unidad_de_compra.precio_unitario_con_impuesto */
 						setPrecioNeto(precios.unidad_de_compra.precio_unitario_con_impuesto);
-						if (element.numero_precio === 1) {
-							let precio = precios.unidad_de_compra.precio_unitario_con_impuesto
+						if (preciosVenta.numero_precio === 1) {
+							let precio = precios.unidad_de_compra.precio_unitario_con_impuesto;
 							if (unidadVentaXDefecto.unidad === 'Caja' || unidadVentaXDefecto.unidad === 'Costal') {
 								precio =
 									unidadVentaXDefecto.cantidad *
-									precios.unidad_de_compra.precio_unitario_con_impuesto
+									precios.unidad_de_compra.precio_unitario_con_impuesto;
 							}
 							setUnidadVentaXDefecto({
 								...unidadVentaXDefecto,
@@ -232,7 +231,7 @@ export default function Precio1({ data, index }) {
 					const ganancia_utilidad_sin_impuestos =
 						precios.unidad_de_compra.precio_unitario_sin_impuesto +
 						precios.unidad_de_compra.precio_unitario_sin_impuesto * new_utilidad;
-					/*  preciosP[i].precio_venta = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2)); */
+					/*  preciosVenta.precio_venta = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2)); */
 
 					nuevo_array.precio_venta = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2));
 					preciosP.slice(i, 1, nuevo_array);
@@ -243,17 +242,17 @@ export default function Precio1({ data, index }) {
 						const ganancia_utilidad_con_impuestos =
 							precios.unidad_de_compra.precio_unitario_con_impuesto +
 							precios.unidad_de_compra.precio_unitario_con_impuesto * new_utilidad;
-						/*  preciosP[i].precio_neto = parseFloat(ganancia_utilidad_con_impuestos.toFixed(2)); */
+						/*  preciosVenta.precio_neto = parseFloat(ganancia_utilidad_con_impuestos.toFixed(2)); */
 						nuevo_array.precio_neto = parseFloat(ganancia_utilidad_con_impuestos.toFixed(2));
 						preciosP.slice(i, 1, nuevo_array);
 
 						setPrecioNeto(parseFloat(ganancia_utilidad_con_impuestos.toFixed(2)));
-						if (element.numero_precio === 1) {
-							let precio = parseFloat(ganancia_utilidad_con_impuestos.toFixed(2))
+						if (preciosVenta.numero_precio === 1) {
+							let precio = parseFloat(ganancia_utilidad_con_impuestos.toFixed(2));
 							if (unidadVentaXDefecto.unidad === 'Caja' || unidadVentaXDefecto.unidad === 'Costal') {
 								precio =
 									unidadVentaXDefecto.cantidad *
-									parseFloat(ganancia_utilidad_con_impuestos.toFixed(2))
+									parseFloat(ganancia_utilidad_con_impuestos.toFixed(2));
 							}
 							setUnidadVentaXDefecto({
 								...unidadVentaXDefecto,
@@ -262,14 +261,14 @@ export default function Precio1({ data, index }) {
 						}
 					} else {
 						/*  const ganancia_utilidad_con_impuestos = (parseFloat(precios.unidad_de_compra.precio_unitario_con_impuesto) * new_utilidad);
-                         preciosP[i].precio_neto = parseFloat(ganancia_utilidad_con_impuestos.toFixed(2)); */
+                         preciosVenta.precio_neto = parseFloat(ganancia_utilidad_con_impuestos.toFixed(2)); */
 						setPrecioNeto(parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2)));
-						if (element.numero_precio === 1) {
-							let precio = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2))
+						if (preciosVenta.numero_precio === 1) {
+							let precio = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2));
 							if (unidadVentaXDefecto.unidad === 'Caja' || unidadVentaXDefecto.unidad === 'Costal') {
 								precio =
 									unidadVentaXDefecto.cantidad *
-									parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2))
+									parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2));
 							}
 							setUnidadVentaXDefecto({
 								...unidadVentaXDefecto,
@@ -290,8 +289,9 @@ export default function Precio1({ data, index }) {
 					setUtilidad(0);
 					setPrecioNeto(precios.unidad_de_compra.precio_unitario_con_impuesto);
 					for (let i = 0; i < preciosP.length; i++) {
-						preciosP[i].utilidad = 0;
-						preciosP[i].precio_neto = precios.unidad_de_compra.precio_unitario_con_impuesto;
+						const preciosVenta = { ...preciosP[i] };
+						preciosVenta.utilidad = 0;
+						preciosVenta.precio_neto = precios.unidad_de_compra.precio_unitario_con_impuesto;
 					}
 				}
 				break;
@@ -300,8 +300,9 @@ export default function Precio1({ data, index }) {
 					setUtilidad(0);
 					setPrecioNeto(precios.unidad_de_compra.precio_unitario_con_impuesto);
 					for (let i = 0; i < preciosP.length; i++) {
-						preciosP[i].precio_neto = precios.unidad_de_compra.precio_unitario_con_impuesto;
-						preciosP[i].utilidad = 0;
+						const preciosVenta = { ...preciosP[i] };
+						preciosVenta.precio_neto = precios.unidad_de_compra.precio_unitario_con_impuesto;
+						preciosVenta.utilidad = 0;
 					}
 				}
 				break;
@@ -309,7 +310,8 @@ export default function Precio1({ data, index }) {
 				if (!value) {
 					setMayoreo(0);
 					for (let i = 0; i < preciosP.length; i++) {
-						preciosP[i].unidad_mayoreo = 0;
+						const preciosVenta = { ...preciosP[i] };
+						preciosVenta.unidad_mayoreo = 0;
 					}
 				}
 				break;
