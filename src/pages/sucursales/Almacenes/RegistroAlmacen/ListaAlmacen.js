@@ -55,7 +55,7 @@ export default function ListaAlmacen() {
 	const [ page, setPage ] = React.useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = React.useState(10);
 	const { update } = useContext(CrearAlmacenContext);
-
+ 
 	/* Queries */
 	const { loading, data, error, refetch } = useQuery(OBTENER_ALMACENES,{
 		variables: {

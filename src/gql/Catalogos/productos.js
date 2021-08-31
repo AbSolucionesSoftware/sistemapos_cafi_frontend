@@ -29,6 +29,23 @@ export const OBTENER_CONSULTAS = gql`
 				talla
 				tipo
 			}
+			calzados {
+				_id
+				talla
+				tipo
+			}
+			almacenes {
+				_id
+				nombre_almacen
+			}
+			centro_costos {
+				_id
+				cuenta
+				subcuentas {
+					_id
+					subcuenta
+				}
+			}
 		}
 	}
 `;
@@ -36,41 +53,138 @@ export const OBTENER_CONSULTAS = gql`
 export const CREAR_PRODUCTO = gql`
 	mutation crearProducto($input: CrearProductoInput) {
 		crearProducto(input: $input) {
-			_id
-			imagenes {
-				url_imagen
-				key_imagen
-			}
+			message
 		}
 	}
 `;
 
-/* export const OBTENER_TALLAS = gql`
-	query obtenerTallas($sucursal: String!, $tipo: String! ) {
-		obtenerTallas(sucursal: $sucursal, tipo: $tipo) {
+export const OBTENER_PRODUCTOS = gql`
+	query obtenerProductos($empresa: ID!, $sucursal: ID!, $filtro: String) {
+		obtenerProductos(empresa: $empresa, sucursal: $sucursal, filtro: $filtro) {
 			_id
-			talla
-			tipo
-			empresa {
-				nombre_empresa
-				correo_empresa
-				nombre_dueno
-				telefono_dueno
-				sucursales_activas
-				limite_sucursales
-				_id
+			centro_de_costos {
+				id_cuenta
+				cuenta
+				id_subcuenta
+				subcuenta
 			}
+			unidades_de_venta {
+				_id
+				precio
+				cantidad
+				unidad
+				unidad_principal
+				codigo_barras
+				id_producto
+				default
+			}
+			datos_generales {
+				codigo_barras
+				clave_alterna
+				tipo_producto
+				nombre_comercial
+				nombre_generico
+				descripcion
+				id_categoria
+				categoria
+				subcategoria
+				id_subcategoria
+				id_departamento
+				departamento
+				id_marca
+				marca
+				clave_producto_sat
+				receta_farmacia
+			}
+			empresa
+			imagenes {
+				location_imagen
+				extencion_imagen
+				url_imagen
+				key_imagen
+			}
+			precio_plazos {
+				precio_cajas {
+					plazo
+					unidad
+					precio
+				}
+				precio_piezas {
+					plazo
+					unidad
+					precio
+				}
+				precio_costales {
+					plazo
+					unidad
+					precio
+				}
+			}
+			precios {
+				ieps
+				ieps_activo
+				iva
+				iva_activo
+				monedero
+				monedero_electronico
+				precio_de_compra {
+					ieps
+					iva
+					precio_con_impuesto
+					precio_sin_impuesto
+				}
+				precios_producto {
+					numero_precio
+					precio_neto
+					precio_venta
+					unidad_mayoreo
+					utilidad
+				}
+				unidad_de_compra {
+					cantidad
+					precio_unitario_con_impuesto
+					precio_unitario_sin_impuesto
+					unidad
+				}
+				inventario {
+					inventario_minimo
+					inventario_maximo
+					unidad_de_inventario
+				}
+				granel
+			}
+			medidas_producto {
+				cantidad
+				codigo_barras
+				color {
+					_id
+					nombre
+					hex
+				}
+				existencia
+				medida {
+					_id
+					talla
+					tipo
+				}
+				nombre_comercial
+				precio
+			}
+			medidas_registradas
+			sucursal
+			usuario
 		}
 	}
-`; */
+`;
 
-/* export const ACTUALIZAR_TALLA = gql`
-	mutation actualizarTalla($input: ActualizarTallaInput, $id: ID!) {
-		actualizarTalla(id: $id, input: $input) {
+export const ACTUALIZAR_PRODUCTO = gql`
+	mutation actualizarProducto($id: ID!, $input: ActualizarProductoInput) {
+		actualizarProducto(id: $id, input: $input) {
 			message
 		}
 	}
-`; */
+`;
+
 /* export const ELIMINAR_TALLA = gql`
 	mutation eliminarTalla($id: ID!) {
 		eliminarTalla(id: $id) {

@@ -6,13 +6,15 @@ import Tallas from './Tallas/Tallas';
 /* import UnidadMedida from './UnidadMedida/UnidadMedida'; */
 import Contabilidad from './Contabilidad/Contabilidad';
 import Proveedores from './Proveedores/Proovedores';
-/* import Cajas from './Cajas/Cajas'; */
+import Cajas from './Cajas/Cajas'; 
 import Descuentos from './Descuentos/Descuentos';
 import Usuarios from './Usuarios/Usuarios';
 import Departamentos from './Departamentos/Departamentos';
 import Categorias from './Categorias/Categorias';
 import Colores from './Colores/Colores';
 import Marcas from './Marcas/Marcas';
+import CentroCostos from './CentroCostos/CentroCostos';
+import ConceptosAlmacen from './ConceptosAlmacen/ConceptosAlmacen';
 
 export default function Catalogos() {
 	return (
@@ -48,11 +50,11 @@ export default function Catalogos() {
 						<Proveedores />
 					</Box>
 				</Grid>
-				{/* <Grid item lg={2}>
+				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Cajas />
 					</Box>
-				</Grid> */}
+				</Grid>
 				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Descuentos />
@@ -81,6 +83,16 @@ export default function Catalogos() {
 				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Marcas />
+					</Box>
+				</Grid>
+				<Grid item lg={2}>
+					<Box display="flex" justifyContent="center" alignItems="center">
+						<CentroCostos />
+					</Box>
+				</Grid>
+				<Grid item lg={2}>
+					<Box display="flex" justifyContent="center" alignItems="center">
+						<ConceptosAlmacen />
 					</Box>
 				</Grid>
 			</Grid>
