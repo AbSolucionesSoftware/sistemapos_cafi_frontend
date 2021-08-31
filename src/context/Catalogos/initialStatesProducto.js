@@ -38,7 +38,7 @@ export const initial_state_unidadVentaXDefecto = {
     default: true
 }
 
-export const initial_state_preciosP = [
+export let initial_state_preciosP = [
     {
         numero_precio: 1,
         utilidad: 0,

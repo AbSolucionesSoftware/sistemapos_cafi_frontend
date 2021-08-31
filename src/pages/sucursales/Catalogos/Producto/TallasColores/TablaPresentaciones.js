@@ -61,6 +61,8 @@ export default function TablaPresentaciones({ datos }) {
 	const classes = useStyles();
 	const { presentaciones } = useContext(RegProductoContext);
 
+	let mostrar_presentaciones = [...presentaciones];
+
 	return (
 		<div className={classes.root}>
 			<Paper className={classes.paper}>
@@ -85,7 +87,7 @@ export default function TablaPresentaciones({ datos }) {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{presentaciones.sort((a, b) => compareFunction(a, b)).map((producto, index) => {
+							{mostrar_presentaciones.sort((a, b) => compareFunction(a, b)).map((producto, index) => {
 								return (
 									<RenderPresentacionesRows
 										key={index}
@@ -165,8 +167,9 @@ const RenderPresentacionesRows = ({ producto, index, datos }) => {
 						value={producto.codigo_barras}
 						type="number"
 						name="precio"
+						disabled={datos.medidas_registradas && !producto.nuevo}
 					/>
-					{datos.medidas_registradas ? (
+					{!datos.medidas_registradas && producto.nuevo ? (
 						<IconButton color="primary" size="small" onClick={() => GenCodigoBarras()}>
 							<Cached />
 						</IconButton>

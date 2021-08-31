@@ -168,8 +168,8 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto, refet
 						<FormControl variant="outlined" fullWidth size="small" name="unidad_de_inventario">
 							{precios.granel ? (
 								<Select
-									name="unidad"
-									value={precios.unidad_de_compra.unidad}
+									name="unidad_de_inventario"
+									value={precios.inventario.unidad_de_inventario}
 									onChange={obtenerInventario}
 								>
 									<MenuItem value="">
@@ -181,8 +181,8 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto, refet
 								</Select>
 							) : (
 								<Select
-									name="unidad"
-									value={precios.unidad_de_compra.unidad}
+									name="unidad_de_inventario"
+									value={precios.inventario.unidad_de_inventario}
 									onChange={obtenerInventario}
 								>
 									<MenuItem value="">

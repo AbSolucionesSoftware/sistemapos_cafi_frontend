@@ -343,6 +343,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setUnidadesVenta(producto.unidades_de_venta);
 		setPreciosP(producto.precios.precios_producto);
 		setUnidadVentaXDefecto(unidadxdefecto[0]);
+		setPresentaciones(producto.medidas_producto);
 	};
 
 	function funcion_tecla(event) {
