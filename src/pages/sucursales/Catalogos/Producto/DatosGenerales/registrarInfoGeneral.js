@@ -1,16 +1,16 @@
-import React, { Fragment, useContext, useState } from 'react';
+import React, { Fragment, useContext, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Box, FormControl, Divider, MenuItem, Select, Container, FormHelperText } from '@material-ui/core';
+import { Box, FormControl, Divider, MenuItem, Select, Container, FormHelperText, OutlinedInput, InputAdornment } from '@material-ui/core';
 import { TextField, Typography, Button, Checkbox, FormControlLabel } from '@material-ui/core';
 import { Dialog, DialogActions, DialogContent, DialogTitle, CircularProgress } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
-import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
+import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
 
 import { useMutation } from '@apollo/client';
-import { CREAR_CATEGORIA, CREAR_SUBCATEGORIA } from '../../../../gql/Catalogos/categorias';
-import { REGISTRAR_DEPARTAMENTO } from '../../../../gql/Catalogos/departamentos';
-import { REGISTRAR_MARCAS } from '../../../../gql/Catalogos/marcas';
-import SnackBarMessages from '../../../../components/SnackBarMessages';
+import { CREAR_CATEGORIA, CREAR_SUBCATEGORIA } from '../../../../../gql/Catalogos/categorias';
+import { REGISTRAR_DEPARTAMENTO } from '../../../../../gql/Catalogos/departamentos';
+import { REGISTRAR_MARCAS } from '../../../../../gql/Catalogos/marcas';
+import SnackBarMessages from '../../../../../components/SnackBarMessages';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {
@@ -29,13 +29,13 @@ const useStyles = makeStyles((theme) => ({
 
 export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetch }) {
 	const classes = useStyles();
-	const { datos_generales, setDatosGenerales, validacion, precios, setPrecios } = useContext(RegProductoContext);
-	const { subcategorias, setSubcategorias, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(RegProductoContext);
-	const { categorias, departamentos, marcas } = obtenerConsultasProducto;
-
+	const { datos_generales, setDatosGenerales, validacion, precios, setPrecios, centro_de_costos, setSubcostos } = useContext(RegProductoContext);
+	const { subcategorias, setSubcategorias, unidadVentaXDefecto, setUnidadVentaXDefecto, update } = useContext(RegProductoContext);
+	const { categorias, departamentos, marcas, centro_costos } = obtenerConsultasProducto;
+ 
 	const obtenerCampos = (e) => {
 		if (e.target.name === "monedero_electronico") {
-			if(!e.target.value){
+			if (!e.target.value) {
 				setPrecios({
 					...precios,
 					[e.target.name]: ''
@@ -84,23 +84,23 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 			setPrecios({
 				...precios,
 				[e.target.name]: e.target.checked,
-				inventario: { ...precios.inventario, unidad_de_inventario: 'KILOGRAMOS', },
-				unidad_de_compra: { ...precios.unidad_de_compra, unidad: 'KILOGRAMOS', }
+				inventario: { ...precios.inventario, unidad_de_inventario: 'Kg', },
+				unidad_de_compra: { ...precios.unidad_de_compra, unidad: 'Kg', }
 			});
 			setUnidadVentaXDefecto({
 				...unidadVentaXDefecto,
-				unidad: 'KILOGRAMOS',
+				unidad: 'Kg',
 			})
 		} else {
 			setPrecios({
 				...precios,
 				[e.target.name]: e.target.checked,
-				inventario: { ...precios.inventario, unidad_de_inventario: 'PIEZAS', },
-				unidad_de_compra: { ...precios.unidad_de_compra, unidad: 'PIEZAS', }
+				inventario: { ...precios.inventario, unidad_de_inventario: 'Pz', },
+				unidad_de_compra: { ...precios.unidad_de_compra, unidad: 'Pz', }
 			});
 			setUnidadVentaXDefecto({
 				...unidadVentaXDefecto,
-				unidad: 'PIEZAS',
+				unidad: 'Pz',
 			})
 		}
 	};
@@ -132,7 +132,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 	};
 
 	const verificarCampoVacio = (campo) => {
-		if(!precios.monedero_electronico){
+		if (!precios.monedero_electronico) {
 			setPrecios({
 				...precios,
 				monedero_electronico: 1
@@ -140,26 +140,49 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 		}
 	}
 
+	useEffect(() => {
+		if(update){
+			const categoria = categorias.filter((res) => res._id === datos_generales.id_categoria);
+			const costos = centro_costos.filter((res) => res._id === centro_de_costos.id_cuenta);
+			if(categoria.length > 0){
+				setSubcategorias(categoria[0].subcategorias);
+			}
+			if(costos.length > 0){
+				setSubcostos(costos[0].subcuentas);
+			}
+		}
+	}, [update])
+
 	return (
 		<Fragment>
 			<Container maxWidth="lg">
 				<div className={classes.formInputFlex}>
 					<Box width="100%">
-						<Typography>Código de barras</Typography>
-						<Box display="flex">
-							<TextField
-								fullWidth
-								size="small"
-								name="codigo_barras"
+						<FormControl variant="outlined" size="small" name="codigo_barras" fullWidth>
+							<Typography>Código de barras</Typography>
+							<OutlinedInput	
+								disabled={update}
+								style={{padding: 0}}
 								id="form-producto-codigo-barras"
-								variant="outlined"
+								name="codigo_barras"
 								value={datos_generales.codigo_barras ? datos_generales.codigo_barras : ''}
 								onChange={obtenerCampos}
+								endAdornment={
+									<InputAdornment position="end">
+										<Button
+											disabled={update}
+											onClick={() => GenCodigoBarras()}
+											/* edge="end" */
+											color="primary"
+											variant="outlined"
+											size="large"
+										>
+											Generar
+										</Button>
+									</InputAdornment>
+								}
 							/>
-							<Button variant="contained" color="primary" onClick={GenCodigoBarras}>
-								Generar
-							</Button>
-						</Box>
+						</FormControl>
 					</Box>
 					<Box width="100%">
 						<Typography>
@@ -374,7 +397,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 								<Select
 									id="form-producto-marca"
 									name="marca"
-									value={datos_generales.marcas ? datos_generales.marcas : ''}
+									value={datos_generales.marca ? datos_generales.marca : ''}
 									onChange={(event, child) => obtenerIDs(event, child)}
 								>
 									<MenuItem value="">
@@ -462,7 +485,6 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 									disabled={precios.monedero ? false : true}
 									onBlur={() => verificarCampoVacio('monedero_electronico')}
 									error={precios.monedero_electronico === ""}
-									helperText={precios.monedero_electronico === "" ? "Campo necesario" : ''}
 								/>
 							</Box>
 						</Box>
@@ -499,7 +521,8 @@ const RegistrarNuevoSelect = ({ tipo, name, refetch, subcategorias, setSubcatego
 		setValue(e.target.value);
 	};
 
-	const guardarDatos = async () => {
+	const guardarDatos = async (e) => {
+		e.preventDefault();
 		if (!value) {
 			setValidacion(true);
 			return;
@@ -568,7 +591,7 @@ const RegistrarNuevoSelect = ({ tipo, name, refetch, subcategorias, setSubcatego
 					const id_marca = marca_creada.data.crearMarcas.message;
 					setDatosGenerales({
 						...datos_generales,
-						marcas: value,
+						marca: value,
 						id_marca
 					});
 					break;
@@ -589,7 +612,7 @@ const RegistrarNuevoSelect = ({ tipo, name, refetch, subcategorias, setSubcatego
 		<Fragment>
 			<Button
 				color="primary"
-				onClick={handleToggle}
+				onClick={() => handleToggle()}
 				disabled={tipo === 'subcategoria' && !datos_generales.id_categoria}
 			>
 				<Add />
@@ -598,23 +621,27 @@ const RegistrarNuevoSelect = ({ tipo, name, refetch, subcategorias, setSubcatego
 				<SnackBarMessages alert={alert} setAlert={setAlert} />
 				<DialogTitle id={`modal-title-${tipo}`}>Registrar {tipo}</DialogTitle>
 				<DialogContent>
-					<TextField
-						error={validacion}
-						name={name}
-						autoFocus
-						label={tipo}
-						fullWidth
-						variant="outlined"
-						onChange={obtenerDatos}
-						helperText={validacion ? 'Campo obligatorio' : ''}
-					/>
+					<form id={`registro-${name}`} onSubmit={(e) => guardarDatos(e)}>
+						<TextField
+							error={validacion}
+							name={name}
+							autoFocus
+							label={tipo}
+							fullWidth
+							variant="outlined"
+							onChange={obtenerDatos}
+							helperText={validacion ? 'Campo obligatorio' : ''}
+						/>
+					</form>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleToggle} color="primary">
+					<Button onClick={() => handleToggle()} color="primary">
 						Cancelar
 					</Button>
 					<Button
-						onClick={guardarDatos}
+						/* onClick={() => guardarDatos()} */
+						form={`registro-${name}`}
+						type="submit"
 						variant="contained"
 						color="primary"
 						endIcon={loading ? <CircularProgress color="inherit" size={18} /> : null}

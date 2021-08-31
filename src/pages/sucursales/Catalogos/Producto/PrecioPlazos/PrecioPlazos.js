@@ -8,16 +8,19 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         '& > *': {
             margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
+        },
+        '& > .precios-box': {
+            margin: `${theme.spacing(1)}px ${theme.spacing(3)}px`
         }
     },
 }));
 
 export default function PrecioPlazos() {
     const classes = useStyles();
-    const { precios, preciosPlazos, setPreciosPlazos, preciosP } = useContext(RegProductoContext);
+    const { precios, preciosPlazos, setPreciosPlazos, unidadesVenta, unidadVentaXDefecto } = useContext(RegProductoContext);
     const [plazo, setPlazo] = useState({
         plazo: "1",
-        unidad: precios.granel ? "COSTALES" : "PIEZAS",
+        unidad: precios.granel ? "Costal" : "Pz",
         precio: 0
     });
 
@@ -38,19 +41,19 @@ export default function PrecioPlazos() {
     const guardarPlazo = () => {
         if (!plazo.plazo || !plazo.precio || !plazo.unidad) return
         switch (plazo.unidad) {
-            case "PIEZAS":
+            case "Pz":
                 setPreciosPlazos({
                     ...preciosPlazos,
                     precio_piezas: [...preciosPlazos.precio_piezas, plazo]
                 })
                 break;
-            case "CAJAS":
+            case "Caja":
                 setPreciosPlazos({
                     ...preciosPlazos,
                     precio_cajas: [...preciosPlazos.precio_cajas, plazo]
                 })
                 break;
-            case "COSTALES":
+            case "Costal":
                 setPreciosPlazos({
                     ...preciosPlazos,
                     precio_costales: [...preciosPlazos.precio_costales, plazo]
@@ -68,9 +71,17 @@ export default function PrecioPlazos() {
     return (
         <Fragment>
             <Box className={classes.formInputFlex}>
-                <Typography>
-                    Precio venta con impuestos(NETO): <b>{preciosP[0].precio_neto}</b>
+                <Typography className="precios-box">
+                    Precio venta de <b>{unidadVentaXDefecto.unidad}</b> con impuestos(NETO): <b>${unidadVentaXDefecto.precio}</b>
                 </Typography>
+                {unidadesVenta.map((unidades, index) => {
+                    if (!unidades.default) return (
+                        <Typography key={index} className="precios-box">
+                            Precio venta de <b>{unidades.unidad}</b> con impuestos(NETO): <b>${unidades.precio}</b>
+                        </Typography>
+                    )
+                    return null
+                })}
             </Box>
             <Divider />
             <Box className={classes.formInputFlex} justifyContent="center">
@@ -96,13 +107,13 @@ export default function PrecioPlazos() {
                             {precios.granel ? (
                                 <Select
                                     name="unidad" value={plazo.unidad} onChange={obtenerPlazos}>
-                                    <MenuItem value="COSTALES">COSTALES</MenuItem>
+                                    <MenuItem value="Costal">Costal</MenuItem>
                                 </Select>
                             ) : (
                                 <Select
                                     name="unidad" value={plazo.unidad} onChange={obtenerPlazos}>
-                                    <MenuItem value="CAJAS">CAJAS</MenuItem>
-                                    <MenuItem value="PIEZAS">PIEZAS</MenuItem>
+                                    <MenuItem value="Caja">Caja</MenuItem>
+                                    <MenuItem value="Pz">Pz</MenuItem>
                                 </Select>
                             )}
                         </FormControl>
@@ -121,7 +132,7 @@ export default function PrecioPlazos() {
                     />
                 </Box>
                 <Box display="flex" alignItems="flex-end">
-                    <Button variant="contained" size="large" color="primary" onClick={guardarPlazo}>Agregar</Button>
+                    <Button variant="contained" size="large" color="primary" onClick={() => guardarPlazo()}>Agregar</Button>
                 </Box>
             </Box>
             <Box>
@@ -129,18 +140,18 @@ export default function PrecioPlazos() {
                     {precios.granel ? (
                         <Fragment>
                             <Grid item lg={3}>
-                                <Typography variant="h6" align="center">COSTALES</Typography>
+                                <Typography variant="h6" align="center">Costal</Typography>
                                 <TablaPreciosPlazos precios={preciosPlazos.precio_costales} />
                             </Grid>
                         </Fragment>
                     ) :
                         <Fragment>
                             <Grid item lg={3}>
-                                <Typography variant="h6" align="center">PIEZAS</Typography>
+                                <Typography variant="h6" align="center">Piezas</Typography>
                                 <TablaPreciosPlazos precios={preciosPlazos.precio_piezas} />
                             </Grid>
                             <Grid item lg={3}>
-                                <Typography variant="h6" align="center">CAJAS</Typography>
+                                <Typography variant="h6" align="center">Cajas</Typography>
                                 <TablaPreciosPlazos precios={preciosPlazos.precio_cajas} />
                             </Grid>
                         </Fragment>}

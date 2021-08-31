@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Dialog, DialogActions, DialogTitle } from '@material-ui/core';
 import { Box, Typography, Button, Divider, Grid } from '@material-ui/core';
 import { AddPhotoAlternate, Visibility, Delete } from '@material-ui/icons';
-import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
+import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
 
 import PhotoSizeSelectActualOutlinedIcon from '@material-ui/icons/PhotoSizeSelectActualOutlined';
 const useStyles = makeStyles((theme) => ({
@@ -82,16 +82,23 @@ export default function CargarImagenesProducto() {
 
 const RenderImagenes = ({ imagen, index }) => {
 	const classes = useStyles();
-	const preview = URL.createObjectURL(imagen)
-	const { imagenes, setImagenes, setOnPreview, onPreview } = useContext(RegProductoContext);
+	const preview = imagen.key_imagen ? imagen.url_imagen : URL.createObjectURL(imagen)
+	const { imagenes, setImagenes, setOnPreview, onPreview, imagenes_eliminadas, setImagenesEliminadas } = useContext(RegProductoContext);
 	const [open, setOpen] = useState(false);
 	const handleModal = () => setOpen(!open);
 
 	const eliminarImagen = () => {
+		/* agregar al arrya de imagenes eliminadas */
+		if(imagen.key_imagen){
+			setImagenesEliminadas([
+				...imagenes_eliminadas, imagen
+			])
+		}
+		/* quitar imagenes del array */
 		if (onPreview.index === index) {
 			setOnPreview({ index: '', image: '' })
 		}
-		const array = imagenes;
+		const array = [...imagenes];
 		array.splice(index, 1);
 		setImagenes([
 			...array,
@@ -107,9 +114,10 @@ const RenderImagenes = ({ imagen, index }) => {
 				</Box>
 				<Box width="90%">
 					<Typography noWrap>
-						{imagen.name}
+						{imagen.key_imagen ? imagen.key_imagen : imagen.name}
 					</Typography>
-					<Typography variant="caption">{imagen.size} bits</Typography>
+					{imagen.key_imagen ? null : (<Typography variant="caption">{imagen.size} bits</Typography>)}
+					
 					<Box display="flex" justifyContent="flex-end">
 						<Button size="small" startIcon={<Visibility />} onClick={() => setOnPreview({ index, image: preview })}>
 							previsualizar
@@ -127,16 +135,16 @@ const RenderImagenes = ({ imagen, index }) => {
 const ModalDelete = ({ handleModal, open, eliminarImagen }) => {
 	return (
 		<div>
-			<Button size="small" color="secondary" startIcon={<Delete />} onClick={handleModal}>
+			<Button size="small" color="secondary" startIcon={<Delete />} onClick={() => handleModal()}>
 				eliminar
 			</Button>
 			<Dialog open={open} onClose={handleModal}>
 				<DialogTitle>{'¿Seguro que quieres eliminar esto?'}</DialogTitle>
 				<DialogActions>
-					<Button onClick={handleModal} color="primary">
+					<Button onClick={() => handleModal()} color="primary">
 						Cancelar
 					</Button>
-					<Button color="secondary" autoFocus variant="contained" onClick={eliminarImagen}>
+					<Button color="secondary" autoFocus variant="contained" onClick={() => eliminarImagen()}>
 						Eliminar
 					</Button>
 				</DialogActions>
