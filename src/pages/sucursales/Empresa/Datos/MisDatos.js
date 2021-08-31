@@ -270,6 +270,7 @@ export default function MisDatos() {
 								<CloseIcon style={{fontSize: 30}} />
 							</Button>
 						</Box>
+                       
 					</Toolbar>
 				</AppBar>
 				{
