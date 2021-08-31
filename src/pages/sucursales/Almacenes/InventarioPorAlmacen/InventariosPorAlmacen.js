@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Slide, Button, Box, Dialog, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 // import { FcPlus } from 'react-icons/fc';
-import inventarioAlmacen from '../../../../icons/warehouse.svg';
+// import inventarioAlmacen from '../../../../icons/warehouse.svg';
 import CloseIcon from '@material-ui/icons/Close';
 import ListaAlmacenes from './ListaAlmacenes'
 
@@ -43,7 +43,7 @@ export default function InventariosPorAlmacen() {
             <Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={inventarioAlmacen} alt="icono almacen" className={classes.imagen}/>
+						<img src={''} alt="icono almacen" className={classes.imagen}/>
 					</Box>
 					Inventario por almacen
 				</Box>
