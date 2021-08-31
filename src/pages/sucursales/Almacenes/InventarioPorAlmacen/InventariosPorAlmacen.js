@@ -1,9 +1,10 @@
 import React, { forwardRef } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Slide, Button, Box, Dialog } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, IconButton, Slide, Button, Box, Dialog, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 // import { FcPlus } from 'react-icons/fc';
-import inventarioAlmacen from '../../../../icons/conceptosAlmacen.svg';
-
+// import inventarioAlmacen from '../../../../icons/warehouse.svg';
+import CloseIcon from '@material-ui/icons/Close';
+import ListaAlmacenes from './ListaAlmacenes'
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -42,7 +43,7 @@ export default function InventariosPorAlmacen() {
             <Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={inventarioAlmacen} alt="icono almacen" className={classes.imagen}/>
+						<img src={''} alt="icono almacen" className={classes.imagen}/>
 					</Box>
 					Inventario por almacen
 				</Box>
@@ -54,16 +55,41 @@ export default function InventariosPorAlmacen() {
                                 Almacenes
 						</Typography>
 						<Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClose}>
-                                Cerrar
-                            </Button>
+							<Box m={1}>
+								<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+									<CloseIcon style={{ fontSize: 30}}/>
+								</Button>
+							</Box>
                         </Box>
                         <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
 							
 						</IconButton>
 					</Toolbar>
 				</AppBar>
-				Toda la info de Abrir una compra
+				<Box mx={3} p={2}>
+					<div className={classes.formInputFlex}>
+						<Box width="50%">
+							<Typography>Buscar Almacén</Typography>
+							<Box display="flex">
+								<TextField
+									fullWidth
+									size="small"
+									/* error */
+									name="codigo_barras"
+									id="form-producto-codigo-barras"
+									variant="outlined"
+									/* helperText="Incorrect entry." */
+								/>
+								<Button variant="contained" color="primary">
+									Buscar
+								</Button>
+							</Box>
+						</Box>
+					</div>
+				</Box>
+				<Box mx={5}>
+					<ListaAlmacenes/>
+				</Box>
 			</Dialog>
         </div>
     )

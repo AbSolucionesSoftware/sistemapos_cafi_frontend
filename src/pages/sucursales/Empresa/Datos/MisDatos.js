@@ -1,15 +1,16 @@
 import React, {  useContext,useState,useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Grid, TextField, Button, Dialog, Avatar } from '@material-ui/core';
-import { Slide, Typography, IconButton, Toolbar, AppBar, Divider, DialogActions,CircularProgress  } from '@material-ui/core';
+import { Slide, Typography, IconButton, Toolbar, AppBar, Divider, DialogActions  } from '@material-ui/core';
 import { useDropzone } from 'react-dropzone';
 import CloseIcon from '@material-ui/icons/Close';
 import { FcNook } from 'react-icons/fc';
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { EmpresaContext } from '../../../../context/Catalogos/empresaContext';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
-import {  ACTUALIZAR_EMPRESA } from '../../../../gql/Empresa/empresa';
+import ErrorPage from '../../../../components/ErrorPage';
+import {  ACTUALIZAR_EMPRESA, OBTENER_DATOS_EMPRESA } from '../../../../gql/Empresa/empresa';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -64,17 +65,27 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function MisDatos() {
 	const classes = useStyles();
-	const [ loading, setLoading ] = React.useState(false);
+	const [ loadingPage, setLoadingPage ] = React.useState(false);
 	const [ preview, setPreview ] = useState('');
 	const [ open, setOpen ] = React.useState(false);
-	const [ error, setError ] = useState({error: false, message: ''});
+	const [ errorPage, setErrorPage ] = React.useState(false);
+	const [ errorForm, setErrorForm ] = React.useState( useState({error: false, message: ''}));
+	
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-	const { empresa, setUpdate } = useContext(EmpresaContext);
+	const { empresa, update, setEmpresa, setUpdate } = useContext(EmpresaContext);
+	
 	const [ actualizarEmpresa ] = useMutation(ACTUALIZAR_EMPRESA);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	
+	/* Queries */
+	const { loading, data,refetch, error } = useQuery(OBTENER_DATOS_EMPRESA, {
+		variables: { id: sesion.empresa._id }
+	});
+
+	
 	const [ empresaDatos, setEmpresaDatos ] = useState({
 		nombre_empresa:'',
-        nombre_dueno:'',
+        nombre_dueno:'', 
 		telefono_dueno:'',
 		celular:'',
 		correo_empresa:'',
@@ -112,7 +123,44 @@ export default function MisDatos() {
         },
 		imagen: null
 	});
+	useEffect(() => {
+		try {
 
+			refetch();
+		
+		} catch (errorCatch) {
+			console.log("SESSIONREFECTUPDATE",errorCatch)
+		}
+	},[update,refetch]);
+	useEffect(() => {
+		try {
+			
+			setLoadingPage(loading)
+		
+		} catch (errorCatch) {
+			console.log("SESSIONREFECTUPDATE",errorCatch)
+		}
+	},[loading]);
+	useEffect(() => {
+		try {
+			
+			if(data !== undefined){
+				
+				setEmpresa(data.obtenerEmpresa)
+			}
+		} catch (errorCatch) {
+			console.log("SESSIONREFECT",errorCatch)
+		}
+	},[data, setEmpresa]);
+	useEffect(() => {
+		try {
+
+			setErrorPage(error)
+		
+		} catch (errorCatch) {
+			console.log("SESSIONREFECT",errorCatch)
+		}
+	},[error]);
 	useEffect(() => {
 		try {
 			setEmpresaDatos({
@@ -132,7 +180,7 @@ export default function MisDatos() {
 
 	const actEmp = async () =>{
 		try {
-			setLoading(true)
+			setLoadingPage(true)
 			//console.log(empresaDatos, sesion.empresa._id )
 			await actualizarEmpresa({
 				variables: {
@@ -142,11 +190,12 @@ export default function MisDatos() {
 			});
 			//console.log(act.data.actualizarEmpresa.message)
 			setUpdate(true);
-			setLoading(false);
+			setLoadingPage(false);
 			setAlert({ message: 'Se han actualizado correctamente los datos.', status: 'success', open: true });	
-			setError(false);
+		    setErrorForm(false)
 		} catch (errorCatch) {
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			setLoadingPage(false);
 			console.log("ACtualizar Empresa",errorCatch)
 		}
 	}
@@ -192,6 +241,7 @@ export default function MisDatos() {
 		noKeyboard: true,
 		onDrop
 	});
+	
 
 	
 	
@@ -206,8 +256,10 @@ export default function MisDatos() {
 				</Box>
 			</Button>
 			<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+				
 				<SnackBarMessages alert={alert} setAlert={setAlert} />
-				<BackdropComponent loading={loading} setLoading={setLoading} />
+				<BackdropComponent loading={loadingPage} setLoading={setLoadingPage} />
+				
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
@@ -218,238 +270,250 @@ export default function MisDatos() {
 								<CloseIcon style={{fontSize: 30}} />
 							</Button>
 						</Box>
+                       
 					</Toolbar>
 				</AppBar>
-
-				<Grid container width="100%" >			
+				{
+					(errorPage) ?
+						<ErrorPage error={errorPage} />
+					:
 					
-						<Grid>
-							<Grid item md={5}>
-								<form autoComplete="off" className={classes.formInputFlex}>
-									<Grid item md={4}>
-										<Box className={classes.avatarContainer} {...getRootProps()}>
-											<input {...getInputProps()} />
-											{preview ? (
-												<Avatar className={classes.avatar} src={`${preview}`} />
-											) : (
-												<Avatar className={classes.avatar} src={`${empresa.imagen}`} />
-											)}
-										</Box>
-									</Grid>
-								
-									<Grid item md={5}>
-										<Grid container  justifyContent="space-evenly">
-											<form autoComplete="off" className={classes.formInputFlex} >
-												<Box width="425px">
-													<Typography>
-														<span>* </span>Nombre de empresa
-													</Typography>
-													<TextField
-														fullWidth
-														className={classes.input}
-														type="text"
-														size="small"
-														error={error.error && !empresaDatos.nombre_empresa}
-														name="nombre_empresa"
-														variant="outlined"
-														value={empresaDatos.nombre_empresa ? empresaDatos.nombre_empresa : ''}
-														helperText={
-															error.error && error.message !== 'El campo nombre es obligatorio' ? (
-																error.message
-															) : (
-																''
-															)
-														}
-														onChange={obtenerCampos}
-													/>
-												</Box>
-												<Box width="425px">
-													<Typography>
-														<span>* </span>Nombre dueño
-													</Typography>
-													<TextField
-														fullWidth
-														className={classes.input}
-														type="text"
-														size="small"
-														error={error.error && !empresaDatos.nombre_dueno}
-														name="nombre_dueno"
-														variant="outlined"
-														value={empresaDatos.nombre_dueno ? empresaDatos.nombre_dueno : ''}
-														helperText={
-															error.error && error.message !== 'El campo nombre es obligatorio' ? (
-																error.message
-															) : (
-																''
-															)
-														}
-														onChange={obtenerCampos}
-													/>
-												</Box>
-											</form>			
+						<div>
+						<Grid container width="100%" >		
+							<Grid>
+								<Grid item md={5}>
+									<form autoComplete="off" className={classes.formInputFlex}>
+										<Grid item md={4}>
+											<Box className={classes.avatarContainer} {...getRootProps()}>
+												<input {...getInputProps()} />
+												{preview ? (
+													<Avatar className={classes.avatar} src={`${preview}`} />
+												) : (
+													<Avatar className={classes.avatar} src={`${empresa.imagen}`} />
+												)}
+											</Box>
 										</Grid>
-										<Grid container  justifyContent="space-evenly">
-											<form autoComplete="off" className={classes.formInputFlex} >
-											<Box width="200px">
-												<Typography>Teléfono</Typography>
-												<TextField
-													className={classes.input}
-													size="small"
-													name="telefono_dueno"
-													variant="outlined"
-													value={empresaDatos.telefono_dueno ? empresaDatos.telefono_dueno : ''}
-													onChange={obtenerCampos}
-													
-												/>
-											</Box>
-											<Box width="210px">
-												<Typography>Celular</Typography>
-												<TextField
-													className={classes.input}
-													size="small"
-													name="celular"
-													variant="outlined"
-													value={empresaDatos.celular ? empresaDatos.celular : ''}
-													onChange={obtenerCampos}
-												/>
-											</Box>
-											<Box width="400px">
-												<Typography>E-mail</Typography>
-												<TextField
-													className={classes.input}
-													size="small"
-													name="correo_empresa"
-													variant="outlined"
-													value={empresaDatos.correo_empresa ? empresaDatos.correo_empresa : ''}
-													onChange={obtenerCampos}
-												/>
-											</Box>
-											</form>
+									
+										<Grid item md={5}>
+											<Grid container  justifyContent="space-evenly">
+												<form autoComplete="off" className={classes.formInputFlex} >
+													<Box width="425px">
+														<Typography>
+															<span>* </span>Nombre de empresa
+														</Typography>
+														<TextField
+															fullWidth
+															className={classes.input}
+															type="text"
+															size="small"
+															error={errorForm.error && !empresaDatos.nombre_empresa}
+															name="nombre_empresa"
+															variant="outlined"
+															value={empresaDatos.nombre_empresa ? empresaDatos.nombre_empresa : ''}
+															helperText={
+																errorForm.error && errorForm.message !== 'El campo nombre es obligatorio' ? (
+																	errorForm.message
+																) : (
+																	''
+																)
+															}
+															onChange={obtenerCampos}
+														/>
+													</Box>
+													<Box width="425px">
+														<Typography>
+															<span>* </span>Nombre dueño
+														</Typography>
+														<TextField
+															fullWidth
+															className={classes.input}
+															type="text"
+															size="small"
+															error={errorForm.error && !empresaDatos.nombre_dueno}
+															name="nombre_dueno"
+															variant="outlined"
+															value={empresaDatos.nombre_dueno ? empresaDatos.nombre_dueno : ''}
+															helperText={
+																errorForm.error && errorForm.message !== 'El campo nombre es obligatorio' ? (
+																	errorForm.message
+																) : (
+																	''
+																)
+															}
+															onChange={obtenerCampos}
+														/>
+													</Box>
+												</form>			
 											</Grid>
-										</Grid>
-									</form>					
+											<Grid container  justifyContent="space-evenly">
+												<form autoComplete="off" className={classes.formInputFlex} >
+												<Box width="200px">
+													<Typography>Teléfono</Typography>
+													<TextField
+														className={classes.input}
+														size="small"
+														name="telefono_dueno"
+														variant="outlined"
+														value={empresaDatos.telefono_dueno ? empresaDatos.telefono_dueno : ''}
+														onChange={obtenerCampos}
+														
+													/>
+												</Box>
+												<Box width="210px">
+													<Typography>Celular</Typography>
+													<TextField
+														className={classes.input}
+														size="small"
+														name="celular"
+														variant="outlined"
+														value={empresaDatos.celular ? empresaDatos.celular : ''}
+														onChange={obtenerCampos}
+													/>
+												</Box>
+												<Box width="400px">
+													<Typography>E-mail</Typography>
+													<TextField
+														className={classes.input}
+														size="small"
+														name="correo_empresa"
+														variant="outlined"
+														value={empresaDatos.correo_empresa ? empresaDatos.correo_empresa : ''}
+														onChange={obtenerCampos}
+													/>
+												</Box>
+												</form>
+												</Grid>
+											</Grid>
+										</form>					
+									</Grid>
 								</Grid>
-							</Grid>
+						
+						</Grid>
+						
+						<Box mt={2} >
+							<Typography className={classes.subtitle}>
+								<b>Domicilio empresa</b>
+							</Typography>
+							<Divider />
+						</Box>
+						<Grid container  justifyContent="space-evenly">
+						<form autoComplete="off" className={classes.formInputFlex} >
+							<Box>
+								<Typography>Calle</Typography>
+								<TextField
+									size="small"
+									name="calle"
+									variant="outlined"
+									value={empresaDatos.direccion.calle ? empresaDatos.direccion.calle : ''}
+									onChange={obtenerCamposDireccion}
+								/>
+							</Box>
+							<Box>
+								<Typography>Colonia</Typography>
+								<TextField
+									size="small"
+									name="colonia"
+									variant="outlined"
+									value={empresaDatos.direccion.colonia ? empresaDatos.direccion.colonia : ''}
+									onChange={obtenerCamposDireccion}
+								/>
+							</Box>
+							<Box width="100px">
+								<Typography>Num. Ext</Typography>
+								<TextField
+									size="small"
+									name="no_ext"
+									variant="outlined"
+									value={empresaDatos.direccion.no_ext ? empresaDatos.direccion.no_ext : ''}
+									onChange={obtenerCamposDireccion}
+								/>
+							</Box>
+							<Box width="100px">
+								<Typography>Num. Int</Typography>
+								<TextField
+									size="small"
+									name="no_int"
+									variant="outlined"
+									value={empresaDatos.direccion.no_int ? empresaDatos.direccion.no_int : ''}
+									onChange={obtenerCamposDireccion}
+								/>
+							</Box>
+							<Box width="100px">
+								<Typography>C.P. </Typography>
+								<TextField
+									size="small"
+									name="codigo_postal"
+									variant="outlined"
+									value={empresaDatos.direccion.codigo_postal ? empresaDatos.direccion.codigo_postal : ''}
+									onChange={obtenerCamposDireccion}
+								/>
+							</Box>
+						</form>
+						<form autoComplete="off" className={classes.formInputFlex}>
+							<Box width="100%">
+								<Typography>Municipio</Typography>
+								<TextField
+									fullWidth
+									size="small"
+									name="municipio"
+									variant="outlined"
+									value={empresaDatos.direccion.municipio ? empresaDatos.direccion.municipio : ''}
+									onChange={obtenerCamposDireccion}
+								/>
+							</Box>
+							<Box width="100%">
+								<Typography>Localidad</Typography>
+								<TextField
+									size="small"
+									name="localidad"
+									variant="outlined"
+									value={empresaDatos.direccion.localidad ? empresaDatos.direccion.localidad : ''}
+									onChange={obtenerCamposDireccion}
+								/>
+							</Box>
+							<Box width="100%">
+								<Typography>Estado</Typography>
+								<TextField
+									size="small"
+									name="estado"
+									variant="outlined"
+									value={empresaDatos.direccion.estado ? empresaDatos.direccion.estado : ''}
+									onChange={obtenerCamposDireccion}
+								/>
+							</Box>
+							<Box width="100%">
+								<Typography>Pais</Typography>
+								<TextField
+									size="small"
+									name="pais"
+									variant="outlined"
+									value={empresaDatos.direccion.pais ? empresaDatos.direccion.pais : ''}
+									onChange={obtenerCamposDireccion}
+								/>
+							</Box>
+						</form>
+						</Grid>
+						<Grid>
+						<DialogActions>
+							<Button onClick={handleClose} color="primary">
+								Cancelar
+							</Button>
+							<Button
+								onClick={()=>actEmp()}
+								color="primary"
+								variant="contained"
+								autoFocus
+								
+							>
+								Guardar
+							</Button>
+						</DialogActions>
+						</Grid>
+					</div>
 					
-				</Grid>
+					
+				}
 				
-				<Box mt={2} >
-					<Typography className={classes.subtitle}>
-						<b>Domicilio empresa</b>
-					</Typography>
-					<Divider />
-				</Box>
-				<Grid container  justifyContent="space-evenly">
-				<form autoComplete="off" className={classes.formInputFlex} >
-					<Box>
-						<Typography>Calle</Typography>
-						<TextField
-							size="small"
-							name="calle"
-							variant="outlined"
-							value={empresaDatos.direccion.calle ? empresaDatos.direccion.calle : ''}
-							onChange={obtenerCamposDireccion}
-						/>
-					</Box>
-					<Box>
-						<Typography>Colonia</Typography>
-						<TextField
-							size="small"
-							name="colonia"
-							variant="outlined"
-							value={empresaDatos.direccion.colonia ? empresaDatos.direccion.colonia : ''}
-							onChange={obtenerCamposDireccion}
-						/>
-					</Box>
-					<Box width="100px">
-						<Typography>Num. Ext</Typography>
-						<TextField
-							size="small"
-							name="no_ext"
-							variant="outlined"
-							value={empresaDatos.direccion.no_ext ? empresaDatos.direccion.no_ext : ''}
-							onChange={obtenerCamposDireccion}
-						/>
-					</Box>
-					<Box width="100px">
-						<Typography>Num. Int</Typography>
-						<TextField
-							size="small"
-							name="no_int"
-							variant="outlined"
-							value={empresaDatos.direccion.no_int ? empresaDatos.direccion.no_int : ''}
-							onChange={obtenerCamposDireccion}
-						/>
-					</Box>
-					<Box width="100px">
-						<Typography>C.P. </Typography>
-						<TextField
-							size="small"
-							name="codigo_postal"
-							variant="outlined"
-							value={empresaDatos.direccion.codigo_postal ? empresaDatos.direccion.codigo_postal : ''}
-							onChange={obtenerCamposDireccion}
-						/>
-					</Box>
-				</form>
-				<form autoComplete="off" className={classes.formInputFlex}>
-					<Box width="100%">
-						<Typography>Municipio</Typography>
-						<TextField
-							fullWidth
-							size="small"
-							name="municipio"
-							variant="outlined"
-							value={empresaDatos.direccion.municipio ? empresaDatos.direccion.municipio : ''}
-							onChange={obtenerCamposDireccion}
-						/>
-					</Box>
-					<Box width="100%">
-						<Typography>Localidad</Typography>
-						<TextField
-							size="small"
-							name="localidad"
-							variant="outlined"
-							value={empresaDatos.direccion.localidad ? empresaDatos.direccion.localidad : ''}
-							onChange={obtenerCamposDireccion}
-						/>
-					</Box>
-					<Box width="100%">
-						<Typography>Estado</Typography>
-						<TextField
-							size="small"
-							name="estado"
-							variant="outlined"
-							value={empresaDatos.direccion.estado ? empresaDatos.direccion.estado : ''}
-							onChange={obtenerCamposDireccion}
-						/>
-					</Box>
-					<Box width="100%">
-						<Typography>Pais</Typography>
-						<TextField
-							size="small"
-							name="pais"
-							variant="outlined"
-							value={empresaDatos.direccion.pais ? empresaDatos.direccion.pais : ''}
-							onChange={obtenerCamposDireccion}
-						/>
-					</Box>
-				</form>
-				</Grid>
-				<Grid>
-				<DialogActions>
-					<Button
-						onClick={()=>actEmp()}
-						color="primary"
-						variant="contained"
-						size="large"
-						autoFocus
-						endIcon={loading ? <CircularProgress color="inherit" size={25} /> : null}
-					>
-						Guardar
-					</Button>
-				</DialogActions>
-				</Grid>
 			</Dialog>
 		</div>
 	);
