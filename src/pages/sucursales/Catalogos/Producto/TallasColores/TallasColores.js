@@ -37,12 +37,13 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 		setPresentaciones,
 		presentaciones,
 		datos_generales,
-		preciosP,
+		preciosP
 	} = useContext(RegProductoContext);
 	const { almacenes, colores, tallas, calzados } = obtenerConsultasProducto;
 	const [ medidasSeleccionadas, setMedidasSeleccionadas ] = useState([]);
 	const [ coloresSeleccionados, setColoresSeleccionados ] = useState([]);
 	const medidas = datos_generales.tipo_producto === 'ROPA' ? tallas : calzados;
+	const [ onUpdate, setOnUpdate ] = useState([]);
 
 	/* useEffect(() => {
 		let colors = [];
@@ -82,7 +83,7 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 	const handleAddTallas = (event, child) => {
 		const medidas_seleccionadas_temp = event.target.value;
 		let presentacion = [];
-		const array_medidad_finales = [...presentaciones];
+		const array_medidad_finales = [ ...presentaciones ];
 
 		if (!coloresSeleccionados.length && !array_medidad_finales.length) {
 			/* SI NO HAY COLORES NI VALORES EN EL ARRAY FINAL SE AGREGA EL PRIMER ELEMENTO */
@@ -96,7 +97,7 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 					color: { nombre: '', hex: '' },
 					precio: preciosP[0].precio_neto,
 					cantidad: 0,
-					nuevo: true,
+					nuevo: true
 				};
 				presentacion.push(producto);
 			}
@@ -116,7 +117,7 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 						color: { nombre: '', hex: '' },
 						precio: preciosP[0].precio_neto,
 						cantidad: 0,
-						nuevo: true,
+						nuevo: true
 					};
 					presentacion.push(producto);
 				}
@@ -137,7 +138,7 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 						color: array_medidad_finales[i].color,
 						precio: array_medidad_finales[i].precio,
 						cantidad: array_medidad_finales[i].cantidad,
-						nuevo: true,
+						nuevo: true
 					});
 				}
 			}
@@ -161,7 +162,7 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 							color: producto_color,
 							precio: preciosP[0].precio_neto,
 							cantidad: 0,
-							nuevo: true,
+							nuevo: true
 						});
 					} else {
 						presentacion.push(presentacion_existente[0]);
@@ -182,17 +183,17 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 						color: objeto_presentaciones_final.color,
 						precio: objeto_presentaciones_final.precio,
 						cantidad: objeto_presentaciones_final.cantidad,
-						nuevo: true,
+						nuevo: true
 					});
 				}
 			}
 		}
 
 		setMedidasSeleccionadas(medidas_seleccionadas_temp);
-		
-		if(datos.medidas_registradas){
-			setPresentaciones([...array_medidad_finales, presentacion]);
-			return
+
+		if (datos.medidas_registradas) {
+			setPresentaciones([ ...array_medidad_finales, presentacion ]);
+			return;
 		}
 		setPresentaciones(presentacion);
 	};
@@ -201,7 +202,7 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 		<div>
 			<Grid container spacing={2}>
 				<Grid item md={9}>
-					<TablaPresentaciones datos={datos} />
+					<TablaPresentaciones datos={datos} setOnUpdate={setOnUpdate} onUpdate={onUpdate} />
 				</Grid>
 				<Grid item md={3}>
 					{!datos.medidas_registradas ? (
@@ -245,7 +246,6 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 										{presentaciones.length > 0 && !almacen_inicial.almacen ? (
 											<FormLabel>* Campo obligatorio</FormLabel>
 										) : null}
-										
 									</FormControl>
 									<AlmacenProvider>
 										<ContainerRegistroAlmacen accion="registrar" refetch={refetch} />
@@ -255,7 +255,18 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 							<Divider />
 						</Fragment>
 					) : null}
-					<Box width="100%" my={2}>
+					<Box
+						width="100%"
+						my={2}
+						style={
+							onUpdate.length > 0 ? (
+								{
+									pointerEvents: 'none',
+									opacity: 0.4
+								}
+							) : null
+						}
+					>
 						<Typography>{datos_generales.tipo_producto === 'ROPA' ? 'Talla' : 'Número'}</Typography>
 						<Box display="flex">
 							<FormControl fullWidth size="small" variant="outlined">
@@ -278,7 +289,18 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 						</Box>
 					</Box>
 					<Divider />
-					<Box width="100%" mt={1}>
+					<Box
+						width="100%"
+						mt={1}
+						style={
+							onUpdate.length > 0 ? (
+								{
+									pointerEvents: 'none',
+									opacity: 0.4
+								}
+							) : null
+						}
+					>
 						<Typography>Color</Typography>
 						<CrearColorProducto refetch={refetch} />
 						<Grid container>
@@ -320,7 +342,7 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 			});
 		}
 		let presentacion = [];
-		const array_medidad_finales = [...presentaciones];
+		const array_medidad_finales = [ ...presentaciones ];
 
 		if (!medidasSeleccionadas.length && !array_medidad_finales.length) {
 			/* SI NO HAY COLORES NI VALORES EN EL ARRAY FINAL SE AGREGA EL PRIMER ELEMENTO */
@@ -334,7 +356,7 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 					color: producto_color,
 					precio: preciosP[0].precio_neto,
 					cantidad: 0,
-					nuevo: true,
+					nuevo: true
 				};
 				presentacion.push(producto);
 			}
@@ -354,7 +376,7 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 						color: producto_color,
 						precio: preciosP[0].precio_neto,
 						cantidad: 0,
-						nuevo: true,
+						nuevo: true
 					};
 					presentacion.push(producto);
 				}
@@ -371,7 +393,7 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 						color: coloresSeleccionados[k],
 						precio: array_medidad_finales[i].precio,
 						cantidad: array_medidad_finales[i].cantidad,
-						nuevo: true,
+						nuevo: true
 					});
 				}
 			}
@@ -395,7 +417,7 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 							color: producto_color,
 							precio: preciosP[0].precio_neto,
 							cantidad: 0,
-							nuevo: true,
+							nuevo: true
 						});
 					} else {
 						presentacion.push(presentacion_existente[0]);
@@ -416,15 +438,15 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 						color: { nombre: '', hex: '' },
 						precio: objeto_presentaciones_final.precio,
 						cantidad: objeto_presentaciones_final.cantidad,
-						nuevo: true,
+						nuevo: true
 					});
 				}
 			}
 		}
 
 		setColoresSeleccionados([ ...coloresSeleccionados ]);
-		if(datos.medidas_registradas){
-			setPresentaciones([...array_medidad_finales, presentacion]);
+		if (datos.medidas_registradas) {
+			setPresentaciones([ ...array_medidad_finales, presentacion ]);
 			return;
 		}
 		setPresentaciones(presentacion);

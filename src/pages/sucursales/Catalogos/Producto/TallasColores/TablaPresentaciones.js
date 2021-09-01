@@ -58,11 +58,11 @@ const compareFunction = (a, b) => {
 	}
 };
 
-export default function TablaPresentaciones({ datos }) {
+export default function TablaPresentaciones({ datos, setOnUpdate, onUpdate }) {
 	const classes = useStyles();
 	const { presentaciones } = useContext(RegProductoContext);
 
-	let mostrar_presentaciones = [...presentaciones.sort((a, b) => compareFunction(a, b))];
+	let mostrar_presentaciones = [ ...presentaciones.sort((a, b) => compareFunction(a, b)) ];
 
 	return (
 		<div className={classes.root}>
@@ -95,6 +95,8 @@ export default function TablaPresentaciones({ datos }) {
 										producto={producto}
 										index={index}
 										datos={datos}
+										setOnUpdate={setOnUpdate}
+										onUpdate={onUpdate}
 									/>
 								);
 							})}
@@ -106,13 +108,11 @@ export default function TablaPresentaciones({ datos }) {
 	);
 }
 
-const RenderPresentacionesRows = ({ producto, index, datos }) => {
+const RenderPresentacionesRows = ({ producto, index, datos, setOnUpdate, onUpdate }) => {
 	const { presentaciones, setPresentaciones, preciosP } = useContext(RegProductoContext);
 	const [ disabledInput, setDisabledInput ] = useState(true);
 	const classes = useStyles();
 	const textfield = useRef(null);
-
-	const presentacion_actual = []
 
 	const handleEditCancel = () => {
 		if (!producto.cantidad) {
@@ -157,6 +157,19 @@ const RenderPresentacionesRows = ({ producto, index, datos }) => {
 		setPresentaciones([ ...presentaciones ]);
 	};
 
+	const actionButton = () => {
+		if (!disabledInput) {
+			handleEditCancel();
+			/* quitar del array	 */
+			onUpdate.splice(onUpdate.length -1, 1);
+			setOnUpdate([...onUpdate]);
+		} else {
+			setDisabledInput(!disabledInput);
+			/*  agregar al array */
+			setOnUpdate([...onUpdate, index]);
+		}
+	};
+
 	return (
 		<TableRow hover selected={!disabledInput} className={classes.tableRow}>
 			<TableCell align="center">
@@ -185,14 +198,16 @@ const RenderPresentacionesRows = ({ producto, index, datos }) => {
 				{producto.medida._id ? <Chip label={producto.medida.talla} color="primary" /> : ''}
 			</TableCell>
 			<TableCell padding="checkbox">
-				{producto.color._id ? <Tooltip title={producto.color.nombre} placement="top" arrow TransitionComponent={Zoom}>
-					<div
-						className={classes.colorContainer}
-						style={{
-							backgroundColor: producto.color.hex
-						}}
-					/>
-				</Tooltip> : null}
+				{producto.color._id ? (
+					<Tooltip title={producto.color.nombre} placement="top" arrow TransitionComponent={Zoom}>
+						<div
+							className={classes.colorContainer}
+							style={{
+								backgroundColor: producto.color.hex
+							}}
+						/>
+					</Tooltip>
+				) : null}
 			</TableCell>
 			<TableCell width={110}>
 				<Input
@@ -215,10 +230,7 @@ const RenderPresentacionesRows = ({ producto, index, datos }) => {
 				/>
 			</TableCell>
 			<TableCell padding="checkbox">
-				<IconButton
-					size="small"
-					onClick={() => (!disabledInput ? handleEditCancel() : setDisabledInput(!disabledInput))}
-				>
+				<IconButton size="small" onClick={() => actionButton()}>
 					{!disabledInput ? <Close /> : <Edit />}
 				</IconButton>
 			</TableCell>
