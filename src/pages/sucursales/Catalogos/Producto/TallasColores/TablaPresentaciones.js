@@ -62,7 +62,7 @@ export default function TablaPresentaciones({ datos, setOnUpdate, onUpdate }) {
 	const classes = useStyles();
 	const { presentaciones } = useContext(RegProductoContext);
 
-	let mostrar_presentaciones = [ ...presentaciones.sort((a, b) => compareFunction(a, b)) ];
+	let mostrar_presentaciones = [ ...presentaciones ].sort((a, b) => compareFunction(a, b));
 
 	return (
 		<div className={classes.root}>
