@@ -14,6 +14,7 @@ import CrearTallasProducto from './crearTalla';
 
 const useStyles = makeStyles((theme) => ({
 	colorContainer: {
+		border: '1px solid rgba(0,0,0, .3)',
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center',

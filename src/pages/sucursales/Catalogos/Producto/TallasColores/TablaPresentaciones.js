@@ -45,6 +45,7 @@ const useStyles = makeStyles((theme) => ({
 		width: 1
 	},
 	colorContainer: {
+		border: '1px solid rgba(0,0,0, .3)',
 		height: 30,
 		width: 30,
 		borderRadius: '15%'
@@ -61,7 +62,7 @@ export default function TablaPresentaciones({ datos }) {
 	const classes = useStyles();
 	const { presentaciones } = useContext(RegProductoContext);
 
-	let mostrar_presentaciones = [...presentaciones];
+	let mostrar_presentaciones = [...presentaciones.sort((a, b) => compareFunction(a, b))];
 
 	return (
 		<div className={classes.root}>
@@ -87,7 +88,7 @@ export default function TablaPresentaciones({ datos }) {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{mostrar_presentaciones.sort((a, b) => compareFunction(a, b)).map((producto, index) => {
+							{mostrar_presentaciones.map((producto, index) => {
 								return (
 									<RenderPresentacionesRows
 										key={index}
@@ -111,6 +112,8 @@ const RenderPresentacionesRows = ({ producto, index, datos }) => {
 	const classes = useStyles();
 	const textfield = useRef(null);
 
+	const presentacion_actual = []
+
 	const handleEditCancel = () => {
 		if (!producto.cantidad) {
 			presentaciones[index].cantidad = 0;
@@ -133,6 +136,7 @@ const RenderPresentacionesRows = ({ producto, index, datos }) => {
 			}
 			presentaciones[index].cantidad = parseFloat(event.target.value);
 			presentaciones[index].existencia = true;
+			setPresentaciones([ ...presentaciones ]);
 		} else if (event.target.name === 'precio') {
 			if (!event.target.value) {
 				presentaciones[index].precio = '';
@@ -181,14 +185,14 @@ const RenderPresentacionesRows = ({ producto, index, datos }) => {
 				{producto.medida._id ? <Chip label={producto.medida.talla} color="primary" /> : ''}
 			</TableCell>
 			<TableCell padding="checkbox">
-				<Tooltip title={producto.color.nombre} placement="top" arrow TransitionComponent={Zoom}>
+				{producto.color._id ? <Tooltip title={producto.color.nombre} placement="top" arrow TransitionComponent={Zoom}>
 					<div
 						className={classes.colorContainer}
 						style={{
 							backgroundColor: producto.color.hex
 						}}
 					/>
-				</Tooltip>
+				</Tooltip> : null}
 			</TableCell>
 			<TableCell width={110}>
 				<Input
