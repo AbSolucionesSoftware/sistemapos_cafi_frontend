@@ -55,3 +55,31 @@ export const ACTUALIZAR_ALMACEN = gql`
         }
     }
 `;
+
+export const OBTENER_PRODUCTOS_ALMACEN = gql`
+	query obtenerProductos($empresa: ID!, $sucursal: ID!, $filtro: String!) {
+		obtenerProductos(empresa: $empresa, sucursal: $sucursal, filtro: $filtro) {
+			_id
+			datos_generales {
+				codigo_barras
+				clave_alterna
+				tipo_producto
+				nombre_comercial
+				nombre_generico
+				descripcion
+				id_categoria
+				categoria
+				subcategoria
+				id_subcategoria
+				id_departamento
+				departamento
+				id_marca
+				marca
+				clave_producto_sat
+				receta_farmacia
+			}
+			empresa
+			sucursal
+		}
+	}
+`;

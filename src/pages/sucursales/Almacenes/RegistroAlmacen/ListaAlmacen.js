@@ -19,7 +19,7 @@ import ErrorPage from '../../../../components/ErrorPage'
 
 
 import { useQuery } from '@apollo/client';
-import { OBTENER_ALMACENES } from '../../../../gql/ALmacenes/Almacen';
+import { OBTENER_ALMACENES } from '../../../../gql/Almacenes/Almacen';
 import ContainerRegistroAlmacen from './ContainerRegistroAlmacen';
 import { CrearAlmacenContext } from '../../../../context/Almacenes/crearAlmacen';
 

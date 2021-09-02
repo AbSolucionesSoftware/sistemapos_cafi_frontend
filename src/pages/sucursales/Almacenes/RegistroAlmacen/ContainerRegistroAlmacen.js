@@ -16,7 +16,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { CrearAlmacenContext } from '../../../../context/Almacenes/crearAlmacen';
 import { useMutation, useQuery } from '@apollo/client';
-import { REGISTRO_ALMACEN, ACTUALIZAR_ALMACEN } from '../../../../gql/ALmacenes/Almacen';
+import { REGISTRO_ALMACEN, ACTUALIZAR_ALMACEN } from '../../../../gql/Almacenes/Almacen';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
 import { OBTENER_USUARIOS } from '../../../../gql/Catalogos/usuarios';
