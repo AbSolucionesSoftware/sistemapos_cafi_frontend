@@ -1,14 +1,15 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react';
 
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
-import { Button, Dialog, makeStyles, DialogTitle, DialogContent,  Grid, Box, Typography, TextField, Slider } from '@material-ui/core'
+import { Button, Dialog, makeStyles, DialogTitle, DialogContent,  Grid, Box, Typography, TextField, Slider } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
 import TablaPreciosDescuentos from './ListaPrecios';
 
-import {  ACTUALIZAR_DESCUENTOS, REGISTRAR_DESCUENTOS } from '../../../../../gql/Catalogos/descuentos';
+import {  REGISTRAR_DESCUENTOS } from '../../../../../gql/Catalogos/descuentos';
 import { useMutation } from '@apollo/client';
 import SnackBarMessages from '../../../../../components/SnackBarMessages';
+import BackdropComponent from '../../../../../components/Layouts/BackDrop';
 
 const useStyles = makeStyles((theme) => ({
 	avatarGroup: {
@@ -18,47 +19,63 @@ const useStyles = makeStyles((theme) => ({
 		}
 	},
 	root: {
-		width: 300
+		width: 400
 	},
+    rootSlice:{
+        width: 350
+    },
 	margin: {
 		height: theme.spacing(3)
-	}
+	},
+    rootTable:{
+        height: 300
+    }
 }));
 
-export default function DescuentoProductos({datos}) {
+export default function DescuentoProductos({datos, productosRefetch}) {
+    const [ CrearDescuentoUnidad ] = useMutation(REGISTRAR_DESCUENTOS);
 
-    const [ openDescuento, setOpenDescuento ] = useState(false);
-	// const [ loading,  setLoading ] = useState(false);
     const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+    const [ openDescuento, setOpenDescuento ] = useState(false);
+    const [ cleanList, setCleanList] = useState(false);
+    const [ validate, setValidate] = useState(false);
+    const [ loading, setLoading] = useState(false);
 
-    const [ preciosProductos, setPreciosProductos ] = useState([]);
     const [ preciosDescuentos, setPreciosDescuentos] = useState([]);
-
-    const [ value, setValue] =  useState(0);
+    const [ preciosProductos, setPreciosProductos ] = useState([]);
 
     const [ precioPrueba, setPrecioPrueba ] = useState(0);
+    const [ value, setValue] =  useState(0);
 
     const classes = useStyles();
 
-    const handleDescuentos = () => {
+    const handleCloseDescuentos = () => {
         setOpenDescuento(!openDescuento);
         setPrecioPrueba(0);
         setValue(0);
-        setPreciosDescuentos([]);
         preciosDescuentos.splice(0, preciosDescuentos.length);
     };
+    	
+    const verificarDatos = useCallback(
+        (datos) => {
+            for (let i = 0; i < datos.length; i++) {
+                if (datos[i].descuento) {
+                    if ( datos[i].descuento.porciento !== 0) {
+                        setValue(datos[i].descuento.porciento);
+                        if (datos.length === 1) {
+                            setPrecioPrueba(datos[i].descuento.precio_con_descuento);
+                        }
+                    }
+                    
+                }
+            }
+    },
+        [datos]
+    );
     
-    const guardarDatos = () => {
-        setValue(0);
-        setOpenDescuento(!openDescuento);
-        setPrecioPrueba(0);
-        setPreciosDescuentos([]);
-        preciosDescuentos.splice(0, preciosDescuentos.length);
-    }
-
     let arrayDescuento = [];
 
-    const obtenerPorciento = (event, newValue) => {
+    const obtenerPorcientoSlide = (event, newValue) => {
         setValue(newValue);
         preciosDescuentos.splice(0, preciosDescuentos.length);
         for (let i = 0; i < preciosProductos.length; i++) {
@@ -66,27 +83,38 @@ export default function DescuentoProductos({datos}) {
             var descuento = Math.round(preciosProductos[i].precio * porcentaje / 100);
             var dineroDescontado = Math.round(preciosProductos[i].precio - descuento);
             arrayDescuento = {
-                "porciento": value,
-                "dineroDescontado": dineroDescontado,
-                "precioConDescuento": descuento,
-                "descuentoActivo": true
-            }
+                "_id": preciosProductos[i]._id,
+                "descuento_activo": true,
+                "descuento":{
+                    "porciento": value,
+                    "dinero_descontado": dineroDescontado,
+                    "precio_con_descuento": descuento
+                }
+            };
             setPrecioPrueba(descuento);
-            preciosDescuentos.push(arrayDescuento);
+            if (preciosProductos.length !== 1) {
+                preciosDescuentos.push(arrayDescuento);
+            }else{
+                setPreciosDescuentos([arrayDescuento]);
+            }
         }
     };
     
-    const obtenerPrecio = (e) => {
+    const obtenerPrecioText = (e) => {
+        var valorText = parseFloat(e.target.value);
         if (preciosProductos.length === 1) {
-            setPrecioPrueba(e.target.value);
-            var porcentaje  = Math.round((e.target.value / preciosProductos[0].precio) * 100);
+            setPrecioPrueba(valorText);
+            var porcentaje  = Math.round((valorText / preciosProductos[0].precio) * 100);
             var descuento =  Math.round(100 - porcentaje);
-            var dineroDescontado = Math.round(preciosProductos[0].precio - e.target.value);
+            var dineroDescontado = Math.round(preciosProductos[0].precio - valorText);
             arrayDescuento = {
-                "porciento": porcentaje,
-                "dineroDescontado": dineroDescontado,
-                "precioConDescuento": e.target.value,
-                "descuentoActivo": true
+                "_id": preciosProductos[0]._id,
+                "descuento_activo": true,
+                "descuento":{
+                    "porciento": porcentaje,
+                    "dinero_descontado": dineroDescontado,
+                    "precio_con_descuento": valorText
+                }
             };
             setValue(descuento);
             setPreciosDescuentos([arrayDescuento]);
@@ -94,48 +122,31 @@ export default function DescuentoProductos({datos}) {
     };
 
     function valuetext(e) {
-        return `${e}°C`;
+        return `${e}`;
     };
 
-    const [ CrearDescuentoUnidad ] = useMutation(REGISTRAR_DESCUENTOS);
-
-    console.log(preciosDescuentos);
-    
-    let arrayDePrueba  = 
-        [
-            {
-                _id: 1,
-                descuentoActivo: false,
-                descuento: {
-                    porciento: 1,
-                    dinero_descontado: 1,
-                    precio_con_descuento: 1,
-                }
-            }
-        ];
-
-    console.log(arrayDePrueba);
-
     const saveData = async () => {
+        setLoading(true);
 		try {
-            const input = arrayDePrueba;
-            console.log('entra en la condicion');
             await CrearDescuentoUnidad({
                 variables: {
                     input: {
-                        _id: '',
-                        descuentoActivo: false,
-                        descuento: {}
+                        descuentos: preciosDescuentos
                     }
                 }
             });
-            console.log( 'truena');
-            setAlert({ message: '¡Listo!', status: 'success', open: true });
+            setLoading(false);
+            productosRefetch();
+            setValue(0);
+            setPreciosProductos([]);
+            setPreciosDescuentos([]);
+            setCleanList(!cleanList);
+            handleCloseDescuentos();
+            setAlert({ message: '¡Listo descuentos realizados!', status: 'success', open: true });
 		} catch (error) {
-            console.log('mandando error');
 			console.log(error);
 		}
-	}
+	};
 
     return (
         <div>
@@ -143,18 +154,19 @@ export default function DescuentoProductos({datos}) {
             <Button
                 size="small"
                 color="default"
-                onClick={handleDescuentos}
+                onClick={handleCloseDescuentos}
             >
                <LocalOfferIcon />
             </Button>
-            <Dialog open={openDescuento} onClose={handleDescuentos} maxWidth="lg">
+            <Dialog open={openDescuento} onClose={handleCloseDescuentos} fullWidth maxWidth="lg">
+            <BackdropComponent loading={loading} setLoading={setLoading} />
 				<DialogTitle>
                     <Grid container>
                         <Box flexGrow={1} display="flex" alignItems="center">
                             {'Descuento de Producto'}
                         </Box>
                         <Box m={1}>
-                            <Button variant="contained" color="secondary" onClick={() => handleDescuentos()} size="large">
+                            <Button variant="contained" color="secondary" onClick={() => handleCloseDescuentos()} size="large">
                                 <CloseIcon />
                             </Button>
                         </Box>
@@ -174,31 +186,41 @@ export default function DescuentoProductos({datos}) {
                         </Typography>
                     </Box>
                     <Grid container>
-                        <Grid item lg={6}>
+                        <Grid item lg={8} md={6} xs={12}> 
                             <Box p={1}>
                                 <TablaPreciosDescuentos
+                                    verificarDatos={verificarDatos}
+                                    productosRefetch={productosRefetch}
                                     value={value}
+                                    cleanList={cleanList}
+                                    setCleanList={setCleanList}
                                     setPrecioPrueba={setPrecioPrueba}
                                     precios={datos.unidades_de_venta} 
                                     preciosProductos={preciosProductos} 
                                     setPreciosProductos={setPreciosProductos} 
+                                    setLoading={setLoading}
                                 />
                             </Box>
                         </Grid>
-                        <Grid item lg={6}>
-                            <Box mt={5} display="flex" justifyContent="center">
+                        <Grid item lg={4} md={6} xs={12}> 
+                            <Box mt={5} dislay="flex" justifyContent="center">
                                 <div className={classes.root}>
-                                    <Typography id="discrete-slider-always" gutterBottom>
-                                        Porcentaje de descuento
-                                    </Typography>
+                                    <Box textAlign="center">
+                                        <Typography id="discrete-slider-always" gutterBottom>
+                                            <b>Porcentaje de descuento</b>
+                                        </Typography>
+                                    </Box>
                                     <Box my={5} />
-                                    <Slider
-                                        getAriaValueText={valuetext}
-                                        value={value}
-                                        aria-labelledby="discrete-slider-small-steps"
-                                        valueLabelDisplay="auto"
-                                        onChange={obtenerPorciento} 
-                                    />
+                                    <Box display='flex' justifyContent="center" justifyItems="center" className={classes.rootSlice}>
+                                        <Slider
+                                            disabled={preciosProductos.length === 0 ? true : false}
+                                            getAriaValueText={valuetext}
+                                            value={value}
+                                            aria-labelledby="discrete-slider-small-steps"
+                                            valueLabelDisplay="auto"
+                                            onChange={obtenerPorcientoSlide} 
+                                        />
+                                    </Box>
                                 </div>
                             </Box>
                             <Box mt={5} display="flex" justifyContent="center">
@@ -206,18 +228,12 @@ export default function DescuentoProductos({datos}) {
                                     <div>
                                         <Typography>Precio con Descuento</Typography>
                                         <TextField
-                                            /* fullWidth */
                                             type="number"
-                                            InputProps={{ inputProps: { min: 0 } }}
+                                            InputProps={{ inputProps: { min: 0} }}
                                             size="small"
-                                            /* error */
-                                            /* name="precio_neto"
-                                            /* id="form-producto-nombre-comercial" */
                                             variant="outlined"
-                                            // defaultValue={ precioPrueba }
                                             value={ precioPrueba }
-                                            /* helperText="Incorrect entry." */
-                                            onChange={(e) => obtenerPrecio(e)}
+                                            onChange={(e) => obtenerPrecioText(e)}
                                         />
                                     </div>
                                 ) : (
@@ -225,8 +241,9 @@ export default function DescuentoProductos({datos}) {
                                 )}
 
                             </Box>
-                            <Box p={2} display="flex" justifyContent="center">
+                            <Box mt={2} display="flex" justifyContent="center">
                                 <Button 
+                                    disabled={preciosProductos.length === 0 || validate === true ? true : false}
                                     variant="contained" 
                                     color="primary" 
                                     size="large"

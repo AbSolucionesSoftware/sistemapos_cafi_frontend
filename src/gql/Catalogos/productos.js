@@ -75,6 +75,12 @@ export const OBTENER_PRODUCTOS = gql`
 				unidad_principal
 				codigo_barras
 				id_producto
+				descuento_activo
+				descuento {
+					porciento
+					dinero_descontado
+					precio_con_descuento
+				}
 				default
 			}
 			datos_generales {
