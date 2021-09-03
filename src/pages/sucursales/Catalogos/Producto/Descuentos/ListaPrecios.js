@@ -18,11 +18,11 @@ import { useMutation } from '@apollo/client';
 import SnackBarMessages from '../../../../../components/SnackBarMessages';
 
 const headCells = [
-	{ id: 'precio',  label: 'Precio' },
 	{ id: 'cantidad',  label: 'Cantidad' },
 	{ id: 'tipo',  label: 'Tipo' },
-	{ id: 'descuento',  label: '% Desc.' },
+	{ id: 'precio',  label: 'Precio U.' },
 	{ id: 'precioDes',  label: 'Precio Desc.' },
+	{ id: 'descuento',  label: '% Desc.' },
 	{ id: 'eliminar',  label: 'Eliminar'},
 	{ id: 'activo',  label: 'Activo'}
 ];
@@ -86,19 +86,23 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaPreciosDescuentos({ 
-	value,
-	setCleanList, 
-	cleanList, 
-	verificarDatos, 
-	setPrecioPrueba,
-	productosRefetch,
-	setPreciosProductos, 
-	precios,
-	setLoading}) {
+export default function TablaPreciosDescuentos(
+	{ 
+		value,
+		setCleanList, 
+		cleanList, 
+		verificarDatos, 
+		setPrecioPrueba,
+		productosRefetch,
+		setPreciosProductos, 
+		precios,
+		setLoading
+	}
+	) {
+
 	const classes = useStyles();
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-	var porcentaje  =  Math.round(100 - value);
+	var porcentaje  =  parseFloat((100 - value).toFixed(2));
 
 	const [ selected, setSelected ] = useState([]);
 	const [ page, setPage ] = useState(0);
@@ -259,6 +263,8 @@ function RowsRender({row, isItemSelected, setLoading, labelId,setAlert, porcenta
 		}
 	}
 
+	
+
 	return(
 		<TableRow
 			hover
@@ -276,23 +282,21 @@ function RowsRender({row, isItemSelected, setLoading, labelId,setAlert, porcenta
 					inputProps={{ 'aria-labelledby': labelId }}
 				/>
 			</TableCell>
-			{selected.length  <= 1 ? (
-				<TableCell align="center">{row.precio}</TableCell>
-			):(
-				<TableCell align="center">{Math.round((row.precio * porcentaje / 100))}</TableCell>
-			)}
 			<TableCell align="center">{row.cantidad}</TableCell>
 			<TableCell align="center">{row.cantidad > 1 ? "Cajas" : "Pieza"}</TableCell>
+			<TableCell align="center">{row.precio}</TableCell>
+
 			<TableCell align="center">
-				{!row.descuento ? 
-					<b style={{color: 'black'}}>0%</b>
-					: <b style={{color: 'red'}}>{row.descuento.porciento}%</b>
+				{selected.length  <= 1 ? (
+					!row.descuento ? 0 : <b style={{color: 'green'}}>{row.descuento.precio_con_descuento}</b>
+				):
+					<b style={{color: 'green'}}>{parseFloat((row.precio * porcentaje / 100).toFixed(2))}</b>
 				}
 			</TableCell>
 			<TableCell align="center">
 				{!row.descuento ? 
-					<b style={{color: 'black'}}>0</b>
-					: <b style={{color: 'green'}}>{row.descuento.precio_con_descuento}</b>
+					<b style={{color: 'black'}}>0%</b>
+					: <b style={{color: 'red'}}>{row.descuento.porciento}%</b>
 				}
 			</TableCell>
 			<TableCell align="center">

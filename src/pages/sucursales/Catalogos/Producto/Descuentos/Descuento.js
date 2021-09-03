@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
-import { Button, Dialog, makeStyles, DialogTitle, DialogContent,  Grid, Box, Typography, TextField, Slider } from '@material-ui/core';
+import { Button, Dialog, makeStyles, DialogTitle, DialogContent,  Grid, Box, Typography, TextField, Slider, IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
 import TablaPreciosDescuentos from './ListaPrecios';
@@ -79,18 +79,19 @@ export default function DescuentoProductos({datos, productosRefetch}) {
         setValue(newValue);
         preciosDescuentos.splice(0, preciosDescuentos.length);
         for (let i = 0; i < preciosProductos.length; i++) {
-            var porcentaje  =  Math.round(100 - value);
-            var descuento = Math.round(preciosProductos[i].precio * porcentaje / 100);
-            var dineroDescontado = Math.round(preciosProductos[i].precio - descuento);
+            var porcentaje  =  parseFloat((100 - newValue).toFixed(2));
+            var descuento = parseFloat((preciosProductos[i].precio * porcentaje / 100).toFixed(2));
+            var dineroDescontado = parseFloat((preciosProductos[i].precio - descuento).toFixed(2));
             arrayDescuento = {
                 "_id": preciosProductos[i]._id,
                 "descuento_activo": true,
                 "descuento":{
-                    "porciento": value,
+                    "porciento": newValue,
                     "dinero_descontado": dineroDescontado,
                     "precio_con_descuento": descuento
                 }
             };
+            console.log(descuento);
             setPrecioPrueba(descuento);
             if (preciosProductos.length !== 1) {
                 preciosDescuentos.push(arrayDescuento);
@@ -104,9 +105,9 @@ export default function DescuentoProductos({datos, productosRefetch}) {
         var valorText = parseFloat(e.target.value);
         if (preciosProductos.length === 1) {
             setPrecioPrueba(valorText);
-            var porcentaje  = Math.round((valorText / preciosProductos[0].precio) * 100);
-            var descuento =  Math.round(100 - porcentaje);
-            var dineroDescontado = Math.round(preciosProductos[0].precio - valorText);
+            var porcentaje  = parseFloat(((valorText / preciosProductos[0].precio) * 100).toFixed(2));
+            var descuento = parseFloat((100 - porcentaje).toFixed(2));
+            var dineroDescontado = parseFloat((preciosProductos[0].precio - valorText).toFixed(2));
             arrayDescuento = {
                 "_id": preciosProductos[0]._id,
                 "descuento_activo": true,
@@ -151,13 +152,12 @@ export default function DescuentoProductos({datos, productosRefetch}) {
     return (
         <div>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
-            <Button
-                size="small"
+            <IconButton
                 color="default"
                 onClick={handleCloseDescuentos}
             >
                <LocalOfferIcon />
-            </Button>
+            </IconButton>
             <Dialog open={openDescuento} onClose={handleCloseDescuentos} fullWidth maxWidth="lg">
             <BackdropComponent loading={loading} setLoading={setLoading} />
 				<DialogTitle>
