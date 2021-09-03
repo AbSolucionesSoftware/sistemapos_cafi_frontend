@@ -186,7 +186,8 @@ export default function TablaPreciosDescuentos(
 										selected={selected} 
 										row={row}
 										setAlert={setAlert}
-										porcentaje={porcentaje} 
+										porcentaje={porcentaje}
+										value={value}
 										isItemSelected={isItemSelected} 
 										labelId={labelId} 
 									/>
@@ -214,7 +215,7 @@ export default function TablaPreciosDescuentos(
 	);
 }
 
-function RowsRender({row, isItemSelected, setLoading, labelId,setAlert, porcentaje, productosRefetch, handleClick, selected}) {
+function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, porcentaje, productosRefetch, handleClick, selected}) {
 
 	const [openModal, setOpenModal] = useState(false);
 
@@ -294,10 +295,16 @@ function RowsRender({row, isItemSelected, setLoading, labelId,setAlert, porcenta
 				}
 			</TableCell>
 			<TableCell align="center">
-				{!row.descuento ? 
+				{console.log(porcentaje)}
+				{selected.length  <= 1 ? (
+					!row.descuento ? 0 : <b style={{color: 'red'}}>{row.descuento.porciento}%</b>
+				):
+					<b style={{color: 'red'}}>{value}%</b>
+				}
+				{/* {!row.descuento ? 
 					<b style={{color: 'black'}}>0%</b>
 					: <b style={{color: 'red'}}>{row.descuento.porciento}%</b>
-				}
+				} */}
 			</TableCell>
 			<TableCell align="center">
 				<Modal row={row} handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
