@@ -91,7 +91,6 @@ export default function DescuentoProductos({datos, productosRefetch}) {
                     "precio_con_descuento": descuento
                 }
             };
-            console.log(descuento);
             setPrecioPrueba(descuento);
             if (preciosProductos.length !== 1) {
                 preciosDescuentos.push(arrayDescuento);

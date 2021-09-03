@@ -295,7 +295,6 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, p
 				}
 			</TableCell>
 			<TableCell align="center">
-				{console.log(porcentaje)}
 				{selected.length  <= 1 ? (
 					!row.descuento ? 0 : <b style={{color: 'red'}}>{row.descuento.porciento}%</b>
 				):
