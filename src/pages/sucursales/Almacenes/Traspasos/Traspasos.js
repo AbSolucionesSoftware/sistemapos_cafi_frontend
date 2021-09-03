@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { FcAdvance } from 'react-icons/fc';
 import almacenIcon from '../../../../icons/almacen.svg';
 import TableSelectProducts from '../../../../components/Traspasos/TableSelectProducts';
-
+import CloseIcon from '@material-ui/icons/Close';
 const useStyles = makeStyles((theme) => ({
 	appBar: {
 		position: 'relative'
@@ -182,14 +182,11 @@ export default function Traspasos() {
 						<Typography variant="h6" className={classes.title}>
                                 Traspasos
 						</Typography>
-						<Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClose}>
-                                Cerrar
-                            </Button>
-                        </Box>
-                        <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-							
-						</IconButton>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
                 
@@ -350,13 +347,11 @@ export default function Traspasos() {
                         </Grid>
                     </Box>
                         <DialogActions>
-                            <Button onClick={handleClose} color="primary">
-                                Cancelar
-                            </Button>
                             <Button
                                 onClick={()=>console.log('')}
                                 color="primary"
                                 variant="contained"
+                                size="large"
                                 autoFocus
                                 endIcon={loading ? <CircularProgress color="inherit" size={25} /> : null}
                             >

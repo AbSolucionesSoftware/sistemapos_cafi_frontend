@@ -1,4 +1,4 @@
-import React, { useContext, useState, Fragment } from 'react';
+import React, { useContext, useState, Fragment, useEffect } from 'react';
 import { Typography, MenuItem, Divider, ListItemText, Tooltip, FormLabel } from '@material-ui/core';
 import { Box, FormControl, Grid, Select, Checkbox } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core';
@@ -36,12 +36,39 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 		setPresentaciones,
 		presentaciones,
 		datos_generales,
-		preciosP
+		preciosP,
 	} = useContext(RegProductoContext);
 	const { almacenes, colores, tallas, calzados } = obtenerConsultasProducto;
 	const [ medidasSeleccionadas, setMedidasSeleccionadas ] = useState([]);
 	const [ coloresSeleccionados, setColoresSeleccionados ] = useState([]);
 	const medidas = datos_generales.tipo_producto === 'ROPA' ? tallas : calzados;
+
+	/* useEffect(() => {
+		let colors = [];
+		let medidas = [];
+
+		presentaciones.forEach(element => {
+			if(element.color._id) colors.push(element.color);
+			if(element.medida._id) medidas.push(element.medida)
+		});
+
+		var hashColor = {};
+		var hashMedida = {};
+		const colores_existentes = colors.filter((color) => {
+			var existColor = !hashColor[color._id];
+			hashColor[color._id] = true;
+			return existColor;
+		});
+		const medidas_existentes = medidas.filter((medida) => {
+			var existMedida = !hashMedida[medida._id];
+			hashMedida[medida._id] = true;
+			return existMedida;
+		});
+
+		setColoresSeleccionados(colores_existentes);
+		setMedidasSeleccionadas(medidas_existentes);
+		
+	}, []) */
 
 	const obtenerAlmacenes = (event, child) => {
 		setAlmacenInicial({
@@ -54,7 +81,7 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 	const handleAddTallas = (event, child) => {
 		const medidas_seleccionadas_temp = event.target.value;
 		let presentacion = [];
-		const array_medidad_finales = presentaciones;
+		const array_medidad_finales = [...presentaciones];
 
 		if (!coloresSeleccionados.length && !array_medidad_finales.length) {
 			/* SI NO HAY COLORES NI VALORES EN EL ARRAY FINAL SE AGREGA EL PRIMER ELEMENTO */
@@ -67,7 +94,8 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 					medida: producto_medida,
 					color: { nombre: '', hex: '' },
 					precio: preciosP[0].precio_neto,
-					cantidad: 0
+					cantidad: 0,
+					nuevo: true,
 				};
 				presentacion.push(producto);
 			}
@@ -86,7 +114,8 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 						medida: producto_medida,
 						color: { nombre: '', hex: '' },
 						precio: preciosP[0].precio_neto,
-						cantidad: 0
+						cantidad: 0,
+						nuevo: true,
 					};
 					presentacion.push(producto);
 				}
@@ -106,7 +135,8 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 						medida: medidas_seleccionadas_temp[k],
 						color: array_medidad_finales[i].color,
 						precio: array_medidad_finales[i].precio,
-						cantidad: array_medidad_finales[i].cantidad
+						cantidad: array_medidad_finales[i].cantidad,
+						nuevo: true,
 					});
 				}
 			}
@@ -129,7 +159,8 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 							medida: producto_medida,
 							color: producto_color,
 							precio: preciosP[0].precio_neto,
-							cantidad: 0
+							cantidad: 0,
+							nuevo: true,
 						});
 					} else {
 						presentacion.push(presentacion_existente[0]);
@@ -149,13 +180,19 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 						medida: {},
 						color: objeto_presentaciones_final.color,
 						precio: objeto_presentaciones_final.precio,
-						cantidad: objeto_presentaciones_final.cantidad
+						cantidad: objeto_presentaciones_final.cantidad,
+						nuevo: true,
 					});
 				}
 			}
 		}
 
 		setMedidasSeleccionadas(medidas_seleccionadas_temp);
+		
+		if(datos.medidas_registradas){
+			setPresentaciones([...array_medidad_finales, presentacion]);
+			return
+		}
 		setPresentaciones(presentacion);
 	};
 
@@ -251,6 +288,7 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 									coloresSeleccionados={coloresSeleccionados}
 									setColoresSeleccionados={setColoresSeleccionados}
 									medidasSeleccionadas={medidasSeleccionadas}
+									datos={datos}
 								/>
 							))}
 						</Grid>
@@ -261,7 +299,7 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 	);
 }
 
-const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidasSeleccionadas }) => {
+const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidasSeleccionadas, datos }) => {
 	const classes = useStyles();
 	const theme = useTheme();
 	const { presentaciones, setPresentaciones, datos_generales, preciosP } = useContext(RegProductoContext);
@@ -281,7 +319,7 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 			});
 		}
 		let presentacion = [];
-		const array_medidad_finales = presentaciones;
+		const array_medidad_finales = [...presentaciones];
 
 		if (!medidasSeleccionadas.length && !array_medidad_finales.length) {
 			/* SI NO HAY COLORES NI VALORES EN EL ARRAY FINAL SE AGREGA EL PRIMER ELEMENTO */
@@ -294,7 +332,8 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 					medida: {},
 					color: producto_color,
 					precio: preciosP[0].precio_neto,
-					cantidad: 0
+					cantidad: 0,
+					nuevo: true,
 				};
 				presentacion.push(producto);
 			}
@@ -313,7 +352,8 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 						medida: {},
 						color: producto_color,
 						precio: preciosP[0].precio_neto,
-						cantidad: 0
+						cantidad: 0,
+						nuevo: true,
 					};
 					presentacion.push(producto);
 				}
@@ -329,7 +369,8 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 						medida: array_medidad_finales[i].medida,
 						color: coloresSeleccionados[k],
 						precio: array_medidad_finales[i].precio,
-						cantidad: array_medidad_finales[i].cantidad
+						cantidad: array_medidad_finales[i].cantidad,
+						nuevo: true,
 					});
 				}
 			}
@@ -352,7 +393,8 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 							medida: producto_medida,
 							color: producto_color,
 							precio: preciosP[0].precio_neto,
-							cantidad: 0
+							cantidad: 0,
+							nuevo: true,
 						});
 					} else {
 						presentacion.push(presentacion_existente[0]);
@@ -372,13 +414,18 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 						medida: objeto_presentaciones_final.medida,
 						color: { nombre: '', hex: '' },
 						precio: objeto_presentaciones_final.precio,
-						cantidad: objeto_presentaciones_final.cantidad
+						cantidad: objeto_presentaciones_final.cantidad,
+						nuevo: true,
 					});
 				}
 			}
 		}
 
 		setColoresSeleccionados([ ...coloresSeleccionados ]);
+		if(datos.medidas_registradas){
+			setPresentaciones([...array_medidad_finales, presentacion]);
+			return;
+		}
 		setPresentaciones(presentacion);
 	};
 

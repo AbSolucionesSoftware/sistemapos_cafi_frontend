@@ -1,7 +1,6 @@
 import React, { useState, Fragment, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
 import { Button, AppBar, Badge, Typography, CircularProgress, Backdrop, IconButton } from '@material-ui/core';
 import { Dialog, DialogActions, DialogContent, Tabs, Tab, Box } from '@material-ui/core';
@@ -30,21 +29,57 @@ import {
 	initial_state_datos_generales,
 	initial_state_precios,
 	initial_state_unidadVentaXDefecto,
-	initial_state_preciosP,
-	initial_state_unidadesVenta,
 	initial_state_almacen_inicial,
 	initial_state_centro_de_costos,
-	initial_state_preciosPlazos,
-	initial_state_subcategorias,
-	initial_state_imagenes,
-	initial_state_onPreview,
-	initial_state_validacion,
-	initial_state_subcostos,
-	initial_state_imagenes_eliminadas,
-	initial_state_presentaciones
+	initial_state_preciosPlazos
 } from '../../../../context/Catalogos/initialStatesProducto';
 import { Close, Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
+
+export const initial_state_preciosP = [
+	{
+		numero_precio: 1,
+		utilidad: 0,
+		precio_neto: 0,
+		unidad_mayoreo: 0,
+		precio_venta: 0
+	},
+	{
+		numero_precio: 2,
+		utilidad: 0,
+		precio_neto: 0,
+		unidad_mayoreo: 0,
+		precio_venta: 0
+	},
+	{
+		numero_precio: 3,
+		utilidad: 0,
+		precio_neto: 0,
+		unidad_mayoreo: 0,
+		precio_venta: 0
+	},
+	{
+		numero_precio: 4,
+		utilidad: 0,
+		precio_neto: 0,
+		unidad_mayoreo: 0,
+		precio_venta: 0
+	},
+	{
+		numero_precio: 5,
+		utilidad: 0,
+		precio_neto: 0,
+		unidad_mayoreo: 0,
+		precio_venta: 0
+	},
+	{
+		numero_precio: 6,
+		utilidad: 0,
+		precio_neto: 0,
+		unidad_mayoreo: 0,
+		precio_venta: 0
+	}
+];
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -145,6 +180,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 	const [ loading, setLoading ] = useState(false);
+	const tipo = datos_generales.tipo_producto;
 
 	/* Mutations */
 	const [ crearProducto ] = useMutation(CREAR_PRODUCTO);
@@ -156,7 +192,6 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		if (producto && accion) {
 			setInitialStates(producto);
 		} else {
-			console.log('enrtro');
 			resetInitialStates();
 		}
 	};
@@ -191,13 +226,13 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		}
 
 		let input = {
-			datos_generales,
+			datos_generales: await validateJsonEdit(datos_generales, 'datos_generales'),
 			precios,
 			imagenes: imagenes_without_aws,
 			imagenes_eliminadas,
 			almacen_inicial,
 			centro_de_costos,
-			unidades_de_venta: unidadesVenta,
+			unidades_de_venta: await validateJsonEdit(unidadesVenta, 'unidades_de_venta'),
 			presentaciones,
 			precio_plazos: preciosPlazos,
 			empresa: sesion.empresa._id,
@@ -208,7 +243,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		console.log(input);
 
 		setLoading(true);
-		 try {
+		try {
 			if (accion) {
 				await actualizarProducto({
 					variables: {
@@ -234,23 +269,76 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		}
 	};
 
+	const validateJsonEdit = async (data, tipo) => {
+		if (tipo === 'datos_generales') {
+			let object_date = {
+				clave_alterna: data.clave_alterna,
+				tipo_producto: data.tipo_producto,
+				nombre_comercial: data.nombre_comercial,
+				nombre_generico: data.nombre_generico,
+				receta_farmacia: data.receta_farmacia
+			};
+			if (data.codigo_barras !== null && data.codigo_barras !== '')
+				object_date = { ...object_date, codigo_barras: data.codigo_barras };
+			if (data.descripcion !== null && data.descripcion !== '')
+				object_date = { ...object_date, descripcion: data.descripcion };
+			if (data.id_categoria !== null && data.id_categoria !== '')
+				object_date = { ...object_date, id_categoria: data.id_categoria };
+			if (data.categoria !== null && data.categoria !== '')
+				object_date = { ...object_date, categoria: data.categoria };
+			if (data.subcategoria !== null && data.subcategoria !== '')
+				object_date = { ...object_date, subcategoria: data.subcategoria };
+			if (data.id_subcategoria !== null && data.id_subcategoria !== '')
+				object_date = { ...object_date, id_subcategoria: data.id_subcategoria };
+			if (data.id_departamento !== null && data.id_departamento !== '')
+				object_date = { ...object_date, id_departamento: data.id_departamento };
+			if (data.departamento !== null && data.departamento !== '')
+				object_date = { ...object_date, departamento: data.departamento };
+			if (data.id_marca !== null && data.id_marca !== '')
+				object_date = { ...object_date, id_marca: data.id_marca };
+			if (data.marca !== null && data.marca !== '') object_date = { ...object_date, marca: data.marca };
+			if (data.clave_producto_sat !== null && data.clave_producto_sat !== '')
+				object_date = { ...object_date, clave_producto_sat: data.clave_producto_sat };
+			return object_date;
+		} else if (tipo === 'unidades_de_venta') {
+			let end_array = [];
+			for (var i = 0; i < data.length; i++) {
+				let object = {
+					_id: data[i]._id,
+					cantidad: data[i].cantidad,
+					id_producto: data[i].id_producto,
+					precio: data[i].precio,
+					unidad_principal: data[i].unidad_principal,
+					unidad: data[i].unidad
+				};
+				if (data[i].codigo_barras !== null && data[i].codigo_barras !== '')
+					object = { ...object, codigo_barras: data[i].codigo_barras };
+				if (data[i].default !== null && data[i].default !== '')
+					object = { ...object, default: data[i].default };
+				end_array.push(object);
+			}
+			return end_array;
+		}
+	};
+
 	/* ###### RESET STATES ###### */
 	const resetInitialStates = () => {
 		setDatosGenerales(initial_state_datos_generales);
 		setPrecios(initial_state_precios);
 		setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
 		setPreciosP(initial_state_preciosP);
-		setUnidadesVenta(initial_state_unidadesVenta);
+		setUnidadesVenta([]);
 		setAlmacenInicial(initial_state_almacen_inicial);
-		setCentroDeCostos(initial_state_centro_de_costos);
+		setCentroDeCostos({});
 		setPreciosPlazos(initial_state_preciosPlazos);
-		setSubcategorias(initial_state_subcategorias);
-		setImagenes(initial_state_imagenes);
-		setOnPreview(initial_state_onPreview);
-		setValidacion(initial_state_validacion);
-		setSubcostos(initial_state_subcostos);
-		setImagenesEliminadas(initial_state_imagenes_eliminadas);
-		setPresentaciones(initial_state_presentaciones);
+		setSubcategorias([]);
+		setImagenes([]);
+		setOnPreview({ index: '', image: '' });
+		setValidacion({ error: false, message: '' });
+		setSubcostos([]);
+		setImagenesEliminadas([]);
+		setPresentaciones([]);
+		setValue(0);
 	};
 
 	/* SET STATES WHEN UPDATING */
@@ -266,6 +354,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setUnidadesVenta(producto.unidades_de_venta);
 		setPreciosP(producto.precios.precios_producto);
 		setUnidadVentaXDefecto(unidadxdefecto[0]);
+		setPresentaciones(producto.medidas_producto);
 	};
 
 	function funcion_tecla(event) {
@@ -277,19 +366,53 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 
 	window.onkeydown = funcion_tecla;
 
-	/* console.log(
-		datos_generales,
-		precios,
-		preciosP,
-		imagenes,
-		unidadesVenta,
-		almacen_inicial,
-		unidadVentaXDefecto,
-		centro_de_costos,
-		preciosPlazos,
-		imagenes_eliminadas,
-		presentaciones
-	); */
+	const saveButton = (
+		<Button
+			variant="contained"
+			color="primary"
+			onClick={() => saveData()}
+			size="large"
+			startIcon={<DoneIcon />}
+			disabled={
+				!datos_generales.clave_alterna ||
+				!datos_generales.tipo_producto ||
+				!datos_generales.nombre_generico ||
+				!datos_generales.nombre_comercial ||
+				!precios.precio_de_compra.precio_con_impuesto ||
+				!precios.precio_de_compra.precio_sin_impuesto ||
+				!precios.unidad_de_compra.cantidad ? (
+					true
+				) : (
+					false
+				)
+			}
+		>
+			Guardar
+		</Button>
+	);
+
+	const ButtonActions = () => {
+		if (!accion && value === 5) {
+			return saveButton;
+		} else if (accion && tipo === 'OTROS' && value === 5) {
+			return saveButton;
+		} else if (accion && tipo !== 'OTROS' && value === 6) {
+			return saveButton;
+		} else {
+			return (
+				<Button
+					variant="contained"
+					color="primary"
+					onClick={() => setValue(value + 1)}
+					size="large"
+					endIcon={<NavigateNext />}
+					disableElevation
+				>
+					Siguiente
+				</Button>
+			);
+		}
+	};
 
 	return (
 		<Fragment>
@@ -305,7 +428,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 					Nuevo producto
 				</Button>
 			) : (
-				<IconButton color="primary" variant="contained" onClick={() => toggleModal(datos)}>
+				<IconButton color="default" variant="contained" onClick={() => toggleModal(datos)}>
 					<Edit />
 				</IconButton>
 			)}
@@ -453,65 +576,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 					>
 						Cancelar
 					</Button>
-					{accion && value > 5 ? (
-						<Button
-							variant="contained"
-							color="primary"
-							onClick={() => saveData()}
-							size="large"
-							startIcon={<DoneIcon />}
-							disabled={
-								!datos_generales.clave_alterna ||
-								!datos_generales.tipo_producto ||
-								!datos_generales.nombre_generico ||
-								!datos_generales.nombre_comercial ||
-								!precios.precio_de_compra.precio_con_impuesto ||
-								!precios.precio_de_compra.precio_sin_impuesto ||
-								!precios.unidad_de_compra.cantidad ? (
-									true
-								) : (
-									false
-								)
-							}
-						>
-							Guardar
-						</Button>
-					) : !accion && value > 4 ? (
-						<Button
-							variant="contained"
-							color="primary"
-							onClick={() => saveData()}
-							size="large"
-							startIcon={<DoneIcon />}
-							disabled={
-								!datos_generales.clave_alterna ||
-								!datos_generales.tipo_producto ||
-								!datos_generales.nombre_generico ||
-								!datos_generales.nombre_comercial ||
-								!precios.precio_de_compra.precio_con_impuesto ||
-								!precios.precio_de_compra.precio_sin_impuesto ||
-								!precios.unidad_de_compra.cantidad ? (
-									true
-								) : (
-									false
-								)
-							}
-						>
-							Guardar
-						</Button>
-					) : (
-						<Button
-							variant="contained"
-							color="primary"
-							onClick={() => setValue(value + 1)}
-							size="large"
-							endIcon={<NavigateNext />}
-							/* disabled={accion && value === 6 ? true : value === 5 ? true : false} */
-							disableElevation
-						>
-							Siguiente
-						</Button>
-					)}
+					<ButtonActions />
 				</DialogActions>
 			</Dialog>
 		</Fragment>

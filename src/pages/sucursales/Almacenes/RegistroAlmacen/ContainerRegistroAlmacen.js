@@ -20,7 +20,7 @@ import { REGISTRO_ALMACEN, ACTUALIZAR_ALMACEN } from '../../../../gql/ALmacenes/
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
 import { OBTENER_USUARIOS } from '../../../../gql/Catalogos/usuarios';
-
+import CloseIcon from '@material-ui/icons/Close';
 import { Edit } from '@material-ui/icons';
 import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
 import Add from '@material-ui/icons/Add';
