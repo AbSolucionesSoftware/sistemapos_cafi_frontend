@@ -161,7 +161,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 						<FormControl variant="outlined" size="small" name="codigo_barras" fullWidth>
 							<Typography>Código de barras</Typography>
 							<OutlinedInput	
-								disabled={update}
+								disabled={update && datos_generales.codigo_barras}
 								style={{padding: 0}}
 								id="form-producto-codigo-barras"
 								name="codigo_barras"
@@ -170,7 +170,7 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 								endAdornment={
 									<InputAdornment position="end">
 										<Button
-											disabled={update}
+											disabled={update && datos_generales.codigo_barras}
 											onClick={() => GenCodigoBarras()}
 											/* edge="end" */
 											color="primary"
