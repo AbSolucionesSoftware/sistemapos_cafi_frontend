@@ -203,7 +203,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 	/* ###### GUARDAR LA INFO EN LA BD ###### */
 
 	const saveData = async () => {
-		const validate = validaciones(datos_generales, precios, almacen_inicial, presentaciones);
+		const validate = validaciones(datos_generales, precios, almacen_inicial, presentaciones, datos);
 
 		if (validate.error) {
 			setValidacion(validate);
