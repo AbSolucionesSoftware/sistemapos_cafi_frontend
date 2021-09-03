@@ -49,7 +49,7 @@ export default function CrearTallasProducto({ setMedidasSeleccionadas, refetch }
 		<Fragment>
 			<Box display="flex" justifyContent="flex-end">
 				<Button color="primary" onClick={() => toggleModal()}>
-					<Add />
+					<Add /> Nueva talla
 				</Button>
 			</Box>
 			<Dialog open={open} onClose={() => toggleModal()} scroll="paper" disableEscapeKeyDown disableBackdropClick>
