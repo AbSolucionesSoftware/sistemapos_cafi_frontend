@@ -1,22 +1,15 @@
-import {
-	Grid,
-	Box,
-	Container,
-	Button,
-	TextField,
-	Typography,
-	makeStyles,
-	IconButton,
-	InputBase,
-	Paper
-} from '@material-ui/core';
-import RegistroProvedor from './RegistroProvedor';
+
 import React from 'react';
+import { Grid, Box, Container, Button, TextField, Typography, makeStyles, Paper } from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import RegistroProvedor from '../proveedor/RegistroProvedor';
 
 import PreciosProductos from './PreciosProductos';
 import RegistroProducto from './RegistroProducto';
 import { Search } from '@material-ui/icons';
 import { Divider } from '@material-ui/core';
+
+import { top100Films } from './peliculastest'
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {
@@ -63,24 +56,27 @@ export default function DatosProducto() {
 				<Grid item lg={12}>
 					<div className={classes.root}>
 						<div className={classes.formInputFlex}>
-							<Paper component="form" variant="outlined" className={classes.rootBusqueda} onSubmit={(e) => e.preventDefault()}>
-								<InputBase
+							<Paper
+								component="form"
+								variant="outlined"
+								className={classes.rootBusqueda}
+								onSubmit={(e) => e.preventDefault()}
+							>
+								<Autocomplete
+									id="combo-box-demo"
+									size="small"
+									options={top100Films}
+									getOptionLabel={(option) => option.title}
 									className={classes.input}
-									placeholder="Busca un producto"
+									renderInput={(params) => (
+										<TextField {...params} label="Combo box" variant="outlined" />
+									)}
 								/>
-								<IconButton type="submit" className={classes.iconButton} aria-label="search">
-									<Search />
-								</IconButton>
 								<Divider className={classes.divider} orientation="vertical" />
 								<RegistroProducto />
 							</Paper>
 
 							<RegistroProvedor />
-							<Box width="100%" mx={3}>
-								<Button autoFocus color="primary" variant="contained" size="large">
-									Realizar compra
-								</Button>
-							</Box>
 						</div>
 					</div>
 				</Grid>

@@ -6,11 +6,11 @@ import { Accordion, AccordionSummary, Typography,
         MenuItem, TextField, FormControl, Select, Divider, InputAdornment, Grid} from '@material-ui/core';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
-import Precio1 from '../../../sucursales/Catalogos/Producto/PreciosVenta/Precios';
+import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
+import Precio1 from '../../../../sucursales/Catalogos/Producto/PreciosVenta/Precios';
 
 import { Alert } from '@material-ui/lab';
-import PreciosDeCompra from '../../Catalogos/Producto/PreciosVenta/preciosCompra';
+import PreciosDeCompra from '../../../Catalogos/Producto/PreciosVenta/preciosCompra';
 
 const useStyles = makeStyles((theme) => ({
     root: {
