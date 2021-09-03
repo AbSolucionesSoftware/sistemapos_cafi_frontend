@@ -14,6 +14,13 @@ import { Box, Chip, IconButton, Tooltip, Zoom } from '@material-ui/core';
 import { Cached, Close, Edit } from '@material-ui/icons';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 
+const compareFunction = (a, b) => {
+	if (a.medida.talla && b.medida.talla) {
+		return a.medida.talla.localeCompare(b.medida.talla);
+	}
+};
+
+
 const useStyles = makeStyles((theme) => ({
 	root: {
 		width: '100%'
@@ -45,23 +52,18 @@ const useStyles = makeStyles((theme) => ({
 		width: 1
 	},
 	colorContainer: {
+		border: '1px solid rgba(0,0,0, .3)',
 		height: 30,
 		width: 30,
 		borderRadius: '15%'
 	}
 }));
 
-const compareFunction = (a, b) => {
-	if (a.color.nombre && b.color.nombre) {
-		return a.color.nombre.localeCompare(b.color.nombre);
-	}
-};
-
-export default function TablaPresentaciones({ datos }) {
+export default function TablaPresentaciones({ datos, setOnUpdate, onUpdate }) {
 	const classes = useStyles();
 	const { presentaciones } = useContext(RegProductoContext);
 
-	let mostrar_presentaciones = [...presentaciones];
+	let mostrar_presentaciones = [ ...presentaciones ].sort((a, b) => compareFunction(a, b));
 
 	return (
 		<div className={classes.root}>
@@ -87,13 +89,15 @@ export default function TablaPresentaciones({ datos }) {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{mostrar_presentaciones.sort((a, b) => compareFunction(a, b)).map((producto, index) => {
+							{mostrar_presentaciones.map((producto, index) => {
 								return (
 									<RenderPresentacionesRows
 										key={index}
 										producto={producto}
 										index={index}
 										datos={datos}
+										setOnUpdate={setOnUpdate}
+										onUpdate={onUpdate}
 									/>
 								);
 							})}
@@ -105,52 +109,81 @@ export default function TablaPresentaciones({ datos }) {
 	);
 }
 
-const RenderPresentacionesRows = ({ producto, index, datos }) => {
+
+const RenderPresentacionesRows = ({ producto, index, datos, setOnUpdate, onUpdate }) => {
 	const { presentaciones, setPresentaciones, preciosP } = useContext(RegProductoContext);
 	const [ disabledInput, setDisabledInput ] = useState(true);
 	const classes = useStyles();
 	const textfield = useRef(null);
 
+	const copy_presentaciones = [...presentaciones].sort((a, b) => compareFunction(a, b))
+	const copy_element_presentacion = { ...copy_presentaciones[index] };
+
+	
 	const handleEditCancel = () => {
 		if (!producto.cantidad) {
-			presentaciones[index].cantidad = 0;
-			setPresentaciones([ ...presentaciones ]);
+			copy_element_presentacion.cantidad = 0;
 		}
 		if (!producto.precio) {
-			presentaciones[index].precio = preciosP[0].precio_neto;
-			setPresentaciones([ ...presentaciones ]);
+			copy_element_presentacion.precio = preciosP[0].precio_neto;
 		}
+		copy_presentaciones.splice(index, 1, copy_element_presentacion);
+		setPresentaciones(copy_presentaciones);
 		setDisabledInput(true);
 	};
 
 	const obtenerDatos = (event) => {
 		if (event.target.name === 'cantidad') {
 			if (!event.target.value) {
-				presentaciones[index].cantidad = '';
-				presentaciones[index].existencia = false;
-				setPresentaciones([ ...presentaciones ]);
+				copy_element_presentacion.cantidad = '';
+				copy_element_presentacion.existencia = false;
+				copy_presentaciones.splice(index, 1, copy_element_presentacion);
+				setPresentaciones(copy_presentaciones);
 				return;
 			}
-			presentaciones[index].cantidad = parseFloat(event.target.value);
-			presentaciones[index].existencia = true;
+			copy_element_presentacion.cantidad = parseFloat(event.target.value);
+			copy_element_presentacion.existencia = true;
 		} else if (event.target.name === 'precio') {
 			if (!event.target.value) {
-				presentaciones[index].precio = '';
-				setPresentaciones([ ...presentaciones ]);
+				copy_element_presentacion.precio = '';
+				copy_presentaciones.splice(index, 1, copy_element_presentacion);
+				setPresentaciones(copy_presentaciones);
 				return;
 			}
-			presentaciones[index].precio = parseFloat(event.target.value);
+			copy_element_presentacion.precio = parseFloat(event.target.value);
 		} else {
+			if (!event.target.value) {
+				copy_element_presentacion.codigo_barras = '';
+				copy_presentaciones.splice(index, 1, copy_element_presentacion);
+				setPresentaciones(copy_presentaciones);
+				return;
+			}
+			copy_element_presentacion.codigo_barras = event.target.value;
 		}
-		setPresentaciones([ ...presentaciones ]);
+		copy_presentaciones.splice(index, 1, copy_element_presentacion);
+		setPresentaciones(copy_presentaciones);
 	};
 
 	const GenCodigoBarras = () => {
 		const max = 999999999999;
 		const min = 100000000000;
 		const codigo_barras = Math.floor(Math.random() * (max - min + 1) + min).toString();
-		presentaciones[index].codigo_barras = codigo_barras;
-		setPresentaciones([ ...presentaciones ]);
+		copy_element_presentacion.codigo_barras = codigo_barras;
+		copy_presentaciones.splice(index, 1, copy_element_presentacion);
+		setPresentaciones(copy_presentaciones);
+	};
+
+	const actionButton = () => {
+		if (!disabledInput) {
+			handleEditCancel();
+			/* quitar del array	 */
+			onUpdate.splice(onUpdate.length - 1, 1);
+			setOnUpdate([ ...onUpdate ]);
+		} else {
+			setDisabledInput(!disabledInput);
+			/*  agregar al array */
+			setOnUpdate([ ...onUpdate, index ]);
+		}
 	};
 
 	return (
@@ -163,13 +196,17 @@ const RenderPresentacionesRows = ({ producto, index, datos }) => {
 					<Input
 						inputRef={textfield}
 						onChange={(e) => obtenerDatos(e)}
-						disabled={disabledInput}
+						/* disabled={disabledInput} */
 						value={producto.codigo_barras}
 						type="number"
 						name="precio"
-						disabled={datos.medidas_registradas && !producto.nuevo}
+						disabled={datos.medidas_registradas && !producto.nuevo ? true : disabledInput}
 					/>
 					{!datos.medidas_registradas && producto.nuevo ? (
+						<IconButton color="primary" size="small" onClick={() => GenCodigoBarras()}>
+							<Cached />
+						</IconButton>
+					) : datos.medidas_registradas && producto.nuevo ? (
 						<IconButton color="primary" size="small" onClick={() => GenCodigoBarras()}>
 							<Cached />
 						</IconButton>
@@ -181,14 +218,16 @@ const RenderPresentacionesRows = ({ producto, index, datos }) => {
 				{producto.medida._id ? <Chip label={producto.medida.talla} color="primary" /> : ''}
 			</TableCell>
 			<TableCell padding="checkbox">
-				<Tooltip title={producto.color.nombre} placement="top" arrow TransitionComponent={Zoom}>
-					<div
-						className={classes.colorContainer}
-						style={{
-							backgroundColor: producto.color.hex
-						}}
-					/>
-				</Tooltip>
+				{producto.color._id ? (
+					<Tooltip title={producto.color.nombre} placement="top" arrow TransitionComponent={Zoom}>
+						<div
+							className={classes.colorContainer}
+							style={{
+								backgroundColor: producto.color.hex
+							}}
+						/>
+					</Tooltip>
+				) : null}
 			</TableCell>
 			<TableCell width={110}>
 				<Input
@@ -211,10 +250,7 @@ const RenderPresentacionesRows = ({ producto, index, datos }) => {
 				/>
 			</TableCell>
 			<TableCell padding="checkbox">
-				<IconButton
-					size="small"
-					onClick={() => (!disabledInput ? handleEditCancel() : setDisabledInput(!disabledInput))}
-				>
+				<IconButton size="small" onClick={() => actionButton()}>
 					{!disabledInput ? <Close /> : <Edit />}
 				</IconButton>
 			</TableCell>

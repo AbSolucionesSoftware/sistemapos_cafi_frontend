@@ -343,6 +343,8 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 
 	/* SET STATES WHEN UPDATING */
 	const setInitialStates = (producto) => {
+
+		console.log(producto);
 		const { precios_producto, ...new_precios } = producto.precios;
 		const unidadxdefecto = producto.unidades_de_venta.filter((res) => res.default);
 
@@ -354,7 +356,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setUnidadesVenta(producto.unidades_de_venta);
 		setPreciosP(producto.precios.precios_producto);
 		setUnidadVentaXDefecto(unidadxdefecto[0]);
-		setPresentaciones(producto.medidas_producto);
+		setPresentaciones(producto.medidas_producto ? producto.medidas_producto : []);
 	};
 
 	function funcion_tecla(event) {
