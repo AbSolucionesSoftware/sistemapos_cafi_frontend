@@ -50,6 +50,7 @@ export default function ListaProductos({ obtenerProductos, productosRefetch }) {
 							<TableCell>Nombre comercial</TableCell>
 							<TableCell>Nombre genérico</TableCell>
 							<TableCell>Descripción</TableCell>
+							<TableCell>Existencia</TableCell>
 							<TableCell>Tipo</TableCell>
 							<TableCell>Información</TableCell>
 							<TableCell>Editar</TableCell>
@@ -95,6 +96,9 @@ const RenderTableRows = ({ producto, productosRefetch }) => {
 				<TableCell>{producto.datos_generales.nombre_comercial}</TableCell>
 				<TableCell>{producto.datos_generales.nombre_generico}</TableCell>
 				<TableCell>{producto.datos_generales.descripcion}</TableCell>
+				<TableCell align="center" padding="checkbox">{
+					producto.inventario_general.map(existencia => existencia.cantidad_existente)
+				}</TableCell>
 				<TableCell>{producto.datos_generales.tipo_producto}</TableCell>
 				<TableCell align="center" padding="checkbox">
 					<InfoProductoDrawer producto={producto} />
@@ -113,115 +117,3 @@ const RenderTableRows = ({ producto, productosRefetch }) => {
 		</Fragment>
 	);
 };
-
-/* const ModalDetalles = ({ producto }) => {
-	const classes = useStyles();
-	const { datos_generales, imagenes } = producto;
-	const [ openDetalles, setOpenDetalles ] = useState(false);
-
-	const handleDetalles = () => setOpenDetalles(!openDetalles);
-
-	return (
-		<div>
-			<IconButton onClick={handleDetalles}>
-				<ArtTrack />
-			</IconButton>
-			<Dialog open={openDetalles} onClose={handleDetalles} fullWidth maxWidth="md">
-				<DialogTitle>{'Información completa del producto'}</DialogTitle>
-				<DialogContent>
-					<Box mt={1}>
-						<Typography variant="h6">Datos generales</Typography>
-						<Divider />
-					</Box>
-					<Box display="flex">
-						<Box mt={3} height={120} width={120} display="flex" justifyContent="center" alignItems="center">
-							{imagenes.length > 0 ? (
-								<Avatar className={classes.avatar} src={imagenes[0].url_imagen} />
-							) : (
-								<Avatar className={classes.avatar}>
-									<CropOriginal />
-								</Avatar>
-							)}
-						</Box>
-						<ul>
-							<Typography>
-								<b>Código de barras: </b>
-								{datos_generales.codigo_barras ? datos_generales.codigo_barras : '-'}
-							</Typography>
-							<Typography>
-								<b>Clave alterna: </b>
-								{datos_generales.clave_alterna ? datos_generales.clave_alterna : '-'}
-							</Typography>
-							<Typography>
-								<b>Clave producto del SAT: </b>
-								{datos_generales.clave_producto_sat ? datos_generales.clave_producto_sat : '-'}
-							</Typography>
-							<Typography>
-								<b>Nombre comercial: </b>
-								{datos_generales.nombre_comercial ? datos_generales.nombre_comercial : '-'}
-							</Typography>
-							<Typography>
-								<b>Nombre genérico: </b>
-								{datos_generales.nombre_generico ? datos_generales.nombre_generico : '-'}
-							</Typography>
-							<Typography>
-								<b>Descripción: </b>
-								{datos_generales.descripcion ? datos_generales.descripcion : '-'}
-							</Typography>
-						</ul>
-						<ul>
-							<Typography>
-								<b>Tipo de producto: </b>
-								{datos_generales.tipo_producto ? datos_generales.tipo_producto : '-'}
-							</Typography>
-							<Typography>
-								<b>Categoria: </b>
-								{datos_generales.categoria ? datos_generales.categoria : '-'}
-							</Typography>
-							<Typography>
-								<b>Subcategoria: </b>
-								{datos_generales.subcategoria ? datos_generales.subcategoria : '-'}
-							</Typography>
-							<Typography>
-								<b>Departamento: </b>
-								{datos_generales.departamento ? datos_generales.departamento : '-'}
-							</Typography>
-							<Typography>
-								<b>Marca: </b>
-								{datos_generales.marca ? datos_generales.marca : '-'}
-							</Typography>
-						</ul>
-					</Box>
-					{imagenes.length > 1 ? (
-						<Fragment>
-							<Box mt={1}>
-								<Typography variant="h6">Más imagenes</Typography>
-								<Divider />
-							</Box>
-							{imagenes.map((res, index) => {
-								return (
-									<Box
-										mt={1}
-										key={index}
-										height={120}
-										width={120}
-										display="flex"
-										justifyContent="center"
-										alignItems="center"
-									>
-										<Avatar className={classes.avatar} src={res.url_imagen} />
-									</Box>
-								);
-							})}
-						</Fragment>
-					) : null}
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleDetalles} color="primary" variant="contained" size="large">
-						Cerrar
-					</Button>
-				</DialogActions>
-			</Dialog>
-		</div>
-	);
-}; */

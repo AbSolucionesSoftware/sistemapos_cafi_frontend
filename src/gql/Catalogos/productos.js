@@ -171,6 +171,10 @@ export const OBTENER_PRODUCTOS = gql`
 				nombre_comercial
 				precio
 			}
+			inventario_general {
+				_id
+				cantidad_existente
+			}
 			medidas_registradas
 			sucursal
 			usuario
