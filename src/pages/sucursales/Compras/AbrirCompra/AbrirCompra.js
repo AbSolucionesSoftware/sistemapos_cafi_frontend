@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Divider, Dialog, DialogActions } from '@material-ui/core';
+import { Button, Divider, Dialog, DialogActions, DialogTitle, DialogContent, ButtonBase } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -14,6 +14,7 @@ import { FcPlus } from 'react-icons/fc';
 import { Box } from '@material-ui/core';
 import ListaCompras from './TablaCompras';
 import { Grid } from '@material-ui/core';
+import { Add } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -69,49 +70,59 @@ export default function AbrirCompra({ status }) {
 				</Button>
 			)}
 			<Dialog fullScreen open={open} onClose={handleClickOpen} TransitionComponent={Transition}>
-				<AppBar className={classes.appBar}>
-					<Toolbar>
-						<Typography variant="h6" className={classes.title}>
-							Nueva compra
-						</Typography>
-						<Box m={1}>
-							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
-								<CloseIcon style={{ fontSize: 30 }} />
-							</Button>
-						</Box>
-					</Toolbar>
-				</AppBar>
-
-				<DatosProducto />
-
-				<Box p={1} mx={4}>
-					<Divider />
-				</Box>
-
-				<Box mt={1} mx={4}>
+				<DialogTitle style={{ padding: 0 }}>
+					<AppBar className={classes.appBar}>
+						<Toolbar>
+							<Typography variant="h6" className={classes.title}>
+								Nueva compra
+							</Typography>
+							<Box m={1}>
+								<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+									<CloseIcon style={{ fontSize: 30 }} />
+								</Button>
+							</Box>
+						</Toolbar>
+					</AppBar>
+				</DialogTitle>
+				<DialogContent>
+					<Box height="200px" mb={7}>
+						<DatosProducto />
+					</Box>
 					<ListaCompras />
-				</Box>
+				</DialogContent>
 
-				<Grid container>
-					<Grid item lg={12}>
-						<Box mt={1} mx={4} display="flex" justifyContent="flex-end">
-							<Box mr={2}>
-								<Typography>Subtotal: $100,000 Mx</Typography>
-							</Box>
-							<Box mr={2}>
-								<Typography>Impuestos: $100,000 Mx</Typography>
-							</Box>
-							<Box mr={2}>
-								<Typography variant="h6">Total: $100,000 Mx</Typography>
-							</Box>
+				<DialogActions  >
+					<Box display="flex" justifyContent="space-between" alignItems="center" flexGrow={1} mx={2}>
+						<Box>
+							<Grid container spacing={2} alignItems="center">
+								<Grid item>
+									<Typography style={{ fontSize: 18 }}>
+										Subtotal: <b>$100,000 Mx</b>
+									</Typography>
+								</Grid>
+								<Grid item>
+									<Typography style={{ fontSize: 18 }}>
+										Impuestos: <b>$100,000 Mx</b>
+									</Typography>
+								</Grid>
+								<Grid item>
+									<Typography style={{ fontSize: 18 }}>
+										<b>Total: $100,000 Mx</b>
+									</Typography>
+								</Grid>
+							</Grid>
 						</Box>
-					</Grid>
-				</Grid>
-				<DialogActions>
+					</Box>
 					<Button color="inherit" size="large" onClick={() => handleClickOpen()}>
 						Cancelar
 					</Button>
-					<Button autoFocus color="primary" variant="contained" size="large" onClick={() => handleClickOpen()}>
+					<Button
+						autoFocus
+						color="primary"
+						variant="contained"
+						size="large"
+						onClick={() => handleClickOpen()}
+					>
 						Realizar compra
 					</Button>
 				</DialogActions>

@@ -52,7 +52,6 @@ export default function RegistroProducto() {
 			<Button color="primary" onClick={toggleModal} startIcon={<AddIcon />}>
 				Nuevo
 			</Button>
-
 			<Dialog open={open} onClose={toggleModal} fullWidth maxWidth="md">
 				<Box p={3} dsiplay="flex" textAlign="center" alignItems="center">
 					<Typography variant="h6">Registro nuevo producto</Typography>
