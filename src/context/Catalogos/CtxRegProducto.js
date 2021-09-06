@@ -38,6 +38,7 @@ export const RegProductoProvider = ({ children }) => {
 	const [selectedDate, setSelectedDate] = useState(initial_state_selectedDate);
 	const [ update, setUpdate ] = useState(false);
 	const [ presentaciones, setPresentaciones ] = useState(initial_state_presentaciones);
+	const [ presentaciones_eliminadas, setPresentacionesEliminadas ] = useState([]);
 
 	return (
 		<RegProductoContext.Provider
@@ -75,7 +76,9 @@ export const RegProductoProvider = ({ children }) => {
 				update, 
 				setUpdate,
 				presentaciones, 
-				setPresentaciones
+				setPresentaciones,
+				presentaciones_eliminadas,
+				 setPresentacionesEliminadas
 			}}
 		>
 			{children}

@@ -154,6 +154,7 @@ export const OBTENER_PRODUCTOS = gql`
 				granel
 			}
 			medidas_producto {
+				_id
 				cantidad
 				codigo_barras
 				color {

@@ -215,7 +215,7 @@ const RenderTallas = ({
 }) => {
 	const classes = useStyles();
 	const theme = useTheme();
-	const { setPresentaciones, presentaciones, datos_generales, preciosP } = useContext(RegProductoContext);
+	const { setPresentaciones, presentaciones, datos_generales, preciosP, presentaciones_eliminadas, setPresentacionesEliminadas } = useContext(RegProductoContext);
 	const [ selected, setSelected ] = useState(false);
 
 	const seleccionarMedidas = useCallback(
@@ -236,6 +236,7 @@ const RenderTallas = ({
 		[ seleccionarMedidas ]
 	);
 
+
 	const handleAddTallas = (value) => {
 		const medidas_seleccionadas_temp = [ ...medidasSeleccionadas ];
 
@@ -247,8 +248,16 @@ const RenderTallas = ({
 				if (res._id === talla._id) {
 					medidas_seleccionadas_temp.splice(index, 1);
 					setSelected(value);
+					presentaciones.forEach((presentacion) => {
+						if(!presentacion.nuevo){
+							if(presentacion.medida._id === res._id){
+								setPresentacionesEliminadas([...presentaciones_eliminadas, presentacion])
+							}
+						}
+					})
 				}
 			});
+			
 		}
 
 		let presentacion_temp = [];
@@ -259,6 +268,7 @@ const RenderTallas = ({
 			for (let i = 0; i < medidas_seleccionadas_temp.length; i++) {
 				const producto_medida = medidas_seleccionadas_temp[i];
 				presentacion_temp.push({
+					_id: '',
 					existencia: false,
 					codigo_barras: GenCodigoBarras(),
 					nombre_comercial: datos_generales.nombre_comercial,
@@ -278,6 +288,7 @@ const RenderTallas = ({
 					presentacion_temp.push(result[0]);
 				} else {
 					presentacion_temp.push({
+						_id: '',
 						existencia: false,
 						codigo_barras: GenCodigoBarras(),
 						nombre_comercial: datos_generales.nombre_comercial,
@@ -294,6 +305,7 @@ const RenderTallas = ({
 			for (let i = 0; i < array_medidad_finales.length; i++) {
 				for (let k = 0; k < medidas_seleccionadas_temp.length; k++) {
 					presentacion_temp.push({
+						_id: '',
 						existencia: array_medidad_finales[i].existencia,
 						codigo_barras: array_medidad_finales[i].codigo_barras,
 						nombre_comercial: array_medidad_finales[i].nombre_comercial,
@@ -318,6 +330,7 @@ const RenderTallas = ({
 					);
 					if (!presentacion_existente.length) {
 						presentacion_temp.push({
+							_id: '',
 							existencia: false,
 							codigo_barras: GenCodigoBarras(),
 							nombre_comercial: datos_generales.nombre_comercial,
@@ -339,6 +352,7 @@ const RenderTallas = ({
 				for (let x = 0; x < array_medidad_finales.length; x++) {
 					const objeto_presentaciones_final = array_medidad_finales[x];
 					presentacion_temp.push({
+						_id: objeto_presentaciones_final._id,
 						existencia: objeto_presentaciones_final.existencia,
 						codigo_barras: objeto_presentaciones_final.codigo_barras,
 						nombre_comercial: objeto_presentaciones_final.nombre_comercial,
@@ -386,7 +400,7 @@ const RenderTallas = ({
 const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidasSeleccionadas, datos }) => {
 	const classes = useStyles();
 	const theme = useTheme();
-	const { presentaciones, setPresentaciones, datos_generales, preciosP } = useContext(RegProductoContext);
+	const { presentaciones, setPresentaciones, datos_generales, preciosP, presentaciones_eliminadas, setPresentacionesEliminadas } = useContext(RegProductoContext);
 
 	const [ selected, setSelected ] = useState(false);
 
@@ -417,6 +431,13 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 				if (res._id === color._id) {
 					coloresSeleccionados.splice(index, 1);
 					setSelected(value);
+					presentaciones.forEach((presentacion) => {
+						if(!presentacion.nuevo){
+							if(presentacion.color._id === res._id){
+								setPresentacionesEliminadas([...presentaciones_eliminadas, presentacion])
+							}
+						}
+					})
 				}
 			});
 		}
@@ -428,6 +449,7 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 			for (let i = 0; i < coloresSeleccionados.length; i++) {
 				const producto_color = coloresSeleccionados[i];
 				presentacion_temp.push({
+					_id: '',
 					existencia: false,
 					codigo_barras: GenCodigoBarras(),
 					nombre_comercial: datos_generales.nombre_comercial,
@@ -447,6 +469,7 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 					presentacion_temp.push(result[0]);
 				} else {
 					presentacion_temp.push({
+						_id: '',
 						existencia: false,
 						codigo_barras: GenCodigoBarras(),
 						nombre_comercial: datos_generales.nombre_comercial,
@@ -463,6 +486,7 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 			for (let i = 0; i < array_medidad_finales.length; i++) {
 				for (let k = 0; k < coloresSeleccionados.length; k++) {
 					presentacion_temp.push({
+						_id: '',
 						existencia: array_medidad_finales[i].existencia,
 						codigo_barras: array_medidad_finales[i].codigo_barras,
 						nombre_comercial: array_medidad_finales[i].nombre_comercial,
@@ -487,6 +511,7 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 					);
 					if (!presentacion_existente.length) {
 						presentacion_temp.push({
+							_id: '',
 							existencia: false,
 							codigo_barras: GenCodigoBarras(),
 							nombre_comercial: datos_generales.nombre_comercial,
@@ -508,6 +533,7 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 				for (let x = 0; x < array_medidad_finales.length; x++) {
 					const objeto_presentaciones_final = array_medidad_finales[x];
 					presentacion_temp.push({
+						_id: objeto_presentaciones_final._id,
 						existencia: objeto_presentaciones_final.existencia,
 						codigo_barras: objeto_presentaciones_final.codigo_barras,
 						nombre_comercial: objeto_presentaciones_final.nombre_comercial,

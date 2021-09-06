@@ -173,7 +173,9 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		imagenes_eliminadas,
 		setImagenesEliminadas,
 		presentaciones,
-		setPresentaciones
+		setPresentaciones,
+		presentaciones_eliminadas,
+		setPresentacionesEliminadas
 	} = useContext(RegProductoContext);
 
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
@@ -234,6 +236,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 			centro_de_costos,
 			unidades_de_venta: await validateJsonEdit(unidadesVenta, 'unidades_de_venta'),
 			presentaciones,
+			presentaciones_eliminadas,
 			precio_plazos: preciosPlazos,
 			empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id,
@@ -338,6 +341,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setSubcostos([]);
 		setImagenesEliminadas([]);
 		setPresentaciones([]);
+		setPresentacionesEliminadas([]);
 		setValue(0);
 	};
 
