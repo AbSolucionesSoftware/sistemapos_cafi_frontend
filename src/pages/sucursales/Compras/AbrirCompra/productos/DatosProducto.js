@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Grid, Box, TextField, Typography, Paper, Button } from '@material-ui/core';
+import { Grid, Box, TextField, Typography, Button } from '@material-ui/core';
 import { MenuItem, Select, InputLabel, FormControl, makeStyles } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import RegistroProvedor from '../proveedor/RegistroProvedor';
@@ -7,6 +7,7 @@ import RegistroAlmacen from '../almacen/RegistroAlmacen';
 
 import PreciosProductos from './PreciosProductos';
 import RegistroProducto from './RegistroProducto';
+import TallasProductos from './TallasProducto';
 
 import { top100Films } from './peliculastest';
 import { Add } from '@material-ui/icons';
@@ -32,7 +33,7 @@ export default function DatosProducto() {
 	return (
 		<Fragment>
 			<Grid container spacing={3}>
-				<Grid item lg={4}>
+				<Grid item md={3} lg={4}>
 					<div className={classes.formInputFlex}>
 						<Autocomplete
 							id="combo-box-demo"
@@ -40,13 +41,13 @@ export default function DatosProducto() {
 							fullWidth
 							options={top100Films}
 							getOptionLabel={(option) => option.title}
-							renderInput={(params) => <TextField {...params} label="Combo box" variant="outlined" />}
+							renderInput={(params) => <TextField {...params} label="Producto" variant="outlined" />}
 						/>
 						<RegistroProducto />
 					</div>
 					<div className={classes.formInputFlex}>
 						<FormControl variant="outlined" fullWidth size="small">
-							<InputLabel id="lista-proveedores-select">Elige tu proveedor</InputLabel>
+							<InputLabel id="lista-proveedores-select">Proveedor</InputLabel>
 							<Select
 								id="form-proveedor"
 								/* value={age} */ /* onChange={handleChange} */ labelId="lista-proveedores-select"
@@ -62,7 +63,7 @@ export default function DatosProducto() {
 					</div>
 					<div className={classes.formInputFlex}>
 						<FormControl variant="outlined" fullWidth size="small">
-							<InputLabel id="lista-almacenes-select">Elige el almacen inicial</InputLabel>
+							<InputLabel id="lista-almacenes-select">Almacen inicial</InputLabel>
 							<Select
 								id="form-almacenes"
 								/* value={age} */ /* onChange={handleChange} */ labelId="lista-almacenes-select"
@@ -77,7 +78,7 @@ export default function DatosProducto() {
 						<RegistroAlmacen />
 					</div>
 				</Grid>
-				<Grid item lg={2}>
+				<Grid item md={2} lg={2}>
 					<Box height="200px" display="flex" justifyContent="center" alignItems="center">
 						<img
 							alr="imagen producto"
@@ -86,7 +87,7 @@ export default function DatosProducto() {
 						/>
 					</Box>
 				</Grid>
-				<Grid item lg={6}>
+				<Grid item md={7} lg={6}>
 					<Grid container spacing={3}>
 						<Grid item>
 							<Typography>
@@ -116,13 +117,22 @@ export default function DatosProducto() {
 								Precio de venta NETO: <b>$3,600</b>
 							</Typography>
 						</Grid>
+						<Grid item xs={12}>
+							<Grid container spacing={1}>
+								<Grid item>
+									<PreciosProductos />
+								</Grid>
+								<Grid item>
+									<TallasProductos />
+								</Grid>
+								<Grid item>
+									<Button size="large" variant="contained" color="primary" startIcon={<Add />}>
+										Agregar compra
+									</Button>
+								</Grid>
+							</Grid>
+						</Grid>
 					</Grid>
-					<Box>
-						<PreciosProductos />
-						<Button size="large" variant="contained" color="primary" startIcon={<Add />}>
-							Agregar compra a la lista
-						</Button>
-					</Box>
 				</Grid>
 			</Grid>
 		</Fragment>
