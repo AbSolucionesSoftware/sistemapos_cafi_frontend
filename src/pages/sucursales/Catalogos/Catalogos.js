@@ -55,11 +55,11 @@ export default function Catalogos() {
 						<Cajas />
 					</Box>
 				</Grid>
-				<Grid item lg={2}>
+				{/* <Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Descuentos />
 					</Box>
-				</Grid>
+				</Grid> */}
 				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Usuarios />

@@ -593,7 +593,7 @@ const ContenidoModal = ({ value, datos }) => {
 	const { loading, data, error, refetch } = useQuery(OBTENER_CONSULTAS, {
 		variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id }
 	});
-
+	
 	if (loading)
 		return (
 			<Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" height="80vh">
