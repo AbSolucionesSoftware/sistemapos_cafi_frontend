@@ -110,7 +110,7 @@ const RenderTableRows = ({ producto, productosRefetch }) => {
 					<DescuentoProductos datos={producto} productosRefetch={productosRefetch} />
 				</TableCell>
 				<TableCell align="center" padding="checkbox">
-					<EliminarProducto />
+					<EliminarProducto datos={producto} productosRefetch={productosRefetch} />
 				</TableCell>
 			</TableRow>
 			

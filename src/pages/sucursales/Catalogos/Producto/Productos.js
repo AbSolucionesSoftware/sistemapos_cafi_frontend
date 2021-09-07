@@ -8,7 +8,8 @@ import { RegProductoProvider } from '../../../../context/Catalogos/CtxRegProduct
 import { useQuery } from '@apollo/client';
 import { OBTENER_PRODUCTOS } from '../../../../gql/Catalogos/productos';
 import ErrorPage from '../../../../components/ErrorPage';
-import { Search, Close } from '@material-ui/icons';
+import { Search, Close, ArrowBack } from '@material-ui/icons';
+
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -99,39 +100,47 @@ const RegistroComponent = () => {
 
 	const filtrarProductos = (event) => {
 		event.preventDefault();
-		if(busqueda === ''){
-			refetch();
-			return
+		if (busqueda === '') {
+			setFiltro('');
+			refetch({filtro: ''});
+			return;
 		}
 		setFiltro(busqueda);
+	};
+
+	const reload = () => {
+		setBusqueda('');
+		setFiltro('');
+		refetch({filtro: ''});
 	}
 
 	return (
 		<div>
 			<RegProductoProvider>
 				<Box mx={4} my={3} display="flex" justifyContent="space-between">
-					<Box style={{ width: '50%'}} >
-						<form onSubmit={filtrarProductos}>
+					<Box style={{ width: '50%' }}>
+						<form onSubmit={filtrarProductos} style={{display: "flex", alignItems: "center"}}>
 							<FormControl variant="outlined" fullWidth size="small">
-							<OutlinedInput
-								id="search-producto"
-								type="text"
-								onChange={(e) => setBusqueda(e.target.value)}
-								endAdornment={
-									<InputAdornment position="start">
-										<IconButton
-											type="submit"
-											aria-label="search producto"
-											edge="end"
-										>
-											<Search />
-										</IconButton>
-									</InputAdornment>
-								}
-							/>
-						</FormControl>
+								<OutlinedInput
+									id="search-producto"
+									type="text"
+									value={busqueda}
+									onChange={(e) => setBusqueda(e.target.value)}
+									endAdornment={
+										<InputAdornment position="start">
+											<IconButton type="submit" aria-label="search producto" edge="end">
+												<Search />
+											</IconButton>
+										</InputAdornment>
+									}
+								/>
+							</FormControl>
+							{filtro !== '' ? (
+								<IconButton color="primary" onClick={() => reload()}>
+									<ArrowBack />
+								</IconButton>
+							) : null}
 						</form>
-						
 					</Box>
 					<Box>
 						<CrearProducto accion={false} productosRefetch={refetch} />

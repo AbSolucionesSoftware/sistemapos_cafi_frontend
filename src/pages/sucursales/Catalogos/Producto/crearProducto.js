@@ -243,8 +243,6 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 			usuario: sesion._id
 		};
 
-		console.log(input);
-
 		setLoading(true);
 		try {
 			if (accion) {
@@ -347,8 +345,6 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 
 	/* SET STATES WHEN UPDATING */
 	const setInitialStates = (producto) => {
-
-		console.log(producto);
 		const { precios_producto, ...new_precios } = producto.precios;
 		const unidadxdefecto = producto.unidades_de_venta.filter((res) => res.default);
 
