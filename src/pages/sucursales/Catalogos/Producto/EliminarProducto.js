@@ -4,7 +4,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
-import { IconButton } from '@material-ui/core';
+import { CircularProgress, IconButton } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import { useMutation } from '@apollo/client';
@@ -63,7 +63,7 @@ export default function EliminarProducto({ datos, productosRefetch }) {
 					<Button onClick={() => handleToggleModal()} color="inherit">
 						Cancelar
 					</Button>
-					<Button onClick={() => eliminarProductoBD()} color="secondary">
+					<Button onClick={() => eliminarProductoBD()} color="secondary" startIcon={loading ? <CircularProgress color="inherit" size={20} /> : null}>
 						Eliminar
 					</Button>
 				</DialogActions>

@@ -9,6 +9,7 @@ import { useQuery } from '@apollo/client';
 import { OBTENER_PRODUCTOS } from '../../../../gql/Catalogos/productos';
 import ErrorPage from '../../../../components/ErrorPage';
 import { Search, Close, ArrowBack } from '@material-ui/icons';
+import ProductosEliminados from './ProductosEliminados';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -142,7 +143,9 @@ const RegistroComponent = () => {
 							) : null}
 						</form>
 					</Box>
-					<Box>
+					<Box display="flex">
+						<ProductosEliminados productosActivosRefetch={refetch} />
+						<Box mx={1} />
 						<CrearProducto accion={false} productosRefetch={refetch} />
 					</Box>
 				</Box>

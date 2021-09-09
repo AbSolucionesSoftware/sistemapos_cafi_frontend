@@ -33,7 +33,7 @@ import {
 	initial_state_centro_de_costos,
 	initial_state_preciosPlazos
 } from '../../../../context/Catalogos/initialStatesProducto';
-import { Close, Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
+import { Add, Close, Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 
 export const initial_state_preciosP = [
@@ -426,6 +426,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 					variant="contained"
 					size="large"
 					onClick={() => toggleModal()}
+					startIcon={<Add />}
 				>
 					Nuevo producto
 				</Button>
