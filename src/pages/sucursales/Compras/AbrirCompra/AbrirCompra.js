@@ -1,9 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Divider, Dialog, DialogActions, DialogTitle, DialogContent, ButtonBase } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogTitle, DialogContent } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
@@ -14,7 +13,6 @@ import { FcPlus } from 'react-icons/fc';
 import { Box } from '@material-ui/core';
 import ListaCompras from './TablaCompras';
 import { Grid } from '@material-ui/core';
-import { Add } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -69,7 +67,16 @@ export default function AbrirCompra({ status }) {
 					</Box>
 				</Button>
 			)}
-			<Dialog fullScreen open={open} onClose={handleClickOpen} TransitionComponent={Transition}>
+			<ModalCompra open={open} handleClickOpen={handleClickOpen} />
+		</div>
+	);
+}
+
+const ModalCompra = ({open, handleClickOpen}) => {
+	const classes = useStyles();
+
+	return (
+		<Dialog fullScreen open={open} onClose={handleClickOpen} TransitionComponent={Transition}>
 				<DialogTitle style={{ padding: 0 }}>
 					<AppBar className={classes.appBar}>
 						<Toolbar>
@@ -127,6 +134,5 @@ export default function AbrirCompra({ status }) {
 					</Button>
 				</DialogActions>
 			</Dialog>
-		</div>
-	);
+	)
 }
