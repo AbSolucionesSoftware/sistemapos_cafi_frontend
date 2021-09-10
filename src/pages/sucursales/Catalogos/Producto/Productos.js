@@ -11,7 +11,6 @@ import ErrorPage from '../../../../components/ErrorPage';
 import { Search, Close, ArrowBack } from '@material-ui/icons';
 import ProductosEliminados from './ProductosEliminados';
 
-
 const useStyles = makeStyles((theme) => ({
 	appBar: {
 		position: 'relative'
@@ -149,7 +148,6 @@ const RegistroComponent = () => {
 						<CrearProducto accion={false} productosRefetch={refetch} />
 					</Box>
 				</Box>
-
 				<Box mx={4}>
 					<ListaProductos obtenerProductos={obtenerProductos} productosRefetch={refetch} />
 				</Box>

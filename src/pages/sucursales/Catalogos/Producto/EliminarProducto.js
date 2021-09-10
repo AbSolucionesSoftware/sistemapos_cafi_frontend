@@ -1,4 +1,4 @@
-import React, { forwardRef, Fragment, useState } from 'react';
+import React, { forwardRef, Fragment, useContext, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -9,6 +9,7 @@ import { Delete } from '@material-ui/icons';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import { useMutation } from '@apollo/client';
 import { ELIMINAR_PRODUCTO } from '../../../../gql/Catalogos/productos';
+import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
 
 const Transition = forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -18,27 +19,27 @@ export default function EliminarProducto({ datos, productosRefetch }) {
 	const [ open, setOpen ] = useState(false);
 	const [ loading, setLoading ] = useState(false);
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+	const { actualizarLista, setActualizarLista } = useContext(RegProductoContext);
 
 	const [ eliminarProducto ] = useMutation(ELIMINAR_PRODUCTO);
-
 
 	const handleToggleModal = () => setOpen(!open);
 
 	const eliminarProductoBD = async () => {
 		setLoading(true);
 		try {
-			await eliminarProducto({
+			const result = await eliminarProducto({
 				variables: {
 					id: datos._id
 				}
 			});
+			setActualizarLista(!actualizarLista);
 			productosRefetch();
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			setAlert({ message: `¡Listo! ${result.data.eliminarProducto.message}`, status: 'success', open: true });
 			setLoading(false);
 			handleToggleModal();
 		} catch (error) {
-			console.log(error);
-			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			setAlert({ message: `Error: ${error.message}`, status: 'error', open: true });
 			setLoading(false);
 		}
 	};

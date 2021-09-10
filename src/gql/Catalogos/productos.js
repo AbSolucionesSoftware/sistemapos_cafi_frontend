@@ -180,6 +180,10 @@ export const OBTENER_PRODUCTOS = gql`
 			inventario_general {
 				_id
 				cantidad_existente
+				unidad_inventario
+				unidad_inventario
+				cantidad_existente_maxima
+				unidad_maxima
 			}
 			medidas_registradas
 			sucursal

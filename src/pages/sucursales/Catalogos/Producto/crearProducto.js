@@ -246,26 +246,26 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setLoading(true);
 		try {
 			if (accion) {
-				await actualizarProducto({
+				const result = await actualizarProducto({
 					variables: {
 						input,
 						id: datos._id
 					}
 				});
+				setAlert({ message: `¡Listo! ${result.data.actualizarProducto.message}`, status: 'success', open: true });
 			} else {
-				await crearProducto({
+				const result = await crearProducto({
 					variables: {
 						input
 					}
 				});
+				setAlert({ message: `¡Listo! ${result.data.crearProducto.message}`, status: 'success', open: true });
 			}
 			productosRefetch();
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setLoading(false);
 			toggleModal();
 		} catch (error) {
-			console.log(error);
-			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			setAlert({ message: `Error: ${error.message}`, status: 'error', open: true });
 			setLoading(false);
 		}
 	};

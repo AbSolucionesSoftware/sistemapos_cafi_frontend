@@ -87,7 +87,7 @@ export default function ListaProductos({ obtenerProductos, productosRefetch }) {
 }
 
 const RenderTableRows = ({ producto, productosRefetch }) => {
-	
+
 	return (
 		<Fragment>
 			<TableRow hover>
@@ -97,7 +97,7 @@ const RenderTableRows = ({ producto, productosRefetch }) => {
 				<TableCell>{producto.datos_generales.nombre_generico}</TableCell>
 				<TableCell>{producto.datos_generales.descripcion}</TableCell>
 				<TableCell align="center" padding="checkbox">{
-					producto.inventario_general.map(existencia => existencia.cantidad_existente)
+					producto.inventario_general.map(existencia => `${existencia.cantidad_existente} ${existencia.unidad_inventario}`)
 				}</TableCell>
 				<TableCell>{producto.datos_generales.tipo_producto}</TableCell>
 				<TableCell align="center" padding="checkbox">

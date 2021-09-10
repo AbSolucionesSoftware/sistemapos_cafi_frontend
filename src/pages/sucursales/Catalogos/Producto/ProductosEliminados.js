@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from 'react';
+import React, { useState, forwardRef, useEffect, useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -18,6 +18,7 @@ import ErrorPage from '../../../../components/ErrorPage';
 import { ACTIVAR_PRODUCTOS, PRODUCTOS_ELIMINADOS } from '../../../../gql/Catalogos/productos';
 import { useMutation, useQuery } from '@apollo/client';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
+import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
 
 const Transition = forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -58,11 +59,16 @@ export default function ProdcutosEliminados({productosActivosRefetch}) {
 
 const TablaProductosEliminados = ({productosActivosRefetch}) => {
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	const { actualizarLista } = useContext(RegProductoContext);
 
 	/* Queries */
 	const { loading, data, error, refetch } = useQuery(PRODUCTOS_ELIMINADOS, {
 		variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id }
 	});
+
+	useEffect(() => {
+		refetch();
+	}, [ refetch, actualizarLista ]);
 
 	if (loading)
 		return (
@@ -120,19 +126,18 @@ const RenderProductosTabla = ({ producto, refetch, productosActivosRefetch }) =>
 	const reactivarProducto = async () => {
 		setLoading(true);
 		try {
-			await activarProducto({
+			const result = await activarProducto({
 				variables: {
 					id: producto._id
 				}
 			});
             refetch();
 			productosActivosRefetch();
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			setAlert({ message: `¡Listo! ${result.data.activarProducto.message}`, status: 'success', open: true });
 			setLoading(false);
 			handleDeleteToggle();
 		} catch (error) {
-			console.log(error);
-			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			setAlert({ message: `Error: ${error.message}`, status: 'error', open: true });
 			setLoading(false);
 		}
 	};
@@ -155,10 +160,9 @@ const RenderProductosTabla = ({ producto, refetch, productosActivosRefetch }) =>
 					)}
 				</TableCell>
 			</TableRow>
-            <SnackBarMessages alert={alert} setAlert={setAlert} />
 			<Dialog open={open} onClose={handleDeleteToggle} aria-labelledby="reactivar-producto-dialog">
 				<DialogTitle id="reactivar-producto-dialog">{'Se reactivará este producto'}</DialogTitle>
-
+				<SnackBarMessages alert={alert} setAlert={setAlert} />         
 				<DialogActions>
 					<Button onClick={handleDeleteToggle} color="inherit">
 						Cancelar
