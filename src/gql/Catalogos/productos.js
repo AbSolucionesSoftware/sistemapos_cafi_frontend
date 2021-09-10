@@ -72,9 +72,16 @@ export const OBTENER_PRODUCTOS = gql`
 				_id
 				precio
 				cantidad
+				unidad
 				unidad_principal
 				codigo_barras
 				id_producto
+				descuento_activo
+				descuento {
+					porciento
+					dinero_descontado
+					precio_con_descuento
+				}
 				default
 			}
 			datos_generales {
@@ -152,6 +159,24 @@ export const OBTENER_PRODUCTOS = gql`
 				}
 				granel
 			}
+			medidas_producto {
+				cantidad
+				codigo_barras
+				color {
+					_id
+					nombre
+					hex
+				}
+				existencia
+				medida {
+					_id
+					talla
+					tipo
+				}
+				nombre_comercial
+				precio
+			}
+			medidas_registradas
 			sucursal
 			usuario
 		}
@@ -165,7 +190,6 @@ export const ACTUALIZAR_PRODUCTO = gql`
 		}
 	}
 `;
-
 
 /* export const ELIMINAR_TALLA = gql`
 	mutation eliminarTalla($id: ID!) {

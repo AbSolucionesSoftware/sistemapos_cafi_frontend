@@ -1,7 +1,6 @@
 import React, { useState, Fragment, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
 import { Button, AppBar, Badge, Typography, CircularProgress, Backdrop, IconButton } from '@material-ui/core';
 import { Dialog, DialogActions, DialogContent, Tabs, Tab, Box } from '@material-ui/core';
@@ -30,20 +29,57 @@ import {
 	initial_state_datos_generales,
 	initial_state_precios,
 	initial_state_unidadVentaXDefecto,
-	initial_state_preciosP,
-	initial_state_unidadesVenta,
 	initial_state_almacen_inicial,
 	initial_state_centro_de_costos,
-	initial_state_preciosPlazos,
-	initial_state_subcategorias,
-	initial_state_imagenes,
-	initial_state_onPreview,
-	initial_state_validacion,
-	initial_state_subcostos,
-	initial_state_imagenes_eliminadas
+	initial_state_preciosPlazos
 } from '../../../../context/Catalogos/initialStatesProducto';
-import { Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
+import { Close, Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
+
+export const initial_state_preciosP = [
+	{
+		numero_precio: 1,
+		utilidad: 0,
+		precio_neto: 0,
+		unidad_mayoreo: 0,
+		precio_venta: 0
+	},
+	{
+		numero_precio: 2,
+		utilidad: 0,
+		precio_neto: 0,
+		unidad_mayoreo: 0,
+		precio_venta: 0
+	},
+	{
+		numero_precio: 3,
+		utilidad: 0,
+		precio_neto: 0,
+		unidad_mayoreo: 0,
+		precio_venta: 0
+	},
+	{
+		numero_precio: 4,
+		utilidad: 0,
+		precio_neto: 0,
+		unidad_mayoreo: 0,
+		precio_venta: 0
+	},
+	{
+		numero_precio: 5,
+		utilidad: 0,
+		precio_neto: 0,
+		unidad_mayoreo: 0,
+		precio_venta: 0
+	},
+	{
+		numero_precio: 6,
+		utilidad: 0,
+		precio_neto: 0,
+		unidad_mayoreo: 0,
+		precio_venta: 0
+	}
+];
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -102,11 +138,6 @@ const useStyles = makeStyles((theme) => ({
 	backdrop: {
 		zIndex: theme.zIndex.drawer + 1,
 		color: '#fff'
-	},
-	buttons: {
-		'& > *': {
-			margin: `0px ${theme.spacing(1)}px`
-		}
 	}
 }));
 
@@ -133,7 +164,6 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setUnidadVentaXDefecto,
 		centro_de_costos,
 		setCentroDeCostos,
-		update,
 		setUpdate,
 		preciosPlazos,
 		setPreciosPlazos,
@@ -141,23 +171,27 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setOnPreview,
 		setSubcostos,
 		imagenes_eliminadas,
-		setImagenesEliminadas
+		setImagenesEliminadas,
+		presentaciones,
+		setPresentaciones
 	} = useContext(RegProductoContext);
 
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 	const [ loading, setLoading ] = useState(false);
+	const tipo = datos_generales.tipo_producto;
 
 	/* Mutations */
-	const [ crearProducto, actualizarProducto ] = useMutation(CREAR_PRODUCTO, ACTUALIZAR_PRODUCTO);
+	const [ crearProducto ] = useMutation(CREAR_PRODUCTO);
+	const [ actualizarProducto ] = useMutation(ACTUALIZAR_PRODUCTO);
 
 	const toggleModal = (producto) => {
 		setOpen(!open);
 		setUpdate(accion);
-		if(producto && accion){
-			setInitialStates(producto)
-		}else{
+		if (producto && accion) {
+			setInitialStates(producto);
+		} else {
 			resetInitialStates();
 		}
 	};
@@ -169,8 +203,8 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 	/* ###### GUARDAR LA INFO EN LA BD ###### */
 
 	const saveData = async () => {
-		const validate = validaciones(datos_generales, precios, almacen_inicial);
-		
+		const validate = validaciones(datos_generales, precios, almacen_inicial, presentaciones, datos);
+
 		if (validate.error) {
 			setValidacion(validate);
 			return;
@@ -187,18 +221,19 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		precios.precios_producto = preciosP;
 
 		let imagenes_without_aws = imagenes;
-		if (update) {
+		if (accion) {
 			imagenes_without_aws = imagenes.filter((res) => !res.key_imagen);
 		}
 
 		let input = {
-			datos_generales,
+			datos_generales: await validateJsonEdit(datos_generales, 'datos_generales'),
 			precios,
 			imagenes: imagenes_without_aws,
 			imagenes_eliminadas,
 			almacen_inicial,
 			centro_de_costos,
-			unidades_de_venta: unidadesVenta,
+			unidades_de_venta: await validateJsonEdit(unidadesVenta, 'unidades_de_venta'),
+			presentaciones,
 			precio_plazos: preciosPlazos,
 			empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id,
@@ -209,7 +244,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 
 		setLoading(true);
 		try {
-			if (update) {
+			if (accion) {
 				await actualizarProducto({
 					variables: {
 						input,
@@ -223,7 +258,6 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 					}
 				});
 			}
-			resetInitialStates();
 			productosRefetch();
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setLoading(false);
@@ -235,26 +269,82 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		}
 	};
 
+	const validateJsonEdit = async (data, tipo) => {
+		if (tipo === 'datos_generales') {
+			let object_date = {
+				clave_alterna: data.clave_alterna,
+				tipo_producto: data.tipo_producto,
+				nombre_comercial: data.nombre_comercial,
+				nombre_generico: data.nombre_generico,
+				receta_farmacia: data.receta_farmacia
+			};
+			if (data.codigo_barras !== null && data.codigo_barras !== '')
+				object_date = { ...object_date, codigo_barras: data.codigo_barras };
+			if (data.descripcion !== null && data.descripcion !== '')
+				object_date = { ...object_date, descripcion: data.descripcion };
+			if (data.id_categoria !== null && data.id_categoria !== '')
+				object_date = { ...object_date, id_categoria: data.id_categoria };
+			if (data.categoria !== null && data.categoria !== '')
+				object_date = { ...object_date, categoria: data.categoria };
+			if (data.subcategoria !== null && data.subcategoria !== '')
+				object_date = { ...object_date, subcategoria: data.subcategoria };
+			if (data.id_subcategoria !== null && data.id_subcategoria !== '')
+				object_date = { ...object_date, id_subcategoria: data.id_subcategoria };
+			if (data.id_departamento !== null && data.id_departamento !== '')
+				object_date = { ...object_date, id_departamento: data.id_departamento };
+			if (data.departamento !== null && data.departamento !== '')
+				object_date = { ...object_date, departamento: data.departamento };
+			if (data.id_marca !== null && data.id_marca !== '')
+				object_date = { ...object_date, id_marca: data.id_marca };
+			if (data.marca !== null && data.marca !== '') object_date = { ...object_date, marca: data.marca };
+			if (data.clave_producto_sat !== null && data.clave_producto_sat !== '')
+				object_date = { ...object_date, clave_producto_sat: data.clave_producto_sat };
+			return object_date;
+		} else if (tipo === 'unidades_de_venta') {
+			let end_array = [];
+			for (var i = 0; i < data.length; i++) {
+				let object = {
+					_id: data[i]._id,
+					cantidad: data[i].cantidad,
+					id_producto: data[i].id_producto,
+					precio: data[i].precio,
+					unidad_principal: data[i].unidad_principal,
+					unidad: data[i].unidad
+				};
+				if (data[i].codigo_barras !== null && data[i].codigo_barras !== '')
+					object = { ...object, codigo_barras: data[i].codigo_barras };
+				if (data[i].default !== null && data[i].default !== '')
+					object = { ...object, default: data[i].default };
+				end_array.push(object);
+			}
+			return end_array;
+		}
+	};
+
 	/* ###### RESET STATES ###### */
 	const resetInitialStates = () => {
 		setDatosGenerales(initial_state_datos_generales);
 		setPrecios(initial_state_precios);
 		setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
 		setPreciosP(initial_state_preciosP);
-		setUnidadesVenta(initial_state_unidadesVenta);
+		setUnidadesVenta([]);
 		setAlmacenInicial(initial_state_almacen_inicial);
-		setCentroDeCostos(initial_state_centro_de_costos);
+		setCentroDeCostos({});
 		setPreciosPlazos(initial_state_preciosPlazos);
-		setSubcategorias(initial_state_subcategorias);
-		setImagenes(initial_state_imagenes);
-		setOnPreview(initial_state_onPreview);
-		setValidacion(initial_state_validacion);
-		setSubcostos(initial_state_subcostos);
-		setImagenesEliminadas(initial_state_imagenes_eliminadas);
+		setSubcategorias([]);
+		setImagenes([]);
+		setOnPreview({ index: '', image: '' });
+		setValidacion({ error: false, message: '' });
+		setSubcostos([]);
+		setImagenesEliminadas([]);
+		setPresentaciones([]);
+		setValue(0);
 	};
 
 	/* SET STATES WHEN UPDATING */
 	const setInitialStates = (producto) => {
+
+		console.log(producto);
 		const { precios_producto, ...new_precios } = producto.precios;
 		const unidadxdefecto = producto.unidades_de_venta.filter((res) => res.default);
 
@@ -266,26 +356,81 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setUnidadesVenta(producto.unidades_de_venta);
 		setPreciosP(producto.precios.precios_producto);
 		setUnidadVentaXDefecto(unidadxdefecto[0]);
+		setPresentaciones(producto.medidas_producto ? producto.medidas_producto : []);
 	};
 
-	 function funcion_tecla(event) {
-	 	const {keyCode} = event;
-	 	if(keyCode === 114){
-			document.getElementById('modal-registro-product').click(); 
-	 	}
-	 } /* CODIGO PARA PODER EJECUTAR LAS VENTANAS A BASE DE LAS TECLAS */
+	function funcion_tecla(event) {
+		const { keyCode } = event;
+		if (keyCode === 114) {
+			document.getElementById('modal-registro-product').click();
+		}
+	} /* CODIGO PARA PODER EJECUTAR LAS VENTANAS A BASE DE LAS TECLAS */
 
-	 window.onkeydown = funcion_tecla;
+	window.onkeydown = funcion_tecla;
+
+	const saveButton = (
+		<Button
+			variant="contained"
+			color="primary"
+			onClick={() => saveData()}
+			size="large"
+			startIcon={<DoneIcon />}
+			disabled={
+				!datos_generales.clave_alterna ||
+				!datos_generales.tipo_producto ||
+				!datos_generales.nombre_generico ||
+				!datos_generales.nombre_comercial ||
+				!precios.precio_de_compra.precio_con_impuesto ||
+				!precios.precio_de_compra.precio_sin_impuesto ||
+				!precios.unidad_de_compra.cantidad ? (
+					true
+				) : (
+					false
+				)
+			}
+		>
+			Guardar
+		</Button>
+	);
+
+	const ButtonActions = () => {
+		if (!accion && value === 5) {
+			return saveButton;
+		} else if (accion && tipo === 'OTROS' && value === 5) {
+			return saveButton;
+		} else if (accion && tipo !== 'OTROS' && value === 6) {
+			return saveButton;
+		} else {
+			return (
+				<Button
+					variant="contained"
+					color="primary"
+					onClick={() => setValue(value + 1)}
+					size="large"
+					endIcon={<NavigateNext />}
+					disableElevation
+				>
+					Siguiente
+				</Button>
+			);
+		}
+	};
 
 	return (
 		<Fragment>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			{!accion ? (
-				<Button id="modal-registro-product" color="primary" variant="contained" size="large" onClick={() => toggleModal()}>
+				<Button
+					id="modal-registro-product"
+					color="primary"
+					variant="contained"
+					size="large"
+					onClick={() => toggleModal()}
+				>
 					Nuevo producto
 				</Button>
 			) : (
-				<IconButton color="primary" variant="contained" onClick={() => toggleModal(datos)}>
+				<IconButton color="default" variant="contained" onClick={() => toggleModal(datos)}>
 					<Edit />
 				</IconButton>
 			)}
@@ -375,21 +520,31 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/imagenes.svg' alt="icono imagenes" className={classes.iconSvg} />}
 								{...a11yProps(5)}
 							/>
-							{accion ? datos_generales.tipo_producto !== "OTROS" ? (
+							{accion ? datos_generales.tipo_producto !== 'OTROS' ? (
 								<Tab
 									label="Tallas y colores"
 									icon={
-										<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tallas-colores.svg' alt="icono colores" className={classes.iconSvg} />
+										<Badge
+											color="secondary"
+											badgeContent={<Typography variant="h6">!</Typography>}
+											anchorOrigin={{
+												vertical: 'bottom',
+												horizontal: 'right'
+											}}
+											invisible={validacion.error && validacion.vista7 ? false : true}
+										>
+											<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tallas-colores.svg' alt="icono colores" className={classes.iconSvg} />
+										</Badge>
 									}
 									{...a11yProps(6)}
 								/>
 							) : null : null}
 						</Tabs>
-						<Box m={1}>
+						{/* <Box m={1}>
 							<Button variant="contained" color="secondary" onClick={() => toggleModal()} size="large">
 								<CloseIcon />
 							</Button>
-						</Box>
+						</Box> */}
 					</Box>
 				</AppBar>
 				<DialogContent className={classes.dialogContent}>
@@ -398,52 +553,28 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 					</Backdrop>
 					<ContenidoModal value={value} datos={datos} />
 				</DialogContent>
-				<DialogActions style={{ display: 'flex', justifyContent: 'space-between' }}>
+				<DialogActions style={{ display: 'flex', justifyContent: 'center' }}>
 					<Button
-						variant="contained"
+						variant="outlined"
 						color="primary"
-						onClick={() => saveData()}
+						onClick={() => setValue(value - 1)}
 						size="large"
-						startIcon={<DoneIcon />}
-						disabled={
-							!datos_generales.clave_alterna ||
-							!datos_generales.tipo_producto ||
-							!datos_generales.nombre_generico ||
-							!datos_generales.nombre_comercial ||
-							!precios.precio_de_compra.precio_con_impuesto ||
-							!precios.precio_de_compra.precio_sin_impuesto ||
-							!precios.unidad_de_compra.cantidad ? (
-								true
-							) : (
-								false
-							)
-						}
+						startIcon={<NavigateBefore />}
+						disabled={value === 0}
 					>
-						Guardar
+						Anterior
 					</Button>
-					<Box className={classes.buttons}>
-						<Button
-							variant="outlined"
-							color="primary"
-							onClick={() => setValue(value - 1)}
-							size="large"
-							startIcon={<NavigateBefore />}
-							disabled={value === 0}
-						>
-							Anterior
-						</Button>
-						<Button
-							variant="contained"
-							color="primary"
-							onClick={() => setValue(value + 1)}
-							size="large"
-							endIcon={<NavigateNext />}
-							disabled={value === 5}
-							disableElevation
-						>
-							Siguiente
-						</Button>
-					</Box>
+					<Button
+						variant="outlined"
+						color="inherit"
+						onClick={() => toggleModal()}
+						size="large"
+						startIcon={<Close />}
+						disableElevation
+					>
+						Cancelar
+					</Button>
+					<ButtonActions />
 				</DialogActions>
 			</Dialog>
 		</Fragment>
@@ -458,7 +589,7 @@ const ContenidoModal = ({ value, datos }) => {
 	const { loading, data, error, refetch } = useQuery(OBTENER_CONSULTAS, {
 		variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id }
 	});
-
+	
 	if (loading)
 		return (
 			<Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" height="80vh">

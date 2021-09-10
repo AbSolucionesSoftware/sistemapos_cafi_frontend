@@ -1,48 +1,25 @@
-import React, { useContext, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import Input from '@material-ui/core/Input';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
+import { Box, Chip, IconButton, Tooltip, Zoom } from '@material-ui/core';
+import { Cached, Close, Edit } from '@material-ui/icons';
+import { fade } from '@material-ui/core/styles/colorManipulator';
 
-function EnhancedTableHead(props) {
-	const { onSelectAllClick, numSelected, rowCount } = props;
-
-	return (
-		<TableHead>
-			<TableRow>
-				<TableCell padding="checkbox">
-					<Checkbox
-						indeterminate={numSelected > 0 && numSelected < rowCount}
-						checked={rowCount > 0 && numSelected === rowCount}
-						onChange={onSelectAllClick}
-						inputProps={{ 'aria-label': 'select all desserts' }}
-					/>
-				</TableCell>
-				<TableCell>Código de barras</TableCell>
-				<TableCell>Nombre</TableCell>
-				<TableCell>Medida</TableCell>
-				<TableCell>Color</TableCell>
-				<TableCell>Precio</TableCell>
-				<TableCell>Cantidad</TableCell>
-			</TableRow>
-		</TableHead>
-	);
-}
-
-EnhancedTableHead.propTypes = {
-	classes: PropTypes.object.isRequired,
-	numSelected: PropTypes.number.isRequired,
-	onSelectAllClick: PropTypes.func.isRequired,
-	rowCount: PropTypes.number.isRequired
+const compareFunction = (a, b) => {
+	if (a.medida.talla && b.medida.talla) {
+		return a.medida.talla.localeCompare(b.medida.talla);
+	}
 };
+
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -55,6 +32,14 @@ const useStyles = makeStyles((theme) => ({
 	table: {
 		minWidth: 750
 	},
+	container: {
+		maxHeight: '65vh'
+	},
+	tableRow: {
+		'&.Mui-selected, &.Mui-selected:hover': {
+			backgroundColor: fade(theme.palette.primary.main, 0.1)
+		}
+	},
 	visuallyHidden: {
 		border: 0,
 		clip: 'rect(0 0 0 0)',
@@ -65,121 +50,210 @@ const useStyles = makeStyles((theme) => ({
 		position: 'absolute',
 		top: 20,
 		width: 1
+	},
+	colorContainer: {
+		border: '1px solid rgba(0,0,0, .3)',
+		height: 30,
+		width: 30,
+		borderRadius: '15%'
 	}
 }));
 
-export default function TablaPresentaciones() {
+export default function TablaPresentaciones({ datos, setOnUpdate, onUpdate }) {
 	const classes = useStyles();
-	const { presentaciones, setPresentaciones } = useContext(RegProductoContext);
-	const [ selected, setSelected ] = useState([]);
-	const [ page, setPage ] = useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = useState(7);
+	const { presentaciones } = useContext(RegProductoContext);
 
-	const handleSelectAllClick = (event) => {
-		if (event.target.checked) {
-			const newSelecteds = presentaciones.map((n) => n.nombre_comercial);
-			setSelected(newSelecteds);
-			return;
-		}
-		setSelected([]);
-	};
-
-	const handleClick = (event, name) => {
-		const selectedIndex = selected.indexOf(name);
-		let newSelected = [];
-
-		if (selectedIndex === -1) {
-			newSelected = newSelected.concat(selected, name);
-		} else if (selectedIndex === 0) {
-			newSelected = newSelected.concat(selected.slice(1));
-		} else if (selectedIndex === selected.length - 1) {
-			newSelected = newSelected.concat(selected.slice(0, -1));
-		} else if (selectedIndex > 0) {
-			newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-		}
-
-		setSelected(newSelected);
-	};
-
-	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
-
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(parseInt(event.target.value, 10));
-		setPage(0);
-	};
-
-	const isSelected = (name) => selected.indexOf(name) !== -1;
-
-	const emptyRows = rowsPerPage - Math.min(rowsPerPage, presentaciones.length - page * rowsPerPage);
+	let mostrar_presentaciones = [ ...presentaciones ].sort((a, b) => compareFunction(a, b));
 
 	return (
 		<div className={classes.root}>
 			<Paper className={classes.paper}>
-				<TableContainer>
+				<TableContainer className={classes.container}>
 					<Table
 						className={classes.table}
 						aria-labelledby="tableTitle"
-						size="medium"
+						size="small"
 						aria-label="enhanced table"
+						stickyHeader
 					>
-						<EnhancedTableHead
-							classes={classes}
-							numSelected={selected.length}
-							onSelectAllClick={handleSelectAllClick}
-							rowCount={presentaciones.length}
-						/>
+						<TableHead>
+							<TableRow>
+								<TableCell>Existencia</TableCell>
+								<TableCell>Código de barras</TableCell>
+								<TableCell width={200}>Nombre</TableCell>
+								<TableCell padding="checkbox">Medida</TableCell>
+								<TableCell padding="checkbox">Color</TableCell>
+								<TableCell>Precio</TableCell>
+								<TableCell padding="checkbox">Cantidad</TableCell>
+								<TableCell padding="checkbox">Editar</TableCell>
+							</TableRow>
+						</TableHead>
 						<TableBody>
-							{presentaciones.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-								const isItemSelected = isSelected(row.nombre_comercial);
-								const labelId = `enhanced-table-checkbox-${index}`;
-
+							{mostrar_presentaciones.map((producto, index) => {
 								return (
-									<TableRow
-										hover
-										onClick={(event) => handleClick(event, row.nombre_comercial)}
-										role="checkbox"
-										aria-checked={isItemSelected}
-										tabIndex={-1}
+									<RenderPresentacionesRows
 										key={index}
-										selected={isItemSelected}
-									>
-										<TableCell padding="checkbox">
-											<Checkbox
-												checked={isItemSelected}
-												inputProps={{ 'aria-labelledby': labelId }}
-											/>
-										</TableCell>
-										<TableCell id={labelId} scope="row">
-											{row.codigo_barras}
-										</TableCell>
-										<TableCell>{row.nombre_comercial}</TableCell>
-										<TableCell>{row.medida}</TableCell>
-										<TableCell>{row.color}</TableCell>
-										<TableCell>{row.precio}</TableCell>
-										<TableCell>{row.cantidad}</TableCell>
-									</TableRow>
+										producto={producto}
+										index={index}
+										datos={datos}
+										setOnUpdate={setOnUpdate}
+										onUpdate={onUpdate}
+									/>
 								);
 							})}
-							{emptyRows > 0 && (
-								<TableRow style={{ height: 53 * emptyRows }}>
-									<TableCell colSpan={6} />
-								</TableRow>
-							)}
 						</TableBody>
 					</Table>
 				</TableContainer>
-				<TablePagination
-					rowsPerPageOptions={[]}
-					component="div"
-					count={presentaciones.length}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onChangePage={handleChangePage}
-					onChangeRowsPerPage={handleChangeRowsPerPage}
-				/>
 			</Paper>
 		</div>
 	);
 }
+
+
+const RenderPresentacionesRows = ({ producto, index, datos, setOnUpdate, onUpdate }) => {
+	const { presentaciones, setPresentaciones, preciosP } = useContext(RegProductoContext);
+	const [ disabledInput, setDisabledInput ] = useState(true);
+	const classes = useStyles();
+	const textfield = useRef(null);
+
+	const copy_presentaciones = [...presentaciones].sort((a, b) => compareFunction(a, b))
+	const copy_element_presentacion = { ...copy_presentaciones[index] };
+
+	
+	const handleEditCancel = () => {
+		if (!producto.cantidad) {
+			copy_element_presentacion.cantidad = 0;
+		}
+		if (!producto.precio) {
+			copy_element_presentacion.precio = preciosP[0].precio_neto;
+		}
+		copy_presentaciones.splice(index, 1, copy_element_presentacion);
+		setPresentaciones(copy_presentaciones);
+		setDisabledInput(true);
+	};
+
+	const obtenerDatos = (event) => {
+		if (event.target.name === 'cantidad') {
+			if (!event.target.value) {
+				copy_element_presentacion.cantidad = '';
+				copy_element_presentacion.existencia = false;
+				copy_presentaciones.splice(index, 1, copy_element_presentacion);
+				setPresentaciones(copy_presentaciones);
+				return;
+			}
+			copy_element_presentacion.cantidad = parseFloat(event.target.value);
+			copy_element_presentacion.existencia = true;
+		} else if (event.target.name === 'precio') {
+			if (!event.target.value) {
+				copy_element_presentacion.precio = '';
+				copy_presentaciones.splice(index, 1, copy_element_presentacion);
+				setPresentaciones(copy_presentaciones);
+				return;
+			}
+			copy_element_presentacion.precio = parseFloat(event.target.value);
+		} else {
+			if (!event.target.value) {
+				copy_element_presentacion.codigo_barras = '';
+				copy_presentaciones.splice(index, 1, copy_element_presentacion);
+				setPresentaciones(copy_presentaciones);
+				return;
+			}
+			copy_element_presentacion.codigo_barras = event.target.value;
+		}
+		copy_presentaciones.splice(index, 1, copy_element_presentacion);
+		setPresentaciones(copy_presentaciones);
+	};
+
+	const GenCodigoBarras = () => {
+		const max = 999999999999;
+		const min = 100000000000;
+		const codigo_barras = Math.floor(Math.random() * (max - min + 1) + min).toString();
+		copy_element_presentacion.codigo_barras = codigo_barras;
+		copy_presentaciones.splice(index, 1, copy_element_presentacion);
+		setPresentaciones(copy_presentaciones);
+	};
+
+	const actionButton = () => {
+		if (!disabledInput) {
+			handleEditCancel();
+			/* quitar del array	 */
+			onUpdate.splice(onUpdate.length - 1, 1);
+			setOnUpdate([ ...onUpdate ]);
+		} else {
+			setDisabledInput(!disabledInput);
+			/*  agregar al array */
+			setOnUpdate([ ...onUpdate, index ]);
+		}
+	};
+
+	return (
+		<TableRow hover selected={!disabledInput} className={classes.tableRow}>
+			<TableCell align="center">
+				<Checkbox checked={producto.existencia} color="primary" />
+			</TableCell>
+			<TableCell width={220}>
+				<Box display="flex">
+					<Input
+						inputRef={textfield}
+						onChange={(e) => obtenerDatos(e)}
+						/* disabled={disabledInput} */
+						value={producto.codigo_barras}
+						type="number"
+						name="precio"
+						disabled={datos.medidas_registradas && !producto.nuevo ? true : disabledInput}
+					/>
+					{!datos.medidas_registradas && producto.nuevo ? (
+						<IconButton color="primary" size="small" onClick={() => GenCodigoBarras()}>
+							<Cached />
+						</IconButton>
+					) : datos.medidas_registradas && producto.nuevo ? (
+						<IconButton color="primary" size="small" onClick={() => GenCodigoBarras()}>
+							<Cached />
+						</IconButton>
+					) : null}
+				</Box>
+			</TableCell>
+			<TableCell width={200}>{producto.nombre_comercial}</TableCell>
+			<TableCell padding="checkbox">
+				{producto.medida._id ? <Chip label={producto.medida.talla} color="primary" /> : ''}
+			</TableCell>
+			<TableCell padding="checkbox">
+				{producto.color._id ? (
+					<Tooltip title={producto.color.nombre} placement="top" arrow TransitionComponent={Zoom}>
+						<div
+							className={classes.colorContainer}
+							style={{
+								backgroundColor: producto.color.hex
+							}}
+						/>
+					</Tooltip>
+				) : null}
+			</TableCell>
+			<TableCell width={110}>
+				<Input
+					inputRef={textfield}
+					onChange={(e) => obtenerDatos(e)}
+					disabled={disabledInput}
+					value={producto.precio}
+					type="tel"
+					name="precio"
+				/>
+			</TableCell>
+			<TableCell padding="checkbox">
+				<Input
+					inputRef={textfield}
+					onChange={(e) => obtenerDatos(e)}
+					disabled={disabledInput}
+					value={producto.cantidad}
+					type="tel"
+					name="cantidad"
+				/>
+			</TableCell>
+			<TableCell padding="checkbox">
+				<IconButton size="small" onClick={() => actionButton()}>
+					{!disabledInput ? <Close /> : <Edit />}
+				</IconButton>
+			</TableCell>
+		</TableRow>
+	);
+};

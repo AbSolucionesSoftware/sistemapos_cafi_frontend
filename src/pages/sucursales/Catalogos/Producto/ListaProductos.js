@@ -8,20 +8,10 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import {
-	Box,
-	IconButton,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	Typography,
-	Divider,
-	DialogActions,
-	Button,
-	Avatar
-} from '@material-ui/core';
-import { CropOriginal, Dehaze } from '@material-ui/icons';
 import CrearProducto from './crearProducto';
+import DescuentoProductos from './Descuentos/Descuento';
+import InfoProductoDrawer from './infoProductoDrawer';
+import EliminarProducto from './EliminarProducto';
 
 const useStyles = makeStyles({
 	root: {
@@ -36,7 +26,7 @@ const useStyles = makeStyles({
 	}
 });
 
-export default function ListaProductos({obtenerProductos}) {
+export default function ListaProductos({ obtenerProductos, productosRefetch }) {
 	const classes = useStyles();
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(10);
@@ -61,9 +51,10 @@ export default function ListaProductos({obtenerProductos}) {
 							<TableCell>Nombre genérico</TableCell>
 							<TableCell>Descripción</TableCell>
 							<TableCell>Tipo</TableCell>
-							<TableCell>Más información</TableCell>
+							<TableCell>Información</TableCell>
 							<TableCell>Editar</TableCell>
-							{/* <TableCell>Eliminar</TableCell> */}
+							<TableCell>Descuento</TableCell>
+							<TableCell>Eliminar</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -71,7 +62,11 @@ export default function ListaProductos({obtenerProductos}) {
 							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 							.map((producto, index) => {
 								return (
-									<RenderTableRows key={index} producto={producto} />
+									<RenderTableRows
+										key={index}
+										producto={producto}
+										productosRefetch={productosRefetch}
+									/>
 								);
 							})}
 					</TableBody>
@@ -90,28 +85,36 @@ export default function ListaProductos({obtenerProductos}) {
 	);
 }
 
-const RenderTableRows = ({producto}) => {
-
+const RenderTableRows = ({ producto, productosRefetch }) => {
+	
 	return (
-		<TableRow hover>
-			<TableCell>{producto.datos_generales.codigo_barras}</TableCell>
-			<TableCell>{producto.datos_generales.clave_alterna}</TableCell>
-			<TableCell>{producto.datos_generales.nombre_comercial}</TableCell>
-			<TableCell>{producto.datos_generales.nombre_generico}</TableCell>
-			<TableCell>{producto.datos_generales.descripcion}</TableCell>
-			<TableCell>{producto.datos_generales.tipo_producto}</TableCell>
-			<TableCell align="center">
-				<ModalDetalles producto={producto} />
-			</TableCell>
-			<TableCell align="center">
-				<CrearProducto accion={true} datos={producto} />
-			</TableCell>
-			{/* <TableCell align="center">Eliminar</TableCell> */}
-		</TableRow>
+		<Fragment>
+			<TableRow hover>
+				<TableCell>{producto.datos_generales.codigo_barras}</TableCell>
+				<TableCell>{producto.datos_generales.clave_alterna}</TableCell>
+				<TableCell>{producto.datos_generales.nombre_comercial}</TableCell>
+				<TableCell>{producto.datos_generales.nombre_generico}</TableCell>
+				<TableCell>{producto.datos_generales.descripcion}</TableCell>
+				<TableCell>{producto.datos_generales.tipo_producto}</TableCell>
+				<TableCell align="center" padding="checkbox">
+					<InfoProductoDrawer producto={producto} />
+				</TableCell>
+				<TableCell align="center" padding="checkbox">
+					<CrearProducto accion={true} datos={producto} productosRefetch={productosRefetch} />
+				</TableCell>
+				<TableCell align="center" padding="checkbox">
+					<DescuentoProductos datos={producto} productosRefetch={productosRefetch} />
+				</TableCell>
+				<TableCell align="center" padding="checkbox">
+					<EliminarProducto />
+				</TableCell>
+			</TableRow>
+			
+		</Fragment>
 	);
-}
+};
 
-const ModalDetalles = ({ producto }) => {
+/* const ModalDetalles = ({ producto }) => {
 	const classes = useStyles();
 	const { datos_generales, imagenes } = producto;
 	const [ openDetalles, setOpenDetalles ] = useState(false);
@@ -121,7 +124,7 @@ const ModalDetalles = ({ producto }) => {
 	return (
 		<div>
 			<IconButton onClick={handleDetalles}>
-				<Dehaze />
+				<ArtTrack />
 			</IconButton>
 			<Dialog open={openDetalles} onClose={handleDetalles} fullWidth maxWidth="md">
 				<DialogTitle>{'Información completa del producto'}</DialogTitle>
@@ -221,4 +224,4 @@ const ModalDetalles = ({ producto }) => {
 			</Dialog>
 		</div>
 	);
-};
+}; */
