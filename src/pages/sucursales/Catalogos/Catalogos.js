@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Container, Grid } from '@material-ui/core';
 import Cliente from './Cliente/Cliente';
-import Productos from './Producto/Productos';
+import Productos from './Producto/';
 import Tallas from './Tallas/Tallas';
 /* import UnidadMedida from './UnidadMedida/UnidadMedida'; */
 import Contabilidad from './Contabilidad/Contabilidad';

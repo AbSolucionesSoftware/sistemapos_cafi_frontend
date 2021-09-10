@@ -33,8 +33,8 @@ import {
 	initial_state_centro_de_costos,
 	initial_state_preciosPlazos
 } from '../../../../context/Catalogos/initialStatesProducto';
-import { Close, Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
-import SnackBarMessages from '../../../../components/SnackBarMessages';
+import { Add, Close, Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
+/* import SnackBarMessages from '../../../../components/SnackBarMessages'; */
 
 export const initial_state_preciosP = [
 	{
@@ -173,12 +173,15 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		imagenes_eliminadas,
 		setImagenesEliminadas,
 		presentaciones,
-		setPresentaciones
+		setPresentaciones,
+		presentaciones_eliminadas,
+		setPresentacionesEliminadas
 	} = useContext(RegProductoContext);
 
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
-	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+	/* const [ alert, setAlert ] = useState({ message: '', status: '', open: false }); */
+	const { alert, setAlert } = useContext(RegProductoContext);
 	const [ loading, setLoading ] = useState(false);
 	const tipo = datos_generales.tipo_producto;
 
@@ -234,37 +237,36 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 			centro_de_costos,
 			unidades_de_venta: await validateJsonEdit(unidadesVenta, 'unidades_de_venta'),
 			presentaciones,
+			presentaciones_eliminadas,
 			precio_plazos: preciosPlazos,
 			empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id,
 			usuario: sesion._id
 		};
 
-		console.log(input);
-
 		setLoading(true);
 		try {
 			if (accion) {
-				await actualizarProducto({
+				const result = await actualizarProducto({
 					variables: {
 						input,
 						id: datos._id
 					}
 				});
+				setAlert({ message: `¡Listo! ${result.data.actualizarProducto.message}`, status: 'success', open: true });
 			} else {
-				await crearProducto({
+				const result = await crearProducto({
 					variables: {
 						input
 					}
 				});
+				setAlert({ message: `¡Listo! ${result.data.crearProducto.message}`, status: 'success', open: true });
 			}
 			productosRefetch();
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setLoading(false);
 			toggleModal();
 		} catch (error) {
-			console.log(error);
-			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			setAlert({ message: `Error: ${error.message}`, status: 'error', open: true });
 			setLoading(false);
 		}
 	};
@@ -338,13 +340,12 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setSubcostos([]);
 		setImagenesEliminadas([]);
 		setPresentaciones([]);
+		setPresentacionesEliminadas([]);
 		setValue(0);
 	};
 
 	/* SET STATES WHEN UPDATING */
 	const setInitialStates = (producto) => {
-
-		console.log(producto);
 		const { precios_producto, ...new_precios } = producto.precios;
 		const unidadxdefecto = producto.unidades_de_venta.filter((res) => res.default);
 
@@ -418,7 +419,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 
 	return (
 		<Fragment>
-			<SnackBarMessages alert={alert} setAlert={setAlert} />
+			{/* <SnackBarMessages alert={alert} setAlert={setAlert} /> */}
 			{!accion ? (
 				<Button
 					id="modal-registro-product"
@@ -426,6 +427,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 					variant="contained"
 					size="large"
 					onClick={() => toggleModal()}
+					startIcon={<Add />}
 				>
 					Nuevo producto
 				</Button>
