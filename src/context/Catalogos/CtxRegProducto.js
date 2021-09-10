@@ -40,6 +40,7 @@ export const RegProductoProvider = ({ children }) => {
 	const [ presentaciones, setPresentaciones ] = useState(initial_state_presentaciones);
 	const [ presentaciones_eliminadas, setPresentacionesEliminadas ] = useState([]);
 	const [ actualizarLista, setActualizarLista ] = React.useState(false);
+	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 
 	return (
 		<RegProductoContext.Provider
@@ -80,7 +81,8 @@ export const RegProductoProvider = ({ children }) => {
 				setPresentaciones,
 				presentaciones_eliminadas,
 				setPresentacionesEliminadas,
-				actualizarLista, setActualizarLista
+				actualizarLista, setActualizarLista,
+				alert, setAlert
 			}}
 		>
 			{children}

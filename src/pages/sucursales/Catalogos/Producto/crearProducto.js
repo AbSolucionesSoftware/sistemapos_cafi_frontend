@@ -34,7 +34,7 @@ import {
 	initial_state_preciosPlazos
 } from '../../../../context/Catalogos/initialStatesProducto';
 import { Add, Close, Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
-import SnackBarMessages from '../../../../components/SnackBarMessages';
+/* import SnackBarMessages from '../../../../components/SnackBarMessages'; */
 
 export const initial_state_preciosP = [
 	{
@@ -180,7 +180,8 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
-	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+	/* const [ alert, setAlert ] = useState({ message: '', status: '', open: false }); */
+	const { alert, setAlert } = useContext(RegProductoContext);
 	const [ loading, setLoading ] = useState(false);
 	const tipo = datos_generales.tipo_producto;
 
@@ -418,7 +419,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 
 	return (
 		<Fragment>
-			<SnackBarMessages alert={alert} setAlert={setAlert} />
+			{/* <SnackBarMessages alert={alert} setAlert={setAlert} /> */}
 			{!accion ? (
 				<Button
 					id="modal-registro-product"

@@ -6,7 +6,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import { CircularProgress, IconButton } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
-import SnackBarMessages from '../../../../components/SnackBarMessages';
+/* import SnackBarMessages from '../../../../components/SnackBarMessages'; */
 import { useMutation } from '@apollo/client';
 import { ELIMINAR_PRODUCTO } from '../../../../gql/Catalogos/productos';
 import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
@@ -18,8 +18,8 @@ const Transition = forwardRef(function Transition(props, ref) {
 export default function EliminarProducto({ datos, productosRefetch }) {
 	const [ open, setOpen ] = useState(false);
 	const [ loading, setLoading ] = useState(false);
-	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-	const { actualizarLista, setActualizarLista } = useContext(RegProductoContext);
+	/* const [ alert, setAlert ] = useState({ message: '', status: '', open: false }); */
+	const { actualizarLista, setActualizarLista, setAlert } = useContext(RegProductoContext);
 
 	const [ eliminarProducto ] = useMutation(ELIMINAR_PRODUCTO);
 
@@ -47,7 +47,7 @@ export default function EliminarProducto({ datos, productosRefetch }) {
 
 	return (
 		<Fragment>
-			<SnackBarMessages alert={alert} setAlert={setAlert} />
+			{/* <SnackBarMessages alert={alert} setAlert={setAlert} /> */}
 			<IconButton onClick={() => handleToggleModal()}>
 				<Delete color="error" />
 			</IconButton>

@@ -17,7 +17,7 @@ import { Fragment } from 'react';
 import ErrorPage from '../../../../components/ErrorPage';
 import { ACTIVAR_PRODUCTOS, PRODUCTOS_ELIMINADOS } from '../../../../gql/Catalogos/productos';
 import { useMutation, useQuery } from '@apollo/client';
-import SnackBarMessages from '../../../../components/SnackBarMessages';
+/* import SnackBarMessages from '../../../../components/SnackBarMessages'; */
 import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
 
 const Transition = forwardRef(function Transition(props, ref) {
@@ -117,7 +117,8 @@ const RenderProductosTabla = ({ producto, refetch, productosActivosRefetch }) =>
 	const [ open, setOpen ] = useState(false);
 	const [ loading, setLoading ] = useState(false);
 	const { datos_generales } = producto;
-    const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+    /* const [ alert, setAlert ] = useState({ message: '', status: '', open: false }); */
+	const { setAlert } = useContext(RegProductoContext);
 
     const [ activarProducto ] = useMutation(ACTIVAR_PRODUCTOS);
 
@@ -162,7 +163,7 @@ const RenderProductosTabla = ({ producto, refetch, productosActivosRefetch }) =>
 			</TableRow>
 			<Dialog open={open} onClose={handleDeleteToggle} aria-labelledby="reactivar-producto-dialog">
 				<DialogTitle id="reactivar-producto-dialog">{'Se reactivará este producto'}</DialogTitle>
-				<SnackBarMessages alert={alert} setAlert={setAlert} />         
+				{/* <SnackBarMessages alert={alert} setAlert={setAlert} />        */}  
 				<DialogActions>
 					<Button onClick={handleDeleteToggle} color="inherit">
 						Cancelar
