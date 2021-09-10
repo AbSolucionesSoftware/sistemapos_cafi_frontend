@@ -25,7 +25,7 @@ export default function CancelarVenta({handleClickOpen}) {
                         justifyContent="center"
                     >
                         <Box>
-                            <img src={shoppingcartIcon} alt="icono caja" className={classes.iconSizeDialogs} />
+                            <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shopping-cart.svg' alt="icono caja" className={classes.iconSizeDialogs} />
                         </Box>
                         <Box m={2} >
                             <Divider orientation="vertical" />

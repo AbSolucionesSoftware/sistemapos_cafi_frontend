@@ -60,7 +60,7 @@ export default function ListaApartados({handleClickOpen}) {
                         flexGrow={1}
                     >
                         <Box>
-                            <img src={tagIcon} alt="icono apartados" className={classes.iconSizeDialogs} />
+                            <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tag.svg' alt="icono apartados" className={classes.iconSizeDialogs} />
                         </Box>
                         <Box m={2} >
                             <Divider orientation="vertical" />

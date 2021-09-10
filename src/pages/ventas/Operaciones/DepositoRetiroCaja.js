@@ -26,7 +26,7 @@ export default function DepositoRetiroCaja({handleClickOpen}) {
                             flexGrow={1} 
                         >
                             <Box>
-                                <img src={cashregister2Icon} alt="icono caja" className={classes.iconSizeDialogs} />
+                                <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cash-register2.svg' alt="icono caja" className={classes.iconSizeDialogs} />
                             </Box>
                             <Box m={2} >
                                 <Divider orientation="vertical" />

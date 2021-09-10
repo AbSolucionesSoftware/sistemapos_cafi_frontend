@@ -45,7 +45,7 @@ export default function Colores() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={coloresIcon} alt="icono numero calzado" className={classes.icon} />
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/colores.svg' alt="icono numero calzado" className={classes.icon} />
 					</Box>
 					Colores
 				</Box>

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { FcShop, FcPaid, FcSurvey, FcNews,FcPrint } from 'react-icons/fc';
+import { FcShop, FcPaid, FcSurvey, FcNews } from 'react-icons/fc';
 import { Toolbar, Box, Tab, Tabs, AppBar } from '@material-ui/core';
 import Empresa from './Empresa/Empresa';
 import Compras from './Compras/Compras';
@@ -90,7 +90,7 @@ function AdminInicio(props) {
 						<Tab label="Mi empresa" icon={<FcShop className={classes.icon} />} {...a11yProps(0)} />
 						<Tab
 							label="Almacenes"
-							icon={<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />}
+							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/almacen.svg' alt="icono almacen" className={classes.iconSvg} />}
 							{...a11yProps(1)}
 						/>
 					
@@ -98,7 +98,7 @@ function AdminInicio(props) {
 						<Tab label="Catalogos" icon={<FcNews className={classes.icon} />} {...a11yProps(3)} />
 						<Tab
 							label="Tesoreria"
-							icon={<img src={moneyIcon} alt="icono money" className={classes.iconSvg} />}
+							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/money.svg' alt="icono money" className={classes.iconSvg} />}
 							{...a11yProps(4)}
 						/>
 						<Tab
@@ -109,13 +109,13 @@ function AdminInicio(props) {
 						/>
 						<Tab
 							label="Ventas"
-							icon={<img src={cartIcon} alt="icono ventas" className={classes.iconSvg} />}
+							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cart-add.svg' alt="icono ventas" className={classes.iconSvg} />}
 							{...a11yProps(8)}
 							onClick={() => props.history.push('/ventas/venta-general')}
 						/>
 						<Tab
 							label="Facturación"
-							icon={<img src={facturaIcon} alt="icono factura" className={classes.iconSvg} />}
+							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/factura.svg' alt="icono factura" className={classes.iconSvg} />}
 							{...a11yProps(6)}
 						/>
 						
@@ -132,7 +132,6 @@ function AdminInicio(props) {
 					<TabPanel value={value} index={1}>
 						<Almacenes />
 					</TabPanel>
-				
 					<TabPanel value={value} index={2}>
 						<Compras />
 					</TabPanel>

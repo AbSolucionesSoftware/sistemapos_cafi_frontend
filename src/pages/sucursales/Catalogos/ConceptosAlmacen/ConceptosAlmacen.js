@@ -45,7 +45,7 @@ export default function ConceptosAlmacen() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={conceptosAlmacen} alt="icono numero calzado" className={classes.icon} />
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/conceptosAlmacen.svg' alt="icono numero calzado" className={classes.icon} />
 					</Box>
 					Conceptos Almacén
 				</Box>

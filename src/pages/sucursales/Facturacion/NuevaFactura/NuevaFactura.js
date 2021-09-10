@@ -42,7 +42,7 @@ export default function NuevaFactura() {
 				<Button fullWidth onClick={handleClickOpen}>
 					<Box display="flex" flexDirection="column">
 						<Box display="flex" justifyContent="center" alignItems="center" mb={2}>
-							<img src={factura} alt="icono Factura" style={{width: 100}} />
+							<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/facturaNueva.svg' alt="icono Factura" style={{width: 100}} />
 						</Box>
 						Generar Factura
 					</Box>
