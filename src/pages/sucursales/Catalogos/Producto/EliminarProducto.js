@@ -41,6 +41,7 @@ export default function EliminarProducto({ datos, productosRefetch }) {
 		} catch (error) {
 			setAlert({ message: `Error: ${error.message}`, status: 'error', open: true });
 			setLoading(false);
+			handleToggleModal();
 		}
 	};
 
