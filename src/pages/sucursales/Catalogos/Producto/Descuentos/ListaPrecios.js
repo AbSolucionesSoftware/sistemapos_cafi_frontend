@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { Delete } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -10,12 +11,20 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
+import { Button, Dialog, DialogActions, DialogTitle, IconButton, Switch } from '@material-ui/core';
+
+import {  DESACTIVAR_DESCUENTOS, ELIMINAR_DESCUENTOS } from '../../../../../gql/Catalogos/descuentos';
+import { useMutation } from '@apollo/client';
+import SnackBarMessages from '../../../../../components/SnackBarMessages';
 
 const headCells = [
-	{ id: 'precio',  label: 'Precio' },
 	{ id: 'cantidad',  label: 'Cantidad' },
 	{ id: 'tipo',  label: 'Tipo' },
-	{ id: 'activo',  label: 'Activo' }
+	{ id: 'precio',  label: 'Precio U.' },
+	{ id: 'precioDes',  label: 'Precio Desc.' },
+	{ id: 'descuento',  label: '% Desc.' },
+	{ id: 'eliminar',  label: 'Eliminar'},
+	{ id: 'activo',  label: 'Activo'}
 ];
 
 function EnhancedTableHead(props) {
@@ -49,10 +58,7 @@ function EnhancedTableHead(props) {
 EnhancedTableHead.propTypes = {
 	classes: PropTypes.object.isRequired,
 	numSelected: PropTypes.number.isRequired,
-	onRequestSort: PropTypes.func.isRequired,
 	onSelectAllClick: PropTypes.func.isRequired,
-	order: PropTypes.oneOf([ 'asc', 'desc' ]).isRequired,
-	orderBy: PropTypes.string.isRequired,
 	rowCount: PropTypes.number.isRequired
 };
 
@@ -65,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
 		marginBottom: theme.spacing(2)
 	},
 	table: {
-		minWidth: 300
+		height: 300
 	},
 	visuallyHidden: {
 		border: 0,
@@ -80,9 +86,24 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaPreciosDescuentos({activeDescount, setActiveDescount, setPreciosProductos, precios}) {
+export default function TablaPreciosDescuentos(
+	{ 
+		value,
+		setCleanList, 
+		cleanList, 
+		verificarDatos, 
+		setPrecioPrueba,
+		productosRefetch,
+		setPreciosProductos, 
+		precios,
+		setLoading
+	}
+	) {
+
 	const classes = useStyles();
-	
+	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+	var porcentaje  =  parseFloat((100 - value).toFixed(2));
+
 	const [ selected, setSelected ] = useState([]);
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(5);
@@ -90,10 +111,11 @@ export default function TablaPreciosDescuentos({activeDescount, setActiveDescoun
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {
 			const newSelecteds = precios.map((n) => n);
-			setSelected(newSelecteds);
+			setSelected(newSelecteds); 
+			verificarDatos(newSelecteds);
 			setPreciosProductos(newSelecteds);
 			return;
-		}
+		};
 		setPreciosProductos([]); 
 		setSelected([]);
 	};
@@ -110,10 +132,12 @@ export default function TablaPreciosDescuentos({activeDescount, setActiveDescoun
 		} else if (selectedIndex > 0) {
 			newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
 		}
+		setPrecioPrueba(newSelected.length === 0 ? 0 : newSelected);
 		setPreciosProductos(newSelected);
+		verificarDatos(newSelected);
 		setSelected(newSelected);
 	};
-
+	
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
 	};
@@ -123,19 +147,25 @@ export default function TablaPreciosDescuentos({activeDescount, setActiveDescoun
 		setPage(0);
 	};
 
+	useEffect(() => {
+		setSelected([]);
+		setCleanList(false);
+	}, [cleanList]);
+
 	const isSelected = (_id) => selected.indexOf(_id) !== -1;
 
 	const emptyRows = rowsPerPage - Math.min(rowsPerPage, precios.length - page * rowsPerPage);
 
 	return (
 		<div className={classes.root}>
+			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<Paper className={classes.paper}>
-				<TableContainer>
+				<TableContainer className={classes.table}>
 					<Table
 						className={classes.table}
 						aria-labelledby="tableTitle"
-						size="medium"
-						aria-label="enhanced table"
+						size="small" 
+						aria-label="a dense table"
 					>
 						<EnhancedTableHead
 							classes={classes}
@@ -147,28 +177,20 @@ export default function TablaPreciosDescuentos({activeDescount, setActiveDescoun
 							{precios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
 								const isItemSelected = isSelected(row);
 								const labelId = `enhanced-table-checkbox-${index}`;
-
 								return (
-									<TableRow
-										hover
-										onClick={(event) => handleClick(event, row)}
-										role="checkbox"
-										aria-checked={isItemSelected}
-										tabIndex={-1}
-										key={row._id}
-										selected={isItemSelected}
-									>
-										<TableCell padding="checkbox">
-											<Checkbox
-												checked={isItemSelected}
-												inputProps={{ 'aria-labelledby': labelId }}
-											/>
-										</TableCell>
-										<TableCell align="center">{row.precio}</TableCell>
-										<TableCell align="center">{row.cantidad}</TableCell>
-										<TableCell align="center">{row.cantidad > 1 ? "Cajas" : "Pieza"}</TableCell>
-										<TableCell align="center">Act.</TableCell>
-									</TableRow>
+									<RowsRender
+									    setLoading={setLoading}
+										key={index}
+										productosRefetch={productosRefetch}
+										handleClick={handleClick} 
+										selected={selected} 
+										row={row}
+										setAlert={setAlert}
+										porcentaje={porcentaje}
+										value={value}
+										isItemSelected={isItemSelected} 
+										labelId={labelId} 
+									/>
 								);
 							})}
 							{emptyRows > 0 && (
@@ -192,3 +214,138 @@ export default function TablaPreciosDescuentos({activeDescount, setActiveDescoun
 		</div>
 	);
 }
+
+function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, porcentaje, productosRefetch, handleClick, selected}) {
+
+	const [openModal, setOpenModal] = useState(false);
+
+	const [ DesactivarDescuentoUnidad ] = useMutation(DESACTIVAR_DESCUENTOS);
+	const [ ELiminarDescuentoUnidad ] = useMutation(ELIMINAR_DESCUENTOS);
+
+	const handleChangeActivo = async () => {
+		setLoading(true);
+		try {
+			await DesactivarDescuentoUnidad({
+				variables: {
+					input: {
+						descuento_activo: !row.descuento_activo,
+					},
+					id: row._id
+				}
+			});
+			setLoading(false);
+			productosRefetch();
+			setAlert({ message: 'Estado de descuento actualizado', status: 'success', open: true });
+		} catch (error) {
+			console.log(error);
+			setAlert({ message: 'Ocurrio un problema en el servidor' , status: 'error', open: true });
+		}
+	};
+
+	const handleModal =()=>{
+		setOpenModal(!openModal);
+	}
+
+	const handleDelete = async () => {
+		setLoading(true);
+		try {
+			const resultado = await ELiminarDescuentoUnidad({
+				variables: {
+					id: row._id,
+				}
+			});
+			setLoading(false);
+			productosRefetch();
+			handleModal();
+			setAlert({ message: resultado.data.eliminarDescuentoUnidad.message, status: 'success', open: true });
+		} catch (error) {
+			console.log(error);
+			setAlert({ message: error.message, status: 'error', open: true });
+		}
+	}
+
+	
+
+	return(
+		<TableRow
+			hover
+			// onClick={(event) => handleClick(event, row)}
+			role="checkbox"
+			aria-checked={isItemSelected}
+			tabIndex={-1}
+			key={row._id}
+			selected={isItemSelected}
+		>
+			<TableCell padding="checkbox">
+				<Checkbox
+					onClick={(event) => handleClick(event, row)}
+					checked={isItemSelected}
+					inputProps={{ 'aria-labelledby': labelId }}
+				/>
+			</TableCell>
+			<TableCell align="center">{row.cantidad}</TableCell>
+			<TableCell align="center">{row.cantidad > 1 ? "Cajas" : "Pieza"}</TableCell>
+			<TableCell align="center">{row.precio}</TableCell>
+
+			<TableCell align="center">
+				{selected.length  <= 1 ? (
+					!row.descuento ? 0 : <b style={{color: 'green'}}>{row.descuento.precio_con_descuento}</b>
+				):
+					<b style={{color: 'green'}}>{parseFloat((row.precio * porcentaje / 100).toFixed(2))}</b>
+				}
+			</TableCell>
+			<TableCell align="center">
+				{selected.length  <= 1 ? (
+					!row.descuento ? 0 : <b style={{color: 'red'}}>{row.descuento.porciento}%</b>
+				):
+					<b style={{color: 'red'}}>{value}%</b>
+				}
+				{/* {!row.descuento ? 
+					<b style={{color: 'black'}}>0%</b>
+					: <b style={{color: 'red'}}>{row.descuento.porciento}%</b>
+				} */}
+			</TableCell>
+			<TableCell align="center">
+				<Modal row={row} handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
+			</TableCell>
+			<TableCell key={row._id} align="center">
+				<Switch
+					key={row._id}
+					onChange={handleChangeActivo}
+					color="primary"
+					disabled={ !row.descuento ? true 
+						 : ( row.descuento.porciento === 0 ? true : false ) }
+					defaultChecked={row.descuento_activo ? row.descuento_activo : false}
+					name="descuento_activo"
+					inputProps={{ 'aria-label': 'secondary checkbox' }}
+				/>
+			</TableCell>
+		</TableRow>
+	)
+};
+
+const Modal = ({row, handleModal, openModal, handleDelete }) => {
+	return (
+		<div>
+			<IconButton 
+				color="secondary" 
+				onClick={handleModal}
+				disabled={ !row.descuento ? true 
+					: ( row.descuento.porciento === 0 ? true : false ) }
+			>
+				<Delete />
+			</IconButton>
+			<Dialog open={openModal} onClose={handleModal}>
+				<DialogTitle>{'¿Seguro que quieres eliminar esto?'}</DialogTitle>
+				<DialogActions>
+					<Button onClick={handleModal} color="primary">
+						Cancelar
+					</Button>
+					<Button color="secondary" autoFocus variant="contained" onClick={handleDelete}>
+						Eliminar
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</div>
+	);
+};

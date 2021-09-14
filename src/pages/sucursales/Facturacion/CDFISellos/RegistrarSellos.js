@@ -56,7 +56,7 @@ export default function RegistroSellos() {
                 <Grid item lg={12}>
                     <Box m={3} display="flex" justifyContent="center">
                         <Box display="flex" alignItems='center'>
-                            <img src={sello} alt="icono Factura" style={{width: 70}} />
+                            <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/validacion.svg' alt="icono Factura" style={{width: 70}} />
                         </Box>
                         <Box mr={3} ml={3}>
                             <Divider orientation='vertical' />

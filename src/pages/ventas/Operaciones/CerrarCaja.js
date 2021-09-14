@@ -20,7 +20,7 @@ export default function CerrarCaja({handleClickOpen}) {
                             alignItems="center"
                         >
                             <Box>
-                                <img src={cashregisterIcon} alt="icono caja" className={classes.iconSizeDialogs} />
+                                <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cash-register.svg' alt="icono caja" className={classes.iconSizeDialogs} />
                             </Box>
                             <Box ml={2}>
                                 <Box textAlign="left">

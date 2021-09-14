@@ -196,12 +196,12 @@ export default function CrearCliente({ tipo, accion, datos }) {
 						>
 							<Tab
 								label="Información básica"
-								icon={<img src={perfilIcon} alt="icono perfil" className={classes.iconSvg} />}
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/perfil.svg' alt="icono perfil" className={classes.iconSvg} />}
 								{...a11yProps(0)}
 							/>
 							<Tab
 								label="Datos Crediticios"
-								icon={<img src={fiscalIcon} alt="icono factura" className={classes.iconSvg} />}
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/fiscal.svg' alt="icono factura" className={classes.iconSvg} />}
 								{...a11yProps(1)}
 							/>
 							<Box ml={58} mt={3} >

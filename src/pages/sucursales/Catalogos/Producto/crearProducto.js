@@ -33,8 +33,8 @@ import {
 	initial_state_centro_de_costos,
 	initial_state_preciosPlazos
 } from '../../../../context/Catalogos/initialStatesProducto';
-import { Close, Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
-import SnackBarMessages from '../../../../components/SnackBarMessages';
+import { Add, Close, Edit, NavigateBefore, NavigateNext } from '@material-ui/icons';
+/* import SnackBarMessages from '../../../../components/SnackBarMessages'; */
 
 export const initial_state_preciosP = [
 	{
@@ -173,12 +173,15 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		imagenes_eliminadas,
 		setImagenesEliminadas,
 		presentaciones,
-		setPresentaciones
+		setPresentaciones,
+		presentaciones_eliminadas,
+		setPresentacionesEliminadas
 	} = useContext(RegProductoContext);
 
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
-	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+	/* const [ alert, setAlert ] = useState({ message: '', status: '', open: false }); */
+	const { alert, setAlert } = useContext(RegProductoContext);
 	const [ loading, setLoading ] = useState(false);
 	const tipo = datos_generales.tipo_producto;
 
@@ -203,7 +206,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 	/* ###### GUARDAR LA INFO EN LA BD ###### */
 
 	const saveData = async () => {
-		const validate = validaciones(datos_generales, precios, almacen_inicial, presentaciones);
+		const validate = validaciones(datos_generales, precios, almacen_inicial, presentaciones, datos);
 
 		if (validate.error) {
 			setValidacion(validate);
@@ -234,37 +237,36 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 			centro_de_costos,
 			unidades_de_venta: await validateJsonEdit(unidadesVenta, 'unidades_de_venta'),
 			presentaciones,
+			presentaciones_eliminadas,
 			precio_plazos: preciosPlazos,
 			empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id,
 			usuario: sesion._id
 		};
 
-		console.log(input);
-
 		setLoading(true);
 		try {
 			if (accion) {
-				await actualizarProducto({
+				const result = await actualizarProducto({
 					variables: {
 						input,
 						id: datos._id
 					}
 				});
+				setAlert({ message: `¡Listo! ${result.data.actualizarProducto.message}`, status: 'success', open: true });
 			} else {
-				await crearProducto({
+				const result = await crearProducto({
 					variables: {
 						input
 					}
 				});
+				setAlert({ message: `¡Listo! ${result.data.crearProducto.message}`, status: 'success', open: true });
 			}
 			productosRefetch();
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setLoading(false);
 			toggleModal();
 		} catch (error) {
-			console.log(error);
-			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			setAlert({ message: `Error: ${error.message}`, status: 'error', open: true });
 			setLoading(false);
 		}
 	};
@@ -338,6 +340,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setSubcostos([]);
 		setImagenesEliminadas([]);
 		setPresentaciones([]);
+		setPresentacionesEliminadas([]);
 		setValue(0);
 	};
 
@@ -354,7 +357,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 		setUnidadesVenta(producto.unidades_de_venta);
 		setPreciosP(producto.precios.precios_producto);
 		setUnidadVentaXDefecto(unidadxdefecto[0]);
-		setPresentaciones(producto.medidas_producto);
+		setPresentaciones(producto.medidas_producto ? producto.medidas_producto : []);
 	};
 
 	function funcion_tecla(event) {
@@ -416,7 +419,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 
 	return (
 		<Fragment>
-			<SnackBarMessages alert={alert} setAlert={setAlert} />
+			{/* <SnackBarMessages alert={alert} setAlert={setAlert} /> */}
 			{!accion ? (
 				<Button
 					id="modal-registro-product"
@@ -424,6 +427,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 					variant="contained"
 					size="large"
 					onClick={() => toggleModal()}
+					startIcon={<Add />}
 				>
 					Nuevo producto
 				</Button>
@@ -464,7 +468,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 										}}
 										invisible={validacion.error && validacion.vista1 ? false : true}
 									>
-										<img src={registroIcon} alt="icono registro" className={classes.iconSvg} />
+										<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/portapapeles.svg' alt="icono registro" className={classes.iconSvg} />
 									</Badge>
 								}
 								{...a11yProps(0)}
@@ -481,7 +485,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 										}}
 										invisible={validacion.error && validacion.vista2 ? false : true}
 									>
-										<img src={ventasIcon} alt="icono venta" className={classes.iconSvg} />
+										<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/etiqueta-de-precio.svg' alt="icono venta" className={classes.iconSvg} />
 									</Badge>
 								}
 								{...a11yProps(1)}
@@ -498,24 +502,24 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 										}}
 										invisible={validacion.error && validacion.vista3 ? false : true}
 									>
-										<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />
+										<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tarea-completada.svg' alt="icono almacen" className={classes.iconSvg} />
 									</Badge>
 								}
 								{...a11yProps(2)}
 							/>
 							<Tab
 								label="Centro de costos"
-								icon={<img src={costosIcon} alt="icono almacen" className={classes.iconSvg} />}
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/costos.svg' alt="icono almacen" className={classes.iconSvg} />}
 								{...a11yProps(3)}
 							/>
 							<Tab
 								label="Precios a plazos"
-								icon={<img src={calendarIcon} alt="icono almacen" className={classes.iconSvg} />}
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/calendar.svg' alt="icono almacen" className={classes.iconSvg} />}
 								{...a11yProps(4)}
 							/>
 							<Tab
 								label="Imagenes"
-								icon={<img src={imagenesIcon} alt="icono imagenes" className={classes.iconSvg} />}
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/imagenes.svg' alt="icono imagenes" className={classes.iconSvg} />}
 								{...a11yProps(5)}
 							/>
 							{accion ? datos_generales.tipo_producto !== 'OTROS' ? (
@@ -531,11 +535,7 @@ export default function CrearProducto({ accion, datos, productosRefetch }) {
 											}}
 											invisible={validacion.error && validacion.vista7 ? false : true}
 										>
-											<img
-												src={tallasColoresIcon}
-												alt="icono colores"
-												className={classes.iconSvg}
-											/>
+											<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tallas-colores.svg' alt="icono colores" className={classes.iconSvg} />
 										</Badge>
 									}
 									{...a11yProps(6)}
@@ -591,7 +591,7 @@ const ContenidoModal = ({ value, datos }) => {
 	const { loading, data, error, refetch } = useQuery(OBTENER_CONSULTAS, {
 		variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id }
 	});
-
+	
 	if (loading)
 		return (
 			<Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" height="80vh">

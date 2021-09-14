@@ -96,7 +96,7 @@ export default function VistaRegistroEgreso({handleClickOpen}) {
 					>
 						<Tab
 							label="Egreso a Credito"
-							icon={<img src={addIcon} alt="icono perfil" className={classes.iconSvg} />}
+							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/add.svg' alt="icono perfil" className={classes.iconSvg} />}
 							{...a11yProps(0)}
 						/>
 						<Tab

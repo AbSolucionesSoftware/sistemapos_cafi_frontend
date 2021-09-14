@@ -45,7 +45,7 @@ export default function CentroCostos() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={costosIcon} alt="icono numero calzado" className={classes.icon} />
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/costos.svg' alt="icono numero calzado" className={classes.icon} />
 					</Box>
 					Centro de costos
 				</Box>

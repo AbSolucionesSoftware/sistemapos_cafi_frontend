@@ -34,7 +34,7 @@ export default function SellosCDFI() {
             <Button onClick={handleClickOpen}>
                 <Box display="flex" flexDirection="column">
                     <Box display="flex" justifyContent="center" alignItems="center" mb={2}>
-                        <img src={sello} alt="icono Factura" style={{width: 100}} />
+                        <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/validacion.svg' alt="icono Factura" style={{width: 100}} />
                     </Box>
                     Registrar Sellos CDFI
                 </Box>

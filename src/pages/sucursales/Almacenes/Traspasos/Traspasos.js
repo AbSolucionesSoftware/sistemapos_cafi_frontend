@@ -158,7 +158,7 @@ export default function Traspasos() {
                         <Grid item lg={2} >
                             <Box display="flex" justifyContent="center" alignItems="center">
                                     <Box display="flex" justifyContent="center" alignItems="center">
-                                        <img src={almacenIcon} alt="icono almacen" className={classes.imagen}/>
+                                        <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/almacen.svg' alt="icono almacen" className={classes.imagen}/>
                                     </Box>
                             </Box>
                         </Grid>
@@ -166,7 +166,7 @@ export default function Traspasos() {
                             <Box display="flex" justifyContent="center" alignItems="center">
                                 <Box display="flex" flexDirection="column">
                                     <Box display="flex" justifyContent="center" alignItems="center">
-                                        <img src={almacenIcon} alt="icono almacen" className={classes.imagen} />
+                                        <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/almacen.svg' alt="icono almacen" className={classes.imagen} />
                                     </Box>
                                 </Box>
                             </Box>

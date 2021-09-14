@@ -223,7 +223,11 @@ export default function InventariosPorAlmacen() {
             <Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
+<<<<<<< HEAD
 						<img src={'https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/conceptosAlmacen.svg'} alt="icono almacen" className={classes.imagen}/>
+=======
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/conceptosAlmacen.svg' alt="icono almacen" className={classes.imagen}/>
+>>>>>>> 5bf0f4a849fb9ece2ee494a6f258e8b8db8f0a03
 					</Box>
 					Inventario por almacen
 				</Box>
