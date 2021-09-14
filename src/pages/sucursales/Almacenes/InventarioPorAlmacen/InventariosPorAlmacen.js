@@ -69,7 +69,6 @@ export default function InventariosPorAlmacen() {
 	const [ filtro, setFiltro ] = React.useState({  codigo_barras: '',clave_alterna: '',tipo_producto: '',nombre_comercial: '',
         nombre_generico: '',categoria: '',subcategoria: ''});
 	const [ filtroTo, setFiltroTo ] = React.useState({});
-	const [ busqueda, setBusqueda ] = React.useState('');
 	const [ tipo, setTipo ] = React.useState('');
 	const [ almacen, setAlmacen ] = React.useState('');
 	const [ categoria, setCategorias ] = React.useState('');
@@ -115,7 +114,7 @@ export default function InventariosPorAlmacen() {
 
 	React.useEffect(
 		() => {
-			console.log("FiltroTo",filtroTo)
+		
 			refetch();
 		},
 		[ filtroTo ]
@@ -132,7 +131,6 @@ export default function InventariosPorAlmacen() {
 			setLoading(true);
 			refetch();
 			setLoading(false);
-			
 		},
 		[ refetch ]
 	);
@@ -168,33 +166,6 @@ export default function InventariosPorAlmacen() {
 		setOpen(false);
 	};
 	
-	const handleChange = (event) => {
-        setTipo(event.target.value);
-    };
-
-	const handleChangeAlm = (event) => {
-		try {
-			//console.log('HANDLECHANGEALM:', event.target.value )
-			setAlmacen(event.target.value);
-			refetch();
-		} catch (error) {
-			console.log(error)
-		}
-		
-    };
-
-
-	const handleChangeCat = (event) => {
-		try {
-		
-			setAlmacen(event.target.value);
-			refetch();
-		} catch (error) {
-			console.log(error)
-		}
-		
-    };
-
 	const setValToFilter = (label,value) => {
 		try {
 			if(label == 'categoria' && value != ''){
@@ -223,11 +194,7 @@ export default function InventariosPorAlmacen() {
             <Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-<<<<<<< HEAD
 						<img src={'https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/conceptosAlmacen.svg'} alt="icono almacen" className={classes.imagen}/>
-=======
-						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/conceptosAlmacen.svg' alt="icono almacen" className={classes.imagen}/>
->>>>>>> 5bf0f4a849fb9ece2ee494a6f258e8b8db8f0a03
 					</Box>
 					Inventario por almacen
 				</Box>
