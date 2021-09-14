@@ -1,13 +1,15 @@
 import React, { forwardRef } from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Select,useTheme,FormControl,
-Slide, Button, Box, Dialog,Input, TextField, Grid, InputLabel, MenuItem} from '@material-ui/core';
+Slide, Button, Box, Dialog,Input, TextField, Grid, InputLabel, MenuItem,CircularProgress, OutlinedInput, InputAdornment } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useQuery } from '@apollo/client';
 // import { FcPlus } from 'react-icons/fc';
 // import inventarioAlmacen from '../../../../icons/warehouse.svg';
-import CloseIcon from '@material-ui/icons/Close';
+import {Close, Search} from '@material-ui/icons';
 import ListaProductos from './ListaProductos'
-import { OBTENER_PRODUCTOS_ALMACEN } from '../../../../gql/Almacenes/Almacen';
+import ErrorPage from '../../../../components/ErrorPage'
+import { useDebounce } from 'use-debounce';
+import { OBTENER_PRODUCTOS_ALMACEN, OBTENER_CATEGORIAS,OBTENER_ALMACENES } from '../../../../gql/Almacenes/Almacen';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -18,17 +20,22 @@ const useStyles = makeStyles((theme) => ({
 		flex: 1
 	},
 	boxControl: {
-        margin: theme.spacing(1),
-        minWidth: 220,
-        maxWidth: 220,
-		
-		
+        margin: theme.spacing(2.5),
+		marginTop: 0,
+        minWidth: "20%",
+        maxWidth: "20%",
     },
     icon: {
 		fontSize: 100
 	},
 	imagen: {
 		width: 100
+	},
+	inputBox:{
+		margin:20
+	},
+	button:{
+		margin: theme.spacing(3),
 	}
 }));
 
@@ -57,39 +64,102 @@ export default function InventariosPorAlmacen() {
     const classes = useStyles();
 	const theme = useTheme();
 	const [ open, setOpen ] = React.useState(false);
-	const [ filtro, setFiltro ] = React.useState('');
+	const [ loading, setLoading ] = React.useState(false);
+	  
+	const [ filtro, setFiltro ] = React.useState({  codigo_barras: '',clave_alterna: '',tipo_producto: '',nombre_comercial: '',
+        nombre_generico: '',categoria: '',subcategoria: ''});
+	const [ filtroTo, setFiltroTo ] = React.useState({});
+	const [ busqueda, setBusqueda ] = React.useState('');
 	const [ tipo, setTipo ] = React.useState('');
-	const [ categoria, setCategoria ] = React.useState('');
+	const [ almacen, setAlmacen ] = React.useState('');
+	const [ categoria, setCategorias ] = React.useState('');
+	const [ subcategoria, setSubcategoria ] = React.useState('');
+	const [ subcategorias, setSubcategorias ] = React.useState([]);
+	const [value] = useDebounce(filtro, 1000);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	let productos = [];
-	let tipos = [];
+	let tipos = ['ROPA','CALZADO','OTROS'];
 	let categorias = [];
 	
+	let obtenerAlmacenes = [];
+
 	/* Queries */
 	const {  data, error, refetch } = useQuery(OBTENER_PRODUCTOS_ALMACEN,{
 		variables: {
             empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id,
-			filtro
+			filtro: value
+		}
+	});	
+
+	const categoriasQuery = useQuery(OBTENER_CATEGORIAS,{
+		variables: {
+            empresa: sesion.empresa._id,
+			sucursal: sesion.sucursal._id,	
+		}
+	});
+	
+	const queryObtenerAlmacenes = useQuery(OBTENER_ALMACENES,{
+		variables: {
+			id: sesion.sucursal._id
 		}
 	});	
 	React.useEffect(
 		() => {
-			
+
+			setFiltroTo(value)
+		},
+		[ value ]
+	);
+
+	React.useEffect(
+		() => {
+			console.log("FiltroTo",filtroTo)
 			refetch();
+		},
+		[ filtroTo ]
+	);
+	React.useEffect(
+		() => {
+			queryObtenerAlmacenes.refetch();
+		},
+		[ queryObtenerAlmacenes.update, queryObtenerAlmacenes.refetch ]
+	);
+
+	React.useEffect(
+		() => {
+			setLoading(true);
+			refetch();
+			setLoading(false);
 			
 		},
 		[ refetch ]
-	); 
-	React.useEffect(() => {
-		console.log('====================================');
-		console.log(error);
-		console.log('====================================');
-	}, [error])
-	if(data){
-		productos = data.obtenerProductos;
-	}
+	);
 
+	React.useEffect(
+		() => {
+			setLoading(true);
+			categoriasQuery.refetch();
+			setLoading(false);
+		},
+		[ categoriasQuery.refetch ]
+	); 
+
+
+	if(data){
+		//console.log(data.obtenerProductosAlmacenes)
+		productos = data.obtenerProductosAlmacenes;
+	}
+	if(categoriasQuery.data){
+		categorias = categoriasQuery.data.obtenerCategorias;
+	}
+	
+	if(queryObtenerAlmacenes.data){
+		//console.log(queryObtenerAlmacenes.data.obtenerAlmacenes)
+		obtenerAlmacenes = queryObtenerAlmacenes.data.obtenerAlmacenes;
+	}
+	
 	const handleClickOpen = () => {
 		setOpen(true);
 	};
@@ -97,9 +167,57 @@ export default function InventariosPorAlmacen() {
 	const handleClose = () => {
 		setOpen(false);
 	};
+	
 	const handleChange = (event) => {
         setTipo(event.target.value);
     };
+
+	const handleChangeAlm = (event) => {
+		try {
+			//console.log('HANDLECHANGEALM:', event.target.value )
+			setAlmacen(event.target.value);
+			refetch();
+		} catch (error) {
+			console.log(error)
+		}
+		
+    };
+
+
+	const handleChangeCat = (event) => {
+		try {
+		
+			setAlmacen(event.target.value);
+			refetch();
+		} catch (error) {
+			console.log(error)
+		}
+		
+    };
+
+	const setValToFilter = (label,value) => {
+		try {
+			if(label == 'categoria' && value != ''){
+			
+				const cat = categorias.find(element => element.categoria == value);
+				setSubcategorias(cat.subcategorias)
+				
+			}
+
+			setFiltro({...filtro, [label] : value});
+		} catch (error) {
+			console.log(error)
+		}
+    };
+
+	if (loading)
+	return (
+		<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
+			<CircularProgress />
+		</Box>
+	);
+
+
     return (
         <div>
             <Button fullWidth onClick={handleClickOpen}>
@@ -119,7 +237,7 @@ export default function InventariosPorAlmacen() {
 						<Box mx={3}>
 							<Box m={1}>
 								<Button variant="contained" color="secondary" onClick={handleClose} size="large">
-									<CloseIcon style={{ fontSize: 30}}/>
+									<Close style={{ fontSize: 30}}/>
 								</Button>
 							</Box>
                         </Box>
@@ -128,117 +246,147 @@ export default function InventariosPorAlmacen() {
 						</IconButton>
 					</Toolbar>
 				</AppBar>
-				<Box mx={3} p={2}>
-					<div className={classes.formInputFlex}>
-					<Grid container direction="row">
-						<Box width="20%">
-							<Typography>Código de barras</Typography>
-							<Box display="flex">
-								<TextField
-									fullWidthß
-									size="small"
-									/* error */
-									name="codigo_barras"
-									id="form-producto-codigo-barras"
-									variant="outlined"
-									/* helperText="Incorrect entry." */
-								/>
-								
-							</Box>
-						</Box>
-						<Box width="20%">
-							<Typography>Clave alterna</Typography>
-							<Box display="flex">
-								<TextField
-									fullWidthß
-									size="small"
-									/* error */
-									name="clave_alterna"
-									id="form-producto-clave-alterna"
-									variant="outlined"
-									/* helperText="Incorrect entry." */
-								/>
-								
-							</Box>
-						</Box>
-						<FormControl className={classes.boxControl} style={{marginTop:10}} mt={5}>
-						
-							<InputLabel id="tipo-label"  >Tipo</InputLabel>
-							<Select
-							labelId="tipo-label"
-							id="tipo"
-							value={tipo}
-							onChange={handleChange}
-							input={<Input />}
-							MenuProps={MenuProps}
-							>
-							{tipos.map((almacen) => (
-								<MenuItem key={almacen} value={almacen} style={getStyles(almacen, tipo, theme)}>
-								{almacen}
-								</MenuItem>
-							))}
-							</Select>
-							
-						</FormControl>
-						<Box width="20%">
-							<Typography>Nombre comercial</Typography>
-							<Box display="flex">
-								<TextField
-									fullWidthß
-									size="small"
-									/* error */
-									name="clave_alterna"
-									id="form-producto-clave-alterna"
-									variant="outlined"
-									/* helperText="Incorrect entry." */
-								/>
-								
-							</Box>
-						</Box>
-						<Box width="20%">
-							<Typography>Nombre génerico</Typography>
-							<Box display="flex">
-								<TextField
-									fullWidthß
-									size="small"
-									/* error */
-									name="clave_alterna"
-									id="form-producto-clave-alterna"
-									variant="outlined"
-									/* helperText="Incorrect entry." */
-								/>
-								
-							</Box>
-						</Box>
+				<Grid container direction="row">
+                        <Box width="20%" className={classes.inputBox} >
+                            <Typography>Código de barras</Typography>
+                            <Box display="flex">
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    /* error */
+                                    name="codigo_barras"
+                                    id="form-producto-codigo-barras"
+                                    variant="outlined"
+                                    /* helperText="Incorrect entry." */
+                                    onChange={(e) =>  setValToFilter('codigo_barras', e.target.value)}
+                                />
+                            </Box>
+                        </Box>
+                        <Box width="20%" className={classes.inputBox} >
+                            <Typography>Clave alterna</Typography>
+                            <Box display="flex">
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    /* error */
+                                    name="clave_alterna"
+                                    id="form-producto-clave-alterna"
+                                    variant="outlined"
+                                    /* helperText="Incorrect entry." */
+									onChange={(e) =>  setValToFilter('clave_alterna', e.target.value)}
+                                />
+                            </Box>
+                        </Box>
+                        
+                        <Box width="20%" className={classes.inputBox} >
+                            <Typography>Nombre comercial</Typography>
+                            <Box display="flex">
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    /* error */
+                                    name="clave_alterna"
+                                    id="form-producto-clave-alterna"
+                                    variant="outlined"
+                                    /* helperText="Incorrect entry." */
+									onChange={(e) =>  setValToFilter('nombre_comercial', e.target.value)}
+                                />
+                            </Box>
+                        </Box>
+                        <Box width="20%" className={classes.inputBox} >
+                            <Typography>Nombre génerico</Typography>
+                            <Box display="flex">
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    /* error */
+                                    name="nombre_generico"
+                                    id="form-producto-nombre-generico"
+                                    variant="outlined"
+                                    /* helperText="Incorrect entry." */
+									onChange={(e) =>  setValToFilter('nombre_generico', e.target.value)}
+                                />
+                            </Box>
+                        </Box>
+                        <FormControl className={classes.boxControl} >
+                        
+                            <InputLabel id="tipo-label"  >Tipo</InputLabel>
+                            <Select
+                            labelId="tipo-label"
+                            id="tipo_producto"
+                            value={filtro.tipo_producto}
+                            onChange={(e) => setValToFilter('tipo_producto', e.target.value )}
+                            input={<Input />}
+                            MenuProps={MenuProps}
+                            >
+                                <MenuItem value="">
+                                    <em>Selecciona uno</em>
+                                </MenuItem>
+                                <MenuItem value="ROPA">Ropa</MenuItem>
+                                <MenuItem value="CALZADO">Calzado</MenuItem>
+                                <MenuItem value="OTROS">Otros</MenuItem>
+                            </Select>
+                            
+                        </FormControl>
+                        <FormControl className={classes.boxControl} >
+                        
+                            <InputLabel id="categoria-label"  >Categoría</InputLabel>
+                            <Select
+                            labelId="categoria-label"
+                            id="categoria"
+                            value={filtro.categoria}
+                            onChange={(e) => setValToFilter('categoria', e.target.value )}
+                            input={<Input />}
+                            MenuProps={MenuProps}
+                            >
+							 <MenuItem value="">
+                                <em>Selecciona una</em>
+                            </MenuItem>
+                            {categorias.map((cat) => (
+                                <MenuItem key={cat._id} value={cat.categoria}  style={getStyles(cat._id, categoria, theme)}>
+                                {cat.categoria}
+                                </MenuItem>
+                            ))}
+                            </Select>
+                            
+                        </FormControl>
 						<FormControl className={classes.boxControl} >
-						
-							<InputLabel id="categoria-label"  >Categoría</InputLabel>
-							<Select
-							labelId="categoria-label"
-							id="categoria"
-							value={categoria}
-							onChange={handleChange}
-							input={<Input />}
-							MenuProps={MenuProps}
-							>
-							{categorias.map((cat) => (
-								<MenuItem key={cat} value={cat} style={getStyles(cat, categoria, theme)}>
-								{categoria}
-								</MenuItem>
-							))}
-							</Select>
-							
-						</FormControl>
-					</Grid>	
-					</div>
-					<Button  variant="contained" color="primary" style={{marginTop:10, width:"15%"}} >
-						Buscar
-					</Button>
-				</Box>
-				
-				<Box mx={5}>
-					<ListaProductos productos={productos} />
-				</Box>
+                        
+                            <InputLabel id="subcategoria-label"  >Subcategoría</InputLabel>
+                            <Select
+                            labelId="subcategoria-label"
+                            id="subcategoria"
+                            value={filtro.subcategoria}
+                            onChange={(e) => setValToFilter('subcategoria', e.target.value )}
+                            input={<Input />}
+                            MenuProps={MenuProps}
+                            >
+							 <MenuItem value="">
+                                    <em>Selecciona una</em>
+                                </MenuItem>
+                            {subcategorias.map((subcat) => (
+                                <MenuItem key={subcat._id} value={subcat.subcategoria} style={getStyles(subcat._id, subcategoria, theme)}>
+                                {subcat.subcategoria}
+                                </MenuItem>
+                            ))}
+                            </Select>
+                            
+                        </FormControl>
+                    
+                        <Button  variant="contained" color="primary" className={classes.button} style={{width:"20%"}} >
+                            Buscar producto
+                        </Button>
+                    </Grid> 
+
+				{
+					(error || categoriasQuery.error) ?
+						<ErrorPage error={error} />
+					:
+					<Box mx={5}>
+						<ListaProductos productos={productos} obtenerAlmacenes={obtenerAlmacenes} />
+					</Box>
+					
+				}
 			</Dialog>
         </div>
     )

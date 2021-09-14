@@ -57,8 +57,8 @@ export const ACTUALIZAR_ALMACEN = gql`
 `;
 
 export const OBTENER_PRODUCTOS_ALMACEN = gql`
-	query obtenerProductos($empresa: ID!, $sucursal: ID!, $filtro: String!) {
-		obtenerProductos(empresa: $empresa, sucursal: $sucursal, filtro: $filtro) {
+	query obtenerProductosAlmacenes($empresa: ID!, $sucursal: ID!, $filtro: FilterProductoInput) {
+		obtenerProductosAlmacenes(empresa: $empresa, sucursal: $sucursal, filtro: $filtro) {
 			_id
 			datos_generales {
 				codigo_barras
@@ -78,8 +78,32 @@ export const OBTENER_PRODUCTOS_ALMACEN = gql`
 				clave_producto_sat
 				receta_farmacia
 			}
+            existencia_almacenes{
+                _id{
+                producto
+                almacen{
+                    _id
+                    nombre_almacen
+                }
+                }
+                cantidad_existente
+            }
 			empresa
 			sucursal
+		}
+	}
+`;
+
+export const OBTENER_CATEGORIAS = gql`
+	query obtenerCategorias($empresa: ID!, $sucursal: ID!) {
+		obtenerCategorias(empresa: $empresa, sucursal: $sucursal) {
+			_id
+			categoria
+			subcategorias {
+				_id
+				subcategoria
+			}
+			
 		}
 	}
 `;

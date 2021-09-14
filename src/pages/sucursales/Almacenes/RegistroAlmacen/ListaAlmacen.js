@@ -55,11 +55,11 @@ export default function ListaAlmacen() {
 	const [ page, setPage ] = React.useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = React.useState(10);
 	const { update } = useContext(CrearAlmacenContext);
- 
+     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));	
 	/* Queries */
 	const { loading, data, error, refetch } = useQuery(OBTENER_ALMACENES,{
 		variables: {
-			id: "60c8e180340d5d223432a916"
+			id: sesion.sucursal._id
 		}
 	});	
 	
