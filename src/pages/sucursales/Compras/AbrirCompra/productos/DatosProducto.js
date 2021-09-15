@@ -1,26 +1,20 @@
 import React, { Fragment, useContext, useState } from "react";
-import {
-  Grid,
-  Box,
-  TextField,
-  Typography,
-  Button,
-  CircularProgress,
-  InputAdornment,
-} from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import RegistroProvedor from "../proveedor/RegistroProvedor";
-import RegistroAlmacen from "../almacen/RegistroAlmacen";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+
+import RegistroProvedor from "../../../Catalogos/Cliente/CrearCliente";
+import RegistroAlmacen from "../../../Almacenes/RegistroAlmacen/ContainerRegistroAlmacen";
 import PreciosProductos from "./PreciosProductos";
 import TallasProductos from "./TallasProducto";
-
-import { useQuery } from "@apollo/client";
-import { OBTENER_CONSULTA_GENERAL_PRODUCTO } from "../../../../../gql/Compras/compras";
-
-import { Add } from "@material-ui/icons";
-import ErrorPage from "../../../../../components/ErrorPage";
-import { ComprasContext } from "../../../../../context/Compras/comprasContext";
-import { formatoMexico } from "../../../../../config/reuserFunctions";
+import Add from "@material-ui/icons/Add";
 
 import "date-fns";
 import local from "date-fns/locale/es";
@@ -29,7 +23,7 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
-import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
+
 import {
   initial_state_almacen_inicial,
   initial_state_centro_de_costos,
@@ -42,7 +36,17 @@ import CrearProducto, {
   initial_state_preciosP,
 } from "../../../Catalogos/Producto/crearProducto";
 import { validaciones } from "../../../Catalogos/Producto/validaciones";
+import { formatoMexico } from "../../../../../config/reuserFunctions";
 import SnackBarMessages from "../../../../../components/SnackBarMessages";
+import ErrorPage from "../../../../../components/ErrorPage";
+
+import { ComprasContext } from "../../../../../context/Compras/comprasContext";
+import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
+import { AlmacenProvider } from "../../../../../context/Almacenes/crearAlmacen";
+import { ClienteProvider } from "../../../../../context/Catalogos/crearClienteCtx";
+
+import { useQuery } from "@apollo/client";
+import { OBTENER_CONSULTA_GENERAL_PRODUCTO } from "../../../../../gql/Compras/compras";
 
 export default function DatosProducto() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -365,7 +369,13 @@ export default function DatosProducto() {
                   : null
               }
             />
-            <RegistroProvedor />
+            <ClienteProvider>
+              <RegistroProvedor
+                accion="registrar"
+                tipo="PROVEEDOR"
+                refetch={refetch}
+              />
+            </ClienteProvider>
           </Box>
         </Grid>
         <Grid item xs={12} md={4}>
@@ -385,7 +395,9 @@ export default function DatosProducto() {
                 datosCompra.almacen.nombre_almacen ? datosCompra.almacen : null
               }
             />
-            <RegistroAlmacen />
+            <AlmacenProvider>
+              <RegistroAlmacen accion="registrar" refetch={refetch} />
+            </AlmacenProvider>
           </Box>
         </Grid>
         <Grid item xs={12} md={4}>
@@ -409,68 +421,28 @@ export default function DatosProducto() {
       </Grid>
       <Box my={2} />
 
-      <Box display="flex" width="100%" border={1}>
-        {datosProducto.producto.datos_generales ? (
-          <Box display="flex">
-            <PreciosProductos />
-            <Box mx={1} />
-            <TallasProductos />
-            <Grid container spacing={3}>
-              <Grid item>
-                <Typography style={{ fontSize: 18 }}>
-                  Subtotal: <b>${formatoMexico(datosProducto.subtotal)}</b>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography style={{ fontSize: 18 }}>
-                  Impuestos: <b>${formatoMexico(datosProducto.impuestos)}</b>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography style={{ fontSize: 18 }}>
-                  <b>Total: ${formatoMexico(datosProducto.total)}</b>
-                </Typography>
-              </Grid>
-            </Grid>
-          </Box>
-        ) : (
-          <CrearProducto
-            accion={false}
-            productosRefetch={refetch}
-            fromCompra={true}
-          />
-        )}
+      <Box mb={1}>
+        <CrearProducto
+          accion={false}
+          productosRefetch={refetch}
+          fromCompra={true}
+        />
       </Box>
       <Grid container spacing={2}>
         <Grid item xs={12} md={2}>
-          <Autocomplete
-            id="combo-box-producto-codigo"
+          <TextField
+            id="input-producto-codigo"
+            name="codigo_barras"
+            label="Código de barras"
+            variant="outlined"
             size="small"
             fullWidth
-            options={productos}
-            getOptionLabel={(option) =>
-              option.datos_generales.codigo_barras
-                ? option.datos_generales.codigo_barras
-                : "sin código de barras"
-            }
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Código de barras"
-                variant="outlined"
-              />
-            )}
-            onChange={(_, value) => obtenerSelectsProducto(value)}
-            getOptionSelected={(option) =>
-              option.datos_generales.codigo_barras
-                ? option.datos_generales.codigo_barras
-                : "sin código de barras"
-            }
             value={
-              datosProducto.producto.datos_generales
-                ? datosProducto.producto
-                : null
+              datosProducto.datos_generales
+                ? datosProducto.datos_generales.codigo_barras
+                : ""
             }
+            type="number"
           />
         </Grid>
         <Grid item xs={12} md={2}>
@@ -569,24 +541,62 @@ export default function DatosProducto() {
           />
         </Grid>
         <Grid item xs={12} md={2}>
-          <Button
-            size="large"
-            variant="contained"
-            color="primary"
-            fullWidth
-            startIcon={<Add />}
-            disableElevation
-            disabled={
-              !datosProducto.producto.datos_generales ||
-              !datosCompra.proveedor.nombre_cliente ||
-              !datosCompra.almacen.nombre_almacen
+          <FormControlLabel
+            control={
+              <Checkbox 
+				color="primary"
+                /* checked={state.checkedA} onChange={handleChange} */ name="mantener_precios"
+              />
             }
-            onClick={() => agregarCompra()}
-          >
-            Agregar
-          </Button>
+            label="Mantener precios"
+          />
         </Grid>
       </Grid>
+      <Box mt={1}>
+        {datosProducto.producto.datos_generales ? (
+          <Box display="flex" alignItems="center">
+            <PreciosProductos />
+            <Box mx={1} />
+            <TallasProductos />
+            <Box flexGrow={1} />
+            <Box>
+              <Grid container spacing={3}>
+                <Grid item>
+                  <Typography style={{ fontSize: 18 }}>
+                    Subtotal: <b>${formatoMexico(datosProducto.subtotal)}</b>
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography style={{ fontSize: 18 }}>
+                    Impuestos: <b>${formatoMexico(datosProducto.impuestos)}</b>
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography style={{ fontSize: 18 }}>
+                    <b>Total: ${formatoMexico(datosProducto.total)}</b>
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Box>
+            <Box mx={1} />
+            <Button
+              size="large"
+              variant="contained"
+              color="primary"
+              startIcon={<Add />}
+              disableElevation
+              disabled={
+                !datosProducto.producto.datos_generales ||
+                !datosCompra.proveedor.nombre_cliente ||
+                !datosCompra.almacen.nombre_almacen
+              }
+              onClick={() => agregarCompra()}
+            >
+              Agregar a compra
+            </Button>
+          </Box>
+        ) : null}
+      </Box>
     </Fragment>
   );
 }

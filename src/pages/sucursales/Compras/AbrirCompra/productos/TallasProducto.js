@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import { Button, CircularProgress } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -45,7 +45,7 @@ export default function AlertDialogSlide() {
   const toggleDrawer = () => setOpen(!open);
 
   return (
-    <div>
+    <Fragment>
       <Button
         color="primary"
         size="large"
@@ -85,6 +85,6 @@ export default function AlertDialogSlide() {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Fragment>
   );
 }

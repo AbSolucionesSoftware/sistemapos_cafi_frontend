@@ -204,12 +204,12 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto, refet
 						</Typography>
 						<Divider />
 					</Box>
-					<div className={classes.formInputFlex}>
+					<div className={classes.formInputFlex} style={{alignItems: 'center'}}>
 						<Box width="100%">
 							<Typography>
 								Cantidad inicial en <b>{precios.unidad_de_compra.unidad}</b>
 							</Typography>
-							<Box display="flex">
+							<Box display="flex" alignItems="center">
 								<TextField
 									fullWidth
 									type="number"
@@ -226,7 +226,7 @@ export default function RegistroAlmacenInicial({ obtenerConsultasProducto, refet
 						</Box>
 						<Box width="100%">
 							<Typography>Almacen</Typography>
-							<Box display="flex">
+							<Box display="flex" alignItems="center">
 								<FormControl
 									variant="outlined"
 									fullWidth

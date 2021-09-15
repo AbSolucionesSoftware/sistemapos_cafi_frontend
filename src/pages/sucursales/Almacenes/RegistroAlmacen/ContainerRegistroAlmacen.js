@@ -192,9 +192,9 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
         <Fragment>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
             {accion === 'registrar' ? refetch ? (
-                <Button color="primary" onClick={toggleModal}>
+                <IconButton color="primary" onClick={toggleModal}>
                     <Add />
-                </Button>
+                </IconButton>
             ) : (
                 <Button color="primary" variant="contained" size="large" onClick={toggleModal}>
                     Nuevo almacen

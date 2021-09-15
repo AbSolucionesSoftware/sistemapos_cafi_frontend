@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useContext } from "react";
+import React, { useState, Fragment, useContext, useEffect } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import DoneIcon from "@material-ui/icons/Done";
@@ -717,6 +717,12 @@ const ContenidoModal = ({ value, datos }) => {
   const { loading, data, error, refetch } = useQuery(OBTENER_CONSULTAS, {
     variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
   });
+
+  useEffect(() => {
+	  return () => {
+		  refetch();
+	  }
+  }, [])
 
   if (loading)
     return (

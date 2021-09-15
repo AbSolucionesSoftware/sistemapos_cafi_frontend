@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function CrearCliente({ tipo, accion, datos }) {
+export default function CrearCliente({ tipo, accion, datos, refetch }) {
 	const classes = useStyles();
 	const { cliente, setCliente, setError, update, setUpdate } = useContext(ClienteCtx);
 	const [ open, setOpen ] = useState(false);
@@ -172,7 +172,11 @@ export default function CrearCliente({ tipo, accion, datos }) {
 	return (
 		<Fragment>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
-			{accion === 'registrar' ? (
+			{accion === 'registrar' ? refetch ? (
+				<IconButton color="primary" onClick={toggleModal}>
+					<Add />
+				</IconButton>
+			) : (
 				<Button color="primary" variant="contained" size="large" onClick={toggleModal}>
 					<Add /> Nuevo {tipo}
 				</Button>
