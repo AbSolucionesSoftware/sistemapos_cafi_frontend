@@ -1,140 +1,592 @@
-import React, { Fragment } from 'react';
-import { Grid, Box, TextField, Typography, Button } from '@material-ui/core';
-import { MenuItem, Select, InputLabel, FormControl, makeStyles } from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import RegistroProvedor from '../proveedor/RegistroProvedor';
-import RegistroAlmacen from '../almacen/RegistroAlmacen';
+import React, { Fragment, useContext, useState } from "react";
+import {
+  Grid,
+  Box,
+  TextField,
+  Typography,
+  Button,
+  CircularProgress,
+  InputAdornment,
+} from "@material-ui/core";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import RegistroProvedor from "../proveedor/RegistroProvedor";
+import RegistroAlmacen from "../almacen/RegistroAlmacen";
+import PreciosProductos from "./PreciosProductos";
+import TallasProductos from "./TallasProducto";
 
-import PreciosProductos from './PreciosProductos';
-import RegistroProducto from './RegistroProducto';
-import TallasProductos from './TallasProducto';
+import { useQuery } from "@apollo/client";
+import { OBTENER_CONSULTA_GENERAL_PRODUCTO } from "../../../../../gql/Compras/compras";
 
-import { top100Films } from './peliculastest';
-import { Add } from '@material-ui/icons';
+import { Add } from "@material-ui/icons";
+import ErrorPage from "../../../../../components/ErrorPage";
+import { ComprasContext } from "../../../../../context/Compras/comprasContext";
+import { formatoMexico } from "../../../../../config/reuserFunctions";
 
-const useStyles = makeStyles((theme) => ({
-	formInputFlex: {
-		display: 'flex',
-		'& > *': {
-			margin: `${theme.spacing(1)}px ${theme.spacing(1)}px ${theme.spacing(1)}px 0px`
-		},
-		paddingTop: 3,
-		alignItems: 'center',
-		justifyItems: 'center'
-	},
-	formInput: {
-		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
-	}
-}));
+import "date-fns";
+import local from "date-fns/locale/es";
+import DateFnsUtils from "@date-io/date-fns";
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from "@material-ui/pickers";
+import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
+import {
+  initial_state_almacen_inicial,
+  initial_state_centro_de_costos,
+  initial_state_datos_generales,
+  initial_state_precios,
+  initial_state_preciosPlazos,
+  initial_state_unidadVentaXDefecto,
+} from "../../../../../context/Catalogos/initialStatesProducto";
+import CrearProducto, {
+  initial_state_preciosP,
+} from "../../../Catalogos/Producto/crearProducto";
+import { validaciones } from "../../../Catalogos/Producto/validaciones";
+import SnackBarMessages from "../../../../../components/SnackBarMessages";
 
 export default function DatosProducto() {
-	const classes = useStyles();
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  const {
+    datosProducto,
+    setDatosProducto,
+    productosCompra,
+    setProductosCompra,
+    datosCompra,
+    setDatosCompra,
+  } = useContext(ComprasContext);
+  const {
+    datos_generales,
+    setDatosGenerales,
+    precios,
+    setPrecios,
+    setValidacion,
+    preciosP,
+    setPreciosP,
+    imagenes,
+    setImagenes,
+    unidadesVenta,
+    setUnidadesVenta,
+    almacen_inicial,
+    setAlmacenInicial,
+    unidadVentaXDefecto,
+    setUnidadVentaXDefecto,
+    centro_de_costos,
+    setCentroDeCostos,
+    preciosPlazos,
+    setPreciosPlazos,
+    setSubcategorias,
+    setOnPreview,
+    setSubcostos,
+    imagenes_eliminadas,
+    setImagenesEliminadas,
+    presentaciones,
+    setPresentaciones,
+    presentaciones_eliminadas,
+    setPresentacionesEliminadas,
+  } = useContext(RegProductoContext);
 
-	return (
-		<Fragment>
-			<Grid container spacing={3}>
-				<Grid item md={3} lg={4}>
-					<div className={classes.formInputFlex}>
-						<Autocomplete
-							id="combo-box-demo"
-							size="small"
-							fullWidth
-							options={top100Films}
-							getOptionLabel={(option) => option.title}
-							renderInput={(params) => <TextField {...params} label="Producto" variant="outlined" />}
-						/>
-						<RegistroProducto />
-					</div>
-					<div className={classes.formInputFlex}>
-						<FormControl variant="outlined" fullWidth size="small">
-							<InputLabel id="lista-proveedores-select">Proveedor</InputLabel>
-							<Select
-								id="form-proveedor"
-								/* value={age} */ /* onChange={handleChange} */ labelId="lista-proveedores-select"
-								label="Elige tu proveedor"
-							>
-								<MenuItem value="">
-									<em>None</em>
-								</MenuItem>
-								<MenuItem value="proveedor 1">proveedor 1</MenuItem>
-							</Select>
-						</FormControl>
-						<RegistroProvedor />
-					</div>
-					<div className={classes.formInputFlex}>
-						<FormControl variant="outlined" fullWidth size="small">
-							<InputLabel id="lista-almacenes-select">Almacen inicial</InputLabel>
-							<Select
-								id="form-almacenes"
-								/* value={age} */ /* onChange={handleChange} */ labelId="lista-almacenes-select"
-								label="Elige el almacen inicial"
-							>
-								<MenuItem value="">
-									<em>None</em>
-								</MenuItem>
-								<MenuItem value="Almacen 1">Almacen 1</MenuItem>
-							</Select>
-						</FormControl>
-						<RegistroAlmacen />
-					</div>
-				</Grid>
-				<Grid item md={2} lg={2}>
-					<Box height="200px" display="flex" justifyContent="center" alignItems="center">
-						<img
-							alr="imagen producto"
-							src="https://www.dportenis.mx/wcsstore/ExtendedSitesCatalogAssetStore/images/catalog/zoom/1016287-0001V1.jpg"
-							style={{ maxWidth: '100%', maxHeight: '100%' }}
-						/>
-					</Box>
-				</Grid>
-				<Grid item md={7} lg={6}>
-					<Grid container spacing={3}>
-						<Grid item>
-							<Typography>
-								Código de barras: <b>a23232322323</b>
-							</Typography>
-							<Typography>
-								Nombre comercial: <b>Tenis nike</b>
-							</Typography>
-							<Typography>
-								Impuestos: <b>IVA: 16%</b> <b>IEPS: 0%</b>
-							</Typography>
-							<Typography>
-								Unidad de compra: <b>PZ</b>
-							</Typography>
-						</Grid>
-						<Grid item>
-							<Typography>
-								Precio de compra con impuestos: <b>$2,500</b>
-							</Typography>
-							<Typography>
-								Precio de compra con impuestos: <b>$3,100</b>
-							</Typography>
-							<Typography>
-								Precio de venta: <b>$3,100</b>
-							</Typography>
-							<Typography>
-								Precio de venta NETO: <b>$3,600</b>
-							</Typography>
-						</Grid>
-						<Grid item xs={12}>
-							<Grid container spacing={1}>
-								<Grid item>
-									<PreciosProductos />
-								</Grid>
-								<Grid item>
-									<TallasProductos />
-								</Grid>
-								<Grid item>
-									<Button size="large" variant="contained" color="primary" startIcon={<Add />}>
-										Agregar compra
-									</Button>
-								</Grid>
-							</Grid>
-						</Grid>
-					</Grid>
-				</Grid>
-			</Grid>
-		</Fragment>
-	);
+  const [alert, setAlert] = useState({ message: "", status: "", open: false });
+
+  /* Queries */
+  const { loading, data, error, refetch } = useQuery(
+    OBTENER_CONSULTA_GENERAL_PRODUCTO,
+    {
+      variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id },
+    }
+  );
+
+  if (loading)
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="30vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  if (error) {
+    return <ErrorPage error={error} />;
+  }
+
+  const {
+    almacenes,
+    productos,
+    proveedores,
+  } = data.obtenerConsultaGeneralCompras;
+
+  const obtenerProveedorAlmacen = (tipo, value) => {
+    if (!value) {
+      setDatosCompra({ ...datosCompra, [tipo]: {} });
+      return;
+    }
+    setDatosCompra({ ...datosCompra, [tipo]: value });
+  };
+
+  const obtenerSelectsProducto = (producto) => {
+    if (!producto) {
+      setDatosProducto({
+        ...datosProducto,
+        producto: {},
+        costo: 0,
+        cantidad: 0,
+        descuento_porcentaje: 0,
+        descuento_precio: 0,
+        subtotal: 0,
+        impuestos: 0,
+        total: 0,
+      });
+      resetInitialStates();
+      return;
+    }
+
+    const {
+      ieps,
+      iva,
+      precio_con_impuesto,
+      precio_sin_impuesto,
+    } = producto.precios.precio_de_compra;
+    const { cantidad } = producto.precios.unidad_de_compra;
+    const impuestos = iva + ieps;
+
+    setDatosProducto({
+      ...datosProducto,
+      producto,
+      costo: precio_con_impuesto,
+      cantidad,
+      descuento_porcentaje: 0,
+      descuento_precio: 0,
+      subtotal: precio_sin_impuesto,
+      impuestos: parseFloat(impuestos.toFixed(2)),
+      total: precio_con_impuesto,
+    });
+    setInitialStates(producto);
+  };
+
+  const agregarCompra = () => {
+    if (
+      !datosProducto.producto.datos_generales ||
+      !datosCompra.proveedor.nombre_cliente ||
+      !datosCompra.almacen.nombre_almacen
+    ) {
+      return;
+    }
+
+    const validate = validaciones(
+      datos_generales,
+      precios,
+      almacen_inicial,
+      presentaciones,
+      datosProducto.producto.datos_generales
+    );
+
+    if (validate.error) {
+      setAlert({
+        message: `Hay campos sin llenar`,
+        status: "error",
+        open: true,
+      });
+      return;
+    }
+
+    if (unidadesVenta.length === 0) {
+      unidadesVenta.push(unidadVentaXDefecto);
+    } else {
+      const unidadxdefecto = unidadesVenta.filter(
+        (unidades) => unidades.default
+      );
+      if (unidadxdefecto.length === 0) unidadesVenta.push(unidadVentaXDefecto);
+    }
+
+    precios.precios_producto = preciosP;
+
+    let producto = {
+      datos_generales: validateJsonEdit(datos_generales, "datos_generales"),
+      precios,
+      imagenes,
+      imagenes_eliminadas,
+      almacen_inicial,
+      centro_de_costos,
+      unidades_de_venta: validateJsonEdit(unidadesVenta, "unidades_de_venta"),
+      presentaciones,
+      presentaciones_eliminadas,
+      precio_plazos: preciosPlazos,
+      empresa: sesion.empresa._id,
+      sucursal: sesion.sucursal._id,
+      usuario: sesion._id,
+    };
+
+    datosProducto.producto = producto;
+
+    setProductosCompra([...productosCompra, datosProducto]);
+    setDatosProducto({
+      producto: {},
+      costo: 0,
+      cantidad: 0,
+      descuento_porcentaje: 0,
+      descuento_precio: 0,
+      subtotal: 0,
+      impuestos: 0,
+      total: 0,
+    });
+  };
+
+  const obtenerFecha = (date) => {
+    setDatosCompra({
+      ...datosCompra,
+      fecha_compra: date,
+    });
+  };
+
+  /* SET STATES WHEN UPDATING */
+  const setInitialStates = (producto) => {
+    const { precios_producto, ...new_precios } = producto.precios;
+    const unidadxdefecto = producto.unidades_de_venta.filter(
+      (res) => res.default
+    );
+
+    setDatosGenerales(producto.datos_generales);
+    setPrecios(new_precios);
+    setCentroDeCostos(
+      producto.centro_de_costos
+        ? producto.centro_de_costos
+        : initial_state_centro_de_costos
+    );
+    setImagenes(producto.imagenes);
+    setPreciosPlazos(producto.precio_plazos);
+    setUnidadesVenta(producto.unidades_de_venta);
+    setPreciosP(producto.precios.precios_producto);
+    setUnidadVentaXDefecto(unidadxdefecto[0]);
+    setPresentaciones(
+      producto.medidas_producto ? producto.medidas_producto : []
+    );
+  };
+
+  /* ###### RESET STATES ###### */
+  const resetInitialStates = () => {
+    setDatosGenerales(initial_state_datos_generales);
+    setPrecios(initial_state_precios);
+    setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
+    setPreciosP(initial_state_preciosP);
+    setUnidadesVenta([]);
+    setAlmacenInicial(initial_state_almacen_inicial);
+    setCentroDeCostos({});
+    setPreciosPlazos(initial_state_preciosPlazos);
+    setSubcategorias([]);
+    setImagenes([]);
+    setOnPreview({ index: "", image: "" });
+    setValidacion({ error: false, message: "" });
+    setSubcostos([]);
+    setImagenesEliminadas([]);
+    setPresentaciones([]);
+    setPresentacionesEliminadas([]);
+  };
+
+  /* SI NO EXISTE ESTA INFORMACION EN LA BD, ENVIAR A LA BD */
+  const validateJsonEdit = async (data, tipo) => {
+    if (tipo === "datos_generales") {
+      let object_date = {
+        clave_alterna: data.clave_alterna,
+        tipo_producto: data.tipo_producto,
+        nombre_comercial: data.nombre_comercial,
+        nombre_generico: data.nombre_generico,
+        receta_farmacia: data.receta_farmacia,
+      };
+      if (data.codigo_barras !== null && data.codigo_barras !== "")
+        object_date = { ...object_date, codigo_barras: data.codigo_barras };
+      if (data.descripcion !== null && data.descripcion !== "")
+        object_date = { ...object_date, descripcion: data.descripcion };
+      if (data.id_categoria !== null && data.id_categoria !== "")
+        object_date = { ...object_date, id_categoria: data.id_categoria };
+      if (data.categoria !== null && data.categoria !== "")
+        object_date = { ...object_date, categoria: data.categoria };
+      if (data.subcategoria !== null && data.subcategoria !== "")
+        object_date = { ...object_date, subcategoria: data.subcategoria };
+      if (data.id_subcategoria !== null && data.id_subcategoria !== "")
+        object_date = { ...object_date, id_subcategoria: data.id_subcategoria };
+      if (data.id_departamento !== null && data.id_departamento !== "")
+        object_date = { ...object_date, id_departamento: data.id_departamento };
+      if (data.departamento !== null && data.departamento !== "")
+        object_date = { ...object_date, departamento: data.departamento };
+      if (data.id_marca !== null && data.id_marca !== "")
+        object_date = { ...object_date, id_marca: data.id_marca };
+      if (data.marca !== null && data.marca !== "")
+        object_date = { ...object_date, marca: data.marca };
+      if (data.clave_producto_sat !== null && data.clave_producto_sat !== "")
+        object_date = {
+          ...object_date,
+          clave_producto_sat: data.clave_producto_sat,
+        };
+      return object_date;
+    } else if (tipo === "unidades_de_venta") {
+      let end_array = [];
+      for (var i = 0; i < data.length; i++) {
+        let object = {
+          _id: data[i]._id,
+          cantidad: data[i].cantidad,
+          id_producto: data[i].id_producto,
+          precio: data[i].precio,
+          unidad_principal: data[i].unidad_principal,
+          unidad: data[i].unidad,
+        };
+        if (data[i].codigo_barras !== null && data[i].codigo_barras !== "")
+          object = { ...object, codigo_barras: data[i].codigo_barras };
+        if (data[i].default !== null && data[i].default !== "")
+          object = { ...object, default: data[i].default };
+        end_array.push(object);
+      }
+      return end_array;
+    }
+  };
+
+  return (
+    <Fragment>
+      <SnackBarMessages alert={alert} setAlert={setAlert} />
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12} md={4}>
+          <Box display="flex" alignItems="center">
+            <Autocomplete
+              id="combo-box-proveedor"
+              size="small"
+              fullWidth
+              options={proveedores}
+              getOptionLabel={(option) => option.nombre_cliente}
+              renderInput={(params) => (
+                <TextField {...params} label="Proveedor" variant="outlined" />
+              )}
+              onChange={(_, value) =>
+                obtenerProveedorAlmacen("proveedor", value)
+              }
+              getOptionSelected={(option) => option.nombre_cliente}
+              value={
+                datosCompra.proveedor.nombre_cliente
+                  ? datosCompra.proveedor
+                  : null
+              }
+            />
+            <RegistroProvedor />
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Box display="flex" alignItems="center">
+            <Autocomplete
+              id="combo-box-almacen"
+              size="small"
+              fullWidth
+              options={almacenes}
+              getOptionLabel={(option) => option.nombre_almacen}
+              renderInput={(params) => (
+                <TextField {...params} label="Almacen" variant="outlined" />
+              )}
+              onChange={(_, value) => obtenerProveedorAlmacen("almacen", value)}
+              getOptionSelected={(option) => option.nombre_almacen}
+              value={
+                datosCompra.almacen.nombre_almacen ? datosCompra.almacen : null
+              }
+            />
+            <RegistroAlmacen />
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <Box display="flex" alignItems="center">
+            <MuiPickersUtilsProvider utils={DateFnsUtils} locale={local}>
+              <KeyboardDatePicker
+                inputVariant="outlined"
+                margin="dense"
+                id="date-picker-dialog"
+                placeholder="ex: DD/MM/AAAA"
+                format="dd/MM/yyyy"
+                value={datosCompra.fecha_compra}
+                onChange={obtenerFecha}
+                KeyboardButtonProps={{
+                  "aria-label": "change date",
+                }}
+              />
+            </MuiPickersUtilsProvider>
+          </Box>
+        </Grid>
+      </Grid>
+      <Box my={2} />
+
+      <Box display="flex" width="100%" border={1}>
+        {datosProducto.producto.datos_generales ? (
+          <Box display="flex">
+            <PreciosProductos />
+            <Box mx={1} />
+            <TallasProductos />
+            <Grid container spacing={3}>
+              <Grid item>
+                <Typography style={{ fontSize: 18 }}>
+                  Subtotal: <b>${formatoMexico(datosProducto.subtotal)}</b>
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography style={{ fontSize: 18 }}>
+                  Impuestos: <b>${formatoMexico(datosProducto.impuestos)}</b>
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography style={{ fontSize: 18 }}>
+                  <b>Total: ${formatoMexico(datosProducto.total)}</b>
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+        ) : (
+          <CrearProducto
+            accion={false}
+            productosRefetch={refetch}
+            fromCompra={true}
+          />
+        )}
+      </Box>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={2}>
+          <Autocomplete
+            id="combo-box-producto-codigo"
+            size="small"
+            fullWidth
+            options={productos}
+            getOptionLabel={(option) =>
+              option.datos_generales.codigo_barras
+                ? option.datos_generales.codigo_barras
+                : "sin código de barras"
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Código de barras"
+                variant="outlined"
+              />
+            )}
+            onChange={(_, value) => obtenerSelectsProducto(value)}
+            getOptionSelected={(option) =>
+              option.datos_generales.codigo_barras
+                ? option.datos_generales.codigo_barras
+                : "sin código de barras"
+            }
+            value={
+              datosProducto.producto.datos_generales
+                ? datosProducto.producto
+                : null
+            }
+          />
+        </Grid>
+        <Grid item xs={12} md={2}>
+          <Autocomplete
+            id="combo-box-producto-nombre"
+            size="small"
+            fullWidth
+            options={productos}
+            getOptionLabel={(option) => option.datos_generales.nombre_comercial}
+            renderInput={(params) => (
+              <TextField {...params} label="Producto" variant="outlined" />
+            )}
+            onChange={(_, value) => obtenerSelectsProducto(value)}
+            getOptionSelected={(option) =>
+              option.datos_generales.nombre_comercial
+            }
+            value={
+              datosProducto.producto.datos_generales
+                ? datosProducto.producto
+                : null
+            }
+          />
+        </Grid>
+        <Grid item xs={12} md={2}>
+          <Autocomplete
+            id="combo-box-producto-clave"
+            size="small"
+            fullWidth
+            options={productos}
+            getOptionLabel={(option) => option.datos_generales.clave_alterna}
+            renderInput={(params) => (
+              <TextField {...params} label="Clave" variant="outlined" />
+            )}
+            onChange={(_, value) => obtenerSelectsProducto(value)}
+            getOptionSelected={(option) => option.datos_generales.clave_alterna}
+            value={
+              datosProducto.producto.datos_generales
+                ? datosProducto.producto
+                : null
+            }
+          />
+        </Grid>
+        <Grid item xs={12} md={1}>
+          <TextField
+            label="Costo"
+            variant="outlined"
+            size="small"
+            fullWidth
+            value={datosProducto.costo}
+            type="number"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">$</InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} md={1}>
+          <TextField
+            label="Cantidad"
+            variant="outlined"
+            size="small"
+            fullWidth
+            type="number"
+            value={datosProducto.cantidad}
+          />
+        </Grid>
+        <Grid item xs={12} md={1}>
+          <TextField
+            label="Descuento"
+            variant="outlined"
+            size="small"
+            fullWidth
+            type="number"
+            value={datosProducto.descuento_precio}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">$</InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} md={1}>
+          <TextField
+            label="Descuento"
+            variant="outlined"
+            size="small"
+            fullWidth
+            type="number"
+            value={datosProducto.descuento_porcentaje}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">%</InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} md={2}>
+          <Button
+            size="large"
+            variant="contained"
+            color="primary"
+            fullWidth
+            startIcon={<Add />}
+            disableElevation
+            disabled={
+              !datosProducto.producto.datos_generales ||
+              !datosCompra.proveedor.nombre_cliente ||
+              !datosCompra.almacen.nombre_almacen
+            }
+            onClick={() => agregarCompra()}
+          >
+            Agregar
+          </Button>
+        </Grid>
+      </Grid>
+    </Fragment>
+  );
 }

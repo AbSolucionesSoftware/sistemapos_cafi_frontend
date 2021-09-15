@@ -1,83 +1,90 @@
-import React, { useState } from 'react';
-import { Drawer, Box, Button, useTheme, CircularProgress, Typography } from '@material-ui/core';
-import TallasProducto from '../../../Catalogos/Producto/TallasColores/TallasColores';
-import { Close, Done } from '@material-ui/icons';
-import PaletteIcon from '@material-ui/icons/Palette';
-import { useQuery } from '@apollo/client';
-import { OBTENER_CONSULTAS } from '../../../../../gql/Catalogos/productos';
-import ErrorPage from '../../../../../components/ErrorPage';
+import React, { useContext, useState } from "react";
+import { Button, CircularProgress } from "@material-ui/core";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import Slide from "@material-ui/core/Slide";
+import { Close, Palette } from "@material-ui/icons";
+import { useQuery } from "@apollo/client";
+import { OBTENER_CONSULTAS } from "../../../../../gql/Catalogos/productos";
+import ErrorPage from "../../../../../components/ErrorPage";
+import { ComprasContext } from "../../../../../context/Compras/comprasContext";
+import TallasProducto from "../../../Catalogos/Producto/TallasColores/TallasColores";
 
-export default function PreciosProductos() {
-	const [ open, setOpen ] = useState(false);
-    const theme = useTheme();
-    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
-    /* Queries */
-	const { loading, data, error, refetch } = useQuery(OBTENER_CONSULTAS, {
-		variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id }
-	});
+export default function AlertDialogSlide() {
+  const [open, setOpen] = useState(false);
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  const { datosProducto } = useContext(ComprasContext);
 
+  /* Queries */
+  const { loading, data, error, refetch } = useQuery(OBTENER_CONSULTAS, {
+    variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
+  });
 
-    if (loading)
-		return (
-			<Button color="primary" disabled={true} size="large" startIcon={<CircularProgress size={18} color="inherit" />}>
-                Tallas y colores
-			</Button>
-		);
-
-	if (error) return <ErrorPage error={error} />;
-
-	const { obtenerConsultasProducto } = data;
-	
-
-	const toggleDrawer = () => setOpen(!open);
-
-	return (
-		<div>
-			<Button color="primary" onClick={() => toggleDrawer()} size="large" startIcon={<PaletteIcon />}>
-                Tallas y colores
-			</Button>
-            <Drawer anchor="right" open={open} onClose={() => toggleDrawer()}>
-				<Box p={5} marginBottom={5} width="75vw">
-					{/* <TallasProducto obtenerConsultasProducto={obtenerConsultasProducto} refetch={refetch} /> */}
-					<Box
-						boxShadow={3}
-						position="fixed"
-						bottom={0}
-						right={16}
-						style={{ backgroundColor: theme.palette.background.paper }}
-						display="flex"
-						justifyContent="flex-end"
-						alignItems="center"
-						width="75vw"
-						height="7%"
-					>
-						<Button color="primary" onClick={() => toggleDrawer()} startIcon={<Close />}>
-								Cancelar
-							</Button>
-							<Box mx={1} />
-							<Button
-								color="primary"
-								variant="contained"
-								onClick={() => toggleDrawer()}
-								startIcon={<Done />}
-							>
-								Guardar
-							</Button>
-							<Box mx={1} />
-					</Box>
-				</Box>
-			</Drawer>
-		</div>
-	);
-}
-
-/* const DrawColors = ({toggleDrawer, open}) => {
-    
-    
-
-    
+  if (loading)
     return (
-      
-    )
-} */
+      <Button
+        color="primary"
+        size="large"
+        disabled={true}
+        startIcon={<CircularProgress size={18} color="inherit" />}
+      >
+        Editar tallas y colores
+      </Button>
+    );
+
+  if (error) return <ErrorPage error={error} />;
+
+  const { obtenerConsultasProducto } = data;
+
+  const toggleDrawer = () => setOpen(!open);
+
+  return (
+    <div>
+      <Button
+        color="primary"
+        size="large"
+        onClick={() => toggleDrawer()}
+        startIcon={<Palette />}
+      >
+        Editar tallas y colores
+      </Button>
+      <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={toggleDrawer}
+        aria-labelledby="alert-tallas-compra"
+        aria-describedby="alert-tallas-compra-description"
+        fullWidth
+        maxWidth="lg"
+      >
+        <DialogContent>
+          <DialogContentText id="alert-tallas-compra-description">
+            <TallasProducto
+              datos={datosProducto}
+              obtenerConsultasProducto={obtenerConsultasProducto}
+              refetch={refetch}
+            />
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            size="large"
+            onClick={() => toggleDrawer()}
+            startIcon={<Close />}
+            color="primary"
+            variant="contained"
+          >
+            Cerrar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+}

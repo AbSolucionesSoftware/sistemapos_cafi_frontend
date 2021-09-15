@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function RegistroProducto() {
+export default function RegistroProducto({refetch}) {
 	const classes = useStyles();
 
 	const [ open, setOpen ] = useState(false);
@@ -49,8 +49,9 @@ export default function RegistroProducto() {
 
 	return (
 		<Fragment>
-			<Button color="primary" onClick={toggleModal} startIcon={<AddIcon />}>
-				Nuevo
+			<Button color="primary" onClick={toggleModal} startIcon={<AddIcon />}
+			size="large">
+				Registrar nuevo producto
 			</Button>
 			<Dialog open={open} onClose={toggleModal} fullWidth maxWidth="md">
 				<Box p={3} dsiplay="flex" textAlign="center" alignItems="center">

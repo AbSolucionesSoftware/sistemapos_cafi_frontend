@@ -1,51 +1,60 @@
-import React, { useState } from 'react';
-import { Drawer, Box, Button, useTheme } from '@material-ui/core';
-import FormularioPrecios from '../../../Catalogos/Producto/PreciosVenta/registrarInfoAdicional';
-import LocalAtmIcon from '@material-ui/icons/LocalAtm';
-import { Close, Done } from '@material-ui/icons';
+import React, { useState } from "react";
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import Slide from '@material-ui/core/Slide';
+import FormularioPrecios from "../../../Catalogos/Producto/PreciosVenta/registrarInfoAdicional";
+import { Close, LocalOffer } from "@material-ui/icons";
 
-export default function TallasProductos() {
-	const [ open, setOpen ] = useState(false);
-	const theme = useTheme();
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
-	const toggleDrawer = () => setOpen(!open);
+export default function AlertDialogSlide() {
+  const [open, setOpen] = useState(false);
 
-	return (
-		<div>
-			<Button color="primary" onClick={() => toggleDrawer()} size="large" startIcon={<LocalAtmIcon />}>
-				Precios
-			</Button>
-			<Drawer anchor="right" open={open} onClose={() => toggleDrawer()}>
-				<Box p={5} marginBottom={5} width="75vw">
-					<FormularioPrecios />
-					<Box
-						boxShadow={3}
-						position="fixed"
-						bottom={0}
-						right={16}
-						style={{ backgroundColor: theme.palette.background.paper }}
-						display="flex"
-						justifyContent="flex-end"
-						alignItems="center"
-						width="75vw"
-						height="7%"
-					>
-						<Button color="primary" onClick={() => toggleDrawer()} startIcon={<Close />}>
-								Cancelar
-							</Button>
-							<Box mx={1} />
-							<Button
-								color="primary"
-								variant="contained"
-								onClick={() => toggleDrawer()}
-								startIcon={<Done />}
-							>
-								Guardar
-							</Button>
-							<Box mx={1} />
-					</Box>
-				</Box>
-			</Drawer>
-		</div>
-	);
+  const toggleDrawer = () => setOpen(!open);
+
+  return (
+    <div>
+      <Button
+        color="primary"
+        size="large"
+        onClick={() => toggleDrawer()}
+        startIcon={<LocalOffer />}
+      >
+        Editar precios
+      </Button>
+      <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={toggleDrawer}
+        aria-labelledby="alert-precios-compra-title"
+        aria-describedby="alert-precios-compra-description"
+        fullWidth
+        maxWidth="lg"
+      >
+        <DialogContent>
+          <DialogContentText id="alert-precios-compra-description">
+            <FormularioPrecios />
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            size="large"
+            onClick={() => toggleDrawer()}
+            startIcon={<Close />}
+            color="primary"
+            variant="contained"
+          >
+            Cerrar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
 }
+
