@@ -17,14 +17,23 @@ import CentroCostos from './CentroCostos/CentroCostos';
 import ConceptosAlmacen from './ConceptosAlmacen/ConceptosAlmacen';
 
 export default function Catalogos() {
+
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
+	
 	return (
 		<Container>
 			<Grid container spacing={5} justify="center">
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Cliente />
-					</Box>
-				</Grid>
+				{
+					permisosUsuario.accesos.catalogos.clientes.ver === false ? (
+						null
+					):(
+						<Grid item lg={2}>
+							<Box display="flex" justifyContent="center" alignItems="center">
+								<Cliente />
+							</Box>
+						</Grid>
+					)
+				}
 				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Productos />

@@ -34,6 +34,16 @@ export const CREAR_USUARIO = gql`
 				nombre_sucursal
 				descripcion
 			}
+			accesos {
+				catalogos {
+					clientes {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+			}
 		}
 	}
 `;
@@ -72,6 +82,16 @@ export const OBTENER_USUARIOS = gql`
 				nombre_sucursal
 				descripcion
 			}
+			accesos {
+				catalogos {
+					clientes {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+			}
 		}
 	}
 `;
@@ -91,7 +111,11 @@ export const LOGEAR_USUARIO = gql`
 		}
 	}
 `;
-/* export const ELIMINAR_USUARIO = gql`
-	
+
+export const AGIGNAR_PERMISOS_USUARIO = gql`
+	mutation asignarAccesosUsuario($input: CrearArregloDeAccesosInput, $id: ID!) {
+		asignarAccesosUsuario(id: $id, input: $input) {
+			message
+		}
+}
 `;
- */
