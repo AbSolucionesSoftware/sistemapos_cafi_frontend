@@ -41,7 +41,7 @@ export default function AbonosProveedores() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-                        <img src={abonoIcon} alt="icono abono" className={classes.icon} />
+                        <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/salary.svg' alt="icono abono" className={classes.icon} />
 					</Box>
 					Abonos de proveedores
 				</Box>

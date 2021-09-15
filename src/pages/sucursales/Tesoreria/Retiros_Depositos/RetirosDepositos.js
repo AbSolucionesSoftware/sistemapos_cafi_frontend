@@ -54,7 +54,7 @@ export default function RetirosDepositos() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-                        <img src={retiroIcon} alt="icono retiro" className={classes.icon} />
+                        <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/retiro-de-dinero.svg' alt="icono retiro" className={classes.icon} />
 					</Box>
 					Retiros y Depositos
 				</Box>

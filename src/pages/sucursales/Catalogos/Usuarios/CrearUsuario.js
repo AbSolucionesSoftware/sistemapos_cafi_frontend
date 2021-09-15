@@ -219,12 +219,16 @@ export default function CrearUsuario({ accion, datos }) {
 						>
 							<Tab
 								label="Información básica"
-								icon={<img src={perfilIcon} alt="icono perfil" className={classes.iconSvg} />}
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/perfil.svg' alt="icono perfil" className={classes.iconSvg} />}
 								{...a11yProps(0)}
 							/>
 							<Tab
 								label="Permisos"
+<<<<<<< HEAD
 								icon={<img src={permisosIcon} alt="icono Perfil" className={classes.iconSvg} />}
+=======
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/permisos.svg' alt="icono factura" className={classes.iconSvg} />}
+>>>>>>> e9aacf9ac1db4d4bf4086cb5050c6d64f7256db9
 								{...a11yProps(1)}
 							/>
 							<Box ml={58} mt={3} >

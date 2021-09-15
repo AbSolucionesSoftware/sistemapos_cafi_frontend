@@ -55,7 +55,7 @@ export default function Egresos() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-                        <img src={egresoIcon} alt="icono egreso" className={classes.icon} />
+                        <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/income.svg' alt="icono egreso" className={classes.icon} />
 					</Box>
 					Egresos
 				</Box>

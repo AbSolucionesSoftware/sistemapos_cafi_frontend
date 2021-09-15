@@ -45,7 +45,7 @@ export default function Categorias() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={categoriasIcon} alt="icono numero calzado" className={classes.icon} />
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/categorias.svg' alt="icono numero calzado" className={classes.icon} />
 					</Box>
 					Categorias
 				</Box>
@@ -69,6 +69,6 @@ export default function Categorias() {
 					</Container>
 				</Box>
 			</Dialog>
-		</div>
+		</div> 
 	);
 }

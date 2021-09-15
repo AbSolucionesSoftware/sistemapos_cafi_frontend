@@ -39,7 +39,7 @@ export default function PreciosProductos({handleClickOpen}) {
                         justifyContent="center" 
                     >
                         <Box mt={3}>
-                            <img src={moneyIcon} alt="icono caja" className={classes.iconSizeDialogs} />
+                            <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/money.svg' alt="icono caja" className={classes.iconSizeDialogs} />
                         </Box>
                         <Box m={2} >
                             <Divider orientation="vertical" />

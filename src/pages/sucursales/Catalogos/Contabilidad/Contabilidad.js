@@ -45,7 +45,7 @@ export default function Contabilidad() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={contabilidadIcon} alt="icono numero calzado" className={classes.icon} />
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/contabilidad.svg' alt="icono numero calzado" className={classes.icon} />
 					</Box>
 					Contabilidad
 				</Box>
