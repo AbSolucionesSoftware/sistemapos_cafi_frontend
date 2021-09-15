@@ -6,14 +6,16 @@ import { Add, Delete, Edit, ExpandMore, Close } from '@material-ui/icons';
 import ErrorPage from '../../../../components/ErrorPage';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
-
+ 
 import { useQuery, useMutation } from '@apollo/client';
 import {
 	OBTENER_CATEGORIAS,
 	CREAR_CATEGORIA,
 	CREAR_SUBCATEGORIA,
 	ACTUALIZAR_SUBCATEGORIA,
-	ACTUALIZAR_CATEGORIA
+	ACTUALIZAR_CATEGORIA, 
+	ELIMINAR_CATEGORIA,
+	ELIMINAR_SUBCATEGORIA
 } from '../../../../gql/Catalogos/categorias';
 
 const useStyles = makeStyles((theme) => ({
@@ -44,27 +46,7 @@ export default function RegistroCategorias() {
 	const [ crearCategoria ] = useMutation(CREAR_CATEGORIA);
 	const [ actualizarCategoria ] = useMutation(ACTUALIZAR_CATEGORIA);
 
-	if (loading)
-		return (
-			<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
-				<CircularProgress />
-			</Box>
-		);
-	if (error) {
-		return <ErrorPage error={error} />;
-	}
-
-	const { obtenerCategorias } = data;
-	const render_categorias = obtenerCategorias.map((categoria, index) => (
-		<RenderCategorias
-			key={index}
-			categoria={categoria}
-			setToUpdateID={setToUpdateID}
-			setCategoria={setCategoria}
-			refetch={refetch}
-			toUpdateID={toUpdateID}
-		/>
-	));
+	
 
 	const obtenerDatos = (e) => {
 		setCategoria(e.target.value);
@@ -105,9 +87,29 @@ export default function RegistroCategorias() {
 			setLoadingBackDrop(false);
 		}
 	};
+	if (loading)
+		return (
+			<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
+				<CircularProgress />
+			</Box>
+		);
+	if (error) {
+		return <ErrorPage error={error} />;
+	}
 
+	const { obtenerCategorias } = data;
+	const render_categorias = obtenerCategorias.map((categoria, index) => (
+		<RenderCategorias
+			key={index}
+			categoria={categoria}
+			setToUpdateID={setToUpdateID}
+			setCategoria={setCategoria}
+			refetch={refetch}
+			toUpdateID={toUpdateID}
+		/>
+	));
 	return (
-		<div className={classes.root}>
+		<div className={classes.root} >
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<BackdropComponent loading={loadingBackDrop} setLoading={setLoadingBackDrop} />
 			<Typography variant="h6">Categorias</Typography>
@@ -132,18 +134,25 @@ const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toU
 	/*  Subcategorias Mutations */
 	const [ crearSubcategoria ] = useMutation(CREAR_SUBCATEGORIA);
 	const [ actualizarSubcategoria ] = useMutation(ACTUALIZAR_SUBCATEGORIA);
+	const [ eliminarCategoria ] = useMutation(ELIMINAR_CATEGORIA);
+
 
 	const render_subcategorias = categoria.subcategorias.map((subcategoria) => (
 		<RenderSubcategorias
 			key={subcategoria._id}
+			idCategoria= {categoria._id}
 			subcategoria={subcategoria}
 			setToUpdateID={setToUpdateID}
 			toUpdateID={toUpdateID}
 			setSubcategoria={setSubcategoria}
+			setAlert={setAlert}
+			refetch={refetch}
 		/>
 	));
 
 	const obtenerCamposParaActualizar = (event) => {
+	
+		window.scrollTo(0,0);
 		event.stopPropagation();
 		setToUpdateID(categoria._id);
 		setCategoria(categoria.categoria);
@@ -162,9 +171,11 @@ const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toU
 	const guardarSubcategoria = async () => {
 		if (!subcategoria) return;
 		setLoadingBackDrop(true);
+		let msgAlert = '';
+		let resp;
 		try {
 			if (!toUpdateID) {
-				await crearSubcategoria({
+				resp = await crearSubcategoria({
 					variables: {
 						input: {
 							subcategoria
@@ -172,8 +183,9 @@ const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toU
 						idCategoria: categoria._id
 					}
 				});
+				msgAlert = ( resp.data.crearSubcategoria.message === 'false' ) ? { message: '¡Listo!', status: 'success', open: true }: { message: resp.data.crearSubcategoria.message, status: 'error', open: true }
 			} else {
-				await actualizarSubcategoria({
+				resp = await actualizarSubcategoria({
 					variables: {
 						input: {
 							subcategoria
@@ -182,9 +194,11 @@ const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toU
 						idSubcategoria: toUpdateID
 					}
 				});
+				msgAlert =( resp.data.actualizarSubcategoria.message === 'false' ) ? { message: '¡Listo!', status: 'success', open: true }: { message: resp.data.actualizarSubcategoria.message, status: 'error', open: true }
 			}
 			refetch();
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			
+			setAlert(msgAlert);
 			setLoadingBackDrop(false);
 			setSubcategoria('');
 			setToUpdateID('');
@@ -194,6 +208,25 @@ const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toU
 			setLoadingBackDrop(false);
 		}
 	};
+
+	const handleDelete = async (event) => {
+		event.stopPropagation()
+		try {
+			const resp = await eliminarCategoria({
+				variables: {
+					idCategoria: categoria._id
+				}
+			});
+			let msgAlert = ( resp.data.eliminarCategoria.message === 'false' ) ? { message: '¡Listo!', status: 'success', open: true }: { message: resp.data.eliminarCategoria.message, status: 'error', open: true }
+			
+			setAlert(msgAlert);
+			refetch();
+		
+		} catch (error) {
+			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+		}
+	};
+
 
 	return (
 		<Fragment>
@@ -223,8 +256,8 @@ const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toU
 							</IconButton>
 						)}
 						<IconButton
-							onClick={(event) => event.stopPropagation()}
-							onFocus={(event) => event.stopPropagation()}
+							onClick={(event) => handleDelete(event)}
+							onFocus={(event) => handleDelete(event)}
 						>
 							<Delete />
 						</IconButton>
@@ -264,10 +297,11 @@ const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toU
 	);
 };
 
-const RenderSubcategorias = ({ subcategoria, toUpdateID, setToUpdateID, setSubcategoria }) => {
+const RenderSubcategorias = ({ subcategoria,idCategoria, toUpdateID, setToUpdateID, setSubcategoria,setAlert, refetch }) => {
 	const classes = useStyles();
-
+	const [ eliminarSubcategoria ] = useMutation(ELIMINAR_SUBCATEGORIA);
 	const obtenerCamposParaActualizar = (event) => {
+
 		event.stopPropagation();
 		setToUpdateID(subcategoria._id);
 		setSubcategoria(subcategoria.subcategoria);
@@ -278,7 +312,26 @@ const RenderSubcategorias = ({ subcategoria, toUpdateID, setToUpdateID, setSubca
 		setToUpdateID('');
 		setSubcategoria('');
 	};
-
+	const handleDelete = async (event) => {
+		try {
+			event.stopPropagation()
+			const resp = await eliminarSubcategoria({
+				variables: {
+					idCategoria: idCategoria,
+					idSubcategoria:subcategoria._id
+				}
+			});
+			
+			let msgAlert = ( resp.data.eliminarSubcategoria.message === 'false' ) ? { message: '¡Listo!', status: 'success', open: true }: { message: resp.data.eliminarSubcategoria.message, status: 'error', open: true }
+		
+			setAlert(msgAlert);
+			
+			refetch();
+		
+		} catch (error) {
+			setAlert({ message: 'Ocurrió un error', status: 'error', open: true });
+		}
+	};
 	return (
 		<Fragment>
 			<Box
@@ -299,7 +352,7 @@ const RenderSubcategorias = ({ subcategoria, toUpdateID, setToUpdateID, setSubca
 						<Edit />
 					</IconButton>
 				)}
-				<IconButton onClick={(event) => event.stopPropagation()} onFocus={(event) => event.stopPropagation()}>
+				<IconButton onClick={(event) => handleDelete(event) }>
 					<Delete />
 				</IconButton>
 			</Box>

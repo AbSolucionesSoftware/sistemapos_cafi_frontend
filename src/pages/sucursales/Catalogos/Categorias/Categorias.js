@@ -69,6 +69,6 @@ export default function Categorias() {
 					</Container>
 				</Box>
 			</Dialog>
-		</div>
+		</div> 
 	);
 }

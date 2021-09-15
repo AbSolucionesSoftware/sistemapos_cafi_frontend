@@ -55,3 +55,55 @@ export const ACTUALIZAR_ALMACEN = gql`
         }
     }
 `;
+
+export const OBTENER_PRODUCTOS_ALMACEN = gql`
+	query obtenerProductosAlmacenes($empresa: ID!, $sucursal: ID!, $filtro: FilterProductoInput) {
+		obtenerProductosAlmacenes(empresa: $empresa, sucursal: $sucursal, filtro: $filtro) {
+			_id
+			datos_generales {
+				codigo_barras
+				clave_alterna
+				tipo_producto
+				nombre_comercial
+				nombre_generico
+				descripcion
+				id_categoria
+				categoria
+				subcategoria
+				id_subcategoria
+				id_departamento
+				departamento
+				id_marca
+				marca
+				clave_producto_sat
+				receta_farmacia
+			}
+            existencia_almacenes{
+                _id{
+                producto
+                almacen{
+                    _id
+                    nombre_almacen
+                }
+                }
+                cantidad_existente
+            }
+			empresa
+			sucursal
+		}
+	}
+`;
+
+export const OBTENER_CATEGORIAS = gql`
+	query obtenerCategorias($empresa: ID!, $sucursal: ID!) {
+		obtenerCategorias(empresa: $empresa, sucursal: $sucursal) {
+			_id
+			categoria
+			subcategorias {
+				_id
+				subcategoria
+			}
+			
+		}
+	}
+`;
