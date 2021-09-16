@@ -17,14 +17,19 @@ import CentroCostos from './CentroCostos/CentroCostos';
 import ConceptosAlmacen from './ConceptosAlmacen/ConceptosAlmacen';
 
 export default function Catalogos() {
+
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
+	
 	return (
 		<Container>
 			<Grid container spacing={5} justify="center">
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Cliente />
-					</Box>
-				</Grid>
+				{permisosUsuario.accesos.catalogos.clientes.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<Cliente />
+						</Box>
+					</Grid>
+				)}
 				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Productos />
@@ -40,36 +45,41 @@ export default function Catalogos() {
 						<UnidadMedida />
 					</Box>
 				</Grid> */}
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Contabilidad />
-					</Box>
-				</Grid>
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Proveedores />
-					</Box>
-				</Grid>
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Cajas />
-					</Box>
-				</Grid>
-				{/* <Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Descuentos />
-					</Box>
-				</Grid> */}
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Usuarios />
-					</Box>
-				</Grid>
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Departamentos />
-					</Box>
-				</Grid>
+				{permisosUsuario.accesos.catalogos.contabilidad.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<Contabilidad />
+						</Box>
+					</Grid>
+				)}
+				{permisosUsuario.accesos.catalogos.provedores.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<Proveedores />
+						</Box>
+					</Grid>
+				)}
+				{permisosUsuario.accesos.catalogos.cajas.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<Cajas />
+						</Box>
+					</Grid>
+				)}
+				{permisosUsuario.accesos.catalogos.usuarios.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<Usuarios />
+						</Box>
+					</Grid>
+				)}
+				{permisosUsuario.accesos.catalogos.departamentos.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<Departamentos />
+						</Box>
+					</Grid>
+				)}
 				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Categorias />
@@ -80,21 +90,27 @@ export default function Catalogos() {
 						<Colores />
 					</Box>
 				</Grid>
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Marcas />
-					</Box>
-				</Grid>
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<CentroCostos />
-					</Box>
-				</Grid>
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<ConceptosAlmacen />
-					</Box>
-				</Grid>
+				{permisosUsuario.accesos.catalogos.marcas.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<Marcas />
+						</Box>
+					</Grid>
+				)}
+				{permisosUsuario.accesos.catalogos.centro_costos.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<CentroCostos />
+						</Box>
+					</Grid>
+				)}
+				{permisosUsuario.accesos.catalogos.conceptos_almacen.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<ConceptosAlmacen />
+						</Box>
+					</Grid>
+				)}
 			</Grid>
 		</Container>
 	);

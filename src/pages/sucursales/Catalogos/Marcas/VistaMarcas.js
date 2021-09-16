@@ -75,36 +75,38 @@ export default function VistaMarcas() {
     }
 
     const pressEnter = (e) => {
-		if (e.key === 'Enter') saveData();
+        if (e.key === 'Enter') saveData();
 	};
 
     return (
         <div>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
-            <Box display="flex" justifyContent="center" alignItems="center" my={2}>
-                <TextField
-                    id="outlined-error-helper-text"
-                    label="Nombre departamento"
-                    value={data.nombre_marca ? data.nombre_marca : ""}
-                    name="nombre_marca"
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    onChange={obtenerDatos}
-                    error={error}
-                    onKeyPress={pressEnter}
-                />
-                <Box ml={1} />
-                <Button 
-                    color="primary" 
-                    variant="contained" 
-                    size="large" 
-                    disableElevation 
-                    onClick={saveData}
-                >
-                    <Add />Guardar
-                </Button>
-            </Box>
+            {sesion.accesos.catalogos.marcas.agregar === false ? (null):(
+                <Box display="flex" justifyContent="center" alignItems="center" my={2}>
+                    <TextField
+                        id="outlined-error-helper-text"
+                        label="Nombre departamento"
+                        value={data.nombre_marca ? data.nombre_marca : ""}
+                        name="nombre_marca"
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        onChange={obtenerDatos}
+                        error={error}
+                        onKeyPress={pressEnter}
+                    />
+                    <Box ml={1} />
+                    <Button 
+                        color="primary" 
+                        variant="contained" 
+                        size="large" 
+                        disableElevation 
+                        onClick={saveData}
+                    >
+                        <Add />Guardar
+                    </Button>
+                </Box>
+            )}
             <ListaMarcas toUpdate={toUpdate} setToUpdate={setToUpdate} updateData={updateData} setData={setData} />
         </div>
     )

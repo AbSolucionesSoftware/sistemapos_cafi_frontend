@@ -34,6 +34,64 @@ export const CREAR_USUARIO = gql`
 				nombre_sucursal
 				descripcion
 			}
+			accesos {
+				catalogos {
+					clientes {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					usuarios {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					marcas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					contabilidad {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					provedores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					cajas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					departamentos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					centro_costos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					conceptos_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+			}
 		}
 	}
 `;
@@ -72,6 +130,64 @@ export const OBTENER_USUARIOS = gql`
 				nombre_sucursal
 				descripcion
 			}
+			accesos {
+				catalogos {
+					clientes {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					usuarios {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					marcas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					contabilidad {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					provedores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					cajas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					departamentos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					centro_costos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					conceptos_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+			}
 		}
 	}
 `;
@@ -91,7 +207,11 @@ export const LOGEAR_USUARIO = gql`
 		}
 	}
 `;
-/* export const ELIMINAR_USUARIO = gql`
-	
+
+export const AGIGNAR_PERMISOS_USUARIO = gql`
+	mutation asignarAccesosUsuario($input: CrearArregloDeAccesosInput, $id: ID!) {
+		asignarAccesosUsuario(id: $id, input: $input) {
+			message
+		}
+}
 `;
- */

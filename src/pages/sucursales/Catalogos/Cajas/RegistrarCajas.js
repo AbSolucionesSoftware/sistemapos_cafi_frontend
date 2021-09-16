@@ -29,7 +29,7 @@ export default function RegistroCajas() {
 	});	
 	const nuevaCaja = async () => {
 		try {
-			console.log(sesion.numero_usuario, sesion.nombre)
+			// console.log(sesion.numero_usuario, sesion.nombre)
             setLoading(true);
 				await crearCaja({
 					variables: {
@@ -53,7 +53,7 @@ export default function RegistroCajas() {
 	
 	const deleteCaja = async (id) => {
 		try {
-			console.log(id)
+			// console.log(id)
             setLoading(true);
 				await eliminarCaja({
 					variables: {
@@ -63,8 +63,6 @@ export default function RegistroCajas() {
 			refetch();
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setLoading(false);
-		
-			
 		} catch (error) {
 			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
@@ -92,9 +90,11 @@ export default function RegistroCajas() {
 			<Box display="flex" justifyContent="left" alignItems="left" my={2}>
 			
 				<Box ml={1} />
-				<Button color="primary" variant="contained" size="large" disableElevation onClick={() => nuevaCaja()}>
-					<Add />Agregar
-				</Button>
+				{sesion.accesos.catalogos.cajas.agregar === false ? (null):(
+					<Button color="primary" variant="contained" size="large" disableElevation onClick={() => nuevaCaja()}>
+						<Add />Agregar
+					</Button>
+				)}
 			</Box>
 			<TablaCajas obtenerCajasSucursal={obtenerCajasSucursal} deleteCaja={deleteCaja} />
 		</Box>

@@ -37,6 +37,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function Cliente() {
 	const classes = useStyles();
+	
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const [ open, setOpen ] = useState(false);
 	const [ filtro, setFiltro ] = useState('');
 	const [ values, setValues ] = useState('');
@@ -92,7 +95,13 @@ export default function Cliente() {
 								</IconButton>
 							</Paper>
 						</Box>
-						<CrearCliente tipo="CLIENTE" accion="registrar" />
+						{
+							permisosUsuario.accesos.catalogos.clientes.agregar === false ? (
+								null
+							):(
+								<CrearCliente tipo="CLIENTE" accion="registrar" />
+							)
+						}
 					</Box>
 					<Box mx={4}>
 						<ListaClientes tipo="CLIENTE" filtro={filtro} />

@@ -47,8 +47,6 @@ const useStyles = makeStyles({
 
 export default function ListaClientes({user, tipo, filtro }) {
 
-	
-
 	const classes = useStyles();
 	const { update } = useContext(ClienteCtx);
 	const [ page, setPage ] = useState(0);
@@ -152,6 +150,8 @@ export default function ListaClientes({user, tipo, filtro }) {
 }
 
 const RowsRender = ({ datos, user }) => {
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const [ openDetalles, setOpenDetalles ] = useState(false);
 	const { update, setUpdate } = useContext(ClienteCtx);
 	const [ loading, setLoading ] = useState(false);
@@ -217,20 +217,25 @@ const RowsRender = ({ datos, user }) => {
 				<ModalDetalles openDetalles={openDetalles} handleDetalles={handleDetalles} datos={datos} />
 			</TableCell>
 			<TableCell width={50}>
-				<CrearCliente tipo="CLIENTE" accion="actualizar" datos={datos} />
+				{permisosUsuario.accesos.catalogos.clientes.editar === false ? (null):(
+					<CrearCliente tipo="CLIENTE" accion="actualizar" datos={datos} />
+				)
+				}
 			</TableCell>
-			{user === 'EMPLEADO' ? (null) :(
-				<TableCell width={50}>
+			<TableCell width={50}>
+				{permisosUsuario.accesos.catalogos.clientes.editar === false ? (null):(
 					<IconButton color="secondary">
 						<Delete />
 					</IconButton>
-				</TableCell>
-			)}
+				)}
+			</TableCell>
 		</TableRow>
 	);
 };
 
 const ModalDetalles = ({ handleDetalles, openDetalles, datos }) => {
+
+
 	const classes = useStyles();
 	return (
 		<div>

@@ -18,8 +18,8 @@ const columns = [
 	{ id: 5, label: 'Correo', minWidth: 150 },
 	{ id: 7, label: 'Estado', minWidth: 100 },
 	{ id: 8, label: 'Detalles', minWidth: 50, align: 'right' },
-	{ id: 9, label: 'Editar', minWidth: 50, align: 'right' },
-	{ id: 10, label: 'Eliminar', minWidth: 50, align: 'right' }
+	// { id: 9, label: 'Editar', minWidth: 50, align: 'right'},
+	// { id: 10, label: 'Eliminar', minWidth: 50, align: 'right' }
 ];
 
 const useStyles = makeStyles({
@@ -37,6 +37,7 @@ const useStyles = makeStyles({
 
 export default function ListaUsuarios({ sucursal, filtro }) {
 	const classes = useStyles();
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
 	const { update } = useContext(UsuarioContext);
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(10);
@@ -85,6 +86,16 @@ export default function ListaUsuarios({ sucursal, filtro }) {
 									{column.label}
 								</TableCell>
 							))}
+							{permisosUsuario.accesos.catalogos.usuarios.editar === false ? (null):(
+								<TableCell key={9} align={'right'}>
+									Editar
+								</TableCell>
+							)}
+							{permisosUsuario.accesos.catalogos.usuarios.eliminar === false ? (null):(
+								<TableCell key={10} align={'right'}>
+									Eliminar
+								</TableCell>
+							)}
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -110,6 +121,8 @@ export default function ListaUsuarios({ sucursal, filtro }) {
 }
 
 const RowsRender = ({ datos }) => {
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const [ openDetalles, setOpenDetalles ] = useState(false);
 	const { update, setUpdate } = useContext(UsuarioContext);
 	const [ loading, setLoading ] = useState(false);
@@ -163,14 +176,19 @@ const RowsRender = ({ datos }) => {
 			<TableCell width={50}>
 				<ModalDetalles openDetalles={openDetalles} handleDetalles={handleDetalles} datos={datos} />
 			</TableCell>
-			<TableCell width={50}>
-				<CrearUsario accion="actualizar" datos={datos} />
-			</TableCell>
-			<TableCell width={50}>
-				<IconButton color="secondary">
-					<Delete />
-				</IconButton>
-			</TableCell>
+			{permisosUsuario.accesos.catalogos.usuarios.editar === false ? (null):(
+				<TableCell width={50}>
+					<CrearUsario accion="actualizar" datos={datos} />
+				</TableCell>
+			)}
+			{permisosUsuario.accesos.catalogos.usuarios.eliminar === false ? (null):(
+				<TableCell width={50}>
+					<IconButton color="secondary">
+						<Delete />
+					</IconButton>
+				</TableCell>
+			)}
+		
 		</TableRow>
 	);
 };

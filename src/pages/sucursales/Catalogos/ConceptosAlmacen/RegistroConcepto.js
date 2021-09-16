@@ -81,25 +81,30 @@ export default function RegistroServicios() {
 			}else{
 				const input = data;
 				if(accion){
-					await crearConceptoAlmacen({
-						variables: {
-							input,
-							empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id,
-							usuario: sesion._id
-						}
-					});
+					if (sesion.accesos.catalogos.conceptos_almacen.agregar === false) {
+						return setAlert({ message: 'Lo sentimos no tienes los permisos autorizados', status: 'error', open: true });
+					}else{
+						await crearConceptoAlmacen({
+							variables: {
+								input,
+								empresa: sesion.empresa._id,
+								sucursal: sesion.sucursal._id,
+								usuario: sesion._id
+							}
+						});
+					}
 				}else{
-					// console.log(accion);
-					// console.log(idService);
-                   
-					await actualizarConceptoAlmacen({
-						variables: {
-							input,
-							id: idConcepto
-						}
-					})
-					setAccion(true);
+					if (sesion.accesos.catalogos.conceptos_almacen.editar === false) {
+						return setAlert({ message: 'Lo sentimos no tienes los permisos autorizados', status: 'error', open: true });
+					}else{
+						await actualizarConceptoAlmacen({
+							variables: {
+								input,
+								id: idConcepto
+							}
+						})
+						setAccion(true);
+					}
 				}
 				setAlert({ message: '¡Listo!', status: 'success', open: true });
 				setData({nombre_concepto: "", tipo: ""});

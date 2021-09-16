@@ -37,7 +37,7 @@ export const ACTUALIZAR_CUENTA= gql`
 `;
 export const ACTUALIZAR_SUBCUENTA = gql`
 	mutation actualizarSubcuenta($idCuenta: ID!, $idSubcuenta: ID!, $input: ActualizarSubcuentasInput) {
-		actualizarSubcosto(idCosto: $idCuenta, idSubcuenta: $idSubcuenta, input: $input) {
+		actualizarSubcuenta(idCuenta: $idCuenta, idSubcuenta: $idSubcuenta, input: $input) {
 			message
 		}
 	}

@@ -24,14 +24,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TablaCajas(props) {
+	const permisos = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const classes = useStyles();
 
-	
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(8);
-
-
-	
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
@@ -55,8 +53,9 @@ export default function TablaCajas(props) {
 						<TableHead>
 							<TableRow>
 								<TableCell>Cajas</TableCell>
-								
-								<TableCell padding="default">Eliminar</TableCell>
+								{permisos.accesos.catalogos.cajas.eliminar === false ? (null):(
+									<TableCell padding="default">Eliminar</TableCell>
+								)}
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -64,12 +63,13 @@ export default function TablaCajas(props) {
 								return (
 									<TableRow hover role="checkbox" tabIndex={-1} key={row.numero_caja}>
 										<TableCell> Caja {row.numero_caja}</TableCell>
-										
-										<TableCell padding="checkbox">
-											<IconButton onClick={() => props.deleteCaja(row._id)} >
-												<Delete />
-											</IconButton>
-										</TableCell>
+										{permisos.accesos.catalogos.cajas.eliminar === false ? (null):(
+											<TableCell padding="checkbox">
+												<IconButton onClick={() => props.deleteCaja(row._id)} >
+													<Delete />
+												</IconButton>
+											</TableCell>
+										)}
 									</TableRow>
 								);
 							})}
