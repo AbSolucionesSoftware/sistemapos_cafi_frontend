@@ -35,6 +35,20 @@ export const CREAR_USUARIO = gql`
 				descripcion
 			}
 			accesos {
+				mi_empresa {
+					datos_empresa {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					informacion_fiscal {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
 				catalogos {
 					clientes {
 						ver
@@ -85,6 +99,30 @@ export const CREAR_USUARIO = gql`
 						eliminar
 					}
 					conceptos_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					categorias {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					colores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					colores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					tallas_numeros {
 						ver
 						agregar
 						editar
@@ -131,6 +169,20 @@ export const OBTENER_USUARIOS = gql`
 				descripcion
 			}
 			accesos {
+				mi_empresa {
+					datos_empresa {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					informacion_fiscal {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
 				catalogos {
 					clientes {
 						ver
@@ -181,6 +233,24 @@ export const OBTENER_USUARIOS = gql`
 						eliminar
 					}
 					conceptos_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					categorias {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					colores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					tallas_numeros {
 						ver
 						agregar
 						editar

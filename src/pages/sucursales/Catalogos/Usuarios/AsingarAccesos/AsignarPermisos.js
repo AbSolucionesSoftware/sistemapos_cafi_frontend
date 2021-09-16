@@ -5,7 +5,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import { AppBar, Box, Tabs } from '@material-ui/core';
 import { Tab } from '@material-ui/core';
 import {  FcPaid, FcShop, FcSurvey, FcNews } from 'react-icons/fc';
+
 import Catalogos from './Departamentos/Catalogos';
+import MiEmpresa from './Departamentos/MiEmpresa';
 
 import SnackBarMessages from '../../../../../components/SnackBarMessages';
 
@@ -65,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function AsignarPermisos({obtenerCatalogos, arregloAccesos}) {
+export default function AsignarPermisos({obtenerAccesos, arregloAccesos}) {
 
 	const classes = useStyles();
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
@@ -131,7 +133,7 @@ export default function AsignarPermisos({obtenerCatalogos, arregloAccesos}) {
             </AppBar>
 			<TabPanel value={value} index={0}>
 				<Box p={2}>
-					{/* <CamposAsignados type='empresa' /> */}
+					<MiEmpresa obtenerAccesos={obtenerAccesos} arregloAccesos={arregloAccesos} />
 				</Box>
 			</TabPanel>
 			<TabPanel value={value} index={1}>
@@ -146,7 +148,7 @@ export default function AsignarPermisos({obtenerCatalogos, arregloAccesos}) {
 			</TabPanel>
 			<TabPanel value={value} index={3}>
 				<Box p={0}>
-					<Catalogos obtenerCatalogos={obtenerCatalogos} arregloAccesos={arregloAccesos} />
+					<Catalogos obtenerAccesos={obtenerAccesos} arregloAccesos={arregloAccesos} />
 				</Box>
 			</TabPanel>
 			<TabPanel value={value} index={4}>

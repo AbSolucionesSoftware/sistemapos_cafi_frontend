@@ -37,21 +37,30 @@ export default function RegistroDepartamentos({accion}) {
 				setError(true);
 			    return;
 			}else{
-				if(accion === "registrar" && sesion.accesos.catalogos.departamentos.agregar === true ){
-					const input = data
-					await CrearDepartamentos({
-						variables: {
-							input,
-							empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id
-						}
-					});
-				}else if(sesion.accesos.catalogos.departamentos.editar === true){
-					/* await ActualzarDepartamentos({
-						variables: {
-							
-						}
-					}) */
+				if(accion === "registrar" ){
+					if (sesion.accesos.catalogos.departamentos.agregar === false) {
+						return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'eror', open: true });
+					}else{
+						const input = data
+						await CrearDepartamentos({
+							variables: {
+								input,
+								empresa: sesion.empresa._id,
+								sucursal: sesion.sucursal._id
+							}
+						});
+					}
+
+				}else{
+					if (sesion.accesos.catalogos.departamentos.editar === false) {
+						return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'eror', open: true });
+					}else{
+						/* await ActualzarDepartamentos({
+							variables: {
+								
+							}
+						}) */
+					}
 				}
 				setUpdateData(!updateData);
 				// setUpdate(!update);
@@ -80,15 +89,9 @@ export default function RegistroDepartamentos({accion}) {
 					error={error}
 				/>
 				<Box ml={1} />
-				{sesion.accesos.catalogos.departamentos.editar === true ? (
-					<Button color="primary" variant="contained" size="large" disableElevation onClick={saveData} >
-						<Add />Guardar
-					</Button>
-				) : sesion.accesos.catalogos.departamentos.editar === true ?(
-					<Button color="primary" variant="contained" size="large" disableElevation onClick={saveData} >
-						<Add />Guardar
-					</Button>
-				) : (null)}
+				<Button color="primary" variant="contained" size="large" disableElevation onClick={saveData} >
+					<Add />Guardar
+				</Button>
 			</Box>
 			<TablaDepartamentos updateData={updateData} />
 		</Box>

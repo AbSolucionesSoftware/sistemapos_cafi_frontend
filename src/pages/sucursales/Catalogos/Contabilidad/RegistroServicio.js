@@ -47,24 +47,30 @@ export default function RegistroServicios() {
 			}else{
 				const input = data;
 				if(accion){
-					await CrearContabilidad({
-						variables: {
-							input,
-							empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id,
-							usuario: sesion._id
-						}
-					});
+					if (sesion.accesos.catalogos.contabilidad.agregar === false) {
+						return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+					}else{
+						await CrearContabilidad({
+							variables: {
+								input,
+								empresa: sesion.empresa._id,
+								sucursal: sesion.sucursal._id,
+								usuario: sesion._id
+							}
+						});
+					}
 				}else{
-					// console.log(accion);
-					// console.log(idService);
-					await ActualizarContabilidad({
-						variables: {
-							input,
-							id: idService
-						}
-					})
-					setAccion(true);
+					if (sesion.accesos.catalogos.contabilidad.editar === false) {
+						return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+					}else{
+						await ActualizarContabilidad({
+							variables: {
+								input,
+								id: idService
+							}
+						})
+						setAccion(true);
+					}
 				}
 				setAlert({ message: '¡Listo!', status: 'success', open: true });
 				setData({nombre_servicio: ""});
@@ -84,24 +90,22 @@ export default function RegistroServicios() {
 		<div className={classes.root}>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<Typography variant="h6">Tipo de Servicio</Typography>
-			{sesion.accesos.catalogos.provedores.agregar === false ? (null):(
-				<Box display="flex" alignItems="center" mb={2}>
-					<TextField
-						error={error}
-						id="outlined-error-helper-text"
-						variant="outlined"
-						size="small"
-						name="nombre_servicio"
-						value={data.nombre_servicio}
-						onChange={handleChangeInput}
-						onKeyPress={pressEnter}
-					/>
-					<Box ml={1} />
-					<Button color="primary" variant="contained" size="large" onClick={handleSubmit} disableElevation>
-						<Add />Guardar
-					</Button>
-				</Box>
-			)}		
+			<Box display="flex" alignItems="center" mb={2}>
+				<TextField
+					error={error}
+					id="outlined-error-helper-text"
+					variant="outlined"
+					size="small"
+					name="nombre_servicio"
+					value={data.nombre_servicio}
+					onChange={handleChangeInput}
+					onKeyPress={pressEnter}
+				/>
+				<Box ml={1} />
+				<Button color="primary" variant="contained" size="large" onClick={handleSubmit} disableElevation>
+					<Add />Guardar
+				</Button>
+			</Box>
 			<ListaServicios 
 				setData={setData} 
 				idService={idService} 
