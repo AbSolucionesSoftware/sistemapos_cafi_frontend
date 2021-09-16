@@ -64,8 +64,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function MisDatos() {
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	const classes = useStyles();
 	const [ loadingPage, setLoadingPage ] = React.useState(false);
+	const [ bloqueo, setBloqueo ] = useState(sesion.accesos.mi_empresa.datos_empresa.editar === false ? true : false);
 	const [ preview, setPreview ] = useState('');
 	const [ open, setOpen ] = React.useState(false);
 	const [ errorPage, setErrorPage ] = React.useState(false);
@@ -75,7 +77,6 @@ export default function MisDatos() {
 	const { empresa, update, setEmpresa, setUpdate } = useContext(EmpresaContext);
 	
 	const [ actualizarEmpresa ] = useMutation(ACTUALIZAR_EMPRESA);
-	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	
 	/* Queries */
 	const { loading, data,refetch, error } = useQuery(OBTENER_DATOS_EMPRESA, {
@@ -304,6 +305,7 @@ export default function MisDatos() {
 														<TextField
 															fullWidth
 															className={classes.input}
+															disabled={bloqueo}
 															type="text"
 															size="small"
 															error={errorForm.error && !empresaDatos.nombre_empresa}
@@ -327,6 +329,7 @@ export default function MisDatos() {
 														<TextField
 															fullWidth
 															className={classes.input}
+															disabled={bloqueo}
 															type="text"
 															size="small"
 															error={errorForm.error && !empresaDatos.nombre_dueno}
@@ -351,6 +354,7 @@ export default function MisDatos() {
 													<Typography>Teléfono</Typography>
 													<TextField
 														className={classes.input}
+														disabled={bloqueo}
 														size="small"
 														name="telefono_dueno"
 														variant="outlined"
@@ -363,6 +367,7 @@ export default function MisDatos() {
 													<Typography>Celular</Typography>
 													<TextField
 														className={classes.input}
+														disabled={bloqueo}
 														size="small"
 														name="celular"
 														variant="outlined"
@@ -374,6 +379,7 @@ export default function MisDatos() {
 													<Typography>E-mail</Typography>
 													<TextField
 														className={classes.input}
+														disabled={bloqueo}
 														size="small"
 														name="correo_empresa"
 														variant="outlined"
@@ -404,6 +410,7 @@ export default function MisDatos() {
 									size="small"
 									name="calle"
 									variant="outlined"
+									disabled={bloqueo}
 									value={empresaDatos.direccion.calle ? empresaDatos.direccion.calle : ''}
 									onChange={obtenerCamposDireccion}
 								/>
@@ -414,6 +421,7 @@ export default function MisDatos() {
 									size="small"
 									name="colonia"
 									variant="outlined"
+									disabled={bloqueo}
 									value={empresaDatos.direccion.colonia ? empresaDatos.direccion.colonia : ''}
 									onChange={obtenerCamposDireccion}
 								/>
@@ -424,6 +432,7 @@ export default function MisDatos() {
 									size="small"
 									name="no_ext"
 									variant="outlined"
+									disabled={bloqueo}
 									value={empresaDatos.direccion.no_ext ? empresaDatos.direccion.no_ext : ''}
 									onChange={obtenerCamposDireccion}
 								/>
@@ -434,6 +443,7 @@ export default function MisDatos() {
 									size="small"
 									name="no_int"
 									variant="outlined"
+									disabled={bloqueo}
 									value={empresaDatos.direccion.no_int ? empresaDatos.direccion.no_int : ''}
 									onChange={obtenerCamposDireccion}
 								/>
@@ -444,6 +454,7 @@ export default function MisDatos() {
 									size="small"
 									name="codigo_postal"
 									variant="outlined"
+									disabled={bloqueo}
 									value={empresaDatos.direccion.codigo_postal ? empresaDatos.direccion.codigo_postal : ''}
 									onChange={obtenerCamposDireccion}
 								/>
@@ -457,6 +468,7 @@ export default function MisDatos() {
 									size="small"
 									name="municipio"
 									variant="outlined"
+									disabled={bloqueo}
 									value={empresaDatos.direccion.municipio ? empresaDatos.direccion.municipio : ''}
 									onChange={obtenerCamposDireccion}
 								/>
@@ -467,6 +479,7 @@ export default function MisDatos() {
 									size="small"
 									name="localidad"
 									variant="outlined"
+									disabled={bloqueo}
 									value={empresaDatos.direccion.localidad ? empresaDatos.direccion.localidad : ''}
 									onChange={obtenerCamposDireccion}
 								/>
@@ -477,6 +490,7 @@ export default function MisDatos() {
 									size="small"
 									name="estado"
 									variant="outlined"
+									disabled={bloqueo}
 									value={empresaDatos.direccion.estado ? empresaDatos.direccion.estado : ''}
 									onChange={obtenerCamposDireccion}
 								/>
@@ -487,6 +501,7 @@ export default function MisDatos() {
 									size="small"
 									name="pais"
 									variant="outlined"
+									disabled={bloqueo}
 									value={empresaDatos.direccion.pais ? empresaDatos.direccion.pais : ''}
 									onChange={obtenerCamposDireccion}
 								/>
@@ -494,20 +509,22 @@ export default function MisDatos() {
 						</form>
 						</Grid>
 						<Grid>
-						<DialogActions>
-							<Button onClick={handleClose} color="primary">
-								Cancelar
-							</Button>
-							<Button
-								onClick={()=>actEmp()}
-								color="primary"
-								variant="contained"
-								autoFocus
-								
-							>
-								Guardar
-							</Button>
-						</DialogActions>
+						{sesion.accesos.mi_empresa.datos_empresa.editar === false ? (null):(
+							<DialogActions>
+								<Button onClick={handleClose} color="primary">
+									Cancelar
+								</Button>
+								<Button
+									onClick={()=>actEmp()}
+									color="primary"
+									variant="contained"
+									autoFocus
+									
+								>
+									Guardar
+								</Button>
+							</DialogActions>
+						)}
 						</Grid>
 					</div>
 					

@@ -1,13 +1,12 @@
 import {
   Box,
   Paper,
-  Grid,
   Typography,
 } from "@material-ui/core";
 import React, { Fragment } from "react";
 import Parametros from "../Parametros";
 
-export default function Catalogos({ obtenerCatalogos, arregloAccesos }) {
+export default function Catalogos({ obtenerAccesos, arregloAccesos }) {
     
     return (
         <Fragment>
@@ -29,7 +28,7 @@ export default function Catalogos({ obtenerCatalogos, arregloAccesos }) {
                             </Box>
                             <Parametros 
                                 arregloAccesos={arregloAccesos} 
-                                obtenerCatalogos={obtenerCatalogos}
+                                obtenerAccesos={obtenerAccesos}
                                 departamento={'catalogos'}
                                 subDepartamento={'clientes'}
                             />
@@ -48,7 +47,7 @@ export default function Catalogos({ obtenerCatalogos, arregloAccesos }) {
                             </Box>
                             <Parametros 
                                 arregloAccesos={arregloAccesos} 
-                                obtenerCatalogos={obtenerCatalogos}
+                                obtenerAccesos={obtenerAccesos}
                                 departamento={'catalogos'}
                                 subDepartamento={'usuarios'}
                             />
@@ -68,7 +67,7 @@ export default function Catalogos({ obtenerCatalogos, arregloAccesos }) {
                             </Box>
                             <Parametros 
                                 arregloAccesos={arregloAccesos} 
-                                obtenerCatalogos={obtenerCatalogos}
+                                obtenerAccesos={obtenerAccesos}
                                 departamento={'catalogos'}
                                 subDepartamento={'marcas'}
                             />
@@ -87,7 +86,7 @@ export default function Catalogos({ obtenerCatalogos, arregloAccesos }) {
                             </Box>
                             <Parametros 
                                 arregloAccesos={arregloAccesos} 
-                                obtenerCatalogos={obtenerCatalogos}
+                                obtenerAccesos={obtenerAccesos}
                                 departamento={'catalogos'}
                                 subDepartamento={'provedores'}
                             />
@@ -107,7 +106,7 @@ export default function Catalogos({ obtenerCatalogos, arregloAccesos }) {
                             </Box>
                             <Parametros 
                                 arregloAccesos={arregloAccesos} 
-                                obtenerCatalogos={obtenerCatalogos}
+                                obtenerAccesos={obtenerAccesos}
                                 departamento={'catalogos'}
                                 subDepartamento={'contabilidad'}
                             />
@@ -126,7 +125,7 @@ export default function Catalogos({ obtenerCatalogos, arregloAccesos }) {
                             </Box>
                             <Parametros 
                                 arregloAccesos={arregloAccesos} 
-                                obtenerCatalogos={obtenerCatalogos}
+                                obtenerAccesos={obtenerAccesos}
                                 departamento={'catalogos'}
                                 subDepartamento={'cajas'}
                             />
@@ -145,7 +144,7 @@ export default function Catalogos({ obtenerCatalogos, arregloAccesos }) {
                             </Box>
                             <Parametros 
                                 arregloAccesos={arregloAccesos} 
-                                obtenerCatalogos={obtenerCatalogos}
+                                obtenerAccesos={obtenerAccesos}
                                 departamento={'catalogos'}
                                 subDepartamento={'departamentos'}
                             />
@@ -164,7 +163,7 @@ export default function Catalogos({ obtenerCatalogos, arregloAccesos }) {
                             </Box>
                             <Parametros 
                                 arregloAccesos={arregloAccesos} 
-                                obtenerCatalogos={obtenerCatalogos}
+                                obtenerAccesos={obtenerAccesos}
                                 departamento={'catalogos'}
                                 subDepartamento={'centro_costos'}
                             />
@@ -183,9 +182,66 @@ export default function Catalogos({ obtenerCatalogos, arregloAccesos }) {
                             </Box>
                             <Parametros 
                                 arregloAccesos={arregloAccesos} 
-                                obtenerCatalogos={obtenerCatalogos}
+                                obtenerAccesos={obtenerAccesos}
                                 departamento={'catalogos'}
                                 subDepartamento={'conceptos_almacen'}
+                            />
+                        </Box>
+                    </Paper>
+                </Box>
+            </Box>
+            <Box p={1}  display='flex' justifyContent= 'center'>
+                <Box width='80%'>
+                    <Paper elevation={3}>
+                        <Box display='flex'>
+                            <Box ml={1} p={1} flexGrow={1} >
+                                <Typography variant="h6">
+                                    <b>Categorias</b>
+                                </Typography>
+                            </Box>
+                            <Parametros 
+                                arregloAccesos={arregloAccesos} 
+                                obtenerAccesos={obtenerAccesos}
+                                departamento={'catalogos'}
+                                subDepartamento={'categorias'}
+                            />
+                        </Box>
+                    </Paper>
+                </Box>
+            </Box>
+            <Box p={1}  display='flex' justifyContent= 'center'>
+                <Box width='80%'>
+                    <Paper elevation={3}>
+                        <Box display='flex'>
+                            <Box ml={1} p={1} flexGrow={1} >
+                                <Typography variant="h6">
+                                    <b>Colores</b>
+                                </Typography>
+                            </Box>
+                            <Parametros 
+                                arregloAccesos={arregloAccesos} 
+                                obtenerAccesos={obtenerAccesos}
+                                departamento={'catalogos'}
+                                subDepartamento={'colores'}
+                            />
+                        </Box>
+                    </Paper>
+                </Box>
+            </Box>
+            <Box p={1}  display='flex' justifyContent= 'center'>
+                <Box width='80%'>
+                    <Paper elevation={3}>
+                        <Box display='flex'>
+                            <Box ml={1} p={1} flexGrow={1} >
+                                <Typography variant="h6">
+                                    <b>Tallas y Numeros</b>
+                                </Typography>
+                            </Box>
+                            <Parametros 
+                                arregloAccesos={arregloAccesos} 
+                                obtenerAccesos={obtenerAccesos}
+                                departamento={'catalogos'}
+                                subDepartamento={'tallas_numeros'}
                             />
                         </Box>
                     </Paper>

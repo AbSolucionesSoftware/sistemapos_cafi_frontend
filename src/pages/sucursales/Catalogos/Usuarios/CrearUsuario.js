@@ -123,10 +123,10 @@ export default function CrearUsuario({ accion, datos }) {
 		limpiarCampos();
 	};
 
-	const obtenerCatalogos = (event, departamento, subDepartamentos) => {
+	const obtenerAccesos = (event, departamento, subDepartamentos) => {
         const { name, checked } = event.target;
         setUsuario({
-			...usuario, accesos:{
+			...usuario, accesos:{ ...usuario.accesos, 
 				[departamento]: {...usuario.accesos[departamento], 
 					[subDepartamentos]: {...usuario.accesos[departamento][subDepartamentos], [name]: checked }}
 			}
@@ -136,7 +136,6 @@ export default function CrearUsuario({ accion, datos }) {
 	/* Mutations */
 	const [ crearUsuario ] = useMutation(CREAR_USUARIO);
 	const [ actualizarUsuario ] = useMutation(ACTUALIZAR_USUARIO);
-
 	const saveData = async () => {
 		if (accion === 'registrar') {
 			if (
@@ -244,7 +243,7 @@ export default function CrearUsuario({ accion, datos }) {
 					<TabPanel value={value} index={1}>
 						<AsignarPermisos 
 							arregloAccesos={usuario.accesos}
-							obtenerCatalogos={obtenerCatalogos}
+							obtenerAccesos={obtenerAccesos}
 						/>
 					</TabPanel>
 				</Box>

@@ -41,28 +41,34 @@ export default function VistaMarcas() {
 			    return;
             }else{
                 if(toUpdate){
-                    //EDITAR
-                    const input = data;
-                    await actualizarMarca({
-                        variables: {
-                            input: {
-                                nombre_marca: input.nombre_marca,
-                            },
-                            id: toUpdate
-                        }
-                    });
-                    setData("");
+                    if (sesion.accesos.catalogos.marcas.editar === false) {
+                        return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción !', status: 'error', open: true });
+                    }else{
+                        const input = data;
+                        await actualizarMarca({
+                            variables: {
+                                input: {
+                                    nombre_marca: input.nombre_marca,
+                                },
+                                id: toUpdate
+                            }
+                        });
+                        setData("");
+                    }
                 }else{
-                    //REGISTRO
-                    const input = data;
-                    await CrearMarca({
-                        variables: {
-                            input,
-                            empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id
-                        }
-                    });
-                    setData("");
+                    if (sesion.accesos.catalogos.marcas.agregar === false) {
+                        return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción !', status: 'error', open: true });
+                    }else{
+                        const input = data;
+                        await CrearMarca({
+                            variables: {
+                                input,
+                                empresa: sesion.empresa._id,
+                                sucursal: sesion.sucursal._id
+                            }
+                        });
+                        setData("");
+                    }
                 }
                 setToUpdate('');
                 setUpdateData(!updateData);
@@ -81,7 +87,6 @@ export default function VistaMarcas() {
     return (
         <div>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
-            {sesion.accesos.catalogos.marcas.agregar === false ? (null):(
                 <Box display="flex" justifyContent="center" alignItems="center" my={2}>
                     <TextField
                         id="outlined-error-helper-text"
@@ -106,7 +111,6 @@ export default function VistaMarcas() {
                         <Add />Guardar
                     </Button>
                 </Box>
-            )}
             <ListaMarcas toUpdate={toUpdate} setToUpdate={setToUpdate} updateData={updateData} setData={setData} />
         </div>
     )

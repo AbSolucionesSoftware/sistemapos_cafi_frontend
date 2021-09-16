@@ -1,5 +1,19 @@
 
 let arregloVacio = {
+    mi_empresa:{
+        datos_empresa: {
+            ver: false,
+            agregar: false,
+            editar: false,
+            eliminar: false
+        },
+        informacion_fiscal: {
+            ver: false,
+            agregar: false,
+            editar: false,
+            eliminar: false
+        }
+    },
     catalogos: {
         clientes:{
             ver: false,
@@ -50,6 +64,24 @@ let arregloVacio = {
             editar:false
         },
         conceptos_almacen:{
+            ver: false,
+            agregar: false,
+            eliminar: false,
+            editar:false
+        },
+        categorias:{
+            ver: false,
+            agregar: false,
+            eliminar: false,
+            editar:false
+        },
+        colores:{
+            ver: false,
+            agregar: false,
+            eliminar: false,
+            editar:false
+        },
+        tallas_numeros:{
             ver: false,
             agregar: false,
             eliminar: false,

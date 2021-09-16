@@ -57,24 +57,35 @@ export default function RegistroCategorias() {
 		setLoadingBackDrop(true);
 		try {
 			if (!toUpdateID) {
-				await crearCategoria({
-					variables: {
-						input: {
-							categoria,
-							empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id
+				if (sesion.accesos.catalogos.categorias.agregar === false) {
+					setLoadingBackDrop(false);
+					return setAlert({ message: 'Lo sentimos no tienes autorización para esta acción', status: 'error', open: true });
+				}else{
+					await crearCategoria({
+						variables: {
+							input: {
+								categoria,
+								empresa: sesion.empresa._id,
+								sucursal: sesion.sucursal._id
+							}
 						}
-					}
-				});
+					});
+				}
+				
 			} else {
-				await actualizarCategoria({
-					variables: {
-						input: {
-							categoria
-						},
-						idCategoria: toUpdateID
-					}
-				});
+				if (sesion.accesos.catalogos.categorias.editar === false) {
+					setLoadingBackDrop(false);
+					return setAlert({ message: 'Lo sentimos no tienes autorización para esta acción', status: 'error', open: true });
+				}else{
+					await actualizarCategoria({
+						variables: {
+							input: {
+								categoria
+							},
+							idCategoria: toUpdateID
+						}
+					});
+				}
 			}
 			refetch();
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
@@ -127,6 +138,7 @@ export default function RegistroCategorias() {
 
 const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toUpdateID }) => {
 	const classes = useStyles();
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	const [ subcategoria, setSubcategoria ] = useState('');
 	const [ loadingBackDrop, setLoadingBackDrop ] = useState(false);
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
@@ -175,26 +187,36 @@ const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toU
 		let resp;
 		try {
 			if (!toUpdateID) {
-				resp = await crearSubcategoria({
-					variables: {
-						input: {
-							subcategoria
-						},
-						idCategoria: categoria._id
-					}
-				});
-				msgAlert = ( resp.data.crearSubcategoria.message === 'false' ) ? { message: '¡Listo!', status: 'success', open: true }: { message: resp.data.crearSubcategoria.message, status: 'error', open: true }
+				if (sesion.accesos.catalogos.categorias.agregar === false) {
+					setLoadingBackDrop(false);
+					return setAlert({ message: 'Lo sentimos no tienes autorización para esta acción', status: 'error', open: true });
+				}else{
+					resp = await crearSubcategoria({
+						variables: {
+							input: {
+								subcategoria
+							},
+							idCategoria: categoria._id
+						}
+					});
+					msgAlert = ( resp.data.crearSubcategoria.message === 'false' ) ? { message: '¡Listo!', status: 'success', open: true }: { message: resp.data.crearSubcategoria.message, status: 'error', open: true }
+				}
 			} else {
-				resp = await actualizarSubcategoria({
-					variables: {
-						input: {
-							subcategoria
-						},
-						idCategoria: categoria._id,
-						idSubcategoria: toUpdateID
-					}
-				});
-				msgAlert =( resp.data.actualizarSubcategoria.message === 'false' ) ? { message: '¡Listo!', status: 'success', open: true }: { message: resp.data.actualizarSubcategoria.message, status: 'error', open: true }
+				if (sesion.accesos.catalogos.categorias.editar === false) {
+					setLoadingBackDrop(false);
+					return setAlert({ message: 'Lo sentimos no tienes autorización para esta acción', status: 'error', open: true });
+				}else{
+					resp = await actualizarSubcategoria({
+						variables: {
+							input: {
+								subcategoria
+							},
+							idCategoria: categoria._id,
+							idSubcategoria: toUpdateID
+						}
+					});
+					msgAlert =( resp.data.actualizarSubcategoria.message === 'false' ) ? { message: '¡Listo!', status: 'success', open: true }: { message: resp.data.actualizarSubcategoria.message, status: 'error', open: true }
+				}
 			}
 			refetch();
 			
@@ -243,24 +265,28 @@ const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toU
 					<Box display="flex" alignItems="center" width="100%">
 						<Typography variant="h6">{categoria.categoria}</Typography>
 						<div className={classes.flexGrow} />
-						{toUpdateID && toUpdateID === categoria._id ? (
-							<IconButton onClick={cancelarUpdate} onFocus={(event) => event.stopPropagation()}>
-								<Close />
-							</IconButton>
-						) : (
+						{sesion.accesos.catalogos.categorias.editar === false ?(null):(
+							toUpdateID && toUpdateID === categoria._id ? (
+								<IconButton onClick={cancelarUpdate} onFocus={(event) => event.stopPropagation()}>
+									<Close />
+								</IconButton>
+							) : (
+								<IconButton
+									onClick={obtenerCamposParaActualizar}
+									onFocus={(event) => event.stopPropagation()}
+								>
+									<Edit />
+								</IconButton>
+							)
+						)}
+						{sesion.accesos.catalogos.categorias.eliminar === false ?(null):(
 							<IconButton
-								onClick={obtenerCamposParaActualizar}
-								onFocus={(event) => event.stopPropagation()}
+								onClick={(event) => handleDelete(event)}
+								onFocus={(event) => handleDelete(event)}
 							>
-								<Edit />
+								<Delete />
 							</IconButton>
 						)}
-						<IconButton
-							onClick={(event) => handleDelete(event)}
-							onFocus={(event) => handleDelete(event)}
-						>
-							<Delete />
-						</IconButton>
 					</Box>
 				</AccordionSummary>
 				<AccordionDetails>
@@ -298,10 +324,10 @@ const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toU
 };
 
 const RenderSubcategorias = ({ subcategoria,idCategoria, toUpdateID, setToUpdateID, setSubcategoria,setAlert, refetch }) => {
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	const classes = useStyles();
 	const [ eliminarSubcategoria ] = useMutation(ELIMINAR_SUBCATEGORIA);
 	const obtenerCamposParaActualizar = (event) => {
-
 		event.stopPropagation();
 		setToUpdateID(subcategoria._id);
 		setSubcategoria(subcategoria.subcategoria);
@@ -343,18 +369,22 @@ const RenderSubcategorias = ({ subcategoria,idCategoria, toUpdateID, setToUpdate
 			>
 				<Typography>{subcategoria.subcategoria}</Typography>
 				<div className={classes.flexGrow} />
-				{toUpdateID && toUpdateID === subcategoria._id ? (
-					<IconButton onClick={cancelarUpdate} onFocus={(event) => event.stopPropagation()}>
-						<Close />
-					</IconButton>
-				) : (
-					<IconButton onClick={obtenerCamposParaActualizar} onFocus={(event) => event.stopPropagation()}>
-						<Edit />
+				{sesion.accesos.catalogos.categorias.editar === false ?(null):(
+					toUpdateID && toUpdateID === subcategoria._id ? (
+						<IconButton onClick={cancelarUpdate} onFocus={(event) => event.stopPropagation()}>
+							<Close />
+						</IconButton>
+					) : (
+						<IconButton onClick={obtenerCamposParaActualizar} onFocus={(event) => event.stopPropagation()}>
+							<Edit />
+						</IconButton>
+					)
+				)}
+				{sesion.accesos.catalogos.categorias.eliminar === false ?(null):(
+					<IconButton onClick={(event) => handleDelete(event) }>
+						<Delete />
 					</IconButton>
 				)}
-				<IconButton onClick={(event) => handleDelete(event) }>
-					<Delete />
-				</IconButton>
 			</Box>
 			<Divider />
 		</Fragment>

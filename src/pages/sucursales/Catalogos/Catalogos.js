@@ -35,11 +35,13 @@ export default function Catalogos() {
 						<Productos />
 					</Box>
 				</Grid>
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Tallas />
-					</Box>
-				</Grid>
+				{permisosUsuario.accesos.catalogos.tallas_numeros.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<Tallas />
+						</Box>
+					</Grid>
+				)}
 				{/* <Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<UnidadMedida />
@@ -80,16 +82,20 @@ export default function Catalogos() {
 						</Box>
 					</Grid>
 				)}
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Categorias />
-					</Box>
-				</Grid>
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Colores />
-					</Box>
-				</Grid>
+				{permisosUsuario.accesos.catalogos.categorias.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<Categorias />
+						</Box>
+					</Grid>
+				)}
+				{permisosUsuario.accesos.catalogos.colores.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<Colores />
+						</Box>
+					</Grid>
+				)}
 				{permisosUsuario.accesos.catalogos.marcas.ver === false ? (null):(
 					<Grid item lg={2}>
 						<Box display="flex" justifyContent="center" alignItems="center">
