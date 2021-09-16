@@ -211,7 +211,7 @@ const RenderCuentas = ({ cuenta, setToUpdateID, setCuenta, refetch, toUpdateID }
 								subcuenta
 							},
 							idCuenta: cuenta._id,
-							idSubCuenta: toUpdateID
+							idSubcuenta: toUpdateID
 						}
 					});
 				}
