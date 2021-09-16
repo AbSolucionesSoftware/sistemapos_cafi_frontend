@@ -29,6 +29,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Cajas() {
+
 	const classes = useStyles();
 
 	const [ open, setOpen ] = React.useState(false);

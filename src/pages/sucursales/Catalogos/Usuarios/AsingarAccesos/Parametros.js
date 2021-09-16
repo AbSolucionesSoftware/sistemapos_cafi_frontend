@@ -1,13 +1,11 @@
 import { Box, Checkbox, FormControlLabel } from '@material-ui/core'
-import React, {useState} from 'react'
+import React from 'react';
+import AddIcon from '@material-ui/icons/Add';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import EditIcon from '@material-ui/icons/Edit';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 
 export default function Parametros({ arregloAccesos, obtenerCatalogos, departamento, subDepartamento}) {
-
-    const [activo, setActivo] = useState(false);
-
-    const verficarDatos = () => {
-        
-    };
 
     return(
         <Box display='flex' justifyContent='center' alignItems='center'>
@@ -20,7 +18,11 @@ export default function Parametros({ arregloAccesos, obtenerCatalogos, departame
                         onChange={(e) => obtenerCatalogos(e, departamento, subDepartamento)}
                     />
                 }
-                label="Ver"
+                label={
+                    <Box mr={2} display='flex'>
+                        Ver
+                    </Box>
+                }
             />
             <FormControlLabel
                 control={
@@ -32,7 +34,11 @@ export default function Parametros({ arregloAccesos, obtenerCatalogos, departame
                         onChange={(e) => obtenerCatalogos(e, departamento, subDepartamento)}
                     />
                 }
-                label="Agregar"
+                label={
+                    <Box mr={2}  display='flex'>
+                        Agregar
+                    </Box>
+                }
             />
             <FormControlLabel
                 control={
@@ -44,7 +50,11 @@ export default function Parametros({ arregloAccesos, obtenerCatalogos, departame
                         onChange={(e) => obtenerCatalogos(e, departamento, subDepartamento)}
                     />
                 }
-                label="Editar"
+                label={
+                    <Box mr={2}  display='flex'>
+                         Editar
+                    </Box>
+                }
             />
             <FormControlLabel
                 control={
@@ -56,7 +66,11 @@ export default function Parametros({ arregloAccesos, obtenerCatalogos, departame
                         onChange={(e) => obtenerCatalogos(e, departamento, subDepartamento)}
                     />
                 }
-                label="Eliminar"
+                label={
+                    <Box display='flex'>
+                         Eliminar
+                    </Box>
+                }
             />
         </Box>
     )

@@ -37,7 +37,7 @@ export default function RegistroDepartamentos({accion}) {
 				setError(true);
 			    return;
 			}else{
-				if(accion === "registrar"){
+				if(accion === "registrar" && sesion.accesos.catalogos.departamentos.agregar === true ){
 					const input = data
 					await CrearDepartamentos({
 						variables: {
@@ -46,7 +46,7 @@ export default function RegistroDepartamentos({accion}) {
 							sucursal: sesion.sucursal._id
 						}
 					});
-				}else{
+				}else if(sesion.accesos.catalogos.departamentos.editar === true){
 					/* await ActualzarDepartamentos({
 						variables: {
 							
@@ -80,9 +80,15 @@ export default function RegistroDepartamentos({accion}) {
 					error={error}
 				/>
 				<Box ml={1} />
-				<Button color="primary" variant="contained" size="large" disableElevation onClick={saveData} >
-					<Add />Guardar
-				</Button>
+				{sesion.accesos.catalogos.departamentos.editar === true ? (
+					<Button color="primary" variant="contained" size="large" disableElevation onClick={saveData} >
+						<Add />Guardar
+					</Button>
+				) : sesion.accesos.catalogos.departamentos.editar === true ?(
+					<Button color="primary" variant="contained" size="large" disableElevation onClick={saveData} >
+						<Add />Guardar
+					</Button>
+				) : (null)}
 			</Box>
 			<TablaDepartamentos updateData={updateData} />
 		</Box>

@@ -42,6 +42,54 @@ export const CREAR_USUARIO = gql`
 						editar
 						eliminar
 					}
+					usuarios {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					marcas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					contabilidad {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					provedores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					cajas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					departamentos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					centro_costos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					conceptos_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
 				}
 			}
 		}
@@ -85,6 +133,54 @@ export const OBTENER_USUARIOS = gql`
 			accesos {
 				catalogos {
 					clientes {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					usuarios {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					marcas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					contabilidad {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					provedores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					cajas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					departamentos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					centro_costos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					conceptos_almacen {
 						ver
 						agregar
 						editar

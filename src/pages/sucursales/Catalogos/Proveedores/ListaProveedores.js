@@ -28,8 +28,8 @@ const columns = [
 	{ id: 6, label: 'Tipo de Cliente', minWidth: 100 },
 	{ id: 7, label: 'Estado', minWidth: 100 },
 	{ id: 8, label: 'Detalles', minWidth: 50, align: 'right' },
-	{ id: 9, label: 'Editar', minWidth: 50, align: 'right' },
-	{ id: 10, label: 'Eliminar', minWidth: 50, align: 'right' }
+	// { id: 9, label: 'Editar', minWidth: 50, align: 'right' },
+	// { id: 10, label: 'Eliminar', minWidth: 50, align: 'right' }
 ];
 
 const useStyles = makeStyles({
@@ -46,6 +46,8 @@ const useStyles = makeStyles({
 });
 
 export default function TablaProveedores({ tipo, filtro }) {
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const classes = useStyles();
 	const { update } = useContext(ClienteCtx);
 	const [ page, setPage ] = useState(0);
@@ -95,6 +97,16 @@ export default function TablaProveedores({ tipo, filtro }) {
 									{column.label}
 								</TableCell>
 							))}
+							{permisosUsuario.accesos.catalogos.provedores.editar === false ? (null):(
+								<TableCell key={9} align={'right'}>
+									Editar
+								</TableCell>
+							)}
+							{permisosUsuario.accesos.catalogos.provedores.eliminar === false ? (null):(
+								<TableCell key={10} align={'right'}>
+									Eliminar
+								</TableCell>
+							)}
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -120,6 +132,8 @@ export default function TablaProveedores({ tipo, filtro }) {
 }
 
 const RowsRender = ({ datos }) => {
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const [ openDetalles, setOpenDetalles ] = useState(false);
 
 	const handleDetalles = () => setOpenDetalles(!openDetalles);
@@ -150,14 +164,18 @@ const RowsRender = ({ datos }) => {
 			<TableCell width={50}>
 				<ModalDetalles openDetalles={openDetalles} handleDetalles={handleDetalles} datos={datos} />
 			</TableCell>
-			<TableCell width={50}>
-				<CrearCliente tipo="PRROVEEDOR" accion="actualizar" datos={datos} />
-			</TableCell>
-			<TableCell width={50}>
-				<IconButton color="secondary">
-					<Delete />
-				</IconButton>
-			</TableCell>
+			{permisosUsuario.accesos.catalogos.provedores.editar === false ? (null):(
+				<TableCell width={50}>
+					<CrearCliente tipo="PRROVEEDOR" accion="actualizar" datos={datos} />
+				</TableCell>
+			)}
+			{permisosUsuario.accesos.catalogos.provedores.eliminar === false ? (null):(
+				<TableCell width={50}>
+					<IconButton color="secondary">
+						<Delete />
+					</IconButton>
+				</TableCell>
+			)}
 		</TableRow>
 	);
 };

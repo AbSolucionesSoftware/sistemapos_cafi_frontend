@@ -145,7 +145,7 @@ export default function AsignarPermisos({obtenerCatalogos, arregloAccesos}) {
 				</Box>
 			</TabPanel>
 			<TabPanel value={value} index={3}>
-				<Box p={2}>
+				<Box p={0}>
 					<Catalogos obtenerCatalogos={obtenerCatalogos} arregloAccesos={arregloAccesos} />
 				</Box>
 			</TabPanel>

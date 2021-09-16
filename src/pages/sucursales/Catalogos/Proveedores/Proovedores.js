@@ -36,6 +36,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Proveedores() {
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const classes = useStyles();
 	const [ open, setOpen ] = useState(false);
 	const [ filtro, setFiltro ] = useState('');
@@ -92,7 +94,9 @@ export default function Proveedores() {
 								</IconButton>
 							</Paper>
 						</Box>
-						<CrearCliente tipo="PROVEEDOR" accion="registrar" />
+						{permisosUsuario.accesos.catalogos.provedores.ver === false ? (null):(
+							<CrearCliente tipo="PROVEEDOR" accion="registrar" />
+						)}
 					</Box>
 					<Box mx={4}>
 						<TablaProovedores tipo="PROVEEDOR" filtro={filtro} />

@@ -84,23 +84,24 @@ export default function RegistroServicios() {
 		<div className={classes.root}>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<Typography variant="h6">Tipo de Servicio</Typography>
-			<Box display="flex" alignItems="center" mb={2}>
-				<TextField
-					error={error}
-					id="outlined-error-helper-text"
-					variant="outlined"
-					size="small"
-					name="nombre_servicio"
-					value={data.nombre_servicio}
-					onChange={handleChangeInput}
-					onKeyPress={pressEnter}
-				/>
-				<Box ml={1} />
-				<Button color="primary" variant="contained" size="large" onClick={handleSubmit} disableElevation>
-					<Add />Guardar
-				</Button>
-			</Box>
-
+			{sesion.accesos.catalogos.provedores.agregar === false ? (null):(
+				<Box display="flex" alignItems="center" mb={2}>
+					<TextField
+						error={error}
+						id="outlined-error-helper-text"
+						variant="outlined"
+						size="small"
+						name="nombre_servicio"
+						value={data.nombre_servicio}
+						onChange={handleChangeInput}
+						onKeyPress={pressEnter}
+					/>
+					<Box ml={1} />
+					<Button color="primary" variant="contained" size="large" onClick={handleSubmit} disableElevation>
+						<Add />Guardar
+					</Button>
+				</Box>
+			)}		
 			<ListaServicios 
 				setData={setData} 
 				idService={idService} 

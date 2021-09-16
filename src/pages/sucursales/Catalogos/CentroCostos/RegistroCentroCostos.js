@@ -79,24 +79,34 @@ export default function RegistroCategorias() {
 		setLoadingBackDrop(true);
 		try {
 			if (!toUpdateID) {
-				await crearCuenta({
-					variables: {
-						input: {
-							cuenta,
-							empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id
+				if (sesion.accesos.catalogos.centro_costos.agregar === false) {
+					setLoadingBackDrop(false);
+					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+				}else{
+					await crearCuenta({
+						variables: {
+							input: {
+								cuenta,
+								empresa: sesion.empresa._id,
+								sucursal: sesion.sucursal._id
+							}
 						}
-					}
-				});
+					});
+				}
 			} else {
-				await actualizarCuenta({
-					variables: {
-						input: {
-							cuenta
-						},
-						idCuenta: toUpdateID
-					}
-				});
+				if (sesion.accesos.catalogos.centro_costos.editar === false) {
+					setLoadingBackDrop(false);
+					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+				}else{
+					await actualizarCuenta({
+						variables: {
+							input: {
+								cuenta
+							},
+							idCuenta: toUpdateID
+						}
+					});
+				}
 			}
 			refetch();
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
@@ -129,6 +139,8 @@ export default function RegistroCategorias() {
 }
 
 const RenderCuentas = ({ cuenta, setToUpdateID, setCuenta, refetch, toUpdateID }) => {
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const classes = useStyles();
 	const [ subcuenta, setSubcuenta ] = useState('');
 	const [ loadingBackDrop, setLoadingBackDrop ] = useState(false);
@@ -175,24 +187,34 @@ const RenderCuentas = ({ cuenta, setToUpdateID, setCuenta, refetch, toUpdateID }
 		setLoadingBackDrop(true);
 		try {
 			if (!toUpdateID) {
-				await crearSubcuenta({
-					variables: {
-						input: {
-							subcuenta
-						},
-						idCuenta: cuenta._id
-					}
-				});
+				if (sesion.accesos.catalogos.centro_costos.agregar === false) {
+					setLoadingBackDrop(false);
+					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+				}else{
+					await crearSubcuenta({
+						variables: {
+							input: {
+								subcuenta
+							},
+							idCuenta: cuenta._id
+						}
+					});
+				}
 			} else {
-				await actualizarSubcuenta({
-					variables: {
-						input: {
-							subcuenta
-						},
-						idCuenta: cuenta._id,
-						idSubCuenta: toUpdateID
-					}
-				});
+				if (sesion.accesos.catalogos.centro_costos.editar === false) {
+					setLoadingBackDrop(false);
+					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+				}else{
+					await actualizarSubcuenta({
+						variables: {
+							input: { 
+								subcuenta
+							},
+							idCuenta: cuenta._id,
+							idSubCuenta: toUpdateID
+						}
+					});
+				}
 			}
 			refetch();
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
@@ -205,17 +227,15 @@ const RenderCuentas = ({ cuenta, setToUpdateID, setCuenta, refetch, toUpdateID }
 			setLoadingBackDrop(false);
 		}
 	};
+
     const deleteCuenta = async (idCuenta) => {
-        
 		setLoadingBackDrop(true);
 		try {
-			
             await eliminarCuenta({
                 variables: {
                     id: idCuenta
                 }
             });
-		
 			refetch();
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setLoadingBackDrop(false);
@@ -249,19 +269,23 @@ const RenderCuentas = ({ cuenta, setToUpdateID, setCuenta, refetch, toUpdateID }
 								<Close />
 							</IconButton>
 						) : (
+							sesion.accesos.catalogos.centro_costos.editar === false ? (null):(
+								<IconButton
+									onClick={obtenerCamposParaActualizar}
+									onFocus={(event) => event.stopPropagation()}
+								>
+									<Edit />
+								</IconButton>
+							)
+						)}
+						{sesion.accesos.catalogos.centro_costos.eliminar === false ? (null):(
 							<IconButton
-								onClick={obtenerCamposParaActualizar}
+								onClick={() => deleteCuenta(cuenta._id )}
 								onFocus={(event) => event.stopPropagation()}
 							>
-								<Edit />
+								<Delete />
 							</IconButton>
 						)}
-						<IconButton
-							onClick={() => deleteCuenta(cuenta._id )}
-							onFocus={(event) => event.stopPropagation()}
-						>
-							<Delete />
-						</IconButton>
 					</Box>
 				</AccordionSummary>
 				<AccordionDetails>
@@ -291,12 +315,10 @@ const RenderCuentas = ({ cuenta, setToUpdateID, setCuenta, refetch, toUpdateID }
 							</Box>
 						</Box>
 						{(cuenta.subcuentas !== null ) ?
-						<Box ml={5}>{render_subcuentas}</Box>
+							<Box ml={5}>{render_subcuentas}</Box>
 						:
 						<div/>
 						}	
-                     
-                           
 						{/* <Box ml={5}>{render_subcostos}</Box> */}
 					</Box>
 				</AccordionDetails>
@@ -306,6 +328,8 @@ const RenderCuentas = ({ cuenta, setToUpdateID, setCuenta, refetch, toUpdateID }
 };
 
 const RenderSubcuentas = ({ idCuenta,subcuenta, toUpdateID, setToUpdateID, setSubcuenta, refetch }) => {
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const classes = useStyles();
     const [ loadingBackDrop, setLoadingBackDrop ] = useState(false);
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
@@ -326,14 +350,12 @@ const RenderSubcuentas = ({ idCuenta,subcuenta, toUpdateID, setToUpdateID, setSu
         
 		setLoadingBackDrop(true);
 		try {
-			
             await eliminarSubcuenta({
                 variables: {
                     idCuenta: idCuenta,
                     idSubcuenta: idSubCuenta
                 }
             });
-		
 			refetch();
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setLoadingBackDrop(false);
@@ -359,18 +381,26 @@ const RenderSubcuentas = ({ idCuenta,subcuenta, toUpdateID, setToUpdateID, setSu
 			>
 				<Typography>{subcuenta.subcuenta}</Typography>
 				<div className={classes.flexGrow} />
-				{toUpdateID && toUpdateID === subcuenta._id ? (
-					<IconButton onClick={cancelarUpdate} onFocus={(event) => event.stopPropagation()}>
-						<Close />
-					</IconButton>
-				) : (
-					<IconButton onClick={obtenerCamposParaActualizar} onFocus={(event) => event.stopPropagation()}>
-						<Edit />
+				{
+					sesion.accesos.catalogos.centro_costos.editar === false ? (null):(
+						toUpdateID && toUpdateID === subcuenta._id ? (
+							<IconButton onClick={cancelarUpdate} onFocus={(event) => event.stopPropagation()}>
+								<Close />
+							</IconButton>
+						) : (
+							
+								<IconButton onClick={obtenerCamposParaActualizar} onFocus={(event) => event.stopPropagation()}>
+									<Edit />
+								</IconButton>
+							
+						)
+					)
+				}
+				{sesion.accesos.catalogos.centro_costos.eliminar === false ? (null):(
+					<IconButton onClick={() => deleteSubCuenta(subcuenta._id)} onFocus={(event) => event.stopPropagation()}>
+						<Delete />
 					</IconButton>
 				)}
-				<IconButton onClick={() => deleteSubCuenta(subcuenta._id)} onFocus={(event) => event.stopPropagation()}>
-					<Delete />
-				</IconButton>
 			</Box>
 			<Divider />
 		</Fragment>
