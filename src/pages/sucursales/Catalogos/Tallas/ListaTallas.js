@@ -114,15 +114,22 @@ const RowsRender = ({ row, setAlert, tipo, toUpdate, setToUpdate, setValue, refe
  
 	const handleDelete = async () => {
 		try {
-			await eliminarTalla({
+			const resp = await eliminarTalla({
 				variables: {
-					id: row._id
+					id: row._id,
+					input:{
+						tipo:tipo,
+						talla:''
+					}
 				}
 			});
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
+		
+			let msgAlert = { message: resp.data.eliminarTalla.message, status: 'success', open: true }
+			setAlert(msgAlert);
 			refetch();
 			handleModal();
 		} catch (error) {
+				handleModal();
 			setAlert({ message: error.message, status: 'error', open: true });
 		}
 	};

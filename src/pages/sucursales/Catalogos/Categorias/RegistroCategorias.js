@@ -217,8 +217,8 @@ const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toU
 					idCategoria: categoria._id
 				}
 			});
-			let msgAlert = ( resp.data.eliminarCategoria.message === 'false' ) ? { message: '¡Listo!', status: 'success', open: true }: { message: resp.data.eliminarCategoria.message, status: 'error', open: true }
 			
+			let msgAlert = ( resp.data.eliminarCategoria.message === 'false' ) ? { message: '¡Listo!', status: 'success', open: true }: { message: resp.data.eliminarCategoria.message, status: 'error', open: true }
 			setAlert(msgAlert);
 			refetch();
 		
