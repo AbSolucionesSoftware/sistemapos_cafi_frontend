@@ -35,22 +35,24 @@ export default function RegistroTallas({ tipo }) {
 	const { obtenerTallas } = data;
 
 	const GuardarDatosBD = async () => {
+		let resp;
 		if (!value) {
 			return;
 		}
 		try {
 			const nueva_talla = value;
 			if(toUpdate){
-				await actualizarTalla({
+				resp = await actualizarTalla({
 					variables: {
 						input: {
 							talla: nueva_talla,
+							tipo
 						},
 						id: toUpdate
 					}
 				});
 			}else{
-				await crearTalla({
+				resp = await crearTalla({
 					variables: {
 						input: {
 							talla: nueva_talla,
@@ -64,7 +66,10 @@ export default function RegistroTallas({ tipo }) {
 			refetch();
 			setValue('');
 			setToUpdate('');
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			console.log(resp.data)
+			let msgAlert = (toUpdate) ? { message: resp.data.actualizarTalla.message, status: 'success', open: true }:{ message: resp.data.crearTalla.message, status: 'success', open: true }
+			setAlert(msgAlert);
+			
 		} catch (error) {
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 		}
