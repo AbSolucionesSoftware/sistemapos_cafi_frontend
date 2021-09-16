@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Dialog, DialogActions, DialogTitle, DialogContent } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
@@ -90,7 +90,6 @@ const ModalCompra = ({ open, handleClickOpen }) => {
 		productosCompra.forEach(element => {
 			const { precio_de_compra } = element.producto.precios
 
-			console.log(precio_de_compra);
 			subtotal += precio_de_compra.precio_sin_impuesto
 			impuestos += precio_de_compra.iva + precio_de_compra.ieps;
 			total += precio_de_compra.precio_con_impuesto
@@ -105,11 +104,15 @@ const ModalCompra = ({ open, handleClickOpen }) => {
 	}
 
 	const realizarCompraBD = () => {
-		/* console.log(productosCompra); */
-		calcularCostoCompra();
+		console.log(productosCompra);
+		
 	};
 
-	
+	useEffect(() => {
+		return () => {
+			calcularCostoCompra();
+		}
+	}, [])
 
 	return (
 		<Dialog fullScreen open={open} onClose={handleClickOpen} TransitionComponent={Transition}>

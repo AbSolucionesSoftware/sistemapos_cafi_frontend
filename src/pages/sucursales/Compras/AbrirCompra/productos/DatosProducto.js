@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState } from "react";
+import React, { Fragment, useContext, useState, forwardRef } from "react";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
@@ -7,8 +7,6 @@ import Typography from "@material-ui/core/Typography";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 
 import RegistroProvedor from "../../../Catalogos/Cliente/CrearCliente";
 import RegistroAlmacen from "../../../Almacenes/RegistroAlmacen/ContainerRegistroAlmacen";
@@ -47,6 +45,8 @@ import { ClienteProvider } from "../../../../../context/Catalogos/crearClienteCt
 
 import { useQuery } from "@apollo/client";
 import { OBTENER_CONSULTA_GENERAL_PRODUCTO } from "../../../../../gql/Compras/compras";
+import PreciosDeVentaCompras from "./PreciosVenta";
+import { Dialog, DialogActions, DialogTitle, Slide } from "@material-ui/core";
 
 export default function DatosProducto() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -168,7 +168,22 @@ export default function DatosProducto() {
     setInitialStates(producto);
   };
 
-  const agregarCompra = () => {
+  const obtenerCostoCantidad = (e) => {
+    const { name, value } = e.target;
+    if (!value) {
+      setDatosProducto({
+        ...datosProducto,
+        [name]: "",
+      });
+      return;
+    }
+    setDatosProducto({
+      ...datosProducto,
+      [name]: parseFloat(value),
+    });
+  };
+
+  const agregarCompra = async () => {
     if (
       !datosProducto.producto.datos_generales ||
       !datosCompra.proveedor.nombre_cliente ||
@@ -182,7 +197,7 @@ export default function DatosProducto() {
       precios,
       almacen_inicial,
       presentaciones,
-      datosProducto.producto.datos_generales
+      datosProducto.producto
     );
 
     if (validate.error) {
@@ -206,13 +221,19 @@ export default function DatosProducto() {
     precios.precios_producto = preciosP;
 
     let producto = {
-      datos_generales: validateJsonEdit(datos_generales, "datos_generales"),
+      datos_generales: await validateJsonEdit(
+        datos_generales,
+        "datos_generales"
+      ),
       precios,
       imagenes,
       imagenes_eliminadas,
       almacen_inicial,
       centro_de_costos,
-      unidades_de_venta: validateJsonEdit(unidadesVenta, "unidades_de_venta"),
+      unidades_de_venta: await validateJsonEdit(
+        unidadesVenta,
+        "unidades_de_venta"
+      ),
       presentaciones,
       presentaciones_eliminadas,
       precio_plazos: preciosPlazos,
@@ -419,184 +440,278 @@ export default function DatosProducto() {
           </Box>
         </Grid>
       </Grid>
-      <Box my={2} />
-
-      <Box mb={1}>
-        <CrearProducto
-          accion={false}
-          productosRefetch={refetch}
-          fromCompra={true}
-        />
-      </Box>
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={2}>
-          <TextField
-            id="input-producto-codigo"
-            name="codigo_barras"
-            label="Código de barras"
-            variant="outlined"
-            size="small"
-            fullWidth
-            value={
-              datosProducto.datos_generales
-                ? datosProducto.datos_generales.codigo_barras
-                : ""
-            }
-            type="number"
-          />
+      <Box my={1} />
+      <Grid container spacing={1} alignItems="center">
+        <Grid item>
+          <Typography>Código de barras</Typography>
+          <Box width={200}>
+            <Autocomplete
+              id="combo-box-producto-codigo"
+              size="small"
+              fullWidth
+              options={productos}
+              getOptionLabel={(option) =>
+                option.datos_generales.codigo_barras
+                  ? option.datos_generales.codigo_barras
+                  : "N/A"
+              }
+              renderInput={(params) => (
+                <TextField {...params} variant="outlined" />
+              )}
+              onChange={(_, value) => obtenerSelectsProducto(value)}
+              getOptionSelected={(option) =>
+                option.datos_generales.codigo_barras
+              }
+              value={
+                datosProducto.producto.datos_generales
+                  ? datosProducto.producto
+                  : null
+              }
+            />
+          </Box>
         </Grid>
-        <Grid item xs={12} md={2}>
-          <Autocomplete
-            id="combo-box-producto-nombre"
-            size="small"
-            fullWidth
-            options={productos}
-            getOptionLabel={(option) => option.datos_generales.nombre_comercial}
-            renderInput={(params) => (
-              <TextField {...params} label="Producto" variant="outlined" />
-            )}
-            onChange={(_, value) => obtenerSelectsProducto(value)}
-            getOptionSelected={(option) =>
-              option.datos_generales.nombre_comercial
-            }
-            value={
-              datosProducto.producto.datos_generales
-                ? datosProducto.producto
-                : null
-            }
-          />
+        <Grid item>
+          <Typography>Producto</Typography>
+          <Box display="flex" alignItems="center" width={250}>
+            <Autocomplete
+              id="combo-box-producto-nombre"
+              size="small"
+              fullWidth
+              options={productos}
+              getOptionLabel={(option) =>
+                option.datos_generales.nombre_comercial
+              }
+              renderInput={(params) => (
+                <TextField {...params} variant="outlined" />
+              )}
+              onChange={(_, value) => obtenerSelectsProducto(value)}
+              getOptionSelected={(option) =>
+                option.datos_generales.nombre_comercial
+              }
+              value={
+                datosProducto.producto.datos_generales
+                  ? datosProducto.producto
+                  : null
+              }
+            />
+            <CrearProducto
+              accion={false}
+              productosRefetch={refetch}
+              fromCompra={true}
+            />
+          </Box>
         </Grid>
-        <Grid item xs={12} md={2}>
-          <Autocomplete
-            id="combo-box-producto-clave"
-            size="small"
-            fullWidth
-            options={productos}
-            getOptionLabel={(option) => option.datos_generales.clave_alterna}
-            renderInput={(params) => (
-              <TextField {...params} label="Clave" variant="outlined" />
-            )}
-            onChange={(_, value) => obtenerSelectsProducto(value)}
-            getOptionSelected={(option) => option.datos_generales.clave_alterna}
-            value={
-              datosProducto.producto.datos_generales
-                ? datosProducto.producto
-                : null
-            }
-          />
+        <Grid item>
+          <Typography>Clave</Typography>
+          <Box width={140}>
+            <Autocomplete
+              id="combo-box-producto-clave"
+              size="small"
+              fullWidth
+              options={productos}
+              getOptionLabel={(option) => option.datos_generales.clave_alterna}
+              renderInput={(params) => (
+                <TextField {...params} variant="outlined" />
+              )}
+              onChange={(_, value) => obtenerSelectsProducto(value)}
+              getOptionSelected={(option) =>
+                option.datos_generales.clave_alterna
+              }
+              value={
+                datosProducto.producto.datos_generales
+                  ? datosProducto.producto
+                  : null
+              }
+            />
+          </Box>
         </Grid>
-        <Grid item xs={12} md={1}>
-          <TextField
-            label="Costo"
-            variant="outlined"
-            size="small"
-            fullWidth
-            value={datosProducto.costo}
-            type="number"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">$</InputAdornment>
-              ),
-            }}
-          />
+        <Grid item>
+          <Typography>Costo</Typography>
+          <Box width={100}>
+            <TextField
+              inputMode="numeric"
+              name="costo"
+              variant="outlined"
+              size="small"
+              fullWidth
+              value={datosProducto.costo}
+              onChange={obtenerCostoCantidad}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
+            />
+          </Box>
         </Grid>
-        <Grid item xs={12} md={1}>
-          <TextField
-            label="Cantidad"
-            variant="outlined"
-            size="small"
-            fullWidth
-            type="number"
-            value={datosProducto.cantidad}
-          />
+        <Grid item>
+          <Typography>Cantidad</Typography>
+          <Box width={60}>
+            <TextField
+              name="cantidad"
+              variant="outlined"
+              size="small"
+              fullWidth
+              inputMode="numeric"
+              value={datosProducto.cantidad}
+              onChange={obtenerCostoCantidad}
+            />
+          </Box>
         </Grid>
-        <Grid item xs={12} md={1}>
-          <TextField
-            label="Descuento"
-            variant="outlined"
-            size="small"
-            fullWidth
-            type="number"
-            value={datosProducto.descuento_precio}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">$</InputAdornment>
-              ),
-            }}
-          />
+        <Grid item>
+          <Typography>Descuento</Typography>
+          <Box display="flex" width={140}>
+            <TextField
+              variant="outlined"
+              size="small"
+              fullWidth
+              inputMode="numeric"
+              value={datosProducto.descuento_precio}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
+            />
+            <Box mr={1} />
+            <TextField
+              variant="outlined"
+              size="small"
+              fullWidth
+              inputMode="numeric"
+              value={datosProducto.descuento_porcentaje}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">%</InputAdornment>
+                ),
+              }}
+            />
+          </Box>
         </Grid>
-        <Grid item xs={12} md={1}>
-          <TextField
-            label="Descuento"
-            variant="outlined"
-            size="small"
-            fullWidth
-            type="number"
-            value={datosProducto.descuento_porcentaje}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">%</InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} md={2}>
-          <FormControlLabel
-            control={
-              <Checkbox 
-				color="primary"
-                /* checked={state.checkedA} onChange={handleChange} */ name="mantener_precios"
-              />
-            }
-            label="Mantener precios"
-          />
+        <Grid item>
+          <Box>
+            <Grid container spacing={2}>
+              <Grid item>
+                <Typography style={{ fontSize: 18 }}>
+                  Subtotal: <b>${formatoMexico(datosProducto.subtotal)}</b>
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography style={{ fontSize: 18 }}>
+                  Impuestos: <b>${formatoMexico(datosProducto.impuestos)}</b>
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography style={{ fontSize: 18 }}>
+                  <b>Total: ${formatoMexico(datosProducto.total)}</b>
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
         </Grid>
       </Grid>
       <Box mt={1}>
-        {datosProducto.producto.datos_generales ? (
-          <Box display="flex" alignItems="center">
-            <PreciosProductos />
-            <Box mx={1} />
-            <TallasProductos />
-            <Box flexGrow={1} />
-            <Box>
-              <Grid container spacing={3}>
-                <Grid item>
-                  <Typography style={{ fontSize: 18 }}>
-                    Subtotal: <b>${formatoMexico(datosProducto.subtotal)}</b>
-                  </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography style={{ fontSize: 18 }}>
-                    Impuestos: <b>${formatoMexico(datosProducto.impuestos)}</b>
-                  </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography style={{ fontSize: 18 }}>
-                    <b>Total: ${formatoMexico(datosProducto.total)}</b>
-                  </Typography>
-                </Grid>
-              </Grid>
+        <Grid container>
+          <Grid item xs={12} md={7} padding="checkbox">
+            <PreciosDeVentaCompras />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            md={5}
+            style={{ display: "flex", alignItems: "flex-end" }}
+          >
+            <Box display="flex" width="100%" justifyContent="center">
+              <TallasProductos />
+              <Box mx={1} />
+              <ModalAgregarCompra agregarCompra={agregarCompra} />
+			  {/* CONDICIONAR */}
+			  
+              {/* <Button
+                variant="contained"
+                color="primary"
+                startIcon={<Add />}
+                disableElevation
+                disabled={
+                  !datosProducto.producto.datos_generales ||
+                  !datosCompra.proveedor.nombre_cliente ||
+                  !datosCompra.almacen.nombre_almacen
+                }
+                onClick={() => agregarCompra()}
+              >
+                Agregar a compra
+              </Button> */}
             </Box>
-            <Box mx={1} />
-            <Button
-              size="large"
-              variant="contained"
-              color="primary"
-              startIcon={<Add />}
-              disableElevation
-              disabled={
-                !datosProducto.producto.datos_generales ||
-                !datosCompra.proveedor.nombre_cliente ||
-                !datosCompra.almacen.nombre_almacen
-              }
-              onClick={() => agregarCompra()}
-            >
-              Agregar a compra
-            </Button>
-          </Box>
-        ) : null}
+          </Grid>
+        </Grid>
       </Box>
     </Fragment>
   );
 }
+
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+const ModalAgregarCompra = ({ agregarCompra }) => {
+  const [open, setOpen] = useState(false);
+  const { datosProducto, datosCompra } = useContext(ComprasContext);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
+    <div>
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<Add />}
+        disableElevation
+        disabled={
+          !datosProducto.producto.datos_generales ||
+          !datosCompra.proveedor.nombre_cliente ||
+          !datosCompra.almacen.nombre_almacen
+        }
+        onClick={() => handleClickOpen()}
+      >
+        Agregar a compra
+      </Button>
+      <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-labelledby="modal-agregar-compra"
+      >
+        <DialogTitle id="modal-agregar-compra">
+          <Typography variant="h6">
+            El costo es diferente al precio de compra actual
+          </Typography>
+          <Typography variant="h6">
+            ¿Desea actualizar los precios o mantenerlos?
+          </Typography>
+        </DialogTitle>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              agregarCompra();
+              handleClose();
+            }}
+            color="primary"
+          >
+            Mantener
+          </Button>
+          <PreciosProductos
+            handleClose={handleClose}
+            agregarCompra={agregarCompra}
+          />
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+};

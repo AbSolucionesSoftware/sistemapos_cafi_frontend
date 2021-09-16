@@ -26,6 +26,8 @@ export default function ListaCompras() {
 	const classes = useStyles();
 	const { productosCompra } = useContext(ComprasContext);
 
+	const productos_ordernados = [ ...productosCompra].reverse();
+
 	return (
 		<Paper className={classes.root}>
 			<TableContainer>
@@ -42,7 +44,7 @@ export default function ListaCompras() {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{productosCompra.map((producto, index) => {
+						{productos_ordernados.map((producto, index) => {
 							return (
 								<TableRow hover role="checkbox" tabIndex={-1} key={index}>
 									<TableCell>
@@ -91,9 +93,9 @@ const ModalDeleteProducto = ({ index }) => {
 	};
 
 	const eliminarCompra = () => {
-		let copy_compras = [ ...productosCompra ];
+		let copy_compras = [ ...productosCompra ].reverse();
 		copy_compras.splice(index, 1);
-		setProductosCompra([...copy_compras])
+		setProductosCompra([...copy_compras].reverse())
 		handleClose();
 	}
 

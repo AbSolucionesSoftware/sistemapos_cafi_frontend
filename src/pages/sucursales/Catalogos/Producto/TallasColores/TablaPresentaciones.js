@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaPresentaciones({ datos, setOnUpdate, onUpdate }) {
+export default function TablaPresentaciones({ from, datos, setOnUpdate, onUpdate }) {
 	const classes = useStyles();
 	const { presentaciones } = useContext(RegProductoContext);
 
@@ -84,6 +84,9 @@ export default function TablaPresentaciones({ datos, setOnUpdate, onUpdate }) {
 								<TableCell padding="checkbox">Medida</TableCell>
 								<TableCell padding="checkbox">Color</TableCell>
 								<TableCell>Precio</TableCell>
+								{from && from === 'compra' ? (
+									<TableCell padding="checkbox">Existente</TableCell>
+								) : null}
 								<TableCell padding="checkbox">Cantidad</TableCell>
 								<TableCell padding="checkbox">Editar</TableCell>
 							</TableRow>
@@ -96,6 +99,7 @@ export default function TablaPresentaciones({ datos, setOnUpdate, onUpdate }) {
 										producto={producto}
 										index={index}
 										datos={datos}
+										from={from}
 										setOnUpdate={setOnUpdate}
 										onUpdate={onUpdate}
 									/>
@@ -110,7 +114,7 @@ export default function TablaPresentaciones({ datos, setOnUpdate, onUpdate }) {
 }
 
 
-const RenderPresentacionesRows = ({ producto, index, datos, setOnUpdate, onUpdate }) => {
+const RenderPresentacionesRows = ({ producto, index, datos, from, setOnUpdate, onUpdate }) => {
 	const { presentaciones, setPresentaciones, preciosP } = useContext(RegProductoContext);
 	const [ disabledInput, setDisabledInput ] = useState(true);
 	const classes = useStyles();
@@ -118,13 +122,17 @@ const RenderPresentacionesRows = ({ producto, index, datos, setOnUpdate, onUpdat
 
 	const copy_presentaciones = [...presentaciones].sort((a, b) => compareFunction(a, b))
 	const copy_element_presentacion = { ...copy_presentaciones[index] };
+	const copy_producto = { ...producto };
 
+	if(from && from === 'compra'){
+		copy_producto.cantidad = 0
+	}
 	
 	const handleEditCancel = () => {
-		if (!producto.cantidad) {
+		if (!copy_producto.cantidad) {
 			copy_element_presentacion.cantidad = 0;
 		}
-		if (!producto.precio) {
+		if (!copy_producto.precio) {
 			copy_element_presentacion.precio = preciosP[0].precio_neto;
 		}
 		copy_presentaciones.splice(index, 1, copy_element_presentacion);
@@ -189,7 +197,7 @@ const RenderPresentacionesRows = ({ producto, index, datos, setOnUpdate, onUpdat
 	return (
 		<TableRow hover selected={!disabledInput} className={classes.tableRow}>
 			<TableCell align="center">
-				<Checkbox checked={producto.existencia} color="primary" />
+				<Checkbox checked={copy_producto.existencia} color="primary" />
 			</TableCell>
 			<TableCell width={220}>
 				<Box display="flex">
@@ -197,33 +205,33 @@ const RenderPresentacionesRows = ({ producto, index, datos, setOnUpdate, onUpdat
 						inputRef={textfield}
 						onChange={(e) => obtenerDatos(e)}
 						/* disabled={disabledInput} */
-						value={producto.codigo_barras}
+						value={copy_producto.codigo_barras}
 						type="number"
 						name="precio"
-						disabled={datos.medidas_registradas && !producto.nuevo ? true : disabledInput}
+						disabled={datos.medidas_registradas && !copy_producto.nuevo ? true : disabledInput}
 					/>
-					{!datos.medidas_registradas && producto.nuevo ? (
+					{!datos.medidas_registradas && copy_producto.nuevo ? (
 						<IconButton color="primary" size="small" onClick={() => GenCodigoBarras()}>
 							<Cached />
 						</IconButton>
-					) : datos.medidas_registradas && producto.nuevo ? (
+					) : datos.medidas_registradas && copy_producto.nuevo ? (
 						<IconButton color="primary" size="small" onClick={() => GenCodigoBarras()}>
 							<Cached />
 						</IconButton>
 					) : null}
 				</Box>
 			</TableCell>
-			<TableCell width={200}>{producto.nombre_comercial}</TableCell>
+			<TableCell width={200}>{copy_producto.nombre_comercial}</TableCell>
 			<TableCell padding="checkbox">
-				{producto.medida._id ? <Chip label={producto.medida.talla} color="primary" /> : ''}
+				{copy_producto.medida._id ? <Chip label={copy_producto.medida.talla} color="primary" /> : ''}
 			</TableCell>
 			<TableCell padding="checkbox">
-				{producto.color._id ? (
-					<Tooltip title={producto.color.nombre} placement="top" arrow TransitionComponent={Zoom}>
+				{copy_producto.color._id ? (
+					<Tooltip title={copy_producto.color.nombre} placement="top" arrow TransitionComponent={Zoom}>
 						<div
 							className={classes.colorContainer}
 							style={{
-								backgroundColor: producto.color.hex
+								backgroundColor: copy_producto.color.hex
 							}}
 						/>
 					</Tooltip>
@@ -234,17 +242,22 @@ const RenderPresentacionesRows = ({ producto, index, datos, setOnUpdate, onUpdat
 					inputRef={textfield}
 					onChange={(e) => obtenerDatos(e)}
 					disabled={disabledInput}
-					value={producto.precio}
+					value={copy_producto.precio}
 					type="tel"
 					name="precio"
 				/>
 			</TableCell>
+			{from && from === 'compra' ? (
+				<TableCell padding="checkbox">
+				{producto.cantidad}
+			</TableCell>
+			) : null}
 			<TableCell padding="checkbox">
 				<Input
 					inputRef={textfield}
 					onChange={(e) => obtenerDatos(e)}
 					disabled={disabledInput}
-					value={producto.cantidad}
+					value={copy_producto.cantidad}
 					type="tel"
 					name="cantidad"
 				/>

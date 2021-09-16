@@ -489,14 +489,12 @@ export default function CrearProducto({
 
       {!accion ? (
         fromCompra ? (
-          <Button
+          <IconButton
             color="primary"
             onClick={() => toggleModal()}
-            startIcon={<Add />}
-            size="large"
           >
-            Registrar nuevo producto
-          </Button>
+            <Add />
+          </IconButton>
         ) : (
           <Button
             id="modal-registro-product"
@@ -512,7 +510,6 @@ export default function CrearProducto({
       ) : (
         <IconButton
           color="default"
-          variant="contained"
           onClick={() => toggleModal(datos)}
         >
           <Edit />
@@ -719,10 +716,10 @@ const ContenidoModal = ({ value, datos }) => {
   });
 
   useEffect(() => {
-	  return () => {
-		  refetch();
-	  }
-  }, [])
+    return () => {
+      refetch();
+    };
+  }, []);
 
   if (loading)
     return (

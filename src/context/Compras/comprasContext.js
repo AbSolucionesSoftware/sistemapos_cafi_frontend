@@ -12,7 +12,7 @@ export const ComprasProvider = ({ children }) => {
     subtotal: 0,
     impuestos: 0,
     total: 0,
-	mantener_precio: false,
+	mantener_precio: true,
   });
 
   const [productosCompra, setProductosCompra] = useState([]);

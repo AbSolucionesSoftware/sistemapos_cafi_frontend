@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -7,13 +7,16 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import Slide from '@material-ui/core/Slide';
 import FormularioPrecios from "../../../Catalogos/Producto/PreciosVenta/registrarInfoAdicional";
 import { Close, LocalOffer } from "@material-ui/icons";
+import { ComprasContext } from "../../../../../context/Compras/comprasContext";
+import Done from "@material-ui/icons/Done";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AlertDialogSlide() {
+export default function AlertDialogSlide({agregarCompra, handleClose}) {
   const [open, setOpen] = useState(false);
+  const { datosProducto } = useContext(ComprasContext);
 
   const toggleDrawer = () => setOpen(!open);
 
@@ -21,11 +24,12 @@ export default function AlertDialogSlide() {
     <Fragment>
       <Button
         color="primary"
-        size="large"
+        size="medium"
         onClick={() => toggleDrawer()}
         startIcon={<LocalOffer />}
+        disabled={!datosProducto.producto.datos_generales}
       >
-        Editar precios
+        Actualizar precios
       </Button>
       <Dialog
         open={open}
@@ -43,14 +47,21 @@ export default function AlertDialogSlide() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
+          <Button color="inherit" size="large" startIcon={<Close />} onClick={toggleDrawer}>
+            Cancelar
+          </Button>
           <Button
             size="large"
-            onClick={() => toggleDrawer()}
-            startIcon={<Close />}
+            onClick={() => {
+              agregarCompra();
+              handleClose();
+              toggleDrawer();
+            }}
+            startIcon={<Done />}
             color="primary"
             variant="contained"
           >
-            Cerrar
+            Aceptar y agregar compra
           </Button>
         </DialogActions>
       </Dialog>

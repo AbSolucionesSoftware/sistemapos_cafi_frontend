@@ -30,9 +30,9 @@ export default function AlertDialogSlide() {
     return (
       <Button
         color="primary"
-        size="large"
+        size="medium"
         disabled={true}
-        startIcon={<CircularProgress size={18} color="inherit" />}
+        startIcon={<CircularProgress size={16} color="inherit" />}
       >
         Editar tallas y colores
       </Button>
@@ -48,9 +48,10 @@ export default function AlertDialogSlide() {
     <Fragment>
       <Button
         color="primary"
-        size="large"
+        size="medium"
         onClick={() => toggleDrawer()}
         startIcon={<Palette />}
+        disabled={!datosProducto.producto.datos_generales}
       >
         Editar tallas y colores
       </Button>
@@ -67,9 +68,10 @@ export default function AlertDialogSlide() {
         <DialogContent>
           <DialogContentText id="alert-tallas-compra-description">
             <TallasProducto
-              datos={datosProducto}
+              datos={datosProducto.producto}
               obtenerConsultasProducto={obtenerConsultasProducto}
               refetch={refetch}
+              from="compra"
             />
           </DialogContentText>
         </DialogContent>
