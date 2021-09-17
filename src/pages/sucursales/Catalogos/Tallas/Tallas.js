@@ -8,9 +8,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import tallasIcon from '../../../../icons/tallas.svg';
-import shirtIcon from '../../../../icons/shirt.svg';
-import shoesIcon from '../../../../icons/shoes.svg';
 import { Box, Container, Tab, Tabs } from '@material-ui/core';
 import RegistroTallas from './RegistroTallas';
 
@@ -90,7 +87,7 @@ export default function Tallas() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={tallasIcon} alt="icono ropa" className={classes.iconSvg} />
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tallas.svg' alt="icono ropa" className={classes.iconSvg} />
 					</Box>
 					Tallas y numeros
 				</Box>
@@ -121,14 +118,14 @@ export default function Tallas() {
 								<Tab
 									label="Tallas"
 									icon={
-										<img src={shirtIcon} alt="icono tallas" className={classes.iconSvgSecondary} />
+										<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/shirt.svg' alt="icono tallas" className={classes.iconSvgSecondary} />
 									}
 									{...a11yProps(0)}
 								/>
 								<Tab
 									label="Numeros"
 									icon={
-										<img src={shoesIcon} alt="icono numeros" className={classes.iconSvgSecondary} />
+										<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/shoes.svg' alt="icono numeros" className={classes.iconSvgSecondary} />
 									}
 									{...a11yProps(1)}
 								/>

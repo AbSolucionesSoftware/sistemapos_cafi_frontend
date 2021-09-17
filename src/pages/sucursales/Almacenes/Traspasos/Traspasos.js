@@ -1,12 +1,12 @@
 import React, { forwardRef } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Slide,
+import { AppBar, Toolbar, Typography, Slide,
          Button, Box, Dialog, Grid, DialogActions, CircularProgress, TextField,Divider,
          InputLabel, Select, Input, MenuItem, FormControl, useTheme } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { FcAdvance } from 'react-icons/fc';
-import almacenIcon from '../../../../icons/almacen.svg';
 import TableSelectProducts from '../../../../components/Traspasos/TableSelectProducts';
+import CloseIcon from '@material-ui/icons/Close';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -112,7 +112,7 @@ export default function Traspasos() {
     const classes = useStyles();
     const theme = useTheme();
 	const [ open, setOpen ] = React.useState(false);
-    const [ loading, setLoading ] = React.useState(false);
+    const [ loading ] = React.useState(false);
     const [ almacenOrigen, setAlmacenOrigen ] = React.useState('');
     const [ almacenDestino, setAlmacenDestino ] = React.useState('');
     const [ transporte, setTransporte ] = React.useState('');
@@ -127,8 +127,6 @@ export default function Traspasos() {
         setProductos(data);
     }, [productos]);
     React.useEffect(() => {
-        
-        console.log(productosTras);
     }, [productosTras]);
 	const handleClickOpen = () => {
 		setOpen(true);
@@ -151,22 +149,22 @@ export default function Traspasos() {
         <div>
             <Button fullWidth onClick={handleClickOpen}>
                 <Box display="flex" flexDirection="column">
-                    <Box display="flex" justifyContent="center" alignItems="center">
+                    <Box display="flex" justifycontent="center" alignItems="center">
                         <FcAdvance className={classes.icon} />
 					</Box>
-                    <Grid container spacing={10} justify="center" >
+                    <Grid container spacing={10} justify="center">
                         <Grid item lg={2} >
-                            <Box display="flex" justifyContent="center" alignItems="center">
-                                    <Box display="flex" justifyContent="center" alignItems="center">
-                                        <img src={almacenIcon} alt="icono almacen" className={classes.imagen}/>
+                            <Box display="flex" justifycontent="center" alignItems="center">
+                                    <Box display="flex" justifycontent="center" alignItems="center">
+                                        <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/almacen.svg' alt="icono almacen" className={classes.imagen}/>
                                     </Box>
                             </Box>
                         </Grid>
                         <Grid item lg={2} >
-                            <Box display="flex" justifyContent="center" alignItems="center">
+                            <Box display="flex" justifycontent="center" alignItems="center">
                                 <Box display="flex" flexDirection="column">
-                                    <Box display="flex" justifyContent="center" alignItems="center">
-                                        <img src={almacenIcon} alt="icono almacen" className={classes.imagen} />
+                                    <Box display="flex" justifycontent="center" alignItems="center">
+                                        <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/almacen.svg' alt="icono almacen" className={classes.imagen} />
                                     </Box>
                                 </Box>
                             </Box>
@@ -182,19 +180,15 @@ export default function Traspasos() {
 						<Typography variant="h6" className={classes.title}>
                                 Traspasos
 						</Typography>
-						<Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClose}>
-                                Cerrar
-                            </Button>
-                        </Box>
-                        <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-							
-						</IconButton>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
                 
-                    <Box  className={{width:50}}>    
-                  
+                    <Box >    
                     <Grid >
                     <Box  flexDirection="row" className={classes.boxUpData}>
                         <Grid container>
@@ -204,7 +198,7 @@ export default function Traspasos() {
                                         <b>Datos traspaso</b>
                                     </Typography>
                                     <Divider />
-                                <Grid container  justifyContent="space-evenly">
+                                <Grid container  justifycontent="space-evenly">
                                     <FormControl className={classes.formControl}>
                                         <InputLabel id="almacen-origen-label">Unidad de traspaso</InputLabel>
                                         <Select
@@ -282,7 +276,7 @@ export default function Traspasos() {
                                         <b>Datos transporte traspaso</b>
                                     </Typography>
                                     <Divider />
-                                    <Grid container  justifyContent="space-evenly">
+                                    <Grid container  justifycontent="space-evenly">
                                         <FormControl className={classes.formControl}>
                                             
                                                 <InputLabel id="transporte-label">Transporte</InputLabel>
@@ -343,26 +337,23 @@ export default function Traspasos() {
                         </Grid>
                     </Box>
                     
-                    <Box ml={2} mt={8} justifyContent="center">
+                    <Box ml={2} mt={8} display='flex' justifycontent="center">
                         <Grid container>
                             <TableSelectProducts title='Productos' add={true} data={productos} productosTras={productosTras} setProductosTras={setProductosTras} />
                             <TableSelectProducts title='Productos a traspasar' add={false} data={productosTras}  />
                         </Grid>
                     </Box>
-                        <DialogActions>
-                            <Button onClick={handleClose} color="primary">
-                                Cancelar
-                            </Button>
-                            <Button
-                                onClick={()=>console.log('')}
-                                color="primary"
-                                variant="contained"
-                                autoFocus
-                                endIcon={loading ? <CircularProgress color="inherit" size={25} /> : null}
-                            >
-                                Traspasar
-                            </Button>
-                        </DialogActions>
+                    <DialogActions>
+                        <Button
+                            color="primary"
+                            variant="contained"
+                            size="large"
+                            autoFocus
+                            endIcon={loading ? <CircularProgress color="inherit" size={25} /> : null}
+                        >
+                            Traspasar
+                        </Button>
+                    </DialogActions>
                     </Grid>
                 </Box>     
 			

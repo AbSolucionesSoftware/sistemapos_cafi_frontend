@@ -34,6 +34,102 @@ export const CREAR_USUARIO = gql`
 				nombre_sucursal
 				descripcion
 			}
+			accesos {
+				mi_empresa {
+					datos_empresa {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					informacion_fiscal {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				catalogos {
+					clientes {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					usuarios {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					marcas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					contabilidad {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					provedores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					cajas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					departamentos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					centro_costos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					conceptos_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					categorias {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					colores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					colores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					tallas_numeros {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+			}
 		}
 	}
 `;
@@ -72,6 +168,96 @@ export const OBTENER_USUARIOS = gql`
 				nombre_sucursal
 				descripcion
 			}
+			accesos {
+				mi_empresa {
+					datos_empresa {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					informacion_fiscal {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				catalogos {
+					clientes {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					usuarios {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					marcas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					contabilidad {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					provedores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					cajas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					departamentos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					centro_costos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					conceptos_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					categorias {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					colores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					tallas_numeros {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+			}
 		}
 	}
 `;
@@ -91,7 +277,11 @@ export const LOGEAR_USUARIO = gql`
 		}
 	}
 `;
-/* export const ELIMINAR_USUARIO = gql`
-	
+
+export const AGIGNAR_PERMISOS_USUARIO = gql`
+	mutation asignarAccesosUsuario($input: CrearArregloDeAccesosInput, $id: ID!) {
+		asignarAccesosUsuario(id: $id, input: $input) {
+			message
+		}
+}
 `;
- */

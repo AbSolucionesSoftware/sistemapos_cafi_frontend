@@ -8,7 +8,6 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, Container } from '@material-ui/core';
-import coloresIcon from '../../../../icons/colores.svg';
 import RegistroColores from './RegistroColores';
 
 const useStyles = makeStyles((theme) => ({
@@ -45,7 +44,7 @@ export default function Colores() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={coloresIcon} alt="icono numero calzado" className={classes.icon} />
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/colores.svg' alt="icono numero calzado" className={classes.icon} />
 					</Box>
 					Colores
 				</Box>

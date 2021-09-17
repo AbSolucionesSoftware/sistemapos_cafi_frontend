@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -8,7 +8,6 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, Container } from '@material-ui/core';
-import cajasIcon from '../../../../icons/cajas.svg';
 import RegistroCajas from './RegistrarCajas';
 
 const useStyles = makeStyles((theme) => ({
@@ -29,6 +28,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Cajas() {
+
 	const classes = useStyles();
 
 	const [ open, setOpen ] = React.useState(false);
@@ -48,7 +48,7 @@ export default function Cajas() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={cajasIcon} alt="icono numero calzado" className={classes.icon} />
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/cajas.svg' alt="icono numero calzado" className={classes.icon} />
 					</Box>
 					Cajas
 				</Box>
@@ -59,9 +59,11 @@ export default function Cajas() {
 						<Typography variant="h6" className={classes.title}>
 							Cajas
 						</Typography>
-						<Button autoFocus color="inherit" size="large" onClick={handleClose} startIcon={<CloseIcon />}>
-							Cerrar
-						</Button>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
 				<Box mt={3}>

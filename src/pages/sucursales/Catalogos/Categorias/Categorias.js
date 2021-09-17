@@ -8,7 +8,6 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, Container } from '@material-ui/core';
-import categoriasIcon from '../../../../icons/categorias.svg';
 import RegistroCategorias from './RegistroCategorias';
 
 const useStyles = makeStyles((theme) => ({
@@ -45,7 +44,7 @@ export default function Categorias() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={categoriasIcon} alt="icono numero calzado" className={classes.icon} />
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/categorias.svg' alt="icono numero calzado" className={classes.icon} />
 					</Box>
 					Categorias
 				</Box>
@@ -69,6 +68,6 @@ export default function Categorias() {
 					</Container>
 				</Box>
 			</Dialog>
-		</div>
+		</div> 
 	);
 }

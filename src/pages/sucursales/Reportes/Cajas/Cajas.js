@@ -8,11 +8,9 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, Grid  } from '@material-ui/core';
-import cajasIcon from '../../../../icons/cajas.svg';
 import HistorialCaja from './HistorialCaja';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
-import TablaCajas from './ListaCajas';
 import CardCaja from './CardCaja';
 
 import { OBTENER_CAJAS } from '../../../../gql/Cajas/cajas';
@@ -47,7 +45,7 @@ export default function Cajas() {
 
 	
     /* Queries */
-    const {  data, error, refetch } = useQuery(OBTENER_CAJAS,{
+    const {  data, refetch } = useQuery(OBTENER_CAJAS,{
 		variables: {
             empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id
@@ -86,7 +84,7 @@ export default function Cajas() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={cajasIcon} alt="icono numero calzado" className={classes.icon} />
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/cajas.svg' alt="icono numero calzado" className={classes.icon} />
 					</Box>
 					Cajas
 				</Box>
@@ -97,17 +95,19 @@ export default function Cajas() {
 						<Typography variant="h6" className={classes.title}>
 							Cajas
 						</Typography>
-						<Button autoFocus color="inherit" size="large" onClick={handleClose} startIcon={<CloseIcon />}>
-							Cerrar
-						</Button>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
 
             <Grid container spacing={1} justify="center" >
                {  obtenerCajasSucursal?.map((caja, index) => {
                     return(
-                        <Button  onClick={()=>{handleClickOpenHistorial(); setCajaSelected(caja)}}>
-                            <CardCaja name={caja.numero_caja} activa ={caja.activa} cantidad_efectivo_actual= {caja.cantidad_efectivo_actual} />
+                        <Button key={index} onClick={()=>{handleClickOpenHistorial(); setCajaSelected(caja)}}>
+                            <CardCaja name={caja.numero_caja} activa={caja.activa} cantidad_efectivo_actual={caja.cantidad_efectivo_actual} />
                         </Button>
                     )	
                 }) } 

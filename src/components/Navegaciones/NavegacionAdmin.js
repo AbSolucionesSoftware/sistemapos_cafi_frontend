@@ -2,8 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Avatar, Box, Button, Typography, Toolbar, AppBar } from '@material-ui/core';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
-import HomeIcon from '@material-ui/icons/Home';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { grey } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
@@ -41,7 +40,7 @@ function NavegacionAdmin(props) {
 					<Box className={classes.title}>
 						<Typography variant="h6" color="inherit">Bienvenido {`${usuario.nombre}`}</Typography>
 					</Box>
-					<Button
+					{/* <Button
 						component={Link}
 						to="/home"
 						size="large"
@@ -49,7 +48,7 @@ function NavegacionAdmin(props) {
 						startIcon={<HomeIcon />}
 					>
 						Inicio
-					</Button>
+					</Button> */}
 					<Button
 						color="secondary"
 						size="large"
@@ -58,7 +57,7 @@ function NavegacionAdmin(props) {
 						variant="contained"
                         onClick={signOut}
 					>
-						Salir
+						Cerrar sesión
 					</Button>
 				</Toolbar>
 			</AppBar>

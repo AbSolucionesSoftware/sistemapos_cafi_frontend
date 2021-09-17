@@ -8,7 +8,6 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, Container, Grid } from '@material-ui/core';
-import descuentosIcon from '../../../../icons/descuentos.svg';
 import TablaProductosDescuentos from './ListaProductos';
 import RegistrarDescuento from './RegistrarDescuento';
 
@@ -46,7 +45,7 @@ export default function Descuentos() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={descuentosIcon} alt="icono numero calzado" className={classes.icon} />
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/descuentos.svg' alt="icono numero calzado" className={classes.icon} />
 					</Box>
 					Descuentos
 				</Box>

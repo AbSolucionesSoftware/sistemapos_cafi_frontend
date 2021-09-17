@@ -1,6 +1,6 @@
 import React, {  useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Dialog, Paper,  Slide, Box, Button, Toolbar, Typography} from '@material-ui/core';
+import { Dialog, useTheme, Paper,  Slide, Box, Button, Toolbar, Typography, FormControl, MenuItem, InputLabel, Input, Select} from '@material-ui/core';
 import {Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel} from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { useQuery, useMutation } from '@apollo/client';
@@ -52,12 +52,27 @@ const useStyles = makeStyles((theme) => ({
      minHeight:300,
      maxHeight:300
     },
+    formControl: {
+        margin: theme.spacing(1),
+        minWidth: 200,
+        maxWidth: 200,
+    },
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const ITEM_HEIGHT = 200;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 400,
+    },
+  },
+};
 const columns = [
 	{ id: 1, label: 'Tipo', minWidth: 100, align:'center' },
     { id: 2, label: 'Cantidad', minWidth: 100, align:'center' },
@@ -70,25 +85,42 @@ const columns = [
 	//{ id: 5, label: 'Observaciones', minWidth: 150 }
 	
 ];
+
+const tipos = [
+    'DEPOSITO',
+    'RETIRO',
+    'TRANSFERENCIA'
+];
+
+function getStyles(almacen, almacenName, theme) {
+  return {
+    fontWeight:
+      almacenName.indexOf(almacen) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  };
+}
 export default function HistorialCaja(props) {
     const classes = useStyles();
+    const theme = useTheme();
 	const [ loading, setLoading ] = React.useState(false);
-    const [ open, setOpen ] = React.useState(false);
+    // const [ open, setOpen ] = React.useState(false);
 	 const [ action, setAction ] = React.useState({depositar:false, retirar:false, transferir:false});
 	const [cantidadMovimiento, setCantidadMovimiento] = React.useState(0);
-    const [ cajaDestino, setCajaDestino] = React.useState('')
+    const [ cajaDestino, setCajaDestino] = React.useState('');
+    const [ tipoState, setTipoState ] = React.useState('');
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(5);
     //const [ error, setError ] = useState({error: false, message: ''});
-    const [ errorCantidad, setErrorCantidad ] = useState(false);
-    const [ errorCajaDestino, setErrorCajaDestino ] = useState(false);
-	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+    const [  setErrorCantidad ] = useState(false);
+    const [ setErrorCajaDestino ] = useState(false);
+	const [  setAlert ] = useState({ message: '', status: '', open: false });
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	let obtenerHistorialCaja = [];
 
     /* Queries */
-	const {  data, error, refetch } = useQuery(OBTENER_HISTORIAL_CAJA,{
+	const {  data, refetch } = useQuery(OBTENER_HISTORIAL_CAJA,{
 		variables: {
             id_Caja: props.cajaSelected._id,
             empresa: sesion.empresa._id,
@@ -98,6 +130,7 @@ export default function HistorialCaja(props) {
 	  /* Mutation */
     const [ crearHistorialCaja ] = useMutation(CREAR_HISTORIAL_CAJA);
    
+   
     useEffect(
 		() => {
            
@@ -105,7 +138,6 @@ export default function HistorialCaja(props) {
                 setLoading(true);
                 refetch();
                 setLoading(false);
-                console.log("DATA",data)
             }
               
 		},
@@ -132,10 +164,7 @@ export default function HistorialCaja(props) {
             if(action.transferir){
                 if(cajaDestino !== ''){
                     setErrorCajaDestino(false);
-                    
-                   
                 }else{
-                    console.log('ENTRA')
                     setErrorCajaDestino(true)
                     return;
                 }
@@ -173,12 +202,14 @@ export default function HistorialCaja(props) {
 		
 			
 		} catch (error) {
-			console.log("nuevoHistorial",error);
 			setAlert({ message: error.message, status: 'error', open: true });
 			setLoading(false);
 		}
 	};
-  
+    
+     const handleChange = (event) => {
+        setTipoState(event.target.value);
+    };
 
     const handleChangePage = (event, newPage) => {
 		setPage(newPage);
@@ -189,35 +220,52 @@ export default function HistorialCaja(props) {
 		setPage(0);
 	};
 
-    const handleClickAction = (name)=>{
-		setAction({...open,[name]:true});
-	};
+    // const handleClickAction = (name)=>{
+	// 	setAction({...open,[name]:true});
+	// };
 
     const handleCloseAction = () => {
 		setAction({depositar:false, retirar:false, transferir:false});
 	};
     return (
 		
-        <Dialog  fullWidth fullHeight  maxWidth="l" maxHeight="xl" open={props.open} onClose={()=>{props.handleClose(); handleCloseAction();}}   TransitionComponent={Transition} >
+        <Dialog fullWidth maxWidth="lg" open={props.open} onClose={()=>{props.handleClose(); handleCloseAction();}}   TransitionComponent={Transition} >
          
             <Toolbar >
                 <Typography variant="h5" className={classes.title}>
                     Caja {props.cajaSelected.numero_caja}
                 </Typography>
-                <Button autoFocus color="inherit"size="large" onClick={()=>{props.handleClose();handleCloseAction();} } startIcon={<CloseIcon />}>
-                    Cerrar
-                </Button>
+                <Box m={1}>
+                    <Button variant="contained" color="secondary" onClick={()=>{props.handleClose();handleCloseAction();} } size="large">
+                        <CloseIcon style={{fontSize: 30}} />
+                    </Button>
+                </Box>
             </Toolbar>
-            
-          
-        <Box>
-       
-            
-        </Box>
+        
         <Box ml={3} m={2}>
             <Typography variant="h6" >
                 Historial 
             </Typography>
+        </Box>
+        <Box ml={3} m={2} flexDirection={'row'}>
+       
+            <FormControl className={classes.formControl}>
+                <InputLabel id="tipo-label">Tipo</InputLabel>
+                <Select
+                labelId="tipo-label"
+                id="tipo-name"
+                value={tipoState}
+                onChange={handleChange}
+                input={<Input />}
+                MenuProps={MenuProps}
+                >
+                {tipos.map((tipo) => (
+                    <MenuItem key={tipo} value={tipo} style={getStyles(tipo, tipoState, theme)}>
+                    {tipo}
+                    </MenuItem>
+                ))}
+                </Select>
+            </FormControl>
         </Box>	
             <Paper className={classes.root} m={2}>
                 <TableContainer >
@@ -236,8 +284,7 @@ export default function HistorialCaja(props) {
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
                                   
-                                    const labelId = `enhanced-table-checkbox-${index}`;
-
+                                    // const labelId = `enhanced-table-checkbox-${index}`;
                                     return (
                                         <TableRow
                                        
@@ -247,7 +294,7 @@ export default function HistorialCaja(props) {
                                             <TableCell align="center">{row.cantidad_movimiento}</TableCell>
                                             <TableCell align="center">{row.id_User.nombre}</TableCell>
                                             <TableCell align="center">{row.origen_movimiento}</TableCell>
-                                            <TableCell align="center">{(row.id_caja_destino !== null)? "Caja" + " " +row.id_caja_destino.numero_caja: ''}</TableCell>
+                                            <TableCell align="center">{(row.id_caja_destino !== null)? "Caja  " + row.id_caja_destino.numero_caja: ''}</TableCell>
 
                                             <TableCell align="center">{formatoFecha(row.createdAt)}</TableCell>
                                             <TableCell align="center">{formatoHora(row.createdAt)}</TableCell>

@@ -1,4 +1,4 @@
-export function validaciones(datos1, datos2, datos3) {
+export function validaciones(datos1, datos2, datos3, datos7, datos) {
     /* si no hay datos1 y datos 2 */
     if (
         !datos1.clave_alterna ||
@@ -27,6 +27,11 @@ export function validaciones(datos1, datos2, datos3) {
         datos3.cantidad > 0 && !datos3.almacen
     ) {
         return { error: true, message: 'Campo obligatorio', vista3: true };
+    } else if(
+        /* si no hay colo */
+        datos7.length > 0 && !datos3.almacen && !datos.medidas_registradas
+    ){
+        return { error: true, message: 'Campo obligatorio', vista7: true };
     } else {
         /* si hay todos los datos */
         return { error: false, message: '' };

@@ -109,8 +109,12 @@ export default function TablaDepartamentos() {
 						<TableHead>
 							<TableRow>
 								<TableCell>Departamentos</TableCell>
-								<TableCell padding="default">Editar</TableCell>
-								<TableCell padding="default">Eliminar</TableCell>
+								{sesion.accesos.catalogos.departamentos.editar === false ? (null):(
+									<TableCell padding="default">Editar</TableCell>
+								)}
+								{sesion.accesos.catalogos.departamentos.eliminar === false ? (null):(
+									<TableCell padding="default">Eliminar</TableCell>
+								)}
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -172,6 +176,7 @@ export default function TablaDepartamentos() {
 }
 
 
+<<<<<<< HEAD
 const Modal = ({ handleModal, openModal, handleDelete }) => {
 	return (
 		<div>
@@ -187,5 +192,29 @@ const Modal = ({ handleModal, openModal, handleDelete }) => {
 				</DialogActions>
 			</Dialog>
 		</div>
+=======
+const RowsRender = ({ datos }) => {
+
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
+	return (
+		<TableRow hover role="checkbox" tabIndex={-1}>
+			<TableCell>{datos.nombre_departamentos}</TableCell>
+			{sesion.accesos.catalogos.departamentos.editar === false ? (null):(
+				<TableCell padding="checkbox">
+					<IconButton>
+						<Edit />
+					</IconButton>
+				</TableCell>
+			)}
+			{sesion.accesos.catalogos.departamentos.eliminar === false ? (null):(
+				<TableCell padding="checkbox">
+					<IconButton>
+						<Delete />
+					</IconButton>
+				</TableCell>
+			)}
+		</TableRow>
+>>>>>>> 55e779f9e69444d601f82155435c4ca39c9e5e20
 	);
 };

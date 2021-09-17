@@ -434,7 +434,6 @@ const ActualizarPasswordModal = () => {
 			setLoading(false);
 			handleClose();
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoading(false);
 		}

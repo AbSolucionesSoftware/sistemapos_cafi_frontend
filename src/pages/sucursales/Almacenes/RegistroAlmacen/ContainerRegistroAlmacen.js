@@ -16,11 +16,10 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { CrearAlmacenContext } from '../../../../context/Almacenes/crearAlmacen';
 import { useMutation, useQuery } from '@apollo/client';
-import { REGISTRO_ALMACEN, ACTUALIZAR_ALMACEN } from '../../../../gql/ALmacenes/Almacen';
+import { REGISTRO_ALMACEN, ACTUALIZAR_ALMACEN } from '../../../../gql/Almacenes/Almacen';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
 import { OBTENER_USUARIOS } from '../../../../gql/Catalogos/usuarios';
-
 import { Edit } from '@material-ui/icons';
 import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
 import Add from '@material-ui/icons/Add';
@@ -121,7 +120,6 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
     };
 
     const saveData = async () => {
-        console.log(datosAlmacen);
         try {
             if (!datosAlmacen.nombre_almacen) {
                 setError(true);
@@ -150,7 +148,6 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                         });
                     }
 
-                    console.log(almacen_creado);
                     const id_almacen = almacen_creado.data.crearAlmacen._id;
                     if (refetch) {
                         setAlmacenInicial({
@@ -161,9 +158,7 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                         refetch();
                     }
                 } else {
-                    console.log("Editar");
                     const { id_sucursal, _id, ...input } = datosAlmacen;
-                    console.log(input);
                     await ActualizarAlmacen({
                         variables: {
                             input,
@@ -178,7 +173,6 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                 onCloseModal();
             }
         } catch (error) {
-            console.log(error);
             setAlert({ message: 'Hubo un error', status: 'error', open: true });
             setLoading(false);
         }
@@ -192,9 +186,9 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
         <Fragment>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
             {accion === 'registrar' ? refetch ? (
-                <Button color="primary" onClick={toggleModal}>
+                <IconButton color="primary" onClick={toggleModal}>
                     <Add />
-                </Button>
+                </IconButton>
             ) : (
                 <Button color="primary" variant="contained" size="large" onClick={toggleModal}>
                     Nuevo almacen

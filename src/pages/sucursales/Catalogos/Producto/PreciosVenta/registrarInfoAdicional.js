@@ -203,7 +203,7 @@ export default function RegistroInfoAdidional() {
 			precio_unitario_sin_impuesto = precio_sin_impuesto / precios.unidad_de_compra.cantidad;
 			precio_unitario_con_impuesto = precio_con_impuesto / precios.unidad_de_compra.cantidad;
 			if (!precios.iva_activo && !precios.ieps_activo) {
-				precio_con_impuesto = 0;
+				precio_con_impuesto = precio_sin_impuesto / precios.unidad_de_compra.cantidad;
 				precio_unitario_con_impuesto = precio_sin_impuesto / precios.unidad_de_compra.cantidad;
 			}
 		} else {
@@ -246,14 +246,34 @@ export default function RegistroInfoAdidional() {
 	/* ARMAR OBJETO DE UNIDAD DE COMPRA */
 	const obtenerUnidadCompra = (e) => {
 		if (e.target.name === 'unidad') {
-			setPrecios({
-				...precios,
-				unidad_de_compra: { ...precios.unidad_de_compra, [e.target.name]: e.target.value }
-			});
-			setUnidadVentaXDefecto({
-				...unidadVentaXDefecto,
-				unidad: e.target.value
-			});
+			if (e.target.value === 'Caja' || e.target.value === 'Costal') {
+				let precio = unidadVentaXDefecto.cantidad * unidadVentaXDefecto.precio;
+				setUnidadVentaXDefecto({
+					...unidadVentaXDefecto,
+					precio: parseFloat(precio.toFixed(2))
+				});
+				setPrecios({
+					...precios,
+					unidad_de_compra: { ...precios.unidad_de_compra, [e.target.name]: e.target.value }
+				});
+			} else {
+				setUnidadVentaXDefecto({
+					...unidadVentaXDefecto,
+					unidad: e.target.value,
+					precio: preciosP[0].precio_neto
+						? preciosP[0].precio_neto
+						: precios.unidad_de_compra.precio_unitario_con_impuesto
+				});
+				setPrecios({
+					...precios,
+					unidad_de_compra: {
+						...precios.unidad_de_compra,
+						[e.target.name]: e.target.value,
+						cantidad: 1
+					}
+				});
+			}
+
 			return;
 		}
 		if (!precios.iva_activo && !precios.ieps_activo) {
@@ -262,8 +282,12 @@ export default function RegistroInfoAdidional() {
 				unidad_de_compra: {
 					...precios.unidad_de_compra,
 					[e.target.name]: parseFloat(e.target.value),
-					precio_unitario_sin_impuesto: parseFloat((precios.precio_de_compra.precio_sin_impuesto / e.target.value).toFixed(2)),
-					precio_unitario_con_impuesto: parseFloat((precios.precio_de_compra.precio_sin_impuesto / e.target.value).toFixed(2))
+					precio_unitario_sin_impuesto: parseFloat(
+						(precios.precio_de_compra.precio_sin_impuesto / e.target.value).toFixed(2)
+					),
+					precio_unitario_con_impuesto: parseFloat(
+						(precios.precio_de_compra.precio_sin_impuesto / e.target.value).toFixed(2)
+					)
 				}
 			});
 			setUnidadVentaXDefecto({
@@ -277,8 +301,12 @@ export default function RegistroInfoAdidional() {
 			unidad_de_compra: {
 				...precios.unidad_de_compra,
 				[e.target.name]: parseFloat(e.target.value),
-				precio_unitario_sin_impuesto: parseFloat((precios.precio_de_compra.precio_sin_impuesto / e.target.value).toFixed(2)),
-				precio_unitario_con_impuesto: parseFloat((precios.precio_de_compra.precio_con_impuesto / e.target.value).toFixed(2))
+				precio_unitario_sin_impuesto: parseFloat(
+					(precios.precio_de_compra.precio_sin_impuesto / e.target.value).toFixed(2)
+				),
+				precio_unitario_con_impuesto: parseFloat(
+					(precios.precio_de_compra.precio_con_impuesto / e.target.value).toFixed(2)
+				)
 			}
 		});
 		setUnidadVentaXDefecto({
@@ -380,33 +408,33 @@ export default function RegistroInfoAdidional() {
 										value={precios.unidad_de_compra.unidad}
 										onChange={obtenerUnidadCompra}
 									>
-										<MenuItem value="KILOGRAMOS">KILOGRAMOS</MenuItem>
-										<MenuItem value="COSTALES">COSTALES</MenuItem>
-										<MenuItem value="LITROS">LITROS</MenuItem>
+										<MenuItem value="Kg">Kg</MenuItem>
+										<MenuItem value="Costal">Costal</MenuItem>
+										<MenuItem value="Lt">Lt</MenuItem>
 									</Select>
-								): (
+								) : (
 									<Select
 										id="form-producto-categoria"
 										name="unidad"
 										value={precios.unidad_de_compra.unidad}
 										onChange={obtenerUnidadCompra}
 									>
-										<MenuItem value="CAJAS">CAJAS</MenuItem>
-										<MenuItem value="PIEZAS">PIEZAS</MenuItem>
+										<MenuItem value="Caja">Caja</MenuItem>
+										<MenuItem value="Pz">Pz</MenuItem>
 									</Select>
 								)}
 								<FormHelperText>{validacion.message}</FormHelperText>
 							</FormControl>
 						</Box>
 					</Box>
-					<Box >
+					<Box>
 						<Typography align="center">Unidad de conversion</Typography>
 						<Typography align="center" variant="h6">
 							<b>
-								{precios.unidad_de_compra.unidad === 'CAJAS' ? (
-									'PIEZAS'
-								) : precios.unidad_de_compra.unidad === 'COSTALES' ? (
-									'KILOGRAMOS'
+								{precios.unidad_de_compra.unidad === 'Caja' ? (
+									'Pz'
+								) : precios.unidad_de_compra.unidad === 'Costal' ? (
+									'Kg'
 								) : (
 									precios.unidad_de_compra.unidad
 								)}
@@ -418,6 +446,14 @@ export default function RegistroInfoAdidional() {
 							<span className="obligatorio">* </span>Factor por Unidad
 						</Typography>
 						<TextField
+							disabled={
+								precios.unidad_de_compra.unidad === 'Caja' ||
+								precios.unidad_de_compra.unidad === 'Costal' ? (
+									false
+								) : (
+									true
+								)
+							}
 							type="number"
 							InputProps={{ inputProps: { min: 1 } }}
 							size="small"

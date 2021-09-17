@@ -12,7 +12,7 @@ export const initial_state_precios = {
     inventario: {
         inventario_minimo: 0,
         inventario_maximo: 0,
-        unidad_de_inventario: 'PIEZAS',
+        unidad_de_inventario: 'Pz',
     },
     precio_de_compra: {
         precio_con_impuesto: 0,
@@ -21,7 +21,7 @@ export const initial_state_precios = {
         ieps: 0
     },
     unidad_de_compra: {
-        unidad: "PIEZAS",
+        unidad: "Pz",
         cantidad: 1,
         precio_unitario_sin_impuesto: 0,
         precio_unitario_con_impuesto: 0,
@@ -31,7 +31,7 @@ export const initial_state_precios = {
 
 export const initial_state_unidadVentaXDefecto = {
     codigo_barras: '',
-    unidad: 'PIEZAS',
+    unidad: 'Pz',
     cantidad: 1,
     precio: 0,
     unidad_principal: true,
@@ -101,7 +101,9 @@ export const initial_state_preciosPlazos = {
 
 export const initial_state_subcategorias = [];
 export const initial_state_imagenes = [];
+export const initial_state_imagenes_eliminadas = [];
 export const initial_state_onPreview = { index: '', image: '' };
 export const initial_state_validacion = { error: false, message: '' };
 export const initial_state_subcostos = [];
 export const initial_state_selectedDate = null;
+export const initial_state_presentaciones = [];

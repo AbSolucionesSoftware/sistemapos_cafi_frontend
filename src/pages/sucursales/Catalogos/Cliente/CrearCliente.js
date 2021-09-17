@@ -5,8 +5,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
 import { Button, AppBar, IconButton } from '@material-ui/core';
 import { Dialog, DialogActions, Tabs, Tab, Box } from '@material-ui/core';
-import perfilIcon from '../../../../icons/perfil.svg';
-import fiscalIcon from '../../../../icons/fiscal.svg';
 import RegistrarInfoBasica from './RegistrarInfoBasica';
 import RegistrarInfoCredito from './RegistroInfoCredito';
 import { Add, Edit } from '@material-ui/icons';
@@ -70,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function CrearCliente({ tipo, accion, datos }) {
+export default function CrearCliente({ tipo, accion, datos, refetch }) {
 	const classes = useStyles();
 	const { cliente, setCliente, setError, update, setUpdate } = useContext(ClienteCtx);
 	const [ open, setOpen ] = useState(false);
@@ -139,9 +137,7 @@ export default function CrearCliente({ tipo, accion, datos }) {
 			if (accion === 'registrar') {
 				cliente.tipo_cliente = tipo;
 				cliente.empresa = sesion.empresa._id;
-				if(tipo !== "PROVEEDOR"){
-					cliente.sucursal = sesion.sucursal._id;
-				}
+				cliente.sucursal = sesion.sucursal._id;
 				const input = cliente;
 				await crearCliente({
 					variables: {
@@ -157,13 +153,15 @@ export default function CrearCliente({ tipo, accion, datos }) {
 					}
 				});
 			}
+			if(refetch){
+				refetch();
+			}
 			setUpdate(!update);
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setError(false);
 			setLoading(false);
 			onCloseModal();
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoading(false);
 		}
@@ -172,7 +170,11 @@ export default function CrearCliente({ tipo, accion, datos }) {
 	return (
 		<Fragment>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
-			{accion === 'registrar' ? (
+			{accion === 'registrar' ? refetch ? (
+				<IconButton color="primary" onClick={toggleModal}>
+					<Add />
+				</IconButton>
+			) : (
 				<Button color="primary" variant="contained" size="large" onClick={toggleModal}>
 					<Add /> Nuevo {tipo}
 				</Button>
@@ -196,12 +198,12 @@ export default function CrearCliente({ tipo, accion, datos }) {
 						>
 							<Tab
 								label="Información básica"
-								icon={<img src={perfilIcon} alt="icono perfil" className={classes.iconSvg} />}
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/perfil.svg' alt="icono perfil" className={classes.iconSvg} />}
 								{...a11yProps(0)}
 							/>
 							<Tab
 								label="Datos Crediticios"
-								icon={<img src={fiscalIcon} alt="icono factura" className={classes.iconSvg} />}
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/fiscal.svg' alt="icono factura" className={classes.iconSvg} />}
 								{...a11yProps(1)}
 							/>
 							<Box ml={58} mt={3} >

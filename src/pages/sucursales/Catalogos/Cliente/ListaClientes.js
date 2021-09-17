@@ -18,18 +18,18 @@ import { ClienteCtx } from '../../../../context/Catalogos/crearClienteCtx';
 import { useQuery, useMutation } from '@apollo/client';
 import { OBTENER_CLIENTES, ACTUALIZAR_CLIENTE } from '../../../../gql/Catalogos/clientes';
 
-const columns = [
-	{ id: 1, label: 'No. Cliente', minWidth: 100 },
-	{ id: 2, label: 'Clave', minWidth: 100 },
-	{ id: 3, label: 'Nombre', minWidth: 150 },
-	{ id: 4, label: 'Razon Social', minWidth: 150 },
-	{ id: 5, label: 'Correo', minWidth: 150 },
-	{ id: 6, label: 'Tipo de Cliente', minWidth: 100 },
-	{ id: 7, label: 'Estado', minWidth: 100 },
-	{ id: 8, label: 'Detalles', minWidth: 50, align: 'right' },
-	{ id: 9, label: 'Editar', minWidth: 50, align: 'right' },
-	{ id: 10, label: 'Eliminar', minWidth: 50, align: 'right' }
-];
+// const columns = [
+// 	{ id: 1, label: 'No. Cliente', minWidth: 100 },
+// 	{ id: 2, label: 'Clave', minWidth: 100 },
+// 	{ id: 3, label: 'Nombre', minWidth: 150 },
+// 	{ id: 4, label: 'Razon Social', minWidth: 150 },
+// 	{ id: 5, label: 'Correo', minWidth: 150 },
+// 	{ id: 6, label: 'Tipo de Cliente', minWidth: 100 },
+// 	{ id: 7, label: 'Estado', minWidth: 100 },
+// 	{ id: 8, label: 'Detalles', minWidth: 50, align: 'right' },
+// 	{ id: 9, label: 'Editar', minWidth: 50, align: 'right' },
+// 	{ id: 10, label: 'Eliminar', minWidth: 50, align: 'right' }
+// ];
 
 const useStyles = makeStyles({
 	root: {
@@ -44,7 +44,9 @@ const useStyles = makeStyles({
 	}
 });
 
-export default function ListaClientes({ tipo, filtro }) {
+
+export default function ListaClientes({user, tipo, filtro }) {
+
 	const classes = useStyles();
 	const { update } = useContext(ClienteCtx);
 	const [ page, setPage ] = useState(0);
@@ -86,21 +88,50 @@ export default function ListaClientes({ tipo, filtro }) {
 	return (
 		<Paper className={classes.root}>
 			<TableContainer className={classes.container}>
-				<Table stickyHeader aria-label="sticky table">
+				<Table stickyHeader size="small" aria-label="a dense table">
 					<TableHead>
 						<TableRow>
-							{columns.map((column) => (
-								<TableCell key={column.id} align={column.align}>
-									{column.label}
+							<TableCell minwidth='100'>
+								No. Cliente
+							</TableCell>
+							<TableCell minwidth='100'>
+								Clave
+							</TableCell>
+							<TableCell minwidth='150'>
+								Nombre
+							</TableCell>
+							<TableCell minwidth='150'>
+								Razon Social
+							</TableCell>
+							<TableCell minwidth='150'>
+								Correo
+							</TableCell>
+							<TableCell minwidth='100'>
+								Tipo de Cliente
+							</TableCell>
+							{user === 'EMPLEADO' ? (null) :(
+								<TableCell minwidth='100'>
+									Estado
 								</TableCell>
-							))}
+							)}
+							<TableCell minwidth='50'>
+								Detalles
+							</TableCell>
+							<TableCell minwidth='50'>
+								Editar
+							</TableCell>
+							{user === 'EMPLEADO' ? (null) :(
+								<TableCell minwidth='50'>
+									Eliminar	
+								</TableCell>
+							)}
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{obtenerClientes
 							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 							.map((row, index) => {
-								return <RowsRender key={index} datos={row} />;
+								return <RowsRender user={user} key={index} datos={row} />;
 							})}
 					</TableBody>
 				</Table>
@@ -118,7 +149,9 @@ export default function ListaClientes({ tipo, filtro }) {
 	);
 }
 
-const RowsRender = ({ datos }) => {
+const RowsRender = ({ datos, user }) => {
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const [ openDetalles, setOpenDetalles ] = useState(false);
 	const { update, setUpdate } = useContext(ClienteCtx);
 	const [ loading, setLoading ] = useState(false);
@@ -142,7 +175,6 @@ const RowsRender = ({ datos }) => {
 			setUpdate(!update);
 			setLoading(false);
 		} catch (error) {
-			console.log(error);
 			setLoading(false);
 		}
 	};
@@ -167,40 +199,49 @@ const RowsRender = ({ datos }) => {
 			<TableCell>
 				<Typography>{datos.tipo_cliente}</Typography>
 			</TableCell>
-			<TableCell>
-				{loading ? (
-					<CircularProgress size={30} />
-				) : (
-					<Switch
-						checked={datos.estado_cliente}
-						onChange={cambiarEstado}
-						color="primary"
-					/>
-				)}
-			</TableCell>
+			{user === 'EMPLEADO' ? (null) :(
+				<TableCell>
+					{loading ? (
+						<CircularProgress size={30} />
+					) : (
+						<Switch
+							checked={datos.estado_cliente}
+							onChange={cambiarEstado}
+							color="primary"
+						/>
+					)}
+				</TableCell>
+			)}
 			<TableCell width={50}>
 				<ModalDetalles openDetalles={openDetalles} handleDetalles={handleDetalles} datos={datos} />
 			</TableCell>
 			<TableCell width={50}>
-				<CrearCliente tipo="CLIENTE" accion="actualizar" datos={datos} />
+				{permisosUsuario.accesos.catalogos.clientes.editar === false ? (null):(
+					<CrearCliente tipo="CLIENTE" accion="actualizar" datos={datos} />
+				)
+				}
 			</TableCell>
 			<TableCell width={50}>
-				<IconButton color="secondary">
-					<Delete />
-				</IconButton>
+				{permisosUsuario.accesos.catalogos.clientes.editar === false ? (null):(
+					<IconButton color="secondary">
+						<Delete />
+					</IconButton>
+				)}
 			</TableCell>
 		</TableRow>
 	);
 };
 
 const ModalDetalles = ({ handleDetalles, openDetalles, datos }) => {
+
+
 	const classes = useStyles();
 	return (
 		<div>
 			<IconButton onClick={handleDetalles}>
 				<Dehaze />
 			</IconButton>
-			<Dialog open={openDetalles} onClose={handleDetalles} fullWidth maxWidth="md">
+			<Dialog open={openDetalles} onClose={handleDetalles} fullwidth maxWidth="md">
 				<DialogTitle>{'Información completa del cliente'}</DialogTitle>
 				<DialogContent>
 					<Box mt={3}>
