@@ -63,15 +63,19 @@ export default function TablaDepartamentos() {
    
 		setLoading(true);
 		try {
-			
-            await eliminarDepartamento({
+            const resultado = await eliminarDepartamento({
                 variables: {
                     id: idDepartamento
                 }
             });
-		
+
+			if(resultado.data.eliminarDepartamento.message === 'false'){
+				setAlert({ message: 'Departamento eliminado con exito', status: 'success', open: true });
+			}else{
+				setAlert({ message: resultado.data.eliminarDepartamento.message, status: 'error', open: true });
+			};
+
 			refetch();
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setLoading(false);
 			setOpen(false)
 			setIdDepartamento('');
@@ -147,8 +151,8 @@ export default function TablaDepartamentos() {
 											</TableCell>
 											<TableCell padding="checkbox">
 												<IconButton onClick={() => {
-														setIdDepartamento(row._id);
-														handleModal();
+													setIdDepartamento(row._id);
+													handleModal();
 												}}>
 													<Delete />
 												</IconButton>
@@ -176,7 +180,6 @@ export default function TablaDepartamentos() {
 }
 
 
-<<<<<<< HEAD
 const Modal = ({ handleModal, openModal, handleDelete }) => {
 	return (
 		<div>
@@ -192,29 +195,5 @@ const Modal = ({ handleModal, openModal, handleDelete }) => {
 				</DialogActions>
 			</Dialog>
 		</div>
-=======
-const RowsRender = ({ datos }) => {
-
-	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
-
-	return (
-		<TableRow hover role="checkbox" tabIndex={-1}>
-			<TableCell>{datos.nombre_departamentos}</TableCell>
-			{sesion.accesos.catalogos.departamentos.editar === false ? (null):(
-				<TableCell padding="checkbox">
-					<IconButton>
-						<Edit />
-					</IconButton>
-				</TableCell>
-			)}
-			{sesion.accesos.catalogos.departamentos.eliminar === false ? (null):(
-				<TableCell padding="checkbox">
-					<IconButton>
-						<Delete />
-					</IconButton>
-				</TableCell>
-			)}
-		</TableRow>
->>>>>>> 55e779f9e69444d601f82155435c4ca39c9e5e20
 	);
 };
