@@ -12,11 +12,16 @@ import { InputAdornment } from '@material-ui/core';
 import { IconButton } from '@material-ui/core';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import ab from '../../img/abLogo.jpeg'
 
 const useStyles = makeStyles((theme) => ({
 	margin: {
 		marginTop: theme.spacing(2),
 		marginBottom: theme.spacing(2)
+	},
+	containerImagen:{
+		width: 170,
+		height: 170
 	}
 }));
 
@@ -85,6 +90,9 @@ export default function LayoutLogin(props) {
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<Box height="100vh" display="flex" justifyContent="center" alignItems="center">
 				<Box boxShadow="3" p={5} width="80%">
+					<Box className={classes.containerImagen}>
+						<img className={classes.containerImagen} src={ab} alt="imagen no disponible" />
+					</Box>
 					<Box display='flex' textAlign='center' justifyContent='center'>
 						<Typography variant="h4" component="p" className={classes.margin}>
 							<b>Inicia sesión</b>
