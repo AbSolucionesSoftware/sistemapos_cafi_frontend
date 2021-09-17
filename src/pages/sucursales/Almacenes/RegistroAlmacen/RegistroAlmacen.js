@@ -1,11 +1,11 @@
 import React, { forwardRef } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Slide, Button, Box, Dialog } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, Slide, Button, Box, Dialog } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { FcPlus } from 'react-icons/fc';
 import ContainerRegistroAlmacen from './ContainerRegistroAlmacen';
 import ListaAlmacen from './ListaAlmacen';
 import { AlmacenProvider } from '../../../../context/Almacenes/crearAlmacen';
-
+import CloseIcon from '@material-ui/icons/Close';
 const useStyles = makeStyles((theme) => ({
 	appBar: {
 		position: 'relative'
@@ -52,14 +52,11 @@ export default function RegistroAlmacen() {
 							<Typography variant="h6" className={classes.title}>
 									Agregar almacen
 							</Typography>
-							<Box mx={3}>
-								<Button autoFocus color="inherit" size="large" onClick={handleClose}>
-									Cerrar
+							<Box m={1}>
+								<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+									<CloseIcon style={{fontSize: 30}} />
 								</Button>
 							</Box>
-							<IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-								
-							</IconButton>
 						</Toolbar>
 					</AppBar>
 					<Box m={3} display="flex" justifyContent="flex-end">

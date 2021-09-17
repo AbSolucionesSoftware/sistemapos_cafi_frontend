@@ -60,21 +60,21 @@ const ModalDeletePlazos = ({ index, unidad }) => {
 
 
 		switch (unidad) {
-			case "PIEZAS":
+			case "Pz":
 				preciosPlazos.precio_piezas.splice(index, 1);
 				setPreciosPlazos({
                     ...preciosPlazos,
                     precio_piezas: [...preciosPlazos.precio_piezas]
                 })
 				break;
-			case "CAJAS":
+			case "Caja":
 				preciosPlazos.precio_cajas.splice(index, 1);
 				setPreciosPlazos({
                     ...preciosPlazos,
                     precio_cajas: [...preciosPlazos.precio_cajas]
                 })
 				break;
-			case "COSTALES":
+			case "Costal":
 				preciosPlazos.precio_costales.splice(index, 1);
 				setPreciosPlazos({
                     ...preciosPlazos,

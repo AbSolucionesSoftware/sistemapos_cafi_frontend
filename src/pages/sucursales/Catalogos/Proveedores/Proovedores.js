@@ -36,6 +36,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Proveedores() {
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const classes = useStyles();
 	const [ open, setOpen ] = useState(false);
 	const [ filtro, setFiltro ] = useState('');
@@ -59,7 +61,7 @@ export default function Proveedores() {
 				<Button fullWidth onClick={handleClickOpen}>
 					<Box display="flex" flexDirection="column">
 						<Box display="flex" justifyContent="center" alignItems="center">
-							<img src={proveedoresIcon} alt="icono numero calzado" className={classes.icon} />
+							<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/distribution.svg' alt="icono numero calzado" className={classes.icon} />
 						</Box>
 						Proveedores
 					</Box>
@@ -70,15 +72,11 @@ export default function Proveedores() {
 							<Typography variant="h6" className={classes.title}>
 								Proveedores
 							</Typography>
-							<Button
-								autoFocus
-								color="inherit"
-								size="large"
-								onClick={handleClose}
-								startIcon={<CloseIcon />}
-							>
-								Cerrar
-							</Button>
+							<Box m={1}>
+								<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+									<CloseIcon style={{fontSize: 30}} />
+								</Button>
+							</Box>
 						</Toolbar>
 					</AppBar>
 					<Box m={3} display="flex" justifyContent="space-between">
@@ -96,7 +94,9 @@ export default function Proveedores() {
 								</IconButton>
 							</Paper>
 						</Box>
-						<CrearCliente tipo="PROVEEDOR" accion="registrar" />
+						{permisosUsuario.accesos.catalogos.provedores.ver === false ? (null):(
+							<CrearCliente tipo="PROVEEDOR" accion="registrar" />
+						)}
 					</Box>
 					<Box mx={4}>
 						<TablaProovedores tipo="PROVEEDOR" filtro={filtro} />

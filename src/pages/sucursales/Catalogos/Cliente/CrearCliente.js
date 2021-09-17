@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function CrearCliente({ tipo, accion, datos }) {
+export default function CrearCliente({ tipo, accion, datos, refetch }) {
 	const classes = useStyles();
 	const { cliente, setCliente, setError, update, setUpdate } = useContext(ClienteCtx);
 	const [ open, setOpen ] = useState(false);
@@ -139,9 +139,7 @@ export default function CrearCliente({ tipo, accion, datos }) {
 			if (accion === 'registrar') {
 				cliente.tipo_cliente = tipo;
 				cliente.empresa = sesion.empresa._id;
-				if(tipo !== "PROVEEDOR"){
-					cliente.sucursal = sesion.sucursal._id;
-				}
+				cliente.sucursal = sesion.sucursal._id;
 				const input = cliente;
 				await crearCliente({
 					variables: {
@@ -156,6 +154,9 @@ export default function CrearCliente({ tipo, accion, datos }) {
 						id: cliente._id
 					}
 				});
+			}
+			if(refetch){
+				refetch();
 			}
 			setUpdate(!update);
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
@@ -172,7 +173,11 @@ export default function CrearCliente({ tipo, accion, datos }) {
 	return (
 		<Fragment>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
-			{accion === 'registrar' ? (
+			{accion === 'registrar' ? refetch ? (
+				<IconButton color="primary" onClick={toggleModal}>
+					<Add />
+				</IconButton>
+			) : (
 				<Button color="primary" variant="contained" size="large" onClick={toggleModal}>
 					<Add /> Nuevo {tipo}
 				</Button>
@@ -196,15 +201,23 @@ export default function CrearCliente({ tipo, accion, datos }) {
 						>
 							<Tab
 								label="Información básica"
-								icon={<img src={perfilIcon} alt="icono perfil" className={classes.iconSvg} />}
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/perfil.svg' alt="icono perfil" className={classes.iconSvg} />}
 								{...a11yProps(0)}
 							/>
 							<Tab
 								label="Datos Crediticios"
-								icon={<img src={fiscalIcon} alt="icono factura" className={classes.iconSvg} />}
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/fiscal.svg' alt="icono factura" className={classes.iconSvg} />}
 								{...a11yProps(1)}
 							/>
+							<Box ml={58} mt={3} >
+								<Box>
+									<Button variant="contained" color="secondary" onClick={onCloseModal} size="large">
+										<CloseIcon />
+									</Button>
+								</Box>
+							</Box>
 						</Tabs>
+						
 					</AppBar>
 					<TabPanel value={value} index={0}>
 						<RegistrarInfoBasica tipo={tipo} accion={accion} />
@@ -214,15 +227,6 @@ export default function CrearCliente({ tipo, accion, datos }) {
 					</TabPanel>
 				</div>
 				<DialogActions>
-					<Button
-						variant="outlined"
-						color="secondary"
-						onClick={onCloseModal}
-						size="large"
-						startIcon={<CloseIcon />}
-					>
-						Cerrar
-					</Button>
 					<Button
 						variant="contained"
 						color="primary"

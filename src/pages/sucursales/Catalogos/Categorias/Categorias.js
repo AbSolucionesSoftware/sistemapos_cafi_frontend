@@ -45,7 +45,7 @@ export default function Categorias() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={categoriasIcon} alt="icono numero calzado" className={classes.icon} />
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/categorias.svg' alt="icono numero calzado" className={classes.icon} />
 					</Box>
 					Categorias
 				</Box>
@@ -56,9 +56,11 @@ export default function Categorias() {
 						<Typography variant="h6" className={classes.title}>
 							Categorias
 						</Typography>
-						<Button autoFocus color="inherit" size="large" onClick={handleClose} startIcon={<CloseIcon />}>
-							Cerrar
-						</Button>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
 				<Box mt={3}>
@@ -67,6 +69,6 @@ export default function Categorias() {
 					</Container>
 				</Box>
 			</Dialog>
-		</div>
+		</div> 
 	);
 }

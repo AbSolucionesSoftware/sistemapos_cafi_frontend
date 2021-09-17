@@ -27,7 +27,7 @@ export default function CerrarVenta({handleClickOpen}) {
                     <Grid container item lg={12} justify="center">
                         <Box display="flex" justifyContent="center" flexGrow={1}>
                             <Box>
-                                <img src={cartIcon} alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
+                                <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cart.svg' alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
                             </Box>
                             <Box m={2} >
                                 <Divider orientation="vertical" />
@@ -61,7 +61,7 @@ export default function CerrarVenta({handleClickOpen}) {
                         <div className={classes.formInputFlex}>
                             <Box width="25%" textAlign="center">
                                 <Box>
-                                    <img src={money} alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
+                                    <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/money.svg' alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
                                 </Box>
                                 <Typography variant='caption'>
                                     Efectivo
@@ -78,7 +78,7 @@ export default function CerrarVenta({handleClickOpen}) {
                             </Box>
                             <Box width="25%" textAlign="center">
                                 <Box>
-                                    <img src={tarjeta} alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
+                                    <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tarjeta-de-credito.svg' alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
                                 </Box>
                                 <Typography variant='caption'>
                                     Tarjeta
@@ -112,7 +112,7 @@ export default function CerrarVenta({handleClickOpen}) {
                             </Box>
                             <Box width="25%" textAlign="center">
                                 <Box p={0}>
-                                    <img src={transfer} alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
+                                    <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/transferencia-bancaria.svg' alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
                                 </Box>
                                 <Typography variant='caption'>
                                     Transferencia

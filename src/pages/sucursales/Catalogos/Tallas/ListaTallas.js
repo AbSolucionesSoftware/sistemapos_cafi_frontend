@@ -26,6 +26,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TablaTallas({ tipo, datos, toUpdate, setToUpdate, setValue, refetch }) {
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const classes = useStyles();
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(7);
@@ -79,8 +81,12 @@ export default function TablaTallas({ tipo, datos, toUpdate, setToUpdate, setVal
 						<TableHead>
 							<TableRow>
 								<TableCell>{tipo === 'ROPA' ? 'Talla' : 'Número'}</TableCell>
-								<TableCell padding="default">Editar</TableCell>
-								<TableCell padding="default">Eliminar</TableCell>
+								{sesion.accesos.catalogos.tallas_numeros.editar === false ? (null) : (
+									<TableCell padding="default">Editar</TableCell>
+								)}
+								{sesion.accesos.catalogos.tallas_numeros.eliminar === false ? (null) : (
+									<TableCell padding="default">Eliminar</TableCell>
+								)}
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -107,40 +113,31 @@ export default function TablaTallas({ tipo, datos, toUpdate, setToUpdate, setVal
 }
 
 const RowsRender = ({ row, setAlert, tipo, toUpdate, setToUpdate, setValue, refetch }) => {
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const [ openModal, setOpenModal ] = useState(false);
 	const handleModal = () => setOpenModal(!openModal);
+	const [ eliminarTalla ] = useMutation(ELIMINAR_TALLA);
 
-	const [ eliminarTalla ] = useMutation(ELIMINAR_TALLA, {
-		update(cache, { data: { eliminarTalla } }) {
-			const { obtenerTallas } = cache.readQuery({
-				query: OBTENER_TALLAS,
-				variables: { empresa: row.empresa._id, tipo }
-			});
-
-			cache.writeQuery({
-				query: OBTENER_TALLAS,
-				variables: { empresa: row.empresa._id, tipo },
-				data: {
-					obtenerTallas: {
-						...obtenerTallas,
-						eliminarTalla
+ 
+	const handleDelete = async () => {
+		try {
+			const resp = await eliminarTalla({
+				variables: {
+					id: row._id,
+					input:{
+						tipo:tipo,
+						talla:''
 					}
 				}
 			});
-		}
-	});
-
-	const handleDelete = async () => {
-		try {
-			await eliminarTalla({
-				variables: {
-					id: row._id
-				}
-			});
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
+		
+			let msgAlert = { message: resp.data.eliminarTalla.message, status: 'success', open: true }
+			setAlert(msgAlert);
 			refetch();
 			handleModal();
 		} catch (error) {
+				handleModal();
 			setAlert({ message: error.message, status: 'error', open: true });
 		}
 	};
@@ -163,20 +160,24 @@ const RowsRender = ({ row, setAlert, tipo, toUpdate, setToUpdate, setValue, refe
 						<b>{row.talla}</b>
 					</Typography>
 				</TableCell>
-				<TableCell padding="checkbox">
-					{toUpdate === row._id ? (
-						<IconButton onClick={() => onUpdate()}>
-							<Close />
-						</IconButton>
-					) : (
-						<IconButton onClick={() => onUpdate(row)}>
-							<Edit />
-						</IconButton>
-					)}
-				</TableCell>
-				<TableCell padding="checkbox">
-					<Modal handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
-				</TableCell>
+				{sesion.accesos.catalogos.tallas_numeros.editar === false ? (null) : (
+					<TableCell padding="checkbox">
+						{toUpdate === row._id ? (
+							<IconButton onClick={() => onUpdate()}>
+								<Close />
+							</IconButton>
+						) : (
+							<IconButton onClick={() => onUpdate(row)}>
+								<Edit />
+							</IconButton>
+						)}
+					</TableCell>
+				)}
+				{sesion.accesos.catalogos.tallas_numeros.eliminar === false ? (null) : (
+					<TableCell padding="checkbox">
+						<Modal handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
+					</TableCell>
+				)}
 			</TableRow>
 		</Fragment>
 	);

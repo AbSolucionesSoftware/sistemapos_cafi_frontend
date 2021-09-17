@@ -9,12 +9,17 @@ import {
     TableHead, 
     TableRow,
 	IconButton,
-	TablePagination
+	TablePagination,
+	Dialog,
+	DialogTitle,
+	DialogActions,
+	Button
 } from '@material-ui/core/';
-import { Delete, Edit } from '@material-ui/icons';
+import { Delete, Edit, Close } from '@material-ui/icons';
 import { useQuery } from '@apollo/client';
-import { OBTENER_MARCAS, } from '../../../../gql/Catalogos/marcas';
-
+import { useMutation } from '@apollo/client';
+import { OBTENER_MARCAS, ELIMINAR_MARCAS } from '../../../../gql/Catalogos/marcas';
+import SnackBarMessages from '../../../../components/SnackBarMessages';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -26,13 +31,20 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function ListaMarcas({updateData}) {
+export default function ListaMarcas({updateData, toUpdate, setToUpdate, setData}) {
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
 
     const classes = useStyles();
     const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(8);
+	const [ alert, setAlert ] = useState({
+		status: '',
+		message: '',
+		open: false
+	});
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	let obtenerMarcas = [];
+	
 
     const { data, refetch } = useQuery(OBTENER_MARCAS,{
 		variables: {
@@ -40,6 +52,7 @@ export default function ListaMarcas({updateData}) {
 			sucursal: sesion.sucursal._id
 		}
 	});	
+
 
 
 	useEffect(() => {
@@ -59,8 +72,10 @@ export default function ListaMarcas({updateData}) {
 		setPage(0);
 	};
 
+
     return (
         <div className={classes.root}>
+			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<Paper className={classes.paper}>
 				<TableContainer>
 					<Table
@@ -72,8 +87,12 @@ export default function ListaMarcas({updateData}) {
 						<TableHead>
 							<TableRow>
 								<TableCell>Marca</TableCell>
-								<TableCell padding="default">Editar</TableCell>
-								<TableCell padding="default">Eliminar</TableCell>
+								{sesion.accesos.catalogos.marcas.editar === false ? (null):(
+									<TableCell padding="default">Editar</TableCell>
+								)}
+								{sesion.accesos.catalogos.marcas.eliminar === false ? (null):(
+									<TableCell padding="default">Eliminar</TableCell>
+								)}
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -81,7 +100,7 @@ export default function ListaMarcas({updateData}) {
 							obtenerMarcas
 								?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 								?.map((row, index) => {
-									return <RowsRender key={index} datos={row} />;
+									return <RowsRender key={index} setAlert={setAlert} refetch={refetch} datos={row} toUpdate={toUpdate} setToUpdate={setToUpdate} setData={setData} />;
 								})
 							}
 						</TableBody>
@@ -101,21 +120,91 @@ export default function ListaMarcas({updateData}) {
     )
 }
 
-const RowsRender = ({ datos }) => {
+const RowsRender = ({ datos, updateData, toUpdate, setAlert, setToUpdate, setData, refetch }) => {
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	const [ openModal, setOpenModal ] = useState(false);
+	const handleModal = () => setOpenModal(!openModal);
+
+	const [ eliminarMarca ] = useMutation(ELIMINAR_MARCAS);
+
+	const handleDelete = async () => {
+		try {
+			const resultado = await eliminarMarca({
+				variables: {
+					id: datos._id,
+					empresa: sesion.empresa._id,
+					sucursal: sesion.sucursal._id
+				}
+			});
+			if(resultado.data.eliminarMarca.message === 'false'){
+				setAlert({ message: 'Marca eliminada con exito', status: 'success', open: true });
+			}else{
+				setAlert({ message: resultado.data.eliminarMarca.message, status: 'error', open: true });
+			};
+			refetch();
+			handleModal();
+		} catch (error) {
+			setAlert({ message: error.message, status: 'error', open: true });
+		}
+	};
+
+	const onUpdate = (dato) => {
+		if(!dato){
+			setToUpdate('');
+			setData('');
+			refetch();
+			return
+		}
+		refetch();
+		setToUpdate(dato._id);
+		setData(dato);
+	};
+
 	return (
-		<TableRow hover role="checkbox" tabIndex={-1}>
+		<TableRow hover role="checkbox" tabIndex={-1} selected={toUpdate === datos._id ? true : false}>
 			<TableCell>{datos.nombre_marca}</TableCell>
-			<TableCell padding="checkbox">
-				<IconButton>
-					<Edit />
-				</IconButton>
-			</TableCell>
-			<TableCell padding="checkbox">
-				<IconButton>
-					<Delete />
-				</IconButton>
-			</TableCell>
+			{sesion.accesos.catalogos.marcas.editar === false ? (null):(
+				<TableCell padding="checkbox">
+					{toUpdate === datos._id ? (
+						<IconButton onClick={() => onUpdate()}>
+							<Close />
+						</IconButton>
+					) : (
+						<IconButton onClick={() => onUpdate(datos)}>
+							<Edit />
+						</IconButton>
+					)}
+				</TableCell>
+			)}
+			{sesion.accesos.catalogos.marcas.eliminar === false ? (null):(
+				<TableCell padding="checkbox">
+					<Modal handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
+				</TableCell>
+			)}
 		</TableRow>
+	);
+};
+
+
+//ELIMINAR DATOS DE LA TABLA
+const Modal = ({ handleModal, openModal, handleDelete }) => {
+	return (
+		<div>
+			<IconButton color="secondary" onClick={handleModal}>
+				<Delete />
+			</IconButton>
+			<Dialog open={openModal} onClose={handleModal}>
+				<DialogTitle>{'¿Seguro que quieres eliminar esto?'}</DialogTitle>
+				<DialogActions>
+					<Button onClick={handleModal} color="primary">
+						Cancelar
+					</Button>
+					<Button color="secondary" autoFocus variant="contained" onClick={handleDelete}>
+						Eliminar
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</div>
 	);
 };
 

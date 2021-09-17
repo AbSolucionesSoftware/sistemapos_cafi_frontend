@@ -9,13 +9,13 @@ import BackdropComponent from '../../../../components/Layouts/BackDrop';
 
 import { useQuery, useMutation } from '@apollo/client';
 import {
-	OBTENER_COSTOS,
-	CREAR_COSTO,
-	CREAR_SUBCOSTO,
-	ACTUALIZAR_SUBCOSTO,
-	ACTUALIZAR_COSTO,
-    ELIMINAR_COSTO,
-    ELIMINAR_SUBCOSTO
+	OBTENER_CUENTAS,
+	CREAR_CUENTA,
+	CREAR_SUBCUENTA,
+	ACTUALIZAR_SUBCUENTA,
+	ACTUALIZAR_CUENTA,
+    ELIMINAR_CUENTA,
+    ELIMINAR_SUBCUENTA
 } from '../../../../gql/Catalogos/centroCostos';
 
 const useStyles = makeStyles((theme) => ({
@@ -33,18 +33,18 @@ const useStyles = makeStyles((theme) => ({
 export default function RegistroCategorias() {
 	const classes = useStyles();
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
-	const [ costo, setCosto ] = useState('');
+	const [ cuenta, setCuenta ] = useState('');
 	const [ toUpdateID, setToUpdateID ] = useState('');
 	const [ loadingBackDrop, setLoadingBackDrop ] = useState(false);
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 
 	/* Queries */
-	const { loading, data, error, refetch } = useQuery(OBTENER_COSTOS, {
+	const { loading, data, error, refetch } = useQuery(OBTENER_CUENTAS, {
 		variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id }
 	});
 	/*  Categorias Mutations */
-	const [ crearCosto ] = useMutation(CREAR_COSTO);
-	const [ actualizarCosto ] = useMutation(ACTUALIZAR_COSTO);
+	const [ crearCuenta ] = useMutation(CREAR_CUENTA);
+	const [ actualizarCuenta ] = useMutation(ACTUALIZAR_CUENTA);
    
   
 
@@ -58,50 +58,60 @@ export default function RegistroCategorias() {
 		return <ErrorPage error={error} />;
 	}
 
-	const { obtenerCostos } = data;
-	const render_costos = obtenerCostos.map((costo, index) => (
-		<RenderCostos
+	const { obtenerCuentas } = data;
+	const render_cuentas = obtenerCuentas.map((cuenta, index) => (
+		<RenderCuentas
 			key={index}
-			costo={costo}
+			cuenta={cuenta}
 			setToUpdateID={setToUpdateID}
-			setCosto={setCosto}
+			setCuenta={setCuenta}
 			refetch={refetch}
 			toUpdateID={toUpdateID}
 		/>
 	));
 
 	const obtenerDatos = (e) => {
-		setCosto(e.target.value);
+		setCuenta(e.target.value);
 	};
     
-	const guardarCosto = async () => {
-		if (!costo) return;
+	const guardarCuenta = async () => {
+		if (!cuenta) return;
 		setLoadingBackDrop(true);
 		try {
 			if (!toUpdateID) {
-				await crearCosto({
-					variables: {
-						input: {
-							costo,
-							empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id
+				if (sesion.accesos.catalogos.centro_costos.agregar === false) {
+					setLoadingBackDrop(false);
+					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+				}else{
+					await crearCuenta({
+						variables: {
+							input: {
+								cuenta,
+								empresa: sesion.empresa._id,
+								sucursal: sesion.sucursal._id
+							}
 						}
-					}
-				});
+					});
+				}
 			} else {
-				await actualizarCosto({
-					variables: {
-						input: {
-							costo
-						},
-						idCosto: toUpdateID
-					}
-				});
+				if (sesion.accesos.catalogos.centro_costos.editar === false) {
+					setLoadingBackDrop(false);
+					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+				}else{
+					await actualizarCuenta({
+						variables: {
+							input: {
+								cuenta
+							},
+							idCuenta: toUpdateID
+						}
+					});
+				}
 			}
 			refetch();
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setLoadingBackDrop(false);
-			setCosto('');
+			setCuenta('');
 			setToUpdateID('');
 		} catch (error) {
 			console.log(error);
@@ -115,86 +125,101 @@ export default function RegistroCategorias() {
 		<div className={classes.root}>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<BackdropComponent loading={loadingBackDrop} setLoading={setLoadingBackDrop} />
-			<Typography variant="h6">Costos</Typography>
+			<Typography variant="h6">Cuentas</Typography>
 			<Box display="flex" alignItems="center" mb={2}>
-				<TextField value={costo} variant="outlined" size="small" onChange={obtenerDatos} />
+				<TextField value={cuenta} variant="outlined" size="small" onChange={obtenerDatos} />
 				<Box ml={1} />
-				<Button color="primary" variant="contained" size="large" disableElevation onClick={guardarCosto}>
+				<Button color="primary" variant="contained" size="large" disableElevation onClick={guardarCuenta}>
 					<Add />Guardar
 				</Button>
 			</Box>
-			{render_costos}
+			{render_cuentas}
 		</div>
 	);
 }
 
-const RenderCostos = ({ costo, setToUpdateID, setCosto, refetch, toUpdateID }) => {
+const RenderCuentas = ({ cuenta, setToUpdateID, setCuenta, refetch, toUpdateID }) => {
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const classes = useStyles();
-	const [ subcosto, setSubcosto ] = useState('');
+	const [ subcuenta, setSubcuenta ] = useState('');
 	const [ loadingBackDrop, setLoadingBackDrop ] = useState(false);
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-     const [ eliminarCosto ] = useMutation(ELIMINAR_COSTO);
+     const [ eliminarCuenta ] = useMutation(ELIMINAR_CUENTA);
 	/*  Subcategorias Mutations */
-	const [ crearSubcosto ] = useMutation(CREAR_SUBCOSTO);
-	const [ actualizarSubcosto ] = useMutation(ACTUALIZAR_SUBCOSTO);
+	const [ crearSubcuenta ] = useMutation(CREAR_SUBCUENTA);
+	const [ actualizarSubcuenta ] = useMutation(ACTUALIZAR_SUBCUENTA);
    
 	
-    const render_subcostos = costo.subcostos.map((subcosto) => (
-		<RenderSubcostos
-			key={subcosto._id}
-            idCosto={costo._id}
-			subcosto={subcosto}
+    const render_subcuentas = (cuenta.subcuentas !== null) ? cuenta.subcuentas.map((subcuenta) => (
+		<RenderSubcuentas
+			key={subcuenta._id}
+            idCuenta={cuenta._id}
+			subcuenta={subcuenta}
 			setToUpdateID={setToUpdateID}
 			toUpdateID={toUpdateID}
-			setSubcosto={setSubcosto}
+			setSubcuenta={setSubcuenta}
             refetch={refetch}
 		/>
-	)); 
+	))
+	: 
+	(<div/>)
+	; 
 
 	const obtenerCamposParaActualizar = (event) => {
 		event.stopPropagation();
-		setToUpdateID(costo._id);
-		setCosto(costo.costo);
+		setToUpdateID(cuenta._id);
+		setCuenta(cuenta.cuenta);
 	};
 
 	const cancelarUpdate = (event) => {
 		event.stopPropagation();
 		setToUpdateID('');
-		setCosto('');
+		setCuenta('');
 	};
 
 	const obtenerDatos = (e) => {
-		setSubcosto(e.target.value);
+		setSubcuenta(e.target.value);
 	};
 
-	const guardarSubcosto = async () => {
-		if (!subcosto) return;
+	const guardarSubcuenta = async () => {
+		if (!subcuenta) return;
 		setLoadingBackDrop(true);
 		try {
 			if (!toUpdateID) {
-				await crearSubcosto({
-					variables: {
-						input: {
-							subcosto
-						},
-						idCosto: costo._id
-					}
-				});
+				if (sesion.accesos.catalogos.centro_costos.agregar === false) {
+					setLoadingBackDrop(false);
+					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+				}else{
+					await crearSubcuenta({
+						variables: {
+							input: {
+								subcuenta
+							},
+							idCuenta: cuenta._id
+						}
+					});
+				}
 			} else {
-				await actualizarSubcosto({
-					variables: {
-						input: {
-							subcosto
-						},
-						idCosto: costo._id,
-						idSubcosto: toUpdateID
-					}
-				});
+				if (sesion.accesos.catalogos.centro_costos.editar === false) {
+					setLoadingBackDrop(false);
+					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+				}else{
+					await actualizarSubcuenta({
+						variables: {
+							input: { 
+								subcuenta
+							},
+							idCuenta: cuenta._id,
+							idSubcuenta: toUpdateID
+						}
+					});
+				}
 			}
 			refetch();
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setLoadingBackDrop(false);
-			setSubcosto('');
+			setSubcuenta('');
 			setToUpdateID('');
 		} catch (error) {
 			console.log(error);
@@ -202,21 +227,19 @@ const RenderCostos = ({ costo, setToUpdateID, setCosto, refetch, toUpdateID }) =
 			setLoadingBackDrop(false);
 		}
 	};
-    const deleteCosto = async (idCosto) => {
-        
+
+    const deleteCuenta = async (idCuenta) => {
 		setLoadingBackDrop(true);
 		try {
-			
-            await eliminarCosto({
+            await eliminarCuenta({
                 variables: {
-                    id: idCosto
+                    id: idCuenta
                 }
             });
-		
 			refetch();
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setLoadingBackDrop(false);
-			setCosto('');
+			setCuenta('');
 			setToUpdateID('');
 		} catch (error) {
 			console.log(error);
@@ -232,33 +255,37 @@ const RenderCostos = ({ costo, setToUpdateID, setCosto, refetch, toUpdateID }) =
 			<BackdropComponent loading={loadingBackDrop} setLoading={setLoadingBackDrop} />
 			<Accordion>
 				<AccordionSummary
-					className={toUpdateID && toUpdateID === costo._id ? classes.selected : ''}
+					className={toUpdateID && toUpdateID === cuenta._id ? classes.selected : ''}
 					expandIcon={<ExpandMore />}
 					aria-label="Expand"
-					aria-controls={`costo-action-${costo._id}`}
-					id={`costo-${costo._id}`}
+					aria-controls={`cuenta-action-${cuenta._id}`}
+					id={`cuenta-${cuenta._id}`}
 				>
 					<Box display="flex" alignItems="center" width="100%">
-						<Typography variant="h6">{costo.costo}</Typography>
+						<Typography variant="h6">{cuenta.cuenta}</Typography>
 						<div className={classes.flexGrow} />
-						{toUpdateID && toUpdateID === costo._id ? (
+						{toUpdateID && toUpdateID === cuenta._id ? (
 							<IconButton onClick={cancelarUpdate} onFocus={(event) => event.stopPropagation()}>
 								<Close />
 							</IconButton>
 						) : (
+							sesion.accesos.catalogos.centro_costos.editar === false ? (null):(
+								<IconButton
+									onClick={obtenerCamposParaActualizar}
+									onFocus={(event) => event.stopPropagation()}
+								>
+									<Edit />
+								</IconButton>
+							)
+						)}
+						{sesion.accesos.catalogos.centro_costos.eliminar === false ? (null):(
 							<IconButton
-								onClick={obtenerCamposParaActualizar}
+								onClick={() => deleteCuenta(cuenta._id )}
 								onFocus={(event) => event.stopPropagation()}
 							>
-								<Edit />
+								<Delete />
 							</IconButton>
 						)}
-						<IconButton
-							onClick={() => deleteCosto(costo._id )}
-							onFocus={(event) => event.stopPropagation()}
-						>
-							<Delete />
-						</IconButton>
 					</Box>
 				</AccordionSummary>
 				<AccordionDetails>
@@ -266,11 +293,11 @@ const RenderCostos = ({ costo, setToUpdateID, setCosto, refetch, toUpdateID }) =
 						<Divider />
 						<Box mb={2} />
 						<Box ml={5} width="100%" display="flex">
-							<Typography variant="h6">Subcostos</Typography>
+							<Typography variant="h6">Subcuenta</Typography>
 							<Box mr={2} />
 							<Box display="flex" alignItems="center" mb={2}>
 								<TextField
-									value={subcosto}
+									value={subcuenta}
 									variant="outlined"
 									size="small"
 									onChange={obtenerDatos}
@@ -281,15 +308,17 @@ const RenderCostos = ({ costo, setToUpdateID, setCosto, refetch, toUpdateID }) =
 									variant="contained"
 									size="large"
 									disableElevation
-									onClick={guardarSubcosto}
+									onClick={guardarSubcuenta}
 								>
 									<Add />Guardar
 								</Button>
 							</Box>
 						</Box>
-                       
-                        <Box ml={5}>{render_subcostos}</Box>
-                           
+						{(cuenta.subcuentas !== null ) ?
+							<Box ml={5}>{render_subcuentas}</Box>
+						:
+						<div/>
+						}	
 						{/* <Box ml={5}>{render_subcostos}</Box> */}
 					</Box>
 				</AccordionDetails>
@@ -298,39 +327,39 @@ const RenderCostos = ({ costo, setToUpdateID, setCosto, refetch, toUpdateID }) =
 	);
 };
 
-const RenderSubcostos = ({ idCosto,subcosto, toUpdateID, setToUpdateID, setSubcosto, refetch }) => {
+const RenderSubcuentas = ({ idCuenta,subcuenta, toUpdateID, setToUpdateID, setSubcuenta, refetch }) => {
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const classes = useStyles();
     const [ loadingBackDrop, setLoadingBackDrop ] = useState(false);
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-    const [ eliminarSubcosto ] = useMutation(ELIMINAR_SUBCOSTO);
+    const [ eliminarSubcuenta ] = useMutation(ELIMINAR_SUBCUENTA);
 	
     const obtenerCamposParaActualizar = (event) => {
 		event.stopPropagation();
-		setToUpdateID(subcosto._id);
-		setSubcosto(subcosto.subcosto);
+		setToUpdateID(subcuenta._id);
+		setSubcuenta(subcuenta.subcuenta);
 	};
 
 	const cancelarUpdate = (event) => {
 		event.stopPropagation();
 		setToUpdateID('');
-		setSubcosto('');
+		setSubcuenta('');
 	};
-    const deleteSubCosto = async ( idSubCosto) => {
+    const deleteSubCuenta = async ( idSubCuenta) => {
         
 		setLoadingBackDrop(true);
 		try {
-			
-            await eliminarSubcosto({
+            await eliminarSubcuenta({
                 variables: {
-                    idCosto: idCosto,
-                    idSubcosto: idSubCosto
+                    idCuenta: idCuenta,
+                    idSubcuenta: idSubCuenta
                 }
             });
-		
 			refetch();
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
 			setLoadingBackDrop(false);
-			setSubcosto('');
+			setSubcuenta('');
 			setToUpdateID('');
 		} catch (error) {
 			console.log(error);
@@ -348,22 +377,30 @@ const RenderSubcostos = ({ idCosto,subcosto, toUpdateID, setToUpdateID, setSubco
 				alignItems="center"
 				borderRadius={3}
 				px={1}
-				className={toUpdateID && toUpdateID === subcosto._id ? classes.selected : ''}
+				className={toUpdateID && toUpdateID === subcuenta._id ? classes.selected : ''}
 			>
-				<Typography>{subcosto.subcosto}</Typography>
+				<Typography>{subcuenta.subcuenta}</Typography>
 				<div className={classes.flexGrow} />
-				{toUpdateID && toUpdateID === subcosto._id ? (
-					<IconButton onClick={cancelarUpdate} onFocus={(event) => event.stopPropagation()}>
-						<Close />
-					</IconButton>
-				) : (
-					<IconButton onClick={obtenerCamposParaActualizar} onFocus={(event) => event.stopPropagation()}>
-						<Edit />
+				{
+					sesion.accesos.catalogos.centro_costos.editar === false ? (null):(
+						toUpdateID && toUpdateID === subcuenta._id ? (
+							<IconButton onClick={cancelarUpdate} onFocus={(event) => event.stopPropagation()}>
+								<Close />
+							</IconButton>
+						) : (
+							
+								<IconButton onClick={obtenerCamposParaActualizar} onFocus={(event) => event.stopPropagation()}>
+									<Edit />
+								</IconButton>
+							
+						)
+					)
+				}
+				{sesion.accesos.catalogos.centro_costos.eliminar === false ? (null):(
+					<IconButton onClick={() => deleteSubCuenta(subcuenta._id)} onFocus={(event) => event.stopPropagation()}>
+						<Delete />
 					</IconButton>
 				)}
-				<IconButton onClick={() => deleteSubCosto(subcosto._id)} onFocus={(event) => event.stopPropagation()}>
-					<Delete />
-				</IconButton>
 			</Box>
 			<Divider />
 		</Fragment>

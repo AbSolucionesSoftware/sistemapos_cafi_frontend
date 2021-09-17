@@ -29,6 +29,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Contabilidad() {
+
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
 
@@ -45,7 +46,7 @@ export default function Contabilidad() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={contabilidadIcon} alt="icono numero calzado" className={classes.icon} />
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/contabilidad.svg' alt="icono numero calzado" className={classes.icon} />
 					</Box>
 					Contabilidad
 				</Box>
@@ -56,9 +57,11 @@ export default function Contabilidad() {
 						<Typography variant="h6" className={classes.title}>
 							Contabilidad
 						</Typography>
-						<Button autoFocus color="inherit" size="large" onClick={handleClose} startIcon={<CloseIcon />}>
-							Cerrar
-						</Button>
+						<Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
 					</Toolbar>
 				</AppBar>
 				<Box mt={4}>

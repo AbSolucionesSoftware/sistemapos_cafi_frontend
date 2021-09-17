@@ -1,5 +1,5 @@
 import { gql } from '@apollo/client';
-
+ 
 export const CREAR_CATEGORIA = gql`
 	mutation crearCategoria($input: CrearCategoriasInput) {
 		crearCategoria(input: $input) {
@@ -67,6 +67,18 @@ export const OBTENER_CATEGORIAS = gql`
 		}
 	}
 `;
-/* export const ELIMINAR_CATEGORIA = gql`
-	
-`; */
+export const ELIMINAR_CATEGORIA = gql`
+	mutation eliminarCategoria($idCategoria: ID!) {
+		eliminarCategoria(idCategoria: $idCategoria) {
+			message
+		}
+	}
+`; 
+
+export const ELIMINAR_SUBCATEGORIA = gql`
+	mutation eliminarSubcategoria($idCategoria: ID!, $idSubcategoria: ID!) {
+		eliminarSubcategoria(idCategoria: $idCategoria, idSubcategoria: $idSubcategoria) {
+			message
+		}
+	}
+`;

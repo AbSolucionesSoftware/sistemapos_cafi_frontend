@@ -52,26 +52,35 @@ export default function RegistroColores() {
 		try {
 			const colores = values;
 			if (toUpdate) {
-				await actualizarColor({
-					variables: {
-						input: {
-							nombre: colores.nombre,
-							hex: colores.hex
-						},
-						id: toUpdate
-					}
-				});
-			} else {
-				await crearColor({
-					variables: {
-						input: {
-							nombre: colores.nombre,
-							hex: colores.hex,
-							empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id
+				if (sesion.accesos.catalogos.colores.editar === false) {
+					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+				}else{
+					await actualizarColor({
+						variables: {
+							input: {
+								nombre: colores.nombre,
+								hex: colores.hex
+							},
+							id: toUpdate
 						}
-					}
-				});
+					});
+				}
+
+			} else {
+				if (sesion.accesos.catalogos.colores.agregar === false) {
+					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+				}else{
+					await crearColor({
+						variables: {
+							input: {
+								nombre: colores.nombre,
+								hex: colores.hex,
+								empresa: sesion.empresa._id,
+								sucursal: sesion.sucursal._id
+							}
+						}
+					});
+				}
 			}
 			refetch();
 			setValues({ nombre: '', hex: '' });

@@ -87,12 +87,12 @@ export default function Turnos({handleClickOpen}) {
 					>
 						<Tab
 							label="Cerrar Turno"
-							icon={<img src={shiftIcon} alt="icono almacen" className={classes.iconSvg} />}
+							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
 							{...a11yProps(0)}
 						/>
 						<Tab
 							label="Abrir Turno"
-							icon={<img src={shiftIcon} alt="icono almacen" className={classes.iconSvg} />}
+							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
 							{...a11yProps(1)}
 						/>
 						<Grid container justify='flex-end'>

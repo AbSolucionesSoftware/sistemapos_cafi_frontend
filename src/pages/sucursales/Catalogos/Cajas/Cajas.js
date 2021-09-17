@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -29,9 +29,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Cajas() {
+
 	const classes = useStyles();
+
 	const [ open, setOpen ] = React.useState(false);
 
+
+	
 	const handleClickOpen = () => {
 		setOpen(true);
 	};
@@ -45,7 +49,7 @@ export default function Cajas() {
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={cajasIcon} alt="icono numero calzado" className={classes.icon} />
+						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/cajas.svg' alt="icono numero calzado" className={classes.icon} />
 					</Box>
 					Cajas
 				</Box>

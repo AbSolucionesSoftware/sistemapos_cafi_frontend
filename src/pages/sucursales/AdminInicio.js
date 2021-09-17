@@ -8,13 +8,16 @@ import Empresa from './Empresa/Empresa';
 import Compras from './Compras/Compras';
 import Catalogos from './Catalogos/Catalogos';
 import Tesoreria from './Tesoreria/Tesoreria';
+import Facturacion from './Facturacion/Facturacion';
 import facturaIcon from '../../icons/factura.svg';
 import moneyIcon from '../../icons/money.svg';
 import almacenIcon from '../../icons/almacen.svg';
 import Almacenes from './Almacenes/Almacenes';
 import cartIcon from '../../icons/ventas/cart-add.svg';
 import { withRouter } from 'react-router';
-
+//import cajaIcon from '../../icons/cajas.svg';
+//import Cajas from './Cajas/Cajas';
+import Reportes from './Reportes/Reportes';
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
 
@@ -83,32 +86,39 @@ function AdminInicio(props) {
 			<Toolbar />
 			<Box>
 				<AppBar position="static" color="default" elevation={0}>
-					<Tabs value={value} onChange={handleChange} indicatorColor="primary" textColor="primary" centered>
+					<Tabs value={value} onChange={handleChange} indicatorColor="primary" textColor="primary" /* centered */ variant="scrollable" scrollButtons="on">
 						<Tab label="Mi empresa" icon={<FcShop className={classes.icon} />} {...a11yProps(0)} />
 						<Tab
 							label="Almacenes"
-							icon={<img src={almacenIcon} alt="icono almacen" className={classes.iconSvg} />}
+							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/almacen.svg' alt="icono almacen" className={classes.iconSvg} />}
 							{...a11yProps(1)}
 						/>
+					
 						<Tab label="Compras" icon={<FcPaid className={classes.icon} />} {...a11yProps(2)} />
 						<Tab label="Catalogos" icon={<FcNews className={classes.icon} />} {...a11yProps(3)} />
 						<Tab
 							label="Tesoreria"
-							icon={<img src={moneyIcon} alt="icono money" className={classes.iconSvg} />}
+							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/money.svg' alt="icono money" className={classes.iconSvg} />}
 							{...a11yProps(4)}
 						/>
-						<Tab label="Reportes" icon={<FcSurvey className={classes.icon} />} {...a11yProps(5)} />
 						<Tab
-							label="Facturación"
-							icon={<img src={facturaIcon} alt="icono factura" className={classes.iconSvg} />}
-							{...a11yProps(6)}
+							label="Reportes"
+							icon={<FcSurvey className={classes.icon} />}
+							{...a11yProps(5)}
+						
 						/>
 						<Tab
 							label="Ventas"
-							icon={<img src={cartIcon} alt="icono ventas" className={classes.iconSvg} />}
-							{...a11yProps(7)}
+							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cart-add.svg' alt="icono ventas" className={classes.iconSvg} />}
+							{...a11yProps(8)}
 							onClick={() => props.history.push('/ventas/venta-general')}
 						/>
+						<Tab
+							label="Facturación"
+							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/factura.svg' alt="icono factura" className={classes.iconSvg} />}
+							{...a11yProps(6)}
+						/>
+						
 					</Tabs>
 				</AppBar>
 				<SwipeableViews
@@ -132,13 +142,13 @@ function AdminInicio(props) {
 						<Tesoreria />
 					</TabPanel>
 					<TabPanel value={value} index={5}>
-						Item Five
+						<Reportes />
 					</TabPanel>
 					<TabPanel value={value} index={6}>
-						Item Six
+						Reportes
 					</TabPanel>
 					<TabPanel value={value} index={7}>
-						Ventas
+						<Facturacion />
 					</TabPanel>
 				</SwipeableViews>
 			</Box>

@@ -3,18 +3,7 @@ import { gql } from '@apollo/client';
 export const CREAR_TALLAS = gql`
 	mutation crearTalla($input: CrearTallaInput) {
 		crearTalla(input: $input) {
-			_id
-			talla
-			tipo
-			empresa {
-				nombre_empresa
-				correo_empresa
-				nombre_dueno
-				telefono_dueno
-				sucursales_activas
-				limite_sucursales
-				_id
-			}
+			message
 		}
 	}
 `;
@@ -46,8 +35,8 @@ export const ACTUALIZAR_TALLA = gql`
 	}
 `;
 export const ELIMINAR_TALLA = gql`
-	mutation eliminarTalla($id: ID!) {
-		eliminarTalla(id: $id) {
+	mutation eliminarTalla($input: ActualizarTallaInput,$id: ID!) {
+		eliminarTalla(id: $id, input: $input) {
 			message
 		}
 	}

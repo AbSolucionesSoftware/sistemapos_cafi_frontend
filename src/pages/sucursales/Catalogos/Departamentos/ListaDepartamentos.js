@@ -79,8 +79,12 @@ export default function TablaDepartamentos({ updateData }) {
 						<TableHead>
 							<TableRow>
 								<TableCell>Departamentos</TableCell>
-								<TableCell padding="default">Editar</TableCell>
-								<TableCell padding="default">Eliminar</TableCell>
+								{sesion.accesos.catalogos.departamentos.editar === false ? (null):(
+									<TableCell padding="default">Editar</TableCell>
+								)}
+								{sesion.accesos.catalogos.departamentos.eliminar === false ? (null):(
+									<TableCell padding="default">Eliminar</TableCell>
+								)}
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -110,19 +114,26 @@ export default function TablaDepartamentos({ updateData }) {
 
 
 const RowsRender = ({ datos }) => {
+
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	return (
 		<TableRow hover role="checkbox" tabIndex={-1}>
 			<TableCell>{datos.nombre_departamentos}</TableCell>
-			<TableCell padding="checkbox">
-				<IconButton>
-					<Edit />
-				</IconButton>
-			</TableCell>
-			<TableCell padding="checkbox">
-				<IconButton>
-					<Delete />
-				</IconButton>
-			</TableCell>
+			{sesion.accesos.catalogos.departamentos.editar === false ? (null):(
+				<TableCell padding="checkbox">
+					<IconButton>
+						<Edit />
+					</IconButton>
+				</TableCell>
+			)}
+			{sesion.accesos.catalogos.departamentos.eliminar === false ? (null):(
+				<TableCell padding="checkbox">
+					<IconButton>
+						<Delete />
+					</IconButton>
+				</TableCell>
+			)}
 		</TableRow>
 	);
 };

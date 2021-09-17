@@ -16,11 +16,11 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { CrearAlmacenContext } from '../../../../context/Almacenes/crearAlmacen';
 import { useMutation, useQuery } from '@apollo/client';
-import { REGISTRO_ALMACEN, ACTUALIZAR_ALMACEN } from '../../../../gql/ALmacenes/Almacen';
+import { REGISTRO_ALMACEN, ACTUALIZAR_ALMACEN } from '../../../../gql/Almacenes/Almacen';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
 import { OBTENER_USUARIOS } from '../../../../gql/Catalogos/usuarios';
-
+import CloseIcon from '@material-ui/icons/Close';
 import { Edit } from '@material-ui/icons';
 import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
 import Add from '@material-ui/icons/Add';
@@ -192,9 +192,9 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
         <Fragment>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
             {accion === 'registrar' ? refetch ? (
-                <Button color="primary" onClick={toggleModal}>
+                <IconButton color="primary" onClick={toggleModal}>
                     <Add />
-                </Button>
+                </IconButton>
             ) : (
                 <Button color="primary" variant="contained" size="large" onClick={toggleModal}>
                     Nuevo almacen
