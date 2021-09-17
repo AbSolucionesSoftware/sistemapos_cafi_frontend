@@ -73,4 +73,4 @@ export default function Departamentos() {
 			</DepartamentosProvider>
 		</div>
 	);
-}
+} 

@@ -4,9 +4,6 @@ import { Box, Button, DialogActions, DialogContent, Divider, Grid, Typography } 
 
 import useStyles from '../styles';
 
-import cajon from '../../../icons/ventas/cajon.svg'
-
-
 export default function AbrirCajon({handleClickOpen}) {
 
     const classes = useStyles();

@@ -2,10 +2,7 @@ import React, { useState } from 'react'
 import useStyles from '../styles';
 
 import { Box, Button, Dialog, DialogActions, DialogContent, Divider, Grid,  IconButton,  Paper,  Slide,  TextField, Typography } from '@material-ui/core'
-import cartIcon from '../../../icons/ventas/cart.svg'
-import money from '../../../icons/ventas/money.svg';
 import tarjeta from '../../../icons/ventas/tarjeta-de-credito.svg';
-import transfer from '../../../icons/transferencia-bancaria.svg';
 import { FcDonate, FcShop } from 'react-icons/fc';
 import { Search } from '@material-ui/icons';
 import CloseIcon from '@material-ui/icons/Close';

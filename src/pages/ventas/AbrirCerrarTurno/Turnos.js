@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types';
 
 import { AppBar, Box, Button, DialogActions, DialogContent, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core'
-import shiftIcon from '../../../icons/ventas/shift.svg'
 import CloseIcon from '@material-ui/icons/Close';
 
 import AbrirTurno from './AbrirTurno';

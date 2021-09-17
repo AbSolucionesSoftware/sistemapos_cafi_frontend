@@ -3,7 +3,6 @@ import useStyles from '../styles';
 import CloseIcon from '@material-ui/icons/Close';
 
 import { Box, Button, DialogActions, DialogContent, Divider, FormControl, Grid, MenuItem, Select, TextField, Typography } from '@material-ui/core'
-import articuloRapido from '../../../icons/ventas/tiempo-rapido.svg'
 
 export default function ArticuloRapido({handleClickOpen}) {
 
