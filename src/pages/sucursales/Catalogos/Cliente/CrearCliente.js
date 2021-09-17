@@ -139,9 +139,7 @@ export default function CrearCliente({ tipo, accion, datos, refetch }) {
 			if (accion === 'registrar') {
 				cliente.tipo_cliente = tipo;
 				cliente.empresa = sesion.empresa._id;
-				if(tipo !== "PROVEEDOR"){
-					cliente.sucursal = sesion.sucursal._id;
-				}
+				cliente.sucursal = sesion.sucursal._id;
 				const input = cliente;
 				await crearCliente({
 					variables: {
@@ -156,6 +154,9 @@ export default function CrearCliente({ tipo, accion, datos, refetch }) {
 						id: cliente._id
 					}
 				});
+			}
+			if(refetch){
+				refetch();
 			}
 			setUpdate(!update);
 			setAlert({ message: '¡Listo!', status: 'success', open: true });
