@@ -5,26 +5,38 @@ import React from 'react';
 
 import useStyles from './styles';
 import TablaVentas from './TablaVentas';
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
-import usuario from '../../icons/usuarios.svg';
-import codigo from '../../icons/ventas/busqueda-de-codigos-de-barras.svg';
-import vendedor from '../../icons/ventas/admin.svg';
-import ticket from '../../icons/ventas/publicalo.svg';
+// import usuario from '../../icons/usuarios.svg';
+// import codigo from '../../icons/ventas/busqueda-de-codigos-de-barras.svg';
+// import vendedor from '../../icons/ventas/admin.svg';
+// import ticket from '../../icons/ventas/publicalo.svg';
 
 import { Fragment } from 'react';
 import MonedaCambio from './Operaciones/MonedaCambio';
 
+
+
 export default function VentasGenerales() {
 
+
+    
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+    console.log(sesion);
     const classes = useStyles();
 
     return (
         <Fragment>
             <Grid container>
                 <Grid item lg={2}>
-                    <Box className={classes.containerImage}>
-                        <img alt="imagen de empresa" src={"https://duckduckgo.com/?q=fotos+150x150&atb=v255-1&iax=images&ia=images&iai=https%3A%2F%2Fintrepidplan.com%2Fwp-content%2Fuploads%2F2020%2F02%2Fcropped-favicon-150x150_op.png"} className={classes.imagen} />
-                    </Box>
+                    {
+                        sesion.empresa.imagen ? (
+                            <Box className={classes.containerImage}>
+                                <img alt="imagen de empresa" src={sesion.empresa.imagen} className={classes.imagen} />
+                            </Box>
+                        ) : null
+                    }
+                    
                 </Grid>
                 <Grid item lg={8}>
                     <div className={classes.formInputFlex}>
@@ -33,6 +45,25 @@ export default function VentasGenerales() {
                                 <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/busqueda-de-codigos-de-barras.svg' alt="iconoBander" className={classes.iconSize} /> 
                             </Box>
                             <Box>
+                                {/* <Autocomplete
+                                    id="combo-box-proveedor"
+                                    size="small"
+                                    fullWidth
+                                    options={proveedores}
+                                    getOptionLabel={(option) => option.nombre_cliente}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Proveedor" variant="outlined" />
+                                    )}
+                                    onChange={(_, value) =>
+                                        obtenerProveedorAlmacen("proveedor", value)
+                                    }
+                                    getOptionSelected={(option) => option.nombre_cliente}
+                                    value={
+                                        datosCompra.proveedor.nombre_cliente
+                                        ? datosCompra.proveedor
+                                        : null
+                                    }
+                                /> */}
                                 <Paper className={classes.rootBusqueda}>
                                     <InputBase
                                         fullWidth
