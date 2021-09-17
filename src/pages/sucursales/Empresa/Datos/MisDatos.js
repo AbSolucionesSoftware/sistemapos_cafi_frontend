@@ -1,7 +1,7 @@
 import React, {  useContext,useState,useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Grid, TextField, Button, Dialog, Avatar } from '@material-ui/core';
-import { Slide, Typography, IconButton, Toolbar, AppBar, Divider, DialogActions  } from '@material-ui/core';
+import { Slide, Typography, Toolbar, AppBar, Divider, DialogActions  } from '@material-ui/core';
 import { useDropzone } from 'react-dropzone';
 import CloseIcon from '@material-ui/icons/Close';
 import { FcNook } from 'react-icons/fc';
@@ -67,7 +67,7 @@ export default function MisDatos() {
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	const classes = useStyles();
 	const [ loadingPage, setLoadingPage ] = React.useState(false);
-	const [ bloqueo, setBloqueo ] = useState(sesion.accesos.mi_empresa.datos_empresa.editar === false ? true : false);
+	const [ bloqueo ] = useState(sesion.accesos.mi_empresa.datos_empresa.editar === false ? true : false);
 	const [ preview, setPreview ] = useState('');
 	const [ open, setOpen ] = React.useState(false);
 	const [ errorPage, setErrorPage ] = React.useState(false);
@@ -130,7 +130,7 @@ export default function MisDatos() {
 			refetch();
 		
 		} catch (errorCatch) {
-			console.log("SESSIONREFECTUPDATE",errorCatch)
+			// console.log("SESSIONREFECTUPDATE",errorCatch)
 		}
 	},[update,refetch]);
 	useEffect(() => {
@@ -139,7 +139,7 @@ export default function MisDatos() {
 			setLoadingPage(loading)
 		
 		} catch (errorCatch) {
-			console.log("SESSIONREFECTUPDATE",errorCatch)
+			// console.log("SESSIONREFECTUPDATE",errorCatch)
 		}
 	},[loading]);
 	useEffect(() => {
@@ -150,7 +150,7 @@ export default function MisDatos() {
 				setEmpresa(data.obtenerEmpresa)
 			}
 		} catch (errorCatch) {
-			console.log("SESSIONREFECT",errorCatch)
+			// console.log("SESSIONREFECT",errorCatch)
 		}
 	},[data, setEmpresa]);
 	useEffect(() => {
@@ -159,7 +159,7 @@ export default function MisDatos() {
 			setErrorPage(error)
 		
 		} catch (errorCatch) {
-			console.log("SESSIONREFECT",errorCatch)
+			// console.log("SESSIONREFECT",errorCatch)
 		}
 	},[error]);
 	useEffect(() => {
@@ -175,7 +175,7 @@ export default function MisDatos() {
 			})
 			
 		} catch (errorCatch) {
-			console.log(errorCatch)
+			// console.log(errorCatch)
 		}
 	}, [empresa])
 
@@ -197,7 +197,6 @@ export default function MisDatos() {
 		} catch (errorCatch) {
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoadingPage(false);
-			console.log("ACtualizar Empresa",errorCatch)
 		}
 	}
 	const handleClickOpen = () => {
@@ -208,7 +207,6 @@ export default function MisDatos() {
 		setOpen(false);
 	};
 	const obtenerCampos = (e) => {
-		//console.log(e.target.name, e.target.value)
 		setEmpresaDatos({
 			...empresaDatos,
 			[e.target.name]: e.target.value
@@ -393,7 +391,6 @@ export default function MisDatos() {
 										</form>					
 									</Grid>
 								</Grid>
-						
 						</Grid>
 						
 						<Box mt={2} >
@@ -402,7 +399,7 @@ export default function MisDatos() {
 							</Typography>
 							<Divider />
 						</Box>
-						<Grid container  justifyContent="space-evenly">
+						<Grid container justifyContent="space-evenly">
 						<form autoComplete="off" className={classes.formInputFlex} >
 							<Box>
 								<Typography>Calle</Typography>

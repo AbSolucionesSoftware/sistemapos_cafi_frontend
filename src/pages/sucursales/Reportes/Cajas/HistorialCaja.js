@@ -138,7 +138,6 @@ export default function HistorialCaja(props) {
                 setLoading(true);
                 refetch();
                 setLoading(false);
-                console.log("DATA",data)
             }
               
 		},
@@ -165,10 +164,7 @@ export default function HistorialCaja(props) {
             if(action.transferir){
                 if(cajaDestino !== ''){
                     setErrorCajaDestino(false);
-                    
-                   
                 }else{
-                    console.log('ENTRA')
                     setErrorCajaDestino(true)
                     return;
                 }
@@ -206,7 +202,6 @@ export default function HistorialCaja(props) {
 		
 			
 		} catch (error) {
-			console.log("nuevoHistorial",error);
 			setAlert({ message: error.message, status: 'error', open: true });
 			setLoading(false);
 		}
@@ -234,15 +229,17 @@ export default function HistorialCaja(props) {
 	};
     return (
 		
-        <Dialog  fullWidth fullHeight  maxWidth="l" maxHeight="xl" open={props.open} onClose={()=>{props.handleClose(); handleCloseAction();}}   TransitionComponent={Transition} >
+        <Dialog fullWidth maxWidth="lg" open={props.open} onClose={()=>{props.handleClose(); handleCloseAction();}}   TransitionComponent={Transition} >
          
             <Toolbar >
                 <Typography variant="h5" className={classes.title}>
                     Caja {props.cajaSelected.numero_caja}
                 </Typography>
-                <Button autoFocus color="inherit"size="large" onClick={()=>{props.handleClose();handleCloseAction();} } startIcon={<CloseIcon />}>
-                    Cerrar
-                </Button>
+                <Box m={1}>
+                    <Button variant="contained" color="secondary" onClick={()=>{props.handleClose();handleCloseAction();} } size="large">
+                        <CloseIcon style={{fontSize: 30}} />
+                    </Button>
+                </Box>
             </Toolbar>
         
         <Box ml={3} m={2}>

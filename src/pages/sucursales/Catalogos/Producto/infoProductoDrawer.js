@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Drawer, Typography, Box, Grid, Button, IconButton } from '@material-ui/core';
 import { Close, CropOriginal, ListAlt } from '@material-ui/icons';

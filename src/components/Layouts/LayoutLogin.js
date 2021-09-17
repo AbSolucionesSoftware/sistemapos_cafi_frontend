@@ -53,7 +53,6 @@ export default function LayoutLogin(props) {
 			localStorage.setItem('tokenCafi', JSON.stringify(token));
 			props.history.push('/home');
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: error.message, status: 'error', open: true });
 			setLoading(false);
 		}
@@ -85,10 +84,12 @@ export default function LayoutLogin(props) {
 		<Container maxWidth="sm">
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<Box height="100vh" display="flex" justifyContent="center" alignItems="center">
-				<Box boxShadow="3" p={5} width="100%">
-					<Typography variant="h6" component="p" className={classes.margin}>
-						Inicia sesión
-					</Typography>
+				<Box boxShadow="3" p={5} width="80%">
+					<Box display='flex' textAlign='center' justifyContent='center'>
+						<Typography variant="h4" component="p" className={classes.margin}>
+							<b>Inicia sesión</b>
+						</Typography>
+					</Box>
 					<form autoComplete="off" onSubmit={signin} >
 						<TextField
 							label="Numero de usuario"

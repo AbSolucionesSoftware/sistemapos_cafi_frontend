@@ -73,7 +73,6 @@ export default function TablaServicios({setData, setIdService, idService, setAcc
 
 	const handleDelete = async () => {
 		try {
-			console.log("Eliminado");
 			await EliminarContabilidad({
 				variables: {
 					id: idService
@@ -130,8 +129,6 @@ export default function TablaServicios({setData, setIdService, idService, setAcc
 										{sesion.accesos.catalogos.contabilidad.editar === false ? (null):(
 											<TableCell padding="checkbox">
 												<IconButton onClick={() => {
-													console.log("editar");
-													console.log(row);
 													setAccion(false)
 													setIdService(row._id)
 													setData({

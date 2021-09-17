@@ -15,10 +15,6 @@ import ExportarExcel from '../../../../components/ExportExcel'
 import { useQuery } from '@apollo/client';
 import { OBTENER_ALMACENES } from '../../../../gql/Almacenes/Almacen';
 
-
-
-
-
 const useStyles = makeStyles({
 	root: {
 		width: '100%'
@@ -34,10 +30,10 @@ export default function ListaAlmacenes(props) {
 	const [ page, setPage ] = React.useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = React.useState(10);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));	
-	const almacenesColumnas = [];
-	const productosRows = [];
+	// const almacenesColumnas = [];
+	// const productosRows = [];
 		/* Queries */
-	const { loading, data, error, refetch } = useQuery(OBTENER_ALMACENES,{
+	const { loading, error, refetch } = useQuery(OBTENER_ALMACENES,{
 		variables: {
 			id: sesion.sucursal._id
 		}
@@ -58,13 +54,12 @@ export default function ListaAlmacenes(props) {
 	useEffect(
 		() => {
 			refetch();
-			
 		},
 		[ refetch ]
 	);
 	
 	if(props.obtenerAlmacenes){
-		let existencias= []; 
+		// let existencias= []; 
 		props.obtenerAlmacenes.forEach(element => {
 			columns.push({ id: element._id, label: element.nombre_almacen, minWidth: 60, widthPx: 160,})
 			
@@ -82,7 +77,7 @@ export default function ListaAlmacenes(props) {
 		let total=0;
 	
 		props.obtenerAlmacenes.forEach((almacenColumna) => {
-			const existencias =	producto.existencia_almacenes.filter((existencia) => existencia._id.almacen._id == almacenColumna._id)
+			const existencias =	producto.existencia_almacenes.filter((existencia) => existencia._id.almacen._id === almacenColumna._id)
 			if(existencias.length > 0){
 				arrayCantidades.push(existencias[0].cantidad_existente)
 			
@@ -107,8 +102,8 @@ export default function ListaAlmacenes(props) {
 			
 				{/* <TableCell style={{textAlign: 'center',}} >{(producto.datos_generales.receta_farmacia) ? "SI" : "NO"}</TableCell> */}
 				{ 
-					arrayCantidades.map((cantidad) => {
-						return(<TableCell style={{backgroundColor:'rgba(255, 253, 150, 0.1)', color:'black',fontSize:17, textAlign:'center',minWidth:60 }}>{cantidad}</TableCell>)	
+					arrayCantidades.map((cantidad, index) => {
+						return(<TableCell key={index} style={{backgroundColor:'rgba(255, 253, 150, 0.1)', color:'black',fontSize:17, textAlign:'center',minWidth:60 }}>{cantidad}</TableCell>)	
 					})	
 				}
 				<TableCell  style={{backgroundColor:'rgba(255, 253, 150, 0.1)', color:'black', fontSize:18,fontWeight:'bold', textAlign:'center' ,minWidth:60}}>{total}</TableCell>
@@ -152,9 +147,8 @@ export default function ListaAlmacenes(props) {
 					</TableHead>
 					<TableBody>
 						{props.productos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-						
 							return (
-								<Rowrow producto={row} />
+								<Rowrow producto={row} key={index} />
 							);
 						})}
 					</TableBody>

@@ -144,7 +144,6 @@ export default function DescuentoProductos({datos, productosRefetch}) {
             handleCloseDescuentos();
             setAlert({ message: '¡Listo descuentos realizados!', status: 'success', open: true });
 		} catch (error) {
-			console.log(error);
 		}
 	};
 

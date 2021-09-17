@@ -604,7 +604,6 @@ const RegistrarNuevoSelect = ({ tipo, name, refetch, subcategorias, setSubcatego
 		} catch (error) {
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoading(false);
-			console.log(error);
 		}
 	};
 

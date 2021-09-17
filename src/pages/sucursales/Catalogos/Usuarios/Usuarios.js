@@ -9,7 +9,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import { Search } from '@material-ui/icons';
 import Slide from '@material-ui/core/Slide';
 import { Box, Paper, InputBase, IconButton } from '@material-ui/core';
-import usuariosIcon from '../../../../icons/usuarios.svg';
 import ListaUsuarios from './ListaUsuario';
 import CrearUsuario from './CrearUsuario';
 import { UsuarioProvider } from '../../../../context/Catalogos/usuarioContext';

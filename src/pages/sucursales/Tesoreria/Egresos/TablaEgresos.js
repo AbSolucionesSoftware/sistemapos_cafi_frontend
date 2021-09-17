@@ -72,14 +72,14 @@ export default function TablaEgresos() {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+						{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
 							return (
-								<TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-									{columns.map((column) => {
+								<TableRow hover role="checkbox" tabIndex={-1} key={index}>
+									{columns.map((column, index) => {
 										const value = row[column.id];
 										return (
 											<TableCell
-                                                key={column.id} 
+                                                key={index} 
                                                 align={column.align}
                                             >
 												{column.format && typeof value === 'number' ? (

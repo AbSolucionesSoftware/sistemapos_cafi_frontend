@@ -9,7 +9,6 @@ import { Box, DialogActions, Paper } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
 
 import FormRetiroDeposito from  './FormRetiroDeposito'
-import retiroIcon from '../../../../icons/retiro-de-dinero.svg';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {

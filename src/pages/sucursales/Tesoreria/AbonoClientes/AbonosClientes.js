@@ -8,7 +8,6 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, TextField, Grid } from '@material-ui/core';
-import abonoIcon from '../../../../icons/salary.svg';
 
 import TablaAbonosClientes from './TablaAbonoClientes';
 import AbonoaRecibir from './Abono_a_Recibir';
@@ -94,7 +93,7 @@ export default function AbonosClientes() {
 							Buscar
 						</Button>
 					</Box>
-					<Grid lg={5}>
+					<Grid item lg={5}>
 						<Box display="flex" justifyContent="center" mt={4}>
 							<AbonoaRecibir />
 						</Box>
