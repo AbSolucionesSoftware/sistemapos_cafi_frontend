@@ -11,8 +11,6 @@ import { Add, Edit } from '@material-ui/icons';
 import { UsuarioContext } from '../../../../context/Catalogos/usuarioContext';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
-import perfilIcon from '../../../../icons/perfil.svg';
-import permisosIcon from '../../../../icons/permisos.svg';
 
 import arregloVacio from './AsingarAccesos/arregloVacioAcceso'
 import { useMutation } from '@apollo/client';
@@ -185,7 +183,6 @@ export default function CrearUsuario({ accion, datos }) {
 			setLoading(false);
 			onCloseModal();
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoading(false);
 		}

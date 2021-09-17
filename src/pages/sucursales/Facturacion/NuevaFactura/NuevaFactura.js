@@ -1,6 +1,5 @@
 import React, { forwardRef, useState } from 'react';
 import { AppBar, Box, Button, Dialog, makeStyles, Slide, Toolbar, Typography } from '@material-ui/core';
-import factura from '../../../../icons/Facturacion/facturaNueva.svg'
 import CloseIcon from '@material-ui/icons/Close';
 
 import RegistroFactura from './RegistroFactura';

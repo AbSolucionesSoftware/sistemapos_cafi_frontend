@@ -5,7 +5,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DoneIcon from '@material-ui/icons/Done';
 import Slide from '@material-ui/core/Slide';
 import { Box, DialogActions, Paper } from '@material-ui/core';
-import transferIcon from '../../../../icons/transferencia-bancaria.svg'
 import FormTransferencia from './FormTransferencia';
 
 const useStyles = makeStyles((theme) => ({

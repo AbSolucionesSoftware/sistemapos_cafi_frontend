@@ -1,6 +1,5 @@
 import React, {useState } from 'react';
 import {  Box, Button, Dialog, Divider, Grid, makeStyles, TextField,  Typography } from '@material-ui/core';
-import serie from '../../../../icons/Facturacion/numero-de-serie.svg'
 
 const useStyles = makeStyles((theme) => ({
 	root: {

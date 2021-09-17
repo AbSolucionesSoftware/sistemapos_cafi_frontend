@@ -114,7 +114,6 @@ export default function RegistroCategorias() {
 			setCuenta('');
 			setToUpdateID('');
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoadingBackDrop(false);
 		}
@@ -222,7 +221,6 @@ const RenderCuentas = ({ cuenta, setToUpdateID, setCuenta, refetch, toUpdateID }
 			setSubcuenta('');
 			setToUpdateID('');
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoadingBackDrop(false);
 		}
@@ -242,7 +240,6 @@ const RenderCuentas = ({ cuenta, setToUpdateID, setCuenta, refetch, toUpdateID }
 			setCuenta('');
 			setToUpdateID('');
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoadingBackDrop(false);
 		}
@@ -362,7 +359,6 @@ const RenderSubcuentas = ({ idCuenta,subcuenta, toUpdateID, setToUpdateID, setSu
 			setSubcuenta('');
 			setToUpdateID('');
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoadingBackDrop(false);
 		}

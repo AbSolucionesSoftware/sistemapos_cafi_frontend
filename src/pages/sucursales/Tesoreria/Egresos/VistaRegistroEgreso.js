@@ -2,7 +2,6 @@ import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types';
 
 import { AppBar, Box, Button, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core';
-import addIcon from '../../../../icons/ventas/add.svg'
 import { FcDonate } from 'react-icons/fc';
 import CloseIcon from '@material-ui/icons/Close';
 

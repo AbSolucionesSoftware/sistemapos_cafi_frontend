@@ -1,6 +1,5 @@
 import React, { forwardRef, useState } from 'react';
 import { AppBar, Box, Button, Dialog, Grid, makeStyles, Slide, Toolbar, Typography } from '@material-ui/core';
-import serie from '../../../../icons/Facturacion/numero-de-serie.svg'
 import CloseIcon from '@material-ui/icons/Close';
 import RegistroSeries from './RegistroSeries';
 import ListaSellosCDFI from './ListaSellos';

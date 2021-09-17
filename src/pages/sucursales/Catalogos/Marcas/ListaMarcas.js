@@ -32,7 +32,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function ListaMarcas({updateData, toUpdate, setToUpdate, setData}) {
-	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
 
     const classes = useStyles();
     const [ page, setPage ] = useState(0);

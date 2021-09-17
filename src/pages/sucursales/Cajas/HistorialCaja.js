@@ -110,7 +110,6 @@ export default function HistorialCaja(props) {
                 setLoading(true);
                 refetch();
                 setLoading(false);
-                console.log("DATA",data)
             }
               
 		},
@@ -140,7 +139,6 @@ export default function HistorialCaja(props) {
                     
                    
                 }else{
-                    console.log('ENTRA')
                     setErrorCajaDestino(true)
                     return;
                 }
@@ -178,7 +176,6 @@ export default function HistorialCaja(props) {
 		
 			
 		} catch (error) {
-			console.log("nuevoHistorial",error);
 			setAlert({ message: error.message, status: 'error', open: true });
 			setLoading(false);
 		}

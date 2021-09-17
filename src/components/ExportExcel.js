@@ -10,7 +10,6 @@ const ExcelColumn = ReactExport.ExcelColumn; //COLUMNA DE EXCEL
 
 //Este componente requiere el ArrayData, ArrayColumn, fileName
 function ExportarExcel(props) {
-    console.log(props.data)
 	return (
 		<Fragment>
             <Grid>
@@ -25,7 +24,6 @@ function ExportarExcel(props) {
 				>
 					<ExcelSheet data={props.data} name={props.fileName}>
                         {props.columnName.map((element) => {
-                            console.log(element)
                             return(
                                 <ExcelColumn label={element.label} value={element.id} />
                             )

@@ -1,6 +1,5 @@
 import React, { forwardRef, useState } from 'react';
 import { AppBar, Box, Button, Dialog, Grid,  makeStyles, Slide, Toolbar, Typography } from '@material-ui/core';
-import sello from '../../../../icons/Facturacion/validacion.svg'
 import CloseIcon from '@material-ui/icons/Close';
 import ListaSellosCDFI from './ListaSellos';
 import RegistroSellos from './RegistrarSellos';

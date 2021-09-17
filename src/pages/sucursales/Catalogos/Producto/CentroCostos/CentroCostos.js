@@ -179,7 +179,6 @@ const RegistrarNuevoSelect = ({ tipo, name, refetch }) => {
 		} catch (error) {
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoading(false);
-			console.log(error);
 		}
 	};
 

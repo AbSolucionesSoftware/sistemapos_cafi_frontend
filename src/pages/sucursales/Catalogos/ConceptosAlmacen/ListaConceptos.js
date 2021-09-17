@@ -73,7 +73,6 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 
 	const handleDelete = async () => {
 		try {
-			console.log("Eliminado");
 			await EliminarContabilidad({
 				variables: {
 					id: idConcepto
@@ -131,8 +130,6 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 										{sesion.accesos.catalogos.conceptos_almacen.editar === false ? (null):(
 											<TableCell padding="checkbox">
 												<IconButton onClick={() => {
-													console.log("editar");
-													console.log(row);
 													setAccion(false)
 													setIdConcepto(row._id)
 													setData({

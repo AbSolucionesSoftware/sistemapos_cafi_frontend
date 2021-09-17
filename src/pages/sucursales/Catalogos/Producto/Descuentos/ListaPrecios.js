@@ -237,7 +237,6 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, p
 			productosRefetch();
 			setAlert({ message: 'Estado de descuento actualizado', status: 'success', open: true });
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: 'Ocurrio un problema en el servidor' , status: 'error', open: true });
 		}
 	};
@@ -259,7 +258,6 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, p
 			handleModal();
 			setAlert({ message: resultado.data.eliminarDescuentoUnidad.message, status: 'success', open: true });
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: error.message, status: 'error', open: true });
 		}
 	}

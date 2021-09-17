@@ -146,7 +146,6 @@ const RowsRender = ({ datos }) => {
 			setUpdate(!update);
 			setLoading(false);
 		} catch (error) {
-			console.log(error);
 			setLoading(false);
 		}
 	};
