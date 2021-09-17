@@ -1,6 +1,5 @@
 import React from 'react'
 import useStyles from '../styles';
-import tagIcon from '../../../icons/ventas/tag.svg'
 
 import { Box, Button, DialogActions, Divider, Grid, IconButton,  Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@material-ui/core'
 import { Search } from '@material-ui/icons';

@@ -4,29 +4,15 @@ import clsx from 'clsx';
 import { Grid,Box, TextField } from '@material-ui/core';
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import {Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel} from '@material-ui/core';
-import {Toolbar, Typography, Paper, Checkbox, IconButton, Tooltip, FormControlLabel,Switch} from '@material-ui/core';
+import {Toolbar, Typography, Paper, IconButton, Tooltip} from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 
-function createData(name, cantidad, precio) {
-  return { name, cantidad, precio };
-}
+// function createData(name, cantidad, precio) {
+//   return { name, cantidad, precio };
+// }
 
-const rows = [
-  createData('Mermelada', 200, 25.50),
-  createData('Cacahuates', 452, 25.0),
-  createData('Galletas', 262, 16.0),
-   createData('Salsa de chipotle', 452, 25.0),
-  createData('Perro negro', 262, 16.0),
-   createData('Kakacafé', 200, 25.50),
-  createData('Pitayas', 452, 25.0),
-  createData('Leche', 262, 16.0),
-   createData('Salsa de habanero', 452, 25.0),
-  createData('Perro blanco', 262, 16.0),
-  
-  
-];
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -61,7 +47,7 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-  const { classes, onSelectAllClick, order, orderBy, productSelected, rowCount, onRequestSort } = props;
+  const { classes,  order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -74,7 +60,7 @@ function EnhancedTableHead(props) {
           <TableCell
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
+            // padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             <TableSortLabel
@@ -98,7 +84,7 @@ function EnhancedTableHead(props) {
 
 EnhancedTableHead.propTypes = {
   classes: PropTypes.object.isRequired,
-  productSelected: PropTypes.object.isRequired,
+  // productSelected: PropTypes.object.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
@@ -142,9 +128,8 @@ const setValueToTrans =() =>{
     prodSet.push({name: productSelected, cantidad:' ', precio:' '})
     
     setArrayTo(prodSet)
-    console.log('setValueToTrans', prodSet)
   } catch (error) {
-    console.log(error)
+
   }
 }
 React.useEffect(() => {
@@ -154,13 +139,13 @@ React.useEffect(() => {
      props.setProductosTras(arrayTo);
      }
   } catch (error) {
-    console.log(error)
+
   }
 }, [arrayTo])
+
 function onlyNumbers(value){
     const onlyNums = value.toString().replace(/[^0-9]/g, '');
     const intValue = parseInt(onlyNums);
-    console.log(onlyNums)
     setCantidadTo(intValue);
 }
   return (
@@ -226,9 +211,9 @@ function onlyNumbers(value){
   );
 };
 
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-};
+// EnhancedTableToolbar.propTypes = {
+//   numSelected: PropTypes.number.isRequired,
+// };
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -283,9 +268,7 @@ export default function EnhancedTable(props) {
 
   const handleClick = (event, name) => {
     const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    
-    console.log(selectedIndex)
+    // let newSelected = [];
     if(selectedIndex === 0){
         setSelected([]);
     }else{
@@ -347,7 +330,7 @@ export default function EnhancedTable(props) {
                       selected={isItemSelected}
                     >
                     
-                      <TableCell component="th" id={labelId} scope="row" padding="none">
+                      <TableCell component="th" id={labelId} scope="row">
                         {row.name}
                       </TableCell>
                       <TableCell align="right">{row.cantidad}</TableCell>
@@ -371,7 +354,7 @@ export default function EnhancedTable(props) {
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+          // onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
       

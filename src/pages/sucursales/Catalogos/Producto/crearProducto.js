@@ -19,13 +19,6 @@ import {
   Tab,
   Box,
 } from "@material-ui/core";
-import almacenIcon from "../../../../icons/tarea-completada.svg";
-import imagenesIcon from "../../../../icons/imagenes.svg";
-import ventasIcon from "../../../../icons/etiqueta-de-precio.svg";
-import registroIcon from "../../../../icons/portapapeles.svg";
-import costosIcon from "../../../../icons/costos.svg";
-import calendarIcon from "../../../../icons/calendar.svg";
-import tallasColoresIcon from "../../../../icons/tallas-colores.svg";
 import RegistroInfoGenerales from "./DatosGenerales/registrarInfoGeneral";
 import RegistroInfoAdidional from "../Producto/PreciosVenta/registrarInfoAdicional";
 import CargarImagenesProducto from "./Imagenes/cargarImagenesProducto";
@@ -211,7 +204,7 @@ export default function CrearProducto({
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
   /* const [ alert, setAlert ] = useState({ message: '', status: '', open: false }); */
-  const { alert, setAlert } = useContext(RegProductoContext);
+  const { setAlert } = useContext(RegProductoContext);
   const [loading, setLoading] = useState(false);
   const tipo = datos_generales.tipo_producto;
 

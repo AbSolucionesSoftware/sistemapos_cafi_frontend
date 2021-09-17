@@ -2,7 +2,6 @@ import React from 'react'
 import useStyles from '../styles';
 
 import { Box, Button, DialogActions, DialogContent, Divider,Grid, IconButton, InputBase,  Paper, Typography } from '@material-ui/core'
-import listaEspera from '../../../icons/ventas/lista-de-espera.svg'
 import { Search } from '@material-ui/icons';
 import ListaVentas from './ListaVentas';
 import CloseIcon from '@material-ui/icons/Close';

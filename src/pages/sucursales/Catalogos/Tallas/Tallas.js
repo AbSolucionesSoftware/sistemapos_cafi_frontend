@@ -8,9 +8,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import tallasIcon from '../../../../icons/tallas.svg';
-import shirtIcon from '../../../../icons/shirt.svg';
-import shoesIcon from '../../../../icons/shoes.svg';
 import { Box, Container, Tab, Tabs } from '@material-ui/core';
 import RegistroTallas from './RegistroTallas';
 

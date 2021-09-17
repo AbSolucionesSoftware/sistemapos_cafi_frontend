@@ -8,7 +8,6 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, Container } from '@material-ui/core';
-import categoriasIcon from '../../../../icons/categorias.svg';
 import RegistroCategorias from './RegistroCategorias';
 
 const useStyles = makeStyles((theme) => ({

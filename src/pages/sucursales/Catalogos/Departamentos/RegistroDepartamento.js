@@ -69,7 +69,6 @@ export default function RegistroDepartamentos({accion}) {
                 setLoading(false);
 			}
 		} catch (error) {
-			console.log(error);
 		}
 	}
 

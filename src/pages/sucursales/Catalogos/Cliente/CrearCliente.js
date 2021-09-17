@@ -5,8 +5,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import DoneIcon from '@material-ui/icons/Done';
 import { Button, AppBar, IconButton } from '@material-ui/core';
 import { Dialog, DialogActions, Tabs, Tab, Box } from '@material-ui/core';
-import perfilIcon from '../../../../icons/perfil.svg';
-import fiscalIcon from '../../../../icons/fiscal.svg';
 import RegistrarInfoBasica from './RegistrarInfoBasica';
 import RegistrarInfoCredito from './RegistroInfoCredito';
 import { Add, Edit } from '@material-ui/icons';
@@ -164,7 +162,6 @@ export default function CrearCliente({ tipo, accion, datos, refetch }) {
 			setLoading(false);
 			onCloseModal();
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoading(false);
 		}

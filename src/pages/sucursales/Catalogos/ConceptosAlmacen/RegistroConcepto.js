@@ -114,7 +114,7 @@ export default function RegistroServicios() {
 				
 			}
 		} catch (error) {
-			console.log("Guardar",error)
+			
 		}
 	}
 

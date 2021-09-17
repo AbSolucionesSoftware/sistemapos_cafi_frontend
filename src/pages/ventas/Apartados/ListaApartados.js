@@ -7,8 +7,6 @@ import { Box, Button, DialogActions, DialogContent, Divider, Grid,   IconButton,
 import DeleteIcon from '@material-ui/icons/Delete';
 import CloseIcon from '@material-ui/icons/Close';
 
-import tagIcon from '../../../icons/ventas/tag.svg'
-
 import useStyles from '../styles';
 
 const columns = [

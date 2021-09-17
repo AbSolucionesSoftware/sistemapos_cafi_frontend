@@ -152,7 +152,6 @@ const RowsRender = ({ row, setAlert, toUpdate, setToUpdate, setValues, refetch }
 					}
 				});
 			} catch (error) {
-				console.log(error);
 			}
 		}
 	});

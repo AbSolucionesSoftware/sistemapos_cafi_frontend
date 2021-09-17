@@ -38,7 +38,7 @@ const headCells = [
 	{ id: 'name', numeric: false, disablePadding: true, label: 'Cliente' },
 	{ id: 'calories', numeric: true, disablePadding: false, label: 'Abondado' },
 	{ id: 'fat', numeric: true, disablePadding: false, label: 'Restante' },
-	{ id: 'carbs', numeric: true, disablePadding: false, label: 'Abono a percibir' },
+	{ id: 'abono', numeric: true, disablePadding: false, label: 'Abono a percibir' },
 	{ id: 'carbs', numeric: true, disablePadding: false, label: 'Detalles' },
 	{ id: 'protein', numeric: true, disablePadding: false, label: 'Liquidar' }
 ];
@@ -74,10 +74,10 @@ function EnhancedTableHead(props) {
 EnhancedTableHead.propTypes = {
 	classes: PropTypes.object.isRequired,
 	numSelected: PropTypes.number.isRequired,
-	onRequestSort: PropTypes.func.isRequired,
+	// onRequestSort: PropTypes.func.isRequired,
 	onSelectAllClick: PropTypes.func.isRequired,
-	order: PropTypes.oneOf([ 'asc', 'desc' ]).isRequired,
-	orderBy: PropTypes.string.isRequired,
+	// order: PropTypes.oneOf([ 'asc', 'desc' ]).isRequired,
+	// orderBy: PropTypes.string.isRequired,
 	rowCount: PropTypes.number.isRequired
 };
 
@@ -109,7 +109,7 @@ export default function TablaAbonosClientes() {
 	const classes = useStyles();
 	const [ selected, setSelected ] = useState([]);
 	const [ page, setPage ] = useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = useState(9);
+	const [ rowsPerPage, setRowsPerPage ] = useState(10);
 
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {
@@ -171,15 +171,14 @@ export default function TablaAbonosClientes() {
 							{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
 								const isItemSelected = isSelected(row.name);
 								const labelId = `enhanced-table-checkbox-${index}`;
-
 								return (
 									<TableRow
 										hover
+										key={index}
 										onClick={(event) => handleClick(event, row.name)}
 										role="checkbox"
 										aria-checked={isItemSelected}
 										tabIndex={-1}
-										key={row.name}
 										selected={isItemSelected}
 									>
 										<TableCell padding="checkbox">

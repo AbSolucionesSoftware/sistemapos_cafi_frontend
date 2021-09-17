@@ -9,14 +9,8 @@ import Compras from './Compras/Compras';
 import Catalogos from './Catalogos/Catalogos';
 import Tesoreria from './Tesoreria/Tesoreria';
 import Facturacion from './Facturacion/Facturacion';
-import facturaIcon from '../../icons/factura.svg';
-import moneyIcon from '../../icons/money.svg';
-import almacenIcon from '../../icons/almacen.svg';
 import Almacenes from './Almacenes/Almacenes';
-import cartIcon from '../../icons/ventas/cart-add.svg';
 import { withRouter } from 'react-router';
-//import cajaIcon from '../../icons/cajas.svg';
-//import Cajas from './Cajas/Cajas';
 import Reportes from './Reportes/Reportes';
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;

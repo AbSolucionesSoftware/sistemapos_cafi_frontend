@@ -91,37 +91,37 @@ export default function ListaClientes({user, tipo, filtro }) {
 				<Table stickyHeader size="small" aria-label="a dense table">
 					<TableHead>
 						<TableRow>
-							<TableCell minWidt='100'>
+							<TableCell minwidth='100'>
 								No. Cliente
 							</TableCell>
-							<TableCell minWidt='100'>
+							<TableCell minwidth='100'>
 								Clave
 							</TableCell>
-							<TableCell minWidt='150'>
+							<TableCell minwidth='150'>
 								Nombre
 							</TableCell>
-							<TableCell minWidt='150'>
+							<TableCell minwidth='150'>
 								Razon Social
 							</TableCell>
-							<TableCell minWidt='150'>
+							<TableCell minwidth='150'>
 								Correo
 							</TableCell>
-							<TableCell minWidt='100'>
+							<TableCell minwidth='100'>
 								Tipo de Cliente
 							</TableCell>
 							{user === 'EMPLEADO' ? (null) :(
-								<TableCell minWidt='100'>
+								<TableCell minwidth='100'>
 									Estado
 								</TableCell>
 							)}
-							<TableCell minWidt='50'>
+							<TableCell minwidth='50'>
 								Detalles
 							</TableCell>
-							<TableCell minWidt='50'>
+							<TableCell minwidth='50'>
 								Editar
 							</TableCell>
 							{user === 'EMPLEADO' ? (null) :(
-								<TableCell minWidt='50'>
+								<TableCell minwidth='50'>
 									Eliminar	
 								</TableCell>
 							)}
@@ -175,7 +175,6 @@ const RowsRender = ({ datos, user }) => {
 			setUpdate(!update);
 			setLoading(false);
 		} catch (error) {
-			console.log(error);
 			setLoading(false);
 		}
 	};
@@ -242,7 +241,7 @@ const ModalDetalles = ({ handleDetalles, openDetalles, datos }) => {
 			<IconButton onClick={handleDetalles}>
 				<Dehaze />
 			</IconButton>
-			<Dialog open={openDetalles} onClose={handleDetalles} fullWidth maxWidth="md">
+			<Dialog open={openDetalles} onClose={handleDetalles} fullwidth maxWidth="md">
 				<DialogTitle>{'Información completa del cliente'}</DialogTitle>
 				<DialogContent>
 					<Box mt={3}>

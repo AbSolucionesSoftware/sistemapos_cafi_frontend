@@ -2,7 +2,7 @@ import React, {  useContext,useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { Box, Grid, TextField, Button, Dialog } from '@material-ui/core';
-import { Slide, Typography, IconButton, Toolbar, AppBar, Divider, DialogActions  } from '@material-ui/core';
+import { Slide, Typography, Toolbar, AppBar, Divider, DialogActions  } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
@@ -54,10 +54,9 @@ export default function InformacionFiscal() {
 	const [ errorForm, setErrorForm ] = React.useState( useState({error: false, message: ''}));
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
-	const [bloqueo, setBloqueo] = useState(sesion.accesos.mi_empresa.informacion_fiscal.editar === false ? true : false);
+	const [bloqueo ] = useState(sesion.accesos.mi_empresa.informacion_fiscal.editar === false ? true : false);
 	const { empresa, update, setEmpresa, setUpdate } = useContext(EmpresaContext);
 	const [ actualizarEmpresa ] = useMutation(ACTUALIZAR_EMPRESA);
-	console.log(bloqueo);
 	const [ empresaFiscal, setEmpresaFiscal ] = useState({
 		nombre_fiscal:'',
 		rfc:'',
@@ -90,7 +89,7 @@ export default function InformacionFiscal() {
 		try {
 			refetch();
 		} catch (errorCatch) {
-			console.log("SESSIONREFECTUPDATE",errorCatch)
+			// console.log("SESSIONREFECTUPDATE",errorCatch)
 		}
 	},[update,refetch]);
 
@@ -98,7 +97,7 @@ export default function InformacionFiscal() {
 		try {
 			setErrorPage(error)
 		} catch (errorCatch) {
-			console.log("SESSIONREFECT",errorCatch)
+			// console.log("SESSIONREFECT",errorCatch)
 		}
 	},[error]);
 
@@ -108,7 +107,7 @@ export default function InformacionFiscal() {
 				setEmpresa(data.obtenerEmpresa)
 			}
 		} catch (errorCatch) {
-			console.log("SESSIONREFECT",errorCatch)
+			// console.log("SESSIONREFECT",errorCatch)
 		}
 	},[data, setEmpresa]);
 
@@ -116,7 +115,7 @@ export default function InformacionFiscal() {
 		try {
 			setErrorPage(error)
 		} catch (errorCatch) {
-			console.log("SESSIONREFECT",errorCatch)
+			// console.log("SESSIONREFECT",errorCatch)
 		}
 	},[error]);
 
@@ -124,7 +123,7 @@ export default function InformacionFiscal() {
 		try {
 			setLoadingPage(loading)
 		} catch (errorCatch) {
-			console.log("SESSIONREFECTUPDATE",errorCatch)
+			// console.log("SESSIONREFECTUPDATE",errorCatch)
 		}
 	},[loading]);
 
@@ -157,14 +156,12 @@ export default function InformacionFiscal() {
 			}) 
 			
 		} catch (errorCatch) {
-			console.log(errorCatch)
 		}
 	}, [empresa])
 
 	const actEmp = async () =>{
 		try {
 			setLoadingPage(true)
-			//console.log(empresaFiscal, sesion.empresa._id )
 			 await actualizarEmpresa({
 				variables: {
 					
@@ -172,7 +169,6 @@ export default function InformacionFiscal() {
 					input: empresaFiscal
 				}
 			})
-			//console.log(act.data.actualizarEmpresa.message)
 			setUpdate(true);
 			setLoadingPage(false);
 			setAlert({ message: 'Se han actualizado correctamente los datos.', status: 'success', open: true });
@@ -181,7 +177,6 @@ export default function InformacionFiscal() {
 		} catch (errorCatch) {
 			setLoadingPage(false);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
-			console.log("ACtualizar Empresa",errorCatch)
 		}
 	}
 
@@ -335,7 +330,7 @@ export default function InformacionFiscal() {
 						</Typography>
 						<Divider />
 					</Box>
-					<Grid container  justifyContent="space-evenly">
+					<Grid container justifyContent="center">
 					<form autoComplete="off" className={classes.formInputFlex} >
 						<Box>
 							<Typography>Calle</Typography>

@@ -12,7 +12,7 @@ import { Box, Button, Dialog, DialogActions, DialogTitle, IconButton, TextField,
 import { Close, Delete, Edit } from '@material-ui/icons';
 
 import { useMutation } from '@apollo/client';
-import { ELIMINAR_TALLA, OBTENER_TALLAS } from '../../../../gql/Catalogos/tallas';
+import { ELIMINAR_TALLA } from '../../../../gql/Catalogos/tallas';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 
 const useStyles = makeStyles((theme) => ({

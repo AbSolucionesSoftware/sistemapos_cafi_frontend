@@ -93,7 +93,6 @@ export default function RegistroCategorias() {
 			setCategoria('');
 			setToUpdateID('');
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoadingBackDrop(false);
 		}
@@ -225,7 +224,6 @@ const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toU
 			setSubcategoria('');
 			setToUpdateID('');
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoadingBackDrop(false);
 		}

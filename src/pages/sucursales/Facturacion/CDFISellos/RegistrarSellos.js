@@ -1,6 +1,5 @@
 import React, {useState } from 'react';
 import {  Box, Button, Dialog, Divider, Grid, IconButton, makeStyles, TextField,  Typography } from '@material-ui/core';
-import sello from '../../../../icons/Facturacion/validacion.svg'
 import { Search } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({

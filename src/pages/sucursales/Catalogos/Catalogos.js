@@ -7,7 +7,6 @@ import Tallas from './Tallas/Tallas';
 import Contabilidad from './Contabilidad/Contabilidad';
 import Proveedores from './Proveedores/Proovedores';
 import Cajas from './Cajas/Cajas'; 
-import Descuentos from './Descuentos/Descuentos';
 import Usuarios from './Usuarios/Usuarios';
 import Departamentos from './Departamentos/Departamentos';
 import Categorias from './Categorias/Categorias';

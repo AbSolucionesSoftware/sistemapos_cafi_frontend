@@ -1,9 +1,5 @@
 import { Box, Checkbox, FormControlLabel } from '@material-ui/core'
 import React from 'react';
-import AddIcon from '@material-ui/icons/Add';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import EditIcon from '@material-ui/icons/Edit';
-import VisibilityIcon from '@material-ui/icons/Visibility';
 
 export default function Parametros({ arregloAccesos, obtenerAccesos, departamento, subDepartamento}) {
 

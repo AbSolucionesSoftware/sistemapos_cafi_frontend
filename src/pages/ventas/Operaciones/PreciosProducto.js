@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Box, Button, DialogActions, DialogContent, Divider, Grid,   Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core'
 
-import moneyIcon from '../../../icons/money.svg';
 import CloseIcon from '@material-ui/icons/Close';
 
 import useStyles from '../styles';

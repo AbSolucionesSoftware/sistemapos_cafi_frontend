@@ -3,7 +3,6 @@ import React from 'react';
 import { Box, Button, DialogActions, DialogContent, Divider, Grid, Typography } from '@material-ui/core'
 
 import useStyles from '../styles';
-import shoppingcartIcon from '../../../icons/ventas/shopping-cart.svg'
 import CloseIcon from '@material-ui/icons/Close';
 
 export default function CancelarVenta({handleClickOpen}) {

@@ -1,11 +1,9 @@
 import React, { forwardRef } from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Select,useTheme,FormControl,
-Slide, Button, Box, Dialog,Input, TextField, Grid, InputLabel, MenuItem,CircularProgress, OutlinedInput, InputAdornment } from '@material-ui/core';
+Slide, Button, Box, Dialog,Input, TextField, Grid, InputLabel, MenuItem,CircularProgress} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useQuery } from '@apollo/client';
-// import { FcPlus } from 'react-icons/fc';
-// import inventarioAlmacen from '../../../../icons/warehouse.svg';
-import {Close, Search} from '@material-ui/icons';
+import {Close} from '@material-ui/icons';
 import ListaProductos from './ListaProductos'
 import ErrorPage from '../../../../components/ErrorPage'
 import { useDebounce } from 'use-debounce';
@@ -70,16 +68,16 @@ export default function InventariosPorAlmacen() {
 	const [ filtro, setFiltro ] = React.useState({  codigo_barras: '',clave_alterna: '',tipo_producto: '',nombre_comercial: '',
         nombre_generico: '',categoria: '',subcategoria: ''});
 	const [ filtroTo, setFiltroTo ] = React.useState({});
-	const [ tipo, setTipo ] = React.useState('');
-	const [ almacen, setAlmacen ] = React.useState('');
-	const [ categoria, setCategorias ] = React.useState('');
-	const [ subcategoria, setSubcategoria ] = React.useState('');
+	// const [ tipo, setTipo ] = React.useState('');
+	// const [ almacen, setAlmacen ] = React.useState('');
+	const [ categoria ] = React.useState('');
+	const [ subcategoria ] = React.useState('');
 	const [ subcategorias, setSubcategorias ] = React.useState([]);
 	const [value] = useDebounce(filtro, 1000);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	let productos = [];
-	let tipos = ['ROPA','CALZADO','OTROS'];
+	// let tipos = ['ROPA','CALZADO','OTROS'];
 	let categorias = [];
 	
 	let obtenerAlmacenes = [];
@@ -147,7 +145,6 @@ export default function InventariosPorAlmacen() {
 
 
 	if(data){
-		//console.log(data.obtenerProductosAlmacenes)
 		productos = data.obtenerProductosAlmacenes;
 	}
 	if(categoriasQuery.data){
@@ -155,7 +152,6 @@ export default function InventariosPorAlmacen() {
 	}
 	
 	if(queryObtenerAlmacenes.data){
-		//console.log(queryObtenerAlmacenes.data.obtenerAlmacenes)
 		obtenerAlmacenes = queryObtenerAlmacenes.data.obtenerAlmacenes;
 	}
 	
@@ -169,16 +165,16 @@ export default function InventariosPorAlmacen() {
 	
 	const setValToFilter = (label,value) => {
 		try {
-			if(label == 'categoria' && value != ''){
+			if(label === 'categoria' && value !== ''){
 			
-				const cat = categorias.find(element => element.categoria == value);
+				const cat = categorias.find(element => element.categoria === value);
 				setSubcategorias(cat.subcategorias)
 				
 			}
 
 			setFiltro({...filtro, [label] : value});
 		} catch (error) {
-			console.log(error)
+			
 		}
     };
 
