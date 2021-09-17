@@ -33,20 +33,28 @@ export default function RegistroDepartamentos() {
 				console.log(accion)
 				const input = data
 				if(accion){
-					await CrearDepartamentos({
-						variables: {
-							input,
-							empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id
-						}
-					});
+					if (sesion.accesos.catalogos.departamentos.agregar === false) {
+						return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+					}else{
+						await CrearDepartamentos({
+							variables: {
+								input,
+								empresa: sesion.empresa._id,
+								sucursal: sesion.sucursal._id
+							}
+						});
+					}
 				}else{
-				    await ActualzarDepartamentos({
-						variables: {
-							input,
-							id: idDepartamento
-						}
-					}) 
+					if (sesion.accesos.catalogos.departamentos.editar === false) {
+						return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+					}else{
+						await ActualzarDepartamentos({
+							variables: {
+								input,
+								id: idDepartamento
+							}
+						}) 
+					}
 				}
 				setUpdate(!update);
 				setAccion(true)

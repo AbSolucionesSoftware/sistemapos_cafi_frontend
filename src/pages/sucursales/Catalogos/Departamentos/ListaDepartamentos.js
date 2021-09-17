@@ -126,37 +126,40 @@ export default function TablaDepartamentos() {
 									return (
 										<TableRow hover role="checkbox" tabIndex={-1} key={row._id}selected={idDepartamento === row._id ? true : false}>
 											<TableCell>{row.nombre_departamentos}</TableCell>
-											<TableCell padding="checkbox">
-											{idDepartamento === row._id ? (
-												<IconButton onClick={() => {
-													setIdDepartamento("");
-													setData({
-														nombre_departamentos: ""
-													}); 
-													}}>
-													<Close />
-												</IconButton>
-											) : (
-												<IconButton onClick={() => {
-													setAccion(false)
-													setData({
-														nombre_departamentos: row.nombre_departamentos
-													});
-													setIdDepartamento(row._id);
-												}}>
-													<Edit />
-												</IconButton>
+											{sesion.accesos.catalogos.departamentos.editar === false ?(null):(
+												<TableCell padding="checkbox">
+													{idDepartamento === row._id ? (
+														<IconButton onClick={() => {
+															setIdDepartamento("");
+															setData({
+																nombre_departamentos: ""
+															}); 
+															}}>
+															<Close />
+														</IconButton>
+													) : (
+														<IconButton onClick={() => {
+															setAccion(false)
+															setData({
+																nombre_departamentos: row.nombre_departamentos
+															});
+															setIdDepartamento(row._id);
+														}}>
+															<Edit />
+														</IconButton>
+													)}
+												</TableCell>
 											)}
-											
-											</TableCell>
-											<TableCell padding="checkbox">
-												<IconButton onClick={() => {
-													setIdDepartamento(row._id);
-													handleModal();
-												}}>
-													<Delete />
-												</IconButton>
-											</TableCell>
+											{sesion.accesos.catalogos.departamentos.eliminar === false ?(null):(
+												<TableCell padding="checkbox">
+													<IconButton onClick={() => {
+														setIdDepartamento(row._id);
+														handleModal();
+													}}>
+														<Delete />
+													</IconButton>
+												</TableCell>
+											)}
 										</TableRow>
 									);
 								})}
