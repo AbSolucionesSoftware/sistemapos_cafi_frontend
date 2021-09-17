@@ -20,8 +20,12 @@ const useStyles = makeStyles((theme) => ({
 		marginBottom: theme.spacing(2)
 	},
 	containerImagen:{
-		width: 170,
-		height: 170
+		maxWidth: 170,
+		maxHeight: 170
+	},
+	imagen:{
+		width: '100%',
+		height: '100%'
 	}
 }));
 
@@ -33,7 +37,7 @@ export default function LayoutLogin(props) {
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 	const [ showPassword, setShowPassword ] = useState(false);
 
-	if (sesion) props.history.push('/home');
+	if (sesion) props.history.push('/ventas/venta-general');
 
 	const [ logearUsuario ] = useMutation(LOGEAR_USUARIO);
 
@@ -56,7 +60,7 @@ export default function LayoutLogin(props) {
 			setLoading(false);
 			localStorage.setItem('sesionCafi', JSON.stringify(decoded));
 			localStorage.setItem('tokenCafi', JSON.stringify(token));
-			props.history.push('/home');
+			props.history.push('/ventas/venta-general');
 		} catch (error) {
 			setAlert({ message: error.message, status: 'error', open: true });
 			setLoading(false);
@@ -89,9 +93,11 @@ export default function LayoutLogin(props) {
 		<Container maxWidth="sm">
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<Box height="100vh" display="flex" justifyContent="center" alignItems="center">
-				<Box boxShadow="3" p={5} width="80%">
-					<Box className={classes.containerImagen}>
-						<img className={classes.containerImagen} src={ab} alt="imagen no disponible" />
+				<Box boxShadow="3" p={3} width="80%">
+					<Box display='flex' justifyContent='center' alignItems='center' justifyItems='center' >
+						<Box className={classes.containerImagen} textAlign='center'>
+							<img className={classes.imagen} src={ab} alt="imagen no disponible" />
+						</Box>
 					</Box>
 					<Box display='flex' textAlign='center' justifyContent='center'>
 						<Typography variant="h4" component="p" className={classes.margin}>

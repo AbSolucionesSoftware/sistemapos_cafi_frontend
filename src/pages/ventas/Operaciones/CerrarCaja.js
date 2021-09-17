@@ -2,7 +2,6 @@ import React from 'react'
 import useStyles from '../styles';
 
 import { Box, Button, DialogActions, DialogContent,  FormControl, Grid, MenuItem, Select, TextField, Typography } from '@material-ui/core'
-import cashregisterIcon from '../../../icons/ventas/cash-register.svg'
 import CloseIcon from '@material-ui/icons/Close';
 
 export default function CerrarCaja({handleClickOpen}) {

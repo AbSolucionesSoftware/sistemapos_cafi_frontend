@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Box, Button,  DialogActions, DialogContent, Divider, FormControl, Grid,  MenuItem, Select, TextField, Typography } from '@material-ui/core'
 
-import cashregister2Icon from '../../../icons/ventas/cash-register2.svg'
 import CloseIcon from '@material-ui/icons/Close';
 
 import useStyles from '../styles';

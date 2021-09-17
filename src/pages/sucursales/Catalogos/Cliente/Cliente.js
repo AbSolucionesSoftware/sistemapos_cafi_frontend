@@ -59,7 +59,7 @@ export default function Cliente() {
 	return (
 		<div>
 			<ClienteProvider>
-				<Button fullWidth onClick={handleClickOpen}>
+				<Button onClick={handleClickOpen}>
 					<Box display="flex" flexDirection="column">
 						<Box display="flex" justifyContent="center" alignItems="center">
 							<FcManager className={classes.icon} />

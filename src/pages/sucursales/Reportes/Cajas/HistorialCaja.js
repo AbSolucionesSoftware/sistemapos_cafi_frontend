@@ -104,7 +104,7 @@ export default function HistorialCaja(props) {
     const classes = useStyles();
     const theme = useTheme();
 	const [ loading, setLoading ] = React.useState(false);
-    const [ open, setOpen ] = React.useState(false);
+    // const [ open, setOpen ] = React.useState(false);
 	 const [ action, setAction ] = React.useState({depositar:false, retirar:false, transferir:false});
 	const [cantidadMovimiento, setCantidadMovimiento] = React.useState(0);
     const [ cajaDestino, setCajaDestino] = React.useState('');
@@ -112,15 +112,15 @@ export default function HistorialCaja(props) {
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(5);
     //const [ error, setError ] = useState({error: false, message: ''});
-    const [ errorCantidad, setErrorCantidad ] = useState(false);
-    const [ errorCajaDestino, setErrorCajaDestino ] = useState(false);
-	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+    const [  setErrorCantidad ] = useState(false);
+    const [ setErrorCajaDestino ] = useState(false);
+	const [  setAlert ] = useState({ message: '', status: '', open: false });
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	let obtenerHistorialCaja = [];
 
     /* Queries */
-	const {  data, error, refetch } = useQuery(OBTENER_HISTORIAL_CAJA,{
+	const {  data, refetch } = useQuery(OBTENER_HISTORIAL_CAJA,{
 		variables: {
             id_Caja: props.cajaSelected._id,
             empresa: sesion.empresa._id,
@@ -220,9 +220,9 @@ export default function HistorialCaja(props) {
 		setPage(0);
 	};
 
-    const handleClickAction = (name)=>{
-		setAction({...open,[name]:true});
-	};
+    // const handleClickAction = (name)=>{
+	// 	setAction({...open,[name]:true});
+	// };
 
     const handleCloseAction = () => {
 		setAction({depositar:false, retirar:false, transferir:false});
@@ -284,8 +284,7 @@ export default function HistorialCaja(props) {
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => {
                                   
-                                    const labelId = `enhanced-table-checkbox-${index}`;
-
+                                    // const labelId = `enhanced-table-checkbox-${index}`;
                                     return (
                                         <TableRow
                                        
@@ -295,7 +294,7 @@ export default function HistorialCaja(props) {
                                             <TableCell align="center">{row.cantidad_movimiento}</TableCell>
                                             <TableCell align="center">{row.id_User.nombre}</TableCell>
                                             <TableCell align="center">{row.origen_movimiento}</TableCell>
-                                            <TableCell align="center">{(row.id_caja_destino !== null)? "Caja" + " " +row.id_caja_destino.numero_caja: ''}</TableCell>
+                                            <TableCell align="center">{(row.id_caja_destino !== null)? "Caja  " + row.id_caja_destino.numero_caja: ''}</TableCell>
 
                                             <TableCell align="center">{formatoFecha(row.createdAt)}</TableCell>
                                             <TableCell align="center">{formatoHora(row.createdAt)}</TableCell>
