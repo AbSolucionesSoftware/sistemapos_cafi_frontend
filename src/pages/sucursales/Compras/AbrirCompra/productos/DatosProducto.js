@@ -30,12 +30,11 @@ import {
   initial_state_preciosPlazos,
   initial_state_unidadVentaXDefecto,
 } from "../../../../../context/Catalogos/initialStatesProducto";
+
 import CrearProducto, {
   initial_state_preciosP,
 } from "../../../Catalogos/Producto/crearProducto";
-import { validaciones } from "../../../Catalogos/Producto/validaciones";
 import { formatoMexico } from "../../../../../config/reuserFunctions";
-import SnackBarMessages from "../../../../../components/SnackBarMessages";
 import ErrorPage from "../../../../../components/ErrorPage";
 
 import { ComprasContext } from "../../../../../context/Compras/comprasContext";
@@ -47,6 +46,9 @@ import { useQuery } from "@apollo/client";
 import { OBTENER_CONSULTA_GENERAL_PRODUCTO } from "../../../../../gql/Compras/compras";
 import PreciosDeVentaCompras from "./PreciosVenta";
 import { Dialog, DialogActions, DialogTitle, Slide } from "@material-ui/core";
+import { validateJsonEdit } from "../../../Catalogos/Producto/validateDatos";
+import { Alert, AlertTitle } from "@material-ui/lab";
+import { InfoOutlined } from "@material-ui/icons";
 
 export default function DatosProducto() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -57,6 +59,8 @@ export default function DatosProducto() {
     setProductosCompra,
     datosCompra,
     setDatosCompra,
+    setProductoOriginal,
+    setPreciosVenta,
   } = useContext(ComprasContext);
   const {
     datos_generales,
@@ -89,8 +93,6 @@ export default function DatosProducto() {
     setPresentacionesEliminadas,
   } = useContext(RegProductoContext);
 
-  const [alert, setAlert] = useState({ message: "", status: "", open: false });
-
   /* Queries */
   const { loading, data, error, refetch } = useQuery(
     OBTENER_CONSULTA_GENERAL_PRODUCTO,
@@ -105,13 +107,13 @@ export default function DatosProducto() {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        height="30vh"
+        height="25vh"
       >
         <CircularProgress />
       </Box>
     );
   if (error) {
-    return <ErrorPage error={error} />;
+    return <ErrorPage error={error} altura={200} />;
   }
 
   const {
@@ -131,7 +133,6 @@ export default function DatosProducto() {
   const obtenerSelectsProducto = (producto) => {
     if (!producto) {
       setDatosProducto({
-        ...datosProducto,
         producto: {},
         costo: 0,
         cantidad: 0,
@@ -166,6 +167,8 @@ export default function DatosProducto() {
       total: precio_con_impuesto,
     });
     setInitialStates(producto);
+    setProductoOriginal(producto);
+    setPreciosVenta(producto.precios.precios_producto);
   };
 
   const obtenerCostoCantidad = (e) => {
@@ -183,7 +186,8 @@ export default function DatosProducto() {
     });
   };
 
-  const agregarCompra = async () => {
+  const agregarCompra = async (actualizar_Precios) => {
+    /* Validaciones */
     if (
       !datosProducto.producto.datos_generales ||
       !datosCompra.proveedor.nombre_cliente ||
@@ -192,23 +196,11 @@ export default function DatosProducto() {
       return;
     }
 
-    const validate = validaciones(
-      datos_generales,
-      precios,
-      almacen_inicial,
-      presentaciones,
-      datosProducto.producto
-    );
-
-    if (validate.error) {
-      setAlert({
-        message: `Hay campos sin llenar`,
-        status: "error",
-        open: true,
-      });
+    if (!datosProducto.costo || !datosProducto.cantidad) {
       return;
     }
 
+    /* poner la unidad de venta por defecto si no agrego */
     if (unidadesVenta.length === 0) {
       unidadesVenta.push(unidadVentaXDefecto);
     } else {
@@ -217,6 +209,12 @@ export default function DatosProducto() {
       );
       if (unidadxdefecto.length === 0) unidadesVenta.push(unidadVentaXDefecto);
     }
+
+	if (actualizar_Precios) {
+		datosProducto.mantener_precio = false;
+	}else{
+		datosProducto.mantener_precio = true;
+	}
 
     precios.precios_producto = preciosP;
 
@@ -245,6 +243,7 @@ export default function DatosProducto() {
     datosProducto.producto = producto;
 
     setProductosCompra([...productosCompra, datosProducto]);
+	setProductoOriginal();
     setDatosProducto({
       producto: {},
       costo: 0,
@@ -254,13 +253,6 @@ export default function DatosProducto() {
       subtotal: 0,
       impuestos: 0,
       total: 0,
-    });
-  };
-
-  const obtenerFecha = (date) => {
-    setDatosCompra({
-      ...datosCompra,
-      fecha_compra: date,
     });
   };
 
@@ -308,66 +300,8 @@ export default function DatosProducto() {
     setPresentacionesEliminadas([]);
   };
 
-  /* SI NO EXISTE ESTA INFORMACION EN LA BD, ENVIAR A LA BD */
-  const validateJsonEdit = async (data, tipo) => {
-    if (tipo === "datos_generales") {
-      let object_date = {
-        clave_alterna: data.clave_alterna,
-        tipo_producto: data.tipo_producto,
-        nombre_comercial: data.nombre_comercial,
-        nombre_generico: data.nombre_generico,
-        receta_farmacia: data.receta_farmacia,
-      };
-      if (data.codigo_barras !== null && data.codigo_barras !== "")
-        object_date = { ...object_date, codigo_barras: data.codigo_barras };
-      if (data.descripcion !== null && data.descripcion !== "")
-        object_date = { ...object_date, descripcion: data.descripcion };
-      if (data.id_categoria !== null && data.id_categoria !== "")
-        object_date = { ...object_date, id_categoria: data.id_categoria };
-      if (data.categoria !== null && data.categoria !== "")
-        object_date = { ...object_date, categoria: data.categoria };
-      if (data.subcategoria !== null && data.subcategoria !== "")
-        object_date = { ...object_date, subcategoria: data.subcategoria };
-      if (data.id_subcategoria !== null && data.id_subcategoria !== "")
-        object_date = { ...object_date, id_subcategoria: data.id_subcategoria };
-      if (data.id_departamento !== null && data.id_departamento !== "")
-        object_date = { ...object_date, id_departamento: data.id_departamento };
-      if (data.departamento !== null && data.departamento !== "")
-        object_date = { ...object_date, departamento: data.departamento };
-      if (data.id_marca !== null && data.id_marca !== "")
-        object_date = { ...object_date, id_marca: data.id_marca };
-      if (data.marca !== null && data.marca !== "")
-        object_date = { ...object_date, marca: data.marca };
-      if (data.clave_producto_sat !== null && data.clave_producto_sat !== "")
-        object_date = {
-          ...object_date,
-          clave_producto_sat: data.clave_producto_sat,
-        };
-      return object_date;
-    } else if (tipo === "unidades_de_venta") {
-      let end_array = [];
-      for (var i = 0; i < data.length; i++) {
-        let object = {
-          _id: data[i]._id,
-          cantidad: data[i].cantidad,
-          id_producto: data[i].id_producto,
-          precio: data[i].precio,
-          unidad_principal: data[i].unidad_principal,
-          unidad: data[i].unidad,
-        };
-        if (data[i].codigo_barras !== null && data[i].codigo_barras !== "")
-          object = { ...object, codigo_barras: data[i].codigo_barras };
-        if (data[i].default !== null && data[i].default !== "")
-          object = { ...object, default: data[i].default };
-        end_array.push(object);
-      }
-      return end_array;
-    }
-  };
-
   return (
     <Fragment>
-      <SnackBarMessages alert={alert} setAlert={setAlert} />
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={12} md={4}>
           <Box display="flex" alignItems="center">
@@ -431,7 +365,12 @@ export default function DatosProducto() {
                 placeholder="ex: DD/MM/AAAA"
                 format="dd/MM/yyyy"
                 value={datosCompra.fecha_compra}
-                onChange={obtenerFecha}
+                onChange={(date) => {
+                  setDatosCompra({
+                    ...datosCompra,
+                    fecha_compra: date,
+                  });
+                }}
                 KeyboardButtonProps={{
                   "aria-label": "change date",
                 }}
@@ -612,35 +551,40 @@ export default function DatosProducto() {
       </Grid>
       <Box mt={1}>
         <Grid container>
-          <Grid item xs={12} md={7} padding="checkbox">
+          <Grid item xs={12} md={8} lg={7} padding="checkbox">
             <PreciosDeVentaCompras />
           </Grid>
           <Grid
             item
             xs={12}
-            md={5}
+            md={4}
+            lg={5}
             style={{ display: "flex", alignItems: "flex-end" }}
           >
             <Box display="flex" width="100%" justifyContent="center">
               <TallasProductos />
               <Box mx={1} />
-              <ModalAgregarCompra agregarCompra={agregarCompra} />
-			  {/* CONDICIONAR */}
-			  
-              {/* <Button
-                variant="contained"
-                color="primary"
-                startIcon={<Add />}
-                disableElevation
-                disabled={
-                  !datosProducto.producto.datos_generales ||
-                  !datosCompra.proveedor.nombre_cliente ||
-                  !datosCompra.almacen.nombre_almacen
-                }
-                onClick={() => agregarCompra()}
-              >
-                Agregar a compra
-              </Button> */}
+              {datosProducto.costo !==
+              precios.precio_de_compra.precio_con_impuesto ? (
+                <ModalAgregarCompra agregarCompra={agregarCompra} />
+              ) : (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<Add />}
+                  disableElevation
+                  disabled={
+                    !datosProducto.producto.datos_generales ||
+                    !datosCompra.proveedor.nombre_cliente ||
+                    !datosCompra.almacen.nombre_almacen ||
+                    !datosProducto.costo ||
+                    !datosProducto.cantidad
+                  }
+                  onClick={() => agregarCompra()}
+                >
+                  Agregar a compra
+                </Button>
+              )}
             </Box>
           </Grid>
         </Grid>
@@ -675,7 +619,9 @@ const ModalAgregarCompra = ({ agregarCompra }) => {
         disabled={
           !datosProducto.producto.datos_generales ||
           !datosCompra.proveedor.nombre_cliente ||
-          !datosCompra.almacen.nombre_almacen
+          !datosCompra.almacen.nombre_almacen ||
+          !datosProducto.costo ||
+          !datosProducto.cantidad
         }
         onClick={() => handleClickOpen()}
       >
@@ -688,15 +634,24 @@ const ModalAgregarCompra = ({ agregarCompra }) => {
         onClose={handleClose}
         aria-labelledby="modal-agregar-compra"
       >
-        <DialogTitle id="modal-agregar-compra">
-          <Typography variant="h6">
-            El costo es diferente al precio de compra actual
-          </Typography>
-          <Typography variant="h6">
-            ¿Desea actualizar los precios o mantenerlos?
-          </Typography>
+        <DialogTitle id="modal-agregar-compra" style={{ padding: 0 }}>
+          <Alert
+            severity="info"
+            icon={<InfoOutlined style={{ fontSize: 30 }} />}
+            style={{ padding: 16 }}
+          >
+            <AlertTitle style={{ fontSize: 20 }}>
+              El costo es diferente al precio de compra actual
+            </AlertTitle>
+            <Typography style={{ fontSize: 18 }}>
+              ¿Desea actualizar los precios o mantenerlos?
+            </Typography>
+          </Alert>
         </DialogTitle>
-        <DialogActions>
+        <DialogActions style={{ display: "flex", justifyContent: "center" }}>
+          <Button onClick={() => handleClose()} color="default">
+            Cancelar
+          </Button>
           <Button
             onClick={() => {
               agregarCompra();
