@@ -158,13 +158,13 @@ const RowsRender = ({ row, setAlert, toUpdate, setToUpdate, setValues, refetch }
 
 	const handleDelete = async () => {
 		try {
-			await eliminarColor({
+			const resp = await eliminarColor({
 				variables: {
 					id: row._id
 				}
 			});
 			refetch(refetch);
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			setAlert({ message: resp.data.eliminarColor.message, status: 'success', open: true });
 			handleModal();
 		} catch (error) {
 			setAlert({ message: error.message, status: 'error', open: true });
