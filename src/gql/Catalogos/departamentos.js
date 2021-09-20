@@ -32,3 +32,12 @@ export const ACTUALIZAR_DEPARTAMENTO = gql`
         }
     }
 `;
+
+export const ELIMINAR_DEPARTAMENTO = gql`
+    mutation EliminarDepartamento($id: ID!){
+        eliminarDepartamento(id: $id){
+            message
+        }
+    }
+	
+`;

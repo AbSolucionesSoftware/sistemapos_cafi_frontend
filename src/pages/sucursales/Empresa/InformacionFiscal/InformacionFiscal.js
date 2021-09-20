@@ -59,7 +59,7 @@ export default function InformacionFiscal() {
 	const [ actualizarEmpresa ] = useMutation(ACTUALIZAR_EMPRESA);
 	const [ empresaFiscal, setEmpresaFiscal ] = useState({
 		nombre_fiscal:'',
-		rfc:'',
+		rfc:'', 
 		curp:'',
 		info_adicio:'',
 		regimen_fiscal:'',
