@@ -113,6 +113,7 @@ const RowsRender = ({ row, setAlert, tipo, toUpdate, setToUpdate, setValue, refe
 
  
 	const handleDelete = async () => {
+	
 		try {
 			const resp = await eliminarTalla({
 				variables: {
