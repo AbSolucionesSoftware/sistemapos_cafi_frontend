@@ -9,7 +9,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, IconButton, InputBase, Paper } from '@material-ui/core';
 import { Search } from '@material-ui/icons';
-import proveedoresIcon from '../../../../icons/distribution.svg';
 import TablaProovedores from './ListaProveedores';
 import CrearCliente from '../Cliente/CrearCliente';
 import { ClienteProvider } from '../../../../context/Catalogos/crearClienteCtx';
@@ -36,6 +35,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Proveedores() {
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const classes = useStyles();
 	const [ open, setOpen ] = useState(false);
 	const [ filtro, setFiltro ] = useState('');
@@ -56,7 +57,7 @@ export default function Proveedores() {
 	return (
 		<div>
 			<ClienteProvider>
-				<Button fullWidth onClick={handleClickOpen}>
+				<Button fullwidth onClick={handleClickOpen}>
 					<Box display="flex" flexDirection="column">
 						<Box display="flex" justifyContent="center" alignItems="center">
 							<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/distribution.svg' alt="icono numero calzado" className={classes.icon} />
@@ -78,10 +79,10 @@ export default function Proveedores() {
 						</Toolbar>
 					</AppBar>
 					<Box m={3} display="flex" justifyContent="space-between">
-						<Box mr={5} minWidth="70%">
+						<Box mr={5} minwidth="70%">
 							<Paper className={classes.root}>
 								<InputBase
-									fullWidth
+									fullwidth
 									placeholder="Buscar proveedor..."
 									onChange={(e) => setValues(e.target.value)}
 									onKeyPress={pressEnter}
@@ -92,7 +93,9 @@ export default function Proveedores() {
 								</IconButton>
 							</Paper>
 						</Box>
-						<CrearCliente tipo="PROVEEDOR" accion="registrar" />
+						{permisosUsuario.accesos.catalogos.provedores.ver === false ? (null):(
+							<CrearCliente tipo="PROVEEDOR" accion="registrar" />
+						)}
 					</Box>
 					<Box mx={4}>
 						<TablaProovedores tipo="PROVEEDOR" filtro={filtro} />

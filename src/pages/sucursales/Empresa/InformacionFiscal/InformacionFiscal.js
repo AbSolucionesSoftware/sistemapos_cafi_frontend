@@ -2,7 +2,7 @@ import React, {  useContext,useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { Box, Grid, TextField, Button, Dialog } from '@material-ui/core';
-import { Slide, Typography, IconButton, Toolbar, AppBar, Divider, DialogActions  } from '@material-ui/core';
+import { Slide, Typography, Toolbar, AppBar, Divider, DialogActions  } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
@@ -54,11 +54,12 @@ export default function InformacionFiscal() {
 	const [ errorForm, setErrorForm ] = React.useState( useState({error: false, message: ''}));
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	const [bloqueo ] = useState(sesion.accesos.mi_empresa.informacion_fiscal.editar === false ? true : false);
 	const { empresa, update, setEmpresa, setUpdate } = useContext(EmpresaContext);
 	const [ actualizarEmpresa ] = useMutation(ACTUALIZAR_EMPRESA);
 	const [ empresaFiscal, setEmpresaFiscal ] = useState({
 		nombre_fiscal:'',
-		rfc:'',
+		rfc:'', 
 		curp:'',
 		info_adicio:'',
 		regimen_fiscal:'',
@@ -78,62 +79,56 @@ export default function InformacionFiscal() {
 			sucursal:'',
 			clave_banco:''
 		}
-		
-		
 	});
 	/* Queries */
 	const { loading, data,refetch, error } = useQuery(OBTENER_DATOS_EMPRESA, {
 		variables: { id: sesion.empresa._id }
 	});
+
 	useEffect(() => {
 		try {
 			refetch();
-		
 		} catch (errorCatch) {
-			console.log("SESSIONREFECTUPDATE",errorCatch)
+			// console.log("SESSIONREFECTUPDATE",errorCatch)
 		}
 	},[update,refetch]);
+
 	useEffect(() => {
 		try {
-
 			setErrorPage(error)
-		
 		} catch (errorCatch) {
-			console.log("SESSIONREFECT",errorCatch)
+			// console.log("SESSIONREFECT",errorCatch)
 		}
 	},[error]);
+
 	useEffect(() => {
 		try {
-			
 			if(data !== undefined){
-				
 				setEmpresa(data.obtenerEmpresa)
 			}
 		} catch (errorCatch) {
-			console.log("SESSIONREFECT",errorCatch)
+			// console.log("SESSIONREFECT",errorCatch)
 		}
 	},[data, setEmpresa]);
+
 	useEffect(() => {
 		try {
-
 			setErrorPage(error)
-		
 		} catch (errorCatch) {
-			console.log("SESSIONREFECT",errorCatch)
+			// console.log("SESSIONREFECT",errorCatch)
 		}
 	},[error]);
-		useEffect(() => {
-		try {
-			
-			setLoadingPage(loading)
-		
-		} catch (errorCatch) {
-			console.log("SESSIONREFECTUPDATE",errorCatch)
-		}
-	},[loading]);
+
 	useEffect(() => {
 		try {
-			
+			setLoadingPage(loading)
+		} catch (errorCatch) {
+			// console.log("SESSIONREFECTUPDATE",errorCatch)
+		}
+	},[loading]);
+
+	useEffect(() => {
+		try {
 			setEmpresaFiscal({
 				nombre_fiscal: empresa.nombre_fiscal,
 				rfc: empresa.rfc,
@@ -161,14 +156,12 @@ export default function InformacionFiscal() {
 			}) 
 			
 		} catch (errorCatch) {
-			console.log(errorCatch)
 		}
 	}, [empresa])
 
 	const actEmp = async () =>{
 		try {
 			setLoadingPage(true)
-			//console.log(empresaFiscal, sesion.empresa._id )
 			 await actualizarEmpresa({
 				variables: {
 					
@@ -176,7 +169,6 @@ export default function InformacionFiscal() {
 					input: empresaFiscal
 				}
 			})
-			//console.log(act.data.actualizarEmpresa.message)
 			setUpdate(true);
 			setLoadingPage(false);
 			setAlert({ message: 'Se han actualizado correctamente los datos.', status: 'success', open: true });
@@ -185,7 +177,6 @@ export default function InformacionFiscal() {
 		} catch (errorCatch) {
 			setLoadingPage(false);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
-			console.log("ACtualizar Empresa",errorCatch)
 		}
 	}
 
@@ -255,6 +246,7 @@ export default function InformacionFiscal() {
 									</Typography>
 									<TextField
 										fullWidth
+										disabled={bloqueo}
 										className={classes.input}
 										type="text"
 										size="small"
@@ -276,6 +268,7 @@ export default function InformacionFiscal() {
 									<Typography>RFC</Typography>
 									<TextField
 										className={classes.input}
+										disabled={bloqueo}
 										size="small"
 										name="rfc"
 										variant="outlined"
@@ -288,6 +281,7 @@ export default function InformacionFiscal() {
 									<Typography>Régimen fiscal</Typography>
 									<TextField
 										className={classes.input}
+										disabled={bloqueo}
 										size="small"
 										name="regimen_fiscal"
 										variant="outlined"
@@ -301,6 +295,7 @@ export default function InformacionFiscal() {
 									<Typography>CURP</Typography>
 									<TextField
 										className={classes.input}
+										disabled={bloqueo}
 										size="small"
 										name="curp"
 										variant="outlined"
@@ -318,6 +313,7 @@ export default function InformacionFiscal() {
 									<Typography>Info. Adicional</Typography>
 									<TextField
 										className={classes.input}
+										disabled={bloqueo}
 										size="small"
 										name="info_adicio"
 										variant="outlined"
@@ -334,7 +330,7 @@ export default function InformacionFiscal() {
 						</Typography>
 						<Divider />
 					</Box>
-					<Grid container  justifyContent="space-evenly">
+					<Grid container justifyContent="center">
 					<form autoComplete="off" className={classes.formInputFlex} >
 						<Box>
 							<Typography>Calle</Typography>
@@ -342,6 +338,7 @@ export default function InformacionFiscal() {
 								size="small"
 								name="calle"
 								variant="outlined"
+								disabled={bloqueo}
 								value={empresaFiscal.direccionFiscal.calle ? empresaFiscal.direccionFiscal.calle : ''}
 								onChange={obtenerCamposDireccion}
 							/>
@@ -352,6 +349,7 @@ export default function InformacionFiscal() {
 								size="small"
 								name="colonia"
 								variant="outlined"
+								disabled={bloqueo}
 								value={empresaFiscal.direccionFiscal.colonia ? empresaFiscal.direccionFiscal.colonia : ''}
 								onChange={obtenerCamposDireccion}
 							/>
@@ -362,6 +360,7 @@ export default function InformacionFiscal() {
 								size="small"
 								name="no_ext"
 								variant="outlined"
+								disabled={bloqueo}
 								value={empresaFiscal.direccionFiscal.no_ext ? empresaFiscal.direccionFiscal.no_ext : ''}
 								onChange={obtenerCamposDireccion}
 							/>
@@ -372,6 +371,7 @@ export default function InformacionFiscal() {
 								size="small"
 								name="no_int"
 								variant="outlined"
+								disabled={bloqueo}
 								value={empresaFiscal.direccionFiscal.no_int ? empresaFiscal.direccionFiscal.no_int : ''}
 								onChange={obtenerCamposDireccion}
 							/>
@@ -382,6 +382,7 @@ export default function InformacionFiscal() {
 								size="small"
 								name="codigo_postal"
 								variant="outlined"
+								disabled={bloqueo}
 								value={empresaFiscal.direccionFiscal.codigo_postal ? empresaFiscal.direccionFiscal.codigo_postal : ''}
 								onChange={obtenerCamposDireccion}
 							/>
@@ -395,6 +396,7 @@ export default function InformacionFiscal() {
 								size="small"
 								name="municipio"
 								variant="outlined"
+								disabled={bloqueo}
 								value={empresaFiscal.direccionFiscal.municipio ? empresaFiscal.direccionFiscal.municipio : ''}
 								onChange={obtenerCamposDireccion}
 							/>
@@ -405,6 +407,7 @@ export default function InformacionFiscal() {
 								size="small"
 								name="localidad"
 								variant="outlined"
+								disabled={bloqueo}
 								value={empresaFiscal.direccionFiscal.localidad ? empresaFiscal.direccionFiscal.localidad : ''}
 								onChange={obtenerCamposDireccion}
 							/>
@@ -415,6 +418,7 @@ export default function InformacionFiscal() {
 								size="small"
 								name="estado"
 								variant="outlined"
+								disabled={bloqueo}
 								value={empresaFiscal.direccionFiscal.estado ? empresaFiscal.direccionFiscal.estado : ''}
 								onChange={obtenerCamposDireccion}
 							/>
@@ -425,6 +429,7 @@ export default function InformacionFiscal() {
 								size="small"
 								name="pais"
 								variant="outlined"
+								disabled={bloqueo}
 								value={empresaFiscal.direccionFiscal.pais ? empresaFiscal.direccionFiscal.pais : ''}
 								onChange={obtenerCamposDireccion}
 							/>
@@ -445,6 +450,7 @@ export default function InformacionFiscal() {
 								size="small"
 								name="cuenta"
 								variant="outlined"
+								disabled={bloqueo}
 								value={empresaFiscal.datosBancarios.cuenta ? empresaFiscal.datosBancarios.cuenta : ''}
 								onChange={obtenerCamposBancarios}
 							/>
@@ -456,6 +462,7 @@ export default function InformacionFiscal() {
 								size="small"
 								name="sucursal"
 								variant="outlined"
+								disabled={bloqueo}
 								value={empresaFiscal.datosBancarios.sucursal ? empresaFiscal.datosBancarios.sucursal : ''}
 								onChange={obtenerCamposBancarios}
 							/>
@@ -467,25 +474,28 @@ export default function InformacionFiscal() {
 								size="small"
 								name="clave_banco"
 								variant="outlined"
+								disabled={bloqueo}
 								value={empresaFiscal.datosBancarios.clave_banco ? empresaFiscal.datosBancarios.clave_banco : ''}
 								onChange={obtenerCamposBancarios}
 							/>
 						</Box>
 					</form>
-					<DialogActions>
-						<Button onClick={handleClose} color="primary">
-							Cancelar
-						</Button> 
-						<Button
-							onClick={()=>actEmp()}
-							color="primary"
-							variant="contained"
-							autoFocus
-							
-						>
-							Guardar
-						</Button>
-					</DialogActions>
+					{sesion.accesos.mi_empresa.informacion_fiscal.editar === false ? (null):(
+						<DialogActions>
+							<Button onClick={handleClose} color="primary">
+								Cancelar
+							</Button> 
+							<Button
+								onClick={()=>actEmp()}
+								color="primary"
+								variant="contained"
+								autoFocus
+								
+							>
+								Guardar
+							</Button>
+						</DialogActions>
+					)}
 					</div>
 					}
 			</Dialog>

@@ -8,7 +8,6 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, Container } from '@material-ui/core';
-import departamentosIcon from '../../../../icons/departamentos.svg';
 import RegistroDepartamentos from './RegistroDepartamento';
 import { DepartamentosProvider } from '../../../../context/Catalogos/Departamentos';
 
@@ -74,4 +73,4 @@ export default function Departamentos() {
 			</DepartamentosProvider>
 		</div>
 	);
-}
+} 

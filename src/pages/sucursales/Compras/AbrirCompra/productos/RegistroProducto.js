@@ -1,8 +1,18 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState } from 'react';
 
-import { Button, Dialog, Box, TextField, DialogActions, makeStyles, Typography, 
-    FormControl, Select, MenuItem, IconButton
-    } from '@material-ui/core';
+import {
+	Button,
+	Dialog,
+	Box,
+	TextField,
+	DialogActions,
+	makeStyles,
+	Typography,
+	FormControl,
+	Select,
+	MenuItem,
+	IconButton
+} from '@material-ui/core';
 
 import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
@@ -28,35 +38,26 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function RegistroProducto() {
+export default function RegistroProducto({refetch}) {
+	const classes = useStyles();
 
-    const classes = useStyles();
+	const [ open, setOpen ] = useState(false);
 
-    const [open, setOpen] = useState(false);
+	const toggleModal = () => {
+		setOpen(!open);
+	};
 
-    const toggleModal = () => {
-        setOpen(!open);
-    };
-
-    return (
-        <Fragment>
-            <Box>
-				<IconButton 
-					size="large"
-                    color="primary"
-                    onClick={toggleModal}>
-					<AddIcon fontSize="large" />
-				</IconButton>
-            </Box>
-
-            <Dialog open={open} onClose={toggleModal} fullWidth maxWidth="md">
-
-                <Box p={3} dsiplay="flex" textAlign="center" alignItems="center">
-                    <Typography  variant="h6">
-                        Registro nuevo producto
-                    </Typography>
-                </Box>
-                <div className={classes.formInputFlex}>
+	return (
+		<Fragment>
+			<Button color="primary" onClick={toggleModal} startIcon={<AddIcon />}
+			size="large">
+				Registrar nuevo producto
+			</Button>
+			<Dialog open={open} onClose={toggleModal} fullWidth maxWidth="md">
+				<Box p={3} dsiplay="flex" textAlign="center" alignItems="center">
+					<Typography variant="h6">Registro nuevo producto</Typography>
+				</Box>
+				<div className={classes.formInputFlex}>
 					<Box width="100%">
 						<Typography>Código de barras</Typography>
 						<Box display="flex">
@@ -74,8 +75,8 @@ export default function RegistroProducto() {
 							</Button>
 						</Box>
 					</Box>
-					
-                    <Box width="100%">
+
+					<Box width="100%">
 						<Typography>Tipo de producto</Typography>
 						<FormControl variant="outlined" fullWidth size="small">
 							<Select id="form-producto-tipo" /* value={age} */ /* onChange={handleChange} */>
@@ -89,8 +90,8 @@ export default function RegistroProducto() {
 						</FormControl>
 					</Box>
 				</div>
-                <div className={classes.formInputFlex}>
-                    <Box width="100%">
+				<div className={classes.formInputFlex}>
+					<Box width="100%">
 						<Typography>Nombre comercial</Typography>
 						<TextField
 							fullWidth
@@ -118,10 +119,10 @@ export default function RegistroProducto() {
 							/* onChange={obtenerCampos} */
 						/>
 					</Box>
-                </div>
+				</div>
 
 				<DialogActions>
-                    <Button
+					<Button
 						variant="outlined"
 						color="secondary"
 						onClick={toggleModal}
@@ -141,6 +142,6 @@ export default function RegistroProducto() {
 					</Button>
 				</DialogActions>
 			</Dialog>
-        </Fragment>
-    )
+		</Fragment>
+	);
 }

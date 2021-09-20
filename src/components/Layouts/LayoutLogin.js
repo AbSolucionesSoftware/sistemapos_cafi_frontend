@@ -12,11 +12,20 @@ import { InputAdornment } from '@material-ui/core';
 import { IconButton } from '@material-ui/core';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import ab from '../../img/abLogo.jpeg'
 
 const useStyles = makeStyles((theme) => ({
 	margin: {
 		marginTop: theme.spacing(2),
 		marginBottom: theme.spacing(2)
+	},
+	containerImagen:{
+		maxWidth: 170,
+		maxHeight: 170
+	},
+	imagen:{
+		width: '100%',
+		height: '100%'
 	}
 }));
 
@@ -28,7 +37,7 @@ export default function LayoutLogin(props) {
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 	const [ showPassword, setShowPassword ] = useState(false);
 
-	if (sesion) props.history.push('/home');
+	if (sesion) props.history.push('/ventas/venta-general');
 
 	const [ logearUsuario ] = useMutation(LOGEAR_USUARIO);
 
@@ -51,9 +60,8 @@ export default function LayoutLogin(props) {
 			setLoading(false);
 			localStorage.setItem('sesionCafi', JSON.stringify(decoded));
 			localStorage.setItem('tokenCafi', JSON.stringify(token));
-			props.history.push('/home');
+			props.history.push('/ventas/venta-general');
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: error.message, status: 'error', open: true });
 			setLoading(false);
 		}
@@ -85,10 +93,17 @@ export default function LayoutLogin(props) {
 		<Container maxWidth="sm">
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<Box height="100vh" display="flex" justifyContent="center" alignItems="center">
-				<Box boxShadow="3" p={5} width="100%">
-					<Typography variant="h6" component="p" className={classes.margin}>
-						Inicia sesión
-					</Typography>
+				<Box boxShadow="3" p={3} width="80%">
+					<Box display='flex' justifyContent='center' alignItems='center' justifyItems='center' >
+						<Box className={classes.containerImagen} textAlign='center'>
+							<img className={classes.imagen} src={ab} alt="imagen no disponible" />
+						</Box>
+					</Box>
+					<Box display='flex' textAlign='center' justifyContent='center'>
+						<Typography variant="h4" component="p" className={classes.margin}>
+							<b>Inicia sesión</b>
+						</Typography>
+					</Box>
 					<form autoComplete="off" onSubmit={signin} >
 						<TextField
 							label="Numero de usuario"

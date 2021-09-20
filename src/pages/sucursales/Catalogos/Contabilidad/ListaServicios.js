@@ -73,7 +73,6 @@ export default function TablaServicios({setData, setIdService, idService, setAcc
 
 	const handleDelete = async () => {
 		try {
-			console.log("Eliminado");
 			await EliminarContabilidad({
 				variables: {
 					id: idService
@@ -114,8 +113,12 @@ export default function TablaServicios({setData, setIdService, idService, setAcc
 						<TableHead>
 							<TableRow>
 								<TableCell>Servicios</TableCell>
-								<TableCell padding="default">Editar</TableCell>
-								<TableCell padding="default">Eliminar</TableCell>
+								{sesion.accesos.catalogos.contabilidad.editar === false ? (null):(
+									<TableCell padding="default">Editar</TableCell>
+								)}
+								{sesion.accesos.catalogos.contabilidad.eliminar === false ? (null):(
+									<TableCell padding="default">Eliminar</TableCell>
+								)}
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -123,27 +126,29 @@ export default function TablaServicios({setData, setIdService, idService, setAcc
 								return (
 									<TableRow hover role="checkbox" tabIndex={-1} key={row._id}>
 										<TableCell>{row.nombre_servicio}</TableCell>
-										<TableCell padding="checkbox">
-											<IconButton onClick={() => {
-												console.log("editar");
-												console.log(row);
-												setAccion(false)
-												setIdService(row._id)
-												setData({
-													nombre_servicio: row.nombre_servicio
-												});
-											}}>
-												<Edit />
-											</IconButton>
-										</TableCell>
-										<TableCell padding="checkbox">
-											<IconButton onClick={() => {
-												setIdService(row._id);
-												handleModal();
-											}}>
-												<Delete />
-											</IconButton>
-										</TableCell>
+										{sesion.accesos.catalogos.contabilidad.editar === false ? (null):(
+											<TableCell padding="checkbox">
+												<IconButton onClick={() => {
+													setAccion(false)
+													setIdService(row._id)
+													setData({
+														nombre_servicio: row.nombre_servicio
+													});
+												}}>
+													<Edit />
+												</IconButton>
+											</TableCell>
+										)}
+										{sesion.accesos.catalogos.contabilidad.eliminar === false ? (null):(
+											<TableCell padding="checkbox">
+												<IconButton onClick={() => {
+													setIdService(row._id);
+													handleModal();
+												}}>
+													<Delete />
+												</IconButton>
+											</TableCell>
+										)}
 									</TableRow>
 								);
 							})}

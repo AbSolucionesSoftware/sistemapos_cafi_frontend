@@ -6,13 +6,13 @@ import DoneIcon from '@material-ui/icons/Done';
 import { Button, IconButton, Tabs } from '@material-ui/core';
 import { Dialog, DialogActions, Box } from '@material-ui/core';
 import FormularioUsuario from './FormularioUsuario';
+import AsignarPermisos from './AsingarAccesos/AsignarPermisos';
 import { Add, Edit } from '@material-ui/icons';
 import { UsuarioContext } from '../../../../context/Catalogos/usuarioContext';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
-import perfilIcon from '../../../../icons/perfil.svg';
-import permisosIcon from '../../../../icons/permisos.svg';
 
+import arregloVacio from './AsingarAccesos/arregloVacioAcceso'
 import { useMutation } from '@apollo/client';
 import { CREAR_USUARIO, ACTUALIZAR_USUARIO } from '../../../../gql/Catalogos/usuarios';
 import { numerosRandom } from '../../../../config/reuserFunctions';
@@ -21,7 +21,6 @@ import { Tab } from '@material-ui/core';
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
-
 	return (
 		<div
 			role="tabpanel"
@@ -31,7 +30,7 @@ function TabPanel(props) {
 			{...other}
 		>
 			{value === index && (
-				<Box p={3} minHeight="70vh">
+				<Box minHeight="70vh">
 					{children}
 				</Box>
 			)}
@@ -61,6 +60,10 @@ const useStyles = makeStyles((theme) => ({
 	},
 	formInput: {
 		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
+	},
+	rootPrincipal:{
+		padding: 0,
+		margin: 0
 	},
 	root: {
 		flexGrow: 1,
@@ -95,7 +98,8 @@ export default function CrearUsuario({ accion, datos }) {
 					estado: '',
 					pais: ''
 				},
-				estado_usuario: true
+				estado_usuario: true,
+				accesos: arregloVacio
 			});
 		},
 		[ setUsuario ]
@@ -111,15 +115,25 @@ export default function CrearUsuario({ accion, datos }) {
 			setUsuario(datos);
 		}
 	};
+	
 	const onCloseModal = () => {
 		setOpen(false);
 		limpiarCampos();
 	};
 
+	const obtenerAccesos = (event, departamento, subDepartamentos) => {
+        const { name, checked } = event.target;
+        setUsuario({
+			...usuario, accesos:{ ...usuario.accesos, 
+				[departamento]: {...usuario.accesos[departamento], 
+					[subDepartamentos]: {...usuario.accesos[departamento][subDepartamentos], [name]: checked }}
+			}
+		});
+	};
+
 	/* Mutations */
 	const [ crearUsuario ] = useMutation(CREAR_USUARIO);
 	const [ actualizarUsuario ] = useMutation(ACTUALIZAR_USUARIO);
-
 	const saveData = async () => {
 		if (accion === 'registrar') {
 			if (
@@ -169,7 +183,6 @@ export default function CrearUsuario({ accion, datos }) {
 			setLoading(false);
 			onCloseModal();
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 			setLoading(false);
 		}
@@ -220,14 +233,18 @@ export default function CrearUsuario({ accion, datos }) {
 						</Tabs>
 					</AppBar>
 					<TabPanel value={value} index={0}>
-						<FormularioUsuario accion={accion} />
+						<Box p={2}>
+							<FormularioUsuario accion={accion} />
+						</Box>
 					</TabPanel>
 					<TabPanel value={value} index={1}>
-						{/* <RegistrarInfoCredito tipo={tipo} accion={accion} /> */}
+						<AsignarPermisos 
+							arregloAccesos={usuario.accesos}
+							obtenerAccesos={obtenerAccesos}
+						/>
 					</TabPanel>
 				</Box>
 				<DialogActions>
-					
 					<Button
 						variant="contained"
 						color="primary"

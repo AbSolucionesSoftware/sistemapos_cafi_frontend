@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react';
-import ProductosIcon from '../../../../icons/productos.svg';
 import { Slide, Typography, Toolbar, AppBar, Dialog, Button, makeStyles } from '@material-ui/core';
 import { Box, CircularProgress, FormControl, OutlinedInput, InputAdornment, IconButton } from '@material-ui/core';
 import CrearProducto from './crearProducto';

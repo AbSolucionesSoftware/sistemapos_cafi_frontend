@@ -9,7 +9,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import { Search } from '@material-ui/icons';
 import Slide from '@material-ui/core/Slide';
 import { Box, Paper, InputBase, IconButton } from '@material-ui/core';
-import usuariosIcon from '../../../../icons/usuarios.svg';
 import ListaUsuarios from './ListaUsuario';
 import CrearUsuario from './CrearUsuario';
 import { UsuarioProvider } from '../../../../context/Catalogos/usuarioContext';
@@ -37,6 +36,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function Usuarios() {
 	const classes = useStyles();
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const [ open, setOpen ] = React.useState(false);
 	const [ filtro, setFiltro ] = useState('');
 	const [ values, setValues ] = useState('');
@@ -94,7 +95,9 @@ export default function Usuarios() {
 								</IconButton>
 							</Paper>
 						</Box>
-						<CrearUsuario accion="registrar" datos={undefined} />
+						{permisosUsuario.accesos.catalogos.usuarios.agregar === false ? (null):(
+							<CrearUsuario accion="registrar" datos={undefined} />
+						)}
 					</Box>
 					<Box mx={4}>
 						<ListaUsuarios sucursal={sesion.sucursal._id} filtro={filtro} />

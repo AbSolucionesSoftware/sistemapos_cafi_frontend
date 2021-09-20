@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Box, Button,  DialogActions, DialogContent, Divider, Grid,  IconButton,  InputBase,  Paper,  Typography } from '@material-ui/core'
 
-import ProductosIcon from '../../../icons/productos.svg';
 import CloseIcon from '@material-ui/icons/Close';
 
 import useStyles from '../styles';

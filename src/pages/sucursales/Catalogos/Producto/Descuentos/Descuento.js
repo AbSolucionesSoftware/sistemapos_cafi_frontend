@@ -38,7 +38,7 @@ export default function DescuentoProductos({datos, productosRefetch}) {
     const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
     const [ openDescuento, setOpenDescuento ] = useState(false);
     const [ cleanList, setCleanList] = useState(false);
-    const [ validate, setValidate] = useState(false);
+    const [ validate ] = useState(false);
     const [ loading, setLoading] = useState(false);
 
     const [ preciosDescuentos, setPreciosDescuentos] = useState([]);
@@ -144,7 +144,6 @@ export default function DescuentoProductos({datos, productosRefetch}) {
             handleCloseDescuentos();
             setAlert({ message: '¡Listo descuentos realizados!', status: 'success', open: true });
 		} catch (error) {
-			console.log(error);
 		}
 	};
 

@@ -12,7 +12,7 @@ import { Box, Button, Dialog, DialogActions, DialogTitle, IconButton, TextField,
 import { Close, Delete, Edit } from '@material-ui/icons';
 
 import { useMutation } from '@apollo/client';
-import { ELIMINAR_TALLA, OBTENER_TALLAS } from '../../../../gql/Catalogos/tallas';
+import { ELIMINAR_TALLA } from '../../../../gql/Catalogos/tallas';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 
 const useStyles = makeStyles((theme) => ({
@@ -26,6 +26,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TablaTallas({ tipo, datos, toUpdate, setToUpdate, setValue, refetch }) {
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const classes = useStyles();
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(7);
@@ -79,8 +81,12 @@ export default function TablaTallas({ tipo, datos, toUpdate, setToUpdate, setVal
 						<TableHead>
 							<TableRow>
 								<TableCell>{tipo === 'ROPA' ? 'Talla' : 'Número'}</TableCell>
-								<TableCell padding="default">Editar</TableCell>
-								<TableCell padding="default">Eliminar</TableCell>
+								{sesion.accesos.catalogos.tallas_numeros.editar === false ? (null) : (
+									<TableCell padding="default">Editar</TableCell>
+								)}
+								{sesion.accesos.catalogos.tallas_numeros.eliminar === false ? (null) : (
+									<TableCell padding="default">Eliminar</TableCell>
+								)}
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -107,6 +113,8 @@ export default function TablaTallas({ tipo, datos, toUpdate, setToUpdate, setVal
 }
 
 const RowsRender = ({ row, setAlert, tipo, toUpdate, setToUpdate, setValue, refetch }) => {
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const [ openModal, setOpenModal ] = useState(false);
 	const handleModal = () => setOpenModal(!openModal);
 	const [ eliminarTalla ] = useMutation(ELIMINAR_TALLA);
@@ -153,20 +161,24 @@ const RowsRender = ({ row, setAlert, tipo, toUpdate, setToUpdate, setValue, refe
 						<b>{row.talla}</b>
 					</Typography>
 				</TableCell>
-				<TableCell padding="checkbox">
-					{toUpdate === row._id ? (
-						<IconButton onClick={() => onUpdate()}>
-							<Close />
-						</IconButton>
-					) : (
-						<IconButton onClick={() => onUpdate(row)}>
-							<Edit />
-						</IconButton>
-					)}
-				</TableCell>
-				<TableCell padding="checkbox">
-					<Modal handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
-				</TableCell>
+				{sesion.accesos.catalogos.tallas_numeros.editar === false ? (null) : (
+					<TableCell padding="checkbox">
+						{toUpdate === row._id ? (
+							<IconButton onClick={() => onUpdate()}>
+								<Close />
+							</IconButton>
+						) : (
+							<IconButton onClick={() => onUpdate(row)}>
+								<Edit />
+							</IconButton>
+						)}
+					</TableCell>
+				)}
+				{sesion.accesos.catalogos.tallas_numeros.eliminar === false ? (null) : (
+					<TableCell padding="checkbox">
+						<Modal handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
+					</TableCell>
+				)}
 			</TableRow>
 		</Fragment>
 	);

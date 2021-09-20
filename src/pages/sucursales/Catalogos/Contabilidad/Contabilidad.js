@@ -8,7 +8,6 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, Container } from '@material-ui/core';
-import contabilidadIcon from '../../../../icons/contabilidad.svg';
 import RegistroServicios from './RegistroServicio';
 
 const useStyles = makeStyles((theme) => ({
@@ -29,6 +28,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Contabilidad() {
+
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
 

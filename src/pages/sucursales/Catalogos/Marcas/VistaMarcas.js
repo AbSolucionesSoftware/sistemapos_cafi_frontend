@@ -41,28 +41,34 @@ export default function VistaMarcas() {
 			    return;
             }else{
                 if(toUpdate){
-                    //EDITAR
-                    const input = data;
-                    await actualizarMarca({
-                        variables: {
-                            input: {
-                                nombre_marca: input.nombre_marca,
-                            },
-                            id: toUpdate
-                        }
-                    });
-                    setData("");
+                    if (sesion.accesos.catalogos.marcas.editar === false) {
+                        return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción !', status: 'error', open: true });
+                    }else{
+                        const input = data;
+                        await actualizarMarca({
+                            variables: {
+                                input: {
+                                    nombre_marca: input.nombre_marca,
+                                },
+                                id: toUpdate
+                            }
+                        });
+                        setData("");
+                    }
                 }else{
-                    //REGISTRO
-                    const input = data;
-                    await CrearMarca({
-                        variables: {
-                            input,
-                            empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id
-                        }
-                    });
-                    setData("");
+                    if (sesion.accesos.catalogos.marcas.agregar === false) {
+                        return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción !', status: 'error', open: true });
+                    }else{
+                        const input = data;
+                        await CrearMarca({
+                            variables: {
+                                input,
+                                empresa: sesion.empresa._id,
+                                sucursal: sesion.sucursal._id
+                            }
+                        });
+                        setData("");
+                    }
                 }
                 setToUpdate('');
                 setUpdateData(!updateData);
@@ -70,41 +76,40 @@ export default function VistaMarcas() {
                 setError(false);
             }
         } catch (error) {
-            console.log(error);
         }
     }
 
     const pressEnter = (e) => {
-		if (e.key === 'Enter') saveData();
+        if (e.key === 'Enter') saveData();
 	};
 
     return (
         <div>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
-            <Box display="flex" justifyContent="center" alignItems="center" my={2}>
-                <TextField
-                    id="outlined-error-helper-text"
-                    label="Nombre departamento"
-                    value={data.nombre_marca ? data.nombre_marca : ""}
-                    name="nombre_marca"
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    onChange={obtenerDatos}
-                    error={error}
-                    onKeyPress={pressEnter}
-                />
-                <Box ml={1} />
-                <Button 
-                    color="primary" 
-                    variant="contained" 
-                    size="large" 
-                    disableElevation 
-                    onClick={saveData}
-                >
-                    <Add />Guardar
-                </Button>
-            </Box>
+                <Box display="flex" justifyContent="center" alignItems="center" my={2}>
+                    <TextField
+                        id="outlined-error-helper-text"
+                        label="Nombre departamento"
+                        value={data.nombre_marca ? data.nombre_marca : ""}
+                        name="nombre_marca"
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        onChange={obtenerDatos}
+                        error={error}
+                        onKeyPress={pressEnter}
+                    />
+                    <Box ml={1} />
+                    <Button 
+                        color="primary" 
+                        variant="contained" 
+                        size="large" 
+                        disableElevation 
+                        onClick={saveData}
+                    >
+                        <Add />Guardar
+                    </Button>
+                </Box>
             <ListaMarcas toUpdate={toUpdate} setToUpdate={setToUpdate} updateData={updateData} setData={setData} />
         </div>
     )

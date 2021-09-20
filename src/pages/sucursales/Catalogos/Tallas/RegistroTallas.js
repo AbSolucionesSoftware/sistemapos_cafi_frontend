@@ -42,26 +42,35 @@ export default function RegistroTallas({ tipo }) {
 		try {
 			const nueva_talla = value;
 			if(toUpdate){
-				resp = await actualizarTalla({
-					variables: {
-						input: {
-							talla: nueva_talla,
-							tipo
-						},
-						id: toUpdate
-					}
-				});
-			}else{
-				resp = await crearTalla({
-					variables: {
-						input: {
-							talla: nueva_talla,
-							tipo,
-							empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id
+				if (sesion.accesos.catalogos.tallas_numeros.editar === false ) {
+					return setAlert({ message: 'Lo sentimos no tienes autorización para esta acción', status: 'error', open: true });
+				}else{
+					resp = await actualizarTalla({
+						variables: {
+							input: {
+								talla: nueva_talla,
+								tipo
+							},
+							id: toUpdate
 						}
-					}
-				});
+					});
+				}
+
+			}else{
+				if (sesion.accesos.catalogos.tallas_numeros.agregar === false ) {
+					return setAlert({ message: 'Lo sentimos no tienes autorización para esta acción', status: 'error', open: true });
+				}else{
+					resp = await crearTalla({
+						variables: {
+							input: {
+								talla: nueva_talla,
+								tipo,
+								empresa: sesion.empresa._id,
+								sucursal: sesion.sucursal._id
+							}
+						}
+					});
+				}
 			}
 			refetch();
 			setValue('');

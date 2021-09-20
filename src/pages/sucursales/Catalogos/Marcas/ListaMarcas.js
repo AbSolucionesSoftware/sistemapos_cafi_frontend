@@ -86,8 +86,12 @@ export default function ListaMarcas({updateData, toUpdate, setToUpdate, setData}
 						<TableHead>
 							<TableRow>
 								<TableCell>Marca</TableCell>
-								<TableCell padding="default">Editar</TableCell>
-								<TableCell padding="default">Eliminar</TableCell>
+								{sesion.accesos.catalogos.marcas.editar === false ? (null):(
+									<TableCell padding="default">Editar</TableCell>
+								)}
+								{sesion.accesos.catalogos.marcas.eliminar === false ? (null):(
+									<TableCell padding="default">Eliminar</TableCell>
+								)}
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -158,20 +162,24 @@ const RowsRender = ({ datos, updateData, toUpdate, setAlert, setToUpdate, setDat
 	return (
 		<TableRow hover role="checkbox" tabIndex={-1} selected={toUpdate === datos._id ? true : false}>
 			<TableCell>{datos.nombre_marca}</TableCell>
-			<TableCell padding="checkbox">
-				{toUpdate === datos._id ? (
-					<IconButton onClick={() => onUpdate()}>
-						<Close />
-					</IconButton>
-				) : (
-					<IconButton onClick={() => onUpdate(datos)}>
-						<Edit />
-					</IconButton>
-				)}
-			</TableCell>
-			<TableCell padding="checkbox">
-				<Modal handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
-			</TableCell>
+			{sesion.accesos.catalogos.marcas.editar === false ? (null):(
+				<TableCell padding="checkbox">
+					{toUpdate === datos._id ? (
+						<IconButton onClick={() => onUpdate()}>
+							<Close />
+						</IconButton>
+					) : (
+						<IconButton onClick={() => onUpdate(datos)}>
+							<Edit />
+						</IconButton>
+					)}
+				</TableCell>
+			)}
+			{sesion.accesos.catalogos.marcas.eliminar === false ? (null):(
+				<TableCell padding="checkbox">
+					<Modal handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
+				</TableCell>
+			)}
 		</TableRow>
 	);
 };

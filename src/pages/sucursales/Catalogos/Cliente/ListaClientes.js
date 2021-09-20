@@ -47,8 +47,6 @@ const useStyles = makeStyles({
 
 export default function ListaClientes({user, tipo, filtro }) {
 
-	
-
 	const classes = useStyles();
 	const { update } = useContext(ClienteCtx);
 	const [ page, setPage ] = useState(0);
@@ -93,37 +91,37 @@ export default function ListaClientes({user, tipo, filtro }) {
 				<Table stickyHeader size="small" aria-label="a dense table">
 					<TableHead>
 						<TableRow>
-							<TableCell minWidt='100'>
+							<TableCell minwidth='100'>
 								No. Cliente
 							</TableCell>
-							<TableCell minWidt='100'>
+							<TableCell minwidth='100'>
 								Clave
 							</TableCell>
-							<TableCell minWidt='150'>
+							<TableCell minwidth='150'>
 								Nombre
 							</TableCell>
-							<TableCell minWidt='150'>
+							<TableCell minwidth='150'>
 								Razon Social
 							</TableCell>
-							<TableCell minWidt='150'>
+							<TableCell minwidth='150'>
 								Correo
 							</TableCell>
-							<TableCell minWidt='100'>
+							<TableCell minwidth='100'>
 								Tipo de Cliente
 							</TableCell>
 							{user === 'EMPLEADO' ? (null) :(
-								<TableCell minWidt='100'>
+								<TableCell minwidth='100'>
 									Estado
 								</TableCell>
 							)}
-							<TableCell minWidt='50'>
+							<TableCell minwidth='50'>
 								Detalles
 							</TableCell>
-							<TableCell minWidt='50'>
+							<TableCell minwidth='50'>
 								Editar
 							</TableCell>
 							{user === 'EMPLEADO' ? (null) :(
-								<TableCell minWidt='50'>
+								<TableCell minwidth='50'>
 									Eliminar	
 								</TableCell>
 							)}
@@ -152,6 +150,8 @@ export default function ListaClientes({user, tipo, filtro }) {
 }
 
 const RowsRender = ({ datos, user }) => {
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const [ openDetalles, setOpenDetalles ] = useState(false);
 	const { update, setUpdate } = useContext(ClienteCtx);
 	const [ loading, setLoading ] = useState(false);
@@ -175,7 +175,6 @@ const RowsRender = ({ datos, user }) => {
 			setUpdate(!update);
 			setLoading(false);
 		} catch (error) {
-			console.log(error);
 			setLoading(false);
 		}
 	};
@@ -217,27 +216,32 @@ const RowsRender = ({ datos, user }) => {
 				<ModalDetalles openDetalles={openDetalles} handleDetalles={handleDetalles} datos={datos} />
 			</TableCell>
 			<TableCell width={50}>
-				<CrearCliente tipo="CLIENTE" accion="actualizar" datos={datos} />
+				{permisosUsuario.accesos.catalogos.clientes.editar === false ? (null):(
+					<CrearCliente tipo="CLIENTE" accion="actualizar" datos={datos} />
+				)
+				}
 			</TableCell>
-			{user === 'EMPLEADO' ? (null) :(
-				<TableCell width={50}>
+			<TableCell width={50}>
+				{permisosUsuario.accesos.catalogos.clientes.editar === false ? (null):(
 					<IconButton color="secondary">
 						<Delete />
 					</IconButton>
-				</TableCell>
-			)}
+				)}
+			</TableCell>
 		</TableRow>
 	);
 };
 
 const ModalDetalles = ({ handleDetalles, openDetalles, datos }) => {
+
+
 	const classes = useStyles();
 	return (
 		<div>
 			<IconButton onClick={handleDetalles}>
 				<Dehaze />
 			</IconButton>
-			<Dialog open={openDetalles} onClose={handleDetalles} fullWidth maxWidth="md">
+			<Dialog open={openDetalles} onClose={handleDetalles} fullwidth maxWidth="md">
 				<DialogTitle>{'Información completa del cliente'}</DialogTitle>
 				<DialogContent>
 					<Box mt={3}>

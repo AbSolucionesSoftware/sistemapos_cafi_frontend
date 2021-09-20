@@ -306,7 +306,7 @@ export default function Precio1({ data, index }) {
 							<b>Utilidad</b>
 						</Typography>
 					</Box>
-					<Box>
+					<Box minWidth={100} > 
 						<Typography>Precio {data.numero_precio}</Typography>
 						<Box mb={2} />
 						<TextField

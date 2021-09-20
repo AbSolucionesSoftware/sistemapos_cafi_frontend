@@ -30,7 +30,7 @@ const GenCodigoBarras = () => {
 	return Math.floor(Math.random() * (999999999999 - 100000000000 + 1) + 100000000000).toString();
 };
 
-export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos }) {
+export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos, from}) {
 	const {
 		almacen_inicial,
 		setAlmacenInicial,
@@ -92,7 +92,7 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 		<div>
 			<Grid container spacing={2}>
 				<Grid item md={9}>
-					<TablaPresentaciones datos={datos} setOnUpdate={setOnUpdate} onUpdate={onUpdate} />
+					<TablaPresentaciones from={from} datos={datos} setOnUpdate={setOnUpdate} onUpdate={onUpdate} />
 				</Grid>
 				<Grid item md={3}>
 					{!datos.medidas_registradas ? (

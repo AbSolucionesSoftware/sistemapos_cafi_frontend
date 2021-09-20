@@ -177,6 +177,7 @@ export default function PreciosDeCompra() {
 						variant="outlined"
 						onChange={obtenerUnidadesVentas}
 						value={unidades.cantidad ? unidades.cantidad : ''}
+						fullWidth
 					/>
 				</Box>
 				<Box>
@@ -191,12 +192,14 @@ export default function PreciosDeCompra() {
 						variant="outlined"
 						onChange={obtenerUnidadesVentas}
 						value={unidades.precio ? unidades.precio : ''}
+						fullWidth
 					/>
 				</Box>
 				<Box>
-					<FormControl variant="outlined" size="small" name="codigo_barras">
+					<FormControl variant="outlined" size="small" name="codigo_barras" fullWidth>
 						<Typography>Código de barras</Typography>
 						<OutlinedInput
+							fullWidth
 							disabled={update}
 							id="input-codigo-barras"
 							name="codigo_barras"
