@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Button, Grid, CircularProgress, TextField, Typography } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 import TablaColores from './ListaColores';
-import { SketchPicker } from 'react-color';
+import { SketchPicker } from 'react-color'; 
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import ErrorPage from '../../../../components/ErrorPage';
 
@@ -51,11 +51,12 @@ export default function RegistroColores() {
 		}
 		try {
 			const colores = values;
+			let msg;
 			if (toUpdate) {
 				if (sesion.accesos.catalogos.colores.editar === false) {
 					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
 				}else{
-					await actualizarColor({
+				const resp = await actualizarColor({
 						variables: {
 							input: {
 								nombre: colores.nombre,
@@ -64,13 +65,14 @@ export default function RegistroColores() {
 							id: toUpdate
 						}
 					});
+				msg = resp.data.actualizarColor.message
 				}
 
 			} else {
 				if (sesion.accesos.catalogos.colores.agregar === false) {
 					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
 				}else{
-					await crearColor({
+						await crearColor({
 						variables: {
 							input: {
 								nombre: colores.nombre,
@@ -79,15 +81,18 @@ export default function RegistroColores() {
 								sucursal: sesion.sucursal._id
 							}
 						}
-					});
+					})
+					msg = '¡Listo!. Color creado.'
 				}
 			}
 			refetch();
 			setValues({ nombre: '', hex: '' });
 			setToUpdate('');
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
+		
+			setAlert({ message: msg, status: 'success', open: true });
 		} catch (error) {
-			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			setAlert({ message: error.message, status: 'error', open: true });
+			
 		}
 	};
 	
