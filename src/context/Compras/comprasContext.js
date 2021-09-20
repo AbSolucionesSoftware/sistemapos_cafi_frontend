@@ -1,4 +1,6 @@
 import React, { createContext, useState } from "react";
+import { initial_state_precios } from "../Catalogos/initialStatesProducto";
+import moment from 'moment';
 
 export const ComprasContext = createContext();
 
@@ -13,12 +15,13 @@ export const ComprasProvider = ({ children }) => {
     impuestos: 0,
     total: 0,
     mantener_precio: true,
+	total_con_descuento: 0
   });
 
   const [datosCompra, setDatosCompra] = useState({
     productos: [],
     proveedor: {},
-    fecha_compra: Date.now(),
+    fecha_compra: moment().locale('es-mx').format(),
     almacen: {},
     subtotal: 0,
     impuestos: 0,
@@ -70,7 +73,9 @@ export const ComprasProvider = ({ children }) => {
     },
   ]);
 
-  const [productoOriginal, setProductoOriginal] = useState();
+  const [productoOriginal, setProductoOriginal] = useState({
+	  precios: initial_state_precios
+  });
   const [productosCompra, setProductosCompra] = useState([]);
 
   return (

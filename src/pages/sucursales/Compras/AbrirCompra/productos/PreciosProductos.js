@@ -17,7 +17,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function AlertDialogSlide({ agregarCompra, handleClose }) {
   const [open, setOpen] = useState(false);
-  const { datosProducto, productoOriginal, /* setDatosProducto */ } = useContext(ComprasContext);
+  const { datosProducto, productoOriginal /* setDatosProducto */ } = useContext(
+    ComprasContext
+  );
   const {
     precios,
     setPrecios,
@@ -43,13 +45,33 @@ export default function AlertDialogSlide({ agregarCompra, handleClose }) {
   };
 
   const actualizarContextProducto = () => {
-    setPrecios({
-      ...precios, precio_de_compra: {
-        ...precios.precio_de_compra, precio_con_impuesto: datosProducto.costo
-      }
-    })
     toggleDrawer();
-  }
+    let precio_unitario_con_impuesto =
+      datosProducto.costo / datosProducto.cantidad;
+    let precio_unitario_sin_impuesto =
+      precios.precio_de_compra.precio_sin_impuesto / datosProducto.cantidad;
+
+    if (isNaN(precio_unitario_sin_impuesto)) precio_unitario_sin_impuesto = 0;
+    if (isNaN(precio_unitario_con_impuesto)) precio_unitario_con_impuesto = 0;
+
+    setPrecios({
+      ...precios,
+      precio_de_compra: {
+        ...precios.precio_de_compra,
+        precio_con_impuesto: datosProducto.costo,
+      },
+      unidad_de_compra: {
+        ...precios.unidad_de_compra,
+        precio_unitario_con_impuesto: parseFloat(
+          precio_unitario_con_impuesto.toFixed(2)
+        ),
+        precio_unitario_sin_impuesto: parseFloat(
+          precio_unitario_sin_impuesto.toFixed(2)
+        ),
+        cantidad: parseInt(datosProducto.cantidad),
+      },
+    });
+  };
 
   return (
     <Fragment>
@@ -57,7 +79,6 @@ export default function AlertDialogSlide({ agregarCompra, handleClose }) {
         color="primary"
         size="medium"
         onClick={() => actualizarContextProducto()}
-        disabled={!datosProducto.producto.datos_generales}
       >
         Actualizar precios
       </Button>
@@ -65,7 +86,7 @@ export default function AlertDialogSlide({ agregarCompra, handleClose }) {
         open={open}
         TransitionComponent={Transition}
         keepMounted
-        onClose={toggleDrawer}
+        onClose={() => resetProducto()}
         aria-labelledby="alert-precios-compra-title"
         aria-describedby="alert-precios-compra-description"
         fullWidth
@@ -81,7 +102,7 @@ export default function AlertDialogSlide({ agregarCompra, handleClose }) {
             color="inherit"
             size="large"
             startIcon={<Close />}
-            onClick={resetProducto}
+            onClick={() => resetProducto()}
           >
             Cancelar
           </Button>

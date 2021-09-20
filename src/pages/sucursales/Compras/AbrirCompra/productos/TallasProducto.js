@@ -5,7 +5,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import Slide from "@material-ui/core/Slide";
-import { Close, Palette } from "@material-ui/icons";
+import { Done, Palette } from "@material-ui/icons";
 import { useQuery } from "@apollo/client";
 import { OBTENER_CONSULTAS } from "../../../../../gql/Catalogos/productos";
 import ErrorPage from "../../../../../components/ErrorPage";
@@ -79,11 +79,11 @@ export default function AlertDialogSlide() {
           <Button
             size="large"
             onClick={() => toggleDrawer()}
-            startIcon={<Close />}
+            startIcon={<Done />}
             color="primary"
             variant="contained"
           >
-            Cerrar
+            Aceptar
           </Button>
         </DialogActions>
       </Dialog>

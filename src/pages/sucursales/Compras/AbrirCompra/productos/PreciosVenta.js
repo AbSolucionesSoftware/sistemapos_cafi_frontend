@@ -5,7 +5,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
 import { ComprasContext } from "../../../../../context/Compras/comprasContext";
 
 export default function PreciosDeVentaCompras() {
@@ -49,8 +48,8 @@ export default function PreciosDeVentaCompras() {
 }
 
 const RenderPrecios = ({ data, tipo, index }) => {
-  const { precios } = useContext(RegProductoContext);
-  const { preciosVenta, datosProducto } = useContext(ComprasContext);
+  const { preciosVenta, datosProducto, productoOriginal } = useContext(ComprasContext);
+  const { precios } = productoOriginal;
 
   const [precio_neto, setPrecioNeto] = useState(data.precio_neto);
 
@@ -65,7 +64,7 @@ const RenderPrecios = ({ data, tipo, index }) => {
   if (isNaN(precio_unitario_sin_impuesto)) precio_unitario_sin_impuesto = 0;
   if (isNaN(precio_unitario_con_impuesto)) precio_unitario_con_impuesto = 0;
 
-  const calculos = useCallback(() => {
+  const calculosCompra = useCallback(() => {
     if (copy_preciosVenta.numero_precio === data.numero_precio) {
       if (!precios.iva_activo && !precios.ieps_activo) {
         copy_preciosVenta.precio_neto = precio_unitario_sin_impuesto;
@@ -121,8 +120,8 @@ const RenderPrecios = ({ data, tipo, index }) => {
   }, [datosProducto.costo, datosProducto.cantidad]);
 
   useEffect(() => {
-    calculos();
-  }, [calculos]);
+    calculosCompra();
+  }, [calculosCompra]);
 
   switch (tipo) {
     case "Utilidad":
