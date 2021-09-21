@@ -3,7 +3,8 @@ import React, { createContext, useState } from "react";
 export const ComprasContext = createContext();
 
 export const ComprasProvider = ({ children }) => {
-  const [datosProducto, setDatosProducto] = useState({
+  const [datosProducto, setDatosProducto] = 
+  ({
     producto: {},
     costo: 0,
     cantidad: 0,

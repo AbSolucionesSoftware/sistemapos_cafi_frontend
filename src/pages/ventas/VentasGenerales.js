@@ -1,29 +1,60 @@
-import { Box, FormControl, Grid, IconButton, InputBase, MenuItem, Paper, Select, Typography } from '@material-ui/core'
+import React, {useState} from 'react';
+import { 
+    Box, 
+    FormControl, 
+    Grid, 
+    IconButton, 
+    InputBase, 
+    MenuItem, 
+    Paper, 
+    Select, 
+    Typography,
+    CircularProgress 
+} from '@material-ui/core';
 import { Search } from '@material-ui/icons';
-
-import React from 'react';
-
 import useStyles from './styles';
 import TablaVentas from './TablaVentas';
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { useMutation, useQuery } from '@apollo/client';
+import { OBTENER_PRODUCTOS } from '../../gql/Catalogos/productos';
 
 // import usuario from '../../icons/usuarios.svg';
 // import codigo from '../../icons/ventas/busqueda-de-codigos-de-barras.svg';
 // import vendedor from '../../icons/ventas/admin.svg';
 // import ticket from '../../icons/ventas/publicalo.svg';
 
-import { Fragment } from 'react';
+import { Fragment } from 'react'; 
 import MonedaCambio from './Operaciones/MonedaCambio';
 
 
 
 export default function VentasGenerales() {
 
-
-    
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     console.log(sesion);
     const classes = useStyles();
+    const [ filtro, setFiltro ] = useState('');
+
+    const { loading, data, error, refetch } = useQuery(OBTENER_PRODUCTOS, {
+		variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id, filtro }
+	});
+
+    console.log(loading);
+
+    if(loading) 
+        return (
+            <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="30vh"
+            >
+                <CircularProgress />
+            </Box>
+        );
+
+    // console.log(data.obtenerProductos);
+    const productosBase = data.obtenerProductos;
 
     return (
         <Fragment>
@@ -49,8 +80,8 @@ export default function VentasGenerales() {
                                     id="combo-box-proveedor"
                                     size="small"
                                     fullWidth
-                                    options={proveedores}
-                                    getOptionLabel={(option) => option.nombre_cliente}
+                                    options={productosBase}
+                                    getOptionLabel={(option) => console.log(option)}
                                     renderInput={(params) => (
                                         <TextField {...params} label="Proveedor" variant="outlined" />
                                     )}
@@ -64,7 +95,7 @@ export default function VentasGenerales() {
                                         : null
                                     }
                                 /> */}
-                                <Paper className={classes.rootBusqueda}>
+                                {/* <Paper className={classes.rootBusqueda}>
                                     <InputBase
                                         fullWidth
                                         placeholder="Buscar producto..."
@@ -72,7 +103,7 @@ export default function VentasGenerales() {
                                     <IconButton >
                                         <Search />
                                     </IconButton>
-                                </Paper>
+                                </Paper> */}
                             </Box>
                         </Box>
                         <Box width="100%" display="flex" justifyItems="center" alignSelf="center" justifySelf="center" alignItems="center">
