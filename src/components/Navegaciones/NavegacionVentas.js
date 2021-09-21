@@ -37,6 +37,7 @@ import ArticuloRapido from '../../pages/ventas/ArticuloRapido/ArticuloRapido';
 import VentaEnEspera from '../../pages/ventas/Operaciones/VentaEnEspera';
 import ListaApartados from '../../pages/ventas/Apartados/ListaApartados';
 import CrearApartado from '../../pages/ventas/Apartados/CrearApartado';
+import ClientesVentas from '../../pages/ventas/ClientesVentas/ClientesVentas';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -90,6 +91,8 @@ function NavegacionVentas(props) {
 				return <ListaApartados handleClickOpen={handleClickOpen} />
 			case 'crearApartado':
 				return <CrearApartado handleClickOpen={handleClickOpen} />
+			case 'clientesVentas':
+				return <ClientesVentas handleClickOpen={handleClickOpen} />
 			default:
 				break;
 		}
@@ -358,10 +361,16 @@ function NavegacionVentas(props) {
 								</Box>
 							</Box>
 						</Button>
-						<Button className={classes.borderBotonChico}>
+						<Button 
+							className={classes.borderBotonChico}
+							onClick={() =>{
+								setVentana('clientesVentas');
+								handleClickOpen();
+							}}
+						>
 							<Box>
 								<Box>
-								<FcBusinessman className={classes.iconSizeInferior} />
+									<FcBusinessman className={classes.iconSizeInferior} />
 								</Box>
 								<Box>
 									Clientes
