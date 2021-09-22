@@ -4,21 +4,20 @@ export const VentasContext = createContext();
 
 export const VentasProvider = ({children}) => {
 
-    const [datosProducto, setDatosProducto] = useState(
+    const [datosProductoVentas, setDatosProductoVentas] = useState(
         {
-            producto: {},
-            costo: 0,
-            cantidad: 0,
-            descuento_porcentaje: 0,
-            descuento_precio: 0,
-            subtotal: 0,
-            impuestos: 0,
-            total: 0
+            // producto: {},
+            // costo: 0,
+            // cantidad: 0,
+            // descuento_porcentaje: 0,
+            // descuento_precio: 0,
+            // subtotal: 0,
+            // impuestos: 0,
+            // total: 0
          }
     );
     
-    const [productosCompra, setProductosCompra] = useState([]);
-
+    const [productosVentas, setProductosVentas] = useState([]);
     const [datosVentas, setDatosVentas] = useState(
         {
             productos: [],
@@ -32,17 +31,18 @@ export const VentasProvider = ({children}) => {
 
 
     return (
-        <VentasContext 
-            value={
-                {
-                    datosProducto,
-                    setDatosProducto
-                    
-                }
-            }
+        <VentasContext.Provider
+            value={{
+                    datosProductoVentas,
+                    setDatosProductoVentas,
+                    productosVentas,
+                    setProductosVentas,
+                    datosVentas,
+                    setDatosVentas
+                }}
         >
             {children}
-        </VentasContext>
+        </VentasContext.Provider>
     );
 };
 

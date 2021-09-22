@@ -10,6 +10,7 @@ import TableRow from '@material-ui/core/TableRow';
 import { IconButton } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 
+
 const columns = [
 	{ id: 'cantidad', label: 'Cant', minWidth: 20, align: 'center' },
 	{ id: 'descripcion', label: 'Descripcion', minWidth: 330 },
@@ -54,48 +55,49 @@ export default function TablaVentas() {
 	const classes = useStyles();
 
 	return (
-		<Paper className={classes.root}>
-			<TableContainer className={classes.container}>
-				<Table stickyHeader size="small" aria-label="a dense table">
-					<TableHead>
-						<TableRow>
-							{columns.map((column) => (
-								<TableCell key={column.id} align={column.align} style={{ width: column.minWidth }}>
-									{column.label}
-								</TableCell>
-							))}
-							<TableCell key={1} align='center' style={{ width: 35 }}>
-								Eliminar
-							</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{rows.map((row) => {
-							return (
-								<TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-									{columns.map((column) => {
-										const value = row[column.id];
-										return (
-											<TableCell key={column.id} align={column.align}>
-												{column.format && typeof value === 'number' ? (
-													column.format(value)
-												) : (
-													value
-												)}
-											</TableCell>
-										);
-									})}
-									<TableCell key={1} align='center' >
-										<IconButton aria-label="delete" size='small'>
-											<DeleteIcon fontSize="small" />
-										</IconButton>
+		
+			<Paper className={classes.root}>
+				<TableContainer className={classes.container}>
+					<Table stickyHeader size="small" aria-label="a dense table">
+						<TableHead>
+							<TableRow>
+								{columns.map((column) => (
+									<TableCell key={column.id} align={column.align} style={{ width: column.minWidth }}>
+										{column.label}
 									</TableCell>
-								</TableRow>
-							);
-						})}
-					</TableBody>
-				</Table>
-			</TableContainer>
-		</Paper>
+								))}
+								<TableCell key={1} align='center' style={{ width: 35 }}>
+									Eliminar
+								</TableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{rows.map((row) => {
+								return (
+									<TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+										{columns.map((column) => {
+											const value = row[column.id];
+											return (
+												<TableCell key={column.id} align={column.align}>
+													{column.format && typeof value === 'number' ? (
+														column.format(value)
+													) : (
+														value
+													)}
+												</TableCell>
+											);
+										})}
+										<TableCell key={1} align='center' >
+											<IconButton aria-label="delete" size='small'>
+												<DeleteIcon fontSize="small" />
+											</IconButton>
+										</TableCell>
+									</TableRow>
+								);
+							})}
+						</TableBody>
+					</Table>
+				</TableContainer>
+			</Paper>
 	);
 }
