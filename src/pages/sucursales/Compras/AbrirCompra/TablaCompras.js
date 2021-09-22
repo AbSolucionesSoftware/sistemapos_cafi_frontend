@@ -81,7 +81,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 
 const ModalDeleteProducto = ({ index }) => {
-	const { productosCompra, setProductosCompra } = useContext(ComprasContext);
+	const { productosCompra, setProductosCompra, datosCompra, setDatosCompra } = useContext(ComprasContext);
 	const [ open, setOpen ] = useState(false);
 
 	const handleClickOpen = () => {
@@ -94,7 +94,14 @@ const ModalDeleteProducto = ({ index }) => {
 
 	const eliminarCompra = () => {
 		let copy_compras = [ ...productosCompra ].reverse();
-		copy_compras.splice(index, 1);
+		let objeto_eliminado = copy_compras.splice(index, 1);
+
+		setDatosCompra({
+			...datosCompra, 
+			subtotal: datosCompra.subtotal - objeto_eliminado[0].subtotal,
+			impuestos: datosCompra.impuestos - objeto_eliminado[0].impuestos,
+			total: datosCompra.total - objeto_eliminado[0].total,
+		});
 		setProductosCompra([...copy_compras].reverse())
 		handleClose();
 	}

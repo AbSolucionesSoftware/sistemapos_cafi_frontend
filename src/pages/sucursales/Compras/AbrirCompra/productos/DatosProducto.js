@@ -8,19 +8,9 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
-import RegistroProvedor from "../../../Catalogos/Cliente/CrearCliente";
-import RegistroAlmacen from "../../../Almacenes/RegistroAlmacen/ContainerRegistroAlmacen";
 import PreciosProductos from "./PreciosProductos";
 import TallasProductos from "./TallasProducto";
 import Add from "@material-ui/icons/Add";
-
-import "date-fns";
-import local from "date-fns/locale/es";
-import DateFnsUtils from "@date-io/date-fns";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from "@material-ui/pickers";
 
 import {
   initial_state_almacen_inicial,
@@ -30,23 +20,26 @@ import {
   initial_state_preciosPlazos,
   initial_state_unidadVentaXDefecto,
 } from "../../../../../context/Catalogos/initialStatesProducto";
+
 import CrearProducto, {
   initial_state_preciosP,
 } from "../../../Catalogos/Producto/crearProducto";
-import { validaciones } from "../../../Catalogos/Producto/validaciones";
 import { formatoMexico } from "../../../../../config/reuserFunctions";
-import SnackBarMessages from "../../../../../components/SnackBarMessages";
 import ErrorPage from "../../../../../components/ErrorPage";
 
 import { ComprasContext } from "../../../../../context/Compras/comprasContext";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
-import { AlmacenProvider } from "../../../../../context/Almacenes/crearAlmacen";
-import { ClienteProvider } from "../../../../../context/Catalogos/crearClienteCtx";
 
 import { useQuery } from "@apollo/client";
 import { OBTENER_CONSULTA_GENERAL_PRODUCTO } from "../../../../../gql/Compras/compras";
 import PreciosDeVentaCompras from "./PreciosVenta";
 import { Dialog, DialogActions, DialogTitle, Slide } from "@material-ui/core";
+import { validateJsonEdit } from "../../../Catalogos/Producto/validateDatos";
+import { Alert, AlertTitle } from "@material-ui/lab";
+import { InfoOutlined } from "@material-ui/icons";
+import DescuentosInputs from "./Descuentos";
+import DatosProveedorAlmacen from "./DatosProveedorAlmacen";
+import { initial_state_datosProducto } from "../initial_states";
 
 export default function DatosProducto() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -56,7 +49,10 @@ export default function DatosProducto() {
     productosCompra,
     setProductosCompra,
     datosCompra,
-    setDatosCompra,
+    productoOriginal,
+    setProductoOriginal,
+    setPreciosVenta,
+	setDatosCompra
   } = useContext(ComprasContext);
   const {
     datos_generales,
@@ -89,8 +85,6 @@ export default function DatosProducto() {
     setPresentacionesEliminadas,
   } = useContext(RegProductoContext);
 
-  const [alert, setAlert] = useState({ message: "", status: "", open: false });
-
   /* Queries */
   const { loading, data, error, refetch } = useQuery(
     OBTENER_CONSULTA_GENERAL_PRODUCTO,
@@ -105,13 +99,13 @@ export default function DatosProducto() {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        height="30vh"
+        height="25vh"
       >
         <CircularProgress />
       </Box>
     );
   if (error) {
-    return <ErrorPage error={error} />;
+    return <ErrorPage error={error} altura={200} />;
   }
 
   const {
@@ -120,27 +114,9 @@ export default function DatosProducto() {
     proveedores,
   } = data.obtenerConsultaGeneralCompras;
 
-  const obtenerProveedorAlmacen = (tipo, value) => {
-    if (!value) {
-      setDatosCompra({ ...datosCompra, [tipo]: {} });
-      return;
-    }
-    setDatosCompra({ ...datosCompra, [tipo]: value });
-  };
-
   const obtenerSelectsProducto = (producto) => {
     if (!producto) {
-      setDatosProducto({
-        ...datosProducto,
-        producto: {},
-        costo: 0,
-        cantidad: 0,
-        descuento_porcentaje: 0,
-        descuento_precio: 0,
-        subtotal: 0,
-        impuestos: 0,
-        total: 0,
-      });
+      setDatosProducto(initial_state_datosProducto);
       resetInitialStates();
       return;
     }
@@ -164,8 +140,11 @@ export default function DatosProducto() {
       subtotal: precio_sin_impuesto,
       impuestos: parseFloat(impuestos.toFixed(2)),
       total: precio_con_impuesto,
+	  total_con_descuento: precio_con_impuesto,
     });
     setInitialStates(producto);
+    setProductoOriginal(producto);
+    setPreciosVenta(producto.precios.precios_producto);
   };
 
   const obtenerCostoCantidad = (e) => {
@@ -183,7 +162,8 @@ export default function DatosProducto() {
     });
   };
 
-  const agregarCompra = async () => {
+  const agregarCompra = async (actualizar_Precios) => {
+    /* Validaciones */
     if (
       !datosProducto.producto.datos_generales ||
       !datosCompra.proveedor.nombre_cliente ||
@@ -192,23 +172,7 @@ export default function DatosProducto() {
       return;
     }
 
-    const validate = validaciones(
-      datos_generales,
-      precios,
-      almacen_inicial,
-      presentaciones,
-      datosProducto.producto
-    );
-
-    if (validate.error) {
-      setAlert({
-        message: `Hay campos sin llenar`,
-        status: "error",
-        open: true,
-      });
-      return;
-    }
-
+    /* poner la unidad de venta por defecto si no agrego */
     if (unidadesVenta.length === 0) {
       unidadesVenta.push(unidadVentaXDefecto);
     } else {
@@ -216,6 +180,12 @@ export default function DatosProducto() {
         (unidades) => unidades.default
       );
       if (unidadxdefecto.length === 0) unidadesVenta.push(unidadVentaXDefecto);
+    }
+
+    if (actualizar_Precios) {
+      datosProducto.mantener_precio = false;
+    } else {
+      datosProducto.mantener_precio = true;
     }
 
     precios.precios_producto = preciosP;
@@ -243,25 +213,17 @@ export default function DatosProducto() {
     };
 
     datosProducto.producto = producto;
+    datosProducto.total = datosProducto.total_con_descuento;
 
     setProductosCompra([...productosCompra, datosProducto]);
-    setDatosProducto({
-      producto: {},
-      costo: 0,
-      cantidad: 0,
-      descuento_porcentaje: 0,
-      descuento_precio: 0,
-      subtotal: 0,
-      impuestos: 0,
-      total: 0,
-    });
-  };
-
-  const obtenerFecha = (date) => {
-    setDatosCompra({
-      ...datosCompra,
-      fecha_compra: date,
-    });
+	setDatosCompra({
+		...datosCompra, 
+		subtotal: datosCompra.subtotal + datosProducto.subtotal,
+		impuestos: datosCompra.impuestos + datosProducto.impuestos,
+		total: datosCompra.total + datosProducto.total,
+	});
+    setProductoOriginal({ precios: initial_state_precios });
+    setDatosProducto(initial_state_datosProducto);
   };
 
   /* SET STATES WHEN UPDATING */
@@ -308,138 +270,13 @@ export default function DatosProducto() {
     setPresentacionesEliminadas([]);
   };
 
-  /* SI NO EXISTE ESTA INFORMACION EN LA BD, ENVIAR A LA BD */
-  const validateJsonEdit = async (data, tipo) => {
-    if (tipo === "datos_generales") {
-      let object_date = {
-        clave_alterna: data.clave_alterna,
-        tipo_producto: data.tipo_producto,
-        nombre_comercial: data.nombre_comercial,
-        nombre_generico: data.nombre_generico,
-        receta_farmacia: data.receta_farmacia,
-      };
-      if (data.codigo_barras !== null && data.codigo_barras !== "")
-        object_date = { ...object_date, codigo_barras: data.codigo_barras };
-      if (data.descripcion !== null && data.descripcion !== "")
-        object_date = { ...object_date, descripcion: data.descripcion };
-      if (data.id_categoria !== null && data.id_categoria !== "")
-        object_date = { ...object_date, id_categoria: data.id_categoria };
-      if (data.categoria !== null && data.categoria !== "")
-        object_date = { ...object_date, categoria: data.categoria };
-      if (data.subcategoria !== null && data.subcategoria !== "")
-        object_date = { ...object_date, subcategoria: data.subcategoria };
-      if (data.id_subcategoria !== null && data.id_subcategoria !== "")
-        object_date = { ...object_date, id_subcategoria: data.id_subcategoria };
-      if (data.id_departamento !== null && data.id_departamento !== "")
-        object_date = { ...object_date, id_departamento: data.id_departamento };
-      if (data.departamento !== null && data.departamento !== "")
-        object_date = { ...object_date, departamento: data.departamento };
-      if (data.id_marca !== null && data.id_marca !== "")
-        object_date = { ...object_date, id_marca: data.id_marca };
-      if (data.marca !== null && data.marca !== "")
-        object_date = { ...object_date, marca: data.marca };
-      if (data.clave_producto_sat !== null && data.clave_producto_sat !== "")
-        object_date = {
-          ...object_date,
-          clave_producto_sat: data.clave_producto_sat,
-        };
-      return object_date;
-    } else if (tipo === "unidades_de_venta") {
-      let end_array = [];
-      for (var i = 0; i < data.length; i++) {
-        let object = {
-          _id: data[i]._id,
-          cantidad: data[i].cantidad,
-          id_producto: data[i].id_producto,
-          precio: data[i].precio,
-          unidad_principal: data[i].unidad_principal,
-          unidad: data[i].unidad,
-        };
-        if (data[i].codigo_barras !== null && data[i].codigo_barras !== "")
-          object = { ...object, codigo_barras: data[i].codigo_barras };
-        if (data[i].default !== null && data[i].default !== "")
-          object = { ...object, default: data[i].default };
-        end_array.push(object);
-      }
-      return end_array;
-    }
-  };
-
   return (
     <Fragment>
-      <SnackBarMessages alert={alert} setAlert={setAlert} />
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} md={4}>
-          <Box display="flex" alignItems="center">
-            <Autocomplete
-              id="combo-box-proveedor"
-              size="small"
-              fullWidth
-              options={proveedores}
-              getOptionLabel={(option) => option.nombre_cliente}
-              renderInput={(params) => (
-                <TextField {...params} label="Proveedor" variant="outlined" />
-              )}
-              onChange={(_, value) =>
-                obtenerProveedorAlmacen("proveedor", value)
-              }
-              getOptionSelected={(option) => option.nombre_cliente}
-              value={
-                datosCompra.proveedor.nombre_cliente
-                  ? datosCompra.proveedor
-                  : null
-              }
-            />
-            <ClienteProvider>
-              <RegistroProvedor
-                accion="registrar"
-                tipo="PROVEEDOR"
-                refetch={refetch}
-              />
-            </ClienteProvider>
-          </Box>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Box display="flex" alignItems="center">
-            <Autocomplete
-              id="combo-box-almacen"
-              size="small"
-              fullWidth
-              options={almacenes}
-              getOptionLabel={(option) => option.nombre_almacen}
-              renderInput={(params) => (
-                <TextField {...params} label="Almacen" variant="outlined" />
-              )}
-              onChange={(_, value) => obtenerProveedorAlmacen("almacen", value)}
-              getOptionSelected={(option) => option.nombre_almacen}
-              value={
-                datosCompra.almacen.nombre_almacen ? datosCompra.almacen : null
-              }
-            />
-            <AlmacenProvider>
-              <RegistroAlmacen accion="registrar" refetch={refetch} />
-            </AlmacenProvider>
-          </Box>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Box display="flex" alignItems="center">
-            <MuiPickersUtilsProvider utils={DateFnsUtils} locale={local}>
-              <KeyboardDatePicker
-                inputVariant="outlined"
-                margin="dense"
-                id="date-picker-dialog"
-                placeholder="ex: DD/MM/AAAA"
-                format="dd/MM/yyyy"
-                value={datosCompra.fecha_compra}
-                onChange={obtenerFecha}
-                KeyboardButtonProps={{
-                  "aria-label": "change date",
-                }}
-              />
-            </MuiPickersUtilsProvider>
-          </Box>
-        </Grid>
-      </Grid>
+      <DatosProveedorAlmacen
+        proveedores={proveedores}
+        almacenes={almacenes}
+        refetch={refetch}
+      />
       <Box my={1} />
       <Grid container spacing={1} alignItems="center">
         <Grid item>
@@ -534,6 +371,7 @@ export default function DatosProducto() {
               variant="outlined"
               size="small"
               fullWidth
+              disabled={!datosProducto.producto.datos_generales}
               value={datosProducto.costo}
               onChange={obtenerCostoCantidad}
               InputProps={{
@@ -544,66 +382,54 @@ export default function DatosProducto() {
             />
           </Box>
         </Grid>
-        <Grid item>
-          <Typography>Cantidad</Typography>
-          <Box width={60}>
-            <TextField
-              name="cantidad"
-              variant="outlined"
-              size="small"
-              fullWidth
-              inputMode="numeric"
-              value={datosProducto.cantidad}
-              onChange={obtenerCostoCantidad}
-            />
-          </Box>
-        </Grid>
+        {datosProducto.producto.datos_generales &&
+        datosProducto.producto.datos_generales.tipo_producto === "OTROS" ? (
+          <Grid item>
+            <Typography>Cantidad</Typography>
+            <Box width={80}>
+              <TextField
+                name="cantidad"
+                variant="outlined"
+                size="small"
+                fullWidth
+                inputMode="numeric"
+                disabled={!datosProducto.producto.datos_generales}
+                value={datosProducto.cantidad}
+                onChange={obtenerCostoCantidad}
+              />
+            </Box>
+          </Grid>
+        ) : null}
+
         <Grid item>
           <Typography>Descuento</Typography>
-          <Box display="flex" width={140}>
-            <TextField
-              variant="outlined"
-              size="small"
-              fullWidth
-              inputMode="numeric"
-              value={datosProducto.descuento_precio}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">$</InputAdornment>
-                ),
-              }}
-            />
-            <Box mr={1} />
-            <TextField
-              variant="outlined"
-              size="small"
-              fullWidth
-              inputMode="numeric"
-              value={datosProducto.descuento_porcentaje}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">%</InputAdornment>
-                ),
-              }}
-            />
-          </Box>
+          <DescuentosInputs />
         </Grid>
         <Grid item>
-          <Box>
+          <Box mx={1}>
             <Grid container spacing={2}>
               <Grid item>
+                <Typography style={{ fontSize: 16 }}>Subtotal:</Typography>
                 <Typography style={{ fontSize: 18 }}>
-                  Subtotal: <b>${formatoMexico(datosProducto.subtotal)}</b>
+                  <b>${formatoMexico(datosProducto.subtotal)}</b>
                 </Typography>
               </Grid>
               <Grid item>
+                <Typography style={{ fontSize: 16 }}>Impuestos:</Typography>
                 <Typography style={{ fontSize: 18 }}>
-                  Impuestos: <b>${formatoMexico(datosProducto.impuestos)}</b>
+                  <b>${formatoMexico(datosProducto.impuestos)}</b>
                 </Typography>
               </Grid>
               <Grid item>
+                <Typography style={{ fontSize: 16 }}>Descuento:</Typography>
                 <Typography style={{ fontSize: 18 }}>
-                  <b>Total: ${formatoMexico(datosProducto.total)}</b>
+                  <b>{datosProducto.descuento_porcentaje}%</b>
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography style={{ fontSize: 16 }}>Total:</Typography>
+                <Typography style={{ fontSize: 18 }}>
+                  <b>${formatoMexico(datosProducto.total_con_descuento)}</b>
                 </Typography>
               </Grid>
             </Grid>
@@ -612,35 +438,45 @@ export default function DatosProducto() {
       </Grid>
       <Box mt={1}>
         <Grid container>
-          <Grid item xs={12} md={7} padding="checkbox">
+          <Grid item xs={12} md={8} lg={7} padding="checkbox">
             <PreciosDeVentaCompras />
           </Grid>
           <Grid
             item
             xs={12}
-            md={5}
+            md={4}
+            lg={5}
             style={{ display: "flex", alignItems: "flex-end" }}
           >
-            <Box display="flex" width="100%" justifyContent="center">
-              <TallasProductos />
+            <Box display="flex" width="100%" >
+              {datosProducto.producto.datos_generales &&
+              datosProducto.producto.datos_generales.tipo_producto !==
+                "OTROS" ? (
+                <TallasProductos />
+              ) : null}
+
               <Box mx={1} />
-              <ModalAgregarCompra agregarCompra={agregarCompra} />
-			  {/* CONDICIONAR */}
-			  
-              {/* <Button
-                variant="contained"
-                color="primary"
-                startIcon={<Add />}
-                disableElevation
-                disabled={
-                  !datosProducto.producto.datos_generales ||
-                  !datosCompra.proveedor.nombre_cliente ||
-                  !datosCompra.almacen.nombre_almacen
-                }
-                onClick={() => agregarCompra()}
-              >
-                Agregar a compra
-              </Button> */}
+              {datosProducto.costo !==
+              productoOriginal.precios.precio_de_compra.precio_con_impuesto ? (
+                <ModalAgregarCompra agregarCompra={agregarCompra} />
+              ) : (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<Add />}
+                  disableElevation
+                  disabled={
+                    !datosProducto.producto.datos_generales ||
+                    !datosCompra.proveedor.nombre_cliente ||
+                    !datosCompra.almacen.nombre_almacen ||
+                    !datosProducto.costo ||
+                    !datosProducto.cantidad
+                  }
+                  onClick={() => agregarCompra()}
+                >
+                  Agregar a compra
+                </Button>
+              )}
             </Box>
           </Grid>
         </Grid>
@@ -675,7 +511,9 @@ const ModalAgregarCompra = ({ agregarCompra }) => {
         disabled={
           !datosProducto.producto.datos_generales ||
           !datosCompra.proveedor.nombre_cliente ||
-          !datosCompra.almacen.nombre_almacen
+          !datosCompra.almacen.nombre_almacen ||
+          !datosProducto.costo ||
+          !datosProducto.cantidad
         }
         onClick={() => handleClickOpen()}
       >
@@ -685,18 +523,27 @@ const ModalAgregarCompra = ({ agregarCompra }) => {
         open={open}
         TransitionComponent={Transition}
         keepMounted
-        onClose={handleClose}
+        onClose={() => handleClose()}
         aria-labelledby="modal-agregar-compra"
       >
-        <DialogTitle id="modal-agregar-compra">
-          <Typography variant="h6">
-            El costo es diferente al precio de compra actual
-          </Typography>
-          <Typography variant="h6">
-            ¿Desea actualizar los precios o mantenerlos?
-          </Typography>
+        <DialogTitle id="modal-agregar-compra" style={{ padding: 0 }}>
+          <Alert
+            severity="info"
+            icon={<InfoOutlined style={{ fontSize: 30 }} />}
+            style={{ padding: 16 }}
+          >
+            <AlertTitle style={{ fontSize: 20 }}>
+              El costo es diferente al precio de compra actual
+            </AlertTitle>
+            <Typography style={{ fontSize: 18 }}>
+              ¿Desea actualizar los precios o mantenerlos?
+            </Typography>
+          </Alert>
         </DialogTitle>
-        <DialogActions>
+        <DialogActions style={{ display: "flex", justifyContent: "center" }}>
+          <Button onClick={() => handleClose()} color="default">
+            Cancelar
+          </Button>
           <Button
             onClick={() => {
               agregarCompra();
