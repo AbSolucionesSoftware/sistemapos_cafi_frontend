@@ -291,9 +291,18 @@ export const PRODUCTOS_ELIMINADOS = gql`
 		}
 	}
 `;
+
 export const ACTIVAR_PRODUCTOS = gql`
 	mutation activarProducto($id: ID!) {
 		activarProducto(id: $id) {
+			message
+		}
+	}
+`;
+
+export const CREAR_PRODUCTO_RAPIDO = gql`
+	mutation crearProductoRapido($input: CrearProductoRapidoInput) {
+		crearProductoRapido(input: $input) {
 			message
 		}
 	}

@@ -33,11 +33,11 @@ import CancelarVenta from '../../pages/ventas/Operaciones/CancelarVenta';
 import CerrarVenta from '../../pages/ventas/Operaciones/CerrarVenta';
 import ConsultarPrecio from '../../pages/ventas/Operaciones/ConsultarPrecio';
 import Cotizacion from '../../pages/ventas/Cotizacion/Cotizacion';
-import ArticuloRapido from '../../pages/ventas/ArticuloRapido/ArticuloRapido';
 import VentaEnEspera from '../../pages/ventas/Operaciones/VentaEnEspera';
 import ListaApartados from '../../pages/ventas/Apartados/ListaApartados';
 import CrearApartado from '../../pages/ventas/Apartados/CrearApartado';
 import ClientesVentas from '../../pages/ventas/ClientesVentas/ClientesVentas';
+import ProductoRapidoIndex from '../../pages/ventas/ArticuloRapido/indexArticuloRapido';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -84,7 +84,7 @@ function NavegacionVentas(props) {
 			case 'cotizacion':
 				return <Cotizacion handleClickOpen={handleClickOpen} />
 			case 'articuloRapido':
-				return <ArticuloRapido handleClickOpen={handleClickOpen} />
+				return <ProductoRapidoIndex handleClickOpen={handleClickOpen} accion={true} />
 			case 'ventaEnEspera':
 				return <VentaEnEspera handleClickOpen={handleClickOpen} />
 			case 'listaApartados':
