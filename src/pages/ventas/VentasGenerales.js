@@ -6,6 +6,7 @@ import React from 'react';
 import useStyles from './styles';
 import TablaVentas from './TablaVentas';
 
+
 import usuario from '../../icons/usuarios.svg';
 import codigo from '../../icons/ventas/busqueda-de-codigos-de-barras.svg';
 import vendedor from '../../icons/ventas/admin.svg';
