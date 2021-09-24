@@ -1,9 +1,6 @@
-import React from 'react';
-
-import { Box, Button, DialogActions, DialogContent, Divider, Grid,   Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core'
-
+import React, { useState } from 'react';
+import { Box, Button, Dialog, DialogActions, DialogContent, Divider, Grid,   Paper, Slide, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
-
 import useStyles from '../styles';
 
 const columns = [
@@ -25,12 +22,42 @@ const rows = [
 	createData(2, 6, 50),
 ];
 
-export default function PreciosProductos({handleClickOpen}) {
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export default function PreciosProductos() {
     
     const classes = useStyles();
+    const [open, setOpen] = useState(false);
+    
+    const handleClickOpen = () => { 
+		setOpen(!open);
+	};
 
     return (
         <div>
+            <Button 
+                className={classes.borderBotonChico}
+                onClick={handleClickOpen}
+            >
+                <Box>
+                    <Box>
+                        <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/money.svg' alt="icono money" style={{fontSize: 40}} />
+                    </Box>
+                    <Box>
+                        Precios
+                    </Box>
+                </Box>
+            </Button>
+
+            <Dialog
+				maxWidth='lg'
+				open={open} 
+				onClose={handleClickOpen} 
+				TransitionComponent={Transition}
+			>
             <DialogContent>
                 <Grid container item lg={12}>
                     <Box 
@@ -112,6 +139,7 @@ export default function PreciosProductos({handleClickOpen}) {
                     Aceptar
                 </Button>
             </DialogActions>
+        </Dialog>
         </div>
     )
 }

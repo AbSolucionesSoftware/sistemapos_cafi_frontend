@@ -35,7 +35,7 @@ export default function Productos() {
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
 	const { alert, setAlert } = useContext(RegProductoContext);
-
+	
 	const handleClickOpen = () => {
 		setOpen(true);
 	};

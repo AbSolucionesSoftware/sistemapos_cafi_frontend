@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { BrowserRouter as Switch, Route } from 'react-router-dom';
 import NavegacionVentas from '../Navegaciones/NavegacionVentas';
 import { Grid, Toolbar } from '@material-ui/core';
+import { VentasProvider } from '../../context/Ventas/ventasContext';
 
 const drawerWidth = '30%';
 
@@ -31,11 +32,13 @@ export default function LayoutVentas(props) {
 
 	return (
 		<div className={classes.root}>
-			<Grid style={{ width: `calc(100% - ${drawerWidth})`}}>
-				<Toolbar className={classes.toolbar} />
-				<LoadRoutes routes={routes} />
-			</Grid>
-			<NavegacionVentas />
+			<VentasProvider>
+				<Grid style={{ width: `calc(100% - ${drawerWidth})`}}>
+					<Toolbar className={classes.toolbar} />
+					<LoadRoutes routes={routes} />
+				</Grid>
+				<NavegacionVentas />
+			</VentasProvider>
 		</div>
 	);
 }
