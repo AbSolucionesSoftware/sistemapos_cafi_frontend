@@ -134,10 +134,23 @@ export default function ArticuloRapido() {
     variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
   });
 
+  const resetInitialStates = () => {
+    setDatosGenerales(initial_state_datos_generales);
+    setPrecios(initial_state_precios);
+    setUnidadVentaXDefecto([]);
+    setPreciosP(initial_state_preciosP);
+    setUnidadesVenta([]);
+    setCentroDeCostos({});
+    setValidacion({ error: false, message: "" });
+    setPresentaciones([]);
+    setValue(0);
+  };
+
   const [open, setOpen] = useState(false);
   const [cantidad, setCantidad] = useState(0);
 
   const handleClickOpen = () => {
+    resetInitialStates();
 		setOpen(!open);
 	};
 
@@ -163,7 +176,7 @@ export default function ArticuloRapido() {
   };
 
   const saveData = async () => {
-    // setCargando(true);
+    setCargando(true);
     if (datos_generales.tipo_producto === 'OTROS' && cantidad < 1) {
         return setValidacion(true);
     }else{
@@ -234,19 +247,6 @@ export default function ArticuloRapido() {
       });
       handleClickOpen();
     }
-  };
-
-
-  const resetInitialStates = () => {
-    setDatosGenerales(initial_state_datos_generales);
-    setPrecios(initial_state_precios);
-    setUnidadVentaXDefecto([]);
-    setPreciosP(initial_state_preciosP);
-    setUnidadesVenta([]);
-    setCentroDeCostos({});
-    setValidacion({ error: false, message: "" });
-    setPresentaciones([]);
-    setValue(0);
   };
 
   const saveButton = (
