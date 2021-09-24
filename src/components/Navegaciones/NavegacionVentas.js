@@ -1,10 +1,9 @@
-import React, { useState, Fragment} from 'react';
-import { Drawer, AppBar, Dialog, Toolbar, Divider, BottomNavigation, BottomNavigationAction, Button, Grid, Slide, Badge } from '@material-ui/core';
+import React, { useState, Fragment, useContext} from 'react';
+import { Drawer, AppBar, Toolbar, Divider, BottomNavigation, Button, Grid, Slide, Badge } from '@material-ui/core';
 import { CssBaseline, Avatar, Box, Typography } from '@material-ui/core';
 import { withRouter } from 'react-router';
 import { FaPowerOff } from 'react-icons/fa';
-import { FcDonate, FcExpired } from 'react-icons/fc';
-import { FcBusinessman,FcServices, FcCurrencyExchange, FcPaid } from 'react-icons/fc';
+import { FcBusinessman, FcPaid } from 'react-icons/fc';
 import useStyles from './styles';
 // import addIcon from '../../icons/ventas/add.svg'
 // import articuloRapido from '../../icons/ventas/tiempo-rapido.svg'
@@ -22,6 +21,8 @@ import useStyles from './styles';
 // import tagIcon from '../../icons/ventas/tag.svg'
 // import shoppingcartIcon from '../../icons/ventas/shopping-cart.svg'
 
+import Abonos from '../../pages/ventas/Abonos/Abonos';
+import VentasCredito from '../../pages/ventas/VentasCredito/VentasCredito';
 import DepositoRetiroCaja from '../../pages/ventas/Operaciones/DepositoRetiroCaja';
 import Turnos from '../../pages/ventas/AbrirCerrarTurno/Turnos';
 import CerrarCaja from '../../pages/ventas/Operaciones/CerrarCaja';
@@ -38,16 +39,14 @@ import ListaApartados from '../../pages/ventas/Apartados/ListaApartados';
 import CrearApartado from '../../pages/ventas/Apartados/CrearApartado';
 import ClientesVentas from '../../pages/ventas/ClientesVentas/ClientesVentas';
 import ProductoRapidoIndex from '../../pages/ventas/ArticuloRapido/indexArticuloRapido';
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-	return <Slide direction="up" ref={ref} {...props} />;
-});
+import SnackBarMessages from '../SnackBarMessages';
+import { VentasContext } from '../../context/Ventas/ventasContext';
 
 function NavegacionVentas(props) {
 	const classes = useStyles();
+	const { alert, setAlert } = useContext(VentasContext);
 	const [ value, setValue ] = useState('venta-general');
 	const [open, setOpen] = useState(false);
-	const [ventana, setVentana] = useState('');
 
 	const signOut = () => {
 		localStorage.removeItem('sesionCafi');
@@ -57,45 +56,6 @@ function NavegacionVentas(props) {
 
 	const handleClickOpen = () => {
 		setOpen(!open);
-	};
-
-	const ventanas = () => {
-		switch (ventana) {
-			case 'retiroDepositoCaja':
-				return <DepositoRetiroCaja handleClickOpen={handleClickOpen} />
-			case 'abrirCerrarTurno':
-				return <Turnos handleClickOpen={handleClickOpen} />
-			case 'cerrarCaja':
-				return <CerrarCaja handleClickOpen={handleClickOpen} />
-			case 'ventasEspera':
-				return <VentasEspera handleClickOpen={handleClickOpen} />
-			case 'ventasRealizadas':
-				return <VentasRealizadas handleClickOpen={handleClickOpen} />
-			case 'abrirCajon':
-				return <AbrirCajon handleClickOpen={handleClickOpen} />
-			case 'cancelarVenta':
-				return <CancelarVenta handleClickOpen={handleClickOpen} />
-			case 'preciosProductos':
-				return <PreciosProductos handleClickOpen={handleClickOpen} />
-			case 'consultarPrecio':
-				return <ConsultarPrecio handleClickOpen={handleClickOpen} />
-			case 'cerrarVenta':
-				return <CerrarVenta handleClickOpen={handleClickOpen} />
-			case 'cotizacion':
-				return <Cotizacion handleClickOpen={handleClickOpen} />
-			case 'articuloRapido':
-				return <ProductoRapidoIndex handleClickOpen={handleClickOpen} accion={true} />
-			case 'ventaEnEspera':
-				return <VentaEnEspera handleClickOpen={handleClickOpen} />
-			case 'listaApartados':
-				return <ListaApartados handleClickOpen={handleClickOpen} />
-			case 'crearApartado':
-				return <CrearApartado handleClickOpen={handleClickOpen} />
-			case 'clientesVentas':
-				return <ClientesVentas handleClickOpen={handleClickOpen} />
-			default:
-				break;
-		}
 	};
 
 	// function funcion_tecla(event) {
@@ -111,6 +71,7 @@ function NavegacionVentas(props) {
 	return (
 		<Fragment>
 			<CssBaseline />
+			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<AppBar position="fixed" elevation={1} className={classes.appBar}>
 				<BottomNavigation
 					value={value}
@@ -120,89 +81,44 @@ function NavegacionVentas(props) {
 					showLabels
 					className={classes.navigationTop}
 				>
-					<BottomNavigationAction
-						value="servicios"
-						label={<Typography variant="subtitle2">Servicios</Typography>}
-						icon={<FcServices className={classes.iconSizeSuperior} />}
-					/>
-					<Divider orientation="vertical" />
-					<BottomNavigationAction
-						onClick={() =>{
-							setVentana('articuloRapido');
-							handleClickOpen();
-						}}
-						value="articulo-rapido"
-						label={<Typography variant="subtitle2">Articulo Rapido</Typography>}
-						icon={<img src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tiempo-rapido.svg" alt="icono caja2" className={classes.iconSizeSecondSuperior} />}
-					/>
-					<Divider orientation="vertical" />
-					<BottomNavigationAction
-						onClick={() =>{
-							setVentana('cotizacion');
-							handleClickOpen();
-						}}
-						value="cotizacion"
-						label={<Typography variant="subtitle2">Cotización</Typography>}
-						icon={<FcCurrencyExchange className={classes.iconSizeSuperior} />}
-					/>
-					
-					<Divider orientation="vertical" />
-					<BottomNavigationAction
-						onClick={() =>{
-							setVentana('retiroDepositoCaja');
-							handleClickOpen();
-						}}
-						value="retiro-caja"
-						label={<Typography variant="subtitle2">Deposito/Retiro</Typography>}
-						icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cash-register2.svg' alt="icono caja" className={classes.iconSizeSecondSuperior} />}
-					/>
-					<Divider orientation="vertical" />
-					<BottomNavigationAction
-						value="abrir-turno"
-						onClick={() =>{
-							setVentana('abrirCerrarTurno');
-							handleClickOpen();
-						}}
-						label={<Typography variant="subtitle2">Abrir/Cerrar turno</Typography>}
-						icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono turno" className={classes.iconSizeSecondSuperior} />}
-					/>
-					<Divider orientation="vertical" />
-					<BottomNavigationAction
-						value="corte-caja"
-						onClick={() =>{
-							setVentana('cerrarCaja');
-							handleClickOpen();
-						}}
-						label={<Typography variant="subtitle2">Corte de caja</Typography>}
-						icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cash-register.svg' alt="icono caja2" className={classes.iconSizeSecondSuperior} />}
-					/>
-					<Divider orientation="vertical" />
-					<BottomNavigationAction
-						value="en-espera"
-						onClick={() =>{
-							setVentana('ventaEnEspera');
-							handleClickOpen();
-						}}
-						label={<Typography variant="subtitle2">En espera</Typography>}
-						icon={<FcExpired className={classes.iconSizeSuperior} />}
-					/>
-					<Divider orientation="vertical" />
-					<BottomNavigationAction
-						value="regresar"
+					<ProductoRapidoIndex />
+						<Divider orientation="vertical" />
+					<Cotizacion /> 
+						<Divider orientation="vertical" />
+					<DepositoRetiroCaja />
+						<Divider orientation="vertical" />
+					<Turnos />
+						<Divider orientation="vertical" />
+					<CerrarCaja />
+						<Divider orientation="vertical" />
+					<VentaEnEspera handleClickOpen={handleClickOpen} />
+						<Divider orientation="vertical" />
+					<Button
 						onClick={() => props.history.push('/admin')}
-						label={<Typography variant="subtitle2">Administrador</Typography>}
-						icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/admin.svg' alt="icono admin" className={classes.iconSizeSecondSuperior} />}
-					/>
-					<Divider orientation="vertical" />
-					<BottomNavigationAction
-						value="salir"
+						style={{textTransform: 'none'}}
+					>
+						<Box display="flex" flexDirection="column">
+							<Box display="flex" justifyContent="center" alignItems="center">
+								<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/admin.svg' alt="icono admin" className={classes.iconSizeSecondSuperior} />
+							</Box>
+							Administrador
+						</Box>
+					</Button>
+						<Divider orientation="vertical" />
+					<Button
 						onClick={() =>{
 							props.history.push('/')
 							signOut()
 						}}
-						label={<Typography variant="subtitle2">Salir</Typography>}
-						icon={<FaPowerOff className={classes.iconSizeSuperior} style={{color: 'red'}} />}
-					/>
+						style={{textTransform: 'none'}}
+					>
+						<Box display="flex" flexDirection="column">
+							<Box display="flex" justifyContent="center" alignItems="center">
+								<FaPowerOff className={classes.iconSizeSuperior} style={{color: 'red'}} />
+							</Box>
+								Salir
+						</Box>
+					</Button>
 					<Box width="350px" display="flex" justifyContent="flex-end">
 						<Box display="flex" alignItems="center">
 							<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" className={classes.avatar} />
@@ -240,34 +156,8 @@ function NavegacionVentas(props) {
 				<Toolbar className={classes.navigationTop} />
 				<Grid container className={classes.drawerColor}>
 					<Grid item lg={6}>
-						<Button 
-							className={classes.borderBoton}
-						>
-							<Box>
-								<Box>
-									<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/add.svg' alt="icono credito" className={classes.iconSizeSecondInferiorGrande} />
-								</Box>
-								<Box>
-									Venta Credito
-								</Box>
-							</Box>
-						</Button>
-						<Button 
-							className={classes.borderBoton}
-							onClick={() =>{
-								setVentana('crearApartado');
-								handleClickOpen();
-							}}
-						>
-							<Box>
-								<Box>
-									<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tag.svg' alt="icono apartados" className={classes.iconSizeSecondInferiorGrande} />
-								</Box>
-								<Box>
-									Apartar Producto
-								</Box>
-							</Box>
-						</Button>
+						<VentasCredito />
+						<CrearApartado />
 					</Grid>
 					<Grid item lg={6}>
 						<Button className={classes.borderBoton}>
@@ -280,185 +170,28 @@ function NavegacionVentas(props) {
 								</Box>
 							</Box>
 						</Button>
-						<Button className={classes.borderBoton}>
-							<Box>
-								<Box>
-									<FcDonate className={classes.iconSizeInferiorGrande} />
-								</Box>
-								<Box>
-									Abonos
-								</Box>
-							</Box>
-						</Button>
+						<Abonos />
 					</Grid>
 				</Grid>
-				{/* <Box mt={4} /> */}
+
 				<Grid container className={classes.drawerColor}>
 					<Grid item lg={4}>
-						<Button 
-							className={classes.borderBotonChico}
-							onClick={() =>{
-								setVentana('cancelarVenta');
-								handleClickOpen();
-							}}
-						>
-							<Box>
-								<Box>
-									<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shopping-cart.svg' alt="icono cancelarventa" className={classes.iconSizeSecondInferior} />
-								</Box>
-								<Box>
-									Cancelar Venta
-								</Box>
-							</Box>
-						</Button>
-						<Button 
-							className={classes.borderBotonChico}
-							onClick={() =>{
-								setVentana('abrirCajon');
-								handleClickOpen();
-							}}
-						>
-							<Box>
-								<Box>
-									<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cajon.svg' alt="icono ventas" className={classes.iconSizeSecondInferior} />
-								</Box>
-								<Box>
-									Cajon
-								</Box>
-							</Box>
-						</Button>
-						<Button 
-							className={classes.borderBotonChico}
-							onClick={() =>{
-								setVentana('consultarPrecio');
-								handleClickOpen();
-							}}
-						>
-							<Box>
-								<Box>
-									<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/precios.svg' alt="icono ventas" className={classes.iconSizeSecondInferior} />
-								</Box>
-								<Box>
-									Consultar Precio
-								</Box>
-							</Box>
-						</Button>
+						<CancelarVenta />
+						<AbrirCajon />
+						<ConsultarPrecio />
 					</Grid>
 					<Grid item lg={4}>
-						<Button 
-							className={classes.borderBotonChico}
-							onClick={() =>{
-								setVentana('cerrarVenta');
-								handleClickOpen();
-							}}
-						>
-							<Box>
-								<Box>
-									<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cart.svg' alt="icono ventas" className={classes.iconSizeSecondInferior} />
-								</Box>
-								<Box>
-									Pagar
-								</Box>
-							</Box>
-						</Button>
-						<Button 
-							className={classes.borderBotonChico}
-							onClick={() =>{
-								setVentana('clientesVentas');
-								handleClickOpen();
-							}}
-						>
-							<Box>
-								<Box>
-									<FcBusinessman className={classes.iconSizeInferior} />
-								</Box>
-								<Box>
-									Clientes
-								</Box>
-							</Box>
-						</Button>
-						<Button 
-							className={classes.borderBotonChico}
-							onClick={() =>{
-								setVentana('ventasEspera');
-								handleClickOpen();
-							}}
-						>
-							<Box>
-								<Box>
-									<Badge badgeContent={4} color="primary">
-										<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/lista-de-espera.svg' alt="icono caja2" className={classes.iconSizeSecondInferior} />
-									</Badge>
-								</Box>
-								<Box>
-									Lista Espera
-								</Box>
-							</Box>
-						</Button>
+						<CerrarVenta />
+						<ClientesVentas />
+						<VentasEspera />
 					</Grid>
 					<Grid item lg={4}>
-						<Button 
-							className={classes.borderBotonChico}
-							onClick={() =>{
-								setVentana('ventasRealizadas');
-								handleClickOpen();
-							}}
-						>
-							<Box>
-								<Box>
-								<FcPaid className={classes.iconSizeInferior} />
-								</Box>
-								<Box>
-									Ventas Realizadas
-								</Box>
-							</Box>
-						</Button>
-						<Button 
-							className={classes.borderBotonChico}
-							onClick={() =>{
-								setVentana('preciosProductos');
-								handleClickOpen();
-							}}
-						>
-							<Box>
-								<Box>
-									<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/money.svg' alt="icono money" className={classes.iconSizeSecondInferior} />
-								</Box>
-								<Box>
-									Precios
-								</Box>
-							</Box>
-						</Button>
-						<Button 
-							className={classes.borderBotonChico}
-							onClick={() =>{
-								setVentana('listaApartados');
-								handleClickOpen();
-							}}
-						>
-							<Box>
-								<Box>
-									<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tag.svg' alt="icono apartados" className={classes.iconSizeSecondInferior} />
-								</Box>
-								<Box>
-									Lista Apartados
-								</Box>
-							</Box>
-						</Button>
+						<VentasRealizadas />
+						<PreciosProductos />
+						<ListaApartados />
 					</Grid>
 				</Grid>
 			</Drawer>
-
-
-			<Dialog
-				maxWidth='lg'
-				open={open} 
-				onClose={handleClickOpen} 
-				TransitionComponent={Transition}
-			>
-				{ventanas()}
-			</Dialog>
-
 		</Fragment>
 	);
 }

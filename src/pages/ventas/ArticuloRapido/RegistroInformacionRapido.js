@@ -22,8 +22,8 @@ const useStyles = makeStyles((theme) => ({
 export default function RegistroInformacionRapido({ setCantidad, cantidad }) {
 	const { datos_generales, precios, setPrecios, setDatosGenerales, validacion } = useContext(RegProductoContext);
 	const { unidadVentaXDefecto, setUnidadVentaXDefecto, update } = useContext(RegProductoContext);
-	
-    const obtenerCampos = (e) => {
+
+	const obtenerCampos = (e) => {
 		if (e.target.name === 'codigo_barras') {
 			setUnidadVentaXDefecto({
 				...unidadVentaXDefecto,
@@ -163,23 +163,25 @@ export default function RegistroInformacionRapido({ setCantidad, cantidad }) {
 							<FormHelperText>{validacion.message}</FormHelperText>
 						</FormControl>
 					</Box>
-					<Box width="100%">
-						<Typography>
-							<span className="obligatorio">* </span>Cantidad
-						</Typography>
-						<TextField
-							fullWidth
-							size="small"
-							error={validacion.error && !cantidad}
-							name="cantidad"
-							type='number'
-							id="form-producto-nombre-generico"
-							variant="outlined"
-							value={cantidad ? cantidad : ''}
-							helperText={validacion.message}
-							onChange={(e) => setCantidad(parseInt(e.target.value))}
-						/>
-					</Box>
+					{datos_generales.tipo_producto === "OTROS" ? (
+						<Box width="100%">
+							<Typography>
+								<span className="obligatorio">* </span>Cantidad
+							</Typography>
+							<TextField
+								fullWidth
+								size="small"
+								error={validacion.error && !cantidad}
+								name="cantidad"
+								type='number'
+								id="form-producto-nombre-generico"
+								variant="outlined"
+								value={cantidad ? cantidad : ''}
+								helperText={validacion.message}
+								onChange={(e) => setCantidad(parseInt(e.target.value))}
+							/>
+						</Box>
+					):(null)}
 				</div>
 				<div className={classes.formInputFlex}>
                     <Box width="100%">

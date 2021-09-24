@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 
-import {  Box, Button, DialogContent,  Grid, IconButton, InputBase, makeStyles, Paper, Typography } from '@material-ui/core'
+import {  Box, Button, Dialog, DialogContent,  Grid, IconButton, InputBase, makeStyles, Paper, Slide, Typography } from '@material-ui/core'
 import { Search } from '@material-ui/icons';
 import ListaClientes from '../../sucursales/Catalogos/Cliente/ListaClientes';
 import CrearCliente from '../../sucursales/Catalogos/Cliente/CrearCliente';
 import { ClienteProvider } from '../../../context/Catalogos/crearClienteCtx';
 import CloseIcon from '@material-ui/icons/Close';
 import { FcBusinessman } from 'react-icons/fc';
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -25,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function ClientesVentas({handleClickOpen}) {
+export default function ClientesVentas() {
 
     const classes = useStyles();
 	
@@ -36,9 +40,35 @@ export default function ClientesVentas({handleClickOpen}) {
 		if (e.key === 'Enter') setFiltro(e.target.defaultValue);
 	};
 
+    const [open, setOpen] = useState(false);
+    
+    const handleClickOpen = () => { 
+		setOpen(!open);
+	};
+
     return (
         <div>
             <ClienteProvider>
+
+            <Button 
+                className={classes.borderBotonChico}
+                onClick={handleClickOpen}
+            >
+                <Box>
+                    <Box>
+                        <FcBusinessman style={{fontSize: 50}} />
+                    </Box>
+                    <Box>
+                        Clientes
+                    </Box>
+                </Box>
+            </Button>
+            <Dialog
+                maxWidth='lg'
+                open={open} 
+                onClose={handleClickOpen} 
+                TransitionComponent={Transition}
+			>
                 <DialogContent>
                     <Grid container item lg={12}>
                         <Box ml={3} display='flex' flexGrow={1}  alignItems='center'>
@@ -76,6 +106,7 @@ export default function ClientesVentas({handleClickOpen}) {
                         <ListaClientes tipo="CLIENTE" filtro={filtro} />
                     </Box>
                 </DialogContent>
+            </Dialog>
             </ClienteProvider>
         </div>
     )
