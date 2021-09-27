@@ -1,31 +1,25 @@
 import React, { Fragment, useState } from 'react'
 import useStyles from '../styles';
-
-import { Box, Button, Dialog, DialogActions, Divider, Grid, IconButton,  Paper, Slide, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@material-ui/core'
+import moment from 'moment';
+import 'moment/locale/es';
+import { Box, Button, Dialog, DialogActions, Divider, Grid, IconButton,  InputBase,  Paper, Slide, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@material-ui/core'
 import { Search } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CloseIcon from '@material-ui/icons/Close';
+import AddIcon from '@material-ui/icons/Add';
+import { useQuery } from "@apollo/client";
+import { OBTENER_PRODUCTOS } from "../../../gql/Catalogos/productos";
+import { OBTENER_CLIENTES } from '../../../gql/Catalogos/clientes';
+import { Autocomplete } from '@material-ui/lab';
+moment.locale('es');
 
 
 const columns = [
-	{ id: 'folio', label: 'Folio', minWidth: 20, align: 'center' },
-	{ id: 'producto', label: 'Producto', minWidth: 160, align: 'center'},
-    { id: 'enganche', label: 'Enganche', minWidth: 160, align: 'center'},
+	{ id: 'codigo', label: 'Codigo Barras', minWidth: 20, align: 'center' },
+	{ id: 'nombre', label: 'Nombre', minWidth: 160, align: 'center'},
+    { id: 'catnidad', label: 'Cantidad', minWidth: 20, align: 'center' },
+    { id: 'precio', label: 'Precio', minWidth: 160, align: 'center'},
     { id: 'total', label: 'Total', minWidth: 160, align: 'center'}
-];
-
-function createData(folio, producto, enganche, total) {
-	return { folio, producto, enganche, total};
-}
-
-const rows = [
-	createData(123, "Refrigerador", 2501, 5000 ),
-    createData(123, "Refrigerador", 2501, 5000 ),
-    createData(123, "Refrigerador", 2501, 5000 ),
-    createData(123, "Refrigerador", 2501, 5000 ),
-    createData(123, "Refrigerador", 2501, 5000 ),
-    createData(123, "Refrigerador", 2501, 5000 ),
-    createData(123, "Refrigerador", 2501, 5000 ),
 ];
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -33,11 +27,32 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function CrearApartado() {
-    
-    const classes = useStyles();
-
+    const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+    const hoy = moment();
     const [ page, setPage ] = React.useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = React.useState(5);
+    const classes = useStyles();
+    const [ open, setOpen ] = useState(false);
+    const [ datosProducto, setDatosProducto ] = useState([]);
+    const [ cantidad, setCantidad ] = useState(0);
+    const [ productosApartados, setProductosApartados] = useState([]);
+    const [ datosApartado, setDatosApartado ] = useState([]);
+
+    const { loading, data, error, refetch } = useQuery(
+        OBTENER_PRODUCTOS,
+        {
+          variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id },
+        }
+    );
+    const clientes = useQuery(OBTENER_CLIENTES, {
+		variables: { tipo:'CLIENTE', filtro: '' }
+	});
+    if (!clientes) return null;
+    if (loading) return null;
+
+    const handleClickOpen = () => { 
+		setOpen(!open);
+	};
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
@@ -48,11 +63,63 @@ export default function CrearApartado() {
 		setPage(0);
 	};
 
-    const [open, setOpen] = useState(false);
-    const handleClickOpen = () => { 
-		setOpen(!open);
-	};
+    const obtenerSelectsProducto = ( value ) => {
+        if (!value) {
+            setDatosProducto({ ...datosProducto,});
+          return;
+        }
+        setDatosProducto({ ...datosProducto, producto: value});
+    };
 
+    const obtenerCliente = (tipo, value) => {
+        if (!value) {
+            setDatosApartado({ ...datosApartado, [tipo]: {} });
+          return;
+        }
+        setDatosApartado({ ...datosApartado, [tipo]: value });
+    };
+    
+    const obtenerDatosApartado =(e)=>{
+        if (e.target.name === 'engancheApartado') {
+            setDatosApartado({...datosApartado, [e.target.name]: parseInt(e.target.value)});
+        }else{
+            setDatosApartado({...datosApartado, [e.target.name]: e.target.value});
+        }
+    };
+
+    const agregarProductos = () => {
+        productosApartados.push({
+            producto: datosProducto.producto,
+            cantidad: cantidad,
+            total: (datosProducto.producto.unidades_de_venta[0].precio * cantidad)
+        });
+
+        setDatosProducto([]);
+        setCantidad(0);
+    }
+
+    console.log(productosApartados);
+
+    const input = {
+        cliente: datosApartado.cliente,
+        fechaVencimiento: datosApartado.fechaVencimiento,
+        engancheApartado: datosApartado.engancheApartado,
+        productosApartados,
+        fechaApartado: moment().locale('es-mx').format(),
+        usuario: sesion.nombre,
+        sucursal: sesion.sucursal._id, 
+        empresa: sesion.empresa._id,
+        abonos: {}
+    };
+
+    function borrarProducto(key) {
+        productosApartados.forEach(function(elemento, indice, array) {
+            if(key === indice){
+                productosApartados.splice(key, 1);
+            }
+        })
+        return productosApartados
+    };
 
     return (
         <Fragment>
@@ -101,17 +168,17 @@ export default function CrearApartado() {
                                 <Box display="flex" >
                                     <Box >
                                         <Typography variant="caption">
-                                            31/12/2021 - 08:00 hrs.
+                                            {hoy.format('dddd D MMMM YYYY hh:mm')}
                                         </Typography>
                                     </Box>
                                     <Box  ml={2}>
                                         <Typography variant="caption">
-                                            Caja 3
+                                            <b>Caja: </b> 3
                                         </Typography>
                                     </Box>
                                     <Box  ml={2}>
                                         <Typography variant="caption">
-                                            <b>Atiende:</b> Luis Flores
+                                            <b>Atiende: </b> {sesion.nombre}
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -133,15 +200,26 @@ export default function CrearApartado() {
                             <Typography>
                                 Cliente:
                             </Typography>
-                            <Box display="flex" alignItems="center">
-                                <TextField
-                                    fullWidth
+                            <Box display="flex" alignItems="center" width='auto'>
+                                <Autocomplete
+                                    id="combo-box-clientes"
                                     size="small"
-                                    variant="outlined"
+                                    fullWidth
+                                    options={clientes.data.obtenerClientes}
+                                    getOptionLabel={(option) => option.nombre_cliente}
+                                    renderInput={(params) => (
+                                        <TextField {...params} variant="outlined" />
+                                    )}
+                                    onChange={(_, value) =>
+                                        obtenerCliente("cliente", value)
+                                    }
+                                    getOptionSelected={(option) => option.nombre_cliente}
+                                    value={
+                                        datosApartado?.cliente
+                                        ? datosApartado.cliente
+                                        : null
+                                    }
                                 />
-                                <IconButton>
-                                    <Search />
-                                </IconButton>
                             </Box>
                         </Box>
                         <Box width="100%">
@@ -152,7 +230,10 @@ export default function CrearApartado() {
                                 <TextField
                                     fullWidth
                                     size="small"
+                                    type="number"
                                     variant="outlined"
+                                    name='engancheApartado'
+                                    onChange={obtenerDatosApartado}
                                 />
                             </Box>
                         </Box>
@@ -163,10 +244,66 @@ export default function CrearApartado() {
                             <Box display="flex">
                                 <TextField
                                     fullWidth
+                                    type='date'
+                                    size="small"
+                                    name='fechaVencimiento'
+                                    variant="outlined"
+                                    onChange={obtenerDatosApartado}
+                                />
+                            </Box>
+                        </Box>
+                    </div>
+                    <div className={classes.formInputFlex}>
+                        <Box width="100%">
+                            <Typography>Producto</Typography>
+                            <Box display="flex" alignItems="center" width='auto'>
+                                <Autocomplete
+                                    id="combo-box-clientes"
+                                    size="small"
+                                    fullWidth
+                                    options={data?.obtenerProductos}
+                                    getOptionLabel={(option) => option?.datos_generales?.nombre_comercial}
+                                    renderInput={(params) => (
+                                        <TextField {...params} variant="outlined" />
+                                    )}
+                                    onChange={(_, value) =>
+                                        obtenerSelectsProducto(value)
+                                    }
+                                    getOptionSelected={(option) => option?.datos_generales?.nombre_comercial}
+                                    value={
+                                        datosProducto
+                                        ? datosProducto.producto
+                                        : null
+                                    }
+                                />
+                            </Box>
+                        </Box>
+                        <Box width="50%">
+                            <Typography>
+                                Cantidad:
+                            </Typography>
+                            <Box display="flex">
+                                <TextField
+                                    fullWidth
                                     type='number'
                                     size="small"
+                                    name='fechaVencimiento'
                                     variant="outlined"
+                                    onChange={(e) => setCantidad(e.target.value)}
                                 />
+                            </Box>
+                        </Box>
+                        <Box ml={2} mr={2} >
+                            <Box display="flex" mt={3}>
+                                <Button
+                                    startIcon={<AddIcon />}
+                                    color='primary'
+                                    variant='outlined'
+                                    size='large'
+                                    onClick={() => agregarProductos()}
+                                >
+                                    Agregar
+                                </Button>
                             </Box>
                         </Box>
                     </div>
@@ -186,23 +323,26 @@ export default function CrearApartado() {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                                    {productosApartados.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                                         return (
                                             <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                                                {columns.map((column) => {
-                                                    const value = row[column.id];
-                                                    return (
-                                                        <TableCell key={column.id} align={column.align}>
-                                                            {column.format && typeof value === 'number' ? (
-                                                                column.format(value)
-                                                            ) : (
-                                                                value
-                                                            )}
-                                                        </TableCell>
-                                                    );
-                                                })}
                                                 <TableCell align='center' >
-                                                    <IconButton aria-label="delete" size='small'>
+                                                    {row.producto.datos_generales.codigo_barras}
+                                                </TableCell>
+                                                <TableCell align='center' >
+                                                    {row.producto.datos_generales.nombre_comercial}
+                                                </TableCell>
+                                                <TableCell align='center' >
+                                                    {row.cantidad}
+                                                </TableCell>
+                                                <TableCell align='center' >
+                                                    {row.producto.unidades_de_venta[0].precio}
+                                                </TableCell>
+                                                <TableCell align='center' >
+                                                    {row.total}
+                                                </TableCell>
+                                                <TableCell align='center' >
+                                                    <IconButton aria-label="delete" size='small' onClick={() => borrarProducto(index)}>
                                                         <DeleteIcon fontSize="small" />
                                                     </IconButton>
                                                 </TableCell>
@@ -214,9 +354,9 @@ export default function CrearApartado() {
                             </Table>
                         </TableContainer>
                         <TablePagination
-                            rowsPerPageOptions={[ 10, 25, 100 ]}
+                            rowsPerPageOptions={[]}
                             component="div"
-                            count={rows.length}
+                            count={productosApartados.length}
                             rowsPerPage={rowsPerPage}
                             page={page}
                             onChangePage={handleChangePage}
