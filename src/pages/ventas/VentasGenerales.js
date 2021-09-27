@@ -18,7 +18,7 @@ import TablaVentas from './TablaVentas';
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { useMutation, useQuery } from '@apollo/client';
 import { OBTENER_PRODUCTOS } from '../../gql/Catalogos/productos';
-import { VentasContext } from '../../context/Ventas/ventasGeneralesContext';
+import { VentasContext } from '../../context/Ventas/ventasContext';
 
 
 // import usuario from '../../icons/usuarios.svg';
@@ -74,6 +74,22 @@ export default function VentasGenerales() {
 
     // console.log(data.obtenerProductos);
     const productosBase = data.obtenerProductos;
+    console.log(productosBase);
+
+    const keyUpEvent = async (event) => {
+        if (event.code === "Enter" || event.code === "NumpadEnter") {
+            const input_value = event.target.value;
+            console.log(input_value, "valor input");
+            const producto_selecionado = await productosBase.filter((producto) => {
+                if(producto.datos_generales.clave_alterna === input_value || producto.datos_generales.codigo_barras === input_value){
+                    return producto;
+                }
+            })
+            console.log(producto_selecionado, "retorno filtro");
+        }
+    }
+
+    
 
     return (
             <Fragment>
@@ -94,32 +110,33 @@ export default function VentasGenerales() {
                                     <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/busqueda-de-codigos-de-barras.svg' alt="iconoBander" className={classes.iconSize} /> 
                                 </Box>
                                 <Box>
-                                    <Autocomplete
+                                    {/* <Autocomplete
                                         id="combo-box-producto"
                                         size="small"
                                         fullWidth
                                         options={productosBase}
-                                        getOptionLabel={(option) => console.log(option)}
+                                        getOptionLabel={(option) => option.datos_generales.nombre_comercial ? option.datos_generales.nombre_comercial : 'N/A'}
                                         renderInput={(params) => (
                                             <TextField {...params} label="Producto" variant="outlined" />
                                         )}
                                         onChange={(_, value) =>
                                             obtenerValorAutoComplete("Producto", value)
                                         }
-                                        getOptionSelected={(option) => option.nombre_cliente}
+                                        getOptionSelected={(option) => option.datos_generales.nombre_comercial}
                                         value={
-                                            productosBase
+                                            datosProductoVentas.producto.datos_generales ? datosProductoVentas.producto : null
                                         }
-                                    />
-                                    {/* <Paper className={classes.rootBusqueda}>
+                                    /> */}
+                                    <Paper className={classes.rootBusqueda}>
                                         <InputBase
                                             fullWidth
                                             placeholder="Buscar producto..."
+                                            onKeyUp={keyUpEvent}
                                         />
                                         <IconButton >
                                             <Search />
                                         </IconButton>
-                                    </Paper> */}
+                                    </Paper>
                                 </Box>
                             </Box>
                             <Box width="100%" display="flex" justifyItems="center" alignSelf="center" justifySelf="center" alignItems="center">

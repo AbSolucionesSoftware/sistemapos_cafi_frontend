@@ -4,26 +4,30 @@ export const VentasContext = createContext();
 
 export const VentasProvider = ({ children }) => {
 
-    const [datosProducto, setDatosProducto] = useState({
-        producto: {},
-        costo: 0,
-        cantidad: 0,
-        descuento_porcentaje: 0,
-        descuento_precio: 0,
-        subtotal: 0,
-    });
-
-    const [datosCompra, setDatosCompra] = useState({
-        productos: [],
-        proveedor: {},
-        fecha_compra: '',
-        almacen: {},
-        subtotal: 0,
-        impuestos: 0,
-        total: 0
-    });
-
-    const [productosCompra, setProductosCompra] = useState([]);
+    const [datosProductoVentas, setDatosProductoVentas] = useState(
+        {
+            producto: {},
+            // costo: 0,
+            // cantidad: 0,
+            // descuento_porcentaje: 0,
+            // descuento_precio: 0,
+            // subtotal: 0,
+            // impuestos: 0,
+            // total: 0
+         }
+    );
+    
+    const [productosVentas, setProductosVentas] = useState([]);
+    const [datosVentas, setDatosVentas] = useState(
+        {
+            productos: [],
+            cliente: {},
+            subtotal: 0,
+            impuestos: 0,
+            total: 0,
+            usuario: {}
+        }
+    );
 
     const [ update, setUpdate ] = useState(false);
     const [ error, setError ] = useState(false);
@@ -38,12 +42,12 @@ export const VentasProvider = ({ children }) => {
                 setUpdate,
                 error,
                 setError,
-                datosProducto,
-                setDatosProducto,
-                datosCompra,
-                setDatosCompra,
-                productosCompra,
-                setProductosCompra
+                datosProductoVentas,
+                setDatosProductoVentas,
+                productosVentas,
+                setProductosVentas,
+                datosVentas,
+                setDatosVentas
             }
         }>
 			{children}
