@@ -80,16 +80,16 @@ export default function VentasGenerales() {
     console.log(productosBase);
 
     const keyUpEvent = async (event) => {
-        // if (event.code === "Enter" || event.code === "NumpadEnter") {
-        //     const input_value = event.target.value;
-        //     console.log(input_value, "valor input");
-        //     const producto_selecionado = await productosBase.filter((producto) => {
-        //         if(producto.datos_generales.clave_alterna === input_value || producto.datos_generales.codigo_barras === input_value){
-        //             return producto;
-        //         }
-        //     })
-        //     console.log(producto_selecionado, "retorno filtro");
-        // }
+        if (event.code === "Enter" || event.code === "NumpadEnter") {
+            // const input_value = event.target.value;
+            // console.log(input_value, "valor input");
+            // const producto_selecionado = await productosBase.filter((producto) => {
+            //     if(producto.datos_generales.clave_alterna === input_value || producto.datos_generales.codigo_barras === input_value){
+            //         return producto;
+            //     }
+            // })
+            // console.log(producto_selecionado, "retorno filtro");
+        }
     }
 
     
