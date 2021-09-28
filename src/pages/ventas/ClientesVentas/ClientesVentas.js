@@ -37,7 +37,7 @@ export default function ClientesVentas() {
 	const [ values, setValues ] = useState('');
 
 	const pressEnter = (e) => {
-		if (e.key === 'Enter') setFiltro(e.target.defaultValue);
+		if (e.key === 'Enter') setValues(e.target.defaultValue);
 	};
 
     const [open, setOpen] = useState(false);
@@ -95,15 +95,15 @@ export default function ClientesVentas() {
                                     onKeyPress={pressEnter}
                                     value={values}
                                 />
-                                <IconButton onClick={() => setFiltro(values)}>
+                                <IconButton onClick={() => setValues(values)}>
                                     <Search />
                                 </IconButton>
                             </Paper>
                         </Box>
-                        <CrearCliente tipo="CLIENTE" accion="registrar" />
+                        <CrearCliente tipo="CLIENTE" accion="registrar"  />
                     </Box>
                     <Box mx={2}>
-                        <ListaClientes tipo="CLIENTE" filtro={filtro} />
+                        <ListaClientes tipo="CLIENTE" filtro={values} />
                     </Box>
                 </DialogContent>
             </Dialog>

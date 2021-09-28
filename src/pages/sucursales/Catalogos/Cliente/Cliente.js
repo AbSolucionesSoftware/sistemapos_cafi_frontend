@@ -53,7 +53,7 @@ export default function Cliente() {
 	};
 
 	const pressEnter = (e) => {
-		if (e.key === 'Enter') setFiltro(e.target.defaultValue);
+		if (e.key === 'Enter') setValues(e.target.defaultValue);
 	};
 
 	return (
@@ -90,7 +90,7 @@ export default function Cliente() {
 									onKeyPress={pressEnter}
 									value={values}
 								/>
-								<IconButton onClick={() => setFiltro(values)}>
+								<IconButton onClick={() => setValues(values)}>
 									<Search />
 								</IconButton>
 							</Paper>
@@ -104,7 +104,7 @@ export default function Cliente() {
 						}
 					</Box>
 					<Box mx={4}>
-						<ListaClientes tipo="CLIENTE" filtro={filtro} />
+						<ListaClientes tipo="CLIENTE" filtro={values} />
 					</Box>
 				</Dialog>
 			</ClienteProvider>
