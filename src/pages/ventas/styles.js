@@ -60,6 +60,16 @@ const useStyles = makeStyles((theme) => ({
     imagenProducto:{
         height: '100%',
         width: '100%'
+    },
+    borderBoton:{
+		minWidth: '100%',
+		height: '50%',
+        border: '.6px solid #DBDBDB'
+    },
+	borderBotonChico:{
+		minWidth: '100%',
+		height: '35%',
+        border: '.6px solid #DBDBDB'
     }
 }));
 

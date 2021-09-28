@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types';
 
-import { AppBar, Box, Button, DialogActions, DialogContent, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core'
+import { AppBar, Box, Button, Dialog, DialogActions, DialogContent, Grid, makeStyles, Slide, Tab, Tabs, Typography } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
 
 import AbrirTurno from './AbrirTurno';
@@ -63,17 +63,47 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function Turnos({handleClickOpen}) {
+const Transition = React.forwardRef(function Transition(props, ref) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export default function Turnos() {
 
     const classes = useStyles();
     const [value, setValue] = useState(0);
+	const [open, setOpen] = useState(false);
 
     const handleChange = (event, newValue) => {
 		setValue(newValue);
 	};
+    const handleClickOpen = () => { 
+		setOpen(!open);
+	};
 
     return (
         <div style={{padding: 0}}>
+			<Button
+                onClick={() =>{handleClickOpen();}}
+                style={{textTransform: 'none'}}
+            >
+                <Box display="flex" flexDirection="column">
+                    <Box display="flex" justifyContent="center" alignItems="center">
+                        <img 
+                            src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg'
+                            alt="icono caja" 
+                            style={{width: 20}}
+                        />
+                    </Box>
+                    Abrir/Cerrar turno
+                </Box>
+            </Button>	
+
+            <Dialog
+				maxWidth='lg'
+				open={open} 
+				onClose={handleClickOpen} 
+				TransitionComponent={Transition}
+			>
             <AppBar position="static" color="default" elevation={0}>
 					<Tabs
 						value={value}
@@ -121,6 +151,7 @@ export default function Turnos({handleClickOpen}) {
 						</Box>
 					</Tabs>
 				</AppBar>
+				
 
                 <DialogContent style={{padding: 0}} >
                     <TabPanel value={value} index={0}>
@@ -135,6 +166,7 @@ export default function Turnos({handleClickOpen}) {
 						Aceptar
 					</Button>
 				</DialogActions>
+			</Dialog>
         </div>
     )
 }

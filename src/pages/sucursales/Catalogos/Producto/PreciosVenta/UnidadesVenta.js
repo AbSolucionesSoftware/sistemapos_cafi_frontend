@@ -44,7 +44,7 @@ export default function PreciosDeCompra() {
 		unidad_principal: false
 	});
 	const [ actualizarUnidad, setActualizarUnidad ] = useState(false);
-
+	console.log(unidadesVenta);
 	const obtenerUnidadesVentas = (e) => {
 		if (e.target.name === 'cantidad' || e.target.name === 'precio') {
 			setUnidades({

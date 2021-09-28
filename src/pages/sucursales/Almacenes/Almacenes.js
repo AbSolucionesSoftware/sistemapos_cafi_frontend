@@ -14,7 +14,7 @@ export default function Moviminetos() {
 						<RegistroAlmacen />
 					</Box>
 				</Grid>
-				<Grid item lg={2} >
+				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Traspasos />
 					</Box>

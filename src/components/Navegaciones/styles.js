@@ -29,7 +29,6 @@ const useStyles = makeStyles((theme) => ({
 	navigationTop:{
 		height: theme.spacing(8)
 	},
-
 	iconSizeSuperior: {
 		fontSize: 30,
         color: theme.palette.info.main

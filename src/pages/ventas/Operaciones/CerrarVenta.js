@@ -11,16 +11,44 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function CerrarVenta({handleClickOpen}) {
+export default function CerrarVenta() {
 
     const classes = useStyles();
     const [cambio, setCambio] = useState(false);
 
     const abrirCajon = () => {setCambio(!cambio)};
+    const [open, setOpen] = useState(false);
+    
+    const handleClickOpen = () => { 
+		setOpen(!open);
+	};
 
     return (
         <div>
-            <DialogContent>
+            <Button 
+                className={classes.borderBotonChico}
+                onClick={handleClickOpen}
+            >
+                <Box>
+                    <Box>
+                        <img 
+                            src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cart.svg' 
+                            alt="icono ventas" 
+                            style={{width: 40}}
+                        />
+                    </Box>
+                    <Box>
+                        Pagar
+                    </Box>
+                </Box>
+            </Button>
+            <Dialog
+				maxWidth='lg'
+				open={open} 
+				onClose={handleClickOpen} 
+				TransitionComponent={Transition}
+			>
+                <DialogContent>
                     <Grid container item lg={12} justify="center">
                         <Box display="flex" justifyContent="center" flexGrow={1}>
                             <Box>
@@ -183,20 +211,21 @@ export default function CerrarVenta({handleClickOpen}) {
                             </div>
                         </Paper>
                     </Grid>
-            </DialogContent>
-            <DialogActions>
-                <Button 
-                    size="large"
-                    onClick={() => {
-                        abrirCajon()
-                    }}
-                    variant="contained" 
-                    color="primary" 
-                    autoFocus
-                >
-                    Terminar
-                </Button>
-            </DialogActions>
+                </DialogContent>
+                <DialogActions>
+                    <Button 
+                        size="large"
+                        onClick={() => {
+                            abrirCajon()
+                        }}
+                        variant="contained" 
+                        color="primary" 
+                        autoFocus
+                    >
+                        Terminar
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
             <Dialog
 				open={cambio} 

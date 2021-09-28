@@ -5,7 +5,8 @@ import moment from "moment";
 export const ComprasContext = createContext();
 
 export const ComprasProvider = ({ children }) => {
-  const [datosProducto, setDatosProducto] = useState({
+  const [datosProducto, setDatosProducto] = 
+  ({
     producto: {},
     costo: 0,
     cantidad: 0,
