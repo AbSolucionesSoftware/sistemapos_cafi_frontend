@@ -30,10 +30,16 @@ import ErrorPage from "../../../../../components/ErrorPage";
 import { ComprasContext } from "../../../../../context/Compras/comprasContext";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
 
-import { useQuery } from "@apollo/client";
-import { OBTENER_CONSULTA_GENERAL_PRODUCTO } from "../../../../../gql/Compras/compras";
+import { useLazyQuery } from "@apollo/client";
+import { OBTENER_PRODUCTOS } from "../../../../../gql/Catalogos/productos";
 import PreciosDeVentaCompras from "./PreciosVenta";
-import { Dialog, DialogActions, DialogTitle, Slide } from "@material-ui/core";
+import {
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  IconButton,
+  Slide,
+} from "@material-ui/core";
 import { validateJsonEdit } from "../../../Catalogos/Producto/validateDatos";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import { InfoOutlined } from "@material-ui/icons";
@@ -52,7 +58,7 @@ export default function DatosProducto() {
     productoOriginal,
     setProductoOriginal,
     setPreciosVenta,
-	setDatosCompra
+    setDatosCompra,
   } = useContext(ComprasContext);
   const {
     datos_generales,
@@ -86,10 +92,10 @@ export default function DatosProducto() {
   } = useContext(RegProductoContext);
 
   /* Queries */
-  const { loading, data, error, refetch } = useQuery(
-    OBTENER_CONSULTA_GENERAL_PRODUCTO,
+  const [getProductos, { loading, data, error, refetch }] = useLazyQuery(
+    OBTENER_PRODUCTOS,
     {
-      variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id },
+      variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
     }
   );
 
@@ -97,22 +103,21 @@ export default function DatosProducto() {
     return (
       <Box
         display="flex"
+        flexDirection="column"
         justifyContent="center"
         alignItems="center"
-        height="25vh"
+        height="20vh"
       >
         <CircularProgress />
+        <Typography variant="h5">Cargando</Typography>
       </Box>
     );
   if (error) {
     return <ErrorPage error={error} altura={200} />;
   }
 
-  const {
-    almacenes,
-    productos,
-    proveedores,
-  } = data.obtenerConsultaGeneralCompras;
+  let obtenerProductos = [];
+  if (data) obtenerProductos = data.obtenerProductos;
 
   const obtenerSelectsProducto = (producto) => {
     if (!producto) {
@@ -133,6 +138,7 @@ export default function DatosProducto() {
     setDatosProducto({
       ...datosProducto,
       producto,
+      id_producto: producto._id,
       costo: precio_con_impuesto,
       cantidad,
       descuento_porcentaje: 0,
@@ -140,7 +146,7 @@ export default function DatosProducto() {
       subtotal: precio_sin_impuesto,
       impuestos: parseFloat(impuestos.toFixed(2)),
       total: precio_con_impuesto,
-	  total_con_descuento: precio_con_impuesto,
+      total_con_descuento: precio_con_impuesto,
     });
     setInitialStates(producto);
     setProductoOriginal(producto);
@@ -214,14 +220,16 @@ export default function DatosProducto() {
 
     datosProducto.producto = producto;
     datosProducto.total = datosProducto.total_con_descuento;
+    datosProducto.cantidad_total =
+      datosProducto.cantidad + datosProducto.cantidad_regalo;
 
     setProductosCompra([...productosCompra, datosProducto]);
-	setDatosCompra({
-		...datosCompra, 
-		subtotal: datosCompra.subtotal + datosProducto.subtotal,
-		impuestos: datosCompra.impuestos + datosProducto.impuestos,
-		total: datosCompra.total + datosProducto.total,
-	});
+    setDatosCompra({
+      ...datosCompra,
+      subtotal: datosCompra.subtotal + datosProducto.subtotal,
+      impuestos: datosCompra.impuestos + datosProducto.impuestos,
+      total: datosCompra.total + datosProducto.total,
+    });
     setProductoOriginal({ precios: initial_state_precios });
     setDatosProducto(initial_state_datosProducto);
   };
@@ -248,6 +256,13 @@ export default function DatosProducto() {
     setPresentaciones(
       producto.medidas_producto ? producto.medidas_producto : []
     );
+    if (datosCompra.almacen.id_almacen && !producto.medidas_registradas) {
+      setAlmacenInicial({
+        ...almacen_inicial,
+        id_almacen: datosCompra.almacen.id_almacen,
+        almacen: datosCompra.almacen.nombre_almacen,
+      });
+    }
   };
 
   /* ###### RESET STATES ###### */
@@ -273,9 +288,8 @@ export default function DatosProducto() {
   return (
     <Fragment>
       <DatosProveedorAlmacen
-        proveedores={proveedores}
-        almacenes={almacenes}
-        refetch={refetch}
+        refetchProductos={refetch}
+        getProductos={getProductos}
       />
       <Box my={1} />
       <Grid container spacing={1} alignItems="center">
@@ -286,7 +300,7 @@ export default function DatosProducto() {
               id="combo-box-producto-codigo"
               size="small"
               fullWidth
-              options={productos}
+              options={obtenerProductos}
               getOptionLabel={(option) =>
                 option.datos_generales.codigo_barras
                   ? option.datos_generales.codigo_barras
@@ -304,17 +318,21 @@ export default function DatosProducto() {
                   ? datosProducto.producto
                   : null
               }
+              disabled={
+                !datosCompra.almacen.id_almacen ||
+                !datosCompra.proveedor.id_proveedor
+              }
             />
           </Box>
         </Grid>
         <Grid item>
           <Typography>Producto</Typography>
-          <Box display="flex" alignItems="center" width={250}>
+          <Box display="flex" width={250} alignItems="center">
             <Autocomplete
               id="combo-box-producto-nombre"
               size="small"
               fullWidth
-              options={productos}
+              options={obtenerProductos}
               getOptionLabel={(option) =>
                 option.datos_generales.nombre_comercial
               }
@@ -330,12 +348,23 @@ export default function DatosProducto() {
                   ? datosProducto.producto
                   : null
               }
+              disabled={
+                !datosCompra.almacen.id_almacen ||
+                !datosCompra.proveedor.id_proveedor
+              }
             />
-            <CrearProducto
-              accion={false}
-              productosRefetch={refetch}
-              fromCompra={true}
-            />
+            {!datosCompra.almacen.id_almacen ||
+            !datosCompra.proveedor.id_proveedor ? (
+              <IconButton disabled>
+                <Add />
+              </IconButton>
+            ) : (
+              <CrearProducto
+                accion={false}
+                productosRefetch={refetch}
+                fromCompra={true}
+              />
+            )}
           </Box>
         </Grid>
         <Grid item>
@@ -345,7 +374,7 @@ export default function DatosProducto() {
               id="combo-box-producto-clave"
               size="small"
               fullWidth
-              options={productos}
+              options={obtenerProductos}
               getOptionLabel={(option) => option.datos_generales.clave_alterna}
               renderInput={(params) => (
                 <TextField {...params} variant="outlined" />
@@ -358,6 +387,10 @@ export default function DatosProducto() {
                 datosProducto.producto.datos_generales
                   ? datosProducto.producto
                   : null
+              }
+              disabled={
+                !datosCompra.almacen.id_almacen ||
+                !datosCompra.proveedor.id_proveedor
               }
             />
           </Box>
@@ -384,21 +417,38 @@ export default function DatosProducto() {
         </Grid>
         {datosProducto.producto.datos_generales &&
         datosProducto.producto.datos_generales.tipo_producto === "OTROS" ? (
-          <Grid item>
-            <Typography>Cantidad</Typography>
-            <Box width={80}>
-              <TextField
-                name="cantidad"
-                variant="outlined"
-                size="small"
-                fullWidth
-                inputMode="numeric"
-                disabled={!datosProducto.producto.datos_generales}
-                value={datosProducto.cantidad}
-                onChange={obtenerCostoCantidad}
-              />
-            </Box>
-          </Grid>
+          <Fragment>
+            <Grid item>
+              <Typography>Cantidad</Typography>
+              <Box width={90}>
+                <TextField
+                  name="cantidad"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  inputMode="numeric"
+                  disabled={!datosProducto.producto.datos_generales}
+                  value={datosProducto.cantidad}
+                  onChange={obtenerCostoCantidad}
+                />
+              </Box>
+            </Grid>
+            <Grid item>
+              <Typography>Cant. regalo</Typography>
+              <Box width={90}>
+                <TextField
+                  name="cantidad_regalo"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  inputMode="numeric"
+                  disabled={!datosProducto.producto.datos_generales}
+                  value={datosProducto.cantidad_regalo}
+                  onChange={obtenerCostoCantidad}
+                />
+              </Box>
+            </Grid>
+          </Fragment>
         ) : null}
 
         <Grid item>
@@ -448,7 +498,7 @@ export default function DatosProducto() {
             lg={5}
             style={{ display: "flex", alignItems: "flex-end" }}
           >
-            <Box display="flex" width="100%" >
+            <Box display="flex" width="100%">
               {datosProducto.producto.datos_generales &&
               datosProducto.producto.datos_generales.tipo_producto !==
                 "OTROS" ? (

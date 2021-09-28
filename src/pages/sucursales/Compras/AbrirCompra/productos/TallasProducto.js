@@ -19,7 +19,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function AlertDialogSlide() {
   const [open, setOpen] = useState(false);
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-  const { datosProducto } = useContext(ComprasContext);
+  const { datosProducto, datosCompra } = useContext(ComprasContext);
 
   /* Queries */
   const { loading, data, error, refetch } = useQuery(OBTENER_CONSULTAS, {
@@ -72,6 +72,7 @@ export default function AlertDialogSlide() {
               obtenerConsultasProducto={obtenerConsultasProducto}
               refetch={refetch}
               from="compra"
+              almacen={datosCompra.almacen}
             />
           </DialogContentText>
         </DialogContent>
