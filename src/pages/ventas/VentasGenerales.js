@@ -19,6 +19,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import { useMutation, useQuery } from '@apollo/client';
 import { OBTENER_PRODUCTOS } from '../../gql/Catalogos/productos';
 import { VentasContext } from '../../context/Ventas/ventasContext';
+import { CONSULTA_PRODUCTOS } from '../../gql/Ventas/ventas_generales';
 
 
 // import usuario from '../../icons/usuarios.svg';
@@ -38,8 +39,8 @@ export default function VentasGenerales() {
     const classes = useStyles();
     const [ filtro, setFiltro ] = useState('');
 
-    const { loading, data, error, refetch } = useQuery(OBTENER_PRODUCTOS, {
-		variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id, filtro }
+    const { loading, data, error, refetch } = useQuery(CONSULTA_PRODUCTOS, {
+		variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id }
 	});
 
     const {
@@ -72,21 +73,23 @@ export default function VentasGenerales() {
             </Box>
         );
 
-    // console.log(data.obtenerProductos);
-    const productosBase = data.obtenerProductos;
+        
+
+    console.log(data);
+    const productosBase = data.obtenerConsultaGeneralVentas;
     console.log(productosBase);
 
     const keyUpEvent = async (event) => {
-        if (event.code === "Enter" || event.code === "NumpadEnter") {
-            const input_value = event.target.value;
-            console.log(input_value, "valor input");
-            const producto_selecionado = await productosBase.filter((producto) => {
-                if(producto.datos_generales.clave_alterna === input_value || producto.datos_generales.codigo_barras === input_value){
-                    return producto;
-                }
-            })
-            console.log(producto_selecionado, "retorno filtro");
-        }
+        // if (event.code === "Enter" || event.code === "NumpadEnter") {
+        //     const input_value = event.target.value;
+        //     console.log(input_value, "valor input");
+        //     const producto_selecionado = await productosBase.filter((producto) => {
+        //         if(producto.datos_generales.clave_alterna === input_value || producto.datos_generales.codigo_barras === input_value){
+        //             return producto;
+        //         }
+        //     })
+        //     console.log(producto_selecionado, "retorno filtro");
+        // }
     }
 
     
