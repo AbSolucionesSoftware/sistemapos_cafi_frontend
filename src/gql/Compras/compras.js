@@ -103,11 +103,6 @@ export const OBTENER_CONSULTA_GENERAL_PRODUCTO = gql`
             unidad
             precio
           }
-          precio_tarimas {
-            plazo
-            unidad
-            precio
-          }
         }
         unidades_de_venta {
           _id

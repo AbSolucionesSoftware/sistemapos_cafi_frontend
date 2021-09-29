@@ -1,9 +1,12 @@
 import { initial_state_precios } from "../../../../context/Catalogos/initialStatesProducto";
+import moment from 'moment';
 
 export const initial_state_datosProducto = {
   producto: {},
   costo: 0,
   cantidad: 0,
+  cantidad_regalo: 0,
+  cantidad_total: 0,
   descuento_porcentaje: 0,
   descuento_precio: 0,
   subtotal: 0,
@@ -16,7 +19,7 @@ export const initial_state_datosProducto = {
 export const initial_state_datosCompra = {
   productos: [],
   proveedor: {},
-  fecha_compra: Date.now(),
+  fecha_registro: moment().locale('es-mx').format(),
   almacen: {},
   subtotal: 0,
   impuestos: 0,
