@@ -124,13 +124,16 @@ const RenderPresentacionesRows = ({ producto, index, datos, from, setOnUpdate, o
 	const copy_element_presentacion = { ...copy_presentaciones[index] };
 	const copy_producto = { ...producto };
 
-	if(from && from === 'compra'){
-		copy_producto.cantidad = 0
-	}
+	/* if(from && from === 'compra'){
+		copy_producto.cantidad_nueva = 0
+	} */
 	
 	const handleEditCancel = () => {
 		if (!copy_producto.cantidad) {
 			copy_element_presentacion.cantidad = 0;
+		}
+		if (!copy_producto.cantidad_nueva) {
+			copy_element_presentacion.cantidad_nueva = 0;
 		}
 		if (!copy_producto.precio) {
 			copy_element_presentacion.precio = preciosP[0].precio_neto;
@@ -150,6 +153,16 @@ const RenderPresentacionesRows = ({ producto, index, datos, from, setOnUpdate, o
 				return;
 			}
 			copy_element_presentacion.cantidad = parseFloat(event.target.value);
+			copy_element_presentacion.existencia = true;
+		}else if (event.target.name === 'cantidad_nueva') {
+			if (!event.target.value) {
+				copy_element_presentacion.cantidad_nueva = '';
+				copy_element_presentacion.existencia = copy_producto.existencia;
+				copy_presentaciones.splice(index, 1, copy_element_presentacion);
+				setPresentaciones(copy_presentaciones);
+				return;
+			}
+			copy_element_presentacion.cantidad_nueva = parseFloat(event.target.value);
 			copy_element_presentacion.existencia = true;
 		} else if (event.target.name === 'precio') {
 			if (!event.target.value) {
@@ -257,9 +270,9 @@ const RenderPresentacionesRows = ({ producto, index, datos, from, setOnUpdate, o
 					inputRef={textfield}
 					onChange={(e) => obtenerDatos(e)}
 					disabled={disabledInput}
-					value={copy_producto.cantidad}
+					value={copy_producto.cantidad_nueva}
 					type="tel"
-					name="cantidad"
+					name="cantidad_nueva"
 				/>
 			</TableCell>
 			<TableCell padding="checkbox">

@@ -1,5 +1,11 @@
 import React, { Fragment, useContext } from "react";
-import { Box, Grid, TextField } from "@material-ui/core";
+import {
+  Box,
+  CircularProgress,
+  Grid,
+  IconButton,
+  TextField,
+} from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { ClienteProvider } from "../../../../../context/Catalogos/crearClienteCtx";
 import { AlmacenProvider } from "../../../../../context/Almacenes/crearAlmacen";
@@ -14,17 +20,127 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
+import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
 
-export default function DatosProveedorAlmacen({ proveedores, almacenes, refetch}) {
-  const { datosCompra, setDatosCompra } = useContext(ComprasContext);
+import { useQuery } from "@apollo/client";
+import { OBTENER_CONSULTA_GENERAL_PRODUCTO } from "../../../../../gql/Compras/compras";
+import { ErrorOutline } from "@material-ui/icons";
+
+export default function DatosProveedorAlmacen({
+  refetchProductos,
+  getProductos,
+}) {
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  const { datosCompra, setDatosCompra, datosProducto } = useContext(
+    ComprasContext
+  );
+  const { almacen_inicial, setAlmacenInicial } = useContext(RegProductoContext);
+
+  /* Queries */
+  const { loading, data, error, refetch } = useQuery(
+    OBTENER_CONSULTA_GENERAL_PRODUCTO,
+    {
+      variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id },
+    }
+  );
 
   const obtenerProveedorAlmacen = (tipo, value) => {
     if (!value) {
       setDatosCompra({ ...datosCompra, [tipo]: {} });
       return;
     }
-    setDatosCompra({ ...datosCompra, [tipo]: value });
+    if (tipo === "proveedor") {
+      setDatosCompra({
+        ...datosCompra,
+        proveedor: {
+          id_proveedor: value._id,
+          nombre_cliente: value.nombre_cliente,
+          numero_cliente: value.numero_cliente,
+          clave_cliente: value.clave_cliente,
+        },
+      });
+    } else {
+      setDatosCompra({
+        ...datosCompra,
+        almacen: {
+          id_almacen: value._id,
+          nombre_almacen: value.nombre_almacen,
+        },
+      });
+      if (
+        datosProducto.producto &&
+        !datosProducto.producto.medidas_registradas
+      ) {
+        setAlmacenInicial({
+          ...almacen_inicial,
+          id_almacen: value._id,
+          almacen: value.nombre_almacen,
+        });
+      }
+      getProductos({
+        variables: {
+          almacen: value._id,
+        },
+      });
+    }
   };
+
+  const errorRender = (
+    <Grid item xs={12} md={4}>
+      <Box display="flex" alignItems="center">
+        <TextField
+          size="small"
+          fullWidth
+          value="Error"
+          error
+          disabled
+          variant="outlined"
+        />
+        <IconButton disabled>
+          <ErrorOutline fontSize="default" />
+        </IconButton>
+      </Box>
+    </Grid>
+  );
+
+  const loadingRender = (
+    <Grid item xs={12} md={4}>
+      <Box display="flex" alignItems="center">
+        <TextField
+          size="small"
+          fullWidth
+          disabled
+          value="Cargando..."
+          variant="outlined"
+        />
+        <IconButton disabled>
+          <CircularProgress size={24} />
+        </IconButton>
+      </Box>
+    </Grid>
+  );
+
+  if (loading)
+    return (
+      <Grid container spacing={2} alignItems="center">
+        {loadingRender}
+        {loadingRender}
+        {loadingRender}
+      </Grid>
+    );
+  if (error) {
+    return (
+      <Fragment>
+        <Grid container spacing={2} alignItems="center">
+          {errorRender}
+          {errorRender}
+          {errorRender}
+        </Grid>
+      </Fragment>
+    );
+  }
+
+  const { almacenes, proveedores } = data.obtenerConsultaGeneralCompras;
 
   return (
     <Fragment>
@@ -90,11 +206,11 @@ export default function DatosProveedorAlmacen({ proveedores, almacenes, refetch}
                 id="date-picker-dialog"
                 placeholder="ex: DD/MM/AAAA"
                 format="dd/MM/yyyy"
-                value={datosCompra.fecha_compra}
+                value={datosCompra.fecha_registro}
                 onChange={(date) => {
                   setDatosCompra({
                     ...datosCompra,
-                    fecha_compra: date,
+                    fecha_registro: date,
                   });
                 }}
                 KeyboardButtonProps={{

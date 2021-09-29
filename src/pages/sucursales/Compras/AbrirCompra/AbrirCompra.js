@@ -23,7 +23,7 @@ import {
   ComprasContext,
   ComprasProvider,
 } from "../../../../context/Compras/comprasContext";
-import { Done } from "@material-ui/icons";
+import { Done, Timer } from "@material-ui/icons";
 import { formatoMexico } from "../../../../config/reuserFunctions";
 import {
   initial_state_datosCompra,
@@ -32,9 +32,9 @@ import {
   initial_state_productoOriginal,
   initial_state_productosCompra,
 } from "./initial_states";
-import moment from "moment";
 import { useMutation } from "@apollo/client";
 import { CREAR_COMPRA } from "../../../../gql/Compras/compras";
+import Close from "@material-ui/icons/Close";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -116,10 +116,10 @@ const ModalCompra = ({ open, handleClose }) => {
 
   const realizarCompraBD = async () => {
     datosCompra.productos = productosCompra;
-    datosCompra.fecha_compra = moment().locale("es-mx").format();
 
     try {
       console.log(datosCompra);
+
       const result = await crearCompra({
         variables: {
           input: datosCompra,
@@ -130,7 +130,11 @@ const ModalCompra = ({ open, handleClose }) => {
       });
       console.log(result);
     } catch (error) {
-      console.log(error);
+      if(error.networkError.result){
+        console.log(error.networkError.result.errors);
+      }else if(error.graphQLErrors){
+        console.log(error.graphQLErrors);
+      }
     }
   };
 
@@ -208,6 +212,7 @@ const ModalCompra = ({ open, handleClose }) => {
           color="inherit"
           size="large"
           onClick={() => handleToggleDelete()}
+          startIcon={<Close />}
         >
           Cancelar
         </Button>
@@ -218,8 +223,9 @@ const ModalCompra = ({ open, handleClose }) => {
           size="large"
           onClick={() => realizarCompraBD()}
           disabled={!productosCompra.length}
+          startIcon={<Timer />}
         >
-          Poner esta compra en espera
+          Compra en espera
         </Button>
         <Button
           autoFocus
