@@ -100,7 +100,7 @@ export default function ClientesVentas() {
                                 </IconButton>
                             </Paper>
                         </Box>
-                        <CrearCliente tipo="CLIENTE" accion="registrar"  />
+                        <CrearCliente tipo="CLIENTE" accion="registrar" />
                     </Box>
                     <Box mx={2}>
                         <ListaClientes tipo="CLIENTE" filtro={values} />
