@@ -91,6 +91,9 @@ export default function ColoresTallas({
     setMedidasSeleccionadas([...medidas_existentes]);
   }, [presentaciones]);
 
+  console.log(coloresSeleccionados);
+  console.log(medidasSeleccionadas);
+
   const obtenerAlmacenes = (event, child) => {
     setAlmacenInicial({
       ...almacen_inicial,
@@ -259,6 +262,7 @@ const RenderTallas = ({
 
   const seleccionarMedidas = useCallback(() => {
     medidasSeleccionadas.forEach((res) => {
+		console.log(res);
       if (res._id === talla._id) setSelected(true);
     });
   }, [talla._id, medidasSeleccionadas]);
