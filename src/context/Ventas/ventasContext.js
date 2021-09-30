@@ -6,15 +6,18 @@ export const VentasProvider = ({ children }) => {
 
     const [datosProductoVentas, setDatosProductoVentas] = useState(
         {
-            producto: {},
-            // costo: 0,
-            // cantidad: 0,
-            // descuento_porcentaje: 0,
-            // descuento_precio: 0,
-            // subtotal: 0,
-            // impuestos: 0,
-            // total: 0
-         }
+            _id: null,
+            cantidad: null,
+            codigo_barras: null,
+            concepto: null,
+            default: null,
+            descuento: null,
+            descuento_activo: null,
+            id_producto: {},
+            precio: null,
+            unidad: null,
+            unidad_principal: null
+        }
     );
     
     const [productosVentas, setProductosVentas] = useState([]);

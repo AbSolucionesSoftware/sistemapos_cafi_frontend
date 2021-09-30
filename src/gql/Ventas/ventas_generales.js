@@ -1,44 +1,64 @@
 import { gql } from '@apollo/client';
 
 export const CONSULTA_PRODUCTOS = gql`
-    query obtenerConsultaGeneralVentas($empresa: ID!, $sucursal: ID!){
+    query ObtenerConsultaGeneralVentas($empresa: ID!, $sucursal: ID!){
         obtenerConsultaGeneralVentas(empresa: $empresa, sucursal: $sucursal){
-            _id
-            producto{
+             _id
+            precio
+            cantidad
+            concepto
+            unidad
+            unidad_principal
+            codigo_barras
+            descuento{
+                porciento
+                dinero_descontado
+                precio_con_descuento
+            }
+            descuento_activo
+            default
+            id_producto{
                 datos_generales{
-                nombre_comercial
-                nombre_generico
-                clave_alterna
+                    nombre_comercial
+                    codigo_barras
+                    tipo_producto
+                    clave_alterna
                 }
             }
+            inventario_general{
                 cantidad_existente
                 unidad_inventario
-                cantidad_existente_minima
-                unidad_minima
                 cantidad_existente_maxima
-            unidad_maxima
-            unidades_de_venta{
-                precio
-                cantidad
-                concepto
-                unidad
-                codigo_barras
+                unidad_maxima
             }
-            medidas_producto{
-                cantidad
-                codigo_barras
-                color{
-                hex
-                nombre
-                _id
+        }
+    }	
+`;
+
+export const CONSULTA_PRODUCTO_UNITARIO = gql`
+    query ObtenerUnProductoVentas($empresa: ID!, $sucursal: ID!, $datosProductos: ID!){
+        obtenerUnProductoVentas(empresa: $empresa, sucursal: $sucursal, datosProductos: $datosProductos){
+            _id
+            precio
+            cantidad
+            concepto
+            unidad
+            unidad_principal
+            codigo_barras
+            descuento{
+                porciento
+                dinero_descontado
+                precio_con_descuento
+            }
+            descuento_activo
+            default
+            id_producto{
+                datos_generales{
+                    nombre_comercial
+                    codigo_barras
+                    tipo_producto
+                    clave_alterna
                 }
-                existencia
-                medida{
-                talla
-                tipo
-                _id
-                }
-                precio
             }
         }
     }	

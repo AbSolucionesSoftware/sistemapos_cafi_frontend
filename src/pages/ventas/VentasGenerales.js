@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { 
     Box, 
     FormControl, 
@@ -15,11 +15,10 @@ import {
 import { Search } from '@material-ui/icons';
 import useStyles from './styles';
 import TablaVentas from './TablaVentas';
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { useMutation, useQuery } from '@apollo/client';
-import { OBTENER_PRODUCTOS } from '../../gql/Catalogos/productos';
+import { useQuery } from '@apollo/client';
 import { VentasContext } from '../../context/Ventas/ventasContext';
-import { CONSULTA_PRODUCTOS } from '../../gql/Ventas/ventas_generales';
+import { CONSULTA_PRODUCTOS, CONSULTA_PRODUCTO_UNITARIO } from '../../gql/Ventas/ventas_generales';
+import { useLazyQuery } from "@apollo/client";
 
 
 // import usuario from '../../icons/usuarios.svg';
@@ -33,12 +32,18 @@ import MonedaCambio from './Operaciones/MonedaCambio';
 
 
 export default function VentasGenerales() {
-
+    
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
-    console.log(sesion);
     const classes = useStyles();
-    const [ filtro, setFiltro ] = useState('');
+    const [productoBase, setProductoBase] = useState({});
+    const [changeState, setChangeState] = useState(false);
 
+    const [obtenerProductos, datos] = useLazyQuery(
+        CONSULTA_PRODUCTO_UNITARIO,
+        { variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id } }
+    );
+    
+    // console.log(datos);
     const { loading, data, error, refetch } = useQuery(CONSULTA_PRODUCTOS, {
 		variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id }
 	});
@@ -52,14 +57,12 @@ export default function VentasGenerales() {
         setDatosVentas
     } = useContext(VentasContext);
 
-    const obtenerValorAutoComplete = (tipo, value) => {
-        console.log(tipo,value);
-        // if (!value) {
-        //   setDatosProducto({ ...datosProducto, [tipo]: {} });
-        //   return;
-        // }
-        // setDatosProducto({ ...datosProducto, [tipo]: value });
-      };
+    useEffect(() => {
+        if(datos.data){
+            const { obtenerUnProductoVentas } = datos.data;
+            setProductoBase(obtenerUnProductoVentas);
+        }
+    }, [changeState])
 
     if(loading) 
         return (
@@ -73,22 +76,42 @@ export default function VentasGenerales() {
             </Box>
         );
 
-        
-
-    console.log(data);
     const productosBase = data.obtenerConsultaGeneralVentas;
-    console.log(productosBase);
+    // console.log(productosBase);
 
     const keyUpEvent = async (event) => {
+        //Buscar el producto en el context de producto, y si existe sumar uno mas a cantidad
+
+        //Verificar si existe localmente
         if (event.code === "Enter" || event.code === "NumpadEnter") {
-            // const input_value = event.target.value;
-            // console.log(input_value, "valor input");
-            // const producto_selecionado = await productosBase.filter((producto) => {
-            //     if(producto.datos_generales.clave_alterna === input_value || producto.datos_generales.codigo_barras === input_value){
-            //         return producto;
-            //     }
-            // })
-            // console.log(producto_selecionado, "retorno filtro");
+            const input_value = event.target.value;
+
+            const producto_selecionado = await productosBase.filter((producto) => {
+                if(typeof producto.codigo_barras !== 'undefined'){
+                    if(producto.id_producto.datos_generales.clave_alterna === input_value || producto.codigo_barras === input_value) return producto;
+                }else{
+                    if(producto.id_producto.datos_generales.clave_alterna === input_value) return producto;
+                }
+            })
+            console.log(producto_selecionado, "retorno filtro");
+            //Condicionar si existe 
+            if(producto_selecionado.lenght > 0){
+
+            }else{
+                obtenerProductos({
+                    variables: {
+                        datosProductos: input_value,
+                    },
+                });
+                setChangeState(!changeState);
+                if(productoBase._id === null){
+                    alert("Este producto no existe en la base de datos");
+                    return
+                }
+                localStorage.getItem('sesionCafi');
+                console.log("datos: ",productoBase);
+                localStorage.setItem('tokenCafi', JSON.stringify(token));
+            }
         }
     }
 
