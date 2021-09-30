@@ -37,7 +37,7 @@ export default function PreciosProductos() {
 	};
 
     return (
-        <div>
+        <>
             <Button 
                 className={classes.borderBotonChico}
                 onClick={handleClickOpen}
@@ -140,6 +140,6 @@ export default function PreciosProductos() {
                 </Button>
             </DialogActions>
         </Dialog>
-        </div>
+        </>
     )
 }

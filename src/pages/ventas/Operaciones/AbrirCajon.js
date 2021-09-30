@@ -19,7 +19,7 @@ export default function AbrirCajon() {
 	};
 
     return (
-        <div>
+        <>
             <Button 
                 className={classes.borderBotonChico}
                 onClick={handleClickOpen}
@@ -29,7 +29,7 @@ export default function AbrirCajon() {
                         <img 
                             src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cajon.svg' 
                             alt="icono ventas" 
-                            style={{width: 50}}
+                            style={{width: 40}}
                         />
                     </Box>
                     <Box>
@@ -81,6 +81,6 @@ export default function AbrirCajon() {
                 </Button>
             </DialogActions>
             </Dialog>
-        </div>
+        </>
     )
 }

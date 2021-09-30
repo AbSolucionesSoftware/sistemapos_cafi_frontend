@@ -81,12 +81,12 @@ export default function Turnos() {
 	};
 
     return (
-        <div style={{padding: 0}}>
+        <>
 			<Button
                 onClick={() =>{handleClickOpen();}}
-                style={{textTransform: 'none'}}
+                style={{textTransform: 'none', height: '100%', width: '70%'}}
             >
-                <Box display="flex" flexDirection="column">
+                <Box display="flex" flexDirection="column" style={{height: '100%', width: '100%'}}>
                     <Box display="flex" justifyContent="center" alignItems="center">
                         <img 
                             src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg'
@@ -167,6 +167,6 @@ export default function Turnos() {
 					</Button>
 				</DialogActions>
 			</Dialog>
-        </div>
+        </>
     )
 }
