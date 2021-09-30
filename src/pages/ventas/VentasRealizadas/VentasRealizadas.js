@@ -22,7 +22,7 @@ export default function VentasRealizadas() {
 	};
 
     return (
-        <div>
+        <>
            <Button 
                 className={classes.borderBotonChico}
                 onClick={handleClickOpen}
@@ -91,6 +91,6 @@ export default function VentasRealizadas() {
                 </DialogActions>
             </Dialog>
 
-        </div>
+        </>
     )
 }

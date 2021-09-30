@@ -17,7 +17,7 @@ export default function VentasEspera() {
 		setOpen(!open);
 	};
     return (
-        <div>
+        <>
             <Button 
                 className={classes.borderBotonChico}
                 onClick={handleClickOpen}
@@ -25,7 +25,11 @@ export default function VentasEspera() {
                 <Box>
                     <Box>
                         <Badge badgeContent={4} color="primary">
-                            <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/lista-de-espera.svg' alt="icono caja2" style={{width: 40}} />
+                            <img 
+                                src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/lista-de-espera.svg' 
+                                alt="icono caja2" 
+                                style={{width: 40}} 
+                            />
                         </Badge>
                     </Box>
                     <Box>
@@ -85,8 +89,7 @@ export default function VentasEspera() {
                         Aceptar
                     </Button>
                 </DialogActions>
-
             </Dialog>
-        </div>
+        </>
     )
 }

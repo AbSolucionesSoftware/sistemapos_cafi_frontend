@@ -23,7 +23,7 @@ export default function DepositoRetiroCaja() {
         <>
             <Button
                 onClick={() =>{handleClickOpen();}}
-                style={{textTransform: 'none'}}
+                style={{textTransform: 'none', height: '100%', width: '70%'}}
             >
                 <Box display="flex" flexDirection="column">
                     <Box display="flex" justifyContent="center" alignItems="center">
