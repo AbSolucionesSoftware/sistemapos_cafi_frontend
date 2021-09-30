@@ -1,9 +1,8 @@
 import React, { useState, Fragment, useContext} from 'react';
-import { Drawer, AppBar, Toolbar, Divider, BottomNavigation, Button, Grid, Slide, Badge } from '@material-ui/core';
+import { Drawer, AppBar, Toolbar, Divider,BottomNavigationAction, BottomNavigation, Button, Grid } from '@material-ui/core';
 import { CssBaseline, Avatar, Box, Typography } from '@material-ui/core';
 import { withRouter } from 'react-router';
 import { FaPowerOff } from 'react-icons/fa';
-import { FcBusinessman, FcPaid } from 'react-icons/fc';
 import useStyles from './styles';
 // import addIcon from '../../icons/ventas/add.svg'
 // import articuloRapido from '../../icons/ventas/tiempo-rapido.svg'
@@ -95,7 +94,7 @@ function NavegacionVentas(props) {
 						<Divider orientation="vertical" />
 					<Button
 						onClick={() => props.history.push('/admin')}
-						style={{textTransform: 'none'}}
+						style={{textTransform: 'none', height: '100%', width: '70%'}}
 					>
 						<Box display="flex" flexDirection="column">
 							<Box display="flex" justifyContent="center" alignItems="center">
@@ -110,9 +109,9 @@ function NavegacionVentas(props) {
 							props.history.push('/')
 							signOut()
 						}}
-						style={{textTransform: 'none'}}
+						style={{textTransform: 'none', height: '100%', width: '70%'}}
 					>
-						<Box display="flex" flexDirection="column">
+						<Box display="flex" flexDirection="column" style={{textTransform: 'none', height: '100%', width: '100%'}}>
 							<Box display="flex" justifyContent="center" alignItems="center">
 								<FaPowerOff className={classes.iconSizeSuperior} style={{color: 'red'}} />
 							</Box>
@@ -155,11 +154,11 @@ function NavegacionVentas(props) {
 			>
 				<Toolbar className={classes.navigationTop} />
 				<Grid container className={classes.drawerColor}>
-					<Grid item lg={6}>
+					<Grid item lg={6} xs={12} md={12}>
 						<VentasCredito />
 						<CrearApartado />
 					</Grid>
-					<Grid item lg={6}>
+					<Grid item lg={6} xs={12} md={12}>
 						<Button className={classes.borderBoton}>
 							<Box>
 								<Box>
@@ -175,17 +174,17 @@ function NavegacionVentas(props) {
 				</Grid>
 
 				<Grid container className={classes.drawerColor}>
-					<Grid item lg={4}>
+					<Grid item lg={4} md={12} xs={12}>
 						<CancelarVenta />
 						<AbrirCajon />
+						<ClientesVentas />
+					</Grid>
+					<Grid item lg={4} md={12} xs={12}>
+						<CerrarVenta />
+						<VentasEspera />
 						<ConsultarPrecio />
 					</Grid>
-					<Grid item lg={4}>
-						<CerrarVenta />
-						<ClientesVentas />
-						<VentasEspera />
-					</Grid>
-					<Grid item lg={4}>
+					<Grid item lg={4} md={12} xs={12}>
 						<VentasRealizadas />
 						<PreciosProductos />
 						<ListaApartados />

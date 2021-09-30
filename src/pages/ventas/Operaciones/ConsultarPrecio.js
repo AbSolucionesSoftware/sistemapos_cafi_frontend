@@ -23,7 +23,7 @@ export default function ConsultarPrecio() {
 
 
     return (
-        <div>
+        <>
             <Button 
                 className={classes.borderBotonChico}
                 onClick={handleClickOpen}
@@ -167,6 +167,6 @@ export default function ConsultarPrecio() {
                 </DialogActions>
             </Dialog>
         
-        </div>
+        </>
     )
 }

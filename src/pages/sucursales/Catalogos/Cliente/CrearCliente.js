@@ -121,7 +121,6 @@ export default function CrearCliente({ tipo, accion, datos, refetch }) {
 			!cliente.numero_cliente ||
 			!cliente.clave_cliente ||
 			!cliente.nombre_cliente ||
-			!cliente.representante ||
 			!cliente.telefono ||
 			!cliente.email ||
 			!cliente.direccion.calle ||
@@ -129,6 +128,10 @@ export default function CrearCliente({ tipo, accion, datos, refetch }) {
 			!cliente.direccion.estado ||
 			!cliente.direccion.pais
 		) {
+			if (tipo !== 'CLIENTE' && !cliente.representante) {
+				setError(true);
+				return;
+			}
 			setError(true);
 			return;
 		}
@@ -138,6 +141,7 @@ export default function CrearCliente({ tipo, accion, datos, refetch }) {
 				cliente.tipo_cliente = tipo;
 				cliente.empresa = sesion.empresa._id;
 				cliente.sucursal = sesion.sucursal._id;
+				if (tipo === 'CLIENTE'){ cliente.representante = ''};
 				const input = cliente;
 				await crearCliente({
 					variables: {
@@ -162,7 +166,13 @@ export default function CrearCliente({ tipo, accion, datos, refetch }) {
 			setLoading(false);
 			onCloseModal();
 		} catch (error) {
-			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			if(error.networkError.result){
+				console.log(error.networkError.result.errors);
+			}else if(error.graphQLErrors){
+				console.log(error.graphQLErrors.message);
+			}
+			console.log(error);
+			setAlert({ message: error.message, status: 'error', open: true });
 			setLoading(false);
 		}
 	};

@@ -15,18 +15,18 @@ export default function VentaEnEspera() {
 	};
 
     return (
-        <div>
-            <Button
+        <>
+           <Button
                 onClick={() =>{handleClickOpen();}}
-                style={{textTransform: 'none'}}
+                style={{textTransform: 'none', height: '100%', width: '70%'}}
             >
                 <Box display="flex" flexDirection="column">
                     <Box display="flex" justifyContent="center" alignItems="center">
-                        <FcExpired style={{fontSize: 30}} />
+                        <FcExpired style={{fontSize: 25}} />
                     </Box>
-                    En espera
+                    Cotización
                 </Box>
-            </Button>	
+            </Button>
 
             <Dialog
 				maxWidth='lg'
@@ -69,6 +69,6 @@ export default function VentaEnEspera() {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </>
     )
 }

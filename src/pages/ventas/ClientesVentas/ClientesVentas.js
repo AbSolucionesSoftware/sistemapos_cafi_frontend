@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import {  Box, Button, Dialog, DialogContent,  Grid, IconButton, InputBase, makeStyles, Paper, Slide, Typography } from '@material-ui/core'
 import { Search } from '@material-ui/icons';
 import ListaClientes from '../../sucursales/Catalogos/Cliente/ListaClientes';
@@ -37,7 +36,7 @@ export default function ClientesVentas() {
 	const [ values, setValues ] = useState('');
 
 	const pressEnter = (e) => {
-		if (e.key === 'Enter') setFiltro(e.target.defaultValue);
+		if (e.key === 'Enter') setValues(e.target.defaultValue);
 	};
 
     const [open, setOpen] = useState(false);
@@ -47,16 +46,16 @@ export default function ClientesVentas() {
 	};
 
     return (
-        <div>
+        <>
             <ClienteProvider>
-
             <Button 
                 className={classes.borderBotonChico}
                 onClick={handleClickOpen}
+                style={{height: 'auto', width: '100%'}}
             >
                 <Box>
-                    <Box>
-                        <FcBusinessman style={{fontSize: 50}} />
+                    <Box mt={3}> 
+                        <FcBusinessman style={{ fontSize: 50 }}/>
                     </Box>
                     <Box>
                         Clientes
@@ -95,7 +94,7 @@ export default function ClientesVentas() {
                                     onKeyPress={pressEnter}
                                     value={values}
                                 />
-                                <IconButton onClick={() => setFiltro(values)}>
+                                <IconButton onClick={() => setValues(values)}>
                                     <Search />
                                 </IconButton>
                             </Paper>
@@ -103,11 +102,11 @@ export default function ClientesVentas() {
                         <CrearCliente tipo="CLIENTE" accion="registrar" />
                     </Box>
                     <Box mx={2}>
-                        <ListaClientes tipo="CLIENTE" filtro={filtro} />
+                        <ListaClientes tipo="CLIENTE" filtro={values} />
                     </Box>
                 </DialogContent>
             </Dialog>
             </ClienteProvider>
-        </div>
+        </>
     )
 }

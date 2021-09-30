@@ -58,8 +58,7 @@ export default function ListaApartados() {
 
 
     return (
-        <div>
-
+        <>
             <Button 
                 className={classes.borderBotonChico}
                 onClick={handleClickOpen}
@@ -175,6 +174,6 @@ export default function ListaApartados() {
                     </Box>
                 </DialogActions>
             </Dialog>
-        </div>
+        </>
     )
 }
