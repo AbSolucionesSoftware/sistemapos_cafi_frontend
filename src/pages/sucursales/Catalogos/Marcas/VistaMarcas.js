@@ -10,6 +10,7 @@ import { Add } from '@material-ui/icons';
 import { /* OBTENER_MARCAS, */ REGISTRAR_MARCAS, ACTUALIZAR_MARCAS} from '../../../../gql/Catalogos/marcas';
 import { useMutation } from '@apollo/client';
 import { CreateMarcasContext } from '../../../../context/Catalogos/Marcas';
+import { cleanTypenames } from '../../../../config/reuserFunctions';
 
 
 export default function VistaMarcas() {
@@ -44,7 +45,7 @@ export default function VistaMarcas() {
                     if (sesion.accesos.catalogos.marcas.editar === false) {
                         return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción !', status: 'error', open: true });
                     }else{
-                        const input = data;
+                        const input = cleanTypenames(data);
                         await actualizarMarca({
                             variables: {
                                 input: {

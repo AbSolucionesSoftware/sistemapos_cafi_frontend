@@ -52,8 +52,6 @@ export default function ListaMarcas({updateData, toUpdate, setToUpdate, setData}
 		}
 	});	
 
-
-
 	useEffect(() => {
 		refetch();
 	}, [refetch, updateData])

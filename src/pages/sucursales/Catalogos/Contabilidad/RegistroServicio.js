@@ -7,6 +7,7 @@ import ListaServicios from './ListaServicios';
 import { REGISTRAR_CONTABILIDAD, ACTUALIZAR_CONTABILIDAD } from '../../../../gql/Catalogos/contabilidad';
 import { useMutation } from '@apollo/client';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
+import { cleanTypenames } from '../../../../config/reuserFunctions';
 
 const useStyles = makeStyles({
 	root: {
@@ -63,9 +64,10 @@ export default function RegistroServicios() {
 					if (sesion.accesos.catalogos.contabilidad.editar === false) {
 						return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
 					}else{
+						const inputActualizado = cleanTypenames(input);
 						await ActualizarContabilidad({
 							variables: {
-								input,
+								input: inputActualizado,
 								id: idService
 							}
 						})

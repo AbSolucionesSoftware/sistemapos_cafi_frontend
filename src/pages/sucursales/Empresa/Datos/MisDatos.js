@@ -11,6 +11,7 @@ import SnackBarMessages from '../../../../components/SnackBarMessages';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
 import ErrorPage from '../../../../components/ErrorPage';
 import {  ACTUALIZAR_EMPRESA, OBTENER_DATOS_EMPRESA } from '../../../../gql/Empresa/empresa';
+import { cleanTypenames } from '../../../../config/reuserFunctions';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -181,15 +182,14 @@ export default function MisDatos() {
 
 	const actEmp = async () =>{
 		try {
-			setLoadingPage(true)
-			//console.log(empresaDatos, sesion.empresa._id )
+			setLoadingPage(true);
+			const input = cleanTypenames(empresaDatos);
 			await actualizarEmpresa({
 				variables: {
 					id: sesion.empresa._id,
-					input: empresaDatos
+					input
 				}
 			});
-			//console.log(act.data.actualizarEmpresa.message)
 			setUpdate(true);
 			setLoadingPage(false);
 			setAlert({ message: 'Se han actualizado correctamente los datos.', status: 'success', open: true });	

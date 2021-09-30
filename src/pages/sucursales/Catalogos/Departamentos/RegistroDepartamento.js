@@ -7,6 +7,7 @@ import { useMutation } from '@apollo/client';
 import { CreateDepartamentosContext } from '../../../../context/Catalogos/Departamentos';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
+import { cleanTypenames } from '../../../../config/reuserFunctions';
 
 export default function RegistroDepartamentos() {
 	const { data, setData, update, setUpdate, error, setError, accion, setAccion, idDepartamento, setIdDepartamento , setLoading, setAlert, loading, alert} = useContext(CreateDepartamentosContext);
@@ -30,7 +31,6 @@ export default function RegistroDepartamentos() {
 				setError(true);
 			    return;
 			}else{
-				console.log(accion)
 				const input = data
 				if(accion){
 					if (sesion.accesos.catalogos.departamentos.agregar === false) {
@@ -48,9 +48,10 @@ export default function RegistroDepartamentos() {
 					if (sesion.accesos.catalogos.departamentos.editar === false) {
 						return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
 					}else{
+						const inputActualizado = cleanTypenames(input);
 						await ActualzarDepartamentos({
 							variables: {
-								input,
+								input: inputActualizado,
 								id: idDepartamento
 							}
 						}) 

@@ -15,7 +15,7 @@ import SnackBarMessages from '../../../../components/SnackBarMessages';
 import arregloVacio from './AsingarAccesos/arregloVacioAcceso'
 import { useMutation } from '@apollo/client';
 import { CREAR_USUARIO, ACTUALIZAR_USUARIO } from '../../../../gql/Catalogos/usuarios';
-import { numerosRandom } from '../../../../config/reuserFunctions';
+import { cleanTypenames, numerosRandom } from '../../../../config/reuserFunctions';
 import { AppBar } from '@material-ui/core';
 import { Tab } from '@material-ui/core';
 
@@ -170,9 +170,10 @@ export default function CrearUsuario({ accion, datos }) {
 				});
 			} else {
 				const { numero_usuario, _id, sucursal, empresa, estado_usuario, ...input } = usuario;
+				const usuarioActualizado = cleanTypenames(input);
 				await actualizarUsuario({
 					variables: {
-						input,
+						input: usuarioActualizado,
 						id: usuario._id
 					}
 				});

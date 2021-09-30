@@ -17,6 +17,7 @@ import {
 	ELIMINAR_CATEGORIA,
 	ELIMINAR_SUBCATEGORIA
 } from '../../../../gql/Catalogos/categorias';
+import { cleanTypenames } from '../../../../config/reuserFunctions';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -77,10 +78,11 @@ export default function RegistroCategorias() {
 					setLoadingBackDrop(false);
 					return setAlert({ message: 'Lo sentimos no tienes autorización para esta acción', status: 'error', open: true });
 				}else{
+					const categoriaActualizada = cleanTypenames(categoria);
 					await actualizarCategoria({
 						variables: {
 							input: {
-								categoria
+								categoria: categoriaActualizada
 							},
 							idCategoria: toUpdateID
 						}
@@ -205,10 +207,11 @@ const RenderCategorias = ({ categoria, setToUpdateID, setCategoria, refetch, toU
 					setLoadingBackDrop(false);
 					return setAlert({ message: 'Lo sentimos no tienes autorización para esta acción', status: 'error', open: true });
 				}else{
+					const subCategoriaActualizada = cleanTypenames(subcategoria);
 					resp = await actualizarSubcategoria({
 						variables: {
 							input: {
-								subcategoria
+								subcategoria: subCategoriaActualizada
 							},
 							idCategoria: categoria._id,
 							idSubcategoria: toUpdateID

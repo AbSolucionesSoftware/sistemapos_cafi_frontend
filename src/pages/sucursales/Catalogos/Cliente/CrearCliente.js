@@ -14,6 +14,7 @@ import SnackBarMessages from '../../../../components/SnackBarMessages';
 
 import { useMutation } from '@apollo/client';
 import { CREAR_CLIENTE, ACTUALIZAR_CLIENTE } from '../../../../gql/Catalogos/clientes';
+import { cleanTypenames } from '../../../../config/reuserFunctions';
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -150,9 +151,10 @@ export default function CrearCliente({ tipo, accion, datos, refetch }) {
 				});
 			} else {
 				const { numero_cliente, _id, clave_cliente, sucursal, empresa, ...input } = cliente;
+				const datosActualizados = cleanTypenames(input);
 				await actualizarCliente({
 					variables: {
-						input,
+						input: datosActualizados,
 						id: cliente._id
 					}
 				});
@@ -166,12 +168,6 @@ export default function CrearCliente({ tipo, accion, datos, refetch }) {
 			setLoading(false);
 			onCloseModal();
 		} catch (error) {
-			if(error.networkError.result){
-				console.log(error.networkError.result.errors);
-			}else if(error.graphQLErrors){
-				console.log(error.graphQLErrors.message);
-			}
-			console.log(error);
 			setAlert({ message: error.message, status: 'error', open: true });
 			setLoading(false);
 		}

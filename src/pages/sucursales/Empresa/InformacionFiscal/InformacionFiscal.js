@@ -12,6 +12,7 @@ import { useMutation, useQuery } from '@apollo/client';
 
 import { EmpresaContext } from '../../../../context/Catalogos/empresaContext';
 import {  ACTUALIZAR_EMPRESA, OBTENER_DATOS_EMPRESA } from '../../../../gql/Empresa/empresa';
+import { cleanTypenames } from '../../../../config/reuserFunctions';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -161,18 +162,17 @@ export default function InformacionFiscal() {
 
 	const actEmp = async () =>{
 		try {
-			setLoadingPage(true)
-			 await actualizarEmpresa({
+			setLoadingPage(true);
+			const input = cleanTypenames(empresaFiscal);
+			await actualizarEmpresa({
 				variables: {
-					
 					id: sesion.empresa._id,
-					input: empresaFiscal
+					input
 				}
 			})
 			setUpdate(true);
 			setLoadingPage(false);
 			setAlert({ message: 'Se han actualizado correctamente los datos.', status: 'success', open: true });
-			
 			setErrorForm(false);
 		} catch (errorCatch) {
 			setLoadingPage(false);
