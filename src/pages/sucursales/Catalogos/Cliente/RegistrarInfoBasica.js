@@ -105,20 +105,22 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
 								<Typography>Huella dactilar</Typography>
 								
 							</Box> */}
-							<Box width="100%">
-								<Typography>
-									<span>* </span>Tipo
-								</Typography>
-								<TextField
-									fullWidth
-									size="small"
-									name="tipo_cliente"
-									variant="outlined"
-									value={tipo}
-									onChange={obtenerCampos}
-									disabled
-								/>
-							</Box>
+							{tipo === 'CLIENTE' ? (null):(
+								<Box width="100%">
+									<Typography>
+										<span>* </span>Tipo
+									</Typography>
+									<TextField
+										fullWidth
+										size="small"
+										name="tipo_cliente"
+										variant="outlined"
+										value={tipo}
+										onChange={obtenerCampos}
+										disabled
+									/>	
+								</Box>
+							)}
 							<Box width="100%">
 								<Typography>
 									<span>* </span>Numero de cliente
@@ -169,21 +171,23 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
 								onChange={obtenerCampos}
 							/>
 						</Box>
-						<Box width="100%">
-							<Typography>
-								<span>* </span>Representante
-							</Typography>
-							<TextField
-								fullWidth
-								size="small"
-								error={error && !cliente.representante}
-								name="representante"
-								variant="outlined"
-								value={cliente.representante ? cliente.representante : ''}
-								helperText={error ? 'Campo Requerido' : ''}
-								onChange={obtenerCampos}
-							/>
-						</Box>
+						{tipo === 'CLIENTE' ? (null):(
+							<Box width="100%">
+								<Typography>
+									<span>* </span>Representante
+								</Typography>
+								<TextField
+									fullWidth
+									size="small"
+									error={error && !cliente.representante}
+									name="representante"
+									variant="outlined"
+									value={cliente.representante ? cliente.representante : ''}
+									helperText={error ? 'Campo Requerido' : ''}
+									onChange={obtenerCampos}
+								/>
+							</Box>
+						)}
 					</div>
 				</Grid>
 				<Grid item md={12}>

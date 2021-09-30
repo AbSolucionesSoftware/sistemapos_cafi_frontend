@@ -14,7 +14,7 @@ import { Box, Button, CircularProgress, Dialog, DialogActions, Divider, Grid } f
 import { DialogContent, DialogTitle, IconButton, Typography, Avatar, Switch } from '@material-ui/core';
 import { Dehaze, Delete } from '@material-ui/icons';
 import { ClienteCtx } from '../../../../context/Catalogos/crearClienteCtx';
- 
+import { useDebounce } from 'use-debounce';
 import { useQuery, useMutation } from '@apollo/client';
 import { OBTENER_CLIENTES, ACTUALIZAR_CLIENTE } from '../../../../gql/Catalogos/clientes';
 
@@ -51,10 +51,10 @@ export default function ListaClientes({user, tipo, filtro }) {
 	const { update } = useContext(ClienteCtx);
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(10);
-
+	const [value] = useDebounce(filtro, 1000);
 	/* Queries */
 	const { loading, data, error, refetch } = useQuery(OBTENER_CLIENTES, {
-		variables: { tipo, filtro }
+		variables: { tipo, filtro: value }
 	});
 
 	useEffect(
@@ -75,7 +75,7 @@ export default function ListaClientes({user, tipo, filtro }) {
 
 	if (loading)
 		return (
-			<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
+			<Box display="flex" justifyContent="center" alignItems="center" height="50vh" width='120vh'>
 				<CircularProgress />
 			</Box>
 		);
