@@ -5,6 +5,7 @@ import TablaColores from './ListaColores';
 import { SketchPicker } from 'react-color'; 
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import ErrorPage from '../../../../components/ErrorPage';
+import { cleanTypenames } from '../../../../config/reuserFunctions';
 
 import { useQuery, useMutation } from '@apollo/client';
 import { OBTENER_COLORES, CREAR_COLOR, ACTUALIZAR_COLOR } from '../../../../gql/Catalogos/colores';
@@ -56,18 +57,18 @@ export default function RegistroColores() {
 				if (sesion.accesos.catalogos.colores.editar === false) {
 					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
 				}else{
-				const resp = await actualizarColor({
-						variables: {
-							input: {
-								nombre: colores.nombre,
-								hex: colores.hex
-							},
-							id: toUpdate
-						}
-					});
-				msg = resp.data.actualizarColor.message
+					const colorActualizado = cleanTypenames(colores);
+					const resp = await actualizarColor({
+							variables: {
+								input: {
+									nombre: colorActualizado.nombre,
+									hex: colorActualizado.hex
+								},
+								id: toUpdate
+							}
+						});
+					msg = resp.data.actualizarColor.message
 				}
-
 			} else {
 				if (sesion.accesos.catalogos.colores.agregar === false) {
 					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });

@@ -17,6 +17,7 @@ import {
     ELIMINAR_CUENTA,
     ELIMINAR_SUBCUENTA
 } from '../../../../gql/Catalogos/centroCostos';
+import { cleanTypenames } from '../../../../config/reuserFunctions';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -98,10 +99,11 @@ export default function RegistroCategorias() {
 					setLoadingBackDrop(false);
 					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
 				}else{
+					const cuentaActualizada = cleanTypenames(cuenta);
 					await actualizarCuenta({
 						variables: {
 							input: {
-								cuenta
+								cuenta: cuentaActualizada
 							},
 							idCuenta: toUpdateID
 						}
@@ -204,10 +206,11 @@ const RenderCuentas = ({ cuenta, setToUpdateID, setCuenta, refetch, toUpdateID }
 					setLoadingBackDrop(false);
 					return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
 				}else{
+					const subCuentaActualizada = cleanTypenames(subcuenta)
 					await actualizarSubcuenta({
 						variables: {
 							input: { 
-								subcuenta
+								subcuenta: subCuentaActualizada
 							},
 							idCuenta: cuenta._id,
 							idSubcuenta: toUpdateID

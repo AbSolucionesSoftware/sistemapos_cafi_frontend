@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -51,8 +51,13 @@ const useStyles = makeStyles({
 	}
 });
 
-export default function TablaVentas() {
+export default function TablaVentas({ newProductoVentas }) {
 	const classes = useStyles();
+	const [datosTabla, setDatosTabla] = useState([])
+
+	// useEffect(() => {
+		
+	// }, [newProductoVentas])
 
 	return (
 		

@@ -160,14 +160,14 @@ export default function ArticuloRapido() {
     };
   }, []);
   
-  if (cargando || loading)
+  if (cargando || loading || !data)
 	return (
-		<Box display="flex" justifyContent="center" alignItems="center" height="100vh" width="150vh">
+		<Box display="flex" justifyContent="center" alignItems="center" height="100%" width="150vh">
 			<CircularProgress />
 		</Box>
 	);
 
-  if (loading) return null;
+  if (cargando || loading || !data ) return null;
 
   const { obtenerConsultasProducto } = data;
 

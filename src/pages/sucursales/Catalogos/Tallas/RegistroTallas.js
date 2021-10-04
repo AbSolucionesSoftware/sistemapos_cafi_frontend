@@ -7,6 +7,7 @@ import ErrorPage from '../../../../components/ErrorPage';
 
 import { useQuery, useMutation } from '@apollo/client';
 import { OBTENER_TALLAS, CREAR_TALLAS, ACTUALIZAR_TALLA } from '../../../../gql/Catalogos/tallas';
+import { cleanTypenames } from '../../../../config/reuserFunctions';
 
 export default function RegistroTallas({ tipo }) {
 	const [ value, setValue ] = useState('');
@@ -45,17 +46,17 @@ export default function RegistroTallas({ tipo }) {
 				if (sesion.accesos.catalogos.tallas_numeros.editar === false ) {
 					return setAlert({ message: 'Lo sentimos no tienes autorización para esta acción', status: 'error', open: true });
 				}else{
+					const talla_actualizada = cleanTypenames(nueva_talla);
 					resp = await actualizarTalla({
 						variables: {
 							input: {
-								talla: nueva_talla,
+								talla: talla_actualizada,
 								tipo
 							},
 							id: toUpdate
 						}
 					});
 				}
-
 			}else{
 				if (sesion.accesos.catalogos.tallas_numeros.agregar === false ) {
 					return setAlert({ message: 'Lo sentimos no tienes autorización para esta acción', status: 'error', open: true });
@@ -75,7 +76,6 @@ export default function RegistroTallas({ tipo }) {
 			refetch();
 			setValue('');
 			setToUpdate('');
-			console.log(resp.data)
 			let msgAlert = (toUpdate) ? { message: resp.data.actualizarTalla.message, status: 'success', open: true }:{ message: resp.data.crearTalla.message, status: 'success', open: true }
 			setAlert(msgAlert);
 			
