@@ -83,7 +83,7 @@ export default function Turnos() {
     return (
         <>
 			<Button
-                onClick={() =>{handleClickOpen();}}
+                onClick={() => handleClickOpen()}
                 style={{textTransform: 'none', height: '100%', width: '70%'}}
             >
                 <Box display="flex" flexDirection="column" style={{height: '100%', width: '100%'}}>
@@ -115,12 +115,12 @@ export default function Turnos() {
 						aria-label="scrollable force tabs example"
 					>
 						<Tab
-							label="Cerrar Turno"
+							label="Abrir Turno"
 							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
 							{...a11yProps(0)}
 						/>
 						<Tab
-							label="Abrir Turno"
+							label="Cerrar Turno"
 							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
 							{...a11yProps(1)}
 						/>
@@ -155,17 +155,13 @@ export default function Turnos() {
 
                 <DialogContent style={{padding: 0}} >
                     <TabPanel value={value} index={0}>
-                        <CerrarTurno />
+						<AbrirTurno handleClickOpen={handleClickOpen} />
                     </TabPanel>
                     <TabPanel value={value} index={1}>
-                        <AbrirTurno />
+						<CerrarTurno />
                     </TabPanel>
 				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleClickOpen} variant="contained" color="primary" size="large">
-						Aceptar
-					</Button>
-				</DialogActions>
+				
 			</Dialog>
         </>
     )
