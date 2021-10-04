@@ -80,13 +80,11 @@ export default function ListaAlmacenes(props) {
 			const existencias =	producto.existencia_almacenes.filter((existencia) => existencia._id.almacen._id === almacenColumna._id)
 			if(existencias.length > 0){
 				arrayCantidades.push(existencias[0].cantidad_existente)
-			
 				row = {...row, [almacenColumna._id]: existencias[0].cantidad_existente };
 				total += existencias[0].cantidad_existente;
 			}else{
 				arrayCantidades.push(0);
 				row = {...row, [almacenColumna._id]:0 };	
-			
 			}
 		});	 
 		row = {...row, total:total };	

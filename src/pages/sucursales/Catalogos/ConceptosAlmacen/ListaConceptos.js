@@ -53,7 +53,7 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 			sucursal: sesion.sucursal._id
 		}
 	});
-	const [ EliminarContabilidad ] = useMutation(ELIMINAR_CONCEPTO_ALMACEN);
+	const [ EliminarConceptoAlmacen ] = useMutation(ELIMINAR_CONCEPTO_ALMACEN);
 
 	useEffect(
 		() => {
@@ -73,7 +73,7 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 
 	const handleDelete = async () => {
 		try {
-			await EliminarContabilidad({
+			await EliminarConceptoAlmacen({
 				variables: {
 					id: idConcepto
 				}
@@ -112,7 +112,8 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 						<TableHead>
 							<TableRow>
 								<TableCell>Concepto almacén</TableCell>
-                                <TableCell padding="default">Tipo</TableCell>
+                                <TableCell padding="default">Origen</TableCell>
+								<TableCell padding="default">Destino</TableCell>
 								{sesion.accesos.catalogos.conceptos_almacen.editar === false ? (null):(
 									<TableCell padding="default">Editar</TableCell>
 								)}
@@ -126,7 +127,8 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 								return (
 									<TableRow hover role="checkbox" tabIndex={-1} key={row._id}>
 										<TableCell>{row.nombre_concepto}</TableCell>
-                                        <TableCell>{row.tipo}</TableCell>
+                                        <TableCell>{row.origen}</TableCell>
+										<TableCell>{row.destino}</TableCell>
 										{sesion.accesos.catalogos.conceptos_almacen.editar === false ? (null):(
 											<TableCell padding="checkbox">
 												<IconButton onClick={() => {
@@ -134,9 +136,13 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 													setIdConcepto(row._id)
 													setData({
 														nombre_concepto: row.nombre_concepto,
-														tipo: row.tipo
+														origen: row.origen,
+														destino: row.destino
 													});
-												}}>
+													
+													}}
+													disabled={!row.editable}
+												>
 													<Edit />
 												</IconButton>
 											</TableCell>
@@ -146,7 +152,9 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 												<IconButton onClick={() => {
 													setIdConcepto(row._id);
 													handleModal();
-												}}>
+												}}
+												disabled={!row.editable}
+												>
 													<Delete />
 												</IconButton>
 											</TableCell>

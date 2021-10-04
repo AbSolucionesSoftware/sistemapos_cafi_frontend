@@ -62,8 +62,8 @@ export default function ConceptosAlmacen() {
 						</Box>
 					</Toolbar>
 				</AppBar>
-				<Box mt={4}>
-					<Container maxWidth="md">
+				<Box mt={4} alignSelf='center' >
+					<Container >
 						<RegistroConcepto />
 					</Container>
 				</Box>

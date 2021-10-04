@@ -59,8 +59,8 @@ export const CREAR_PRODUCTO = gql`
 `;
 
 export const OBTENER_PRODUCTOS = gql`
-	query obtenerProductos($empresa: ID!, $sucursal: ID!, $filtro: String, $almacen: ID) {
-		obtenerProductos(empresa: $empresa, sucursal: $sucursal, filtro: $filtro, almacen: $almacen) {
+	query obtenerProductos($empresa: ID!, $sucursal: ID!, $filtro: String, $almacen: ID, $existencias: Boolean) {
+		obtenerProductos(empresa: $empresa, sucursal: $sucursal, filtro: $filtro, almacen: $almacen, existencias: $existencias) {
 			_id
 			centro_de_costos {
 				id_cuenta
