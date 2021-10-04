@@ -47,9 +47,9 @@ export default function AlertDialogSlide({ agregarCompra, handleClose }) {
   const actualizarContextProducto = () => {
     toggleDrawer();
     let precio_unitario_con_impuesto =
-      datosProducto.costo / datosProducto.cantidad;
+      datosProducto.costo / precios.unidad_de_compra.cantidad;
     let precio_unitario_sin_impuesto =
-      precios.precio_de_compra.precio_sin_impuesto / datosProducto.cantidad;
+      precios.precio_de_compra.precio_sin_impuesto / precios.unidad_de_compra.cantidad;
 
     if (isNaN(precio_unitario_sin_impuesto)) precio_unitario_sin_impuesto = 0;
     if (isNaN(precio_unitario_con_impuesto)) precio_unitario_con_impuesto = 0;
@@ -68,7 +68,6 @@ export default function AlertDialogSlide({ agregarCompra, handleClose }) {
         precio_unitario_sin_impuesto: parseFloat(
           precio_unitario_sin_impuesto.toFixed(2)
         ),
-        cantidad: parseInt(datosProducto.cantidad),
       },
     });
   };
