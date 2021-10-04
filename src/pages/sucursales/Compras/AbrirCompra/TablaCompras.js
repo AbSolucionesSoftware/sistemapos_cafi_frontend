@@ -19,6 +19,7 @@ import { Close, Edit } from "@material-ui/icons";
 import { initial_state_datosProducto } from "./initial_states";
 import { SetOrResetData } from "./productos/setOrResetData";
 import { RegProductoContext } from "../../../../context/Catalogos/CtxRegProducto";
+import { formatoMexico } from "../../../../config/reuserFunctions";
 
 const useStyles = makeStyles({
   root: {
@@ -130,7 +131,7 @@ const RenderProductosCompra = ({ producto, index }) => {
       tabIndex={-1}
       selected={isSelected}
       style={
-        isEditing.index && !isSelected
+        isEditing.producto && !isSelected
           ? {
               pointerEvents: "none",
               opacity: 0.4,
@@ -150,7 +151,7 @@ const RenderProductosCompra = ({ producto, index }) => {
       </TableCell>
       <TableCell width={180}>
         <b>
-          $ {producto.producto.precios.precio_de_compra.precio_con_impuesto}
+          $ {formatoMexico(producto.total)}
         </b>
       </TableCell>
       <TableCell>{producto.cantidad}</TableCell>

@@ -130,7 +130,8 @@ const ModalCompra = ({ open, handleClose }) => {
   }
 
   const realizarCompraBD = async () => {
-    setLoading(true);
+    console.log(productosCompra);
+    /* setLoading(true);
     try {
       datosCompra.productos = productosCompra;
       const clean_data = cleanTypenames(datosCompra);
@@ -150,7 +151,6 @@ const ModalCompra = ({ open, handleClose }) => {
         open: true,
       });
       limpiarCampos();
-      /* handleClose(); */
     } catch (error) {
       setLoading(false);
       setAlert({
@@ -164,7 +164,7 @@ const ModalCompra = ({ open, handleClose }) => {
       } else if (error.graphQLErrors) {
         console.log(error.graphQLErrors);
       }
-    }
+    } */
   };
 
   const handleToggleDelete = () => {
