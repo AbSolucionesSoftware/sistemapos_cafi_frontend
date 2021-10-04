@@ -17,7 +17,7 @@ import useStyles from './styles';
 import TablaVentas from './TablaVentas';
 import { useQuery } from '@apollo/client';
 import { VentasContext } from '../../context/Ventas/ventasContext';
-import { CONSULTA_PRODUCTOS, CONSULTA_PRODUCTO_UNITARIO } from '../../gql/Ventas/ventas_generales';
+import { CONSULTA_PRODUCTO_UNITARIO } from '../../gql/Ventas/ventas_generales';
 import { useLazyQuery } from "@apollo/client";
 
 
@@ -34,84 +34,151 @@ import MonedaCambio from './Operaciones/MonedaCambio';
 export default function VentasGenerales() {
     
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+    // const productosVentas = JSON.parse(localStorage.getItem('productosVentas'));
     const classes = useStyles();
     const [productoBase, setProductoBase] = useState({});
     const [changeState, setChangeState] = useState(false);
-
-    const [obtenerProductos, datos] = useLazyQuery(
+    const [newProductoVentas, setNewProductoVentas] = useState(false);
+    // let venta = JSON.parse(localStorage.getItem('DatosVentas'));
+    // let productosVentas = venta === null ? {subTotal = 0, total = 0 , impuestos = 0 , iva = 0, ieps = 0} : venta;
+    const [DatosVentasActual, setDatosVentasActual] = useState({
+        subTotal: 0, 
+        total: 0 , 
+        impuestos: 0 , 
+        iva: 0, 
+        ieps: 0
+    })
+    const [obtenerProductos, { data ,error }] = useLazyQuery(
         CONSULTA_PRODUCTO_UNITARIO,
-        { variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id } }
+        { variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id }, fetchPolicy: "network-only" }
     );
-    
-    // console.log(datos);
-    const { loading, data, error, refetch } = useQuery(CONSULTA_PRODUCTOS, {
-		variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id }
-	});
 
-    const {
-        datosProductoVentas,
-        setDatosProductoVentas,
-        productosVentas,
-        setProductosVentas,
-        datosVentas,
-        setDatosVentas
-    } = useContext(VentasContext);
+
+    let productosBase = null;
+    if(data) productosBase = data.obtenerUnProductoVentas;
 
     useEffect(() => {
-        if(datos.data){
-            const { obtenerUnProductoVentas } = datos.data;
-            setProductoBase(obtenerUnProductoVentas);
+        if(productosBase !== null){
+            agregarProductos(productosBase);
         }
-    }, [changeState])
-
-    if(loading) 
-        return (
-            <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                height="30vh"
-            >
-                <CircularProgress />
-            </Box>
-        );
-
-    const productosBase = data.obtenerConsultaGeneralVentas;
-    // console.log(productosBase);
+    }, [productosBase])
 
     const keyUpEvent = async (event) => {
-        //Buscar el producto en el context de producto, y si existe sumar uno mas a cantidad
-
-        //Verificar si existe localmente
         if (event.code === "Enter" || event.code === "NumpadEnter") {
             const input_value = event.target.value;
+            console.log(input_value);
+            obtenerProductos({
+                variables: {
+                    datosProductos: input_value,
+                }
+            }); 
+            // setChangeState(!changeState);
+        }
+    }
 
-            const producto_selecionado = await productosBase.filter((producto) => {
-                if(typeof producto.codigo_barras !== 'undefined'){
-                    if(producto.id_producto.datos_generales.clave_alterna === input_value || producto.codigo_barras === input_value) return producto;
+    const agregarProductos = async (producto) => {
+        let venta = JSON.parse(localStorage.getItem('DatosVentas'));
+        console.log(venta);
+        let productosVentas = venta === null ? [] : venta.produtos;
+        let productosVentasTemp = [];
+        let subTotal = 0, total = 0 , impuestos = 0 , iva = 0, ieps = 0;
+        let found = false;
+        for(let i = 0; i < productosVentas.length; i++){
+            if(typeof productosVentas[i].codigo_barras !== 'undefined'){
+                if(productosVentas[i].id_producto.datos_generales.clave_alterna === producto.id_producto.datos_generales.clave_alterna || productosVentas[i].codigo_barras === producto.codigo_barras){
+                    const { cantidad_venta, ...newP } = productosVentas[i];
+                    newP.cantidad_venta = parseInt(cantidad_venta) + 1;
+                    found = true;
+                    const { subtotalCalculo, totalCalculo , impuestoCalculo, ivaCalculo, iepsCalculo } = await CalculoPreciosVentas(found,newP);
+                    subTotal += subtotalCalculo;
+                    total += totalCalculo;
+                    impuestos += impuestoCalculo;
+                    iva += ivaCalculo;
+                    ieps += iepsCalculo;
+                    productosVentasTemp.push(newP);
                 }else{
-                    if(producto.id_producto.datos_generales.clave_alterna === input_value) return producto;
+                    const newP = productosVentas[i];
+                    const { subtotalCalculo, totalCalculo , impuestoCalculo, ivaCalculo, iepsCalculo } = await CalculoPreciosVentas(found,newP);
+                    subTotal += subtotalCalculo;
+                    total += totalCalculo;
+                    impuestos += impuestoCalculo;
+                    iva += ivaCalculo;
+                    ieps += iepsCalculo;
+                    productosVentasTemp.push(newP);
                 }
-            })
-            console.log(producto_selecionado, "retorno filtro");
-            //Condicionar si existe 
-            if(producto_selecionado.lenght > 0){
-
             }else{
-                obtenerProductos({
-                    variables: {
-                        datosProductos: input_value,
-                    },
-                });
-                setChangeState(!changeState);
-                if(productoBase._id === null){
-                    alert("Este producto no existe en la base de datos");
-                    return
+                if(productosVentas[i].id_producto.datos_generales.clave_alterna === producto.id_producto.datos_generales.clave_alterna){
+                    const { cantidad_venta, ...newP } = productosVentas[i];
+                    newP.cantidad_venta = parseInt(cantidad_venta) + 1;
+                    found = true;
+                    const { subtotalCalculo, totalCalculo , impuestoCalculo, ivaCalculo, iepsCalculo } = await CalculoPreciosVentas(found,newP);
+                    subTotal += subtotalCalculo;
+                    total += totalCalculo;
+                    impuestos += impuestoCalculo;
+                    iva += ivaCalculo;
+                    ieps += iepsCalculo;
+                    productosVentasTemp.push(newP);
+                }else{
+                    const newP = productosVentas[i];
+                    const { subtotalCalculo, totalCalculo , impuestoCalculo, ivaCalculo, iepsCalculo } = await CalculoPreciosVentas(found,newP);
+                    subTotal += subtotalCalculo;
+                    total += totalCalculo;
+                    impuestos += impuestoCalculo;
+                    iva += ivaCalculo;
+                    ieps += iepsCalculo;
+                    productosVentasTemp.push(newP);
                 }
-                localStorage.getItem('sesionCafi');
-                console.log("datos: ",productoBase);
-                localStorage.setItem('tokenCafi', JSON.stringify(token));
             }
+        }
+        if(!found){
+            const newP = {...producto};
+            const { subtotalCalculo, totalCalculo , impuestoCalculo, ivaCalculo, iepsCalculo } = await CalculoPreciosVentas(false,newP);
+            subTotal += subtotalCalculo;
+            total += totalCalculo;
+            impuestos += impuestoCalculo;
+            iva += ivaCalculo;
+            ieps += iepsCalculo;
+            newP.cantidad_venta = 1;
+            productosVentasTemp.push(newP);
+        }
+
+        
+        const datosVentaFinales = {
+            subTotal, 
+            total, 
+            impuestos, 
+            iva, 
+            ieps,
+            produtos: productosVentasTemp
+        }
+        console.log(datosVentaFinales);
+        JSON.parse(localStorage.setItem('DatosVentas',JSON.stringify(datosVentaFinales)));
+        setDatosVentasActual({
+            subTotal, 
+            total, 
+            impuestos, 
+            iva, 
+            ieps,
+        })
+        //Recargar la tabla de los productos
+        setNewProductoVentas(!newProductoVentas);
+        //GUARDAR EN LOCALSTORAGE
+    }
+
+    const CalculoPreciosVentas = async (found = false, newP) => {
+        console.log("entro");
+        let subtotalCalculo = 0, totalCalculo = 0, impuestoCalculo = 0, ivaCalculo = 0, iepsCalculo = 0;
+        totalCalculo = found ? parseFloat(newP.precio) * parseFloat(newP.cantidad_venta) : parseFloat(newP.precio);
+        subtotalCalculo = found ? (parseFloat(newP.precio) - parseFloat(newP.id_producto.precios.precio_de_compra.iva)) * parseFloat(newP.cantidad_venta) : (parseFloat(newP.precio) - parseFloat(newP.id_producto.precios.precio_de_compra.iva));
+        impuestoCalculo = found ? (parseFloat(newP.id_producto.precios.precio_de_compra.iva) + parseFloat(newP.id_producto.precios.precio_de_compra.ieps)) * parseFloat(newP.cantidad_venta) : (parseFloat(newP.id_producto.precios.precio_de_compra.iva) + parseFloat(newP.id_producto.precios.precio_de_compra.ieps));
+        ivaCalculo = found ? parseFloat(newP.id_producto.precios.precio_de_compra.iva) * parseFloat(newP.cantidad_venta) : parseFloat(newP.id_producto.precios.precio_de_compra.iva);
+        iepsCalculo = found ? parseFloat(newP.id_producto.precios.precio_de_compra.ieps) * parseFloat(newP.cantidad_venta) : parseFloat(newP.id_producto.precios.precio_de_compra.ieps);
+        return {
+            totalCalculo,
+            subtotalCalculo,
+            impuestoCalculo,
+            ivaCalculo,
+            iepsCalculo,
         }
     }
 
@@ -136,23 +203,6 @@ export default function VentasGenerales() {
                                     <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/busqueda-de-codigos-de-barras.svg' alt="iconoBander" className={classes.iconSize} /> 
                                 </Box>
                                 <Box>
-                                    {/* <Autocomplete
-                                        id="combo-box-producto"
-                                        size="small"
-                                        fullWidth
-                                        options={productosBase}
-                                        getOptionLabel={(option) => option.datos_generales.nombre_comercial ? option.datos_generales.nombre_comercial : 'N/A'}
-                                        renderInput={(params) => (
-                                            <TextField {...params} label="Producto" variant="outlined" />
-                                        )}
-                                        onChange={(_, value) =>
-                                            obtenerValorAutoComplete("Producto", value)
-                                        }
-                                        getOptionSelected={(option) => option.datos_generales.nombre_comercial}
-                                        value={
-                                            datosProductoVentas.producto.datos_generales ? datosProductoVentas.producto : null
-                                        }
-                                    /> */}
                                     <Paper className={classes.rootBusqueda}>
                                         <InputBase
                                             fullWidth
@@ -239,7 +289,7 @@ export default function VentasGenerales() {
                 </Grid>
                 
                 <Grid item lg={12}>
-                    <TablaVentas />
+                    <TablaVentas newProductoVentas={newProductoVentas} />
                 </Grid>                                                                                                                                                             
             
                 <Grid container item lg={12} justify="flex-end">
@@ -248,28 +298,28 @@ export default function VentasGenerales() {
                             <Box display="flex">
                                 <Box p={1} display='flex' justifySelf='center' alignItems='center'>
                                     <Typography variant="subtitle1">
-                                        Unidades: 25
+                                        Iva: ${DatosVentasActual.iva}
                                     </Typography>
                                 </Box>
                                 <Box p={1} display='flex' justifySelf='center' alignItems='center'>
                                     <Typography variant="subtitle1">
-                                        Descuento: 25%
+                                        Descuento: $0
                                     </Typography>
                                 </Box>
                                 <Box mr={1} display='flex' justifySelf='center' alignItems='center'>
                                     <Typography variant="subtitle1">
-                                        Subtotal: $250,000
+                                        Subtotal: ${DatosVentasActual.subTotal}
                                     </Typography>
                                 </Box>
                             </Box>
                             <Box display="flex" flexDirection="row-reverse" mr={1} >
                                 <Typography variant="subtitle1">
-                                    Impuestos: $15,00
+                                    Impuestos: ${DatosVentasActual.impuestos}
                                 </Typography>
                             </Box>
                             <Box display="flex" flexDirection="row-reverse" mr={1} mt={1}>
                                 <Typography variant='h5'>
-                                    Total: $250,000.00
+                                    Total: ${DatosVentasActual.total}
                                 </Typography>
                             </Box>
                         </Paper>
