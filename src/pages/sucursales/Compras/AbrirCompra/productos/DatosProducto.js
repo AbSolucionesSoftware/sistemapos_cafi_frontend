@@ -158,7 +158,7 @@ export default function DatosProducto() {
     setPreciosVenta(producto.precios.precios_producto);
   };
 
-  const obtenerCostoCantidad = (e) => {
+  const obtenerCantidad = (e) => {
     const { name, value } = e.target;
     if (!value) {
       setDatosProducto({
@@ -172,6 +172,36 @@ export default function DatosProducto() {
       [name]: parseFloat(value),
     });
   };
+
+  const obtenerCosto = (e) => {
+    const { name, value } = e.target;
+    if (!value) {
+      setDatosProducto({
+        ...datosProducto,
+        [name]: "",
+      });
+      return;
+    }
+
+    /* let descuento_precio = Math.round((datosProducto.total * value) / 100);
+    let total = datosProducto.total - descuento_precio; */
+    if(datosProducto.descuento_porcentaje > 0){
+      let descuento_precio =  Math.round((value * datosProducto.descuento_porcentaje) / 100);
+      let total = datosProducto.total - descuento_precio;
+      setDatosProducto({
+        ...datosProducto,
+        [name]: parseFloat(value),
+        descuento_precio: parseFloat(descuento_precio),
+        total_con_descuento: parseFloat(total),
+      });
+      return
+    } 
+
+    setDatosProducto({
+      ...datosProducto,
+      [name]: parseFloat(value),
+    });
+  }
 
   const agregarCompra = async (actualizar_Precios) => {
     /* Validaciones */
@@ -229,17 +259,23 @@ export default function DatosProducto() {
       datosProducto.cantidad + datosProducto.cantidad_regalo;
 
     if(isEditing.producto){
-      console.log("pasa primero");
       /* se tiene que actualizar el producto en la fila y sumar el subtotal */
-      const productosCompra_ordenados = [ ...productosCompra ].reverse();
-      productosCompra_ordenados.splice(isEditing.index, 1, isEditing.producto);
+      let productosCompra_ordenados = [ ...productosCompra ].reverse();
+
+      console.log(datosCompra.subtotal, datosProducto.subtotal, isEditing.producto.subtotal);
+      
+      let subtotal = datosCompra.subtotal + datosProducto.subtotal - isEditing.producto.subtotal;
+      let impuestos = datosCompra.impuestos + datosProducto.impuestos - isEditing.producto.impuestos;
+      let total = datosCompra.total + datosProducto.total - isEditing.producto.total;
+
+      productosCompra_ordenados.splice(isEditing.index, 1, datosProducto);
 
       setProductosCompra(productosCompra_ordenados);
       setDatosCompra({
         ...datosCompra,
-        subtotal: datosCompra.subtotal + datosProducto.subtotal,
-        impuestos: datosCompra.impuestos + datosProducto.impuestos,
-        total: datosCompra.total + datosProducto.total,
+        subtotal,
+        impuestos,
+        total,
       });
       setIsEditing({});
       setEditFinish(!editFinish);
@@ -430,7 +466,7 @@ export default function DatosProducto() {
               fullWidth
               disabled={!datosProducto.producto.datos_generales}
               value={datosProducto.costo}
-              onChange={obtenerCostoCantidad}
+              onChange={obtenerCosto}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">$</InputAdornment>
@@ -466,7 +502,7 @@ export default function DatosProducto() {
                   inputMode="numeric"
                   disabled={!datosProducto.producto.datos_generales}
                   value={datosProducto.cantidad}
-                  onChange={obtenerCostoCantidad}
+                  onChange={obtenerCantidad}
                 />
               </Box>
             </Grid>
@@ -481,7 +517,7 @@ export default function DatosProducto() {
                   inputMode="numeric"
                   disabled={!datosProducto.producto.datos_generales}
                   value={datosProducto.cantidad_regalo}
-                  onChange={obtenerCostoCantidad}
+                  onChange={obtenerCantidad}
                 />
               </Box>
             </Grid>
