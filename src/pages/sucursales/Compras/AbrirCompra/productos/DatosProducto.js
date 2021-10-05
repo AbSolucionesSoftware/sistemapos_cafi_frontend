@@ -293,11 +293,14 @@ export default function DatosProducto() {
     } else {
       /* se agregar el producto normal y verificar si ya esta el producto en la lista */
 
-      const existente = productosCompra.map((result, index) =>
-        result.id_producto === datosProducto.id_producto
-          ? { index, result }
-          : []
-      );
+      const existente = productosCompra.map((result, index) => {
+        if(result.id_producto === datosProducto.id_producto){
+          return {result, index}
+        }else{
+          return ''
+        }
+      }
+      ).filter(Boolean);
 
       if (existente.length > 0) {
         let productosCompra_ordenados = [...productosCompra].reverse();

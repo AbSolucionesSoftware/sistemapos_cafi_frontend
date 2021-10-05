@@ -46,7 +46,7 @@ export default function AlertDialogSlide() {
   return (
     <Fragment>
       <Button
-        color="ihnerit"
+        color="inherit"
         variant="outlined"
         size="medium"
         onClick={() => toggleDrawer()}

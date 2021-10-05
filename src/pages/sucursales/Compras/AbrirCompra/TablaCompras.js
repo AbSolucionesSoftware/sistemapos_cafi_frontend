@@ -1,4 +1,10 @@
-import React, { useContext, useState, forwardRef, useEffect } from "react";
+import React, {
+  useContext,
+  useState,
+  forwardRef,
+  useEffect,
+  Fragment,
+} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -37,7 +43,6 @@ export default function ListaCompras() {
     <Paper className={classes.root}>
       <TableContainer>
         <Table stickyHeader size="small">
-          {/* <caption>A basic table example with a caption</caption> */}
           <TableHead>
             <TableRow>
               <TableCell>Código de barras</TableCell>
@@ -220,7 +225,7 @@ const ModalDeleteProducto = ({ index, isSelected }) => {
   };
 
   return (
-    <div>
+    <Fragment>
       <IconButton
         color="secondary"
         size="small"
@@ -237,7 +242,7 @@ const ModalDeleteProducto = ({ index, isSelected }) => {
         aria-labelledby="modal-eliminar-compra"
       >
         <DialogTitle id="modal-eliminar-compra">
-          {"Seguro que quiere eliminar esto de la lista?"}
+          Seguro que quiere eliminar esto de la lista?
         </DialogTitle>
 
         <DialogActions>
@@ -249,6 +254,6 @@ const ModalDeleteProducto = ({ index, isSelected }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Fragment>
   );
 };

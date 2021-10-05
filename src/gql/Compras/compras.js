@@ -18,6 +18,24 @@ export const CREAR_COMPRA = gql`
   }
 `;
 
+export const CREAR_COMPRA_ESPERA = gql`
+  mutation crearCompraEnEspera(
+    $input: CrearCompraInput
+    $empresa: ID!
+    $sucursal: ID!
+    $usuario: ID!
+  ) {
+    crearCompraEnEspera(
+      input: $input
+      empresa: $empresa
+      sucursal: $sucursal
+      usuario: $usuario
+    ) {
+      message
+    }
+  }
+`;
+
 export const OBTENER_CONSULTA_GENERAL_PRODUCTO = gql`
   query obtenerConsultaGeneralCompras($empresa: ID!, $sucursal: ID!) {
     obtenerConsultaGeneralCompras(empresa: $empresa, sucursal: $sucursal) {

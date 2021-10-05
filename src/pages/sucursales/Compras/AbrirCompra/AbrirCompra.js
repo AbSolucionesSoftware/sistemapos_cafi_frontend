@@ -36,7 +36,7 @@ import {
   initial_state_productosCompra,
 } from "./initial_states";
 import { useMutation } from "@apollo/client";
-import { CREAR_COMPRA } from "../../../../gql/Compras/compras";
+import { CREAR_COMPRA, CREAR_COMPRA_ESPERA } from "../../../../gql/Compras/compras";
 import Close from "@material-ui/icons/Close";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 import BackdropComponent from "../../../../components/Layouts/BackDrop";
@@ -128,6 +128,7 @@ const ModalCompra = ({ open, handleClose }) => {
   const [loading, setLoading] = useState(false);
 
   const [crearCompra] = useMutation(CREAR_COMPRA);
+  const [crearCompraEnEspera] = useMutation(CREAR_COMPRA_ESPERA)
 
   const limpiarCampos = () => {
     setDatosProducto(initial_state_datosProducto);
@@ -142,10 +143,9 @@ const ModalCompra = ({ open, handleClose }) => {
     try {
       datosCompra.productos = productosCompra;
       const clean_data = cleanTypenames(datosCompra);
-      const result = {};
 
       if (compra_en_espera) {
-        result = await crearCompra({
+        const result = await crearCompraEnEspera({
           variables: {
             input: clean_data,
             empresa: sesion.empresa._id,
@@ -153,22 +153,27 @@ const ModalCompra = ({ open, handleClose }) => {
             usuario: sesion._id,
           },
         });
+        setAlert({
+          message: `¡Listo! ${result.data.crearCompraEnEspera.message}`,
+          status: "success",
+          open: true,
+        });
       } else {
-        result = await crearCompra({
+        const result = await crearCompra({
           variables: {
             input: clean_data,
             empresa: sesion.empresa._id,
             sucursal: sesion.sucursal._id,
             usuario: sesion._id,
           },
+        });
+        setAlert({
+          message: `¡Listo! ${result.data.crearCompra.message}`,
+          status: "success",
+          open: true,
         });
       }
       setLoading(false);
-      setAlert({
-        message: `¡Listo! ${result.data.crearCompra.message}`,
-        status: "success",
-        open: true,
-      });
       limpiarCampos();
     } catch (error) {
       setLoading(false);
@@ -276,7 +281,7 @@ const ModalCompra = ({ open, handleClose }) => {
           color="primary"
           variant="text"
           size="large"
-          onClick={() => realizarCompraBD()}
+          onClick={() => realizarCompraBD(true)}//realiza la compra en espera en la funcion
           disabled={!productosCompra.length}
           startIcon={<Timer />}
         >
@@ -287,7 +292,7 @@ const ModalCompra = ({ open, handleClose }) => {
           color="primary"
           variant="contained"
           size="large"
-          onClick={() => realizarCompraBD()}
+          onClick={() => realizarCompraBD(false)}
           disabled={!productosCompra.length}
           startIcon={<Done />}
         >
