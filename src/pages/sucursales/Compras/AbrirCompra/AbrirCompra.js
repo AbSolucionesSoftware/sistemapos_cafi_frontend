@@ -113,11 +113,19 @@ export default function AbrirCompra({ status }) {
 
 const ModalCompra = ({ open, handleClose }) => {
   const classes = useStyles();
-  const { productosCompra, datosCompra, setDatosProducto, setProductosCompra, setDatosCompra, setProductoOriginal, setPreciosVenta } = useContext(ComprasContext);
+  const {
+    productosCompra,
+    datosCompra,
+    setDatosProducto,
+    setProductosCompra,
+    setDatosCompra,
+    setProductoOriginal,
+    setPreciosVenta,
+  } = useContext(ComprasContext);
   const [openDelete, setOpenDelete] = useState(false);
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-  const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-  const [ loading, setLoading ] = useState(false);
+  const [alert, setAlert] = useState({ message: "", status: "", open: false });
+  const [loading, setLoading] = useState(false);
 
   const [crearCompra] = useMutation(CREAR_COMPRA);
 
@@ -127,23 +135,34 @@ const ModalCompra = ({ open, handleClose }) => {
     setDatosCompra(initial_state_datosCompra);
     setProductoOriginal(initial_state_productoOriginal);
     setPreciosVenta(initial_state_precios_venta);
-  }
+  };
 
-  const realizarCompraBD = async () => {
-    console.log(productosCompra);
-    /* setLoading(true);
+  const realizarCompraBD = async (compra_en_espera) => {
+    setLoading(true);
     try {
       datosCompra.productos = productosCompra;
       const clean_data = cleanTypenames(datosCompra);
+      const result = {};
 
-      const result = await crearCompra({
-        variables: {
-          input: clean_data,
-          empresa: sesion.empresa._id,
-          sucursal: sesion.sucursal._id,
-          usuario: sesion._id,
-        },
-      });
+      if (compra_en_espera) {
+        result = await crearCompra({
+          variables: {
+            input: clean_data,
+            empresa: sesion.empresa._id,
+            sucursal: sesion.sucursal._id,
+            usuario: sesion._id,
+          },
+        });
+      } else {
+        result = await crearCompra({
+          variables: {
+            input: clean_data,
+            empresa: sesion.empresa._id,
+            sucursal: sesion.sucursal._id,
+            usuario: sesion._id,
+          },
+        });
+      }
       setLoading(false);
       setAlert({
         message: `¡Listo! ${result.data.crearCompra.message}`,
@@ -164,14 +183,13 @@ const ModalCompra = ({ open, handleClose }) => {
       } else if (error.graphQLErrors) {
         console.log(error.graphQLErrors);
       }
-    } */
+    }
   };
 
   const handleToggleDelete = () => {
-    
-    if(productosCompra.length > 0){
+    if (productosCompra.length > 0) {
       setOpenDelete(!openDelete);
-    }else{
+    } else {
       limpiarCampos();
       handleClose();
     }

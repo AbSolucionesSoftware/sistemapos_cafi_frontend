@@ -3,9 +3,8 @@ import { Button, CircularProgress } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import Slide from "@material-ui/core/Slide";
-import { Done, Palette } from "@material-ui/icons";
+import { Done, SquareFoot } from "@material-ui/icons";
 import { useQuery } from "@apollo/client";
 import { OBTENER_CONSULTAS } from "../../../../../gql/Catalogos/productos";
 import ErrorPage from "../../../../../components/ErrorPage";
@@ -47,13 +46,14 @@ export default function AlertDialogSlide() {
   return (
     <Fragment>
       <Button
-        color="primary"
+        color="ihnerit"
+        variant="outlined"
         size="medium"
         onClick={() => toggleDrawer()}
-        startIcon={<Palette />}
+        startIcon={<SquareFoot />}
         disabled={!datosProducto.producto.datos_generales}
       >
-        Editar tallas y colores
+        Medidas
       </Button>
       <Dialog
         open={open}
@@ -66,15 +66,14 @@ export default function AlertDialogSlide() {
         maxWidth="lg"
       >
         <DialogContent>
-          <DialogContentText id="alert-tallas-compra-description">
-            <TallasProducto
-              datos={datosProducto.producto}
-              obtenerConsultasProducto={obtenerConsultasProducto}
-              refetch={refetch}
-              from="compra"
-              almacen={datosCompra.almacen}
-            />
-          </DialogContentText>
+          <TallasProducto
+            datos={datosProducto.producto}
+            obtenerConsultasProducto={obtenerConsultasProducto}
+            refetch={refetch}
+            from="compra"
+            almacen={datosCompra.almacen}
+            withoutPrice={true}
+          />
         </DialogContent>
         <DialogActions>
           <Button

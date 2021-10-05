@@ -61,8 +61,8 @@ export default function DatosProducto() {
     setDatosCompra,
     isEditing,
     setIsEditing,
-    editFinish, 
-    setEditFinish
+    editFinish,
+    setEditFinish,
   } = useContext(ComprasContext);
   const {
     datos_generales,
@@ -183,25 +183,31 @@ export default function DatosProducto() {
       return;
     }
 
-    /* let descuento_precio = Math.round((datosProducto.total * value) / 100);
-    let total = datosProducto.total - descuento_precio; */
-    if(datosProducto.descuento_porcentaje > 0){
-      let descuento_precio =  Math.round((value * datosProducto.descuento_porcentaje) / 100);
-      let total = datosProducto.total - descuento_precio;
+    let total = value;
+    let total_con_descuento;
+    let descuento_precio;
+    if (datosProducto.descuento_porcentaje > 0) {
+      descuento_precio = Math.round(
+        (value * datosProducto.descuento_porcentaje) / 100
+      );
+      total_con_descuento = total - descuento_precio;
+
       setDatosProducto({
         ...datosProducto,
         [name]: parseFloat(value),
         descuento_precio: parseFloat(descuento_precio),
-        total_con_descuento: parseFloat(total),
+        total_con_descuento: parseFloat(total_con_descuento),
+        subtotal: parseFloat(total) - datosProducto.impuestos,
       });
-      return
-    } 
-
+      return;
+    }
     setDatosProducto({
       ...datosProducto,
       [name]: parseFloat(value),
+      total_con_descuento: parseFloat(total),
+      subtotal: parseFloat(total) - datosProducto.impuestos,
     });
-  }
+  };
 
   const agregarCompra = async (actualizar_Precios) => {
     /* Validaciones */
@@ -258,15 +264,20 @@ export default function DatosProducto() {
     datosProducto.cantidad_total =
       datosProducto.cantidad + datosProducto.cantidad_regalo;
 
-    if(isEditing.producto){
+    if (isEditing.producto) {
       /* se tiene que actualizar el producto en la fila y sumar el subtotal */
-      let productosCompra_ordenados = [ ...productosCompra ].reverse();
+      let productosCompra_ordenados = [...productosCompra].reverse();
 
-      console.log(datosCompra.subtotal, datosProducto.subtotal, isEditing.producto.subtotal);
-      
-      let subtotal = datosCompra.subtotal + datosProducto.subtotal - isEditing.producto.subtotal;
-      let impuestos = datosCompra.impuestos + datosProducto.impuestos - isEditing.producto.impuestos;
-      let total = datosCompra.total + datosProducto.total - isEditing.producto.total;
+      let subtotal =
+        datosCompra.subtotal +
+        datosProducto.subtotal -
+        isEditing.producto.subtotal;
+      let impuestos =
+        datosCompra.impuestos +
+        datosProducto.impuestos -
+        isEditing.producto.impuestos;
+      let total =
+        datosCompra.total + datosProducto.total - isEditing.producto.total;
 
       productosCompra_ordenados.splice(isEditing.index, 1, datosProducto);
 
@@ -279,16 +290,37 @@ export default function DatosProducto() {
       });
       setIsEditing({});
       setEditFinish(!editFinish);
-    }else{
-      console.log("pasa por aca");
-      /* se agregar el producto normal */
-      setProductosCompra([...productosCompra, datosProducto]);
-      setDatosCompra({
-        ...datosCompra,
-        subtotal: datosCompra.subtotal + datosProducto.subtotal,
-        impuestos: datosCompra.impuestos + datosProducto.impuestos,
-        total: datosCompra.total + datosProducto.total,
-      });
+    } else {
+      /* se agregar el producto normal y verificar si ya esta el producto en la lista */
+
+      const existente = productosCompra.map((result, index) =>
+        result.id_producto === datosProducto.id_producto
+          ? { index, result }
+          : []
+      );
+
+      if (existente.length > 0) {
+        let productosCompra_ordenados = [...productosCompra].reverse();
+        const { index, result } = existente[0];
+        productosCompra_ordenados.splice(index, 1, datosProducto);
+        setProductosCompra(productosCompra_ordenados);
+        setDatosCompra({
+          ...datosCompra,
+          subtotal:
+            datosCompra.subtotal + datosProducto.subtotal - result.subtotal,
+          impuestos:
+            datosCompra.impuestos + datosProducto.impuestos - result.impuestos,
+          total: datosCompra.total + datosProducto.total - result.total,
+        });
+      } else {
+        setProductosCompra([...productosCompra, datosProducto]);
+        setDatosCompra({
+          ...datosCompra,
+          subtotal: datosCompra.subtotal + datosProducto.subtotal,
+          impuestos: datosCompra.impuestos + datosProducto.impuestos,
+          total: datosCompra.total + datosProducto.total,
+        });
+      }
     }
     setProductoOriginal({ precios: initial_state_precios });
     setDatosProducto(initial_state_datosProducto);
@@ -569,13 +601,13 @@ export default function DatosProducto() {
             xs={12}
             md={4}
             lg={5}
-            style={{ display: "flex", alignItems: "flex-end" }}
+            style={{ display: "flex", alignItems: "center", justifyContent: 'center' }}
           >
-            <Box display="flex" width="100%">
+            <Box display="flex">
               {datosProducto.producto.datos_generales &&
               datosProducto.producto.datos_generales.tipo_producto !==
                 "OTROS" ? (
-                <TallasProductos />
+                <TallasProductos/>
               ) : null}
 
               <Box mx={1} />

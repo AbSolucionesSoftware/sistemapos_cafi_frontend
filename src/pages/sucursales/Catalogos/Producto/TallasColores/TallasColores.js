@@ -49,7 +49,7 @@ export default function ColoresTallas({
   refetch,
   datos,
   from,
-  almacen,
+  withoutPrice,
 }) {
   const {
     almacen_inicial,
@@ -109,6 +109,7 @@ export default function ColoresTallas({
         <Grid item md={9}>
           <TablaPresentaciones
             from={from}
+            withoutPrice={withoutPrice}
             datos={datos}
             setOnUpdate={setOnUpdate}
             onUpdate={onUpdate}

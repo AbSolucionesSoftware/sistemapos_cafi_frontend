@@ -78,7 +78,7 @@ const RenderProductosCompra = ({ producto, index }) => {
     setPreciosVenta,
     isEditing,
     setIsEditing,
-    editFinish
+    editFinish,
   } = useContext(ComprasContext);
   const [isSelected, setIsSelected] = useState(false);
   const productoCTX = useContext(RegProductoContext);
@@ -106,7 +106,7 @@ const RenderProductosCompra = ({ producto, index }) => {
 
   const handleEdit = () => {
     setIsSelected(true);
-    setIsEditing({producto, index, finish: false});
+    setIsEditing({ producto, index, finish: false });
     setDatosProducto(producto);
     SetOrResetData("SET", seStates, producto.producto);
     setProductoOriginal(producto.producto);
@@ -122,7 +122,7 @@ const RenderProductosCompra = ({ producto, index }) => {
 
   useEffect(() => {
     setIsSelected(false);
-  }, [editFinish])
+  }, [editFinish]);
 
   return (
     <TableRow
@@ -150,9 +150,7 @@ const RenderProductosCompra = ({ producto, index }) => {
         {producto.producto.datos_generales.nombre_comercial}
       </TableCell>
       <TableCell width={180}>
-        <b>
-          $ {formatoMexico(producto.total)}
-        </b>
+        <b>$ {formatoMexico(producto.total)}</b>
       </TableCell>
       <TableCell>{producto.cantidad}</TableCell>
       <TableCell>{producto.cantidad_regalo}</TableCell>
