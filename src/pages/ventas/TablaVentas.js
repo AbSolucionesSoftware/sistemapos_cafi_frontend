@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, Fragment} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import {} from '@material-ui/core'
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -9,38 +10,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { IconButton } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
+import EliminarProductoVenta from './EliminarProductoVenta';
 
-
-const columns = [
-	{ id: 'cantidad', label: 'Cant', minWidth: 20, align: 'center' },
-	{ id: 'descripcion', label: 'Descripcion', minWidth: 330 },
-	{ id: 'existencia', label: 'Exist.', minWidth: 100, align: 'center'},
-	{ id: 'descuento', label: '% Desc.', minWidth: 100, align: 'center'},
-	{ id: 'unidadVenta', label: 'U. Venta', minWidth: 100, align: 'center'},
-	{ id: 'unitario', label: 'Precio U.', minWidth: 100, align: 'center'},
-	{ id: 'importe', label: 'Importe', minWidth: 100, align: 'center'},
-];
-
-function createData(cantidad, descripcion, existencia, descuento, unidadVenta, unitario, importe ) {
-	return { cantidad, descripcion, existencia, descuento, unidadVenta, unitario, importe };
-}
-
-const rows = [
-	createData(2, 'Jabon', 50, 10, 10, 60, 120),
-	createData(2, 'Jabon', 50, 10, 10, 60, 120),
-	createData(2, 'Jabon', 50, 10, 10, 60, 120),
-	createData(2, 'Jabon', 50, 10, 10, 60, 120),
-	createData(2, 'Jabon', 50, 10, 10, 60, 120),
-	createData(2, 'Jabon', 50, 10, 10, 60, 120),
-	createData(2, 'Jabon', 50, 10, 10, 60, 120),
-	createData(2, 'Jabon', 50, 10, 10, 60, 120),
-	createData(2, 'Jabon', 50, 10, 10, 60, 120),
-	createData(2, 'Jabon', 50, 10, 10, 60, 120),
-	createData(2, 'Jabon', 50, 10, 10, 60, 120),
-	createData(2, 'Jabon', 50, 10, 10, 60, 120),
-	createData(2, 'Jabon', 50, 10, 10, 60, 120),
-	createData(2, 'Jabon', 50, 10, 10, 60, 120),
-];
 
 const useStyles = makeStyles({
 	root: {
@@ -55,9 +26,10 @@ export default function TablaVentas({ newProductoVentas }) {
 	const classes = useStyles();
 	const [datosTabla, setDatosTabla] = useState([])
 
-	// useEffect(() => {
-		
-	// }, [newProductoVentas])
+	useEffect(() => {
+		const venta = JSON.parse(localStorage.getItem("DatosVentas"));
+		setDatosTabla(venta === null ? [] : venta.produtos)
+	}, [newProductoVentas])
 
 	return (
 		
@@ -65,44 +37,57 @@ export default function TablaVentas({ newProductoVentas }) {
 				<TableContainer className={classes.container}>
 					<Table stickyHeader size="small" aria-label="a dense table">
 						<TableHead>
-							<TableRow>
-								{columns.map((column) => (
-									<TableCell key={column.id} align={column.align} style={{ width: column.minWidth }}>
-										{column.label}
-									</TableCell>
-								))}
-								<TableCell key={1} align='center' style={{ width: 35 }}>
-									Eliminar
-								</TableCell>
+						<TableRow>
+							<TableCell style={{ width: 25 }}>Cantidad</TableCell>
+							<TableCell style={{ width: 330 }}>Descripcion</TableCell>
+							<TableCell style={{ width: 100 }}>Existencias</TableCell>
+							<TableCell style={{ width: 100 }}>% Desc</TableCell>
+							<TableCell style={{ width: 100 }}>U. Venta</TableCell>
+							<TableCell style={{ width: 100 }}>Precio U</TableCell>
+							<TableCell key={1} align='center' style={{ width: 35 }}>
+								Eliminar
+							</TableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{rows.map((row) => {
-								return (
-									<TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-										{columns.map((column) => {
-											const value = row[column.id];
-											return (
-												<TableCell key={column.id} align={column.align}>
-													{column.format && typeof value === 'number' ? (
-														column.format(value)
-													) : (
-														value
-													)}
-												</TableCell>
-											);
-										})}
-										<TableCell key={1} align='center' >
-											<IconButton aria-label="delete" size='small'>
-												<DeleteIcon fontSize="small" />
-											</IconButton>
-										</TableCell>
-									</TableRow>
-								);
-							})}
+							{datosTabla
+								.map((producto, index) => {
+									return (
+										<RenderTableRows
+											key={index}
+											producto={producto}
+											// productosRefetch={productosRefetch}
+										/>
+									);
+								})}
 						</TableBody>
 					</Table>
 				</TableContainer>
 			</Paper>
 	);
 }
+
+
+const RenderTableRows = ({ producto, productosRefetch }) => {
+
+	return (
+		<Fragment>
+			<TableRow hover>
+				<TableCell>{producto.cantidad_venta}</TableCell>
+				<TableCell>{producto.id_producto.datos_generales.nombre_comercial}</TableCell>
+				<TableCell>
+					{producto.inventario_general.map(existencia => `${existencia.cantidad_existente}`)}
+				</TableCell>
+				<TableCell>% {producto.descuento_activo === true ? producto.descuento.porciento : 0}</TableCell>
+				<TableCell>
+					{producto.inventario_general.map(existencia => `${existencia.unidad_inventario}`)}
+				</TableCell>
+				<TableCell>$ {producto.precio}</TableCell>
+				<TableCell>
+					<EliminarProductoVenta />
+				</TableCell>
+			</TableRow>
+			
+		</Fragment>
+	);
+};

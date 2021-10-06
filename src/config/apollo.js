@@ -8,7 +8,7 @@ const httpLink = createUploadLink({
 const client = new ApolloClient({
 	connectToDevTools: true,
 	cache: new InMemoryCache({
-		addTypename: true
+		addTypename: false
 	}),
 	link: httpLink
 });

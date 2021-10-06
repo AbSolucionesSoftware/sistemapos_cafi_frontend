@@ -91,7 +91,19 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
             unidad_mayoreo
             utilidad
           }
+          unidad_de_compra {
+            cantidad
+            precio_unitario_con_impuesto
+            precio_unitario_sin_impuesto
+            unidad
+          }
         }
+      }
+      inventario_general {
+        cantidad_existente
+        unidad_inventario
+        cantidad_existente_maxima
+        unidad_maxima
       }
     }
   }
