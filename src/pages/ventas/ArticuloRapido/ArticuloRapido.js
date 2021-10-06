@@ -2,14 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   AppBar,
   Badge,
-  BottomNavigationAction,
   Box,
   Button,
   CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
-  IconButton,
   makeStyles,
   Slide,
   Tab,
@@ -25,9 +23,9 @@ import {
   initial_state_datos_generales,
   initial_state_precios,
   initial_state_preciosP,
-  initial_state_unidadVentaXDefecto,
   initial_state_presentaciones
 } from "../../../context/Catalogos/initialStatesProducto";
+import { cleanTypenames } from '../../../config/reuserFunctions';
 import TallasColoresRapidos from "./TallasColoresRapidos/TallasColoresRapidos";
 import { RegProductoContext } from "../../../context/Catalogos/CtxRegProducto";
 import { useMutation, useQuery } from "@apollo/client";
@@ -147,11 +145,13 @@ export default function ArticuloRapido() {
   };
 
   const [open, setOpen] = useState(false);
+  const [abrirTallaColor, setAbrirTallaColor] = useState(false);
   const [cantidad, setCantidad] = useState(0);
 
   const handleClickOpen = () => {
     resetInitialStates();
 		setOpen(!open);
+    setAbrirTallaColor(false);
 	};
 
   useEffect(() => {
@@ -160,14 +160,15 @@ export default function ArticuloRapido() {
     };
   }, []);
   
-  if (cargando || loading || !data)
-	return (
-		<Box display="flex" justifyContent="center" alignItems="center" height="100%" width="150vh">
-			<CircularProgress />
-		</Box>
-	);
+  if (cargando || loading || !data){
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" height="100%" width="150vh">
+        <CircularProgress />
+      </Box>
+    )
+  }
 
-  if (cargando || loading || !data ) return null;
+  if(cargando || loading || !data) { return null }
 
   const { obtenerConsultasProducto } = data;
 
@@ -209,7 +210,7 @@ export default function ArticuloRapido() {
         setCantidad(0)
     }
 
-    const input = {
+    const data = {
       datos_generales,
       precios,
       unidades_de_venta: unidadesVenta,
@@ -221,12 +222,12 @@ export default function ArticuloRapido() {
     };
 
     try {
-      const result = 
-        await crearProductoRapido({
-          variables: {
-            input
-          },
-        });
+      const input = cleanTypenames(data);
+      const result = await crearProductoRapido({
+        variables: {
+          input
+        }
+      });
       resetInitialStates();
       refetch();
       setCargando(false);
@@ -245,6 +246,11 @@ export default function ArticuloRapido() {
         status: "error",
         open: true,
       });
+      if(error.networkError.result){
+        console.log(error.networkError.result.errors);
+      }else if(error.graphQLErrors){
+        console.log(error.graphQLErrors.message);
+      }
       handleClickOpen();
     }
   };
@@ -327,7 +333,6 @@ export default function ArticuloRapido() {
 					Articulo Rapido
 				</Box>
       </Button>
-
       <Dialog
 				maxWidth='lg'
 				open={open} 
@@ -369,7 +374,7 @@ export default function ArticuloRapido() {
                 {...a11yProps(0)}
               />
               {
-                datos_generales.tipo_producto === 'OTROS' ? (
+                 abrirTallaColor === false  || datos_generales.tipo_producto === 'OTROS' ? (
                   null
                 ) :(
                   <Tab
@@ -403,7 +408,7 @@ export default function ArticuloRapido() {
         <DialogContent className={classes.dialogContent}>
           <div className={classes.root}>
             <TabPanel value={value} index={0}>
-              <RegistroInformacionRapido setCantidad={setCantidad} cantidad={cantidad} />
+              <RegistroInformacionRapido setAbrirTallaColor={setAbrirTallaColor} setCantidad={setCantidad} cantidad={cantidad} />
               <RegistroInfoAdidional />
             </TabPanel>
             <TabPanel value={value} index={1}>
