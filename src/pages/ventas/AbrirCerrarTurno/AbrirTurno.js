@@ -1,17 +1,23 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import useStyles from '../styles';
 
 import { Box, Button, DialogActions, DialogContent,  FormControl, Grid, MenuItem, Select, TextField, Typography } from '@material-ui/core'
-import { useQuery } from '@apollo/client';
-import { OBTENER_CAJAS } from '../../../gql/Cajas/cajas';
+import { useMutation, useQuery } from '@apollo/client';
+import { OBTENER_CAJAS, ACTUALIZAR_CAJA } from '../../../gql/Cajas/cajas';
+import { VentasContext } from '../../../context/Ventas/ventasContext';
 
 export default function AbrirTurno({handleClickOpen}) {
-    const classes = useStyles();
-    const [ abrirTurno, setAbrirTurno ] = useState([]);
+    const [ ActualizarCaja ] = useMutation(ACTUALIZAR_CAJA);
+    const { setAlert } = useContext(VentasContext);
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+    const turnoEnCurso = JSON.parse(localStorage.getItem('cajaEnCurso'));
+    const [ error, setError] = useState(false);
+    const [ abrirTurno, setAbrirTurno ] = useState([]);
+    
+    const classes = useStyles();
     let obtenerCajasSucursal = [];
 
-    const {  data, refetch } = useQuery(OBTENER_CAJAS,{
+    const {  data } = useQuery(OBTENER_CAJAS,{
 		variables: {
             empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id
@@ -19,19 +25,66 @@ export default function AbrirTurno({handleClickOpen}) {
 	});	
 
     const obtenerTurno = (e) => {
-        setAbrirTurno({...abrirTurno, [e.target.name]: e.target.value})
-    }
+        setAbrirTurno({...abrirTurno, [e.target.name]: e.target.value});
+    };
 
     if(data){
 		obtenerCajasSucursal = data.obtenerCajasSucursal;
-	}
+	};
 
-    console.log(abrirTurno);
+    let arraySesion = {
+        accesos: sesion.accesos,
+        email: sesion.email,
+        empresa: sesion.empresa,
+        estado: sesion.estado,
+        exp: sesion.exp,
+        iat: sesion.iat,
+        imagen: sesion.imagen,
+        nombre: sesion.nombre,
+        numero_usuario: sesion.numero_usuario,
+        sucursal: sesion.sucursal,
+        telefono: sesion.telefono,
+        turno_en_caja_activo: true, 
+        _id: sesion._id,
+    };
 
-    const enviarDatos = () => {
-        localStorage.setItem('turnoEnCurso', JSON.stringify(abrirTurno));
-        handleClickOpen();
-    }
+    const enviarDatos = async () => {
+        try {
+            if(!abrirTurno.turno_en_curso ||
+                !abrirTurno.caja_elegida ||
+                !abrirTurno.monto_abrir
+            ){
+                setError(true);
+                return;
+            }else{
+                const input = {
+                    activa: true,
+                    usuario_en_caja: sesion._id,
+                    turno_en_caja_activo: true
+                };
+                const cajaActualizada = await ActualizarCaja({
+                    variables: {
+                        input,
+                        id: abrirTurno.caja_elegida
+                    }
+                });
+                localStorage.setItem('turnoEnCurso', JSON.stringify(cajaActualizada.data.actualizarCaja));
+                localStorage.setItem('sesionCafi', JSON.stringify(arraySesion));
+                setAlert({
+                    message: `Turno abierto con exito`,
+                    status: "success",
+                    open: true,
+                });
+                handleClickOpen();
+            }
+        } catch (error) {
+            setAlert({
+                message: `Error: ${error.message}`,
+                status: "error",
+                open: true,
+            });
+        }
+    };
 
     return (
         <div>
@@ -39,7 +92,7 @@ export default function AbrirTurno({handleClickOpen}) {
                 <Grid>
                     <div className={classes.formInputFlex}>
                         <Box width="100%">
-                            <Typography>Empleado:</Typography>
+                            <Typography> Empleado:</Typography>
                             <Box display="flex">
                                 <TextField
                                     fullWidth
@@ -55,16 +108,17 @@ export default function AbrirTurno({handleClickOpen}) {
                         </Box>
                         <Box width="100%">
                             <Typography>
-                                Turno:
+                                <span className="obligatorio">* </span>Turno:
                             </Typography>
                             <FormControl
                                 variant="outlined"
+                                disabled={turnoEnCurso ? true : false}
                                 fullWidth
                                 size="small"
                             >
                                 <Select
                                     id="form-producto-tipo"
-                                    name="horario_turno"
+                                    name="turno_en_curso"
                                     onChange={obtenerTurno}
                                 >
                                     <MenuItem value="">
@@ -79,10 +133,11 @@ export default function AbrirTurno({handleClickOpen}) {
                     <div className={classes.formInputFlex}>
                         <Box width="100%">
                             <Typography>
-                                Caja:
+                                <span className="obligatorio">* </span>Caja:
                             </Typography>
                             <FormControl
                                 variant="outlined"
+                                disabled={turnoEnCurso ? true : false}
                                 fullWidth
                                 size="small"
                             >
@@ -105,31 +160,13 @@ export default function AbrirTurno({handleClickOpen}) {
                             </FormControl>
                         </Box>
                         <Box width="100%">
-                            <Typography>Monto para abrir:</Typography>
+                            <Typography> <span className="obligatorio">* </span>Monto para abrir:</Typography>
                             <Box display="flex">
                                 <TextField
                                     fullWidth
                                     size="small"
                                     name="monto_abrir"
                                     type="number"
-                                    value={abrirTurno.monto_abrir ? abrirTurno.monto_abrir : ""}
-                                    onChange={obtenerTurno}
-                                    id="form-producto-codigo-barras"
-                                    variant="outlined"
-                                />
-                            </Box>
-                        </Box>
-                    </div>
-                    <div className={classes.formInputFlex}>
-                        <Box width="100%">
-                            <Typography>Comentarios:</Typography>
-                            <Box display="flex">
-                                <TextField
-                                    fullWidth
-                                    multiline
-                                    rows={3}
-                                    size="small"
-                                    name="comentarios"
                                     onChange={obtenerTurno}
                                     id="form-producto-codigo-barras"
                                     variant="outlined"
@@ -141,7 +178,13 @@ export default function AbrirTurno({handleClickOpen}) {
             </DialogContent>
             <DialogActions>
                 <Box display="flex" alignItems='flex-end'>
-                    <Button onClick={enviarDatos} variant="contained" color="primary" size="large">
+                    <Button 
+                        onClick={enviarDatos} 
+                        variant="contained" 
+                        color="primary" 
+                        size="large"
+                        disabled={turnoEnCurso ? true : false}
+                    >
                         Aceptar
                     </Button>
                 </Box>

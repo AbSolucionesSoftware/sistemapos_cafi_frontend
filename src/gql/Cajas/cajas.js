@@ -71,3 +71,12 @@ export const ELIMINAR_CAJA = gql`
 		}
 	}
 `; 
+
+export const ACTUALIZAR_CAJA = gql`
+	mutation ActualizarCaja($input: EditarCaja, $id: ID!) {
+		actualizarCaja(id: $id, input: $input) {
+            _id
+            numero_caja
+            activa
+        }
+    }`; 

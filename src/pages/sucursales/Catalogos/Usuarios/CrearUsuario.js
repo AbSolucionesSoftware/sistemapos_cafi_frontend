@@ -98,6 +98,7 @@ export default function CrearUsuario({ accion, datos }) {
 					estado: '',
 					pais: ''
 				},
+				turno_en_caja_activo: false,
 				estado_usuario: true,
 				accesos: arregloVacio
 			});
@@ -162,6 +163,7 @@ export default function CrearUsuario({ accion, datos }) {
 				usuario.numero_usuario = numerosRandom(100000000, 999999999);
 				usuario.empresa = sesion.empresa._id;
 				usuario.sucursal = sesion.sucursal._id;
+				usuario.turno_en_caja_activo = false;
 				const input = usuario;
 				await crearUsuario({
 					variables: {

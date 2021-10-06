@@ -1,9 +1,10 @@
 import React, { useState, Fragment, useContext} from 'react';
-import { Drawer, AppBar, Toolbar, Divider,BottomNavigationAction, BottomNavigation, Button, Grid } from '@material-ui/core';
+import { Drawer, AppBar, Toolbar, Divider, BottomNavigation, Button, Grid } from '@material-ui/core';
 import { CssBaseline, Avatar, Box, Typography } from '@material-ui/core';
 import { withRouter } from 'react-router';
 import { FaPowerOff } from 'react-icons/fa';
 import useStyles from './styles';
+import moment from 'moment';
 // import addIcon from '../../icons/ventas/add.svg'
 // import articuloRapido from '../../icons/ventas/tiempo-rapido.svg'
 // import listaEspera from '../../icons/ventas/lista-de-espera.svg'
@@ -46,6 +47,7 @@ function NavegacionVentas(props) {
 	const { alert, setAlert } = useContext(VentasContext);
 	const [ value, setValue ] = useState('venta-general');
 	const [open, setOpen] = useState(false);
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	const signOut = () => {
 		localStorage.removeItem('sesionCafi');
@@ -123,9 +125,9 @@ function NavegacionVentas(props) {
 							<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" className={classes.avatar} />
 							<div>
 								<Box mr={2}>
-									<Typography color="textSecondary">aldo chagollan</Typography>
+									<Typography color="textSecondary">{sesion.nombre}</Typography>
 									<Typography color="textSecondary">
-										<b>Caja: </b>xx
+										<b>Caja: </b>2 
 									</Typography>
 								</Box>
 							</div>

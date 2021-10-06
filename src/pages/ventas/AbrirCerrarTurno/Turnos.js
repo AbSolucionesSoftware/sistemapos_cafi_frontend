@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types';
-
-import { AppBar, Box, Button, Dialog, DialogActions, DialogContent, Grid, makeStyles, Slide, Tab, Tabs, Typography } from '@material-ui/core'
+import { AppBar, Box, Button, Dialog, DialogContent, Grid, makeStyles, Slide, Tab, Tabs, Typography } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
 
 import AbrirTurno from './AbrirTurno';
 import CerrarTurno from './CerrarTurno';
+import moment from 'moment';
+import 'moment/locale/es';
+moment.locale('es');
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -68,6 +70,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Turnos() {
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
+	console.log(moment().format('MMMM Do YYYY, h:mm:ss a'));
 
     const classes = useStyles();
     const [value, setValue] = useState(0);
@@ -115,30 +120,32 @@ export default function Turnos() {
 						aria-label="scrollable force tabs example"
 					>
 						<Tab
-							label="Abrir Turno"
+							label="Cerrar Turno"
 							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
 							{...a11yProps(0)}
 						/>
-						<Tab
-							label="Cerrar Turno"
-							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
-							{...a11yProps(1)}
-						/>
+						{sesion?.turno_en_caja_activo === true ? null : (
+							<Tab
+								label="Abrir Turno"
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
+								{...a11yProps(1)}
+							/>			
+						)}
 						<Grid container justify='flex-end'>
 							<Box mt={2} textAlign="right">
 								<Box textAlign="right">
 									<Typography variant="caption">
-										31/12/2021
+										{moment().format('L')}
 									</Typography>
 								</Box>
 								<Box textAlign="right">
 									<Typography variant="caption">
-										08:00 hrs.
+										{moment().format('LT')} hrs.
 									</Typography>
 								</Box>
 								<Box textAlign="right">
 									<Typography variant="caption">
-										Caja 3
+										Caja {!turnoEnCurso ? null : turnoEnCurso.numero_caja }
 									</Typography>
 								</Box>
 							</Box>
@@ -152,14 +159,15 @@ export default function Turnos() {
 					</Tabs>
 				</AppBar>
 				
-
-                <DialogContent style={{padding: 0}} >
-                    <TabPanel value={value} index={0}>
-						<AbrirTurno handleClickOpen={handleClickOpen} />
-                    </TabPanel>
-                    <TabPanel value={value} index={1}>
+                <DialogContent style={{padding: 0}}>
+					<TabPanel value={value} index={0}>
 						<CerrarTurno />
-                    </TabPanel>
+					</TabPanel>
+					{sesion?.turno_en_caja_activo === true ? null : (
+						<TabPanel value={value} index={1}>
+							<AbrirTurno handleClickOpen={handleClickOpen} />
+						</TabPanel>
+					)}
 				</DialogContent>
 				
 			</Dialog>
