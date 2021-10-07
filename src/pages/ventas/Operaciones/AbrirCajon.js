@@ -29,11 +29,18 @@ export default function AbrirCajon() {
                         <img 
                             src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cajon.svg' 
                             alt="icono ventas" 
-                            style={{width: 40}}
+                            style={{width: 38}}
                         />
                     </Box>
                     <Box>
-                        Cajon
+                        <Typography variant="body2" >
+                            <b>Cajon</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F3</b>
+                        </Typography>
                     </Box>
                 </Box>
             </Button>

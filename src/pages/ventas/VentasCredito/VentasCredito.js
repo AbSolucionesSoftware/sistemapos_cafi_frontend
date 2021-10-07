@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button,  Dialog, DialogActions, DialogContent, Slide } from '@material-ui/core'
+import { Box, Button,  Dialog, DialogActions, DialogContent, Slide, Typography } from '@material-ui/core'
 import useStyles from '../styles';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -27,11 +27,18 @@ export default function VentasCredito() {
                         <img 
                             src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/add.svg' 
                             alt="icono credito" 
-                            style={{width: 110}}
+                            style={{width: 100}}
                         />
                     </Box>
                     <Box>
-                        Venta Credito
+                        <Typography variant="body2" >
+                            <b>Venta Credito</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F3</b>
+                        </Typography>
                     </Box>
                 </Box>
             </Button>

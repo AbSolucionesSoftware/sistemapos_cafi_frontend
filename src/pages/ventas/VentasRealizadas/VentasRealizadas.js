@@ -29,10 +29,17 @@ export default function VentasRealizadas() {
             >
                 <Box>
                     <Box>
-                        <FcPaid style={{ fontSize: 50 }}/>
+                        <FcPaid style={{ fontSize: 45 }}/>
                     </Box>
                     <Box>
-                        Ventas Realizadas
+                        <Typography variant="body2" >
+                            <b>Ventas Realizadas</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F3</b>
+                        </Typography>
                     </Box>
                 </Box>
             </Button>

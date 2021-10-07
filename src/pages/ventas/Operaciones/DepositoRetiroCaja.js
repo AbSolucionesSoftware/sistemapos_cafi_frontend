@@ -33,7 +33,16 @@ export default function DepositoRetiroCaja() {
                             style={{width: 20}}
                         />
                     </Box>
-                    Deposito/Retiro Caja
+                    <Box>
+                        <Typography variant="body2" >
+                            <b>Deposito/Retiro Caja</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F3</b>
+                        </Typography>
+                    </Box>
                 </Box>
             </Button>	
 

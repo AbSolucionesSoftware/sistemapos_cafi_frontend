@@ -32,7 +32,16 @@ export default function Cotizacion() {
                     <Box display="flex" justifyContent="center" alignItems="center">
                         <FcCurrencyExchange style={{fontSize: 25}} />
                     </Box>
-                    Cotización
+                    <Box>
+                        <Typography variant="body2" >
+                            <b>Cotización</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F3</b>
+                        </Typography>
+                    </Box>
                 </Box>
             </Button>	
         	<Dialog

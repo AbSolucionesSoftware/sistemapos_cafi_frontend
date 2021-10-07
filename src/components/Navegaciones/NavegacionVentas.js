@@ -100,7 +100,16 @@ function NavegacionVentas(props) {
 							<Box display="flex" justifyContent="center" alignItems="center">
 								<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/admin.svg' alt="icono admin" className={classes.iconSizeSecondSuperior} />
 							</Box>
-							Administrador
+							<Box>
+								<Typography variant="body2" >
+									<b>Administrador</b>
+								</Typography>
+							</Box>
+							<Box>
+								<Typography variant="caption" style={{color: '#808080'}} >
+									<b>F3</b>
+								</Typography>
+							</Box>
 						</Box>
 					</Button>
 						<Divider orientation="vertical" />
@@ -115,7 +124,16 @@ function NavegacionVentas(props) {
 							<Box display="flex" justifyContent="center" alignItems="center">
 								<FaPowerOff className={classes.iconSizeSuperior} style={{color: 'red'}} />
 							</Box>
-								Salir
+							<Box>
+								<Typography variant="body2" >
+									<b>Salir</b>
+								</Typography>
+							</Box>
+							<Box>
+								<Typography variant="caption" style={{color: '#808080'}} >
+									<b>F3</b>
+								</Typography>
+							</Box>
 						</Box>
 					</Button>
 					<Box width="350px" display="flex" justifyContent="flex-end">
@@ -154,18 +172,29 @@ function NavegacionVentas(props) {
 			>
 				<Toolbar className={classes.navigationTop} />
 				<Grid container className={classes.drawerColor}>
-					<Grid item lg={6} xs={12} md={12}>
+					<Grid item lg={6} xs={6} md={6}>
 						<VentasCredito />
 						<CrearApartado />
 					</Grid>
-					<Grid item lg={6} xs={12} md={12}>
+					<Grid item  lg={6} xs={6} md={6}>
 						<Button className={classes.borderBoton}>
 							<Box>
 								<Box>
-									<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cart-add.svg' alt="icono general" className={classes.iconSizeSecondInferiorGrande} />
+									<img 
+										src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cart-add.svg' 
+										alt="icono general" 
+										className={classes.iconSizeSecondInferiorGrande} 
+									/>
 								</Box>
 								<Box>
-									Venta General
+									<Typography variant="body2" >
+										<b>Venta General</b>
+									</Typography>
+								</Box>
+								<Box>
+									<Typography variant="caption" style={{color: '#808080'}} >
+										<b>F3</b>
+									</Typography>
 								</Box>
 							</Box>
 						</Button>
@@ -174,17 +203,17 @@ function NavegacionVentas(props) {
 				</Grid>
 
 				<Grid container className={classes.drawerColor}>
-					<Grid item lg={4} md={12} xs={12}>
+					<Grid item lg={4} md={4} xs={4}>
 						<CancelarVenta />
 						<AbrirCajon />
 						<ClientesVentas />
 					</Grid>
-					<Grid item lg={4} md={12} xs={12}>
+					<Grid item lg={4} md={4} xs={4}>
 						<CerrarVenta />
 						<VentasEspera />
 						<ConsultarPrecio />
 					</Grid>
-					<Grid item lg={4} md={12} xs={12}>
+					<Grid item lg={4} md={4} xs={4}>
 						<VentasRealizadas />
 						<PreciosProductos />
 						<ListaApartados />

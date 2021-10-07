@@ -330,7 +330,16 @@ export default function ArticuloRapido() {
             className={classes.iconSizeSecondSuperior} 
           />
 					</Box>
-					Articulo Rapido
+					<Box>
+              <Typography variant="body2" >
+                  <b>Producto Rapido</b>
+              </Typography>
+          </Box>
+          <Box>
+              <Typography variant="caption" style={{color: '#808080'}} >
+                  <b>F3</b>
+              </Typography>
+          </Box>
 				</Box>
       </Button>
       <Dialog
