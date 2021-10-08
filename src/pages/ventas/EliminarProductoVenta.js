@@ -7,11 +7,18 @@ import Slide from '@material-ui/core/Slide';
 import { CircularProgress, IconButton } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 
+import {findProductArray, calculateTaxes } from '../../config/reuserFunctions';
+
 const Transition = forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function EliminarProducto({ datos, productosRefetch }) {
+export default function EliminarProducto({ 
+	producto,
+	setNewProductoVentas,
+	newProductoVentas,
+	setDatosVentasActual,
+ }) {
 	const [ open, setOpen ] = useState(false);
 	const [ loading, setLoading ] = useState(false);
 	/* const [ alert, setAlert ] = useState({ message: '', status: '', open: false }); */
@@ -19,7 +26,64 @@ export default function EliminarProducto({ datos, productosRefetch }) {
 	const handleToggleModal = () => setOpen(!open);
 
 	const eliminarProductoBD = async () => {
+		console.log(producto);
+		let venta = JSON.parse(localStorage.getItem("DatosVentas"));
+		let productosVentas = venta === null ? [] : venta.produtos;
+		let productosVentasTemp = productosVentas;
+		let venta_existente =
+			venta === null
+			? 
+				{
+					subTotal: 0,
+					total: 0,
+					impuestos: 0,
+					iva: 0,
+					ieps: 0,
+					descuento: 0,
+				}
+			: venta;
 
+		const producto_encontrado = await findProductArray(
+			productosVentas,
+			producto
+		);
+		if (producto_encontrado.found) {
+			const { cantidad_venta, ...newP } = producto;
+			//Sacar los impuestos que se van a restar
+			let calculoResta = await calculateTaxes(newP, cantidad_venta);
+			productosVentasTemp.splice(
+				producto_encontrado.producto_found.index,
+				1
+			);
+			const CalculosData = {
+				subTotal: 
+				  parseFloat(venta_existente.subTotal) -
+				  parseFloat(calculoResta.subtotalCalculo) ,
+				total: 
+				  parseFloat(venta_existente.total) -
+				  parseFloat(calculoResta.totalCalculo),
+				impuestos: 
+				  parseFloat(venta_existente.impuestos) -
+				  parseFloat(calculoResta.impuestoCalculo),
+				iva: 
+				  parseFloat(venta_existente.iva) -
+				  parseFloat(calculoResta.ivaCalculo),
+				ieps: 
+				  parseFloat(venta_existente.ieps) -
+				  parseFloat(calculoResta.iepsCalculo),
+				descuento: 
+				  parseFloat(venta_existente.descuento) -
+				  parseFloat(calculoResta.descuentoCalculo),
+			  };
+			  localStorage.setItem("DatosVentas", JSON.stringify({
+				...CalculosData,
+				produtos: productosVentasTemp,
+			  }));
+			  setDatosVentasActual(CalculosData);
+			  //Recargar la tabla de los productos
+			  setNewProductoVentas(!newProductoVentas);
+		}
+		
 	};
 
 	return (

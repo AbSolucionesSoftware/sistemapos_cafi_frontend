@@ -20,25 +20,28 @@ import { useLazyQuery } from "@apollo/client";
 
 import { Fragment } from "react";
 import MonedaCambio from "./Operaciones/MonedaCambio";
+import { findProductArray, calculateTaxes } from "../../config/reuserFunctions";
 
 export default function VentasGenerales() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   // const productosVentas = JSON.parse(localStorage.getItem('productosVentas'));
   const classes = useStyles();
-  // const [productoBase, setProductoBase] = useState({});
-  // const [changeState, setChangeState] = useState(false);
   const [newProductoVentas, setNewProductoVentas] = useState(false);
-  // let venta = JSON.parse(localStorage.getItem('DatosVentas'));
-  // let productosVentas = venta === null ? {subTotal = 0, total = 0 , impuestos = 0 , iva = 0, ieps = 0} : venta;
+  const [granel, setGranel] = useState({
+    granel: false,
+    valor: '0'
+  })
+
   const [DatosVentasActual, setDatosVentasActual] = useState({
     subTotal: 0,
     total: 0,
     impuestos: 0,
     iva: 0,
     ieps: 0,
+    descuento: 0,
   });
 
-  const [obtenerProductos, { data, error }] = useLazyQuery(
+  const [obtenerProductos, { data /* error */ }] = useLazyQuery(
     CONSULTA_PRODUCTO_UNITARIO,
     {
       variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id },
@@ -57,78 +60,66 @@ export default function VentasGenerales() {
 
   useEffect(() => {
     const venta = JSON.parse(localStorage.getItem("DatosVentas"));
-		if(venta !== null){
-			setDatosVentasActual({
+    if (venta !== null) {
+      setDatosVentasActual({
         subTotal: parseFloat(venta.subTotal),
         total: parseFloat(venta.total),
         impuestos: parseFloat(venta.impuestos),
         iva: parseFloat(venta.iva),
         ieps: parseFloat(venta.ieps),
-      })
-		}
-  },[])
+      });
+    }
+  }, []);
 
   const keyUpEvent = async (event) => {
     if (event.code === "Enter" || event.code === "NumpadEnter") {
       const input_value = event.target.value;
-      console.log(input_value);
-      obtenerProductos({
-        variables: {
-          datosProductos: input_value,
-        },
-      });
+      const data = input_value.split('*');
+      if(data.length > 0){
+        console.log("Entro a * ",data);
+        setGranel({
+          granel: true,
+          valor: data[1]
+        });
+        obtenerProductos({
+          variables: {
+            datosProductos: data[0],
+          },
+        });
+      }else{
+        console.log(input_value);
+        obtenerProductos({
+          variables: {
+            datosProductos: input_value,
+          },
+        });
+      }
     }
   };
 
   const agregarProductos = async (producto) => {
     let venta = JSON.parse(localStorage.getItem("DatosVentas"));
-    // console.log(venta);
     let productosVentas = venta === null ? [] : venta.produtos;
     let venta_existente =
       venta === null
-        ? { subTotal: 0, total: 0, impuestos: 0, iva: 0, ieps: 0 }
+        ? { subTotal: 0, total: 0, impuestos: 0, iva: 0, ieps: 0, descuento: 0 }
         : venta;
     let productosVentasTemp = productosVentas;
     let subTotal = 0,
       total = 0,
       impuestos = 0,
       iva = 0,
-      ieps = 0;
-    let found = false;
-    let producto_found = {
-      producto: {},
-      index: 0,
-    };
+      ieps = 0,
+      descuento = 0;
 
-    for (let i = 0; i < productosVentas.length; i++) {
-      if (typeof productosVentas[i].codigo_barras !== "undefined") {
-        if (
-          productosVentas[i].id_producto.datos_generales.clave_alterna ===
-            producto.id_producto.datos_generales.clave_alterna ||
-          productosVentas[i].codigo_barras === producto.codigo_barras
-        ) {
-          producto_found = {
-            producto: productosVentas[i],
-            index: i,
-          };
-          found = true;
-        }
-      } else {
-        if (
-          productosVentas[i].id_producto.datos_generales.clave_alterna ===
-          producto.id_producto.datos_generales.clave_alterna
-        ) {
-          producto_found = {
-            producto: productosVentas[i],
-            index: i,
-          };
-          found = true;
-        }
-      }
-    }
+    const producto_encontrado = await findProductArray(
+      productosVentas,
+      producto
+    );
 
+    if(granel.granel === true) console.log("es granel");
 
-    if (!found) {
+    if (!producto_encontrado.found) {
       const newP = { ...producto };
       const {
         subtotalCalculo,
@@ -136,79 +127,62 @@ export default function VentasGenerales() {
         impuestoCalculo,
         ivaCalculo,
         iepsCalculo,
-      } = await CalculoPreciosVentas(newP);
+        descuentoCalculo,
+      } = await calculateTaxes(newP, 0);
       subTotal = subtotalCalculo;
       total = totalCalculo;
       impuestos = impuestoCalculo;
       iva = ivaCalculo;
       ieps = iepsCalculo;
+      descuento = descuentoCalculo;
       newP.cantidad_venta = 1;
       productosVentasTemp.push(newP);
     } else {
-      const { cantidad_venta, ...newP } = producto_found.producto;
+      const { cantidad_venta, ...newP } =
+        producto_encontrado.producto_found.producto;
       const {
         subtotalCalculo,
         totalCalculo,
         impuestoCalculo,
         ivaCalculo,
         iepsCalculo,
-      } = await CalculoPreciosVentas(newP);
+        descuentoCalculo,
+      } = await calculateTaxes(newP, 0);
       subTotal = subtotalCalculo;
       total = totalCalculo;
       impuestos = impuestoCalculo;
       iva = ivaCalculo;
       ieps = iepsCalculo;
+      descuento = descuentoCalculo;
+      console.log(descuento);
       newP.cantidad_venta = parseInt(cantidad_venta) + 1;
-      productosVentasTemp.splice(producto_found.index, 1, newP);
+      productosVentasTemp.splice(
+        producto_encontrado.producto_found.index,
+        1,
+        newP
+      );
     }
 
     const CalculosData = {
-      subTotal: (parseFloat(venta_existente.subTotal) + subTotal).toFixed(2),
-      total: (parseFloat(venta_existente.total) + total).toFixed(2),
-      impuestos: (parseFloat(venta_existente.impuestos) + impuestos).toFixed(2),
-      iva: (parseFloat(venta_existente.iva) + iva).toFixed(2),
-      ieps: (parseFloat(venta_existente.ieps) + ieps).toFixed(2),
-    }
-
-    const datosVentaFinales = {
-      ...CalculosData,
-      produtos: productosVentasTemp,
+      subTotal: parseFloat(venta_existente.subTotal) + subTotal,
+      total: parseFloat(venta_existente.total) + total,
+      impuestos: parseFloat(venta_existente.impuestos) + impuestos,
+      iva: parseFloat(venta_existente.iva) + iva,
+      ieps: parseFloat(venta_existente.ieps) + ieps,
+      descuento: parseFloat(venta_existente.descuento) + descuento,
     };
-
-    localStorage.setItem("DatosVentas", JSON.stringify(datosVentaFinales))
-
+    localStorage.setItem(
+      "DatosVentas",
+      JSON.stringify({
+        ...CalculosData,
+        produtos: productosVentasTemp,
+      })
+    );
     setDatosVentasActual({
-      ...CalculosData
+      ...CalculosData,
     });
     //Recargar la tabla de los productos
     setNewProductoVentas(!newProductoVentas);
-  };
-
-  const CalculoPreciosVentas = async (newP) => {
-    console.log("entro");
-    let subtotalCalculo = 0,
-      totalCalculo = 0,
-      impuestoCalculo = 0,
-      ivaCalculo = 0,
-      iepsCalculo = 0;
-    const iva_producto = parseFloat(newP.id_producto.precios.unidad_de_compra.precio_unitario_sin_impuesto) * parseFloat(`0.${newP.id_producto.precios.iva}`);
-    const ieps_producto = parseFloat(newP.id_producto.precios.unidad_de_compra.precio_unitario_sin_impuesto) * parseFloat(`0.${newP.id_producto.precios.ieps}`);
-
-    console.log("iva",iva_producto);
-    console.log("ieps",ieps_producto);
-    totalCalculo = parseFloat(newP.precio);
-    subtotalCalculo = parseFloat(newP.precio) - (iva_producto + ieps_producto);
-    impuestoCalculo = iva_producto + ieps_producto
-    ivaCalculo = iva_producto;
-    iepsCalculo = ieps_producto;
-
-    return {
-      totalCalculo,
-      subtotalCalculo,
-      impuestoCalculo,
-      ivaCalculo,
-      iepsCalculo,
-    };
   };
 
   return (
@@ -347,7 +321,11 @@ export default function VentasGenerales() {
       </Grid>
 
       <Grid item lg={12}>
-        <TablaVentas newProductoVentas={newProductoVentas} />
+        <TablaVentas
+          newProductoVentas={newProductoVentas}
+          setNewProductoVentas={setNewProductoVentas}
+          setDatosVentasActual={setDatosVentasActual}
+        />
       </Grid>
 
       <Grid container item lg={12} justify="flex-end">
@@ -361,7 +339,7 @@ export default function VentasGenerales() {
                 alignItems="center"
               >
                 <Typography variant="subtitle1">
-                  Iva: $ {DatosVentasActual.iva}
+                  Iva: $ {DatosVentasActual.iva.toFixed(2)}
                 </Typography>
               </Box>
               <Box
@@ -370,7 +348,9 @@ export default function VentasGenerales() {
                 justifySelf="center"
                 alignItems="center"
               >
-                <Typography variant="subtitle1">Descuento: $0</Typography>
+                <Typography variant="subtitle1">
+                  Descuento: ${DatosVentasActual.descuento.toFixed(2)}
+                </Typography>
               </Box>
               <Box
                 mr={1}
@@ -379,24 +359,23 @@ export default function VentasGenerales() {
                 alignItems="center"
               >
                 <Typography variant="subtitle1">
-                  Subtotal: $ {DatosVentasActual.subTotal}
+                  Subtotal: $ {DatosVentasActual.subTotal.toFixed(2)}
                 </Typography>
               </Box>
             </Box>
             <Box display="flex" flexDirection="row-reverse" mr={1}>
               <Typography variant="subtitle1">
-                Impuestos: $ {DatosVentasActual.impuestos}
+                Impuestos: $ {DatosVentasActual.impuestos.toFixed(2)}
               </Typography>
             </Box>
             <Box display="flex" flexDirection="row-reverse" mr={1} mt={1}>
               <Typography variant="h5">
-                Total: $ {DatosVentasActual.total}
+                Total: $ {DatosVentasActual.total.toFixed(2)}
               </Typography>
             </Box>
           </Paper>
         </Box>
       </Grid>
     </Fragment>
-
   );
 }
