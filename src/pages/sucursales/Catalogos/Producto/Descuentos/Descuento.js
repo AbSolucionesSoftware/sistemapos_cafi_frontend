@@ -34,13 +34,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function DescuentoProductos({datos, productosRefetch}) {
     const [ CrearDescuentoUnidad ] = useMutation(REGISTRAR_DESCUENTOS);
-
     const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
     const [ openDescuento, setOpenDescuento ] = useState(false);
     const [ cleanList, setCleanList] = useState(false);
+    const [ descuentoPresente, setDescuentoPresente] = useState(false);
     const [ validate ] = useState(false);
     const [ loading, setLoading] = useState(false);
 
+    const [ datosPreciosProducto, setDatosPreciosProducto ] = useState([]);
     const [ preciosDescuentos, setPreciosDescuentos] = useState([]);
     const [ preciosProductos, setPreciosProductos ] = useState([]);
 
@@ -50,12 +51,17 @@ export default function DescuentoProductos({datos, productosRefetch}) {
     const classes = useStyles();
 
     const handleCloseDescuentos = () => {
+        if (datos.medidas_registradas === true) {
+            setDatosPreciosProducto(datos.medidas_producto);
+        }else{
+            setDatosPreciosProducto(datos.unidades_de_venta);
+        }
         setOpenDescuento(!openDescuento);
         setPrecioPrueba(0);
         setValue(0);
         preciosDescuentos.splice(0, preciosDescuentos.length);
     };
-    	
+
     const verificarDatos = useCallback(
         (datos) => {
             for (let i = 0; i < datos.length; i++) {
@@ -79,9 +85,9 @@ export default function DescuentoProductos({datos, productosRefetch}) {
         setValue(newValue);
         preciosDescuentos.splice(0, preciosDescuentos.length);
         for (let i = 0; i < preciosProductos.length; i++) {
-            var porcentaje  =  parseFloat((100 - newValue).toFixed(2));
-            var descuento = parseFloat((preciosProductos[i].precio * porcentaje / 100).toFixed(2));
-            var dineroDescontado = parseFloat((preciosProductos[i].precio - descuento).toFixed(2));
+            var porcentaje  =  parseFloat((100 - newValue).toFixed(6));
+            var descuento = parseFloat((preciosProductos[i].precio * porcentaje / 100).toFixed(6));
+            var dineroDescontado = parseFloat((preciosProductos[i].precio - descuento).toFixed(6));
             arrayDescuento = {
                 "_id": preciosProductos[i]._id,
                 "descuento_activo": true,
@@ -104,9 +110,9 @@ export default function DescuentoProductos({datos, productosRefetch}) {
         var valorText = parseFloat(e.target.value);
         if (preciosProductos.length === 1) {
             setPrecioPrueba(valorText);
-            var porcentaje  = parseFloat(((valorText / preciosProductos[0].precio) * 100).toFixed(2));
-            var descuento = parseFloat((100 - porcentaje).toFixed(2));
-            var dineroDescontado = parseFloat((preciosProductos[0].precio - valorText).toFixed(2));
+            var porcentaje  = parseFloat(((valorText / preciosProductos[0].precio) * 100).toFixed(6));
+            var descuento = parseFloat((100 - porcentaje).toFixed(6));
+            var dineroDescontado = parseFloat((preciosProductos[0].precio - valorText).toFixed(6));
             arrayDescuento = {
                 "_id": preciosProductos[0]._id,
                 "descuento_activo": true,
@@ -147,11 +153,32 @@ export default function DescuentoProductos({datos, productosRefetch}) {
 		}
 	};
 
+    const validacion = () => {
+        if (datos.medidas_producto.length > 0 ) {
+            for (let i = 0; i < datos.medidas_producto.length; i++) {
+                if (datos.medidas_producto[i]?.descuento_activo === true) {
+                    return "primary";
+                }else{
+                    return "default";
+                }
+            }
+        }else{
+            for (let i = 0; i < datos.unidades_de_venta.length; i++) {
+                if (datos.unidades_de_venta[i]?.descuento_activo === true) {
+                    return "primary";
+                }else{
+                    return "default";
+                }
+            }
+        }
+    }
+
+    
     return (
         <div>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
             <IconButton
-                color="default"
+                color={validacion()}
                 onClick={handleCloseDescuentos}
             >
                <LocalOfferIcon />
@@ -189,11 +216,12 @@ export default function DescuentoProductos({datos, productosRefetch}) {
                                 <TablaPreciosDescuentos
                                     verificarDatos={verificarDatos}
                                     productosRefetch={productosRefetch}
+                                    datos={datos}
                                     value={value}
                                     cleanList={cleanList}
                                     setCleanList={setCleanList}
                                     setPrecioPrueba={setPrecioPrueba}
-                                    precios={datos.unidades_de_venta} 
+                                    datosPrecios={datosPreciosProducto} 
                                     preciosProductos={preciosProductos} 
                                     setPreciosProductos={setPreciosProductos} 
                                     setLoading={setLoading}

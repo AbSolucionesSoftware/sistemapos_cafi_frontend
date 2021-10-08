@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Delete } from '@material-ui/icons';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from "@material-ui/core";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -11,7 +11,8 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-import { Button, Dialog, DialogActions, DialogTitle, IconButton, Switch } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogTitle, IconButton, Switch, Tooltip } from '@material-ui/core';
+import Zoom from "@material-ui/core/Zoom";
 
 import {  DESACTIVAR_DESCUENTOS, ELIMINAR_DESCUENTOS } from '../../../../../gql/Catalogos/descuentos';
 import { useMutation } from '@apollo/client';
@@ -28,8 +29,13 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-	const { onSelectAllClick, numSelected, rowCount } = props;
-
+	const { onSelectAllClick, numSelected, rowCount, datosPrecios } = props;
+	let variable = false;
+	datosPrecios?.forEach(element => {
+		if (element.medida) {
+			return variable = true;
+		}
+	});
 	return (
 		<TableHead>
 			<TableRow>
@@ -50,6 +56,13 @@ function EnhancedTableHead(props) {
 						{headCell.label}
 					</TableCell>
 				))}
+				{ variable === true ? (
+					<>
+						<TableCell>Talla</TableCell>
+						<TableCell>Color</TableCell>
+					</>
+				): null}
+				
 			</TableRow>
 		</TableHead>
 	);
@@ -83,7 +96,18 @@ const useStyles = makeStyles((theme) => ({
 		position: 'absolute',
 		top: 20,
 		width: 1
-	}
+	},
+	colorContainer: {
+		border: "1px solid rgba(0,0,0, .3)",
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
+		height: 40,
+		width: 40,
+		margin: 1,
+		borderRadius: "15%",
+		cursor: "pointer",
+	  },
 }));
 
 export default function TablaPreciosDescuentos(
@@ -95,22 +119,20 @@ export default function TablaPreciosDescuentos(
 		setPrecioPrueba,
 		productosRefetch,
 		setPreciosProductos, 
-		precios,
+		datosPrecios,
 		setLoading
 	}
 	) {
-
 	const classes = useStyles();
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-	var porcentaje  =  parseFloat((100 - value).toFixed(2));
-
+	var porcentaje  =  parseFloat((100 - value).toFixed(6));
 	const [ selected, setSelected ] = useState([]);
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(5);
 
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {
-			const newSelecteds = precios.map((n) => n);
+			const newSelecteds = datosPrecios.map((n) => n);
 			setSelected(newSelecteds); 
 			verificarDatos(newSelecteds);
 			setPreciosProductos(newSelecteds);
@@ -154,7 +176,7 @@ export default function TablaPreciosDescuentos(
 
 	const isSelected = (_id) => selected.indexOf(_id) !== -1;
 
-	const emptyRows = rowsPerPage - Math.min(rowsPerPage, precios.length - page * rowsPerPage);
+	// const emptyRows = rowsPerPage - Math.min(rowsPerPage, datosPrecios.length - page * rowsPerPage);
 
 	return (
 		<div className={classes.root}>
@@ -171,16 +193,17 @@ export default function TablaPreciosDescuentos(
 							classes={classes}
 							numSelected={selected.length}
 							onSelectAllClick={handleSelectAllClick}
-							rowCount={precios.length}
+							rowCount={datosPrecios.length}
+							datosPrecios={datosPrecios}
 						/>
 						<TableBody>
-							{precios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+							{datosPrecios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
 								const isItemSelected = isSelected(row);
 								const labelId = `enhanced-table-checkbox-${index}`;
 								return (
 									<RowsRender
+										key={row._id}
 									    setLoading={setLoading}
-										key={index}
 										productosRefetch={productosRefetch}
 										handleClick={handleClick} 
 										selected={selected} 
@@ -188,23 +211,24 @@ export default function TablaPreciosDescuentos(
 										setAlert={setAlert}
 										porcentaje={porcentaje}
 										value={value}
+										datosPrecios={datosPrecios}
 										isItemSelected={isItemSelected} 
 										labelId={labelId} 
 									/>
 								);
 							})}
-							{emptyRows > 0 && (
+							{/* {emptyRows > 0 && (
 								<TableRow style={{ height: 53 * emptyRows }}>
 									<TableCell colSpan={6} />
 								</TableRow>
-							)}
+							)} */}
 						</TableBody>
 					</Table>
 				</TableContainer>
 				<TablePagination
                     rowsPerPageOptions={[]}
 					component="div"
-					count={precios.length}
+					count={datosPrecios.length}
 					rowsPerPage={rowsPerPage}
 					page={page}
 					onChangePage={handleChangePage}
@@ -215,13 +239,14 @@ export default function TablaPreciosDescuentos(
 	);
 }
 
-function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, porcentaje, productosRefetch, handleClick, selected}) {
+function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, porcentaje, productosRefetch, handleClick, selected, datosPrecios}) {
 
+	const classes = useStyles();
+	const theme = useTheme();
 	const [openModal, setOpenModal] = useState(false);
 
 	const [ DesactivarDescuentoUnidad ] = useMutation(DESACTIVAR_DESCUENTOS);
 	const [ ELiminarDescuentoUnidad ] = useMutation(ELIMINAR_DESCUENTOS);
-
 	const handleChangeActivo = async () => {
 		setLoading(true);
 		try {
@@ -243,7 +268,7 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, p
 
 	const handleModal =()=>{
 		setOpenModal(!openModal);
-	}
+	};
 
 	const handleDelete = async () => {
 		setLoading(true);
@@ -260,9 +285,33 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, p
 		} catch (error) {
 			setAlert({ message: error.message, status: 'error', open: true });
 		}
-	}
-
-	
+	};
+	console.log(row);
+	const funcionPorcentaje = () => {
+		// if(selected.length === 1){
+		// 	console.log("solo uno seleccionado");
+		// }else{
+		// 	selected.forEach(element => {
+		// 		if (element._id === row._id) {
+		// 			return <b style={{color: 'green'}}> ${parseFloat((row.precio * porcentaje / 100).toFixed(2))}</b>
+		// 		}
+		// 	})
+		// }
+		
+		if(!row.descuento){
+			if (selected.length > 1 ) {
+				selected.forEach(element => {
+					if (element._id === row._id) {
+						return "4"
+						//  (parseFloat((row.precio * porcentaje / 100).toFixed(2)))
+					}
+				})
+			}
+			return "0";
+		}else{
+			return row.descuento.precio_con_descuento;
+		}
+	};
 
 	return(
 		<TableRow
@@ -284,24 +333,27 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, p
 			<TableCell align="center">{row.cantidad}</TableCell>
 			<TableCell align="center">{row.cantidad > 1 ? "Cajas" : "Pieza"}</TableCell>
 			<TableCell align="center">{row.precio}</TableCell>
-
 			<TableCell align="center">
-				{selected.length  <= 1 ? (
-					!row.descuento ? 0 : <b style={{color: 'green'}}>{row.descuento.precio_con_descuento}</b>
-				):
-					<b style={{color: 'green'}}>{parseFloat((row.precio * porcentaje / 100).toFixed(2))}</b>
-				}
+				{/* {console.log(selected, "selects")} */}
+				{/* {console.log(row, "rows")} */}
+				{/* {selected.length === 1 ? (console.log("solo uno seleccionado")) :
+					selected.forEach(element => {
+						return <b style={{color: 'green'}}> ${parseFloat((row.precio * porcentaje / 100).toFixed(2))}</b>
+						// if (element._id === row._id) {
+						// 	console.log("si es el mismo");
+						// 	// return <b style={{color: 'green'}}> ${parseFloat((row.precio * porcentaje / 100).toFixed(2))}</b>
+						// }
+					})
+				} */}
+				{funcionPorcentaje()}
+				{/* {selected.length === 1 ? (
+					!row.descuento ? 0 : console.log("Si hay valor")
+				): (console.log("hola mundo"))
+				} */}
+				{/* {!row.descuento ? 0 : <b style={{color: 'green'}}> ${parseFloat((row.precio * porcentaje / 100).toFixed(2))}</b>} */}
 			</TableCell>
 			<TableCell align="center">
-				{selected.length  <= 1 ? (
-					!row.descuento ? 0 : <b style={{color: 'red'}}>{row.descuento.porciento}%</b>
-				):
-					<b style={{color: 'red'}}>{value}%</b>
-				}
-				{/* {!row.descuento ? 
-					<b style={{color: 'black'}}>0%</b>
-					: <b style={{color: 'red'}}>{row.descuento.porciento}%</b>
-				} */}
+				{!row.descuento ? 0 : <b style={{color: 'red'}}>{value}%</b>}
 			</TableCell>
 			<TableCell align="center">
 				<Modal row={row} handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
@@ -318,6 +370,34 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, p
 					inputProps={{ 'aria-label': 'secondary checkbox' }}
 				/>
 			</TableCell>
+			{
+				row.medida ? (
+					<TableCell align="center">{row?.medida?.talla}</TableCell>
+				) :(
+					null
+				)
+			}
+			{
+				row.color ? (
+					<Tooltip
+						title={row?.color?.nombre}
+						placement="top"
+						arrow
+						TransitionComponent={Zoom}
+					>
+						<div
+							className={classes.colorContainer}
+							style={{
+								backgroundColor:row?.color?.hex,
+								color: theme.palette.getContrastText(row?.color?.hex),
+							}}
+						>
+						</div>
+					</Tooltip>
+				) :(
+					null
+				)
+			}
 		</TableRow>
 	)
 };
