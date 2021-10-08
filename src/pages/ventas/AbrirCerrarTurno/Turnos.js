@@ -94,7 +94,16 @@ export default function Turnos() {
                             style={{width: 20}}
                         />
                     </Box>
-                    Abrir/Cerrar turno
+					<Box>
+                        <Typography variant="body2" >
+                            <b>Abrir/Cerrar turno</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F3</b>
+                        </Typography>
+                    </Box>
                 </Box>
             </Button>	
 

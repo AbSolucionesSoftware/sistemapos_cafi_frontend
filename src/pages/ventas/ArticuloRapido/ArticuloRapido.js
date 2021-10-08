@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
   AppBar,
+  Backdrop,
   Badge,
   Box,
   Button,
@@ -23,6 +24,7 @@ import {
   initial_state_datos_generales,
   initial_state_precios,
   initial_state_preciosP,
+  initial_state_unidadVentaXDefecto,
   initial_state_presentaciones
 } from "../../../context/Catalogos/initialStatesProducto";
 import { cleanTypenames } from '../../../config/reuserFunctions';
@@ -106,7 +108,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function ArticuloRapido() {
   const classes = useStyles();
   const [value, setValue] = useState(0);
-  const [cargando, setCargando] = useState(false);
+  const [ cargando, setCargando ] = useState(false);
 
   const {
     datos_generales,
@@ -135,7 +137,7 @@ export default function ArticuloRapido() {
   const resetInitialStates = () => {
     setDatosGenerales(initial_state_datos_generales);
     setPrecios(initial_state_precios);
-    setUnidadVentaXDefecto([]);
+    setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
     setPreciosP(initial_state_preciosP);
     setUnidadesVenta([]);
     setCentroDeCostos({});
@@ -160,15 +162,20 @@ export default function ArticuloRapido() {
     };
   }, []);
   
-  if (cargando || loading || !data){
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100%" width="150vh">
-        <CircularProgress />
-      </Box>
-    )
-  }
-
-  if(cargando || loading || !data) { return null }
+  if(loading || !data) { return null }
+  if (loading)
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      height="80vh"
+    >
+      <CircularProgress />
+      <Typography variant="h6">Cargando...</Typography>
+    </Box>
+  );
 
   const { obtenerConsultasProducto } = data;
 
@@ -194,7 +201,6 @@ export default function ArticuloRapido() {
         return setValidacion(true);
       }
     }
-
     if (unidadesVenta.length === 0) {
       unidadesVenta.push(unidadVentaXDefecto);
     } else {
@@ -208,8 +214,7 @@ export default function ArticuloRapido() {
     if (datos_generales.tipo_producto === 'OTROS' && cantidad < 1) {
         setPresentaciones(initial_state_presentaciones)
         setCantidad(0)
-    }
-
+    };
     const data = {
       datos_generales,
       precios,
@@ -220,7 +225,7 @@ export default function ArticuloRapido() {
       sucursal: sesion.sucursal._id,
       usuario: sesion._id,
     };
-
+    
     try {
       const input = cleanTypenames(data);
       const result = await crearProductoRapido({
@@ -230,27 +235,22 @@ export default function ArticuloRapido() {
       });
       resetInitialStates();
       refetch();
-      setCargando(false);
       setAlert({
         message: `¡Listo ${result.data.crearProductoRapido.message}!`,
         status: "success",
         open: true,
       });
+      setCargando(false);
       handleClickOpen();
     } catch (error) {
       resetInitialStates();
       refetch();
-      setCargando(false);
       setAlert({
         message: `Error: ${error.message}`,
         status: "error",
         open: true,
       });
-      if(error.networkError.result){
-        console.log(error.networkError.result.errors);
-      }else if(error.graphQLErrors){
-        console.log(error.graphQLErrors.message);
-      }
+      setCargando(false);
       handleClickOpen();
     }
   };
@@ -318,7 +318,7 @@ export default function ArticuloRapido() {
   return (
     <>
       <Button
-        onClick={() =>{handleClickOpen();}}
+        onClick={() =>{handleClickOpen()}}
         value="articulo-rapido"
         style={{textTransform: 'none', height: '100%', width: '70%'}}
       >
@@ -330,7 +330,16 @@ export default function ArticuloRapido() {
             className={classes.iconSizeSecondSuperior} 
           />
 					</Box>
-					Articulo Rapido
+					<Box>
+              <Typography variant="body2" >
+                  <b>Producto Rapido</b>
+              </Typography>
+          </Box>
+          <Box>
+              <Typography variant="caption" style={{color: '#808080'}} >
+                  <b>F3</b>
+              </Typography>
+          </Box>
 				</Box>
       </Button>
       <Dialog
@@ -406,6 +415,9 @@ export default function ArticuloRapido() {
           </Box>
         </AppBar>
         <DialogContent className={classes.dialogContent}>
+          <Backdrop className={classes.backdrop} open={cargando}>
+            <CircularProgress color="inherit" />
+          </Backdrop>
           <div className={classes.root}>
             <TabPanel value={value} index={0}>
               <RegistroInformacionRapido setAbrirTallaColor={setAbrirTallaColor} setCantidad={setCantidad} cantidad={cantidad} />

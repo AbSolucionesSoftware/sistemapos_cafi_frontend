@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button,  Dialog, DialogActions, DialogContent, Slide } from '@material-ui/core'
+import { Box, Button,  Dialog, DialogActions, DialogContent, Slide, Typography } from '@material-ui/core'
 import useStyles from '../styles';
 import { FcDonate } from 'react-icons/fc';
 
@@ -22,10 +22,17 @@ export default function Abonos() {
             >
                 <Box>
                     <Box>
-                        <FcDonate style={{fontSize: 110}} />
+                        <FcDonate style={{fontSize: 100}} />
                     </Box>
                     <Box>
-                        Abonos
+                        <Typography variant="body2" >
+                            <b>Abonos</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F3</b>
+                        </Typography>
                     </Box>
                 </Box>
             </Button>
