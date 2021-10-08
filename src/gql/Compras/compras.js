@@ -36,6 +36,172 @@ export const CREAR_COMPRA_ESPERA = gql`
   }
 `;
 
+export const OBTENER_COMPRAS_REALIZADAS = gql`
+  query obtenerComprasRealizadas(
+    $empresa: ID!
+    $sucursal: ID!
+    $filtro: String
+    $fecha: String
+  ) {
+    obtenerComprasRealizadas(
+      empresa: $empresa
+      sucursal: $sucursal
+      filtro: $filtro
+      fecha: $fecha
+    ) {
+      _id
+      usuario {
+        _id
+        numero_usuario
+        nombre
+        estado_usuario
+      }
+      empresa {
+        _id
+        nombre_empresa
+      }
+      sucursal {
+        _id
+        nombre_sucursal
+      }
+      proveedor {
+        id_proveedor {
+          _id
+          numero_cliente
+          clave_cliente
+          nombre_cliente
+        }
+        numero_cliente
+        clave_cliente
+        nombre_cliente
+      }
+      productos {
+        _id
+        id_compra
+        id_traspaso
+        id_producto
+        producto {
+          almacen_inicial {
+            almacen
+            cantidad
+            fecha_de_expiracion
+            id_almacen
+          }
+          datos_generales {
+            codigo_barras
+            clave_alterna
+            tipo_producto
+            nombre_comercial
+            nombre_generico
+            descripcion
+            id_categoria
+            categoria
+            subcategoria
+            id_subcategoria
+            id_departamento
+            departamento
+            id_marca
+            marca
+            clave_producto_sat
+            receta_farmacia
+          }
+          precios {
+            ieps
+            ieps_activo
+            iva
+            iva_activo
+            monedero
+            monedero_electronico
+            granel
+            inventario {
+              inventario_minimo
+              inventario_maximo
+              unidad_de_inventario
+            }
+            precio_de_compra {
+              precio_con_impuesto
+              precio_sin_impuesto
+              iva
+              ieps
+            }
+            precios_producto {
+              numero_precio
+              precio_neto
+              precio_venta
+              unidad_mayoreo
+              utilidad
+            }
+            unidad_de_compra {
+              cantidad
+              precio_unitario_con_impuesto
+              precio_unitario_sin_impuesto
+              unidad
+            }
+          }
+          unidades_de_venta {
+            _id
+            cantidad
+            codigo_barras
+            id_producto
+            precio
+            unidad
+            unidad_principal
+          }
+        }
+        concepto
+        cantidad
+        cantidad_regalo
+        cantidad_total
+        costo
+        descuento_porcentaje
+        descuento_precio
+        impuestos
+        mantener_precio
+        subtotal
+        total
+        medida {
+          id_medida
+          medida
+          tipo
+        }
+        color {
+          id_color
+          color
+          hex
+        }
+        unidad
+        id_unidad_venta
+        empresa
+        sucursal
+        usuario
+        year_registro
+        numero_semana_year
+        numero_mes_year
+        fecha_registro
+      }
+      almacen {
+        id_almacen {
+          _id
+          nombre_almacen
+          id_usuario_encargado {
+            _id
+            numero_usuario
+            nombre
+          }
+        }
+        nombre_almacen
+      }
+      subtotal
+      impuestos
+      total
+      year_registro
+      numero_semana_year
+      numero_mes_year
+      fecha_registro
+    }
+  }
+`;
+
 export const OBTENER_CONSULTA_GENERAL_PRODUCTO = gql`
   query obtenerConsultaGeneralCompras($empresa: ID!, $sucursal: ID!) {
     obtenerConsultaGeneralCompras(empresa: $empresa, sucursal: $sucursal) {

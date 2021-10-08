@@ -145,7 +145,7 @@ export default function DatosProducto() {
       producto,
       id_producto: producto._id,
       costo: precio_con_impuesto,
-      cantidad: 0,
+      cantidad: 1,
       descuento_porcentaje: 0,
       descuento_precio: 0,
       subtotal: precio_sin_impuesto,

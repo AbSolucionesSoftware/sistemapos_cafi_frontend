@@ -1,16 +1,32 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import AppBar from "@material-ui/core/AppBar";
+import Box from "@material-ui/core/Box";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Container from "@material-ui/core/Container";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
+import Chip from "@material-ui/core/Chip";
+import FormControl from "@material-ui/core/FormControl";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
+import TextField from "@material-ui/core/TextField";
+import Grid from "@material-ui/core/Grid";
 import { FcInspection } from "react-icons/fc";
-import { Box, TextField } from "@material-ui/core";
 import ListaCompras from "./ListaCompras";
+import { useQuery } from "@apollo/client";
+import { OBTENER_COMPRAS_REALIZADAS } from "../../../../gql/Compras/compras";
+import ErrorPage from "../../../../components/ErrorPage";
+import { SearchOutlined } from "@material-ui/icons";
+import moment from "moment";
+import ExportarComprasExcel from "./ExportarComprasExcel";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -83,35 +99,212 @@ export default function ComprasRealizadas() {
             </Box>
           </Toolbar>
         </AppBar>
-		<ContentDialogCompras />
+        <Container maxWidth="xl">
+          <ContentDialogCompras />
+        </Container>
       </Dialog>
     </div>
   );
 }
 
 const ContentDialogCompras = () => {
-  const classes = useStyles();
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  const [filtro, setFiltro] = useState("");
+  const [filtroFecha, setFiltroFecha] = useState({ fecha: "", since: "todos" });
+  const searchfilter = useRef(null);
+  const filterDate = useRef(null);
+
+  /* Queries */
+  const { loading, data, error, refetch } = useQuery(
+    OBTENER_COMPRAS_REALIZADAS,
+    {
+      variables: {
+        empresa: sesion.empresa._id,
+        sucursal: sesion.sucursal._id,
+        fecha: filtroFecha.fecha,
+      },
+      fetchPolicy: "network-only",
+    }
+  );
+
+  if (loading)
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        height="40vh"
+      >
+        <CircularProgress />
+        <Typography variant="h5">Cargando</Typography>
+      </Box>
+    );
+  if (error) {
+    return <ErrorPage error={error} altura={300} />;
+  }
+
+  let obtenerComprasRealizadas = [];
+  if (data) obtenerComprasRealizadas = data.obtenerComprasRealizadas;
+
+  const obtenerBusqueda = (e, value) => {
+    e.preventDefault();
+    refetch({ filtro: value, fecha: filtroFecha.fecha });
+    setFiltro(value);
+  };
+
+  const handleDeleteFiltro = () => {
+    refetch({ filtro: "", fecha: filtroFecha.fecha });
+    setFiltro("");
+    searchfilter.current.value = "";
+  };
+  const handleDeleteFecha = () => {
+    refetch({ filtro, fecha: "" });
+    setFiltroFecha({ since: "todos", fecha: "" });
+    filterDate.current.value = "todos";
+  };
+
+  const obtenerFecha = (value) => {
+    switch (value) {
+      case "7 dias":
+        setFiltroFecha({
+          since: value,
+          fecha: moment().subtract(7, "d").format(),
+        });
+        refetch({ filtro, fecha: moment().subtract(7, "d").format() });
+        break;
+      case "2 semanas":
+        setFiltroFecha({
+          since: value,
+          fecha: moment().subtract(2, "w").format(),
+        });
+        refetch({ filtro, fecha: moment().subtract(2, "w").format() });
+        break;
+      case "1 mes":
+        setFiltroFecha({
+          since: value,
+          fecha: moment().subtract(1, "M").format(),
+        });
+        refetch({ filtro, fecha: moment().subtract(1, "M").format() });
+        break;
+      case "3 meses":
+        setFiltroFecha({
+          since: value,
+          fecha: moment().subtract(3, "M").format(),
+        });
+        refetch({ filtro, fecha: moment().subtract(3, "M").format() });
+        break;
+      case "6 meses":
+        setFiltroFecha({
+          since: value,
+          fecha: moment().subtract(6, "M").format(),
+        });
+        refetch({ filtro, fecha: moment().subtract(6, "M").format() });
+        break;
+      case "8 meses":
+        setFiltroFecha({
+          since: value,
+          fecha: moment().subtract(8, "M").format(),
+        });
+        refetch({ filtro, fecha: moment().subtract(8, "M").format() });
+        break;
+      case "1 año":
+        setFiltroFecha({
+          since: value,
+          fecha: moment().subtract(1, "y").format(),
+        });
+        refetch({ filtro, fecha: moment().subtract(1, "y").format() });
+        break;
+      default:
+        setFiltroFecha({ since: "todos", fecha: "" });
+        refetch({ filtro, fecha: "" });
+        break;
+    }
+  };
 
   return (
     <Fragment>
-      <Box mx={3} p={2}>
-          <Box width="50%">
-            <Box display="flex">
+      <Box my={3}>
+        <Grid container spacing={2}>
+          <Grid item md={4} xs={12}>
+            <form onSubmit={(e) => obtenerBusqueda(e, e.target[0].value)}>
               <TextField
+                inputRef={searchfilter}
                 fullWidth
                 size="small"
                 variant="outlined"
-				placeholder="Buscar una compra..."
+                placeholder="Buscar una compra..."
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton type="submit" color="primary" size="medium">
+                        <SearchOutlined />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
-              <Button variant="contained" color="primary">
-                Buscar
-              </Button>
-            </Box>
-          </Box>
+            </form>
+          </Grid>
+          <Grid item md={4} xs={12}>
+            <FormControl variant="outlined" fullWidth size="small">
+              <InputLabel id="label-select-fecha-filter">
+                Filtrar desde...
+              </InputLabel>
+              <Select
+                inputRef={filterDate}
+                labelId="label-select-fecha-filter"
+                value={filtroFecha.since}
+                onChange={(e) => obtenerFecha(e.target.value)}
+                label="Filtrar desde..."
+              >
+                <MenuItem value="todos">
+                  <em>Todos los registros</em>
+                </MenuItem>
+                <MenuItem value="7 dias">hace 7 días</MenuItem>
+                <MenuItem value="2 semanas">hace 2 semanas</MenuItem>
+                <MenuItem value="1 mes">hace 1 mes</MenuItem>
+                <MenuItem value="3 meses">hace 3 meses</MenuItem>
+                <MenuItem value="6 meses">hace 6 meses</MenuItem>
+                <MenuItem value="8 meses">hace 8 meses</MenuItem>
+                <MenuItem value="1 año">hace 1 año</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item md={4} xs={12}>
+            <ExportarComprasExcel
+              obtenerComprasRealizadas={obtenerComprasRealizadas}
+              filtro={filtro}
+              filtroFecha={filtroFecha}
+            />
+          </Grid>
+        </Grid>
       </Box>
-      <Box mx={5}>
-        <ListaCompras />
-      </Box>
+      {filtro || filtroFecha.fecha ? (
+        <Box display="flex" mb={1}>
+          <Typography variant="h6">Resultados de:</Typography>
+          <Box mr={1} />
+          {filtro ? (
+            <Chip
+              variant="outlined"
+              size="medium"
+              label={filtro}
+              onDelete={handleDeleteFiltro}
+            />
+          ) : null}
+          <Box mx={1} />
+          {filtroFecha.fecha ? (
+            <Chip
+              variant="outlined"
+              size="medium"
+              label={`Desde hace ${filtroFecha.since}`}
+              onDelete={handleDeleteFecha}
+            />
+          ) : null}
+        </Box>
+      ) : null}
+
+      <ListaCompras obtenerComprasRealizadas={obtenerComprasRealizadas} />
     </Fragment>
   );
 };

@@ -309,11 +309,12 @@ const CancelarCompra = ({ handleClose, handleToggleDelete, openDelete }) => {
     setDatosCompra,
     setPreciosVenta,
     setProductoOriginal,
+    setDatosProducto
   } = useContext(ComprasContext);
 
   const cancelarCompra = () => {
     /* reset states */
-    setDatosCompra(initial_state_datosProducto);
+    setDatosProducto(initial_state_datosProducto);
     setDatosCompra(initial_state_datosCompra);
     setPreciosVenta(initial_state_precios_venta);
     setProductoOriginal(initial_state_productoOriginal);
