@@ -117,10 +117,10 @@ export default function DatosDeCompra({ compra }) {
                       {datos.producto.datos_generales.nombre_comercial}
                     </TableCell>
                     <TableCell padding="checkbox">
-                      {datos.medida ? datos.medida.medida : "N/A"}
+                      {datos.medida && datos.medida.medida ? datos.medida.medida : "N/A"}
                     </TableCell>
                     <TableCell padding="checkbox">
-                      {datos.color ? (
+                      {datos.color && datos.color.hex ? (
                         <Chip
                           label={datos.color.color}
                           size="small"

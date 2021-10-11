@@ -129,6 +129,9 @@ const RenderProductosCompra = ({ producto, index }) => {
     setIsSelected(false);
   }, [editFinish]);
 
+  const unidad_producto = producto.producto.precios.unidad_de_compra.unidad;
+  const unidad_regalo = producto.unidad_regalo;
+  const { cantidad, cantidad_regalo, cantidad_total } = producto;
   return (
     <TableRow
       hover
@@ -157,9 +160,9 @@ const RenderProductosCompra = ({ producto, index }) => {
       <TableCell width={180}>
         <b>$ {formatoMexico(producto.total)}</b>
       </TableCell>
-      <TableCell>{producto.cantidad}</TableCell>
-      <TableCell>{producto.cantidad_regalo}</TableCell>
-      <TableCell>{producto.cantidad_total}</TableCell>
+      <TableCell>{cantidad}<b>({unidad_producto})</b></TableCell>
+      <TableCell>{cantidad_regalo}<b>({unidad_producto})</b></TableCell>
+      <TableCell>{cantidad_total}<b>({unidad_producto})</b></TableCell>
       <TableCell>
         {producto.producto.presentaciones.length > 0
           ? producto.producto.presentaciones.length

@@ -101,10 +101,10 @@ export default function AlertDialogSlide({ agregarCompra, handleClose }) {
       unidad_de_compra: {
         ...precios.unidad_de_compra,
         precio_unitario_con_impuesto: parseFloat(
-          precio_unitario_con_impuesto.toFixed(2)
+          precio_unitario_con_impuesto.toFixed(6)
         ),
         precio_unitario_sin_impuesto: parseFloat(
-          precio_unitario_sin_impuesto.toFixed(2)
+          precio_unitario_sin_impuesto.toFixed(6)
         ),
       },
     });
