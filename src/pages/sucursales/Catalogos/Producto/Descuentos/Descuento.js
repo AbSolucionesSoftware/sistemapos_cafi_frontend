@@ -81,6 +81,7 @@ export default function DescuentoProductos({datos, productosRefetch}) {
     
     let arrayDescuento = [];
 
+
     const obtenerPorcientoSlide = (event, newValue) => {
         setValue(newValue);
         preciosDescuentos.splice(0, preciosDescuentos.length);
@@ -105,7 +106,7 @@ export default function DescuentoProductos({datos, productosRefetch}) {
             }
         }
     };
-    
+
     const obtenerPrecioText = (e) => {
         var valorText = parseFloat(e.target.value);
         if (preciosProductos.length === 1) {

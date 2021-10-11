@@ -239,7 +239,7 @@ export default function TablaPreciosDescuentos(
 	);
 }
 
-function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, porcentaje, productosRefetch, handleClick, selected, datosPrecios}) {
+function RowsRender({row, value, isItemSelected, setLoading, labelId, setAlert, porcentaje, productosRefetch, handleClick, selected}) {
 
 	const classes = useStyles();
 	const theme = useTheme();
@@ -286,37 +286,10 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, p
 			setAlert({ message: error.message, status: 'error', open: true });
 		}
 	};
-	console.log(row);
-	const funcionPorcentaje = () => {
-		// if(selected.length === 1){
-		// 	console.log("solo uno seleccionado");
-		// }else{
-		// 	selected.forEach(element => {
-		// 		if (element._id === row._id) {
-		// 			return <b style={{color: 'green'}}> ${parseFloat((row.precio * porcentaje / 100).toFixed(2))}</b>
-		// 		}
-		// 	})
-		// }
-		
-		if(!row.descuento){
-			if (selected.length > 1 ) {
-				selected.forEach(element => {
-					if (element._id === row._id) {
-						return "4"
-						//  (parseFloat((row.precio * porcentaje / 100).toFixed(2)))
-					}
-				})
-			}
-			return "0";
-		}else{
-			return row.descuento.precio_con_descuento;
-		}
-	};
 
 	return(
 		<TableRow
 			hover
-			// onClick={(event) => handleClick(event, row)}
 			role="checkbox"
 			aria-checked={isItemSelected}
 			tabIndex={-1}
@@ -325,7 +298,9 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, p
 		>
 			<TableCell padding="checkbox">
 				<Checkbox
-					onClick={(event) => handleClick(event, row)}
+					onClick={(event) => {
+						handleClick(event, row)
+					}}
 					checked={isItemSelected}
 					inputProps={{ 'aria-labelledby': labelId }}
 				/>
@@ -334,26 +309,13 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, p
 			<TableCell align="center">{row.cantidad > 1 ? "Cajas" : "Pieza"}</TableCell>
 			<TableCell align="center">{row.precio}</TableCell>
 			<TableCell align="center">
-				{/* {console.log(selected, "selects")} */}
-				{/* {console.log(row, "rows")} */}
-				{/* {selected.length === 1 ? (console.log("solo uno seleccionado")) :
-					selected.forEach(element => {
-						return <b style={{color: 'green'}}> ${parseFloat((row.precio * porcentaje / 100).toFixed(2))}</b>
-						// if (element._id === row._id) {
-						// 	console.log("si es el mismo");
-						// 	// return <b style={{color: 'green'}}> ${parseFloat((row.precio * porcentaje / 100).toFixed(2))}</b>
-						// }
-					})
-				} */}
-				{funcionPorcentaje()}
-				{/* {selected.length === 1 ? (
-					!row.descuento ? 0 : console.log("Si hay valor")
-				): (console.log("hola mundo"))
-				} */}
-				{/* {!row.descuento ? 0 : <b style={{color: 'green'}}> ${parseFloat((row.precio * porcentaje / 100).toFixed(2))}</b>} */}
+				{
+					isItemSelected === true && selected.length > 1 ? <b style={{color: 'green'}}> ${parseFloat((row.precio * porcentaje / 100).toFixed(2))} </b>
+					: (row.descuento === null ? 0 : <b style={{color: 'green'}}> ${row.descuento.precio_con_descuento} </b> )
+				}
 			</TableCell>
 			<TableCell align="center">
-				{!row.descuento ? 0 : <b style={{color: 'red'}}>{value}%</b>}
+				{isItemSelected === true && selected.length > 1 ? <b style={{color: 'red'}}> {value}% </b> : (!row.descuento || row.descuento === null ? 0 : <b style={{color: 'red'}}> {row.descuento.porciento}% </b>)}
 			</TableCell>
 			<TableCell align="center">
 				<Modal row={row} handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
@@ -402,6 +364,7 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, p
 	)
 };
 
+// MODAL PARA ELIMINAR EL DESCUENTO DE LOS PRODUCTOS
 const Modal = ({row, handleModal, openModal, handleDelete }) => {
 	return (
 		<div>
