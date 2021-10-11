@@ -27,9 +27,9 @@ export default function VentasGenerales() {
   // const productosVentas = JSON.parse(localStorage.getItem('productosVentas'));
   const classes = useStyles();
   const [newProductoVentas, setNewProductoVentas] = useState(false);
-  const [granel, setGranel] = useState({
+  const [granelBase, setGranelBase] = useState({
     granel: false,
-    valor: '0'
+    valor: 0
   })
 
   const [DatosVentasActual, setDatosVentasActual] = useState({
@@ -67,17 +67,22 @@ export default function VentasGenerales() {
         impuestos: parseFloat(venta.impuestos),
         iva: parseFloat(venta.iva),
         ieps: parseFloat(venta.ieps),
+        descuento: parseFloat(venta.descuento)
       });
     }
+    setGranelBase({
+      granel: false,
+      valor: 0
+    });
   }, []);
 
   const keyUpEvent = async (event) => {
     if (event.code === "Enter" || event.code === "NumpadEnter") {
-      const input_value = event.target.value;
+      const input_value = event.target.value.trim();
       const data = input_value.split('*');
-      if(data.length > 0){
+      if(data.length > 1){
         console.log("Entro a * ",data);
-        setGranel({
+        setGranelBase({
           granel: true,
           valor: data[1]
         });
@@ -88,6 +93,10 @@ export default function VentasGenerales() {
         });
       }else{
         console.log(input_value);
+        setGranelBase({
+          granel: false,
+          valor: 0
+        });
         obtenerProductos({
           variables: {
             datosProductos: input_value,
@@ -112,12 +121,12 @@ export default function VentasGenerales() {
       ieps = 0,
       descuento = 0;
 
+    // if(producto.id_prodo)
+
     const producto_encontrado = await findProductArray(
       productosVentas,
       producto
     );
-
-    if(granel.granel === true) console.log("es granel");
 
     if (!producto_encontrado.found) {
       const newP = { ...producto };
@@ -128,7 +137,8 @@ export default function VentasGenerales() {
         ivaCalculo,
         iepsCalculo,
         descuentoCalculo,
-      } = await calculateTaxes(newP, 0);
+      } = await calculateTaxes(newP, 0, granelBase);
+      console.log(granelBase)
       subTotal = subtotalCalculo;
       total = totalCalculo;
       impuestos = impuestoCalculo;
@@ -136,6 +146,7 @@ export default function VentasGenerales() {
       ieps = iepsCalculo;
       descuento = descuentoCalculo;
       newP.cantidad_venta = 1;
+      newP.granelProducto = granelBase;
       productosVentasTemp.push(newP);
     } else {
       const { cantidad_venta, ...newP } =
@@ -147,7 +158,7 @@ export default function VentasGenerales() {
         ivaCalculo,
         iepsCalculo,
         descuentoCalculo,
-      } = await calculateTaxes(newP, 0);
+      } = await calculateTaxes(newP, 0,granelBase);
       subTotal = subtotalCalculo;
       total = totalCalculo;
       impuestos = impuestoCalculo;
@@ -156,6 +167,7 @@ export default function VentasGenerales() {
       descuento = descuentoCalculo;
       console.log(descuento);
       newP.cantidad_venta = parseInt(cantidad_venta) + 1;
+      newP.granelProducto = granelBase;
       productosVentasTemp.splice(
         producto_encontrado.producto_found.index,
         1,

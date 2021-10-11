@@ -128,10 +128,10 @@ const RenderTableRows = ({
         const { cantidad_venta, ...newP } =
           producto_encontrado.producto_found.producto;
         //Sacar los impuestos que se van a restar
-        calculoResta = await calculateTaxes(newP, cantidad_venta);
+        calculoResta = await calculateTaxes(newP, cantidad_venta, newP.granelProducto);
         // console.log(calculoResta);
         //Sacar los impuestos que se van a sumar
-        calculoSuma = await calculateTaxes(newP, new_cant);
+        calculoSuma = await calculateTaxes(newP, new_cant, newP.granelProducto);
         newP.cantidad_venta = parseInt(new_cant);
         productosVentasTemp.splice(
           producto_encontrado.producto_found.index,

@@ -99,7 +99,7 @@ export const findProductArray = async (productosVentas, producto) => {
   }
 };
 
-export const calculateTaxes = async (newP, cantidad) => {
+export const calculateTaxes = async (newP, cantidad, granel) => {
   console.log(newP);
   let subtotalCalculo = 0,
     totalCalculo = 0,
@@ -107,6 +107,9 @@ export const calculateTaxes = async (newP, cantidad) => {
     ivaCalculo = 0,
     iepsCalculo = 0,
     descuentoCalculo = 0;
+
+  const cantidadNueva = cantidad > 0 ? cantidad : 1;
+
   const iva_producto =
     parseFloat(
       newP.id_producto.precios.unidad_de_compra.precio_unitario_sin_impuesto
@@ -116,34 +119,64 @@ export const calculateTaxes = async (newP, cantidad) => {
       newP.id_producto.precios.unidad_de_compra.precio_unitario_sin_impuesto
     ) * parseFloat(`0.${newP.id_producto.precios.ieps}`);
 
-  if (cantidad > 0) {
-    totalCalculo = newP.descuento_activo === true
-      ? parseFloat(newP.descuento.precio_con_descuento) * cantidad
-      : parseFloat(newP.precio) * cantidad;
-    subtotalCalculo = newP.descuento_activo === true
-      ? (parseFloat(newP.descuento.precio_con_descuento) - (iva_producto + ieps_producto)) * cantidad
-      : (parseFloat(newP.precio) - (iva_producto + ieps_producto)) * cantidad;
-    impuestoCalculo = (iva_producto + ieps_producto) * cantidad;
-    ivaCalculo = iva_producto * cantidad;
-    iepsCalculo = ieps_producto * cantidad;
-    descuentoCalculo = newP.descuento_activo === true
-      ? parseFloat(newP.descuento.dinero_descontado) * cantidad
-      : 0;
-  } else {
-    totalCalculo = newP.descuento_activo === true
-      ? parseFloat(newP.descuento.precio_con_descuento)
-      : parseFloat(newP.precio);
-    subtotalCalculo = newP.descuento_activo === true
-      ? (parseFloat(newP.descuento.precio_con_descuento) - (iva_producto + ieps_producto))
-      : (parseFloat(newP.precio) - (iva_producto + ieps_producto));
-    impuestoCalculo = iva_producto + ieps_producto;
-    ivaCalculo = iva_producto;
-    iepsCalculo = ieps_producto;
-    descuentoCalculo = newP.descuento_activo === true
-      ? parseFloat(newP.descuento.dinero_descontado)
-      : 0;
-  }
-  
+    totalCalculo =
+      granel.granel === true
+        ? newP.descuento_activo === true
+          ? parseFloat(newP.descuento.precio_con_descuento) *
+            cantidadNueva *
+            parseFloat(granel.valor)
+          : parseFloat(newP.precio) * cantidadNueva * parseFloat(granel.valor)
+        : newP.descuento_activo === true
+        ? parseFloat(newP.descuento.precio_con_descuento) * cantidadNueva
+        : parseFloat(newP.precio) * cantidadNueva;
+
+    subtotalCalculo =
+      granel.granel === true
+        ? newP.descuento_activo === true
+          ? (parseFloat(newP.descuento.precio_con_descuento) -
+              (iva_producto + ieps_producto)) *
+            cantidadNueva *
+            parseFloat(granel.valor)
+          : (parseFloat(newP.precio) - (iva_producto + ieps_producto)) *
+            cantidadNueva *
+            parseFloat(granel.valor)
+        : newP.descuento_activo === true
+        ? (parseFloat(newP.descuento.precio_con_descuento) -
+            (iva_producto + ieps_producto)) *
+          cantidadNueva
+        : (parseFloat(newP.precio) - (iva_producto + ieps_producto)) *
+          cantidadNueva;
+
+    impuestoCalculo =
+      granel.granel === true
+        ? (iva_producto + ieps_producto) *
+          cantidadNueva *
+          parseFloat(granel.valor)
+        : (iva_producto + ieps_producto) * cantidadNueva;
+
+    ivaCalculo =
+      granel.granel === true
+        ? iva_producto * cantidadNueva * parseFloat(granel.valor)
+        : iva_producto * cantidadNueva;
+
+    iepsCalculo =
+      granel.granel === true
+        ? ieps_producto * cantidadNueva * parseFloat(granel.valor)
+        : ieps_producto * cantidadNueva;
+
+    descuentoCalculo =
+      granel.granel === true
+        ? newP.descuento_activo === true
+          ? parseFloat(newP.descuento.dinero_descontado) *
+            cantidadNueva *
+            parseFloat(granel.valor)
+          : 0
+        : newP.descuento_activo === true
+        ? parseFloat(newP.descuento.dinero_descontado) *
+          cantidadNueva
+        : 0;
+        
+
   return {
     totalCalculo,
     subtotalCalculo,

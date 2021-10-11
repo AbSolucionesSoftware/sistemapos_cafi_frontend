@@ -50,7 +50,7 @@ export default function EliminarProducto({
 		if (producto_encontrado.found) {
 			const { cantidad_venta, ...newP } = producto;
 			//Sacar los impuestos que se van a restar
-			let calculoResta = await calculateTaxes(newP, cantidad_venta);
+			let calculoResta = await calculateTaxes(newP, cantidad_venta, newP.granelProducto);
 			productosVentasTemp.splice(
 				producto_encontrado.producto_found.index,
 				1
