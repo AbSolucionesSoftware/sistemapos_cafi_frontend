@@ -24,7 +24,16 @@ export default function VentaEnEspera() {
                     <Box display="flex" justifyContent="center" alignItems="center">
                         <FcExpired style={{fontSize: 25}} />
                     </Box>
-                    Cotización
+                    <Box>
+                        <Typography variant="body2" >
+                            <b>En espera</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F3</b>
+                        </Typography>
+                    </Box>
                 </Box>
             </Button>
 

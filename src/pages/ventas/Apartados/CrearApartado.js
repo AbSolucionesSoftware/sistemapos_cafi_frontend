@@ -65,11 +65,18 @@ export default function CrearApartado() {
                         <img 
                             src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tag.svg' 
                             alt="icono apartados"
-                            style={{width: 110}}
+                            style={{width: 100}}
                         />
                     </Box>
                     <Box>
-                        Apartar Producto
+                        <Typography variant="body2" >
+                            <b>Apartar Producto</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F3</b>
+                        </Typography>
                     </Box>
                 </Box>
             </Button>

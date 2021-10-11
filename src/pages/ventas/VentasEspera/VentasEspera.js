@@ -28,12 +28,19 @@ export default function VentasEspera() {
                             <img 
                                 src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/lista-de-espera.svg' 
                                 alt="icono caja2" 
-                                style={{width: 40}} 
+                                style={{width: 38}} 
                             />
                         </Badge>
                     </Box>
                     <Box>
-                        Lista Espera
+                        <Typography variant="body2" >
+                            <b>Lista Espera</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F3</b>
+                        </Typography>
                     </Box>
                 </Box>
             </Button>

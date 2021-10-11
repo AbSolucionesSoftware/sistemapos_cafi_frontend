@@ -28,11 +28,18 @@ export default function CancelarVenta() {
                         <img 
                             src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shopping-cart.svg' 
                             alt="icono cancelarventa" 
-                            style={{width: 40}}
+                            style={{width: 38}}
                         />
                     </Box>
                     <Box>
-                        Cancelar Venta
+                        <Typography variant="body2" >
+                            <b>Cancelar Venta</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F3</b>
+                        </Typography>
                     </Box>
                 </Box>
             </Button>
