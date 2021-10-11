@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
 		// padding: theme.spacing(1)
 	},
     toolbar: {
-		height: theme.spacing(8)
+		height: theme.spacing(9)
 	},
 	// drawerPaper: {
 	// 	width: drawerWidth,

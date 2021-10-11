@@ -44,10 +44,21 @@ export default function PreciosProductos() {
             >
                 <Box>
                     <Box>
-                        <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/money.svg' alt="icono money" style={{fontSize: 40}} />
+                        <img 
+                            src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/money.svg' 
+                            alt="icono money" 
+                            style={{fontSize: 35}} 
+                        />
                     </Box>
                     <Box>
-                        Precios
+                        <Typography variant="body2" >
+                            <b>Precios</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F3</b>
+                        </Typography>
                     </Box>
                 </Box>
             </Button>

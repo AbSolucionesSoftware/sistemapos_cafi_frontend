@@ -30,7 +30,16 @@ export default function CerrarCaja() {
                             style={{width: 20}}
                         />
                     </Box>
-                    Corte Caja
+                    <Box>
+                        <Typography variant="body2" >
+                            <b>Corte Cajao</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F3</b>
+                        </Typography>
+                    </Box>
                 </Box>
             </Button>	
 

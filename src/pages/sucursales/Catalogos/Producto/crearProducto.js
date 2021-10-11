@@ -224,6 +224,8 @@ export default function CrearProducto({
     }
   };
 
+  console.log(unidadVentaXDefecto); 
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };

@@ -1,15 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
   AppBar,
+  Backdrop,
   Badge,
-  BottomNavigationAction,
   Box,
   Button,
   CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
-  IconButton,
   makeStyles,
   Slide,
   Tab,
@@ -28,6 +27,7 @@ import {
   initial_state_unidadVentaXDefecto,
   initial_state_presentaciones
 } from "../../../context/Catalogos/initialStatesProducto";
+import { cleanTypenames } from '../../../config/reuserFunctions';
 import TallasColoresRapidos from "./TallasColoresRapidos/TallasColoresRapidos";
 import { RegProductoContext } from "../../../context/Catalogos/CtxRegProducto";
 import { useMutation, useQuery } from "@apollo/client";
@@ -108,7 +108,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function ArticuloRapido() {
   const classes = useStyles();
   const [value, setValue] = useState(0);
-  const [cargando, setCargando] = useState(false);
+  const [ cargando, setCargando ] = useState(false);
 
   const {
     datos_generales,
@@ -137,7 +137,7 @@ export default function ArticuloRapido() {
   const resetInitialStates = () => {
     setDatosGenerales(initial_state_datos_generales);
     setPrecios(initial_state_precios);
-    setUnidadVentaXDefecto([]);
+    setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
     setPreciosP(initial_state_preciosP);
     setUnidadesVenta([]);
     setCentroDeCostos({});
@@ -147,11 +147,13 @@ export default function ArticuloRapido() {
   };
 
   const [open, setOpen] = useState(false);
+  const [abrirTallaColor, setAbrirTallaColor] = useState(false);
   const [cantidad, setCantidad] = useState(0);
 
   const handleClickOpen = () => {
     resetInitialStates();
 		setOpen(!open);
+    setAbrirTallaColor(false);
 	};
 
   useEffect(() => {
@@ -160,14 +162,20 @@ export default function ArticuloRapido() {
     };
   }, []);
   
-  if (cargando || loading || !data)
-	return (
-		<Box display="flex" justifyContent="center" alignItems="center" height="100%" width="150vh">
-			<CircularProgress />
-		</Box>
-	);
-
-  if (cargando || loading || !data ) return null;
+  if(loading || !data) { return null }
+  if (loading)
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      height="80vh"
+    >
+      <CircularProgress />
+      <Typography variant="h6">Cargando...</Typography>
+    </Box>
+  );
 
   const { obtenerConsultasProducto } = data;
 
@@ -193,7 +201,6 @@ export default function ArticuloRapido() {
         return setValidacion(true);
       }
     }
-
     if (unidadesVenta.length === 0) {
       unidadesVenta.push(unidadVentaXDefecto);
     } else {
@@ -207,9 +214,8 @@ export default function ArticuloRapido() {
     if (datos_generales.tipo_producto === 'OTROS' && cantidad < 1) {
         setPresentaciones(initial_state_presentaciones)
         setCantidad(0)
-    }
-
-    const input = {
+    };
+    const data = {
       datos_generales,
       precios,
       unidades_de_venta: unidadesVenta,
@@ -219,32 +225,32 @@ export default function ArticuloRapido() {
       sucursal: sesion.sucursal._id,
       usuario: sesion._id,
     };
-
+    
     try {
-      const result = 
-        await crearProductoRapido({
-          variables: {
-            input
-          },
-        });
+      const input = cleanTypenames(data);
+      const result = await crearProductoRapido({
+        variables: {
+          input
+        }
+      });
       resetInitialStates();
       refetch();
-      setCargando(false);
       setAlert({
         message: `¡Listo ${result.data.crearProductoRapido.message}!`,
         status: "success",
         open: true,
       });
+      setCargando(false);
       handleClickOpen();
     } catch (error) {
       resetInitialStates();
       refetch();
-      setCargando(false);
       setAlert({
         message: `Error: ${error.message}`,
         status: "error",
         open: true,
       });
+      setCargando(false);
       handleClickOpen();
     }
   };
@@ -312,7 +318,7 @@ export default function ArticuloRapido() {
   return (
     <>
       <Button
-        onClick={() =>{handleClickOpen();}}
+        onClick={() =>{handleClickOpen()}}
         value="articulo-rapido"
         style={{textTransform: 'none', height: '100%', width: '70%'}}
       >
@@ -324,10 +330,18 @@ export default function ArticuloRapido() {
             className={classes.iconSizeSecondSuperior} 
           />
 					</Box>
-					Articulo Rapido
+					<Box>
+              <Typography variant="body2" >
+                  <b>Producto Rapido</b>
+              </Typography>
+          </Box>
+          <Box>
+              <Typography variant="caption" style={{color: '#808080'}} >
+                  <b>F3</b>
+              </Typography>
+          </Box>
 				</Box>
       </Button>
-
       <Dialog
 				maxWidth='lg'
 				open={open} 
@@ -369,7 +383,7 @@ export default function ArticuloRapido() {
                 {...a11yProps(0)}
               />
               {
-                datos_generales.tipo_producto === 'OTROS' ? (
+                 abrirTallaColor === false  || datos_generales.tipo_producto === 'OTROS' ? (
                   null
                 ) :(
                   <Tab
@@ -401,9 +415,12 @@ export default function ArticuloRapido() {
           </Box>
         </AppBar>
         <DialogContent className={classes.dialogContent}>
+          <Backdrop className={classes.backdrop} open={cargando}>
+            <CircularProgress color="inherit" />
+          </Backdrop>
           <div className={classes.root}>
             <TabPanel value={value} index={0}>
-              <RegistroInformacionRapido setCantidad={setCantidad} cantidad={cantidad} />
+              <RegistroInformacionRapido setAbrirTallaColor={setAbrirTallaColor} setCantidad={setCantidad} cantidad={cantidad} />
               <RegistroInfoAdidional />
             </TabPanel>
             <TabPanel value={value} index={1}>

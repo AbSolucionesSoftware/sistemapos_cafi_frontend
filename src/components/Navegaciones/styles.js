@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 		height: '100%'
 	},
 	navigationTop:{
-		height: theme.spacing(8)
+		height: theme.spacing(9)
 	},
 	iconSizeSuperior: {
 		fontSize: 30,
@@ -36,7 +36,6 @@ const useStyles = makeStyles((theme) => ({
     iconSizeSecondSuperior: {
 		width: 20,
 	},
-
 	iconSizeInferior: {
 		fontSize: 50,
         color: theme.palette.info.main
@@ -44,9 +43,8 @@ const useStyles = makeStyles((theme) => ({
     iconSizeSecondInferior: {
 		width: 40,
 	},
-
 	iconSizeSecondInferiorGrande: {
-		width: 110,
+		width: 100
 	},
 	iconSizeInferiorGrande:{
 		fontSize: 110,
