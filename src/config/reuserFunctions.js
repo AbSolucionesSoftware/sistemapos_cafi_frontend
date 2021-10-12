@@ -99,7 +99,7 @@ export const findProductArray = async (productosVentas, producto) => {
   }
 };
 
-export const calculateTaxes = async (newP, cantidad, granel) => {
+export const calculatePrices = async (newP, cantidad, granel) => {
   console.log(newP);
   let subtotalCalculo = 0,
     totalCalculo = 0,
@@ -175,7 +175,6 @@ export const calculateTaxes = async (newP, cantidad, granel) => {
         ? parseFloat(newP.descuento.dinero_descontado) *
           cantidadNueva
         : 0;
-        
 
   return {
     totalCalculo,

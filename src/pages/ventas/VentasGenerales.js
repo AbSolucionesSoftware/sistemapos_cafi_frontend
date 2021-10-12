@@ -15,12 +15,15 @@ import {
 import { Search } from "@material-ui/icons";
 import useStyles from "./styles";
 import TablaVentas from "./TablaVentas";
-import { CONSULTA_PRODUCTO_UNITARIO } from "../../gql/Ventas/ventas_generales";
+import { CONSULTA_PRODUCTO_UNITARIO, OBTENER_CLIENTES_VENTAS } from "../../gql/Ventas/ventas_generales";
 import { useLazyQuery } from "@apollo/client";
 
 import { Fragment } from "react";
 import MonedaCambio from "./Operaciones/MonedaCambio";
-import { findProductArray, calculateTaxes } from "../../config/reuserFunctions";
+import {
+  findProductArray,
+  calculatePrices,
+} from "../../config/reuserFunctions";
 
 export default function VentasGenerales() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -29,8 +32,8 @@ export default function VentasGenerales() {
   const [newProductoVentas, setNewProductoVentas] = useState(false);
   const [granelBase, setGranelBase] = useState({
     granel: false,
-    valor: 0
-  })
+    valor: 0,
+  });
 
   const [DatosVentasActual, setDatosVentasActual] = useState({
     subTotal: 0,
@@ -39,7 +42,19 @@ export default function VentasGenerales() {
     iva: 0,
     ieps: 0,
     descuento: 0,
+    tipo_cambio: {}
   });
+
+  // const [tipoCambioMoneda, setTipoCambioMoneda] = useState({
+  //   cambio_actual: {
+  //     tipo: "MXM",
+  //     valor: 1,
+  //   },
+  //   cambio_convertir: {
+  //     tipo: "USD",
+  //     valor: 20,
+  //   },
+  // });
 
   const [obtenerProductos, { data /* error */ }] = useLazyQuery(
     CONSULTA_PRODUCTO_UNITARIO,
@@ -59,6 +74,11 @@ export default function VentasGenerales() {
   }, [productosBase]);
 
   useEffect(() => {
+    setGranelBase({
+      granel: false,
+      valor: 0,
+    });
+
     const venta = JSON.parse(localStorage.getItem("DatosVentas"));
     if (venta !== null) {
       setDatosVentasActual({
@@ -70,32 +90,28 @@ export default function VentasGenerales() {
         descuento: parseFloat(venta.descuento)
       });
     }
-    setGranelBase({
-      granel: false,
-      valor: 0
-    });
   }, []);
 
   const keyUpEvent = async (event) => {
     if (event.code === "Enter" || event.code === "NumpadEnter") {
       const input_value = event.target.value.trim();
-      const data = input_value.split('*');
-      if(data.length > 1){
-        console.log("Entro a * ",data);
+      const data = input_value.split("*");
+      if (data.length > 1) {
+        console.log("Entro a * ", data);
         setGranelBase({
           granel: true,
-          valor: data[1]
+          valor: data[1],
         });
         obtenerProductos({
           variables: {
             datosProductos: data[0],
           },
         });
-      }else{
+      } else {
         console.log(input_value);
         setGranelBase({
           granel: false,
-          valor: 0
+          valor: 0,
         });
         obtenerProductos({
           variables: {
@@ -137,8 +153,8 @@ export default function VentasGenerales() {
         ivaCalculo,
         iepsCalculo,
         descuentoCalculo,
-      } = await calculateTaxes(newP, 0, granelBase);
-      console.log(granelBase)
+      } = await calculatePrices(newP, 0, granelBase);
+      console.log(granelBase);
       subTotal = subtotalCalculo;
       total = totalCalculo;
       impuestos = impuestoCalculo;
@@ -158,7 +174,7 @@ export default function VentasGenerales() {
         ivaCalculo,
         iepsCalculo,
         descuentoCalculo,
-      } = await calculateTaxes(newP, 0,granelBase);
+      } = await calculatePrices(newP, 0, granelBase);
       subTotal = subtotalCalculo;
       total = totalCalculo;
       impuestos = impuestoCalculo;
@@ -181,7 +197,7 @@ export default function VentasGenerales() {
       impuestos: parseFloat(venta_existente.impuestos) + impuestos,
       iva: parseFloat(venta_existente.iva) + iva,
       ieps: parseFloat(venta_existente.ieps) + ieps,
-      descuento: parseFloat(venta_existente.descuento) + descuento,
+      descuento: parseFloat(venta_existente.descuento) + descuento
     };
     localStorage.setItem(
       "DatosVentas",

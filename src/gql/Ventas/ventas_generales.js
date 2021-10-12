@@ -108,3 +108,36 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
     }
   }
 `;
+
+export const OBTENER_CLIENTES_VENTAS = gql`
+  query ObtenerClientesVentas($empresa: ID!, $sucursal: ID!) {
+    obtenerClientesVentas(empresa: $empresa, sucursal: $sucursal) {
+      numero_cliente
+      clave_cliente
+      nombre_cliente
+      rfc
+      curp
+      telefono
+      celular
+      email
+      numero_descuento
+      limite_credito
+      dias_credito
+      razon_social
+      direccion {
+        calle
+        no_ext
+        no_int
+        codigo_postal
+        colonia
+        municipio
+        localidad
+        estado
+        pais
+      }
+      imagen
+      banco
+      numero_cuenta
+    }
+  }
+`;

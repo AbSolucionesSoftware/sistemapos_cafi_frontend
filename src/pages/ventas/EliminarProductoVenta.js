@@ -7,7 +7,7 @@ import Slide from '@material-ui/core/Slide';
 import { CircularProgress, IconButton } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
 
-import {findProductArray, calculateTaxes } from '../../config/reuserFunctions';
+import {findProductArray, calculatePrices } from '../../config/reuserFunctions';
 
 const Transition = forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -17,7 +17,7 @@ export default function EliminarProducto({
 	producto,
 	setNewProductoVentas,
 	newProductoVentas,
-	setDatosVentasActual,
+	setDatosVentasActual
  }) {
 	const [ open, setOpen ] = useState(false);
 	const [ loading, setLoading ] = useState(false);
@@ -50,7 +50,7 @@ export default function EliminarProducto({
 		if (producto_encontrado.found) {
 			const { cantidad_venta, ...newP } = producto;
 			//Sacar los impuestos que se van a restar
-			let calculoResta = await calculateTaxes(newP, cantidad_venta, newP.granelProducto);
+			let calculoResta = await calculatePrices(newP, cantidad_venta, newP.granelProducto);
 			productosVentasTemp.splice(
 				producto_encontrado.producto_found.index,
 				1
