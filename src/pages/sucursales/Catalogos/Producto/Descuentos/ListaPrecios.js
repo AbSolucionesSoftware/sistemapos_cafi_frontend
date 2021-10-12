@@ -102,8 +102,8 @@ const useStyles = makeStyles((theme) => ({
 		display: "flex",
 		justifyContent: "center",
 		alignItems: "center",
-		height: 40,
-		width: 40,
+		height: 30,
+		width: 30,
 		margin: 1,
 		borderRadius: "15%",
 		cursor: "pointer",
@@ -176,7 +176,7 @@ export default function TablaPreciosDescuentos(
 
 	const isSelected = (_id) => selected.indexOf(_id) !== -1;
 
-	// const emptyRows = rowsPerPage - Math.min(rowsPerPage, datosPrecios.length - page * rowsPerPage);
+	const emptyRows = rowsPerPage - Math.min(rowsPerPage, datosPrecios.length - page * rowsPerPage);
 
 	return (
 		<div className={classes.root}>
@@ -197,7 +197,7 @@ export default function TablaPreciosDescuentos(
 							datosPrecios={datosPrecios}
 						/>
 						<TableBody>
-							{datosPrecios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+							{datosPrecios.map((row, index) => {
 								const isItemSelected = isSelected(row);
 								const labelId = `enhanced-table-checkbox-${index}`;
 								return (
@@ -217,15 +217,15 @@ export default function TablaPreciosDescuentos(
 									/>
 								);
 							})}
-							{/* {emptyRows > 0 && (
+							{emptyRows > 0 && (
 								<TableRow style={{ height: 53 * emptyRows }}>
 									<TableCell colSpan={6} />
 								</TableRow>
-							)} */}
+							)}
 						</TableBody>
 					</Table>
 				</TableContainer>
-				<TablePagination
+				{/* <TablePagination
                     rowsPerPageOptions={[]}
 					component="div"
 					count={datosPrecios.length}
@@ -233,7 +233,7 @@ export default function TablaPreciosDescuentos(
 					page={page}
 					onChangePage={handleChangePage}
 					onChangeRowsPerPage={handleChangeRowsPerPage}
-				/>
+				/> */}
 			</Paper>
 		</div>
 	);
@@ -339,23 +339,26 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId, setAlert, 
 					null
 				)
 			}
+
 			{
 				row.color ? (
-					<Tooltip
-						title={row?.color?.nombre}
-						placement="top"
-						arrow
-						TransitionComponent={Zoom}
-					>
-						<div
-							className={classes.colorContainer}
-							style={{
-								backgroundColor:row?.color?.hex,
-								color: theme.palette.getContrastText(row?.color?.hex),
-							}}
+					<TableCell align="center">
+						<Tooltip
+							title={row?.color?.nombre}
+							placement="top"
+							arrow
+							TransitionComponent={Zoom}
 						>
-						</div>
-					</Tooltip>
+							<div
+								className={classes.colorContainer}
+								style={{
+									backgroundColor:row?.color?.hex,
+									color: theme.palette.getContrastText(row?.color?.hex),
+								}}
+							>
+							</div>
+						</Tooltip>
+					</TableCell>
 				) :(
 					null
 				)
