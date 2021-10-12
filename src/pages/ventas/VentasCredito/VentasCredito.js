@@ -5,7 +5,7 @@ import useStyles from '../styles';
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
-
+ 
 export default function VentasCredito() {
 
     const classes = useStyles();
@@ -15,6 +15,13 @@ export default function VentasCredito() {
     const handleClickOpen = () => { 
 		setOpen(!open);
 	};
+
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.keyCode === 113){ 
+            handleClickOpen();
+        } 
+    };
 
     return (
         <>
@@ -37,7 +44,7 @@ export default function VentasCredito() {
                     </Box>
                     <Box>
                         <Typography variant="caption" style={{color: '#808080'}} >
-                            <b>F3</b>
+                            <b>F2</b>
                         </Typography>
                     </Box>
                 </Box>

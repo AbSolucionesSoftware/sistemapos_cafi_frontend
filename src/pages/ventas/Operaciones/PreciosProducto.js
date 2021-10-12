@@ -36,6 +36,13 @@ export default function PreciosProductos() {
 		setOpen(!open);
 	};
 
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.keyCode === 114){ 
+            handleClickOpen();
+        } 
+    };
+
     return (
         <>
             <Button 

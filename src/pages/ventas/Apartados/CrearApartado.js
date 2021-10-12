@@ -53,6 +53,13 @@ export default function CrearApartado() {
 		setOpen(!open);
 	};
 
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.keyCode === 116){ 
+            handleClickOpen();
+        } 
+    };
+
 
     return (
         <Fragment>
@@ -75,7 +82,7 @@ export default function CrearApartado() {
                     </Box>
                     <Box>
                         <Typography variant="caption" style={{color: '#808080'}} >
-                            <b>F3</b>
+                            <b>F5</b>
                         </Typography>
                     </Box>
                 </Box>

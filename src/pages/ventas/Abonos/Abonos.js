@@ -14,6 +14,14 @@ export default function Abonos() {
     const handleClickOpen = () => { 
 		setOpen(!open);
 	};
+    
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.keyCode === 117){ 
+            handleClickOpen();
+        } 
+    };
+
     return (
         <>
             <Button 
@@ -31,7 +39,7 @@ export default function Abonos() {
                     </Box>
                     <Box>
                         <Typography variant="caption" style={{color: '#808080'}} >
-                            <b>F3</b>
+                            <b>F6</b>
                         </Typography>
                     </Box>
                 </Box>

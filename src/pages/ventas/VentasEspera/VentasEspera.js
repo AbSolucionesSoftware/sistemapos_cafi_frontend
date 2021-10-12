@@ -16,6 +16,14 @@ export default function VentasEspera() {
     const handleClickOpen = () => { 
 		setOpen(!open);
 	};
+
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.altKey && e.keyCode === 76){ 
+            handleClickOpen();
+        } 
+    };
+
     return (
         <>
             <Button 
@@ -39,7 +47,7 @@ export default function VentasEspera() {
                     </Box>
                     <Box>
                         <Typography variant="caption" style={{color: '#808080'}} >
-                            <b>F3</b>
+                            <b>Alt + L</b>
                         </Typography>
                     </Box>
                 </Box>

@@ -56,6 +56,12 @@ export default function ListaApartados() {
 		setOpen(!open);
 	};
 
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.keyCode === 121){ 
+            handleClickOpen();
+        } 
+    };
 
     return (
         <>
@@ -78,7 +84,7 @@ export default function ListaApartados() {
                     </Box>
                     <Box>
                         <Typography variant="caption" style={{color: '#808080'}} >
-                            <b>F3</b>
+                            <b>F10</b>
                         </Typography>
                     </Box>
                 </Box>

@@ -16,6 +16,13 @@ export default function CancelarVenta() {
     const handleClickOpen = () => { 
 		setOpen(!open);
 	};
+    
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.keyCode === 118){ 
+            handleClickOpen();
+        } 
+    };
 
     return (
         <>
@@ -38,7 +45,7 @@ export default function CancelarVenta() {
                     </Box>
                     <Box>
                         <Typography variant="caption" style={{color: '#808080'}} >
-                            <b>F3</b>
+                            <b>F7</b>
                         </Typography>
                     </Box>
                 </Box>
