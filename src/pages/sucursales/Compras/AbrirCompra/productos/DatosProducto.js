@@ -59,6 +59,10 @@ export default function DatosProducto() {
     setProductoOriginal,
     setPreciosVenta,
     setDatosCompra,
+    isEditing,
+    setIsEditing,
+    editFinish, 
+    setEditFinish
   } = useContext(ComprasContext);
   const {
     datos_generales,
@@ -96,6 +100,7 @@ export default function DatosProducto() {
     OBTENER_PRODUCTOS,
     {
       variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
+      fetchPolicy: "network-only",
     }
   );
 
@@ -132,7 +137,7 @@ export default function DatosProducto() {
       precio_con_impuesto,
       precio_sin_impuesto,
     } = producto.precios.precio_de_compra;
-    const { cantidad } = producto.precios.unidad_de_compra;
+
     const impuestos = iva + ieps;
 
     setDatosProducto({
@@ -140,7 +145,7 @@ export default function DatosProducto() {
       producto,
       id_producto: producto._id,
       costo: precio_con_impuesto,
-      cantidad,
+      cantidad: 0,
       descuento_porcentaje: 0,
       descuento_precio: 0,
       subtotal: precio_sin_impuesto,
@@ -153,7 +158,7 @@ export default function DatosProducto() {
     setPreciosVenta(producto.precios.precios_producto);
   };
 
-  const obtenerCostoCantidad = (e) => {
+  const obtenerCantidad = (e) => {
     const { name, value } = e.target;
     if (!value) {
       setDatosProducto({
@@ -167,6 +172,36 @@ export default function DatosProducto() {
       [name]: parseFloat(value),
     });
   };
+
+  const obtenerCosto = (e) => {
+    const { name, value } = e.target;
+    if (!value) {
+      setDatosProducto({
+        ...datosProducto,
+        [name]: "",
+      });
+      return;
+    }
+
+    /* let descuento_precio = Math.round((datosProducto.total * value) / 100);
+    let total = datosProducto.total - descuento_precio; */
+    if(datosProducto.descuento_porcentaje > 0){
+      let descuento_precio =  Math.round((value * datosProducto.descuento_porcentaje) / 100);
+      let total = datosProducto.total - descuento_precio;
+      setDatosProducto({
+        ...datosProducto,
+        [name]: parseFloat(value),
+        descuento_precio: parseFloat(descuento_precio),
+        total_con_descuento: parseFloat(total),
+      });
+      return
+    } 
+
+    setDatosProducto({
+      ...datosProducto,
+      [name]: parseFloat(value),
+    });
+  }
 
   const agregarCompra = async (actualizar_Precios) => {
     /* Validaciones */
@@ -223,13 +258,38 @@ export default function DatosProducto() {
     datosProducto.cantidad_total =
       datosProducto.cantidad + datosProducto.cantidad_regalo;
 
-    setProductosCompra([...productosCompra, datosProducto]);
-    setDatosCompra({
-      ...datosCompra,
-      subtotal: datosCompra.subtotal + datosProducto.subtotal,
-      impuestos: datosCompra.impuestos + datosProducto.impuestos,
-      total: datosCompra.total + datosProducto.total,
-    });
+    if(isEditing.producto){
+      /* se tiene que actualizar el producto en la fila y sumar el subtotal */
+      let productosCompra_ordenados = [ ...productosCompra ].reverse();
+
+      console.log(datosCompra.subtotal, datosProducto.subtotal, isEditing.producto.subtotal);
+      
+      let subtotal = datosCompra.subtotal + datosProducto.subtotal - isEditing.producto.subtotal;
+      let impuestos = datosCompra.impuestos + datosProducto.impuestos - isEditing.producto.impuestos;
+      let total = datosCompra.total + datosProducto.total - isEditing.producto.total;
+
+      productosCompra_ordenados.splice(isEditing.index, 1, datosProducto);
+
+      setProductosCompra(productosCompra_ordenados);
+      setDatosCompra({
+        ...datosCompra,
+        subtotal,
+        impuestos,
+        total,
+      });
+      setIsEditing({});
+      setEditFinish(!editFinish);
+    }else{
+      console.log("pasa por aca");
+      /* se agregar el producto normal */
+      setProductosCompra([...productosCompra, datosProducto]);
+      setDatosCompra({
+        ...datosCompra,
+        subtotal: datosCompra.subtotal + datosProducto.subtotal,
+        impuestos: datosCompra.impuestos + datosProducto.impuestos,
+        total: datosCompra.total + datosProducto.total,
+      });
+    }
     setProductoOriginal({ precios: initial_state_precios });
     setDatosProducto(initial_state_datosProducto);
   };
@@ -406,7 +466,7 @@ export default function DatosProducto() {
               fullWidth
               disabled={!datosProducto.producto.datos_generales}
               value={datosProducto.costo}
-              onChange={obtenerCostoCantidad}
+              onChange={obtenerCosto}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">$</InputAdornment>
@@ -419,6 +479,19 @@ export default function DatosProducto() {
         datosProducto.producto.datos_generales.tipo_producto === "OTROS" ? (
           <Fragment>
             <Grid item>
+              <Typography>Unidad</Typography>
+              <Box width={90}>
+                <TextField
+                  name="cantidad"
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  aria-readonly="true"
+                  value={datosProducto.producto.precios.unidad_de_compra.unidad}
+                />
+              </Box>
+            </Grid>
+            <Grid item>
               <Typography>Cantidad</Typography>
               <Box width={90}>
                 <TextField
@@ -429,7 +502,7 @@ export default function DatosProducto() {
                   inputMode="numeric"
                   disabled={!datosProducto.producto.datos_generales}
                   value={datosProducto.cantidad}
-                  onChange={obtenerCostoCantidad}
+                  onChange={obtenerCantidad}
                 />
               </Box>
             </Grid>
@@ -444,7 +517,7 @@ export default function DatosProducto() {
                   inputMode="numeric"
                   disabled={!datosProducto.producto.datos_generales}
                   value={datosProducto.cantidad_regalo}
-                  onChange={obtenerCostoCantidad}
+                  onChange={obtenerCantidad}
                 />
               </Box>
             </Grid>
@@ -516,11 +589,21 @@ export default function DatosProducto() {
                   startIcon={<Add />}
                   disableElevation
                   disabled={
-                    !datosProducto.producto.datos_generales ||
-                    !datosCompra.proveedor.nombre_cliente ||
-                    !datosCompra.almacen.nombre_almacen ||
-                    !datosProducto.costo ||
-                    !datosProducto.cantidad
+                    datosProducto.producto.datos_generales
+                      ? datosProducto.producto.datos_generales.tipo_producto ===
+                        "OTROS"
+                        ? !datosCompra.proveedor.nombre_cliente ||
+                          !datosCompra.almacen.nombre_almacen ||
+                          !datosProducto.costo ||
+                          !datosProducto.cantidad
+                          ? true
+                          : false
+                        : !datosCompra.proveedor.nombre_cliente ||
+                          !datosCompra.almacen.nombre_almacen ||
+                          !datosProducto.costo
+                        ? true
+                        : false
+                      : true
                   }
                   onClick={() => agregarCompra()}
                 >
@@ -559,11 +642,20 @@ const ModalAgregarCompra = ({ agregarCompra }) => {
         startIcon={<Add />}
         disableElevation
         disabled={
-          !datosProducto.producto.datos_generales ||
-          !datosCompra.proveedor.nombre_cliente ||
-          !datosCompra.almacen.nombre_almacen ||
-          !datosProducto.costo ||
-          !datosProducto.cantidad
+          datosProducto.producto.datos_generales
+            ? datosProducto.producto.datos_generales.tipo_producto === "OTROS"
+              ? !datosCompra.proveedor.nombre_cliente ||
+                !datosCompra.almacen.nombre_almacen ||
+                !datosProducto.costo ||
+                !datosProducto.cantidad
+                ? true
+                : false
+              : !datosCompra.proveedor.nombre_cliente ||
+                !datosCompra.almacen.nombre_almacen ||
+                !datosProducto.costo
+              ? true
+              : false
+            : true
         }
         onClick={() => handleClickOpen()}
       >

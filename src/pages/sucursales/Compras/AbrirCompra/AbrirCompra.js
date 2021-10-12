@@ -38,6 +38,8 @@ import {
 import { useMutation } from "@apollo/client";
 import { CREAR_COMPRA } from "../../../../gql/Compras/compras";
 import Close from "@material-ui/icons/Close";
+import SnackBarMessages from "../../../../components/SnackBarMessages";
+import BackdropComponent from "../../../../components/Layouts/BackDrop";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -111,16 +113,27 @@ export default function AbrirCompra({ status }) {
 
 const ModalCompra = ({ open, handleClose }) => {
   const classes = useStyles();
-  const { productosCompra, datosCompra } = useContext(ComprasContext);
+  const { productosCompra, datosCompra, setDatosProducto, setProductosCompra, setDatosCompra, setProductoOriginal, setPreciosVenta } = useContext(ComprasContext);
   const [openDelete, setOpenDelete] = useState(false);
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+  const [ loading, setLoading ] = useState(false);
 
   const [crearCompra] = useMutation(CREAR_COMPRA);
 
-  const realizarCompraBD = async () => {
-    datosCompra.productos = productosCompra;
+  const limpiarCampos = () => {
+    setDatosProducto(initial_state_datosProducto);
+    setProductosCompra(initial_state_productosCompra);
+    setDatosCompra(initial_state_datosCompra);
+    setProductoOriginal(initial_state_productoOriginal);
+    setPreciosVenta(initial_state_precios_venta);
+  }
 
+  const realizarCompraBD = async () => {
+    console.log(productosCompra);
+    /* setLoading(true);
     try {
+      datosCompra.productos = productosCompra;
       const clean_data = cleanTypenames(datosCompra);
 
       const result = await crearCompra({
@@ -131,19 +144,37 @@ const ModalCompra = ({ open, handleClose }) => {
           usuario: sesion._id,
         },
       });
-      console.log(result);
+      setLoading(false);
+      setAlert({
+        message: `¡Listo! ${result.data.crearCompra.message}`,
+        status: "success",
+        open: true,
+      });
+      limpiarCampos();
     } catch (error) {
+      setLoading(false);
+      setAlert({
+        message: `Error de servidor`,
+        status: "error",
+        open: true,
+      });
       console.log(error);
-      if (error.networkError.result) {
+      if (error.networkError) {
         console.log(error.networkError.result.errors);
       } else if (error.graphQLErrors) {
         console.log(error.graphQLErrors);
       }
-    }
+    } */
   };
 
   const handleToggleDelete = () => {
-    setOpenDelete(!openDelete);
+    
+    if(productosCompra.length > 0){
+      setOpenDelete(!openDelete);
+    }else{
+      limpiarCampos();
+      handleClose();
+    }
   };
 
   return (
@@ -178,6 +209,8 @@ const ModalCompra = ({ open, handleClose }) => {
         </AppBar>
       </DialogTitle>
       <DialogContent>
+        <SnackBarMessages alert={alert} setAlert={setAlert} />
+        <BackdropComponent loading={loading} setLoading={setLoading} />
         <DatosProducto />
         <Box my={2} />
         <ListaCompras />

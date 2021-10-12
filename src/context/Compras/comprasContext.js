@@ -79,6 +79,8 @@ export const ComprasProvider = ({ children }) => {
     precios: initial_state_precios,
   });
   const [productosCompra, setProductosCompra] = useState([]);
+  const [isEditing, setIsEditing] = useState({});
+  const [ editFinish, setEditFinish ] = useState(false)
 
   return (
     <ComprasContext.Provider
@@ -93,6 +95,10 @@ export const ComprasProvider = ({ children }) => {
         setProductoOriginal,
         preciosVenta,
         setPreciosVenta,
+        isEditing, 
+        setIsEditing,
+        editFinish,
+         setEditFinish
       }}
     >
       {children}

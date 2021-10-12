@@ -21,6 +21,13 @@ export default function VentasRealizadas() {
 		setOpen(!open);
 	};
 
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.altKey && e.keyCode === 86){ 
+            handleClickOpen();
+        } 
+    };
+
     return (
         <>
            <Button 
@@ -29,10 +36,17 @@ export default function VentasRealizadas() {
             >
                 <Box>
                     <Box>
-                        <FcPaid style={{ fontSize: 50 }}/>
+                        <FcPaid style={{ fontSize: 45 }}/>
                     </Box>
                     <Box>
-                        Ventas Realizadas
+                        <Typography variant="body2" >
+                            <b>Ventas Realizadas</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>Alt + V</b>
+                        </Typography>
                     </Box>
                 </Box>
             </Button>

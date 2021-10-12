@@ -31,9 +31,12 @@ export default function DatosProveedorAlmacen({
   getProductos,
 }) {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-  const { datosCompra, setDatosCompra, datosProducto } = useContext(
-    ComprasContext
-  );
+  const {
+    datosCompra,
+    setDatosCompra,
+    datosProducto,
+    productosCompra,
+  } = useContext(ComprasContext);
   const { almacen_inicial, setAlmacenInicial } = useContext(RegProductoContext);
 
   /* Queries */
@@ -148,6 +151,7 @@ export default function DatosProveedorAlmacen({
         <Grid item xs={12} md={4}>
           <Box display="flex" alignItems="center">
             <Autocomplete
+              disabled={productosCompra.length > 0}
               id="combo-box-proveedor"
               size="small"
               fullWidth
@@ -178,6 +182,7 @@ export default function DatosProveedorAlmacen({
         <Grid item xs={12} md={4}>
           <Box display="flex" alignItems="center">
             <Autocomplete
+              disabled={productosCompra.length > 0}
               id="combo-box-almacen"
               size="small"
               fullWidth

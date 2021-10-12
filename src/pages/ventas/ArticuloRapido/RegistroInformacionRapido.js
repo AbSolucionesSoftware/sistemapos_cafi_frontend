@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-export default function RegistroInformacionRapido({ setCantidad, cantidad }) {
+export default function RegistroInformacionRapido({ setAbrirTallaColor, setCantidad, cantidad }) {
 	const { datos_generales, precios, setPrecios, setDatosGenerales, validacion } = useContext(RegProductoContext);
 	const { unidadVentaXDefecto, setUnidadVentaXDefecto, update } = useContext(RegProductoContext);
 
@@ -34,6 +34,11 @@ export default function RegistroInformacionRapido({ setCantidad, cantidad }) {
 			...datos_generales,
 			[e.target.name]: e.target.value
 		});
+
+		if (e.target.value === "CALZADO" || e.target.value === "ROPA") {
+			setAbrirTallaColor(true);
+		}
+		
 	};
 
 	const checkFarmacia = (e) => {

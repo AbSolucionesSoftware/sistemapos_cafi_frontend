@@ -224,6 +224,8 @@ export default function CrearProducto({
     }
   };
 
+  console.log(unidadVentaXDefecto); 
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -283,6 +285,7 @@ export default function CrearProducto({
       usuario: sesion._id,
     };
 
+    const clean_data = cleanTypenames(input);
     console.log(input);
 
     setLoading(true);
@@ -290,7 +293,7 @@ export default function CrearProducto({
       if (accion) {
         const result = await actualizarProducto({
           variables: {
-            input,
+            input: clean_data,
             id: datos._id,
           },
         });
@@ -315,12 +318,13 @@ export default function CrearProducto({
       setLoading(false);
       toggleModal();
     } catch (error) {
+      setLoading(false);
       setAlert({
         message: `Error: ${error.message}`,
         status: "error",
         open: true,
       });
-      setLoading(false);
+      console.log(error);
     }
   };
 
