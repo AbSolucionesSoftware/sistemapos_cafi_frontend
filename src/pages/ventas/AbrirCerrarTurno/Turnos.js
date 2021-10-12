@@ -80,6 +80,13 @@ export default function Turnos() {
 		setOpen(!open);
 	};
 
+	window.addEventListener('keydown', Mi_función); 
+	function Mi_función(e){
+		if(e.altKey && e.keyCode === 85){ 
+			handleClickOpen();
+		} 
+	};
+
     return (
         <>
 			<Button
@@ -101,7 +108,7 @@ export default function Turnos() {
                     </Box>
                     <Box>
                         <Typography variant="caption" style={{color: '#808080'}} >
-                            <b>F3</b>
+                            <b>Alt + U</b>
                         </Typography>
                     </Box>
                 </Box>

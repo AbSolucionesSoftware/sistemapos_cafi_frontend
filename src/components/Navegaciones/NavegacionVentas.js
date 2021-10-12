@@ -45,6 +45,7 @@ function NavegacionVentas(props) {
 	const classes = useStyles();
 	const { alert, setAlert } = useContext(VentasContext);
 	const [ value, setValue ] = useState('venta-general');
+
 	const [open, setOpen] = useState(false);
 
 	const signOut = () => {
@@ -53,19 +54,15 @@ function NavegacionVentas(props) {
 		props.history.push('/');
 	};
 
-	const handleClickOpen = () => {
-		setOpen(!open);
+	window.addEventListener('keydown', Mi_función); 
+	function Mi_función(e){
+		if( e.keyCode === 112){ 
+			props.history.push('/admin');
+		}
+		if( e.keyCode === 115){ 
+			props.history.push('/');
+		}
 	};
-
-	// function funcion_tecla(event) {
-	// 	const tecla_escape = event.keyCode;
-	// 	if(tecla_escape === 27){
-	// 		handleClickOpen();
-	// 		return setVentana('cerrarVenta');
-	// 	}
-	// } CODIGO PARA PODER EJECUTAR LAS VENTANAS A BASE DE LAS TECLAS
-
-	// window.onkeydown = funcion_tecla;
 
 	return (
 		<Fragment>
@@ -90,7 +87,7 @@ function NavegacionVentas(props) {
 						<Divider orientation="vertical" />
 					<CerrarCaja />
 						<Divider orientation="vertical" />
-					<VentaEnEspera handleClickOpen={handleClickOpen} />
+					<VentaEnEspera />
 						<Divider orientation="vertical" />
 					<Button
 						onClick={() => props.history.push('/admin')}
@@ -98,7 +95,11 @@ function NavegacionVentas(props) {
 					>
 						<Box display="flex" flexDirection="column">
 							<Box display="flex" justifyContent="center" alignItems="center">
-								<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/admin.svg' alt="icono admin" className={classes.iconSizeSecondSuperior} />
+								<img 
+									src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/admin.svg' 
+									alt="icono admin" 
+									className={classes.iconSizeSecondSuperior} 
+								/>
 							</Box>
 							<Box>
 								<Typography variant="body2" >
@@ -107,7 +108,7 @@ function NavegacionVentas(props) {
 							</Box>
 							<Box>
 								<Typography variant="caption" style={{color: '#808080'}} >
-									<b>F3</b>
+									<b>F1</b>
 								</Typography>
 							</Box>
 						</Box>
@@ -131,7 +132,7 @@ function NavegacionVentas(props) {
 							</Box>
 							<Box>
 								<Typography variant="caption" style={{color: '#808080'}} >
-									<b>F3</b>
+									{/* <b>F3</b> */}
 								</Typography>
 							</Box>
 						</Box>
@@ -193,7 +194,7 @@ function NavegacionVentas(props) {
 								</Box>
 								<Box>
 									<Typography variant="caption" style={{color: '#808080'}} >
-										<b>F3</b>
+										<b>F4</b>
 									</Typography>
 								</Box>
 							</Box>

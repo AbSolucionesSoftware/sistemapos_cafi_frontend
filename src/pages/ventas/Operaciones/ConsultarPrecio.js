@@ -21,6 +21,12 @@ export default function ConsultarPrecio() {
 		setOpen(!open);
 	};
 
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.keyCode === 120){ 
+            handleClickOpen();
+        } 
+    };
 
     return (
         <>
@@ -43,7 +49,7 @@ export default function ConsultarPrecio() {
                     </Box>
                     <Box>
                         <Typography variant="caption" style={{color: '#808080'}} >
-                            <b>F3</b>
+                            <b>F9</b>
                         </Typography>
                     </Box>
                 </Box>
