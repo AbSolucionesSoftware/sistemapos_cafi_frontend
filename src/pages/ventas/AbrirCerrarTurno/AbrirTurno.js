@@ -3,16 +3,18 @@ import useStyles from '../styles';
 
 import { Box, Button, DialogActions, DialogContent,  FormControl, Grid, MenuItem, Select, TextField, Typography } from '@material-ui/core'
 import { useMutation, useQuery } from '@apollo/client';
-import { OBTENER_CAJAS, ACTUALIZAR_CAJA } from '../../../gql/Cajas/cajas';
+import { OBTENER_CAJAS } from '../../../gql/Cajas/cajas';
+import { REGISTRAR_TURNOS } from '../../../gql/Ventas/abrir_cerrar_turno';
 import { VentasContext } from '../../../context/Ventas/ventasContext';
 
 export default function AbrirTurno({handleClickOpen}) {
-    const [ ActualizarCaja ] = useMutation(ACTUALIZAR_CAJA);
+    const [ CrearRegistroDeTurno ] = useMutation(REGISTRAR_TURNOS);
     const { setAlert } = useContext(VentasContext);
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const turnoEnCurso = JSON.parse(localStorage.getItem('cajaEnCurso'));
     const [ error, setError] = useState(false);
     const [ abrirTurno, setAbrirTurno ] = useState([]);
+    const [numeroCaja, setNumeroCaja] = useState('');
     
     const classes = useStyles();
     let obtenerCajasSucursal = [];
@@ -48,6 +50,14 @@ export default function AbrirTurno({handleClickOpen}) {
         _id: sesion._id,
     };
 
+
+    let sesionTurno = {
+        turno_en_caja_activo: true, 
+        numero_caja: numeroCaja,
+        id_caja: abrirTurno.caja_elegida,
+        usuario_en_turno: sesion._id
+    };
+
     const enviarDatos = async () => {
         try {
             if(!abrirTurno.turno_en_curso ||
@@ -58,24 +68,62 @@ export default function AbrirTurno({handleClickOpen}) {
                 return;
             }else{
                 const input = {
-                    activa: true,
-                    usuario_en_caja: sesion._id,
-                    turno_en_caja_activo: true
+                    horario_en_turno: abrirTurno.turno_en_curso,
+                    concepto: "A",
+                    numero_caja: numeroCaja.toString(),
+                    comentarios: "A",
+                    id_caja: abrirTurno.caja_elegida,
+                    empresa: sesion.empresa._id,
+                    sucursal: sesion.sucursal._id,
+                    usuario_en_turno: sesion._id,
+                    hora_entrada: {
+                        hora: "A",
+                        minutos: "A",
+                        segundos: "A"
+                    },
+                    hora_salida: {
+                        hora: "A",
+                        minutos: "A",
+                        segundos: "A"
+                    },
+                    fecha_entrada:{
+                        year: "A",
+                        mes: "A",
+                        dia: "A",
+                        no_semana_year: "A",
+                        no_dia_year: "A"
+                    },
+                    fecha_salida:{
+                        year: "A",
+                        mes: "A",
+                        dia: "A",
+                        no_semana_year: "A",
+                        no_dia_year: "A"
+                    },
+                    montos_en_caja: {
+                        monto_efectivo: parseFloat(abrirTurno.monto_abrir),
+                        monto_tarjeta_debito: 0,
+                        monto_tarjeta_credito: 0,
+                        monto_creditos: 0,
+                        monto_puntos: 0,
+                        monto_transferencia: 0,
+                        monto_cheques: 0,
+                        monto_vales_despensa: 0,
+                    }
                 };
-                const cajaActualizada = await ActualizarCaja({
+                localStorage.setItem('turnoEnCurso', JSON.stringify(sesionTurno));
+                localStorage.setItem('sesionCafi', JSON.stringify(arraySesion));
+                await CrearRegistroDeTurno({
                     variables: {
-                        input,
-                        id: abrirTurno.caja_elegida
+                        activa: true,
+                        input
                     }
                 });
-                localStorage.setItem('turnoEnCurso', JSON.stringify(cajaActualizada.data.actualizarCaja));
-                localStorage.setItem('sesionCafi', JSON.stringify(arraySesion));
                 setAlert({
                     message: `Turno abierto con exito`,
                     status: "success",
                     open: true,
                 });
-                handleClickOpen();
             }
         } catch (error) {
             setAlert({
@@ -152,7 +200,7 @@ export default function AbrirTurno({handleClickOpen}) {
                                     {
                                         obtenerCajasSucursal.map((caja) =>{
                                             return(
-                                                <MenuItem key={caja.numero_caja} value={caja._id} >Caja {caja.numero_caja}</MenuItem>
+                                                <MenuItem key={caja.numero_caja} value={caja._id} onClick={() => setNumeroCaja(caja.numero_caja)} >Caja {caja.numero_caja}</MenuItem>
                                             );
                                         })
                                     }
@@ -183,7 +231,6 @@ export default function AbrirTurno({handleClickOpen}) {
                         variant="contained" 
                         color="primary" 
                         size="large"
-                        disabled={turnoEnCurso ? true : false}
                     >
                         Aceptar
                     </Button>
