@@ -15,8 +15,9 @@ import {
 import { Search } from "@material-ui/icons";
 import useStyles from "./styles";
 import TablaVentas from "./TablaVentas";
-import { CONSULTA_PRODUCTO_UNITARIO, OBTENER_CLIENTES_VENTAS } from "../../gql/Ventas/ventas_generales";
+import { CONSULTA_PRODUCTO_UNITARIO } from "../../gql/Ventas/ventas_generales";
 import { useLazyQuery } from "@apollo/client";
+import ClientesVentas from './ClientesVentas';
 
 import { Fragment } from "react";
 import MonedaCambio from "./Operaciones/MonedaCambio";
@@ -24,6 +25,7 @@ import {
   findProductArray,
   calculatePrices,
 } from "../../config/reuserFunctions";
+
 
 export default function VentasGenerales() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -272,13 +274,14 @@ export default function VentasGenerales() {
                   className={classes.iconSize}
                 />
               </Box>
-              <Box>
-                <Paper className={classes.rootBusqueda}>
+              <Box width={250} alignItems="center">
+                <ClientesVentas sesion={sesion} />
+                {/* <Paper className={classes.rootBusqueda}>
                   <InputBase fullWidth placeholder="Buscar cliente..." />
                   <IconButton>
                     <Search />
                   </IconButton>
-                </Paper>
+                </Paper> */}
               </Box>
             </Box>
             <Box
