@@ -79,9 +79,9 @@ export default function DescuentoProductos({datos, productosRefetch}) {
         setValue(newValue);
         preciosDescuentos.splice(0, preciosDescuentos.length);
         for (let i = 0; i < preciosProductos.length; i++) {
-            var porcentaje  =  parseFloat((100 - newValue).toFixed(2));
-            var descuento = parseFloat((preciosProductos[i].precio * porcentaje / 100).toFixed(2));
-            var dineroDescontado = parseFloat((preciosProductos[i].precio - descuento).toFixed(2));
+            var porcentaje  =  parseFloat((100 - newValue).toFixed(6));
+            var descuento = parseFloat((preciosProductos[i].precio * porcentaje / 100).toFixed(6));
+            var dineroDescontado = parseFloat((preciosProductos[i].precio - descuento).toFixed(6));
             arrayDescuento = {
                 "_id": preciosProductos[i]._id,
                 "descuento_activo": true,
@@ -104,9 +104,9 @@ export default function DescuentoProductos({datos, productosRefetch}) {
         var valorText = parseFloat(e.target.value);
         if (preciosProductos.length === 1) {
             setPrecioPrueba(valorText);
-            var porcentaje  = parseFloat(((valorText / preciosProductos[0].precio) * 100).toFixed(2));
-            var descuento = parseFloat((100 - porcentaje).toFixed(2));
-            var dineroDescontado = parseFloat((preciosProductos[0].precio - valorText).toFixed(2));
+            var porcentaje  = parseFloat(((valorText / preciosProductos[0].precio) * 100).toFixed(6));
+            var descuento = parseFloat((100 - porcentaje).toFixed(6));
+            var dineroDescontado = parseFloat((preciosProductos[0].precio - valorText).toFixed(6));
             arrayDescuento = {
                 "_id": preciosProductos[0]._id,
                 "descuento_activo": true,

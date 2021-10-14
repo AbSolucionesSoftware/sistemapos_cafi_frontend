@@ -102,7 +102,7 @@ export default function TablaPreciosDescuentos(
 
 	const classes = useStyles();
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-	var porcentaje  =  parseFloat((100 - value).toFixed(2));
+	var porcentaje  =  parseFloat((100 - value).toFixed(6));
 
 	const [ selected, setSelected ] = useState([]);
 	const [ page, setPage ] = useState(0);
@@ -289,7 +289,7 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, p
 				{selected.length  <= 1 ? (
 					!row.descuento ? 0 : <b style={{color: 'green'}}>{row.descuento.precio_con_descuento}</b>
 				):
-					<b style={{color: 'green'}}>{parseFloat((row.precio * porcentaje / 100).toFixed(2))}</b>
+					<b style={{color: 'green'}}>{parseFloat((row.precio * porcentaje / 100).toFixed(3))}</b>
 				}
 			</TableCell>
 			<TableCell align="center">
