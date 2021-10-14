@@ -310,7 +310,7 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId, setAlert, 
 			<TableCell align="center">{row.precio}</TableCell>
 			<TableCell align="center">
 				{
-					isItemSelected === true && selected.length > 1 ? <b style={{color: 'green'}}> ${parseFloat((row.precio * porcentaje / 100).toFixed(2))} </b>
+					isItemSelected === true && selected.length > 1 ? <b style={{color: 'green'}}> ${parseFloat((row.precio * porcentaje / 100).toFixed(3))} </b>
 					: (row.descuento === null ? 0 : <b style={{color: 'green'}}> ${row.descuento.precio_con_descuento} </b> )
 				}
 			</TableCell>
