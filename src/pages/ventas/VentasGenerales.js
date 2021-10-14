@@ -99,14 +99,15 @@ export default function VentasGenerales() {
       const input_value = event.target.value.trim();
       const data = input_value.split("*");
       if (data.length > 1) {
-        console.log("Entro a * ", data);
+        let data_operation = isNaN(data[0]) ? data[1] : data[0];
+        let data_key = isNaN(data[0]) ? data[0] : data[1];
         setGranelBase({
           granel: true,
-          valor: data[1],
+          valor: data_operation,
         });
         obtenerProductos({
           variables: {
-            datosProductos: data[0],
+            datosProductos: data_key,
           },
         });
       } else {
@@ -127,6 +128,7 @@ export default function VentasGenerales() {
   const agregarProductos = async (producto) => {
     let venta = JSON.parse(localStorage.getItem("DatosVentas"));
     let productosVentas = venta === null ? [] : venta.produtos;
+    let venta_actual = venta === null ? [] : venta;
     let venta_existente =
       venta === null
         ? { subTotal: 0, total: 0, impuestos: 0, iva: 0, ieps: 0, descuento: 0 }
@@ -146,7 +148,7 @@ export default function VentasGenerales() {
       producto
     );
 
-    if (!producto_encontrado.found) {
+    if (!producto_encontrado.found && producto._id) {
       const newP = { ...producto };
       const {
         subtotalCalculo,
@@ -165,8 +167,10 @@ export default function VentasGenerales() {
       descuento = descuentoCalculo;
       newP.cantidad_venta = 1;
       newP.granelProducto = granelBase;
+      newP.precio_a_vender = totalCalculo;
+
       productosVentasTemp.push(newP);
-    } else {
+    } else if(producto_encontrado.found && producto._id){
       const { cantidad_venta, ...newP } =
         producto_encontrado.producto_found.producto;
       const {
@@ -186,6 +190,7 @@ export default function VentasGenerales() {
       console.log(descuento);
       newP.cantidad_venta = parseInt(cantidad_venta) + 1;
       newP.granelProducto = granelBase;
+      newP.precio_a_vender = totalCalculo;
       productosVentasTemp.splice(
         producto_encontrado.producto_found.index,
         1,
@@ -205,6 +210,8 @@ export default function VentasGenerales() {
       "DatosVentas",
       JSON.stringify({
         ...CalculosData,
+        cliente: venta_actual.venta_cliente === true ? venta_actual.cliente : {},
+        venta_cliente: venta_actual.venta_cliente === true ? venta_actual.venta_cliente : false,
         produtos: productosVentasTemp,
       })
     );

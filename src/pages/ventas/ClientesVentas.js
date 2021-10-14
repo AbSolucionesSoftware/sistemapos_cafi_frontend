@@ -38,6 +38,14 @@ export default function ClientesVentas() {
     try {
       console.log(value);
       setSelectClient(value);
+      let venta = JSON.parse(localStorage.getItem("DatosVentas"));
+      let VentasProducto = venta === null ? [] : venta;
+      VentasProducto.cliente = value;
+      VentasProducto.venta_cliente = true;
+      localStorage.setItem(
+        "DatosVentas",
+        JSON.stringify(VentasProducto)
+      );
     } catch (error) {
       console.log(error);
     }

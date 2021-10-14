@@ -12,7 +12,10 @@ import {
 } from "@material-ui/core";
 import EliminarProductoVenta from "./EliminarProductoVenta";
 import { useDebounce } from "use-debounce";
-import { findProductArray, calculatePrices } from "../../config/reuserFunctions";
+import {
+  findProductArray,
+  calculatePrices,
+} from "../../config/reuserFunctions";
 
 const useStyles = makeStyles({
   root: {
@@ -26,7 +29,7 @@ const useStyles = makeStyles({
 export default function TablaVentas({
   newProductoVentas,
   setNewProductoVentas,
-  setDatosVentasActual
+  setDatosVentasActual,
 }) {
   const classes = useStyles();
   const [datosTabla, setDatosTabla] = useState([]);
@@ -35,7 +38,6 @@ export default function TablaVentas({
     const venta = JSON.parse(localStorage.getItem("DatosVentas"));
     setDatosTabla(venta === null ? [] : venta.produtos);
   }, [newProductoVentas]);
-  
 
   return (
     <Paper className={classes.root}>
@@ -78,7 +80,7 @@ const RenderTableRows = ({
   producto,
   setNewProductoVentas,
   newProductoVentas,
-  setDatosVentasActual
+  setDatosVentasActual,
 }) => {
   // const [actuallyProduct, setActuallyProduct] = useState(producto);
   const [newCantidadProduct, setNewCantidadProduct] = useState(
@@ -103,6 +105,7 @@ const RenderTableRows = ({
       //Obtener el array de ventas
       let venta = JSON.parse(localStorage.getItem("DatosVentas"));
       let productosVentas = venta === null ? [] : venta.produtos;
+      const venta_actual = venta === null ? [] : venta;
       let productosVentasTemp = productosVentas;
       let venta_existente =
         venta === null
@@ -124,7 +127,7 @@ const RenderTableRows = ({
         productosVentas,
         producto
       );
-        
+
       if (producto_encontrado.found) {
         const { cantidad_venta, ...newP } =
           producto_encontrado.producto_found.producto;
@@ -136,8 +139,13 @@ const RenderTableRows = ({
         );
         // console.log(calculoResta);
         //Sacar los impuestos que se van a sumar
-        calculoSuma = await calculatePrices(newP, new_cant, newP.granelProducto);
+        calculoSuma = await calculatePrices(
+          newP,
+          new_cant,
+          newP.granelProducto
+        );
         newP.cantidad_venta = parseInt(new_cant);
+        newP.precio_a_vender = calculoSuma.totalCalculo;
         productosVentasTemp.splice(
           producto_encontrado.producto_found.index,
           1,
@@ -178,6 +186,12 @@ const RenderTableRows = ({
         "DatosVentas",
         JSON.stringify({
           ...CalculosData,
+          cliente:
+            venta_actual.venta_cliente === true ? venta_actual.cliente : {},
+          venta_cliente:
+            venta_actual.venta_cliente === true
+              ? venta_actual.venta_cliente
+              : false,
           produtos: productosVentasTemp,
         })
       );
@@ -203,10 +217,11 @@ const RenderTableRows = ({
           {producto.id_producto.datos_generales.nombre_comercial}
         </TableCell>
         <TableCell>
-          {producto.concepto === "medida" 
+          {producto.concepto === "medida"
             ? producto.cantidad
-            : producto.inventario_general.map( existencia => `${existencia.cantidad_existente}`)
-          }
+            : producto.inventario_general.map(
+                (existencia) => `${existencia.cantidad_existente}`
+              )}
         </TableCell>
         <TableCell>
           %{" "}
@@ -225,10 +240,10 @@ const RenderTableRows = ({
           )}
         </TableCell>
         <TableCell>
-          ${" "}
-          {producto.descuento_activo === true
+          $ {producto.precio_a_vender.toFixed(2)}
+          {/* {producto.descuento_activo === true
             ? producto.descuento.precio_con_descuento
-            : producto.precio}
+            : producto.precio} */}
         </TableCell>
         <TableCell>
           <EliminarProductoVenta

@@ -29,6 +29,7 @@ export default function EliminarProducto({
 		console.log(producto);
 		let venta = JSON.parse(localStorage.getItem("DatosVentas"));
 		let productosVentas = venta === null ? [] : venta.produtos;
+		const venta_actual = venta === null ? [] : venta;
 		let productosVentasTemp = productosVentas;
 		let venta_existente =
 			venta === null
@@ -77,6 +78,8 @@ export default function EliminarProducto({
 			  };
 			  localStorage.setItem("DatosVentas", JSON.stringify({
 				...CalculosData,
+				cliente: venta_actual.venta_cliente === true ? venta_actual.cliente : {},
+				venta_cliente: venta_actual.venta_cliente === true ? venta_actual.venta_cliente : false,
 				produtos: productosVentasTemp,
 			  }));
 			  setDatosVentasActual(CalculosData);
