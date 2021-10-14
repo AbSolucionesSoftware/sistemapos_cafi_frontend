@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -11,6 +11,7 @@ import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import { Box, Chip, IconButton, Tooltip, Zoom , TextField} from '@material-ui/core';
 import { Cached, Close, Edit } from '@material-ui/icons';
+import { TraspasosAlmacenContext } from "../../context/Almacenes/traspasosAlmacen";
 import { fade } from '@material-ui/core/styles/colorManipulator';
 
 const compareFunction = (a, b) => {
@@ -96,17 +97,20 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export default function TablaPresentaciones({ producto, setOnUpdate, onUpdate }) {
-	const classes = useStyles();
+export default function TablaPresentaciones({ producto, setOnUpdate, onUpdate, newMedidas, setNewMedidas }) {
+  const classes = useStyles();
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
   const [selected, setSelected] = useState(undefined);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-console.log(producto)
+ 
+
+ 
 const handleChangePage = (event, newPage) => {
     setPage(newPage);
 };
+
 	return (
 		<div className={classes.root}>
 			<Paper className={classes.paper}>
@@ -129,13 +133,17 @@ const handleChangePage = (event, newPage) => {
 							{stableSort(producto.medidas_producto, getComparator(order, orderBy))
                 			.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 							.map((item, index) => {
+								
 								return (
 									<RenderPresentacionesRows
+										idProducto={producto._id}
 										key={index}
-										producto={item}
+										medida={item}
 										index={index}
 										setOnUpdate={setOnUpdate}
 										onUpdate={onUpdate}
+										newMedidas={newMedidas}
+										setNewMedidas={setNewMedidas}
 									/>
 								);
 							})}
@@ -157,20 +165,71 @@ const handleChangePage = (event, newPage) => {
 }
 
 
-const RenderPresentacionesRows = ({ producto, index, setOnUpdate, onUpdate }) => {
+const RenderPresentacionesRows = ({ medida, index, setOnUpdate, onUpdate,newMedidas, setNewMedidas, idProducto}) => {
 
 	const [ disabledInput, setDisabledInput ] = useState(true);
 	const classes = useStyles();
-	const textfield = useRef(null);
-	const copy_producto = { ...producto };
+	const [ cantidad, setCantidad ] = useState(0);
+	const [ cantidadAnt, setCantidadAnt ] = useState(0);
+	const copy_medida = { ...medida };
+	const {productosTras} = useContext(TraspasosAlmacenContext);
+	//const [productInTras, setProductInTras] =  useState(null);
+	let productInTras = null;
+	//let productInTras = productosTras.find(element => element.productSelected._id === idProducto);
+	const productosTrasContext = productosTras;
+ 
+	useEffect(() => {
+		productosTras.forEach(producto => {
+			//console.log(producto)
+		if(producto.productSelected._id === idProducto){
+			let newMedidasCopia = [];
+			let element = null;
+			for (const med in producto.newMedidas) {
+				if (Object.hasOwnProperty.call(producto.newMedidas, med)) {
+					element = producto.newMedidas[med];
+					
+					newMedidasCopia.push(element)
+					
+					if(medida._id === element.medida._id){
+						console.log(element.nuevaCantidad)	
+						setCantidad( element.nuevaCantidad);		
+					}
+					
+				}
+			
+			}
+			
+			setNewMedidas(producto.newMedidas);
+			return;
+		}
+		
+	});
+		return () => {
+			<div/>
+		}
+	}, [productosTras])
+	
+
+
+	
 
 	/* if(from && from === 'compra'){
 		copy_producto.cantidad_nueva = 0
 	} */
 	
-
-	const obtenerDatos = (event) => {
-		console.log(event)
+	const obtenerDatos = (value) => {
+		let cant = (cantidadAnt > 0) ? parseInt(value - cantidadAnt)   : value;
+		console.log("CANT",cantidad)
+		if(cant <= medida.cantidad){
+			setCantidad(value);
+		
+			setNewMedidas({...newMedidas, [index] : {medida, nuevaCantidad: parseInt(cant)}})
+		}
+		/* 
+		const unidades = {cantidad:} 
+		copy_producto.push() */
+		//Tengo que obtener los datos que se van a enviar se debe agregar un elemento al array 
+		
 		//setPresentaciones(copy_presentaciones);
 	};
 
@@ -178,15 +237,15 @@ const RenderPresentacionesRows = ({ producto, index, setOnUpdate, onUpdate }) =>
 	return (
 		<TableRow  selected={!disabledInput} className={classes.tableRow} >
 			<TableCell >
-				{copy_producto.medida._id ? <Chip label={copy_producto.medida.talla} color="primary" /> : ''}
+				{copy_medida.medida._id ? <Chip label={copy_medida.medida.talla} color="primary" /> : ''}
 			</TableCell>
 			<TableCell  style={{width:'20%'}}>
-				{copy_producto.color._id ? (
-					<Tooltip title={copy_producto.color.nombre} placement="top" arrow TransitionComponent={Zoom}>
+				{copy_medida.color._id ? (
+					<Tooltip title={copy_medida.color.nombre} placement="top" arrow TransitionComponent={Zoom}>
 						<div
 							className={classes.colorContainer}
 							style={{
-								backgroundColor: copy_producto.color.hex
+								backgroundColor: copy_medida.color.hex
 							}}
 						/>
 					</Tooltip>
@@ -195,7 +254,7 @@ const RenderPresentacionesRows = ({ producto, index, setOnUpdate, onUpdate }) =>
 			
 		
 			<TableCell className={classes.cell}  style={{width:'25%'}}>
-				{producto.cantidad}
+				{medida.cantidad}
 			</TableCell>
 		 
 			<TableCell  style={{width:'25%'}}>
@@ -203,10 +262,10 @@ const RenderPresentacionesRows = ({ producto, index, setOnUpdate, onUpdate }) =>
 					size="small"
 					variant="outlined"
 					InputProps={{ inputProps: { min: 0 } }}
-
+					inputMode="numeric"
 					type="number"
-					onChange={(e) => obtenerDatos(e)}
-					value={copy_producto.cantidad_nueva}
+					value={cantidad}
+					onChange={(value) => obtenerDatos(value.target.value)}
 					name="cantidad_nueva"
 				/>
             </TableCell>    

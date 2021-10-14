@@ -107,3 +107,11 @@ export const OBTENER_CATEGORIAS = gql`
 		}
 	}
 `;
+
+export const REALIZAR_TRASPASO = gql`
+	mutation CrearTraspaso($input: CrearTraspasoInput, $usuario: ID!, $empresa: ID!) {
+		crearTraspaso(input: $input, usuario: $usuario, empresa: $empresa) {
+			_id
+		}
+	}
+`;

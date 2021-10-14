@@ -11,7 +11,10 @@ export const TraspasosProvider = ({ children }) => {
     const [ productos, setProductos ] = useState([]);
     const [ productosTo, setProductosTo ] = useState([]);
     const [ productosTras, setProductosTras ] = useState([]);
-
+useEffect(() => {
+   console.log("CONTEXT",productosTras)
+  
+}, [productosTras])
   
 	return (
 		<TraspasosAlmacenContext.Provider value={

@@ -2,19 +2,22 @@ import React, { forwardRef, useEffect, useContext, useState,useCallback } from '
 import { AppBar, Toolbar, Typography, IconButton, Slide,
          Button, Box, Dialog, Grid, DialogActions, CircularProgress, TextField,Divider,
          InputLabel, Select, Input, MenuItem, FormControl, useTheme, OutlinedInput, InputAdornment,
-         Stepper, Step, StepLabel } from '@material-ui/core';
+         Stepper, Step, StepLabel, DialogTitle } from '@material-ui/core';
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { makeStyles } from '@material-ui/core/styles';
 import { Search } from '@material-ui/icons';
+import {  Add } from '@material-ui/icons';
 import { FcAdvance } from 'react-icons/fc';
 import almacenIcon from '../../../../icons/almacen.svg';
 import TableSelectProducts from '../../../../components/Traspasos/TableSelectProducts';
 
 import { useQuery, useMutation } from '@apollo/client';
 import { OBTENER_CONCEPTOS_ALMACEN} from '../../../../gql/Catalogos/conceptosAlmacen';
-import { OBTENER_ALMACENES } from '../../../../gql/Almacenes/Almacen';
-import { OBTENER_CATEGORIAS } from '../../../../gql/Almacenes/Almacen';
+import { OBTENER_ALMACENES, REALIZAR_TRASPASO, OBTENER_CATEGORIAS} from '../../../../gql/Almacenes/Almacen';
+
 import { OBTENER_PRODUCTOS } from "../../../../gql/Catalogos/productos";
+
+
 import { TraspasosAlmacenContext } from "../../../../context/Almacenes/traspasosAlmacen";
 
 const useStyles = makeStyles((theme) => ({
@@ -136,6 +139,12 @@ function createData(name, cantidad, precio, unidad) {
 ]; */
 
 const steps = ['Datos traspaso', 'Seleccionar productos'];
+
+
+
+
+
+
 export default function Traspasos() {
     const classes = useStyles();
     const theme = useTheme();
@@ -163,8 +172,8 @@ export default function Traspasos() {
     const [ isAlmacenOrigen, setIsAlmacenOrigen ] = useState(false);
     const [ isAlmacenDestino, setIsAlmacenDestino ] = useState(false);
 
-    const [ almacenOrigen, setAlmacenOrigen ] = useState({});
-    const [ almacenDestino, setAlmacenDestino ] = useState({});
+    const [ almacenOrigen, setAlmacenOrigen ] = useState(null);
+    const [ almacenDestino, setAlmacenDestino ] = useState(null);
 
     const [ transporte, setTransporte ] = useState('');
     const [ placas, setPlacas ] = useState('');
@@ -206,7 +215,7 @@ export default function Traspasos() {
       variables: { 
           empresa: sesion.empresa._id, 
           sucursal: sesion.sucursal._id,
-          almacen: almacenOrigen._id,
+          almacen: (almacenOrigen ) ? almacenOrigen._id : "",
           existencias: true
       },
     }
@@ -259,6 +268,7 @@ export default function Traspasos() {
         return;
     };
     const handleChangeDestino = (event) => {
+        console.log(event)
         setAlmacenDestino(event.target.value);
         setProductosTras([]);
     };
@@ -266,8 +276,8 @@ export default function Traspasos() {
         try {
           
             let concepto = event.target.value;  
-             setAlmacenOrigen({}); 
-            setAlmacenDestino({});
+             setAlmacenOrigen(null); 
+            setAlmacenDestino(null);
            
             
             setIsAlmacenOrigen((concepto.origen === 'N/A') ? false:true);
@@ -329,12 +339,9 @@ export default function Traspasos() {
     const setValToFilter = (label,value) => {
 		try {
 			if(label === 'categoria' && value !== ''){
-			
 				const cat = categorias.find(element => element.categoria === value);
 				setSubcategorias(cat.subcategorias)
-				
 			}
-
 			setFiltro({...filtro, [label] : value});
 		} catch (error) {
 			
@@ -354,16 +361,13 @@ export default function Traspasos() {
     }
 
     const obtenerSelectsProducto = (producto) => {
-        
         if(producto !== null){
             setProductosTo([producto])
         }else{
-            setProductosTo(productos)
-            
+            setProductosTo(productos) 
         }
-        
-       
     };
+
     return (
         <Box sx={{ width: '100%' }}>
             <Button fullWidth onClick={handleClickOpen}>
@@ -459,7 +463,7 @@ export default function Traspasos() {
                                             <Select
                                             labelId="concepto-label"
                                             id="concepto-name"
-                                            value={conceptoTraspaso}
+                                            value={(conceptoTraspaso) ? conceptoTraspaso : ""}
                                             onChange={handleChangeConcepto}
                                             input={<Input />}
                                             MenuProps={MenuProps}
@@ -481,7 +485,7 @@ export default function Traspasos() {
                                                     <Select
                                                     labelId="almacen-origen-label"
                                                     id="almacen-origen-name"
-                                                    value={almacenOrigen}
+                                                    value={(almacenOrigen) ? almacenOrigen : ""}
                                                     onChange={handleChange}
                                                     input={<Input />}
                                                     MenuProps={MenuProps}
@@ -504,7 +508,7 @@ export default function Traspasos() {
                                                 <Select
                                                 labelId="almacen-destino-label"
                                                 id="almacen-destino-name"
-                                                value={almacenDestino}
+                                                value={(almacenDestino) ? almacenDestino : ""}
 
                                                 onChange={handleChangeDestino}
                                                 input={<Input />}
@@ -528,7 +532,7 @@ export default function Traspasos() {
                                         <b>Datos transporte traspaso</b>
                                     </Typography>
                                     <Divider />
-                                    <Grid container  justifyContent="space-evenly">
+                                    <Grid container >
                                         <FormControl className={classes.formControl}>
                                             
                                                 <InputLabel id="transporte-label">Transporte</InputLabel>
@@ -791,7 +795,7 @@ export default function Traspasos() {
                                 )} */}
                             
                                 <Button onClick={handleNext}>
-                                {activeStep === steps.length - 1 ? 'Terminar' : 'Siguiente'}
+                                    Terminar
                                 </Button>
                         
                         </Box>
@@ -801,3 +805,24 @@ export default function Traspasos() {
         </Box>
     )
 }
+
+const ModalTerminar = ({ handleModal, open, hacerTraspaso }) => {
+	return (
+		<div>
+			<Button size="small" color="secondary" startIcon={<Add />} onClick={() => handleModal()}>
+				terminar
+			</Button>
+			<Dialog open={open} onClose={handleModal}>
+				<DialogTitle>{'¿Está seguro de realizar este traspaso?'}</DialogTitle>
+				<DialogActions>
+					<Button onClick={() => handleModal()} color="primary">
+						Cancelar
+					</Button>
+					<Button color="secondary" autoFocus variant="contained" onClick={() => hacerTraspaso()}>
+						Terminar
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</div>
+	);
+};
