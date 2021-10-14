@@ -32,24 +32,23 @@ const useStyles = makeStyles((theme) => ({
 
 export default function PreciosDeVenta() {
   const { preciosP } = useContext(RegProductoContext);
-
-  /* const [precio_venta, setPrecioVenta] = useState(data.precio_venta);
-  const [precio_neto, setPrecioNeto] = useState(data.precio_neto);
-  const [utilidad, setUtilidad] = useState(data.utilidad);
-  const [mayoreo, setMayoreo] = useState(data.unidad_mayoreo); */
-
-  console.log(preciosP);
+  let newPreciosP = [...preciosP];
 
   return (
     <Fragment>
       {preciosP.map((res, index) => (
-        <RenderPreciosP key={index} data={res} index={index} />
+        <RenderPreciosP
+          key={index}
+          data={res}
+          index={index}
+          newPreciosP={newPreciosP}
+        />
       ))}
     </Fragment>
   );
 }
 
-const RenderPreciosP = ({ data, index }) => {
+const RenderPreciosP = ({ data, index, newPreciosP }) => {
   const classes = useStyles();
   const {
     preciosP,
@@ -59,12 +58,9 @@ const RenderPreciosP = ({ data, index }) => {
     setPreciosP,
   } = useContext(RegProductoContext);
   let preciosVenta = { ...preciosP[index] };
-  let newPreciosP = [...preciosP];
 
   const obtenerUtilidad = (value) => {
-    console.log(value);
     if (!value) {
-      /* setUtilidad(""); */
       preciosVenta.utilidad = "";
       newPreciosP.splice(index, 1, preciosVenta);
       setPreciosP(newPreciosP);
@@ -72,7 +68,6 @@ const RenderPreciosP = ({ data, index }) => {
     }
     //se agrega la utilidad
     preciosVenta.utilidad = parseFloat(value);
-    /* setUtilidad(parseFloat(value)); */
 
     //apartir de aqui se hacen los calculos para meter datos a precios de venta y precios netos
     let utilidad = 1;
@@ -147,13 +142,13 @@ const RenderPreciosP = ({ data, index }) => {
 
   const obtenerPrecioNeto = (value) => {
     if (!value) {
-      /* setPrecioNeto(""); */
       preciosVenta.precio_neto = "";
+      newPreciosP.splice(index, 1, preciosVenta);
+      setPreciosP(newPreciosP);
       return;
     }
     //obtenermos el precio neto
     preciosVenta.precio_neto = parseFloat(value);
-    /* setPrecioNeto(value); */
 
     //si es el primer precio ponerlo en la unidad de venta por defecto
     if (preciosVenta.numero_precio === 1) {
@@ -205,29 +200,27 @@ const RenderPreciosP = ({ data, index }) => {
 
   const obtenerMayoreo = (value) => {
     if (!value) {
-      /* setMayoreo(""); */
       preciosVenta.unidad_mayoreo = "";
+      newPreciosP.splice(index, 1, preciosVenta);
+      setPreciosP(newPreciosP);
       return;
     }
-    /* setMayoreo(value); */
     preciosVenta.unidad_mayoreo = parseInt(value);
     newPreciosP.splice(index, 1, preciosVenta);
 
     setPreciosP(newPreciosP);
   };
-
-  useEffect(() => {
+  
+  const calculos = () =>{
     const utilidad = preciosVenta.utilidad;
     if (!utilidad) {
       preciosVenta.precio_venta =
         precios.unidad_de_compra.precio_unitario_sin_impuesto;
-      /* setPrecioVenta(precios.unidad_de_compra.precio_unitario_sin_impuesto); */
     }
     if (!precios.iva_activo && !precios.ieps_activo) {
       preciosVenta.precio_neto =
         precios.unidad_de_compra.precio_unitario_sin_impuesto;
 
-      /* setPrecioNeto(precios.unidad_de_compra.precio_unitario_sin_impuesto); */
       if (preciosVenta.numero_precio === 1) {
         let precio = precios.unidad_de_compra.precio_unitario_sin_impuesto;
         if (
@@ -246,7 +239,6 @@ const RenderPreciosP = ({ data, index }) => {
     } else {
       preciosVenta.precio_neto =
         precios.unidad_de_compra.precio_unitario_con_impuesto;
-      /* setPrecioNeto(precios.unidad_de_compra.precio_unitario_con_impuesto); */
       if (preciosVenta.numero_precio === 1) {
         let precio = precios.unidad_de_compra.precio_unitario_con_impuesto;
         if (
@@ -288,7 +280,6 @@ const RenderPreciosP = ({ data, index }) => {
     preciosVenta.precio_venta = parseFloat(
       ganancia_utilidad_sin_impuestos.toFixed(6)
     );
-    /* setPrecioVenta(parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6))); */
 
     if (precios.iva_activo || precios.ieps_activo) {
       const ganancia_utilidad_con_impuestos =
@@ -298,7 +289,6 @@ const RenderPreciosP = ({ data, index }) => {
         ganancia_utilidad_con_impuestos.toFixed(6)
       );
 
-      /*  setPrecioNeto(parseFloat(ganancia_utilidad_con_impuestos.toFixed(6))); */
       if (preciosVenta.numero_precio === 1) {
         let precio = parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
         if (
@@ -318,7 +308,6 @@ const RenderPreciosP = ({ data, index }) => {
       preciosVenta.precio_neto = parseFloat(
         ganancia_utilidad_sin_impuestos.toFixed(6)
       );
-      /* setPrecioNeto(parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6))); */
       if (preciosVenta.numero_precio === 1) {
         let precio = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
         if (
@@ -335,15 +324,24 @@ const RenderPreciosP = ({ data, index }) => {
         });
       }
     }
-    preciosP.splice(index, 1, preciosVenta);
+
+    newPreciosP.splice(index, 1, preciosVenta);
+    setPreciosP(newPreciosP);
+  }
+  useEffect(() => {
+    if(preciosVenta.numero_precio === 1){
+      calculos();
+    }else if(preciosVenta.numero_precio > 1 && preciosVenta.precio_neto){
+      calculos();
+    }
+
+    /* preciosP.splice(index, 1, preciosVenta); */
   }, [precios.unidad_de_compra.precio_unitario_con_impuesto]);
 
   const verificarCampoVacio = (name, value) => {
     switch (name) {
       case "utilidad":
         if (!value) {
-          /* setUtilidad(0); */
-          /*  setPrecioNeto(precios.unidad_de_compra.precio_unitario_con_impuesto); */
           preciosVenta.utilidad = 0;
           preciosVenta.precio_neto =
             precios.unidad_de_compra.precio_unitario_con_impuesto;
@@ -353,10 +351,10 @@ const RenderPreciosP = ({ data, index }) => {
         break;
       case "precio_neto":
         if (!value) {
-          /* setUtilidad(0); */
-          /* setPrecioNeto(precios.unidad_de_compra.precio_unitario_con_impuesto); */
           preciosVenta.precio_neto =
-            precios.unidad_de_compra.precio_unitario_con_impuesto;
+            preciosVenta.numero_precio > 1
+              ? 0
+              : precios.unidad_de_compra.precio_unitario_con_impuesto;
           preciosVenta.utilidad = 0;
           newPreciosP.splice(index, 1, preciosVenta);
           setPreciosP(newPreciosP);
@@ -364,7 +362,6 @@ const RenderPreciosP = ({ data, index }) => {
         break;
       case "unidad_mayoreo":
         if (!value) {
-          /*  setMayoreo(0); */
           preciosVenta.unidad_mayoreo = 0;
           newPreciosP.splice(index, 1, preciosVenta);
           setPreciosP(newPreciosP);

@@ -284,9 +284,9 @@ export default function CrearProducto({
     };
 
     /* const clean_data = cleanTypenames(input); */
-    /* console.log(input); */
+    console.log(input);
 
-    setLoading(true);
+    /* setLoading(true);
     try {
       if (accion) {
         const result = await actualizarProducto({
@@ -328,7 +328,7 @@ export default function CrearProducto({
       } else if (error.graphQLErrors) {
         console.log(error.graphQLErrors);
       }
-    }
+    } */
   };
 
   /* ###### RESET STATES ###### */
