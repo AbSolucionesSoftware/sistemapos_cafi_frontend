@@ -34,13 +34,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function DescuentoProductos({datos, productosRefetch}) {
     const [ CrearDescuentoUnidad ] = useMutation(REGISTRAR_DESCUENTOS);
-
     const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
     const [ openDescuento, setOpenDescuento ] = useState(false);
     const [ cleanList, setCleanList] = useState(false);
+    const [ descuentoPresente, setDescuentoPresente] = useState(false);
     const [ validate ] = useState(false);
     const [ loading, setLoading] = useState(false);
 
+    const [ datosPreciosProducto, setDatosPreciosProducto ] = useState([]);
     const [ preciosDescuentos, setPreciosDescuentos] = useState([]);
     const [ preciosProductos, setPreciosProductos ] = useState([]);
 
@@ -50,12 +51,17 @@ export default function DescuentoProductos({datos, productosRefetch}) {
     const classes = useStyles();
 
     const handleCloseDescuentos = () => {
+        if (datos.medidas_registradas === true) {
+            setDatosPreciosProducto(datos.medidas_producto);
+        }else{
+            setDatosPreciosProducto(datos.unidades_de_venta);
+        }
         setOpenDescuento(!openDescuento);
         setPrecioPrueba(0);
         setValue(0);
         preciosDescuentos.splice(0, preciosDescuentos.length);
     };
-    	
+
     const verificarDatos = useCallback(
         (datos) => {
             for (let i = 0; i < datos.length; i++) {
@@ -74,6 +80,7 @@ export default function DescuentoProductos({datos, productosRefetch}) {
     );
     
     let arrayDescuento = [];
+
 
     const obtenerPorcientoSlide = (event, newValue) => {
         setValue(newValue);
@@ -99,7 +106,7 @@ export default function DescuentoProductos({datos, productosRefetch}) {
             }
         }
     };
-    
+
     const obtenerPrecioText = (e) => {
         var valorText = parseFloat(e.target.value);
         if (preciosProductos.length === 1) {
@@ -147,11 +154,32 @@ export default function DescuentoProductos({datos, productosRefetch}) {
 		}
 	};
 
+    const validacion = () => {
+        if (datos.medidas_producto.length > 0 ) {
+            for (let i = 0; i < datos.medidas_producto.length; i++) {
+                if (datos.medidas_producto[i]?.descuento_activo === true) {
+                    return "primary";
+                }else{
+                    return "default";
+                }
+            }
+        }else{
+            for (let i = 0; i < datos.unidades_de_venta.length; i++) {
+                if (datos.unidades_de_venta[i]?.descuento_activo === true) {
+                    return "primary";
+                }else{
+                    return "default";
+                }
+            }
+        }
+    }
+
+    
     return (
         <div>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
             <IconButton
-                color="default"
+                color={validacion()}
                 onClick={handleCloseDescuentos}
             >
                <LocalOfferIcon />
@@ -189,11 +217,12 @@ export default function DescuentoProductos({datos, productosRefetch}) {
                                 <TablaPreciosDescuentos
                                     verificarDatos={verificarDatos}
                                     productosRefetch={productosRefetch}
+                                    datos={datos}
                                     value={value}
                                     cleanList={cleanList}
                                     setCleanList={setCleanList}
                                     setPrecioPrueba={setPrecioPrueba}
-                                    precios={datos.unidades_de_venta} 
+                                    datosPrecios={datosPreciosProducto} 
                                     preciosProductos={preciosProductos} 
                                     setPreciosProductos={setPreciosProductos} 
                                     setLoading={setLoading}

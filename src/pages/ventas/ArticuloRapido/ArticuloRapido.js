@@ -183,6 +183,13 @@ export default function ArticuloRapido() {
     setValue(newValue);
   };
 
+  window.addEventListener('keydown', Mi_función); 
+  function Mi_función(e){
+      if(e.altKey && e.keyCode === 65){ 
+          handleClickOpen();
+      } 
+  };
+
   const saveData = async () => {
     setCargando(true);
     if (datos_generales.tipo_producto === 'OTROS' && cantidad < 1) {
@@ -337,7 +344,7 @@ export default function ArticuloRapido() {
           </Box>
           <Box>
               <Typography variant="caption" style={{color: '#808080'}} >
-                  <b>F3</b>
+                  <b>Alt + A</b>
               </Typography>
           </Box>
 				</Box>

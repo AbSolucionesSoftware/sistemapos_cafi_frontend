@@ -45,6 +45,13 @@ export default function ClientesVentas() {
 		setOpen(!open);
 	};
 
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.altKey && e.keyCode === 67){ 
+            handleClickOpen();
+        } 
+    };
+
     return (
         <>
             <ClienteProvider>
@@ -64,7 +71,7 @@ export default function ClientesVentas() {
                     </Box>
                     <Box>
                         <Typography variant="caption" style={{color: '#808080'}} >
-                            <b>F3</b>
+                            <b>aLT + C</b>
                         </Typography>
                     </Box>
                 </Box>

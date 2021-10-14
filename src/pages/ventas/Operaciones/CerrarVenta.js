@@ -23,6 +23,14 @@ export default function CerrarVenta() {
 		setOpen(!open);
 	};
 
+    function funcion_tecla(event) {
+		const tecla_escape = event.keyCode;
+		if(tecla_escape === 27){
+            handleClickOpen();
+		}
+	}
+	window.onkeydown = funcion_tecla;
+
     return (
         <>
             <Button 
@@ -44,7 +52,7 @@ export default function CerrarVenta() {
                     </Box>
                     <Box>
                         <Typography variant="caption" style={{color: '#808080'}} >
-                            <b>F3</b>
+                            <b>ESC</b>
                         </Typography>
                     </Box>
                 </Box>

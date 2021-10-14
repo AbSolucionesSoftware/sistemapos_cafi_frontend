@@ -21,6 +21,13 @@ export default function VentasRealizadas() {
 		setOpen(!open);
 	};
 
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.altKey && e.keyCode === 86){ 
+            handleClickOpen();
+        } 
+    };
+
     return (
         <>
            <Button 
@@ -38,7 +45,7 @@ export default function VentasRealizadas() {
                     </Box>
                     <Box>
                         <Typography variant="caption" style={{color: '#808080'}} >
-                            <b>F3</b>
+                            <b>Alt + V</b>
                         </Typography>
                     </Box>
                 </Box>

@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types';
-
-import { AppBar, Box, Button, Dialog, DialogActions, DialogContent, Grid, makeStyles, Slide, Tab, Tabs, Typography } from '@material-ui/core'
+import { AppBar, Box, Button, Dialog, DialogContent, Grid, makeStyles, Slide, Tab, Tabs, Typography } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
 
 import AbrirTurno from './AbrirTurno';
 import CerrarTurno from './CerrarTurno';
+import moment from 'moment';
+import 'moment/locale/es';
+moment.locale('es');
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -68,6 +70,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Turnos() {
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
+	console.log(moment().format('MMMM Do YYYY, h:mm:ss a'));
 
     const classes = useStyles();
     const [value, setValue] = useState(0);
@@ -80,10 +85,17 @@ export default function Turnos() {
 		setOpen(!open);
 	};
 
+	window.addEventListener('keydown', Mi_función); 
+	function Mi_función(e){
+		if(e.altKey && e.keyCode === 85){ 
+			handleClickOpen();
+		} 
+	};
+
     return (
         <>
 			<Button
-                onClick={() =>{handleClickOpen();}}
+                onClick={() => handleClickOpen()}
                 style={{textTransform: 'none', height: '100%', width: '70%'}}
             >
                 <Box display="flex" flexDirection="column" style={{height: '100%', width: '100%'}}>
@@ -101,7 +113,7 @@ export default function Turnos() {
                     </Box>
                     <Box>
                         <Typography variant="caption" style={{color: '#808080'}} >
-                            <b>F3</b>
+                            <b>Alt + U</b>
                         </Typography>
                     </Box>
                 </Box>
@@ -128,26 +140,28 @@ export default function Turnos() {
 							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
 							{...a11yProps(0)}
 						/>
-						<Tab
-							label="Abrir Turno"
-							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
-							{...a11yProps(1)}
-						/>
+						{sesion?.turno_en_caja_activo === true ? null : (
+							<Tab
+								label="Abrir Turno"
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
+								{...a11yProps(1)}
+							/>			
+						)}
 						<Grid container justify='flex-end'>
 							<Box mt={2} textAlign="right">
 								<Box textAlign="right">
 									<Typography variant="caption">
-										31/12/2021
+										{moment().format('L')}
 									</Typography>
 								</Box>
 								<Box textAlign="right">
 									<Typography variant="caption">
-										08:00 hrs.
+										{moment().format('LT')} hrs.
 									</Typography>
 								</Box>
 								<Box textAlign="right">
 									<Typography variant="caption">
-										Caja 3
+										Caja {!turnoEnCurso ? null : turnoEnCurso.numero_caja }
 									</Typography>
 								</Box>
 							</Box>
@@ -161,20 +175,17 @@ export default function Turnos() {
 					</Tabs>
 				</AppBar>
 				
-
-                <DialogContent style={{padding: 0}} >
-                    <TabPanel value={value} index={0}>
-                        <CerrarTurno />
-                    </TabPanel>
-                    <TabPanel value={value} index={1}>
-                        <AbrirTurno />
-                    </TabPanel>
+                <DialogContent style={{padding: 0}}>
+					<TabPanel value={value} index={0}>
+						<CerrarTurno />
+					</TabPanel>
+					{sesion?.turno_en_caja_activo === true ? null : (
+						<TabPanel value={value} index={1}>
+							<AbrirTurno handleClickOpen={handleClickOpen} />
+						</TabPanel>
+					)}
 				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleClickOpen} variant="contained" color="primary" size="large">
-						Aceptar
-					</Button>
-				</DialogActions>
+				
 			</Dialog>
         </>
     )

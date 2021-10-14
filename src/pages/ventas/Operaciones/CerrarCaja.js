@@ -16,6 +16,13 @@ export default function CerrarCaja() {
 		setOpen(!open);
 	};
 
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.altKey && e.keyCode === 79){ 
+            handleClickOpen();
+        } 
+    };
+
     return (
         <>
             <Button
@@ -32,12 +39,12 @@ export default function CerrarCaja() {
                     </Box>
                     <Box>
                         <Typography variant="body2" >
-                            <b>Corte Cajao</b>
+                            <b>Corte Caja</b>
                         </Typography>
                     </Box>
                     <Box>
                         <Typography variant="caption" style={{color: '#808080'}} >
-                            <b>F3</b>
+                            <b>Alt + O</b>
                         </Typography>
                     </Box>
                 </Box>

@@ -1,9 +1,10 @@
 import React, { useState, Fragment, useContext} from 'react';
-import { Drawer, AppBar, Toolbar, Divider,BottomNavigationAction, BottomNavigation, Button, Grid } from '@material-ui/core';
+import { Drawer, AppBar, Toolbar, Divider, BottomNavigation, Button, Grid } from '@material-ui/core';
 import { CssBaseline, Avatar, Box, Typography } from '@material-ui/core';
 import { withRouter } from 'react-router';
 import { FaPowerOff } from 'react-icons/fa';
 import useStyles from './styles';
+import moment from 'moment';
 // import addIcon from '../../icons/ventas/add.svg'
 // import articuloRapido from '../../icons/ventas/tiempo-rapido.svg'
 // import listaEspera from '../../icons/ventas/lista-de-espera.svg'
@@ -45,7 +46,9 @@ function NavegacionVentas(props) {
 	const classes = useStyles();
 	const { alert, setAlert } = useContext(VentasContext);
 	const [ value, setValue ] = useState('venta-general');
+
 	const [open, setOpen] = useState(false);
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	const signOut = () => {
 		localStorage.removeItem('sesionCafi');
@@ -53,19 +56,15 @@ function NavegacionVentas(props) {
 		props.history.push('/');
 	};
 
-	const handleClickOpen = () => {
-		setOpen(!open);
+	window.addEventListener('keydown', Mi_función); 
+	function Mi_función(e){
+		if( e.keyCode === 112){ 
+			props.history.push('/admin');
+		}
+		if( e.keyCode === 115){ 
+			props.history.push('/');
+		}
 	};
-
-	// function funcion_tecla(event) {
-	// 	const tecla_escape = event.keyCode;
-	// 	if(tecla_escape === 27){
-	// 		handleClickOpen();
-	// 		return setVentana('cerrarVenta');
-	// 	}
-	// } CODIGO PARA PODER EJECUTAR LAS VENTANAS A BASE DE LAS TECLAS
-
-	// window.onkeydown = funcion_tecla;
 
 	return (
 		<Fragment>
@@ -90,7 +89,7 @@ function NavegacionVentas(props) {
 						<Divider orientation="vertical" />
 					<CerrarCaja />
 						<Divider orientation="vertical" />
-					<VentaEnEspera handleClickOpen={handleClickOpen} />
+					<VentaEnEspera />
 						<Divider orientation="vertical" />
 					<Button
 						onClick={() => props.history.push('/admin')}
@@ -98,7 +97,11 @@ function NavegacionVentas(props) {
 					>
 						<Box display="flex" flexDirection="column">
 							<Box display="flex" justifyContent="center" alignItems="center">
-								<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/admin.svg' alt="icono admin" className={classes.iconSizeSecondSuperior} />
+								<img 
+									src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/admin.svg' 
+									alt="icono admin" 
+									className={classes.iconSizeSecondSuperior} 
+								/>
 							</Box>
 							<Box>
 								<Typography variant="body2" >
@@ -107,7 +110,7 @@ function NavegacionVentas(props) {
 							</Box>
 							<Box>
 								<Typography variant="caption" style={{color: '#808080'}} >
-									<b>F3</b>
+									<b>F1</b>
 								</Typography>
 							</Box>
 						</Box>
@@ -131,7 +134,7 @@ function NavegacionVentas(props) {
 							</Box>
 							<Box>
 								<Typography variant="caption" style={{color: '#808080'}} >
-									<b>F3</b>
+									{/* <b>F3</b> */}
 								</Typography>
 							</Box>
 						</Box>
@@ -141,9 +144,9 @@ function NavegacionVentas(props) {
 							<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" className={classes.avatar} />
 							<div>
 								<Box mr={2}>
-									<Typography color="textSecondary">aldo chagollan</Typography>
+									<Typography color="textSecondary">{sesion.nombre}</Typography>
 									<Typography color="textSecondary">
-										<b>Caja: </b>xx
+										<b>Caja: </b>2 
 									</Typography>
 								</Box>
 							</div>
@@ -193,7 +196,7 @@ function NavegacionVentas(props) {
 								</Box>
 								<Box>
 									<Typography variant="caption" style={{color: '#808080'}} >
-										<b>F3</b>
+										<b>F4</b>
 									</Typography>
 								</Box>
 							</Box>

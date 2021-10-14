@@ -18,6 +18,13 @@ export default function AbrirCajon() {
 		setOpen(!open);
 	};
 
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.keyCode === 119){ 
+            handleClickOpen();
+        } 
+    };
+
     return (
         <>
             <Button 
@@ -39,7 +46,7 @@ export default function AbrirCajon() {
                     </Box>
                     <Box>
                         <Typography variant="caption" style={{color: '#808080'}} >
-                            <b>F3</b>
+                            <b>F8</b>
                         </Typography>
                     </Box>
                 </Box>
