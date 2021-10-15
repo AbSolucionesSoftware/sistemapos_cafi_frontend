@@ -17,7 +17,12 @@ export default function DepositoRetiroCaja() {
     const handleClickOpen = () => { 
 		setOpen(!open);
 	};
-
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.altKey && e.keyCode === 68){ 
+            handleClickOpen();
+        } 
+    };
 
     return (
         <>
@@ -33,7 +38,16 @@ export default function DepositoRetiroCaja() {
                             style={{width: 20}}
                         />
                     </Box>
-                    Deposito/Retiro Caja
+                    <Box>
+                        <Typography variant="body2" >
+                            <b>Deposito/Retiro Caja</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>Alt + D</b>
+                        </Typography>
+                    </Box>
                 </Box>
             </Button>	
 

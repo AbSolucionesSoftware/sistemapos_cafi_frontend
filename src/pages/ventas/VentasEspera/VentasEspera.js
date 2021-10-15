@@ -16,6 +16,14 @@ export default function VentasEspera() {
     const handleClickOpen = () => { 
 		setOpen(!open);
 	};
+
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.altKey && e.keyCode === 76){ 
+            handleClickOpen();
+        } 
+    };
+
     return (
         <>
             <Button 
@@ -28,12 +36,19 @@ export default function VentasEspera() {
                             <img 
                                 src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/lista-de-espera.svg' 
                                 alt="icono caja2" 
-                                style={{width: 40}} 
+                                style={{width: 38}} 
                             />
                         </Badge>
                     </Box>
                     <Box>
-                        Lista Espera
+                        <Typography variant="body2" >
+                            <b>Lista Espera</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>Alt + L</b>
+                        </Typography>
                     </Box>
                 </Box>
             </Button>

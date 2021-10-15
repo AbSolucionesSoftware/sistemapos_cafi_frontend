@@ -241,7 +241,7 @@ const ModalDetalles = ({ handleDetalles, openDetalles, datos }) => {
 			<IconButton onClick={handleDetalles}>
 				<Dehaze />
 			</IconButton>
-			<Dialog open={openDetalles} onClose={handleDetalles} fullwidth maxWidth="md">
+			<Dialog open={openDetalles} onClose={handleDetalles} fullWidth maxWidth="md">
 				<DialogTitle>{'Información completa del cliente'}</DialogTitle>
 				<DialogContent>
 					<Box mt={3}>

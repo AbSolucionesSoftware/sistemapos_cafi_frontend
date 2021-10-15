@@ -37,6 +37,9 @@ const useStyles = makeStyles((theme) => ({
 		'& > *': {
 			margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
 		},
+		'& .obligatorio': {
+			color: 'red'
+		},
         paddingTop: 0,
         alignItems: "center",
         justifyItems: "center"

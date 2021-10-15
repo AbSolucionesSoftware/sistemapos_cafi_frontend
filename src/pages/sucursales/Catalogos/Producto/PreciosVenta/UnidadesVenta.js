@@ -15,7 +15,6 @@ import { Add, Close, DeleteOutline, EditOutlined } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core';
 import { FormControl } from '@material-ui/core';
 import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
-import { useEffect } from 'react';
 import Done from '@material-ui/icons/Done';
 
 const useStyles = makeStyles((theme) => ({
@@ -40,7 +39,7 @@ export default function PreciosDeCompra() {
 		update
 	} = useContext(RegProductoContext);
 	const [ unidades, setUnidades ] = useState({
-		unidad: precios.granel ? 'Kg' : 'Pz',
+		unidad: precios.unidad_de_compra.unidad,
 		unidad_principal: false
 	});
 	const [ actualizarUnidad, setActualizarUnidad ] = useState(false);
@@ -128,10 +127,6 @@ export default function PreciosDeCompra() {
 			codigo_barras
 		});
 	};
-
-	useEffect(() => {
-		
-	}, [])
 
 	return (
 		<Fragment>
@@ -245,7 +240,7 @@ export default function PreciosDeCompra() {
 								<TableCell>
 									{unidadVentaXDefecto.unidad}
 								</TableCell>
-								<TableCell>$ {unidadVentaXDefecto.precio}</TableCell>
+								<TableCell>$ {parseFloat(unidadVentaXDefecto.precio).toFixed(3)}</TableCell>
 								<TableCell>{unidadVentaXDefecto.cantidad}</TableCell>
 								<TableCell>
 									<Checkbox
@@ -285,8 +280,6 @@ const RenderUnidadesRows = ({ unidades, index }) => {
 		RegProductoContext
 	);
 
-	useEffect(() => {}, []);
-
 	const checkUnidadPrincipal = () => {
 		let nuevo_array = [];
 		for (let i = 0; i < unidadesVenta.length; i++) {
@@ -312,7 +305,7 @@ const RenderUnidadesRows = ({ unidades, index }) => {
 		<TableRow>
 			<TableCell>{unidades.codigo_barras}</TableCell>
 			<TableCell>{unidades.unidad}</TableCell>
-			<TableCell>$ {unidades.precio}</TableCell>
+			<TableCell>$ {parseFloat(unidades.precio).toFixed(3)}</TableCell>
 			<TableCell>{unidades.cantidad}</TableCell>
 			<TableCell>
 				<Checkbox

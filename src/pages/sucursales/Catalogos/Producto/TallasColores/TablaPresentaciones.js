@@ -63,6 +63,8 @@ export default function TablaPresentaciones({
   datos,
   setOnUpdate,
   onUpdate,
+  withoutPrice,
+  onlyPrice,
 }) {
   const classes = useStyles();
   const { presentaciones } = useContext(RegProductoContext);
@@ -89,11 +91,15 @@ export default function TablaPresentaciones({
                 <TableCell width={200}>Nombre</TableCell>
                 <TableCell padding="checkbox">Medida</TableCell>
                 <TableCell padding="checkbox">Color</TableCell>
-                <TableCell>Precio</TableCell>
-                {from && from === "compra" ? (
-                  <TableCell padding="checkbox">Existente</TableCell>
+                {!withoutPrice ? <TableCell>Precio</TableCell> : null}
+                {!onlyPrice ? (
+                  <Fragment>
+                    {from && from === "compra" ? (
+                      <TableCell padding="checkbox">Existente</TableCell>
+                    ) : null}
+                    <TableCell padding="checkbox">Cantidad</TableCell>
+                  </Fragment>
                 ) : null}
-                <TableCell padding="checkbox">Cantidad</TableCell>
                 <TableCell padding="checkbox">Editar</TableCell>
               </TableRow>
             </TableHead>
@@ -108,6 +114,8 @@ export default function TablaPresentaciones({
                     from={from}
                     setOnUpdate={setOnUpdate}
                     onUpdate={onUpdate}
+                    withoutPrice={withoutPrice}
+                    onlyPrice={onlyPrice}
                   />
                 );
               })}
@@ -126,6 +134,8 @@ const RenderPresentacionesRows = ({
   from,
   setOnUpdate,
   onUpdate,
+  withoutPrice,
+  onlyPrice,
 }) => {
   const { presentaciones, setPresentaciones, preciosP } = useContext(
     RegProductoContext
@@ -227,7 +237,7 @@ const RenderPresentacionesRows = ({
 
   return (
     <TableRow hover selected={!disabledInput} className={classes.tableRow}>
-      <TableCell align="center">
+      <TableCell align="center" padding="checkbox">
         <Checkbox checked={copy_producto.existencia} color="primary" />
       </TableCell>
       <TableCell width={220}>
@@ -289,42 +299,48 @@ const RenderPresentacionesRows = ({
           </Tooltip>
         ) : null}
       </TableCell>
-      <TableCell width={110}>
-        <Input
-          inputRef={textfield}
-          onChange={(e) => obtenerDatos(e)}
-          disabled={disabledInput}
-          value={copy_producto.precio}
-          type="tel"
-          name="precio"
-        />
-      </TableCell>
-      {from && from === "compra" ? (
-        <Fragment>
-          <TableCell padding="checkbox">{producto.cantidad}</TableCell>
-          <TableCell padding="checkbox">
-            <Input
-              inputRef={textfield}
-              onChange={(e) => obtenerDatos(e)}
-              disabled={disabledInput}
-              value={copy_producto.cantidad_nueva}
-              type="tel"
-              name="cantidad_nueva"
-            />
-          </TableCell>
-        </Fragment>
-      ) : (
-        <TableCell padding="checkbox">
+      {!withoutPrice ? (
+        <TableCell width={110}>
           <Input
             inputRef={textfield}
             onChange={(e) => obtenerDatos(e)}
             disabled={disabledInput}
-            value={copy_producto.cantidad}
+            value={copy_producto.precio}
             type="tel"
-            name="cantidad"
+            name="precio"
           />
         </TableCell>
-      )}
+      ) : null}
+      {!onlyPrice ? (
+        <Fragment>
+          {from && from === "compra" ? (
+            <Fragment>
+              <TableCell padding="checkbox">{producto.cantidad}</TableCell>
+              <TableCell padding="checkbox">
+                <Input
+                  inputRef={textfield}
+                  onChange={(e) => obtenerDatos(e)}
+                  disabled={disabledInput}
+                  value={copy_producto.cantidad_nueva}
+                  type="tel"
+                  name="cantidad_nueva"
+                />
+              </TableCell>
+            </Fragment>
+          ) : (
+            <TableCell padding="checkbox">
+              <Input
+                inputRef={textfield}
+                onChange={(e) => obtenerDatos(e)}
+                disabled={disabledInput}
+                value={copy_producto.cantidad}
+                type="tel"
+                name="cantidad"
+              />
+            </TableCell>
+          )}
+        </Fragment>
+      ) : null}
       <TableCell padding="checkbox">
         <IconButton size="small" onClick={() => actionButton()}>
           {!disabledInput ? <Close /> : <Edit />}

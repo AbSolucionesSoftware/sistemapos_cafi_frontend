@@ -56,6 +56,12 @@ export default function ListaApartados() {
 		setOpen(!open);
 	};
 
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.keyCode === 121){ 
+            handleClickOpen();
+        } 
+    };
 
     return (
         <>
@@ -65,10 +71,21 @@ export default function ListaApartados() {
             >
                 <Box>
                     <Box>
-                        <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tag.svg' alt="icono apartados" style={{width: 40}} />
+                        <img 
+                            src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tag.svg' 
+                            alt="icono apartados" 
+                            style={{width: 38}} 
+                        />
                     </Box>
                     <Box>
-                        Lista Apartados
+                        <Typography variant="body2" >
+                            <b>Lista Apartados</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F10</b>
+                        </Typography>
                     </Box>
                 </Box>
             </Button>

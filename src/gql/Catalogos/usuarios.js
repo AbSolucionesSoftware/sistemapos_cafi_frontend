@@ -9,6 +9,7 @@ export const CREAR_USUARIO = gql`
 			telefono
 			celular
 			email
+			turno_en_caja_activo
 			direccion {
 				calle
 				no_ext
@@ -142,6 +143,7 @@ export const OBTENER_USUARIOS = gql`
 			nombre
 			telefono
 			celular
+			turno_en_caja_activo
 			email
 			direccion {
 				calle

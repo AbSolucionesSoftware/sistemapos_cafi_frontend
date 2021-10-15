@@ -3,7 +3,9 @@ import { Box, InputAdornment, TextField } from "@material-ui/core";
 import { ComprasContext } from "../../../../../context/Compras/comprasContext";
 
 export default function DescuentosInputs() {
-  const { datosProducto, setDatosProducto, productoOriginal } = useContext(ComprasContext);
+  const { datosProducto, setDatosProducto, productoOriginal } = useContext(
+    ComprasContext
+  );
 
   const obtenerPorcentaje = (value) => {
     if (!value || parseFloat(value) === 0) {
@@ -11,7 +13,8 @@ export default function DescuentosInputs() {
         ...datosProducto,
         descuento_porcentaje: "",
         descuento_precio: "",
-        total_con_descuento: productoOriginal.precios.precio_de_compra.precio_con_impuesto,
+        total_con_descuento:
+          productoOriginal.precios.precio_de_compra.precio_con_impuesto,
       });
       return;
     }
@@ -32,7 +35,8 @@ export default function DescuentosInputs() {
         ...datosProducto,
         descuento_porcentaje: "",
         descuento_precio: "",
-        total_con_descuento: productoOriginal.precios.precio_de_compra.precio_con_impuesto,
+        total_con_descuento:
+          productoOriginal.precios.precio_de_compra.precio_con_impuesto,
       });
       return;
     }
