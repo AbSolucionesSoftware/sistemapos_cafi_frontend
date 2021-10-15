@@ -61,7 +61,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ListaClientes({ user, tipo, filtro, ventas }) {
+export default function ListaClientes({ user, tipo, filtro, ventas, handleClickOpen }) {
   const classes = useStyles();
   const { update } = useContext(ClienteCtx);
   const [page, setPage] = useState(0);
@@ -80,10 +80,60 @@ export default function ListaClientes({ user, tipo, filtro, ventas }) {
     setPage(newPage);
   };
 
+  //show modal accept client
+  const [showModal, setShowModal] = useState(false);
+
+  const [dataSelectRowClient, setDataSelectRowClient] = useState({});
+
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  const handleClickOpenModal = (data) => {
+    if(ventas){
+      setShowModal(!showModal);
+      setDataSelectRowClient(data);
+    }
+  };
+
+  const handleClickSelectClient = () => {
+    try {
+      const venta = JSON.parse(localStorage.getItem("DatosVentas"));
+      let venta_actual = venta === null ? {} : venta;
+      console.log(venta_actual);
+      localStorage.setItem(
+        "DatosVentas",
+        JSON.stringify({
+          subTotal:
+            venta_actual.subTotal === undefined ? 0 : venta_actual.subTotal,
+          total: venta_actual.total === undefined ? 0 : venta_actual.total,
+          impuestos:
+            venta_actual.impuestos === undefined
+              ? 0
+              : venta_actual.impuestos,
+          iva: venta_actual.iva === undefined ? 0 : venta_actual.iva,
+          ieps: venta_actual.ieps === undefined ? 0 : venta_actual.ieps,
+          descuento:
+            venta_actual.descuento === undefined
+              ? 0
+              : venta_actual.descuento,
+          tipo_cambio: venta_actual.tipo_cambio
+            ? venta_actual.descuento
+            : {},
+          cliente: dataSelectRowClient,
+          venta_cliente: true,
+          productos:
+            venta_actual.productos?.length > 0 ? venta_actual.productos : [],
+        })
+      );
+      setShowModal(!showModal);
+      handleClickOpen();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
 
   if (loading)
     return (
@@ -135,6 +185,7 @@ export default function ListaClientes({ user, tipo, filtro, ventas }) {
                     key={index}
                     datos={row}
                     ventas={ventas}
+                    handleClickOpenModal={handleClickOpenModal}
                   />
                 );
               })}
@@ -150,26 +201,43 @@ export default function ListaClientes({ user, tipo, filtro, ventas }) {
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
       />
+      <Dialog
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {" Estas seguro que desea seleccionar este cliente ?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Al seleccionar el cliente se colocara en la venta.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleClickSelectClient()} color="primary">
+            Aceptar
+          </Button>
+          <Button onClick={() => setShowModal(false)} color="primary" autoFocus>
+            cancelar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 }
 
-const RowsRender = ({ datos, user, ventas }) => {
+const RowsRender = ({ datos, user, handleClickOpenModal }) => {
   const permisosUsuario = JSON.parse(localStorage.getItem("sesionCafi"));
 
   const [openDetalles, setOpenDetalles] = useState(false);
   const { update, setUpdate } = useContext(ClienteCtx);
   const [loading, setLoading] = useState(false);
-  //show modal accept client
-  const [showModaL, setShowModaL] = useState(false);
+
   const handleDetalles = () => setOpenDetalles(!openDetalles);
 
   const [actualizarCliente] = useMutation(ACTUALIZAR_CLIENTE);
-
-  const handleClickOpenModal = (accion) => {
-    setShowModaL(accion);
-    console.log("entro a modal");
-  };
 
   const cambiarEstado = async (e) => {
     setLoading(true);
@@ -190,41 +258,13 @@ const RowsRender = ({ datos, user, ventas }) => {
     }
   };
 
-  const onClickTableClient = (datos) => {
-    if (ventas) {
-      const venta = JSON.parse(localStorage.getItem("DatosVentas"));
-      let venta_actual = venta === null ? {} : venta;
-      console.log(venta_actual);
-      localStorage.setItem(
-        "DatosVentas",
-        JSON.stringify({
-          subTotal:
-            venta_actual.subTotal === undefined ? 0 : venta_actual.subTotal,
-          total: venta_actual.total === undefined ? 0 : venta_actual.total,
-          impuestos:
-            venta_actual.impuestos === undefined ? 0 : venta_actual.impuestos,
-          iva: venta_actual.iva === undefined ? 0 : venta_actual.iva,
-          ieps: venta_actual.ieps === undefined ? 0 : venta_actual.ieps,
-          descuento:
-            venta_actual.descuento === undefined ? 0 : venta_actual.descuento,
-          tipo_cambio: venta_actual.tipo_cambio ? venta_actual.descuento : {},
-          cliente: datos,
-          venta_cliente: true,
-          productos:
-            venta_actual.productos.length > 0 ? venta_actual.productos : [],
-        })
-      );
-    }
-    console.log(datos);
-  };
-
   return (
     <Fragment>
       <TableRow
         hover
         role="checkbox"
         tabIndex={-1}
-        onClick={() => setShowModaL(true)}
+        onClick={() => handleClickOpenModal(datos)}
       >
         <TableCell>
           <Typography>{datos.numero_cliente}</Typography>
@@ -279,49 +319,7 @@ const RowsRender = ({ datos, user, ventas }) => {
           )}
         </TableCell>
       </TableRow>
-      <ModalAceptar
-        showModaL={showModaL}
-        setShowModaL={setShowModaL}
-        onClickTableClient={onClickTableClient}
-        datos={datos}
-      />
     </Fragment>
-  );
-};
-
-const ModalAceptar = ({
-  showModaL,
-  setShowModaL,
-  onClickTableClient,
-  datos,
-}) => {
-
-
-  return (
-    <Dialog
-      open={showModaL}
-      onClose={setShowModaL(false)}
-      aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
-    >
-      <DialogTitle id="alert-dialog-title">
-        {"Use Google's location service?"}
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          Let Google help apps determine location. This means sending anonymous
-          location data to Google, even when no apps are running.
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => onClickTableClient(datos)} color="primary">
-          Aceptar
-        </Button>
-        <Button onClick={() => setShowModaL(false)} color="primary" autoFocus>
-          cancelar
-        </Button>
-      </DialogActions>
-    </Dialog>
   );
 };
 

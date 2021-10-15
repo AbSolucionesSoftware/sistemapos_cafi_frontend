@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CrearCliente({ tipo, accion, datos, refetch, ventas }) {
+export default function CrearCliente({ tipo, accion, datos, refetch, ventas, handleClickOpen }) {
   const classes = useStyles();
   const { cliente, setCliente, setError, update, setUpdate } =
     useContext(ClienteCtx);
@@ -156,22 +156,34 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas }) {
         if (ventas === true) {
           const venta = JSON.parse(localStorage.getItem("DatosVentas"));
           let venta_actual = venta === null ? {} : venta;
-          console.log(venta_actual);
+          // console.log(venta_actual);
           localStorage.setItem(
             "DatosVentas",
             JSON.stringify({
-              subTotal: venta_actual.subTotal === undefined ? 0 : venta_actual.subTotal,
+              subTotal:
+                venta_actual.subTotal === undefined ? 0 : venta_actual.subTotal,
               total: venta_actual.total === undefined ? 0 : venta_actual.total,
-              impuestos: venta_actual.impuestos === undefined ? 0 : venta_actual.impuestos,
+              impuestos:
+                venta_actual.impuestos === undefined
+                  ? 0
+                  : venta_actual.impuestos,
               iva: venta_actual.iva === undefined ? 0 : venta_actual.iva,
               ieps: venta_actual.ieps === undefined ? 0 : venta_actual.ieps,
-              descuento: venta_actual.descuento === undefined ? 0 : venta_actual.descuento,
-              tipo_cambio: venta_actual.tipo_cambio ? venta_actual.descuento : {},
+              descuento:
+                venta_actual.descuento === undefined
+                  ? 0
+                  : venta_actual.descuento,
+              tipo_cambio: venta_actual.tipo_cambio
+                ? venta_actual.descuento
+                : {},
               cliente: clienteBase.data.crearCliente,
               venta_cliente: true,
-			  productos: venta_actual.productos.length > 0 ? venta_actual.productos : []
+              productos:
+                venta_actual.productos?.length > 0 ? venta_actual.productos : [],
             })
           );
+          onCloseModal();
+          handleClickOpen();
         }
       } else {
         const {
@@ -198,9 +210,8 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas }) {
       setLoading(false);
       onCloseModal();
     } catch (error) {
-      console.log(error.networkError.result);
       setAlert({ message: error.message, status: "error", open: true });
-      console.log();
+      console.log(error);
       setLoading(false);
     }
   };

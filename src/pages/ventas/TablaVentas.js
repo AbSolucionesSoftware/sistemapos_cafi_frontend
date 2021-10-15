@@ -58,7 +58,7 @@ export default function TablaVentas({
             </TableRow>
           </TableHead>
           <TableBody>
-            {datosTabla.map((producto, index) => {
+            {datosTabla?.map((producto, index) => {
               return (
                 <RenderTableRows
                   key={index}
