@@ -45,6 +45,13 @@ export default function ClientesVentas() {
 		setOpen(!open);
 	};
 
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.altKey && e.keyCode === 67){ 
+            handleClickOpen();
+        } 
+    };
+
     return (
         <>
             <ClienteProvider>
@@ -54,11 +61,18 @@ export default function ClientesVentas() {
                 style={{height: 'auto', width: '100%'}}
             >
                 <Box>
-                    <Box mt={3}> 
-                        <FcBusinessman style={{ fontSize: 50 }}/>
+                    <Box> 
+                        <FcBusinessman style={{ fontSize: 48 }}/>
                     </Box>
                     <Box>
-                        Clientes
+                        <Typography variant="body2" >
+                            <b>Clientes</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>aLT + C</b>
+                        </Typography>
                     </Box>
                 </Box>
             </Button>

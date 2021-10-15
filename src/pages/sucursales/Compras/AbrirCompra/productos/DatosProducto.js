@@ -8,6 +8,15 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import FormControl from "@material-ui/core/FormControl";
+import IconButton from "@material-ui/core/IconButton";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
+import Slide from "@material-ui/core/Slide";
+
 import PreciosProductos from "./PreciosProductos";
 import TallasProductos from "./TallasProducto";
 import Add from "@material-ui/icons/Add";
@@ -26,20 +35,11 @@ import CrearProducto, {
 } from "../../../Catalogos/Producto/crearProducto";
 import { formatoMexico } from "../../../../../config/reuserFunctions";
 import ErrorPage from "../../../../../components/ErrorPage";
-
 import { ComprasContext } from "../../../../../context/Compras/comprasContext";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
-
 import { useLazyQuery } from "@apollo/client";
 import { OBTENER_PRODUCTOS } from "../../../../../gql/Catalogos/productos";
 import PreciosDeVentaCompras from "./PreciosVenta";
-import {
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  IconButton,
-  Slide,
-} from "@material-ui/core";
 import { validateJsonEdit } from "../../../Catalogos/Producto/validateDatos";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import { InfoOutlined } from "@material-ui/icons";
@@ -61,8 +61,8 @@ export default function DatosProducto() {
     setDatosCompra,
     isEditing,
     setIsEditing,
-    editFinish, 
-    setEditFinish
+    editFinish,
+    setEditFinish,
   } = useContext(ComprasContext);
   const {
     datos_generales,
@@ -125,6 +125,7 @@ export default function DatosProducto() {
   if (data) obtenerProductos = data.obtenerProductos;
 
   const obtenerSelectsProducto = (producto) => {
+    console.log(producto);
     if (!producto) {
       setDatosProducto(initial_state_datosProducto);
       resetInitialStates();
@@ -145,11 +146,12 @@ export default function DatosProducto() {
       producto,
       id_producto: producto._id,
       costo: precio_con_impuesto,
-      cantidad: 0,
+      cantidad: 1,
+      unidad_regalo: producto.precios.unidad_de_compra.unidad,
       descuento_porcentaje: 0,
       descuento_precio: 0,
       subtotal: precio_sin_impuesto,
-      impuestos: parseFloat(impuestos.toFixed(2)),
+      impuestos: parseFloat(impuestos.toFixed(6)),
       total: precio_con_impuesto,
       total_con_descuento: precio_con_impuesto,
     });
@@ -173,6 +175,14 @@ export default function DatosProducto() {
     });
   };
 
+  const obtenerUnidadRegalo = (e) => {
+    const { value, name } = e.target;
+    setDatosProducto({
+      ...datosProducto,
+      [name]: value,
+    });
+  };
+
   const obtenerCosto = (e) => {
     const { name, value } = e.target;
     if (!value) {
@@ -183,25 +193,31 @@ export default function DatosProducto() {
       return;
     }
 
-    /* let descuento_precio = Math.round((datosProducto.total * value) / 100);
-    let total = datosProducto.total - descuento_precio; */
-    if(datosProducto.descuento_porcentaje > 0){
-      let descuento_precio =  Math.round((value * datosProducto.descuento_porcentaje) / 100);
-      let total = datosProducto.total - descuento_precio;
+    let total = value;
+    let total_con_descuento;
+    let descuento_precio;
+    if (datosProducto.descuento_porcentaje > 0) {
+      descuento_precio = Math.round(
+        (value * datosProducto.descuento_porcentaje) / 100
+      );
+      total_con_descuento = total - descuento_precio;
+
       setDatosProducto({
         ...datosProducto,
         [name]: parseFloat(value),
         descuento_precio: parseFloat(descuento_precio),
-        total_con_descuento: parseFloat(total),
+        total_con_descuento: parseFloat(total_con_descuento),
+        subtotal: parseFloat(total) - datosProducto.impuestos,
       });
-      return
-    } 
-
+      return;
+    }
     setDatosProducto({
       ...datosProducto,
       [name]: parseFloat(value),
+      total_con_descuento: parseFloat(total),
+      subtotal: parseFloat(total) - datosProducto.impuestos,
     });
-  }
+  };
 
   const agregarCompra = async (actualizar_Precios) => {
     /* Validaciones */
@@ -254,19 +270,58 @@ export default function DatosProducto() {
     };
 
     datosProducto.producto = producto;
+
+    if (datosProducto.producto.datos_generales.tipo_producto !== "OTROS") {
+      //si son medidas sumas las cantidades de las presetnaciones
+      if (datosProducto.producto.presentaciones.length > 0) {
+        datosProducto.cantidad = 0;
+        datosProducto.producto.presentaciones.forEach((presentacion) => {
+          const { cantidad, cantidad_nueva } = presentacion;
+          datosProducto.cantidad += cantidad + cantidad_nueva;
+        });
+        datosProducto.cantidad_total = datosProducto.cantidad
+      }else{
+        datosProducto.cantidad_total = datosProducto.cantidad
+      }
+    } else {
+      //Si hay cantidad regalo y es diferente unidad hacer las converciones
+      const { cantidad_regalo, cantidad, unidad_regalo } = datosProducto;
+      //convertir todo a la unidad media y sumar (Pz, Kg, Lt)
+      const factor = datosProducto.producto.precios.unidad_de_compra.cantidad;
+      const cantiad_media = cantidad * factor;
+      let cantidad_regalo_media =
+        unidad_regalo === "Pz" ||
+        unidad_regalo === "Kg" ||
+        unidad_regalo === "Lt"
+          ? cantidad_regalo
+          : cantidad_regalo * factor;
+      let cantidad_total_media = cantiad_media + cantidad_regalo_media;
+
+      //si factor es > 1 es caja o costal y dividir unidad media entre factor y si no mandar la cantidad total media;
+      if (factor > 1) {
+        datosProducto.cantidad_regalo = cantidad_regalo_media / factor;
+        datosProducto.cantidad_total = cantidad_total_media / factor;
+      } else {
+        datosProducto.cantidad_regalo = cantidad_regalo_media;
+        datosProducto.cantidad_total = cantidad_total_media;
+      }
+    }
     datosProducto.total = datosProducto.total_con_descuento;
-    datosProducto.cantidad_total =
-      datosProducto.cantidad + datosProducto.cantidad_regalo;
 
-    if(isEditing.producto){
-      /* se tiene que actualizar el producto en la fila y sumar el subtotal */
-      let productosCompra_ordenados = [ ...productosCompra ].reverse();
+    if (isEditing.producto) {
+      //se tiene que actualizar el producto en la fila y sumar el subtotal
+      let productosCompra_ordenados = [...productosCompra].reverse();
 
-      console.log(datosCompra.subtotal, datosProducto.subtotal, isEditing.producto.subtotal);
-      
-      let subtotal = datosCompra.subtotal + datosProducto.subtotal - isEditing.producto.subtotal;
-      let impuestos = datosCompra.impuestos + datosProducto.impuestos - isEditing.producto.impuestos;
-      let total = datosCompra.total + datosProducto.total - isEditing.producto.total;
+      let subtotal =
+        datosCompra.subtotal +
+        datosProducto.subtotal -
+        isEditing.producto.subtotal;
+      let impuestos =
+        datosCompra.impuestos +
+        datosProducto.impuestos -
+        isEditing.producto.impuestos;
+      let total =
+        datosCompra.total + datosProducto.total - isEditing.producto.total;
 
       productosCompra_ordenados.splice(isEditing.index, 1, datosProducto);
 
@@ -279,19 +334,44 @@ export default function DatosProducto() {
       });
       setIsEditing({});
       setEditFinish(!editFinish);
-    }else{
-      console.log("pasa por aca");
-      /* se agregar el producto normal */
-      setProductosCompra([...productosCompra, datosProducto]);
-      setDatosCompra({
-        ...datosCompra,
-        subtotal: datosCompra.subtotal + datosProducto.subtotal,
-        impuestos: datosCompra.impuestos + datosProducto.impuestos,
-        total: datosCompra.total + datosProducto.total,
-      });
+    } else {
+      // se agregar el producto normal y verificar si ya esta el producto en la lista
+
+      const existente = productosCompra
+        .map((result, index) => {
+          if (result.id_producto === datosProducto.id_producto) {
+            return { result, index };
+          } else {
+            return "";
+          }
+        })
+        .filter(Boolean);
+
+      if (existente.length > 0) {
+        let productosCompra_ordenados = [...productosCompra].reverse();
+        const { index, result } = existente[0];
+        productosCompra_ordenados.splice(index, 1, datosProducto);
+        setProductosCompra(productosCompra_ordenados);
+        setDatosCompra({
+          ...datosCompra,
+          subtotal:
+            datosCompra.subtotal + datosProducto.subtotal - result.subtotal,
+          impuestos:
+            datosCompra.impuestos + datosProducto.impuestos - result.impuestos,
+          total: datosCompra.total + datosProducto.total - result.total,
+        });
+      } else {
+        setProductosCompra([...productosCompra, datosProducto]);
+        setDatosCompra({
+          ...datosCompra,
+          subtotal: datosCompra.subtotal + datosProducto.subtotal,
+          impuestos: datosCompra.impuestos + datosProducto.impuestos,
+          total: datosCompra.total + datosProducto.total,
+        });
+      }
+      setProductoOriginal({ precios: initial_state_precios });
+      setDatosProducto(initial_state_datosProducto);
     }
-    setProductoOriginal({ precios: initial_state_precios });
-    setDatosProducto(initial_state_datosProducto);
   };
 
   /* SET STATES WHEN UPDATING */
@@ -459,7 +539,7 @@ export default function DatosProducto() {
           <Typography>Costo</Typography>
           <Box width={100}>
             <TextField
-              inputMode="numeric"
+              inputMode="decimal"
               name="costo"
               variant="outlined"
               size="small"
@@ -480,9 +560,8 @@ export default function DatosProducto() {
           <Fragment>
             <Grid item>
               <Typography>Unidad</Typography>
-              <Box width={90}>
+              <Box width={100}>
                 <TextField
-                  name="cantidad"
                   variant="outlined"
                   size="small"
                   fullWidth
@@ -493,7 +572,7 @@ export default function DatosProducto() {
             </Grid>
             <Grid item>
               <Typography>Cantidad</Typography>
-              <Box width={90}>
+              <Box width={100}>
                 <TextField
                   name="cantidad"
                   variant="outlined"
@@ -508,7 +587,7 @@ export default function DatosProducto() {
             </Grid>
             <Grid item>
               <Typography>Cant. regalo</Typography>
-              <Box width={90}>
+              <Box width={100}>
                 <TextField
                   name="cantidad_regalo"
                   variant="outlined"
@@ -521,6 +600,42 @@ export default function DatosProducto() {
                 />
               </Box>
             </Grid>
+            <Grid item>
+              <Typography>Unidad. regalo</Typography>
+              <Box width={100}>
+                <FormControl
+                  variant="outlined"
+                  size="small"
+                  name="unidad_regalo"
+                  fullWidth
+                >
+                  {datosProducto.producto.precios.granel ? (
+                    <Select
+                      id="select-unidad-regalo"
+                      disabled={!datosProducto.producto.datos_generales}
+                      name="unidad_regalo"
+                      value={datosProducto.unidad_regalo}
+                      onChange={obtenerUnidadRegalo}
+                    >
+                      <MenuItem value="Kg">Kg</MenuItem>
+                      <MenuItem value="Costal">Costal</MenuItem>
+                      <MenuItem value="Lt">Lt</MenuItem>
+                    </Select>
+                  ) : (
+                    <Select
+                      id="select-unidad-regalo"
+                      disabled={!datosProducto.producto.datos_generales}
+                      name="unidad_regalo"
+                      value={datosProducto.unidad_regalo}
+                      onChange={obtenerUnidadRegalo}
+                    >
+                      <MenuItem value="Caja">Caja</MenuItem>
+                      <MenuItem value="Pz">Pz</MenuItem>
+                    </Select>
+                  )}
+                </FormControl>
+              </Box>
+            </Grid>
           </Fragment>
         ) : null}
 
@@ -528,50 +643,52 @@ export default function DatosProducto() {
           <Typography>Descuento</Typography>
           <DescuentosInputs />
         </Grid>
-        <Grid item>
-          <Box mx={1}>
-            <Grid container spacing={2}>
-              <Grid item>
-                <Typography style={{ fontSize: 16 }}>Subtotal:</Typography>
-                <Typography style={{ fontSize: 18 }}>
-                  <b>${formatoMexico(datosProducto.subtotal)}</b>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography style={{ fontSize: 16 }}>Impuestos:</Typography>
-                <Typography style={{ fontSize: 18 }}>
-                  <b>${formatoMexico(datosProducto.impuestos)}</b>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography style={{ fontSize: 16 }}>Descuento:</Typography>
-                <Typography style={{ fontSize: 18 }}>
-                  <b>{datosProducto.descuento_porcentaje}%</b>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography style={{ fontSize: 16 }}>Total:</Typography>
-                <Typography style={{ fontSize: 18 }}>
-                  <b>${formatoMexico(datosProducto.total_con_descuento)}</b>
-                </Typography>
-              </Grid>
-            </Grid>
-          </Box>
-        </Grid>
       </Grid>
       <Box mt={1}>
         <Grid container>
-          <Grid item xs={12} md={8} lg={7} padding="checkbox">
+          <Grid item xs={12} md={7} padding="checkbox">
             <PreciosDeVentaCompras />
           </Grid>
           <Grid
             item
             xs={12}
-            md={4}
-            lg={5}
-            style={{ display: "flex", alignItems: "flex-end" }}
+            md={5}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "column",
+            }}
           >
-            <Box display="flex" width="100%">
+            <Box m={1}>
+              <Grid container spacing={2}>
+                <Grid item>
+                  <Typography style={{ fontSize: 16 }}>Subtotal:</Typography>
+                  <Typography style={{ fontSize: 18 }}>
+                    <b>${formatoMexico(datosProducto.subtotal)}</b>
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography style={{ fontSize: 16 }}>Impuestos:</Typography>
+                  <Typography style={{ fontSize: 18 }}>
+                    <b>${formatoMexico(datosProducto.impuestos)}</b>
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography style={{ fontSize: 16 }}>Descuento:</Typography>
+                  <Typography style={{ fontSize: 18 }}>
+                    <b>{datosProducto.descuento_porcentaje}%</b>
+                  </Typography>
+                </Grid>
+                <Grid item>
+                  <Typography style={{ fontSize: 16 }}>Total:</Typography>
+                  <Typography style={{ fontSize: 18 }}>
+                    <b>${formatoMexico(datosProducto.total_con_descuento)}</b>
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Box>
+            <Box display="flex">
               {datosProducto.producto.datos_generales &&
               datosProducto.producto.datos_generales.tipo_producto !==
                 "OTROS" ? (

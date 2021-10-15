@@ -324,178 +324,161 @@ const RowsRender = ({ datos, user, handleClickOpenModal }) => {
 };
 
 const ModalDetalles = ({ handleDetalles, openDetalles, datos }) => {
-  const classes = useStyles();
-  return (
-    <div>
-      <IconButton onClick={handleDetalles}>
-        <Dehaze />
-      </IconButton>
-      <Dialog
-        open={openDetalles}
-        onClose={handleDetalles}
-        fullwidth
-        maxWidth="md"
-      >
-        <DialogTitle>{"Información completa del cliente"}</DialogTitle>
-        <DialogContent>
-          <Box mt={3}>
-            <Typography variant="h6">Información básica</Typography>
-            <Divider />
-          </Box>
-          <Box display="flex">
-            <Box
-              mt={3}
-              height={120}
-              width={120}
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <Avatar className={classes.avatar} src={datos.imagen} />
-            </Box>
-            <ul>
-              <Typography>
-                <b>Número de cliente: </b>
-                {datos.numero_cliente}
-              </Typography>
-              <Typography>
-                <b>Clave: </b>
-                {datos.clave_cliente}
-              </Typography>
-              <Typography>
-                <b>Representante: </b>
-                {datos.representante}
-              </Typography>
-              <Typography>
-                <b>Nombre cliente/empresa: </b>
-                {datos.nombre_cliente}
-              </Typography>
-              <Typography>
-                <b>Razon social: </b>
-                {datos.razon_social}
-              </Typography>
-              <Typography>
-                <b>RFC: </b>
-                {datos.rfc ? datos.rfc : " -"}
-              </Typography>
-            </ul>
-            <ul>
-              <Typography>
-                <b>CURP: </b>
-                {datos.curp ? datos.curp : " -"}
-              </Typography>
-              <Typography>
-                <b>Telefono: </b>
-                {datos.telefono ? datos.telefono : " -"}
-              </Typography>
-              <Typography>
-                <b>Celular: </b>
-                {datos.celular ? datos.celular : " -"}
-              </Typography>
-              <Typography>
-                <b>Correo: </b>
-                {datos.email ? datos.email : " -"}
-              </Typography>
-              <Typography>
-                <b>Estado del cliente: </b>
-                {datos.estado_cliente ? "Activo" : "Inactivo"}
-              </Typography>
-              <Typography>
-                <b>Tipo: </b>
-                {datos.tipo_cliente}
-              </Typography>
-            </ul>
-          </Box>
-          <Grid container spacing={2}>
-            <Grid item md={6}>
-              <Box mt={3}>
-                <Typography>
-                  <b>Dirección</b>
-                </Typography>
-                <Divider />
-              </Box>
-              <Box display="flex">
-                <ul>
-                  <Typography>
-                    <b>Calle: </b>
-                    {datos.direccion.calle}
-                  </Typography>
-                  <Typography>
-                    <b>No. Exterior: </b>
-                    {datos.direccion.no_ext}
-                  </Typography>
-                  <Typography>
-                    <b>No. Interior: </b>
-                    {datos.direccion.no_int ? datos.direccion.no_int : " -"}
-                  </Typography>
-                  <Typography>
-                    <b>Código postal: </b>
-                    {datos.direccion.codigo_postal}
-                  </Typography>
-                  <Typography>
-                    <b>Colonia: </b>
-                    {datos.direccion.colonia}
-                  </Typography>
-                </ul>
-                <ul>
-                  <Typography>
-                    <b>Municipio: </b>
-                    {datos.direccion.municipio}
-                  </Typography>
-                  <Typography>
-                    <b>Localidad: </b>
-                    {datos.direccion.localidad
-                      ? datos.direccion.localidad
-                      : " -"}
-                  </Typography>
-                  <Typography>
-                    <b>Estado: </b>
-                    {datos.direccion.estado}
-                  </Typography>
-                  <Typography>
-                    <b>Pais: </b>
-                    {datos.direccion.pais}
-                  </Typography>
-                </ul>
-              </Box>
-            </Grid>
-            <Grid item md={6}>
-              <Box mt={3}>
-                <Typography>
-                  <b>Información crediticia</b>
-                </Typography>
-                <Divider />
-              </Box>
-              <Box display="flex">
-                <ul>
-                  <Typography>
-                    <b>Descuento: </b>
-                    {datos.numero_credito ? datos.numero_credito : " -"}
-                  </Typography>
-                  <Typography>
-                    <b>Limite de crédito: </b>
-                    {datos.limite_credito ? datos.limite_credito : " -"}
-                  </Typography>
-                  <Typography>
-                    <b>Días de crédito: </b>
-                    {datos.dias_credito ? datos.dias_credito : " -"}
-                  </Typography>
-                </ul>
-              </Box>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleDetalles}
-            color="primary"
-            variant="contained"
-            size="large"
-          >
-            Cerrar
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
-  );
+
+
+	const classes = useStyles();
+	return (
+		<div>
+			<IconButton onClick={handleDetalles}>
+				<Dehaze />
+			</IconButton>
+			<Dialog open={openDetalles} onClose={handleDetalles} fullWidth maxWidth="md">
+				<DialogTitle>{'Información completa del cliente'}</DialogTitle>
+				<DialogContent>
+					<Box mt={3}>
+						<Typography variant="h6">Información básica</Typography>
+						<Divider />
+					</Box>
+					<Box display="flex">
+						<Box mt={3} height={120} width={120} display="flex" justifyContent="center" alignItems="center">
+							<Avatar className={classes.avatar} src={datos.imagen} />
+						</Box>
+						<ul>
+							<Typography>
+								<b>Número de cliente: </b>
+								{datos.numero_cliente}
+							</Typography>
+							<Typography>
+								<b>Clave: </b>
+								{datos.clave_cliente}
+							</Typography>
+							<Typography>
+								<b>Representante: </b>
+								{datos.representante}
+							</Typography>
+							<Typography>
+								<b>Nombre cliente/empresa: </b>
+								{datos.nombre_cliente}
+							</Typography>
+							<Typography>
+								<b>Razon social: </b>
+								{datos.razon_social}
+							</Typography>
+							<Typography>
+								<b>RFC: </b>
+								{datos.rfc ? datos.rfc : ' -'}
+							</Typography>
+						</ul>
+						<ul>
+							<Typography>
+								<b>CURP: </b>
+								{datos.curp ? datos.curp : ' -'}
+							</Typography>
+							<Typography>
+								<b>Telefono: </b>
+								{datos.telefono ? datos.telefono : ' -'}
+							</Typography>
+							<Typography>
+								<b>Celular: </b>
+								{datos.celular ? datos.celular : ' -'}
+							</Typography>
+							<Typography>
+								<b>Correo: </b>
+								{datos.email ? datos.email : ' -'}
+							</Typography>
+							<Typography>
+								<b>Estado del cliente: </b>
+								{datos.estado_cliente ? 'Activo' : 'Inactivo'}
+							</Typography>
+							<Typography>
+								<b>Tipo: </b>
+								{datos.tipo_cliente}
+							</Typography>
+						</ul>
+					</Box>
+					<Grid container spacing={2}>
+						<Grid item md={6}>
+							<Box mt={3}>
+								<Typography>
+									<b>Dirección</b>
+								</Typography>
+								<Divider />
+							</Box>
+							<Box display="flex">
+								<ul>
+									<Typography>
+										<b>Calle: </b>
+										{datos.direccion.calle}
+									</Typography>
+									<Typography>
+										<b>No. Exterior: </b>
+										{datos.direccion.no_ext}
+									</Typography>
+									<Typography>
+										<b>No. Interior: </b>
+										{datos.direccion.no_int ? datos.direccion.no_int : ' -'}
+									</Typography>
+									<Typography>
+										<b>Código postal: </b>
+										{datos.direccion.codigo_postal}
+									</Typography>
+									<Typography>
+										<b>Colonia: </b>
+										{datos.direccion.colonia}
+									</Typography>
+								</ul>
+								<ul>
+									<Typography>
+										<b>Municipio: </b>
+										{datos.direccion.municipio}
+									</Typography>
+									<Typography>
+										<b>Localidad: </b>
+										{datos.direccion.localidad ? datos.direccion.localidad : ' -'}
+									</Typography>
+									<Typography>
+										<b>Estado: </b>
+										{datos.direccion.estado}
+									</Typography>
+									<Typography>
+										<b>Pais: </b>
+										{datos.direccion.pais}
+									</Typography>
+								</ul>
+							</Box>
+						</Grid>
+						<Grid item md={6}>
+							<Box mt={3}>
+								<Typography>
+									<b>Información crediticia</b>
+								</Typography>
+								<Divider />
+							</Box>
+							<Box display="flex">
+								<ul>
+									<Typography>
+										<b>Descuento: </b>
+										{datos.numero_credito ? datos.numero_credito : ' -'}
+									</Typography>
+									<Typography>
+										<b>Limite de crédito: </b>
+										{datos.limite_credito ? datos.limite_credito : ' -'}
+									</Typography>
+									<Typography>
+										<b>Días de crédito: </b>
+										{datos.dias_credito ? datos.dias_credito : ' -'}
+									</Typography>
+								</ul>
+							</Box>
+						</Grid>
+					</Grid>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleDetalles} color="primary" variant="contained" size="large">
+						Cerrar
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</div>
+	);
 };

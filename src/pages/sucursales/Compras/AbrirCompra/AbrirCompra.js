@@ -36,7 +36,7 @@ import {
   initial_state_productosCompra,
 } from "./initial_states";
 import { useMutation } from "@apollo/client";
-import { CREAR_COMPRA } from "../../../../gql/Compras/compras";
+import { CREAR_COMPRA, CREAR_COMPRA_ESPERA } from "../../../../gql/Compras/compras";
 import Close from "@material-ui/icons/Close";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 import BackdropComponent from "../../../../components/Layouts/BackDrop";
@@ -113,13 +113,22 @@ export default function AbrirCompra({ status }) {
 
 const ModalCompra = ({ open, handleClose }) => {
   const classes = useStyles();
-  const { productosCompra, datosCompra, setDatosProducto, setProductosCompra, setDatosCompra, setProductoOriginal, setPreciosVenta } = useContext(ComprasContext);
+  const {
+    productosCompra,
+    datosCompra,
+    setDatosProducto,
+    setProductosCompra,
+    setDatosCompra,
+    setProductoOriginal,
+    setPreciosVenta,
+  } = useContext(ComprasContext);
   const [openDelete, setOpenDelete] = useState(false);
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-  const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-  const [ loading, setLoading ] = useState(false);
+  const [alert, setAlert] = useState({ message: "", status: "", open: false });
+  const [loading, setLoading] = useState(false);
 
   const [crearCompra] = useMutation(CREAR_COMPRA);
+  const [crearCompraEnEspera] = useMutation(CREAR_COMPRA_ESPERA)
 
   const limpiarCampos = () => {
     setDatosProducto(initial_state_datosProducto);
@@ -127,29 +136,44 @@ const ModalCompra = ({ open, handleClose }) => {
     setDatosCompra(initial_state_datosCompra);
     setProductoOriginal(initial_state_productoOriginal);
     setPreciosVenta(initial_state_precios_venta);
-  }
+  };
 
-  const realizarCompraBD = async () => {
-    console.log(productosCompra);
-    /* setLoading(true);
+  const realizarCompraBD = async (compra_en_espera) => {
+    setLoading(true);
     try {
       datosCompra.productos = productosCompra;
       const clean_data = cleanTypenames(datosCompra);
 
-      const result = await crearCompra({
-        variables: {
-          input: clean_data,
-          empresa: sesion.empresa._id,
-          sucursal: sesion.sucursal._id,
-          usuario: sesion._id,
-        },
-      });
+      if (compra_en_espera) {
+        const result = await crearCompraEnEspera({
+          variables: {
+            input: clean_data,
+            empresa: sesion.empresa._id,
+            sucursal: sesion.sucursal._id,
+            usuario: sesion._id,
+          },
+        });
+        setAlert({
+          message: `¡Listo! ${result.data.crearCompraEnEspera.message}`,
+          status: "success",
+          open: true,
+        });
+      } else {
+        const result = await crearCompra({
+          variables: {
+            input: clean_data,
+            empresa: sesion.empresa._id,
+            sucursal: sesion.sucursal._id,
+            usuario: sesion._id,
+          },
+        });
+        setAlert({
+          message: `¡Listo! ${result.data.crearCompra.message}`,
+          status: "success",
+          open: true,
+        });
+      }
       setLoading(false);
-      setAlert({
-        message: `¡Listo! ${result.data.crearCompra.message}`,
-        status: "success",
-        open: true,
-      });
       limpiarCampos();
     } catch (error) {
       setLoading(false);
@@ -164,14 +188,13 @@ const ModalCompra = ({ open, handleClose }) => {
       } else if (error.graphQLErrors) {
         console.log(error.graphQLErrors);
       }
-    } */
+    }
   };
 
   const handleToggleDelete = () => {
-    
-    if(productosCompra.length > 0){
+    if (productosCompra.length > 0) {
       setOpenDelete(!openDelete);
-    }else{
+    } else {
       limpiarCampos();
       handleClose();
     }
@@ -258,7 +281,7 @@ const ModalCompra = ({ open, handleClose }) => {
           color="primary"
           variant="text"
           size="large"
-          onClick={() => realizarCompraBD()}
+          onClick={() => realizarCompraBD(true)}//realiza la compra en espera en la funcion
           disabled={!productosCompra.length}
           startIcon={<Timer />}
         >
@@ -269,7 +292,7 @@ const ModalCompra = ({ open, handleClose }) => {
           color="primary"
           variant="contained"
           size="large"
-          onClick={() => realizarCompraBD()}
+          onClick={() => realizarCompraBD(false)}
           disabled={!productosCompra.length}
           startIcon={<Done />}
         >
@@ -286,11 +309,12 @@ const CancelarCompra = ({ handleClose, handleToggleDelete, openDelete }) => {
     setDatosCompra,
     setPreciosVenta,
     setProductoOriginal,
+    setDatosProducto
   } = useContext(ComprasContext);
 
   const cancelarCompra = () => {
     /* reset states */
-    setDatosCompra(initial_state_datosProducto);
+    setDatosProducto(initial_state_datosProducto);
     setDatosCompra(initial_state_datosCompra);
     setPreciosVenta(initial_state_precios_venta);
     setProductoOriginal(initial_state_productoOriginal);

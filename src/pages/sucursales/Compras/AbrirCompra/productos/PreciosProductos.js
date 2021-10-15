@@ -1,22 +1,59 @@
 import React, { Fragment, useContext, useState } from "react";
+import PropTypes from "prop-types";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import Slide from "@material-ui/core/Slide";
 import FormularioPrecios from "../../../Catalogos/Producto/PreciosVenta/registrarInfoAdicional";
-import { Close } from "@material-ui/icons";
+import { Close, LocalAtm, SquareFoot } from "@material-ui/icons";
 import { ComprasContext } from "../../../../../context/Compras/comprasContext";
 import Done from "@material-ui/icons/Done";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
+import { DialogTitle } from "@material-ui/core";
+import TablaPresentaciones from "../../../Catalogos/Producto/TallasColores/TablaPresentaciones";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      style={{ height: "80vh" }}
+      role="tabpanel"
+      hidden={value !== index}
+      id={`scrollable-force-tabpanel-${index}`}
+      aria-labelledby={`scrollable-force-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box p={3}>{children}</Box>}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `scrollable-force-tab-${index}`,
+    "aria-controls": `scrollable-force-tabpanel-${index}`,
+  };
+}
+
 export default function AlertDialogSlide({ agregarCompra, handleClose }) {
   const [open, setOpen] = useState(false);
+  const [onUpdate, setOnUpdate] = useState([]);
   const { datosProducto, productoOriginal /* setDatosProducto */ } = useContext(
     ComprasContext
   );
@@ -49,7 +86,8 @@ export default function AlertDialogSlide({ agregarCompra, handleClose }) {
     let precio_unitario_con_impuesto =
       datosProducto.costo / precios.unidad_de_compra.cantidad;
     let precio_unitario_sin_impuesto =
-      precios.precio_de_compra.precio_sin_impuesto / precios.unidad_de_compra.cantidad;
+      precios.precio_de_compra.precio_sin_impuesto /
+      precios.unidad_de_compra.cantidad;
 
     if (isNaN(precio_unitario_sin_impuesto)) precio_unitario_sin_impuesto = 0;
     if (isNaN(precio_unitario_con_impuesto)) precio_unitario_con_impuesto = 0;
@@ -63,13 +101,19 @@ export default function AlertDialogSlide({ agregarCompra, handleClose }) {
       unidad_de_compra: {
         ...precios.unidad_de_compra,
         precio_unitario_con_impuesto: parseFloat(
-          precio_unitario_con_impuesto.toFixed(2)
+          precio_unitario_con_impuesto.toFixed(6)
         ),
         precio_unitario_sin_impuesto: parseFloat(
-          precio_unitario_sin_impuesto.toFixed(2)
+          precio_unitario_sin_impuesto.toFixed(6)
         ),
       },
     });
+  };
+
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
   };
 
   return (
@@ -91,10 +135,49 @@ export default function AlertDialogSlide({ agregarCompra, handleClose }) {
         fullWidth
         maxWidth="lg"
       >
+        {datosProducto.producto.datos_generales &&
+        datosProducto.producto.datos_generales.tipo_producto !== "OTROS" ? (
+          <DialogTitle style={{ padding: 0 }}>
+            <AppBar position="static" color="default">
+              <Tabs
+                value={value}
+                onChange={handleChange}
+                variant="scrollable"
+                scrollButtons="on"
+                indicatorColor="primary"
+                textColor="primary"
+                aria-label="scrollable force tabs example"
+              >
+                <Tab label="Precios" icon={<LocalAtm />} {...a11yProps(0)} />
+                <Tab
+                  label="Precios Medidas"
+                  icon={<SquareFoot />}
+                  {...a11yProps(1)}
+                />
+              </Tabs>
+            </AppBar>
+          </DialogTitle>
+        ) : null}
         <DialogContent>
-          <DialogContentText id="alert-precios-compra-description">
+          {datosProducto.producto.datos_generales &&
+          datosProducto.producto.datos_generales.tipo_producto !== "OTROS" ? (
+            <div>
+              <TabPanel value={value} index={0}>
+                <FormularioPrecios />
+              </TabPanel>
+              <TabPanel value={value} index={1}>
+                <TablaPresentaciones
+                  from="compras"
+                  datos={datosProducto.producto}
+                  setOnUpdate={setOnUpdate}
+                  onUpdate={onUpdate}
+                  onlyPrice={true}
+                />
+              </TabPanel>
+            </div>
+          ) : (
             <FormularioPrecios />
-          </DialogContentText>
+          )}
         </DialogContent>
         <DialogActions>
           <Button

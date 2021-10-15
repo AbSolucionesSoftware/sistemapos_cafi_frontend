@@ -50,7 +50,7 @@ export const SetOrResetData = (accion,setStates, producto) => {
     setPreciosP(producto.precios.precios_producto);
     setUnidadVentaXDefecto(unidadxdefecto[0]);
     setPresentaciones(
-      producto.medidas_producto ? producto.medidas_producto : []
+      producto.presentaciones ? producto.presentaciones : []
     );
     if (datosCompra.almacen.id_almacen && !producto.medidas_registradas) {
       setAlmacenInicial({

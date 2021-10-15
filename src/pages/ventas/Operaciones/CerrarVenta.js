@@ -23,6 +23,14 @@ export default function CerrarVenta() {
 		setOpen(!open);
 	};
 
+    function funcion_tecla(event) {
+		const tecla_escape = event.keyCode;
+		if(tecla_escape === 27){
+            handleClickOpen();
+		}
+	}
+	window.onkeydown = funcion_tecla;
+
     return (
         <>
             <Button 
@@ -34,11 +42,18 @@ export default function CerrarVenta() {
                         <img 
                             src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cart.svg' 
                             alt="icono ventas" 
-                            style={{width: 40}}
+                            style={{width: 38}}
                         />
                     </Box>
                     <Box>
-                        Pagar
+                        <Typography variant="body2" >
+                            <b>Pagar</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>ESC</b>
+                        </Typography>
                     </Box>
                 </Box>
             </Button>

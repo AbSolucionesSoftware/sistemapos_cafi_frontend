@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Button,  Dialog, DialogActions, DialogContent, Slide } from '@material-ui/core'
+import { Box, Button,  Dialog, DialogActions, DialogContent, Slide, Typography } from '@material-ui/core'
 import useStyles from '../styles';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
-
+ 
 export default function VentasCredito() {
 
     const classes = useStyles();
@@ -15,6 +15,13 @@ export default function VentasCredito() {
     const handleClickOpen = () => { 
 		setOpen(!open);
 	};
+
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.keyCode === 113){ 
+            handleClickOpen();
+        } 
+    };
 
     return (
         <>
@@ -27,11 +34,18 @@ export default function VentasCredito() {
                         <img 
                             src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/add.svg' 
                             alt="icono credito" 
-                            style={{width: 110}}
+                            style={{width: 100}}
                         />
                     </Box>
                     <Box>
-                        Venta Credito
+                        <Typography variant="body2" >
+                            <b>Venta Credito</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F2</b>
+                        </Typography>
                     </Box>
                 </Box>
             </Button>

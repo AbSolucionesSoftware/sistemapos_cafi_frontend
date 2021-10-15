@@ -162,6 +162,12 @@ export const OBTENER_PRODUCTOS = gql`
 			medidas_producto {
 				_id
 				cantidad
+				descuento_activo
+				descuento {
+					porciento
+					dinero_descontado
+					precio_con_descuento
+				}
 				codigo_barras
 				color {
 					_id

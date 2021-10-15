@@ -53,7 +53,7 @@ import {
   NavigateNext,
 } from "@material-ui/icons";
 import { validateJsonEdit } from "./validateDatos";
-import { cleanTypenames } from "../../../../config/reuserFunctions";
+/* import { cleanTypenames } from "../../../../config/reuserFunctions"; */
 /* import SnackBarMessages from '../../../../components/SnackBarMessages'; */
 
 export const initial_state_preciosP = [
@@ -258,7 +258,7 @@ export default function CrearProducto({
 
     let imagenes_without_aws = imagenes;
     if (accion) {
-      imagenes_without_aws = imagenes.filter((res) => !res.key_imagen);
+      imagenes_without_aws = [...imagenes].filter((res) => !res.key_imagen);
     }
 
     let input = {
@@ -283,15 +283,15 @@ export default function CrearProducto({
       usuario: sesion._id,
     };
 
-    const clean_data = cleanTypenames(input);
-    console.log(input);
+    /* const clean_data = cleanTypenames(input); */
+    /* console.log(input); */
 
     setLoading(true);
     try {
       if (accion) {
         const result = await actualizarProducto({
           variables: {
-            input: clean_data,
+            input,
             id: datos._id,
           },
         });
@@ -323,6 +323,11 @@ export default function CrearProducto({
         open: true,
       });
       console.log(error);
+      if (error.networkError) {
+        console.log(error.networkError.result);
+      } else if (error.graphQLErrors) {
+        console.log(error.graphQLErrors);
+      }
     }
   };
 
@@ -348,8 +353,8 @@ export default function CrearProducto({
   };
 
   /* SET STATES WHEN UPDATING */
-  const setInitialStates = (product) => {
-    const producto = cleanTypenames(product);
+  const setInitialStates = (producto) => {
+    /* const producto = cleanTypenames(product); */
     const { precios_producto, ...new_precios } = producto.precios;
     const unidadxdefecto = producto.unidades_de_venta.filter(
       (res) => res.default
@@ -663,7 +668,7 @@ const ContenidoModal = ({ value, datos }) => {
     return () => {
       refetch();
     };
-  }, []);
+  }, [refetch]);
 
   if (loading)
     return (

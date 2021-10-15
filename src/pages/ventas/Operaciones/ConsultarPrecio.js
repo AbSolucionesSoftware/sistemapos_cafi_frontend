@@ -21,6 +21,12 @@ export default function ConsultarPrecio() {
 		setOpen(!open);
 	};
 
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.keyCode === 120){ 
+            handleClickOpen();
+        } 
+    };
 
     return (
         <>
@@ -33,11 +39,18 @@ export default function ConsultarPrecio() {
                         <img 
                             src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/precios.svg' 
                             alt="icono ventas" 
-                            style={{width: 40}}
+                            style={{width: 38}}
                         />
                     </Box>
                     <Box>
-                        Consultar Precio
+                        <Typography variant="body2" >
+                            <b>Consultar Precio</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F9</b>
+                        </Typography>
                     </Box>
                 </Box>
             </Button>

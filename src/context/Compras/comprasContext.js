@@ -8,8 +8,9 @@ export const ComprasProvider = ({ children }) => {
   const [datosProducto, setDatosProducto] = useState({
     producto: {},
     costo: 0,
-    cantidad: 0,
+    cantidad: 1,
     cantidad_regalo: 0,
+    unidad_regalo: '',
     cantidad_total: 0,
     descuento_porcentaje: 0,
     descuento_precio: 0,
