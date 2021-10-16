@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState, forwardRef } from "react";
+import React, { Fragment, useContext, useState, forwardRef, useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
@@ -46,6 +46,8 @@ import { InfoOutlined } from "@material-ui/icons";
 import DescuentosInputs from "./Descuentos";
 import DatosProveedorAlmacen from "./DatosProveedorAlmacen";
 import { initial_state_datosProducto } from "../initial_states";
+import MostrarPrecios from "./mostrar_precios";
+import { useDebounce } from "use-debounce/lib";
 
 export default function DatosProducto() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -95,6 +97,21 @@ export default function DatosProducto() {
     setPresentacionesEliminadas,
   } = useContext(RegProductoContext);
 
+  const [costo, setCosto] = useState(datosProducto.costo);
+  const [cantidad, setCantidad] = useState(datosProducto.cantidad);
+  const [cargando, setCargando] = useState(false);
+
+  const [COSTO] = useDebounce(costo, 500);
+  const [CANTIDAD] = useDebounce(cantidad, 500);
+
+  useEffect(() => {
+    obtenerCosto(COSTO);
+  }, [COSTO]);
+
+  useEffect(() => {
+    obtenerCantidad(CANTIDAD);
+  }, [CANTIDAD]);
+
   /* Queries */
   const [getProductos, { loading, data, error, refetch }] = useLazyQuery(
     OBTENER_PRODUCTOS,
@@ -128,6 +145,8 @@ export default function DatosProducto() {
     console.log(producto);
     if (!producto) {
       setDatosProducto(initial_state_datosProducto);
+      setCosto(0);
+      setCantidad(0);
       resetInitialStates();
       return;
     }
@@ -156,22 +175,23 @@ export default function DatosProducto() {
       total_con_descuento: precio_con_impuesto,
     });
     setInitialStates(producto);
+    setCosto(precio_con_impuesto);
+    setCantidad(1);
     setProductoOriginal(producto);
     setPreciosVenta(producto.precios.precios_producto);
   };
 
-  const obtenerCantidad = (e) => {
-    const { name, value } = e.target;
+  const obtenerCantidad = (value) => {
     if (!value) {
       setDatosProducto({
         ...datosProducto,
-        [name]: "",
+        cantidad: "",
       });
       return;
     }
     setDatosProducto({
       ...datosProducto,
-      [name]: parseFloat(value),
+      cantidad: parseFloat(value),
     });
   };
 
@@ -183,12 +203,12 @@ export default function DatosProducto() {
     });
   };
 
-  const obtenerCosto = (e) => {
-    const { name, value } = e.target;
+  const obtenerCosto = (value) => {
+    /* const { name, value } = e.target; */
     if (!value) {
       setDatosProducto({
         ...datosProducto,
-        [name]: "",
+        costo: "",
       });
       return;
     }
@@ -204,7 +224,7 @@ export default function DatosProducto() {
 
       setDatosProducto({
         ...datosProducto,
-        [name]: parseFloat(value),
+        costo: parseFloat(value),
         descuento_precio: parseFloat(descuento_precio),
         total_con_descuento: parseFloat(total_con_descuento),
         subtotal: parseFloat(total) - datosProducto.impuestos,
@@ -213,7 +233,7 @@ export default function DatosProducto() {
     }
     setDatosProducto({
       ...datosProducto,
-      [name]: parseFloat(value),
+      costo: parseFloat(value),
       total_con_descuento: parseFloat(total),
       subtotal: parseFloat(total) - datosProducto.impuestos,
     });
@@ -221,11 +241,13 @@ export default function DatosProducto() {
 
   const agregarCompra = async (actualizar_Precios) => {
     /* Validaciones */
+    setCargando(true);
     if (
       !datosProducto.producto.datos_generales ||
       !datosCompra.proveedor.nombre_cliente ||
       !datosCompra.almacen.nombre_almacen
     ) {
+      setCargando(false);
       return;
     }
 
@@ -279,8 +301,10 @@ export default function DatosProducto() {
           const { cantidad, cantidad_nueva } = presentacion;
           datosProducto.cantidad += cantidad + cantidad_nueva;
         });
+        if (isNaN(datosProducto.cantidad)) datosProducto.cantidad = 0;
         datosProducto.cantidad_total = datosProducto.cantidad
       }else{
+        datosProducto.cantidad = 0;
         datosProducto.cantidad_total = datosProducto.cantidad
       }
     } else {
@@ -310,7 +334,7 @@ export default function DatosProducto() {
 
     if (isEditing.producto) {
       //se tiene que actualizar el producto en la fila y sumar el subtotal
-      let productosCompra_ordenados = [...productosCompra].reverse();
+      let productosCompra_ordenados = [...productosCompra];
 
       let subtotal =
         datosCompra.subtotal +
@@ -334,6 +358,11 @@ export default function DatosProducto() {
       });
       setIsEditing({});
       setEditFinish(!editFinish);
+      setProductoOriginal({ precios: initial_state_precios });
+      setDatosProducto(initial_state_datosProducto);
+      setCosto(0);
+      setCantidad(0);
+      setCargando(false);
     } else {
       // se agregar el producto normal y verificar si ya esta el producto en la lista
 
@@ -348,7 +377,7 @@ export default function DatosProducto() {
         .filter(Boolean);
 
       if (existente.length > 0) {
-        let productosCompra_ordenados = [...productosCompra].reverse();
+        let productosCompra_ordenados = [...productosCompra];
         const { index, result } = existente[0];
         productosCompra_ordenados.splice(index, 1, datosProducto);
         setProductosCompra(productosCompra_ordenados);
@@ -361,7 +390,17 @@ export default function DatosProducto() {
           total: datosCompra.total + datosProducto.total - result.total,
         });
       } else {
-        setProductosCompra([...productosCompra, datosProducto]);
+        let array_ordenado = [ ...productosCompra];
+        const { iva, ieps } = datosProducto.producto.precios.precio_de_compra;
+
+        datosProducto.iva_total = iva*datosProducto.cantidad_total
+        datosProducto.ieps_total = ieps*datosProducto.cantidad_total
+        datosProducto.subtotal = datosProducto.subtotal*datosProducto.cantidad_total
+        datosProducto.impuestos = datosProducto.impuestos*datosProducto.cantidad_total
+        datosProducto.total = datosProducto.total*datosProducto.cantidad_total
+
+        array_ordenado.splice(0,0, datosProducto)
+        setProductosCompra(array_ordenado);
         setDatosCompra({
           ...datosCompra,
           subtotal: datosCompra.subtotal + datosProducto.subtotal,
@@ -371,6 +410,9 @@ export default function DatosProducto() {
       }
       setProductoOriginal({ precios: initial_state_precios });
       setDatosProducto(initial_state_datosProducto);
+      setCosto(0);
+      setCantidad(0);
+      setCargando(false);
     }
   };
 
@@ -424,6 +466,7 @@ export default function DatosProducto() {
     setPresentaciones([]);
     setPresentacionesEliminadas([]);
   };
+  console.log(cargando);
 
   return (
     <Fragment>
@@ -545,8 +588,8 @@ export default function DatosProducto() {
               size="small"
               fullWidth
               disabled={!datosProducto.producto.datos_generales}
-              value={datosProducto.costo}
-              onChange={obtenerCosto}
+              value={costo}
+              onChange={(e) => setCosto(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">$</InputAdornment>
@@ -580,8 +623,8 @@ export default function DatosProducto() {
                   fullWidth
                   inputMode="numeric"
                   disabled={!datosProducto.producto.datos_generales}
-                  value={datosProducto.cantidad}
-                  onChange={obtenerCantidad}
+                  value={cantidad}
+                  onChange={(e) => setCantidad(e.target.value)}
                 />
               </Box>
             </Grid>
@@ -661,32 +704,7 @@ export default function DatosProducto() {
             }}
           >
             <Box m={1}>
-              <Grid container spacing={2}>
-                <Grid item>
-                  <Typography style={{ fontSize: 16 }}>Subtotal:</Typography>
-                  <Typography style={{ fontSize: 18 }}>
-                    <b>${formatoMexico(datosProducto.subtotal)}</b>
-                  </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography style={{ fontSize: 16 }}>Impuestos:</Typography>
-                  <Typography style={{ fontSize: 18 }}>
-                    <b>${formatoMexico(datosProducto.impuestos)}</b>
-                  </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography style={{ fontSize: 16 }}>Descuento:</Typography>
-                  <Typography style={{ fontSize: 18 }}>
-                    <b>{datosProducto.descuento_porcentaje}%</b>
-                  </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography style={{ fontSize: 16 }}>Total:</Typography>
-                  <Typography style={{ fontSize: 18 }}>
-                    <b>${formatoMexico(datosProducto.total_con_descuento)}</b>
-                  </Typography>
-                </Grid>
-              </Grid>
+              <MostrarPrecios />
             </Box>
             <Box display="flex">
               {datosProducto.producto.datos_generales &&
@@ -698,12 +716,12 @@ export default function DatosProducto() {
               <Box mx={1} />
               {datosProducto.costo !==
               productoOriginal.precios.precio_de_compra.precio_con_impuesto ? (
-                <ModalAgregarCompra agregarCompra={agregarCompra} />
+                <ModalAgregarCompra agregarCompra={agregarCompra} cargando={cargando} />
               ) : (
                 <Button
                   variant="contained"
                   color="primary"
-                  startIcon={<Add />}
+                  startIcon={cargando ? <CircularProgress color="inherit" size={20} /> : <Add />}
                   disableElevation
                   disabled={
                     datosProducto.producto.datos_generales
@@ -724,7 +742,7 @@ export default function DatosProducto() {
                   }
                   onClick={() => agregarCompra()}
                 >
-                  Agregar a compra
+                  {isEditing.producto ? "Actualizar " :"Agregar a compra"}
                 </Button>
               )}
             </Box>
@@ -739,9 +757,9 @@ const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const ModalAgregarCompra = ({ agregarCompra }) => {
+const ModalAgregarCompra = ({ agregarCompra, cargando }) => {
   const [open, setOpen] = useState(false);
-  const { datosProducto, datosCompra } = useContext(ComprasContext);
+  const { datosProducto, datosCompra, isEditing } = useContext(ComprasContext);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -776,7 +794,7 @@ const ModalAgregarCompra = ({ agregarCompra }) => {
         }
         onClick={() => handleClickOpen()}
       >
-        Agregar a compra
+        {isEditing.producto ? "Actualizar " :"Agregar a compra"}
       </Button>
       <Dialog
         open={open}
@@ -813,6 +831,7 @@ const ModalAgregarCompra = ({ agregarCompra }) => {
             Mantener
           </Button>
           <PreciosProductos
+            cargando={cargando}
             handleClose={handleClose}
             agregarCompra={agregarCompra}
           />

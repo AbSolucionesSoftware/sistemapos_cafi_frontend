@@ -60,6 +60,8 @@ export default function RegistroInfoAdidional() {
     setUnidadVentaXDefecto,
   } = useContext(RegProductoContext);
 
+  console.log(precios);
+
   /* CHECKBOX IVA */
   const obtenerIva = (e) => {
     if (e.target.name === "iva" && !e.target.value) {
