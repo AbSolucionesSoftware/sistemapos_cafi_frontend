@@ -6,13 +6,16 @@ import { FcCurrencyExchange } from 'react-icons/fc';
 import ListaCotizacion from './ListaCotizacion';
 import { Search } from '@material-ui/icons';
 import CloseIcon from '@material-ui/icons/Close';
-
+import moment from 'moment';
+import 'moment/locale/es';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function Cotizacion() {
+    moment.locale('es');
+    const turnoEnCurso =JSON.parse(localStorage.getItem('turnoEnCurso'));
 
     const [open, setOpen] = useState(false);
 
@@ -33,7 +36,7 @@ export default function Cotizacion() {
         <>
 			<Button
                 onClick={() =>{handleClickOpen();}}
-                style={{textTransform: 'none', height: '100%', width: '70%'}}
+                style={{textTransform: 'none', height: '100%', width: '60%'}}
             >
                 <Box display="flex" flexDirection="column">
                     <Box display="flex" justifyContent="center" alignItems="center">
@@ -92,17 +95,17 @@ export default function Cotizacion() {
                                     <Box  mt={1} display="flex" textAlign="right">
                                         <Box textAlign="right">
                                             <Typography variant="caption">
-                                                31/12/2021
+                                                {moment().format('MM/DD/YYYY')}
                                             </Typography>
                                         </Box>
                                         <Box textAlign="right" ml={2}>
                                             <Typography variant="caption">
-                                                08:00 hrs.
+                                                <b>{moment().format('h:mm')} hrs.</b> 
                                             </Typography>
                                         </Box>
                                         <Box textAlign="right" ml={2}>
                                             <Typography variant="caption">
-                                                Caja 3
+                                                <b>Caja: </b>{turnoEnCurso?.numero_caja}
                                             </Typography>
                                         </Box>
                                     </Box>

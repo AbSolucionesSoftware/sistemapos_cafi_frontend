@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types';
-import { AppBar, Box, Button, Dialog, DialogContent, Grid, makeStyles, Slide, Tab, Tabs, Typography } from '@material-ui/core'
+import { AppBar, Box, Button, CircularProgress, Dialog, DialogContent, Grid, makeStyles, Slide, StepButton, Tab, Tabs, Typography } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
 
 import AbrirTurno from './AbrirTurno';
 import CerrarTurno from './CerrarTurno';
 import moment from 'moment';
 import 'moment/locale/es';
+import { VentasContext } from '../../../context/Ventas/ventasContext';
 moment.locale('es');
 
 function TabPanel(props) {
@@ -70,19 +71,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Turnos() {
+	const { abrirTurnosDialog, setAbrirTurnosDialog } = useContext(VentasContext);
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
-	console.log(moment().format('MMMM Do YYYY, h:mm:ss a'));
-
     const classes = useStyles();
     const [value, setValue] = useState(0);
-	const [open, setOpen] = useState(false);
+	const [loading, setLoading] = useState(false);
 
     const handleChange = (event, newValue) => {
 		setValue(newValue);
 	};
-    const handleClickOpen = () => { 
-		setOpen(!open);
+
+	const handleClickOpen = () => { 
+		setAbrirTurnosDialog(!abrirTurnosDialog);
 	};
 
 	window.addEventListener('keydown', Mi_función); 
@@ -92,11 +93,24 @@ export default function Turnos() {
 		} 
 	};
 
+	if (loading) 
+	return (
+		<Box
+		display="flex"
+		flexDirection="column"
+		justifyContent="center"
+		alignItems="center"
+		height="80vh"
+		>
+			<CircularProgress />
+		</Box>
+	);
+
     return (
         <>
 			<Button
                 onClick={() => handleClickOpen()}
-                style={{textTransform: 'none', height: '100%', width: '70%'}}
+                style={{textTransform: 'none', height: '100%', width: '60%'}}
             >
                 <Box display="flex" flexDirection="column" style={{height: '100%', width: '100%'}}>
                     <Box display="flex" justifyContent="center" alignItems="center">
@@ -121,7 +135,7 @@ export default function Turnos() {
 
             <Dialog
 				maxWidth='lg'
-				open={open} 
+				open={abrirTurnosDialog} 
 				onClose={handleClickOpen} 
 				TransitionComponent={Transition}
 			>
@@ -176,12 +190,12 @@ export default function Turnos() {
 				</AppBar>
 				
                 <DialogContent style={{padding: 0}}>
-					<TabPanel value={value} index={0}>
-						<CerrarTurno />
+					<TabPanel style={{padding: 0}} value={value} index={0}>
+						<CerrarTurno setLoading={setLoading} handleClickOpen={handleClickOpen} />
 					</TabPanel>
 					{sesion?.turno_en_caja_activo === true ? null : (
 						<TabPanel value={value} index={1}>
-							<AbrirTurno handleClickOpen={handleClickOpen} />
+							<AbrirTurno setLoading={setLoading} handleClickOpen={handleClickOpen} />
 						</TabPanel>
 					)}
 				</DialogContent>

@@ -7,7 +7,11 @@ import { OBTENER_CAJAS } from '../../../gql/Cajas/cajas';
 import { REGISTRAR_TURNOS } from '../../../gql/Ventas/abrir_cerrar_turno';
 import { VentasContext } from '../../../context/Ventas/ventasContext';
 
-export default function AbrirTurno({handleClickOpen}) {
+import moment from 'moment';
+import 'moment/locale/es';
+moment.locale('es');
+
+export default function AbrirTurno({handleClickOpen, setLoading}) {
     const [ CrearRegistroDeTurno ] = useMutation(REGISTRAR_TURNOS);
     const { setAlert } = useContext(VentasContext);
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
@@ -19,7 +23,7 @@ export default function AbrirTurno({handleClickOpen}) {
     const classes = useStyles();
     let obtenerCajasSucursal = [];
 
-    const {  data } = useQuery(OBTENER_CAJAS,{
+    const { data } = useQuery(OBTENER_CAJAS,{
 		variables: {
             empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id
@@ -59,6 +63,7 @@ export default function AbrirTurno({handleClickOpen}) {
     };
 
     const enviarDatos = async () => {
+        setLoading(true);
         try {
             if(!abrirTurno.turno_en_curso ||
                 !abrirTurno.caja_elegida ||
@@ -69,36 +74,36 @@ export default function AbrirTurno({handleClickOpen}) {
             }else{
                 const input = {
                     horario_en_turno: abrirTurno.turno_en_curso,
-                    concepto: "A",
+                    concepto: "ABRIR TURNO",
                     numero_caja: numeroCaja.toString(),
-                    comentarios: "A",
+                    comentarios: abrirTurno.comentarios,
                     id_caja: abrirTurno.caja_elegida,
                     empresa: sesion.empresa._id,
                     sucursal: sesion.sucursal._id,
                     usuario_en_turno: sesion._id,
                     hora_entrada: {
-                        hora: "A",
-                        minutos: "A",
-                        segundos: "A"
+                        hora: moment().format('hh'),
+                        minutos: moment().format('mm'),
+                        segundos: moment().format('ss')
                     },
                     hora_salida: {
-                        hora: "A",
-                        minutos: "A",
-                        segundos: "A"
+                        hora: "",
+                        minutos: "",
+                        segundos: ""
                     },
                     fecha_entrada:{
-                        year: "A",
-                        mes: "A",
-                        dia: "A",
-                        no_semana_year: "A",
-                        no_dia_year: "A"
+                        year: moment().format('YYYY'),
+                        mes: moment().format('DD'),
+                        dia: moment().format('MM'),
+                        no_semana_year: moment().week().toString(),
+                        no_dia_year: moment().dayOfYear().toString()
                     },
                     fecha_salida:{
-                        year: "A",
-                        mes: "A",
-                        dia: "A",
-                        no_semana_year: "A",
-                        no_dia_year: "A"
+                        year: "",
+                        mes: "",
+                        dia: "",
+                        no_semana_year: "",
+                        no_dia_year: ""
                     },
                     montos_en_caja: {
                         monto_efectivo: parseFloat(abrirTurno.monto_abrir),
@@ -124,13 +129,17 @@ export default function AbrirTurno({handleClickOpen}) {
                     status: "success",
                     open: true,
                 });
+                setLoading(false);
+                handleClickOpen();
             }
         } catch (error) {
+            setLoading(false);
             setAlert({
                 message: `Error: ${error.message}`,
                 status: "error",
                 open: true,
             });
+            handleClickOpen();
         }
     };
 
@@ -200,7 +209,11 @@ export default function AbrirTurno({handleClickOpen}) {
                                     {
                                         obtenerCajasSucursal.map((caja) =>{
                                             return(
-                                                <MenuItem key={caja.numero_caja} value={caja._id} onClick={() => setNumeroCaja(caja.numero_caja)} >Caja {caja.numero_caja}</MenuItem>
+                                                caja.activa === true ? null :(
+                                                    <MenuItem key={caja.numero_caja} value={caja._id} onClick={() => setNumeroCaja(caja.numero_caja)}>
+                                                        Caja {caja.numero_caja}
+                                                    </MenuItem>
+                                                )
                                             );
                                         })
                                     }
@@ -215,6 +228,23 @@ export default function AbrirTurno({handleClickOpen}) {
                                     size="small"
                                     name="monto_abrir"
                                     type="number"
+                                    onChange={obtenerTurno}
+                                    id="form-producto-codigo-barras"
+                                    variant="outlined"
+                                />
+                            </Box>
+                        </Box>
+                    </div>
+                    <div className={classes.formInputFlex}>
+                        <Box width="100%">
+                            <Typography> Comentarios:</Typography>
+                            <Box display="flex">
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    name="comentarios"
+                                    multiline
+                                    rows={5}
                                     onChange={obtenerTurno}
                                     id="form-producto-codigo-barras"
                                     variant="outlined"
