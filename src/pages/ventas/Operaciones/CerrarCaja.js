@@ -3,6 +3,8 @@ import useStyles from '../styles';
 
 import { Box, Button, Dialog, DialogActions, DialogContent,  FormControl, Grid, MenuItem, Select, Slide, TextField, Typography } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
+import moment from 'moment';
+import 'moment/locale/es';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -16,6 +18,10 @@ export default function CerrarCaja() {
 		setOpen(!open);
 	};
 
+    const turnoEnCurso =JSON.parse(localStorage.getItem('turnoEnCurso'));
+    moment.locale('es');
+
+
     window.addEventListener('keydown', Mi_función); 
     function Mi_función(e){
         if(e.altKey && e.keyCode === 79){ 
@@ -27,7 +33,7 @@ export default function CerrarCaja() {
         <>
             <Button
                 onClick={() =>{handleClickOpen();}}
-                style={{textTransform: 'none', height: '100%', width: '70%'}}
+                style={{textTransform: 'none', height: '100%', width: '60%'}}
             >
                 <Box display="flex" flexDirection="column">
                     <Box display="flex" justifyContent="center" alignItems="center">
@@ -39,7 +45,7 @@ export default function CerrarCaja() {
                     </Box>
                     <Box>
                         <Typography variant="body2" >
-                            <b>Corte Caja</b>
+                            <b>Pre corte caja</b>
                         </Typography>
                     </Box>
                     <Box>
@@ -69,23 +75,23 @@ export default function CerrarCaja() {
                                 <Box ml={2}>
                                     <Box textAlign="left">
                                         <Typography variant="h6">
-                                            Corte de Caja
+                                            Pre corte Caja
                                         </Typography>
                                     </Box>
                                     <Box display="flex">
                                         <Box textAlign="right">
                                             <Typography variant="caption">
-                                                31/12/2021
+                                                {moment().format('MM/DD/YYYY')}
                                             </Typography>
                                         </Box>
                                         <Box textAlign="right" ml={2}>
                                             <Typography variant="caption">
-                                                08:00 hrs.
+                                                <b>{moment().format('h:mm')} hrs.</b>
                                             </Typography>
                                         </Box>
                                         <Box textAlign="right" ml={2}>
                                             <Typography variant="caption">
-                                                Caja 3
+                                                <b>Caja: </b>{turnoEnCurso?.numero_caja}
                                             </Typography>
                                         </Box>
                                     </Box>

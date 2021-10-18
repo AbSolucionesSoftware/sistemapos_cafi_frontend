@@ -35,6 +35,7 @@ export const VentasProvider = ({ children }) => {
     const [ update, setUpdate ] = useState(false);
     const [ error, setError ] = useState(false);
     const [ alert, setAlert ] = useState({ message: "", status: "", open: false });
+    const [abrirTurnosDialog, setAbrirTurnosDialog] = useState(false);
 
 	return (
 		<VentasContext.Provider value={
@@ -50,7 +51,9 @@ export const VentasProvider = ({ children }) => {
                 productosVentas,
                 setProductosVentas,
                 datosVentas,
-                setDatosVentas
+                setDatosVentas,
+                abrirTurnosDialog, 
+                setAbrirTurnosDialog
             }
         }>
 			{children}

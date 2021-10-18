@@ -50,10 +50,9 @@ const useStyles = makeStyles((theme) => ({
 		fontSize: 110,
         color: theme.palette.info.main
 	},
-
 	avatar: {
-		width: theme.spacing(4),
-		height: theme.spacing(4),
+		width: theme.spacing(3),
+		height: theme.spacing(3),
 		marginRight: theme.spacing(1)
 	},
 	borderBoton:{
