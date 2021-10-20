@@ -142,7 +142,6 @@ export default function DatosProducto() {
   if (data) obtenerProductos = data.obtenerProductos;
 
   const obtenerSelectsProducto = (producto) => {
-    console.log(producto);
     if (!producto) {
       setDatosProducto(initial_state_datosProducto);
       setCosto(0);
@@ -466,7 +465,6 @@ export default function DatosProducto() {
     setPresentaciones([]);
     setPresentacionesEliminadas([]);
   };
-  console.log(cargando);
 
   return (
     <Fragment>

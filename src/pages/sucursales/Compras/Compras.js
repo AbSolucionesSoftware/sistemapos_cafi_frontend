@@ -9,24 +9,24 @@ import ComprasEnEspera from './ComprasEnEspera/ComprasEnEspera';
 export default function Compras() {
 
 	return (
-		<Container>
+		<Container maxWidth="md">
 			<Grid container spacing={3} justify="center">
-				<Grid item lg={4}>
+				<Grid item md={4}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<AbrirCompra />
 					</Box>
 				</Grid>
-				<Grid item lg={4}>
+				<Grid item md={4}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<ComprasRealizadas />
 					</Box>
 				</Grid>
-				{/* <Grid item lg={2}>
+				{/* <Grid item md={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<CargaMasiva />
 					</Box>
 				</Grid> */}
-                <Grid item lg={4}>
+                <Grid item md={4}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<ComprasEnEspera />
 					</Box>

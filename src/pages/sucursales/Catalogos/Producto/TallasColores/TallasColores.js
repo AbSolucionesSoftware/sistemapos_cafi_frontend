@@ -105,20 +105,11 @@ export default function ColoresTallas({
 
   return (
     <div>
-      <Grid container spacing={2}>
-        <Grid item md={9}>
-          <TablaPresentaciones
-            from={from}
-            withoutPrice={withoutPrice}
-            datos={datos}
-            setOnUpdate={setOnUpdate}
-            onUpdate={onUpdate}
-          />
-        </Grid>
-        <Grid item md={3}>
+      <Box>
+        <Grid container spacing={2}>
           {!datos.medidas_registradas ? (
-            <Fragment>
-              <Box width="100%" mb={2}>
+            <Grid item md={4}>
+              <Box width="100%">
                 <Typography>Almacen</Typography>
                 <Box display="flex">
                   <FormControl
@@ -170,71 +161,88 @@ export default function ColoresTallas({
                   )}
                 </Box>
               </Box>
-              <Divider />
-            </Fragment>
+            </Grid>
           ) : null}
-          <Box
-            width="100%"
-            my={2}
-            style={
-              onUpdate.length > 0
-                ? {
-                    pointerEvents: "none",
-                    opacity: 0.4,
-                  }
-                : null
-            }
-          >
-            <Typography>
-              {datos_generales.tipo_producto === "ROPA" ? "Talla" : "Número"}
-            </Typography>
-            <CrearTallasProducto
-              setMedidasSeleccionadas={setMedidasSeleccionadas}
-              refetch={refetch}
-            />
-            <Grid container>
-              {medidas.map((talla, index) => (
-                <RenderTallas
-                  key={index}
-                  talla={talla}
-                  coloresSeleccionados={coloresSeleccionados}
-                  medidasSeleccionadas={medidasSeleccionadas}
+
+          <Grid item md={!datos.medidas_registradas ? 4 : 6}>
+            <Box
+              width="100%"
+              style={
+                onUpdate.length > 0
+                  ? {
+                      pointerEvents: "none",
+                      opacity: 0.4,
+                    }
+                  : null
+              }
+            >
+              <Box display="flex" alignItems="center">
+                <Typography>
+                  {datos_generales.tipo_producto === "ROPA"
+                    ? "Talla"
+                    : "Número"}
+                </Typography>
+                <Box mx={1} />
+                <CrearTallasProducto
                   setMedidasSeleccionadas={setMedidasSeleccionadas}
-                  datos={datos}
+                  refetch={refetch}
                 />
-              ))}
-            </Grid>
-          </Box>
-          <Divider />
-          <Box
-            width="100%"
-            mt={1}
-            style={
-              onUpdate.length > 0
-                ? {
-                    pointerEvents: "none",
-                    opacity: 0.4,
-                  }
-                : null
-            }
-          >
-            <Typography>Color</Typography>
-            <CrearColorProducto refetch={refetch} />
-            <Grid container>
-              {colores.map((color, index) => (
-                <Colores
-                  key={index}
-                  color={color}
-                  coloresSeleccionados={coloresSeleccionados}
-                  setColoresSeleccionados={setColoresSeleccionados}
-                  medidasSeleccionadas={medidasSeleccionadas}
-                  datos={datos}
-                />
-              ))}
-            </Grid>
-          </Box>
+              </Box>
+              <Grid container>
+                {medidas.map((talla, index) => (
+                  <RenderTallas
+                    key={index}
+                    talla={talla}
+                    coloresSeleccionados={coloresSeleccionados}
+                    medidasSeleccionadas={medidasSeleccionadas}
+                    setMedidasSeleccionadas={setMedidasSeleccionadas}
+                    datos={datos}
+                  />
+                ))}
+              </Grid>
+            </Box>
+          </Grid>
+          <Grid item md={!datos.medidas_registradas ? 4 : 6}>
+            <Box
+              width="100%"
+              style={
+                onUpdate.length > 0
+                  ? {
+                      pointerEvents: "none",
+                      opacity: 0.4,
+                    }
+                  : null
+              }
+            >
+              <Box display="flex" alignItems="center">
+                <Typography>Color</Typography>
+                <Box mx={1} />
+                <CrearColorProducto refetch={refetch} />
+              </Box>
+              <Grid container>
+                {colores.map((color, index) => (
+                  <Colores
+                    key={index}
+                    color={color}
+                    coloresSeleccionados={coloresSeleccionados}
+                    setColoresSeleccionados={setColoresSeleccionados}
+                    medidasSeleccionadas={medidasSeleccionadas}
+                    datos={datos}
+                  />
+                ))}
+              </Grid>
+            </Box>
+          </Grid>
         </Grid>
-      </Grid>
+        <Box mt={3} />
+        <TablaPresentaciones
+          from={from}
+          withoutPrice={withoutPrice}
+          datos={datos}
+          setOnUpdate={setOnUpdate}
+          onUpdate={onUpdate}
+        />
+      </Box>
     </div>
   );
 }

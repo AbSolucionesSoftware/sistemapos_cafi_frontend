@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
       "-webkit-appearance": "none",
       margin: 0,
     },
-  },
+  }
 }));
 
 export default function RegistroInfoAdidional() {
@@ -56,12 +56,11 @@ export default function RegistroInfoAdidional() {
     setPrecios,
     validacion,
     preciosP,
+    unidadesVenta,
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
   } = useContext(RegProductoContext);
-
-  console.log(precios);
-
+  
   /* CHECKBOX IVA */
   const obtenerIva = (e) => {
     if (e.target.name === "iva" && !e.target.value) {

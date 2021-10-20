@@ -245,13 +245,17 @@ export default function CrearProducto({
     }
     setValidacion(validate);
 
-    if (unidadesVenta.length === 0) {
-      unidadesVenta.push(unidadVentaXDefecto);
+    console.log(unidadesVenta);
+
+    let copy_unidadesVenta = [ ...unidadesVenta];
+
+    if (copy_unidadesVenta.length === 0) {
+      copy_unidadesVenta.push(unidadVentaXDefecto);
     } else {
-      const unidadxdefecto = unidadesVenta.filter(
-        (unidades) => unidades.default
+      const unidadxdefecto = copy_unidadesVenta.filter(
+        (unidades) => unidades.default === true
       );
-      if (unidadxdefecto.length === 0) unidadesVenta.push(unidadVentaXDefecto);
+      if (unidadxdefecto.length > 0) copy_unidadesVenta.splice(0,1,unidadVentaXDefecto);
     }
 
     precios.precios_producto = preciosP;
@@ -272,7 +276,7 @@ export default function CrearProducto({
       almacen_inicial,
       centro_de_costos,
       unidades_de_venta: await validateJsonEdit(
-        unidadesVenta,
+        copy_unidadesVenta,
         "unidades_de_venta"
       ),
       presentaciones,
@@ -356,7 +360,7 @@ export default function CrearProducto({
   const setInitialStates = (producto) => {
     /* const producto = cleanTypenames(product); */
     const { precios_producto, ...new_precios } = producto.precios;
-    const unidadxdefecto = producto.unidades_de_venta.filter(
+    let unidadxdefecto = producto.unidades_de_venta.filter(
       (res) => res.default
     );
 
