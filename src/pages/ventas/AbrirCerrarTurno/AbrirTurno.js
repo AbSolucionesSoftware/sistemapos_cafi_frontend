@@ -16,9 +16,9 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
     const { setAlert } = useContext(VentasContext);
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const turnoEnCurso = JSON.parse(localStorage.getItem('cajaEnCurso'));
-    const [ error, setError] = useState(false);
+    const [ error, setError ] = useState(false);
     const [ abrirTurno, setAbrirTurno ] = useState([]);
-    const [numeroCaja, setNumeroCaja] = useState('');
+    const [ numeroCaja, setNumeroCaja ] = useState('');
     
     const classes = useStyles();
     let obtenerCajasSucursal = [];
@@ -54,14 +54,6 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
         _id: sesion._id,
     };
 
-
-    let sesionTurno = {
-        turno_en_caja_activo: true, 
-        numero_caja: numeroCaja,
-        id_caja: abrirTurno.caja_elegida,
-        usuario_en_turno: sesion._id
-    };
-
     const enviarDatos = async () => {
         setLoading(true);
         try {
@@ -70,6 +62,12 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                 !abrirTurno.monto_abrir
             ){
                 setError(true);
+                setLoading(false);
+                setAlert({
+                    message: `Por favor complete los datos obligatorios`,
+                    status: "error",
+                    open: true,
+                });
                 return;
             }else{
                 const input = {
@@ -84,27 +82,32 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                     hora_entrada: {
                         hora: moment().format('hh'),
                         minutos: moment().format('mm'),
-                        segundos: moment().format('ss')
+                        segundos: moment().format('ss'),
+                        completa: moment().format('HH:mm:ss')
                     },
                     hora_salida: {
                         hora: "",
                         minutos: "",
-                        segundos: ""
+                        segundos: "",
+                        completa: ""
                     },
                     fecha_entrada:{
                         year: moment().format('YYYY'),
                         mes: moment().format('DD'),
                         dia: moment().format('MM'),
                         no_semana_year: moment().week().toString(),
-                        no_dia_year: moment().dayOfYear().toString()
+                        no_dia_year: moment().dayOfYear().toString(),
+                        completa: moment().format("YYYY-MM-DD")
                     },
                     fecha_salida:{
                         year: "",
                         mes: "",
                         dia: "",
                         no_semana_year: "",
-                        no_dia_year: ""
+                        no_dia_year: "",
+                        completa: ""
                     },
+                    fecha_movimiento: moment().format("YYYY-MM-DD"),
                     montos_en_caja: {
                         monto_efectivo: parseFloat(abrirTurno.monto_abrir),
                         monto_tarjeta_debito: 0,
@@ -116,14 +119,14 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                         monto_vales_despensa: 0,
                     }
                 };
-                localStorage.setItem('turnoEnCurso', JSON.stringify(sesionTurno));
-                localStorage.setItem('sesionCafi', JSON.stringify(arraySesion));
-                await CrearRegistroDeTurno({
+                const variableTurnoAbierto = await CrearRegistroDeTurno({
                     variables: {
                         activa: true,
                         input
                     }
                 });
+                localStorage.setItem('turnoEnCurso', JSON.stringify(variableTurnoAbierto.data.crearRegistroDeTurno));
+                localStorage.setItem('sesionCafi', JSON.stringify(arraySesion));
                 setAlert({
                     message: `Turno abierto con exito`,
                     status: "success",
@@ -227,6 +230,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                                     fullWidth
                                     size="small"
                                     name="monto_abrir"
+                                    inputProps={{min: 0}}
                                     type="number"
                                     onChange={obtenerTurno}
                                     id="form-producto-codigo-barras"

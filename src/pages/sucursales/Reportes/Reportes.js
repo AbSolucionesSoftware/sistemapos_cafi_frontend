@@ -6,6 +6,7 @@ import ReportesVentas from './Ventas/ReportesVentas';
 import ReportesAlmacen from './Almacenes/ReportesAlmacen';
 import ReportesCortes from './Cortes/ReportesCortes';
 import ReportesTesoreria from './Tesoreria/ReportesTesoreria';
+import ReportesTurnosUsuarios from './TurnosUsuarios/ReportesTurnosUsuarios';
 
 
 export default function Reportes() {
@@ -41,6 +42,7 @@ export default function Reportes() {
 				<Grid item lg={2} >
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<ReportesTesoreria />
+						<ReportesTurnosUsuarios />
 					</Box>
 				</Grid>
 			</Grid>
