@@ -34,6 +34,7 @@ import {
   OBTENER_CLIENTES,
   ACTUALIZAR_CLIENTE,
 } from "../../../../gql/Catalogos/clientes";
+import { VentasContext } from "../../../../context/Ventas/ventasContext";
 
 // const columns = [
 // 	{ id: 1, label: 'No. Cliente', minWidth: 100 },
@@ -78,6 +79,8 @@ export default function ListaClientes({
   const { loading, data, error, refetch } = useQuery(OBTENER_CLIENTES, {
     variables: { tipo, filtro: value },
   });
+  const { setUpdateClientVenta, updateClientVenta } =
+  useContext(VentasContext);
 
   useEffect(() => {
     refetch();
@@ -129,6 +132,7 @@ export default function ListaClientes({
             venta_actual.productos?.length > 0 ? venta_actual.productos : [],
         })
       );
+      setUpdateClientVenta(!updateClientVenta);
       setShowModal(!showModal);
       handleClickOpen();
     } catch (error) {
@@ -219,11 +223,11 @@ export default function ListaClientes({
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => handleClickSelectClient()} color="primary">
-            Aceptar
-          </Button>
           <Button onClick={() => setShowModal(false)} color="primary" autoFocus>
             cancelar
+          </Button>
+          <Button onClick={() => handleClickSelectClient()} color="primary">
+            Aceptar
           </Button>
         </DialogActions>
       </Dialog>

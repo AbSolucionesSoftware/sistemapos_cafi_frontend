@@ -14,7 +14,7 @@ import EliminarProductoVenta from "./EliminarProductoVenta";
 import { useDebounce } from "use-debounce";
 import {
   findProductArray,
-  calculatePrices,
+  calculatePrices
 } from "../../config/reuserFunctions";
 
 const useStyles = makeStyles({
@@ -26,6 +26,21 @@ const useStyles = makeStyles({
   },
 });
 
+const TwoClickInRowTableBuy = (e) => {
+  try {
+    let timer;
+    clearTimeout(timer);
+    if (e.detail === 2) {
+        // timer = setTimeout(e.props.onClick, 200)
+        console.log("doble click");
+    }/*  else if (e.detail === 2) {
+       
+    } */
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export default function TablaVentas({
   newProductoVentas,
   setNewProductoVentas,
@@ -36,7 +51,7 @@ export default function TablaVentas({
 
   useEffect(() => {
     const venta = JSON.parse(localStorage.getItem("DatosVentas"));
-    setDatosTabla(venta === null ? [] : venta.produtos);
+    setDatosTabla(venta === null ? [] : venta.productos);
   }, [newProductoVentas]);
 
   return (
@@ -66,6 +81,7 @@ export default function TablaVentas({
                   setNewProductoVentas={setNewProductoVentas}
                   newProductoVentas={newProductoVentas}
                   setDatosVentasActual={setDatosVentasActual}
+                  TwoClickInRowTableBuy={TwoClickInRowTableBuy}
                 />
               );
             })}
@@ -81,6 +97,7 @@ const RenderTableRows = ({
   setNewProductoVentas,
   newProductoVentas,
   setDatosVentasActual,
+  TwoClickInRowTableBuy
 }) => {
   // const [actuallyProduct, setActuallyProduct] = useState(producto);
   const [newCantidadProduct, setNewCantidadProduct] = useState(
@@ -104,7 +121,7 @@ const RenderTableRows = ({
       // console.log(new_cant);
       //Obtener el array de ventas
       let venta = JSON.parse(localStorage.getItem("DatosVentas"));
-      let productosVentas = venta === null ? [] : venta.produtos;
+      let productosVentas = venta === null ? [] : venta.productos;
       const venta_actual = venta === null ? [] : venta;
       let productosVentasTemp = productosVentas;
       let venta_existente =
@@ -192,7 +209,7 @@ const RenderTableRows = ({
             venta_actual.venta_cliente === true
               ? venta_actual.venta_cliente
               : false,
-          produtos: productosVentasTemp,
+          productos: productosVentasTemp,
         })
       );
       setDatosVentasActual(CalculosData);
@@ -201,9 +218,11 @@ const RenderTableRows = ({
     }
   };
 
+  
+
   return (
     <Fragment>
-      <TableRow hover>
+      <TableRow hover onClick={TwoClickInRowTableBuy}> 
         <TableCell>
           <Input
             inputRef={textfield}

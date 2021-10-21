@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { OBTENER_CLIENTES_VENTAS } from "../../gql/Ventas/ventas_generales";
 import { useQuery } from "@apollo/client";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { TextField } from "@material-ui/core";
-import { BlurLinear } from "@material-ui/icons";
+// import { BlurLinear } from "@material-ui/icons";
+import { VentasContext } from "../../context/Ventas/ventasContext";
 
 export default function ClientesVentas() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
-  console.log(sesion);
+  const { setUpdateClientVenta, updateClientVenta } =
+  useContext(VentasContext);
 
   const [selectClient, setSelectClient] = useState({});
 
@@ -17,7 +19,7 @@ export default function ClientesVentas() {
       empresa: sesion.empresa._id,
       sucursal: sesion.sucursal._id,
     },
-    // fetchPolicy: "network-only"
+    fetchPolicy: "network-only"
   });
 
   // console.log("data",data);
@@ -26,13 +28,13 @@ export default function ClientesVentas() {
   console.log(obtenerClientes);
 
   useEffect(() => {
+    console.log("llego al final");
     const venta = JSON.parse(localStorage.getItem("DatosVentas"));
     if (venta !== null) {
       setSelectClient(venta.cliente);
     }
-  }, []);
-
-  
+    refetch();
+  }, [updateClientVenta]);
 
   const ChangeClientAutocomplate = (value) => {
     try {
@@ -42,15 +44,12 @@ export default function ClientesVentas() {
       let VentasProducto = venta === null ? [] : venta;
       VentasProducto.cliente = value;
       VentasProducto.venta_cliente = true;
-      localStorage.setItem(
-        "DatosVentas",
-        JSON.stringify(VentasProducto)
-      );
+      localStorage.setItem("DatosVentas", JSON.stringify(VentasProducto));
+      updateClientVenta(!setUpdateClientVenta);
     } catch (error) {
       console.log(error);
     }
   };
-
 
   if (loading) return null;
 

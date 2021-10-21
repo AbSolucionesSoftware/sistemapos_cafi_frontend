@@ -28,7 +28,7 @@ export default function EliminarProducto({
 	const eliminarProductoBD = async () => {
 		console.log(producto);
 		let venta = JSON.parse(localStorage.getItem("DatosVentas"));
-		let productosVentas = venta === null ? [] : venta.produtos;
+		let productosVentas = venta === null ? [] : venta.productos;
 		const venta_actual = venta === null ? [] : venta;
 		let productosVentasTemp = productosVentas;
 		let venta_existente =
@@ -80,7 +80,7 @@ export default function EliminarProducto({
 				...CalculosData,
 				cliente: venta_actual.venta_cliente === true ? venta_actual.cliente : {},
 				venta_cliente: venta_actual.venta_cliente === true ? venta_actual.venta_cliente : false,
-				produtos: productosVentasTemp,
+				productos: productosVentasTemp,
 			  }));
 			  setDatosVentasActual(CalculosData);
 			  //Recargar la tabla de los productos
