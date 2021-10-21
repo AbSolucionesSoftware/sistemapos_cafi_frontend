@@ -85,6 +85,7 @@ export const OBTENER_HISTORIAL_TURNOS = gql`
 				no_dia_year
 				completa
 			}
+			fecha_movimiento
 			montos_en_caja {
 				monto_efectivo
 				monto_tarjeta_debito
