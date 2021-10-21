@@ -97,7 +97,7 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export default function TablaPresentaciones({ producto, setOnUpdate, onUpdate, newMedidas, setNewMedidas }) {
+export default function TablaPresentaciones({ producto, setOnUpdate, onUpdate, new_medidas, setNew_medidas }) {
   const classes = useStyles();
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
@@ -142,8 +142,8 @@ const handleChangePage = (event, newPage) => {
 										index={index}
 										setOnUpdate={setOnUpdate}
 										onUpdate={onUpdate}
-										newMedidas={newMedidas}
-										setNewMedidas={setNewMedidas}
+										new_medidas={new_medidas}
+										setNew_medidas={setNew_medidas}
 									/>
 								);
 							})}
@@ -165,7 +165,7 @@ const handleChangePage = (event, newPage) => {
 }
 
 
-const RenderPresentacionesRows = ({ medida, index, setOnUpdate, onUpdate,newMedidas, setNewMedidas, idProducto}) => {
+const RenderPresentacionesRows = ({ medida, index, setOnUpdate, onUpdate,new_medidas, setNew_medidas, idProducto}) => {
 
 	const [ disabledInput, setDisabledInput ] = useState(true);
 	const classes = useStyles();
@@ -175,20 +175,22 @@ const RenderPresentacionesRows = ({ medida, index, setOnUpdate, onUpdate,newMedi
 	const {productosTras} = useContext(TraspasosAlmacenContext);
 	//const [productInTras, setProductInTras] =  useState(null);
 	let productInTras = null;
-	//let productInTras = productosTras.find(element => element.productSelected._id === idProducto);
+	//let productInTras = productosTras.find(element => element.product_selecteded._id === idProducto);
 	const productosTrasContext = productosTras;
  
 	useEffect(() => {
 		productosTras.forEach(producto => {
-			//console.log(producto)
-		if(producto.productSelected._id === idProducto){
-			let newMedidasCopia = [];
+			console.log("SELECTMEDIDAS",producto)
+		if(producto.product_selected._id === idProducto){
+			let new_medidasCopia = [];
 			let element = null;
-			for (const med in producto.newMedidas) {
-				if (Object.hasOwnProperty.call(producto.newMedidas, med)) {
-					element = producto.newMedidas[med];
+		
+			for (const med in producto.new_medidas) {
+			
+				if (Object.hasOwnProperty.call(producto.new_medidas, med)) {
+					element = producto.new_medidas[med];
 					
-					newMedidasCopia.push(element)
+					new_medidasCopia.push(element)
 					
 					if(medida._id === element.medida._id){
 						console.log(element.nuevaCantidad)	
@@ -199,7 +201,7 @@ const RenderPresentacionesRows = ({ medida, index, setOnUpdate, onUpdate,newMedi
 			
 			}
 			
-			setNewMedidas(producto.newMedidas);
+			setNew_medidas(producto.new_medidas);
 			return;
 		}
 		
@@ -220,10 +222,11 @@ const RenderPresentacionesRows = ({ medida, index, setOnUpdate, onUpdate,newMedi
 	const obtenerDatos = (value) => {
 		let cant = (cantidadAnt > 0) ? parseInt(value - cantidadAnt)   : value;
 		console.log("CANT",cantidad)
+
 		if(cant <= medida.cantidad){
 			setCantidad(value);
 		
-			setNewMedidas({...newMedidas, [index] : {medida, nuevaCantidad: parseInt(cant)}})
+			setNew_medidas({...new_medidas, [index] : {medida:medida, nuevaCantidad: parseInt(cant)}})
 		}
 		/* 
 		const unidades = {cantidad:} 

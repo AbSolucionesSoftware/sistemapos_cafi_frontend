@@ -87,7 +87,7 @@ function EnhancedTableHead(props) {
 
 EnhancedTableHead.propTypes = {
   classes: PropTypes.object.isRequired,
-  // productSelected: PropTypes.object.isRequired,
+  // product_selected: PropTypes.object.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
@@ -131,55 +131,66 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const DialogTallas = (props) => {
 
-  const [newMedidas, setNewMedidas] = useState([]);
+  const [new_medidas, setNew_medidas] = useState([]);
   const {setProductosTras, productosTras} = useContext(TraspasosAlmacenContext);
   
   useEffect(() => {
-    console.log(newMedidas)
-  }, [newMedidas])
+    console.log(new_medidas)
+  }, [new_medidas])
   
   const setProd = () =>{
     
-    let cantidadTotal = 0;
-
+    let cantidad_total = 0;
+    console.log(props.product_selected)
+    let prodSelect = {
+      _id: props.product_selected._id,
+      datos_generales:  props.product_selected.datos_generales,
+      medidas_producto: props.product_selected.medidas_producto,
+      precios: props.product_selected.precios,
+      empresa:props.product_selected.empresa,
+      sucursal:props.product_selected.sucursal,
+      usuario: props.product_selected.usuario
+    } 
     let existe = false;
     let copyProductosTras = productosTras;
-
-    //Count all newMedidas from array
-    for (let newMed in newMedidas){ 
-      cantidadTotal += newMedidas[newMed].nuevaCantidad;
+    let medidasTo =[];
+    //Count all new_medidas from array
+    for (let newMed in new_medidas){ 
+      cantidad_total += new_medidas[newMed].nuevaCantidad;
+      medidasTo.push(new_medidas[newMed])
     } 
+
 
     if(copyProductosTras.length){//Check have data context
       copyProductosTras.forEach(element => {
-        if(element.productSelected._id === props.productSelected._id){
+        if(element.product_selected._id === props.product_selected._id){
           existe = true;
           ///VA A SUMAR EN LAS MEDIDAS LAS CANTIDADES
-          element.newMedidas = newMedidas;
-          element.cantidadTotal = cantidadTotal;
+          element.new_medidas = medidasTo;
+          element.cantidad_total = cantidad_total;
           return;
         }
       });
-
+   
       if(!existe){
-         //console.log("NO está este producto", element.productSelected._id , props.productSelected._id );
-        let obj= {productSelected:props.productSelected, newMedidas, cantidadTotal:parseInt(cantidadTotal)}
+         //console.log("NO está este producto", element.product_selected._id , props.product_selected._id );
+        let obj= {product_selected:prodSelect, new_medidas:medidasTo, cantidad_total:parseInt(cantidad_total)}
         copyProductosTras.push(obj)
      
       } 
     }else{ 
-        let obj= {productSelected:props.productSelected, newMedidas, cantidadTotal:parseInt(cantidadTotal)}
+        let obj= {product_selected:prodSelect, new_medidas:medidasTo, cantidad_total:parseInt(cantidad_total)}
         copyProductosTras.push(obj)
     }
     setProductosTras([...copyProductosTras])  
-    setNewMedidas([]);
+    setNew_medidas([]);
     close();
   }
 
   const close= () => {
     try {
       props.setOpenTallas();
-      props.setProductSelected(undefined)
+      props.setproduct_selected(undefined)
     } catch (error) {
       
     }
@@ -195,7 +206,7 @@ const DialogTallas = (props) => {
             </Button>
       </Box>
 
-      <TableSelectMedidas producto = {props.productSelected} newMedidas={newMedidas} setNewMedidas={setNewMedidas} />
+      <TableSelectMedidas producto = {props.product_selected} new_medidas={new_medidas} setNew_medidas={setNew_medidas} />
       <Box display="flex" justifyContent="flex-end" m={1} mr={5}>
         <Button  variant="contained" color="primary"style={{width:"20%"}} onClick={setProd} >
           AGREGAR 
@@ -214,7 +225,7 @@ const EnhancedTableToolbar = (props) => {
   const [cantidadTo, setCantidadTo] = useState('');
   const [error, setError] = useState({error:false, mensaje:''});
   const [ openTallas, setOpenTallas] = useState(false);
-  const { productSelected, setProductSelected, tipoPieza, update } = props;
+  const { product_selected, setproduct_selected, tipoPieza, update } = props;
    const {
         setProductosTras,
         productosTras, 
@@ -223,37 +234,45 @@ const EnhancedTableToolbar = (props) => {
 
 
 
-const setValueToTrans =(cantidadTotal) =>{
+const setValueToTrans =(cantidad_total) =>{
   try {
     setError({error:false, mensaje:''})
-    if(cantidadTotal === 0 || cantidadTotal === '') return;
-   let element = productosTras.find(element => element.productSelected._id === productSelected._id);
+    if(cantidad_total === 0 || cantidad_total === '') return;
+   let element = productosTras.find(element => element.product_selected._id === product_selected._id);
    
     if(element) {
  
-      let totalCantExistMasNuevaCantidad = cantidadTotal + element.cantidadTotal
+      let totalCantExistMasNuevaCantidad = cantidad_total + element.cantidad_total
       //SUMA CANTIDAD TOTAL
       
       if(props.add){
-        if(totalCantExistMasNuevaCantidad <=  productSelected.inventario_general[0].cantidad_existente){
+        if(totalCantExistMasNuevaCantidad <=  product_selected.inventario_general[0].cantidad_existente){
       
-            element.cantidadTotal += cantidadTotal;
+            element.cantidad_total += cantidad_total;
           
         }else{
           setError({error:true, mensaje:'La cantidad ingresada sobrepasa la cantidad existente del producto seleccionado.'})
         }
       }else{
-        element.cantidadTotal = cantidadTotal;
+        element.cantidad_total = cantidad_total;
       }  
       return;
 
 
     }else{
-       
+      console.log(props.product_selected.precios)
+       let prodSelect = {
+      _id: props.product_selected._id,
+      datos_generales:  props.product_selected.datos_generales,
+      precios: props.product_selected.precios,
+      empresa:props.product_selected.empresa,
+      sucursal:props.product_selected.sucursal,
+      usuario: props.product_selected.usuario
+    } 
     //VERIFICA CANTIDAD MAXIMA
-      if(cantidadTotal <=  productSelected.inventario_general[0].cantidad_existente){
+      if(cantidad_total <=  product_selected.inventario_general[0].cantidad_existente){
       
-        let obj= {productSelected:props.productSelected, newMedidas:[], cantidadTotal};
+        let obj= {product_selected:prodSelect, new_medidas:[], cantidad_total};
         setProductosTras([...productosTras, obj]);
       }
       else{
@@ -276,9 +295,9 @@ const deleteItem =() =>{
       prodSet = productosTras;
     }
     
-    setProductSelected(undefined)
-    console.log(prodSet.filter(item => item.productSelected._id !== productSelected._id))
-    setProductosTras(prodSet.filter(item => item.productSelected._id !== productSelected._id));
+    setproduct_selected(undefined)
+    console.log(prodSet.filter(item => item.product_selected._id !== product_selected._id))
+    setProductosTras(prodSet.filter(item => item.product_selected._id !== product_selected._id));
   } catch (error) {
 
   }
@@ -286,7 +305,7 @@ const deleteItem =() =>{
 
 const editItem =() =>{
   try {
-    if(productSelected.datos_generales.tipo_producto !== 'OTROS') {
+    if(product_selected.datos_generales.tipo_producto !== 'OTROS') {
       setOpenTallas(true);
     }
    
@@ -305,13 +324,13 @@ useEffect(() => {
     
   }
   
-}, [productSelected])   
+}, [product_selected])   
   
           
 function onlyNumbers(value){
     const onlyNums = value.toString().replace(/[^0-9]/g, '');
     const intValue = parseInt(onlyNums);
-    if(intValue <= productSelected.inventario_general[0].cantidad_existente){
+    if(intValue <= product_selected.inventario_general[0].cantidad_existente){
       setCantidadTo(intValue);
     }
 }
@@ -319,15 +338,15 @@ function onlyNumbers(value){
   return (
     <Toolbar
       className={clsx(classes.root, {
-        [classes.highlight]: productSelected !== undefined,
+        [classes.highlight]: product_selected !== undefined,
       })}
     
     >
     <Grid container>
-      {productSelected !== undefined  ? (
+      {product_selected !== undefined  ? (
         <Grid  container>
         <Typography className={classes.title} color="inherit" variant="subtitle1"  >
-          {productSelected.datos_generales.nombre_comercial} 
+          {product_selected.datos_generales.nombre_comercial} 
         </Typography>
         </Grid>
       ) : (
@@ -336,7 +355,7 @@ function onlyNumbers(value){
         </Typography>
       )}
 
-      {(productSelected !== undefined )? (
+      {(product_selected !== undefined )? (
         <Grid ml={5}> 
         {
             (error.error) ?
@@ -345,21 +364,21 @@ function onlyNumbers(value){
             <div/>
         } 
             {(props.add ) ?
-                (productSelected.datos_generales.tipo_producto === 'OTROS') ? 
+                (product_selected.datos_generales.tipo_producto === 'OTROS') ? 
 
                 <Box flexDirection={'row'}>
                   <Grid container  justifyContent="space-evenly" style={{marginLeft:'2%'}}>
                    
                       <Box flexDirection={'row'} display="flex" m={1}>
-                        <Checkbox checked={tipoPieza.piezas}   color="primary" onChange={() => update()} disabled={props.productSelected.inventario_general[0].cantidad_existente_maxima === null} />
+                        <Checkbox checked={tipoPieza.piezas}   color="primary" onChange={() => update()} disabled={props.product_selected.inventario_general[0].cantidad_existente_maxima === null} />
                         <Typography color="primary" style={{marginTop:15}}>Piezas</Typography> 
                       </Box>
                     
                     {
-                      (props.productSelected.inventario_general[0].cantidad_existente_maxima !== null) ?
+                      (props.product_selected.inventario_general[0].cantidad_existente_maxima !== null) ?
                         <Box flexDirection={'row'} display="flex"m={1}>
                           <Checkbox checked={tipoPieza.cajas} color="primary" onChange={() => update()}/>
-                          <Typography color="primary" style={{marginTop:15}}>{"" + props.productSelected.inventario_general[0].unidad_maxima} </Typography> 
+                          <Typography color="primary" style={{marginTop:15}}>{"" + props.product_selected.inventario_general[0].unidad_maxima} </Typography> 
                         </Box>
                       :
                         <div/>
@@ -393,10 +412,10 @@ function onlyNumbers(value){
                   :
                      
                    
-                  <DialogTallas openTallas={openTallas} setOpenTallas={setOpenTallas} setProductSelected={setProductSelected}  productSelected={productSelected} /> 
+                  <DialogTallas openTallas={openTallas} setOpenTallas={setOpenTallas} setproduct_selected={setproduct_selected}  product_selected={product_selected} /> 
                 :
                 <Grid width={'100%'} container>
-                  { (productSelected.datos_generales.tipo_producto === 'OTROS') ? 
+                  { (product_selected.datos_generales.tipo_producto === 'OTROS') ? 
                     <div>
                      
                       <Typography color="primary">Cantidad</Typography>
@@ -420,10 +439,10 @@ function onlyNumbers(value){
                       </Tooltip>
                     </div>
                     :
-                     <DialogTallas openTallas={openTallas} setOpenTallas={setOpenTallas} setProductSelected={setProductSelected}  productSelected={productSelected} /> 
+                     <DialogTallas openTallas={openTallas} setOpenTallas={setOpenTallas} setproduct_selected={setproduct_selected}  product_selected={product_selected} /> 
                   }
                   <Box mt={3}>
-                      { (productSelected.datos_generales.tipo_producto !== 'OTROS') ? 
+                      { (product_selected.datos_generales.tipo_producto !== 'OTROS') ? 
                      <Tooltip title="Editar">
                         <IconButton aria-label="delete" onClick={() => editItem()} >
                             <EditIcon />
@@ -502,6 +521,7 @@ export default function EnhancedTable(props) {
   const {
         productosTras, productosTo
     } = useContext(TraspasosAlmacenContext);
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -524,6 +544,8 @@ export default function EnhancedTable(props) {
         console.log("CANT",props.add , elemento, cant)     
         setCant(props.add ? 0 : cant)
       }
+
+      console.log("handleClick",elemento)
     if(selected!== undefined){
       const selectedIndex = selected._id === elemento._id;
      
@@ -579,7 +601,7 @@ export default function EnhancedTable(props) {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar productSelected={selected} setProductSelected={setSelected} title={props.title} add={props.add} productosTras ={productosTras} tipoPieza={tipoPieza} update={update} cant={cant} />
+        <EnhancedTableToolbar product_selected={selected} setproduct_selected={setSelected} title={props.title} add={props.add} productosTras ={productosTras} tipoPieza={tipoPieza} update={update} cant={cant} />
         <TableContainer>
           <Table
             className={classes.table}
@@ -589,7 +611,7 @@ export default function EnhancedTable(props) {
           >
             <EnhancedTableHead
               classes={classes}
-              productSelected={selected}
+              product_selected={selected}
               order={order}
               orderBy={orderBy}
               handleSelectAllClick={handleSelectAllClick}
@@ -600,7 +622,7 @@ export default function EnhancedTable(props) {
               {stableSort(data, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected((props.add) ? row._id: row.productSelected._id);
+                  const isItemSelected = isSelected((props.add) ? row._id: row.product_selected._id);
                   const labelId = `enhanced-table-checkbox-${index}`;
                  
                   if(props.add){
@@ -631,7 +653,7 @@ export default function EnhancedTable(props) {
                     return(
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.productSelected, row.cantidadTotal)}
+                      onClick={(event) => handleClick(event, row.product_selected, row.cantidad_total)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
@@ -640,13 +662,13 @@ export default function EnhancedTable(props) {
                       
                     >
                       <TableCell component="right" id={labelId} scope="row">
-                        {(row.productSelected.datos_generales.codigo_barras == null)? 'SIN CÓDIGO' : row.productSelected.datos_generales.codigo_barras}
+                        {(row.product_selected.datos_generales.codigo_barras == null)? 'SIN CÓDIGO' : row.product_selected.datos_generales.codigo_barras}
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row">
-                        {row.productSelected.datos_generales.nombre_comercial}
+                        {row.product_selected.datos_generales.nombre_comercial}
                       </TableCell>
-                      <TableCell align="right"> {row.productSelected.datos_generales.tipo_producto}</TableCell>
-                      <TableCell align="right"> {row.cantidadTotal}</TableCell> 
+                      <TableCell align="right"> {row.product_selected.datos_generales.tipo_producto}</TableCell>
+                      <TableCell align="right"> {row.cantidad_total}</TableCell> 
                      
                     </TableRow>
                     )

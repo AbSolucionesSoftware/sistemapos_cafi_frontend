@@ -5,8 +5,10 @@ import { AppBar, Toolbar, Typography, IconButton, Slide,
          Stepper, Step, StepLabel, DialogTitle } from '@material-ui/core';
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { makeStyles } from '@material-ui/core/styles';
-import { Search } from '@material-ui/icons';
-import {  Add } from '@material-ui/icons';
+import moment from "moment";
+import ErrorPage from '../../../../components/ErrorPage';
+import SnackBarMessages from '../../../../components/SnackBarMessages';
+
 import { FcAdvance } from 'react-icons/fc';
 import almacenIcon from '../../../../icons/almacen.svg';
 import TableSelectProducts from '../../../../components/Traspasos/TableSelectProducts';
@@ -154,8 +156,10 @@ export default function Traspasos() {
         productos,
         setProductosTras,
         setProductosTo,
-        productosTo
+        productosTo,
+        productosTras
     } = useContext(TraspasosAlmacenContext);
+    const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 	const [ open, setOpen ] = useState(false);
     const [ loading, setLoading ] = useState(false);
     const [ busqueda, setBusqueda ] = useState('');
@@ -181,9 +185,10 @@ export default function Traspasos() {
   
     const [activeStep, setActiveStep] = useState(0);
     const [skipped, setSkipped] = useState(new Set());
+    const [openEnd, setOpenEnd] = useState(false);
+ 
+    const [ CrearTraspaso ] = useMutation(REALIZAR_TRASPASO); 
 
- 
- 
     let conceptos= [];
     let categorias = [];
    
@@ -302,6 +307,10 @@ export default function Traspasos() {
     };
 
     const handleNext = () => {
+        /* if(conceptoTraspaso === null ) {setAlert({message:'No es posible continuar sin seleccionar un concepto.', status: 'error', open: true });  return}
+        if( isAlmacenOrigen && almacenOrigen === null)  {setAlert({message:'No es posible continuar sin seleccionar un almacén origen.', status: 'error', open: true });  return }   
+        if(isAlmacenDestino && almacenDestino === null) { setAlert({message:'No es posible continuar sin seleccionar un almacén destino.', status: 'error', open: true }); return}    */
+        
         let newSkipped = skipped;
         if (isStepSkipped(activeStep)) {
         newSkipped = new Set(newSkipped.values());
@@ -310,6 +319,7 @@ export default function Traspasos() {
 
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
         setSkipped(newSkipped);
+        
     };
 
     const handleBack = () => {
@@ -368,6 +378,61 @@ export default function Traspasos() {
         }
     };
 
+
+    const handleModal = () => {
+        setOpenEnd(!openEnd)
+    }
+
+    const traspasar = async () => {
+        try {
+            if(productosTras.length){
+                console.log(productosTras)
+                let productTrasTo = productosTras;
+                
+                await CrearTraspaso({
+                variables: {
+                    input: {
+                        concepto_traspaso: {
+                            _id: conceptoTraspaso._id, 
+                            nombre_concepto: conceptoTraspaso.nombre_concepto,
+                            destino: conceptoTraspaso.destino,
+                            origen: conceptoTraspaso.origen,
+                            editable: conceptoTraspaso.editable,
+                        },
+                        almacen_origen: (almacenOrigen !== null) ? almacenOrigen._id : '',
+                        almacen_destino: (almacenDestino !== null) ? almacenDestino._id : '',
+                        productos: productosTras,
+                        datos_transporte :{
+                            transporte: transporte,
+                            placas: placas,
+                            nombre_encargado: nombreQuien
+                        },
+                        sucursalOrigen: sesion.sucursal._id,
+                        sucursalDestino: sesion.sucursal._id,
+                        fecha_registro: moment().locale("es-mx").format()
+                    },
+                    usuario: sesion._id,
+                    empresa: sesion.empresa._id
+                }
+            }) 
+           
+            }else{
+                
+                setAlert({message:'No es posible realizar un traspaso sin agregar productos.', status: 'error', open: true })
+            }
+           
+            setOpenEnd(false)
+        } catch (error) {
+              setOpenEnd(false)
+            console.log(error)
+           if(error.networkError.result){
+				console.log(error.networkError.result.errors);
+			  }else if(error.graphQLErrors){
+				console.log(error.graphQLErrors.message);
+			  }
+           
+        }
+    }
     return (
         <Box sx={{ width: '100%' }}>
             <Button fullWidth onClick={handleClickOpen}>
@@ -398,7 +463,8 @@ export default function Traspasos() {
 					
 			</Button>
 			<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-				<AppBar className={classes.appBar}>
+				
+                <AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
                                 Traspasos
@@ -794,35 +860,31 @@ export default function Traspasos() {
                                 </Button>
                                 )} */}
                             
-                                <Button onClick={handleNext}>
-                                    Terminar
+                                <Button onClick={() => (activeStep < steps.length -1) ? handleNext() : handleModal()}>
+                                    {activeStep < steps.length -1   ? 'Siguiente' : 'Terminar'}
                                 </Button>
                         
                         </Box>
                   
                 </Box>
+                <Dialog open={openEnd} onClose={handleModal}>
+                    <DialogTitle>{'¿Está seguro de realizar este traspaso?'}</DialogTitle>
+                    <DialogActions>
+                        <Button onClick={() => handleModal()} color="primary">
+                            Cancelar
+                        </Button>
+                        <Button color="secondary" autoFocus variant="contained" onClick={() => traspasar()}>
+                            Traspasar
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+               
+	        <SnackBarMessages alert={alert} setAlert={setAlert} />    
 			</Dialog>
+
         </Box>
     )
 }
 
-const ModalTerminar = ({ handleModal, open, hacerTraspaso }) => {
-	return (
-		<div>
-			<Button size="small" color="secondary" startIcon={<Add />} onClick={() => handleModal()}>
-				terminar
-			</Button>
-			<Dialog open={open} onClose={handleModal}>
-				<DialogTitle>{'¿Está seguro de realizar este traspaso?'}</DialogTitle>
-				<DialogActions>
-					<Button onClick={() => handleModal()} color="primary">
-						Cancelar
-					</Button>
-					<Button color="secondary" autoFocus variant="contained" onClick={() => hacerTraspaso()}>
-						Terminar
-					</Button>
-				</DialogActions>
-			</Dialog>
-		</div>
-	);
-};
+
+		
