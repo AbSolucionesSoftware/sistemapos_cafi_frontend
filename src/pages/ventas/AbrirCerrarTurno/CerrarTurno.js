@@ -42,12 +42,14 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
         hora_entrada: {
             hora:  "",
             minutos: "",
-            segundos:  ""
+            segundos:  "",
+            completa: ""
         },
         hora_salida: {
             hora: moment().format('hh'),
             minutos: moment().format('mm'),
-            segundos: moment().format('ss')
+            segundos: moment().format('ss'),
+            completa: moment().format('HH:mm:ss')
         },
         fecha_entrada:{
             year: "",
@@ -55,14 +57,17 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
             dia: "",
             no_semana_year: "",
             no_dia_year: "",
+            completa: ""
         },
         fecha_salida:{
             year: moment().format('YYYY'),
             mes: moment().format('DD'),
             dia: moment().format('MM'),
             no_semana_year: moment().week().toString(),
-            no_dia_year: moment().dayOfYear().toString()
+            no_dia_year: moment().dayOfYear().toString(),
+            completa: moment().format("YYYY-MM-DD")
         },
+        fecha_movimiento: moment().format("YYYY-MM-DD"),
         montos_en_caja: {
             monto_efectivo: parseFloat(montoTurno.monto_efectivo ? montoTurno.monto_efectivo : 0),
             monto_tarjeta_debito: parseFloat(montoTurno.monto_tarjeta_debito ? montoTurno.monto_tarjeta_debito : 0),
@@ -96,6 +101,12 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
         try {
             if(!cerrarTurno.horario_en_turno){
                 setError(true);
+                setLoading(false);
+                setAlert({
+                    message: `Por favor elija que turno esta cerrando`,
+                    status: "error",
+                    open: true,
+                });
                 return;
             }else{
                 await CrearRegistroDeTurno({
@@ -105,7 +116,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                     }
                 });
                 setAlert({
-                    message: `Turno abierto con exito`,
+                    message: `Turno cerrado con exito`,
                     status: "success",
                     open: true,
                 });
@@ -140,6 +151,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                     <Box display="flex">
                         <TextField
                             name="monto_efectivo"
+                            inputProps={{min: 0}}
                             type="number"
                             defaultValue={0}
                             color="primary"
@@ -153,6 +165,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                     <Box display="flex">
                         <TextField
                             name="monto_tarjeta_debito"
+                            inputProps={{min: 0}}
                             type="number"
                             defaultValue={0}
                             color="primary"
@@ -168,6 +181,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                     <Box display="flex">
                         <TextField
                             name="monto_tarjeta_credito"
+                            inputProps={{min: 0}}
                             type="number" 
                             defaultValue={0}
                             color="primary"
@@ -181,6 +195,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                     <Box display="flex">
                         <TextField
                             name="monto_creditos"
+                            inputProps={{min: 0}}
                             type="number" 
                             defaultValue={0}
                             color="primary"
@@ -196,6 +211,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                     <Box display="flex">
                         <TextField
                             name="monto_puntos"
+                            inputProps={{min: 0}}
                             type="number" 
                             defaultValue={0}
                             color="primary"
@@ -209,6 +225,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                     <Box display="flex">
                         <TextField
                             name="monto_transferencia"
+                            inputProps={{min: 0}}
                             type="number" 
                             defaultValue={0}
                             color="primary"
@@ -224,6 +241,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                     <Box display="flex">
                         <TextField
                             name="monto_cheques"
+                            inputProps={{min: 0}}
                             type="number" 
                             defaultValue={0}
                             color="primary"
@@ -237,6 +255,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                     <Box display="flex">
                         <TextField
                             name="monto_vales_despensa"
+                            inputProps={{min: 0}}
                             type="number" 
                             defaultValue={0}
                             color="primary"
@@ -280,8 +299,8 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                                 <MenuItem value="">
                                     <em>Selecciona uno</em>
                                 </MenuItem>
-                                <MenuItem value="Vespertino">Vespertino</MenuItem>
-                                <MenuItem value="Matutino">Matutino</MenuItem>
+                                <MenuItem value="VESPERTINO">Vespertino</MenuItem>
+                                <MenuItem value="MATUTINO">Matutino</MenuItem>
                             </Select>
                         </FormControl>
                     </Box>
