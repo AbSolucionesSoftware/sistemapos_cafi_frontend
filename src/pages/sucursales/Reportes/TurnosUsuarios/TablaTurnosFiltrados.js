@@ -7,7 +7,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { Box, Dialog, DialogContent, Typography} from '@material-ui/core';
+import { Box, Grid, Dialog, DialogContent, Typography} from '@material-ui/core';
 
 const columns = [
 	{ id: 'fecha', label: 'Fecha', minWidth: 100 },
@@ -95,16 +95,71 @@ function RowsRender({turno}) {
 			</TableRow>
 
 			<Dialog
-				maxWidth='md'
+				maxWidth='lg'
 				open={open} 
 				onClose={handleClickOpen} 
 			>
 				<DialogContent>
-					<Box textAlign="center" p={2}>
-						<Typography variant="h6">
-							Hola mundo de los turnos
-						</Typography>
-					</Box>
+					<Grid container>
+						<Grid lg={12} xs={12}>
+							<Box textAlign="center" p={2}>
+								<Typography variant="h6">
+									Información del turno
+								</Typography>
+							</Box>
+						</Grid>
+						<Grid lg={6} xs={12}>
+							<Box p={1} >
+								<Typography>
+									<b>Usuario</b>: Luis Manuel
+								</Typography>
+							</Box>
+							<Box p={1} >
+								<Typography>
+									<b>Numero de caja</b>: {turno.numero_caja}
+								</Typography>
+							</Box>
+							<Box p={1} >
+								<Typography>
+									<b>Moviento de turno</b>: {turno.concepto}
+								</Typography>
+							</Box>
+							<Box p={1} >
+								<Typography>
+									<b>Horario de turno</b>: {turno.horario_en_turno}
+								</Typography>
+							</Box>
+							<Box p={1} >
+								<Typography>
+									{turno.concepto === "ABRIR TURNO" ? (
+										<>
+											<b>Hora de Entrada de turno: </b>{ turno.horario_en_turno}
+										</>
+										): (
+										<>
+											<b>Hora de Salida de turno: </b>{ turno.horario_en_turno}
+										</>
+									)}
+								</Typography>
+							</Box>
+							<Box p={1} >
+								<Typography>
+									<b>Comentarios</b>: {turno.comentarios}
+								</Typography>
+							</Box>
+							<Box p={1} >
+								<Typography>
+									<b>Fecha de movimiento</b>: {turno.fecha_movimiento}
+								</Typography>
+								{console.log(turno.fecha_movimiento)}
+							</Box>
+						</Grid>
+						<Grid lg={6} xs={12}>
+							<Box>
+
+							</Box>
+						</Grid>
+					</Grid>
 				</DialogContent>
 			</Dialog>
 		</>
