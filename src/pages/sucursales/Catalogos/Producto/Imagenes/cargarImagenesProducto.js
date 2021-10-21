@@ -31,12 +31,13 @@ export default function CargarImagenesProducto() {
 	const { imagenes, setImagenes, setOnPreview, onPreview } = useContext(RegProductoContext);
 
 	const cargarImagen = (e) => {
+		const { files } = e.target;
 		if (e.target.files.length < 1) return
 		setImagenes([
 			...imagenes,
-			e.target.files[0]
+			files[0]
 		]);
-		setOnPreview({image: URL.createObjectURL(e.target.files[0])})
+		setOnPreview({image: URL.createObjectURL(files[0])})
 	};
 
 	const render_imagenes = imagenes.map((res, index) => <RenderImagenes key={index} index={index} imagen={res} />);

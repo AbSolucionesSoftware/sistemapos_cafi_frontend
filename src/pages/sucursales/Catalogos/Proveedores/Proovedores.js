@@ -57,7 +57,7 @@ export default function Proveedores() {
 	return (
 		<div>
 			<ClienteProvider>
-				<Button fullwidth onClick={handleClickOpen}>
+				<Button fullWidth onClick={handleClickOpen}>
 					<Box display="flex" flexDirection="column">
 						<Box display="flex" justifyContent="center" alignItems="center">
 							<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/distribution.svg' alt="icono numero calzado" className={classes.icon} />
@@ -82,7 +82,7 @@ export default function Proveedores() {
 						<Box mr={5} minwidth="70%">
 							<Paper className={classes.root}>
 								<InputBase
-									fullwidth
+									fullWidth
 									placeholder="Buscar proveedor..."
 									onChange={(e) => setValues(e.target.value)}
 									onKeyPress={pressEnter}

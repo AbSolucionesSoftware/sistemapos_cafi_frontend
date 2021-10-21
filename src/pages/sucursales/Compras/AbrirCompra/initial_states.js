@@ -6,6 +6,7 @@ export const initial_state_datosProducto = {
   costo: 0,
   cantidad: 0,
   cantidad_regalo: 0,
+  unidad_regalo: '',
   cantidad_total: 0,
   descuento_porcentaje: 0,
   descuento_precio: 0,
