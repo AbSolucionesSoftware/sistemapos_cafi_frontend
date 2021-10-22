@@ -142,6 +142,7 @@ const ModalCompra = ({ open, handleClose }) => {
      /*  const clean_data = cleanTypenames(datosCompra); */
 
      /* console.log(datosCompra); */
+     /* console.log(datosCompra); */
 
       if (compra_en_espera) {
         const result = await crearCompraEnEspera({
