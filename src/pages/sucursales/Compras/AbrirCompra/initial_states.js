@@ -10,6 +10,8 @@ export const initial_state_datosProducto = {
   cantidad_total: 0,
   descuento_porcentaje: 0,
   descuento_precio: 0,
+  iva_total: 0,
+  ieps_total: 0,
   subtotal: 0,
   impuestos: 0,
   total: 0,

@@ -14,7 +14,7 @@ import { Close, LocalAtm, SquareFoot } from "@material-ui/icons";
 import { ComprasContext } from "../../../../../context/Compras/comprasContext";
 import Done from "@material-ui/icons/Done";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
-import { DialogTitle } from "@material-ui/core";
+import { CircularProgress, DialogTitle } from "@material-ui/core";
 import TablaPresentaciones from "../../../Catalogos/Producto/TallasColores/TablaPresentaciones";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -51,7 +51,7 @@ function a11yProps(index) {
   };
 }
 
-export default function AlertDialogSlide({ agregarCompra, handleClose }) {
+export default function AlertDialogSlide({ agregarCompra, handleClose, cargando }) {
   const [open, setOpen] = useState(false);
   const [onUpdate, setOnUpdate] = useState([]);
   const { datosProducto, productoOriginal /* setDatosProducto */ } = useContext(
@@ -196,7 +196,7 @@ export default function AlertDialogSlide({ agregarCompra, handleClose }) {
               handleClose();
               toggleDrawer();
             }}
-            startIcon={<Done />}
+            startIcon={cargando ? <CircularProgress color="inherit" size={20} /> : <Done />}
             color="primary"
             variant="contained"
             disabled={!precios.precio_de_compra.precio_con_impuesto}

@@ -122,7 +122,11 @@ const RenderPrecios = ({ data, tipo, index }) => {
   }, [datosProducto.costo, datosProducto.cantidad]);
 
   useEffect(() => {
-    calculosCompra();
+    if(data.numero_precio === 1){
+      calculosCompra();
+    }else if(data.numero_precio > 1 && precio_neto){
+      calculosCompra();
+    }
   }, [calculosCompra]);
 
   switch (tipo) {
