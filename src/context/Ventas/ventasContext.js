@@ -32,6 +32,8 @@ export const VentasProvider = ({ children }) => {
         }
     );
 
+    const [productoCambioPrecio, setProductoCambioPrecio] = useState({});
+
     const [ update, setUpdate ] = useState(false);
     const [ error, setError ] = useState(false);
     const [ alert, setAlert ] = useState({ message: "", status: "", open: false });
@@ -56,7 +58,9 @@ export const VentasProvider = ({ children }) => {
                 abrirTurnosDialog, 
                 setAbrirTurnosDialog,
                 setUpdateClientVenta,
-                updateClientVenta
+                updateClientVenta,
+                setProductoCambioPrecio,
+                productoCambioPrecio
             }
         }>
 			{children}
