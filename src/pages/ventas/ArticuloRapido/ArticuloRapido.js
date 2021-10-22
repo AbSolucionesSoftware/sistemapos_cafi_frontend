@@ -327,7 +327,7 @@ export default function ArticuloRapido() {
       <Button
         onClick={() =>{handleClickOpen()}}
         value="articulo-rapido"
-        style={{textTransform: 'none', height: '100%', width: '70%'}}
+        style={{textTransform: 'none', height: '100%', width: '60%'}}
       >
         <Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">

@@ -65,14 +65,6 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
 	});
 
 	const obtenerCampos = (e) => {
-		const name = e.target.name;
-		if (name === 'numero_cliente' || name === 'clave_cliente') {
-			setCliente({
-				...cliente,
-				[e.target.name]: parseInt(e.target.value)
-			});
-			return;
-		}
 		setCliente({
 			...cliente,
 			[e.target.name]: e.target.value

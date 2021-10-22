@@ -1,196 +1,282 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import useStyles from '../styles';
 
-import { Box,  DialogActions,  DialogContent,  FormControl, Grid, MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TextField, Typography } from '@material-ui/core'
-import { TableRow } from '@material-ui/core';
+import { Box,  Button,  DialogActions,  DialogContent,  FormControl, Grid, MenuItem, Select, TextField, Typography } from '@material-ui/core'
+import { REGISTRAR_TURNOS } from '../../../gql/Ventas/abrir_cerrar_turno';
 
-export default function AbrirTurno(handleClickOpen) {
+import moment from 'moment';
+import 'moment/locale/es';
+import { VentasContext } from '../../../context/Ventas/ventasContext';
+import { useMutation } from '@apollo/client';
+moment.locale('es');
+
+export default function AbrirTurno({handleClickOpen, setLoading}) {
+    const [ CrearRegistroDeTurno ] = useMutation(REGISTRAR_TURNOS);
+    const { setAlert } = useContext(VentasContext);
+    const [ error, setError] = useState(false);
+
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+    const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
 
     const classes = useStyles();
     const [ montoTurno, setMontoTurno ] = useState([]);
-    const [ datosCerrarTurno, setDatosCerrarTurno ] = useState([]);
+    const [ cerrarTurno, setCerrarTurno ] = useState([]);
 
     const obtenerCamposMontos = (e) => { 
         setMontoTurno({...montoTurno, [e.target.name]: e.target.value})
     };
 
     const obtenerCampos = (e) => { 
-        setDatosCerrarTurno({...datosCerrarTurno, [e.target.name]: e.target.value})
+        setCerrarTurno({...cerrarTurno, [e.target.name]: e.target.value})
+    };
+    
+    const input = {
+        horario_en_turno: cerrarTurno.horario_en_turno,
+        concepto: "CERRAR TURNO",
+        numero_caja: turnoEnCurso ? turnoEnCurso.numero_caja.toString() : "",
+        comentarios: cerrarTurno.comentarios,
+        id_caja: turnoEnCurso ? turnoEnCurso.id_caja : "",
+        empresa: sesion.empresa._id,
+        sucursal: sesion.sucursal._id,
+        usuario_en_turno: sesion._id,
+        hora_entrada: {
+            hora:  "",
+            minutos: "",
+            segundos:  "",
+            completa: ""
+        },
+        hora_salida: {
+            hora: moment().format('hh'),
+            minutos: moment().format('mm'),
+            segundos: moment().format('ss'),
+            completa: moment().format('HH:mm:ss')
+        },
+        fecha_entrada:{
+            year: "",
+            mes: "",
+            dia: "",
+            no_semana_year: "",
+            no_dia_year: "",
+            completa: ""
+        },
+        fecha_salida:{
+            year: moment().format('YYYY'),
+            mes: moment().format('DD'),
+            dia: moment().format('MM'),
+            no_semana_year: moment().week().toString(),
+            no_dia_year: moment().dayOfYear().toString(),
+            completa: moment().format("YYYY-MM-DD")
+        },
+        fecha_movimiento: moment().format("YYYY-MM-DD"),
+        montos_en_caja: {
+            monto_efectivo: parseFloat(montoTurno.monto_efectivo ? montoTurno.monto_efectivo : 0),
+            monto_tarjeta_debito: parseFloat(montoTurno.monto_tarjeta_debito ? montoTurno.monto_tarjeta_debito : 0),
+            monto_tarjeta_credito: parseFloat(montoTurno.monto_tarjeta_credito ? montoTurno.monto_tarjeta_credito : 0),
+            monto_creditos: parseFloat(montoTurno.monto_creditos ? montoTurno.monto_creditos : 0 ),
+            monto_puntos: parseFloat(montoTurno.monto_puntos ? montoTurno.monto_puntos : 0),
+            monto_transferencia: parseFloat(montoTurno.monto_transferencia ? montoTurno.monto_transferencia : 0),
+            monto_cheques: parseFloat(montoTurno.monto_cheques ? montoTurno.monto_cheques : 0),
+            monto_vales_despensa: parseFloat(montoTurno.monto_vales_despensa ? montoTurno.monto_vales_despensa : 0)
+        }
     };
 
-    const input = {
-        montos_en_caja: montoTurno,
-        horario_en_turno: "",
-        concepto: "",
-        numero_caja: "",
-        id_caja: "",
-        comentarios: "",
-        usuario_en_truno: "",
-        empresa: "",
-        sucursal: ""
+    let arraySesion = {
+        accesos: sesion.accesos,
+        email: sesion.email,
+        empresa: sesion.empresa,
+        estado: sesion.estado,
+        exp: sesion.exp,
+        iat: sesion.iat,
+        imagen: sesion.imagen,
+        nombre: sesion.nombre,
+        numero_usuario: sesion.numero_usuario,
+        sucursal: sesion.sucursal,
+        telefono: sesion.telefono,
+        turno_en_caja_activo: false, 
+        _id: sesion._id,
     };
+
+    const enviarDatos  = async () => {
+        setLoading(true);
+        try {
+            if(!cerrarTurno.horario_en_turno){
+                setError(true);
+                setLoading(false);
+                setAlert({
+                    message: `Por favor elija que turno esta cerrando`,
+                    status: "error",
+                    open: true,
+                });
+                return;
+            }else{
+                await CrearRegistroDeTurno({
+                    variables: {
+                        activa: false,
+                        input
+                    }
+                });
+                setAlert({
+                    message: `Turno cerrado con exito`,
+                    status: "success",
+                    open: true,
+                });
+                localStorage.setItem('sesionCafi', JSON.stringify(arraySesion));
+                localStorage.removeItem('turnoEnCurso');
+                setLoading(false);
+                handleClickOpen();
+            }
+        } catch (error) {
+            setAlert({
+                message: `Error: ${error.message}`,
+                status: "error",
+                open: true,
+            });
+            setLoading(false);
+            handleClickOpen();
+        }
+    };
+
 
     return (
         <>
             <DialogContent style={{padding: 0}}>
-                <TableContainer style={{padding: 0}}>
-                    <Table stickyHeader size="small" aria-label="a dense table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell align="center">
-                                    Concepto 
-                                </TableCell>
-                                <TableCell align="center">
-                                    Total 
-                                </TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody >
-                            <TableRow hover>
-                                <TableCell align="center" > 
-                                    Efectivo
-                                </TableCell>
-                                <TableCell  align="center" > 
-                                    <TextField
-                                        name="monto_efectivo"
-                                        type="number"
-                                        defaultValue={0}
-                                        color="primary"
-                                        style={{width: "70%"}}
-                                        onChange={obtenerCamposMontos}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                            <TableRow hover>
-                                <TableCell  align="center" > 
-                                    Tarjeta Debito
-                                </TableCell>
-                                <TableCell  align="center" > 
-                                    <TextField
-                                        name="monto_tarjeta_debito"
-                                        type="number"
-                                        defaultValue={0}
-                                        color="primary"
-                                        style={{width: "70%"}}
-                                        onChange={obtenerCamposMontos}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                            <TableRow hover>
-                                <TableCell  align="center" > 
-                                    Tarjeta Credito
-                                </TableCell>
-                                <TableCell  align="center" > 
-                                    <TextField
-                                        name="monto_tarjeta_credito"
-                                        type="number" 
-                                        defaultValue={0}
-                                        color="primary"
-                                        style={{width: "70%"}}
-                                        onChange={obtenerCamposMontos}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                            <TableRow hover>
-                                <TableCell  align="center" > 
-                                    Creditos
-                                </TableCell>
-                                <TableCell  align="center" > 
-                                    <TextField
-                                        name="monto_creditos"
-                                        type="number" 
-                                        defaultValue={0}
-                                        color="primary"
-                                        style={{width: "70%"}}
-                                        onChange={obtenerCamposMontos}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                            <TableRow hover>
-                                <TableCell  align="center" > 
-                                    Puntos
-                                </TableCell>
-                                <TableCell  align="center" > 
-                                    <TextField
-                                        name="monto_puntos"
-                                        type="number" 
-                                        defaultValue={0}
-                                        color="primary"
-                                        style={{width: "70%"}}
-                                        onChange={obtenerCamposMontos}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                            <TableRow hover>
-                                <TableCell  align="center" > 
-                                    Transferencias
-                                </TableCell>
-                                <TableCell  align="center" > 
-                                    <TextField
-                                        name="monto_transferencia"
-                                        type="number" 
-                                        defaultValue={0}
-                                        color="primary"
-                                        style={{width: "70%"}}
-                                        onChange={obtenerCamposMontos}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                            <TableRow hover>
-                                <TableCell  align="center" > 
-                                    Cheques
-                                </TableCell>
-                                <TableCell  align="center" > 
-                                    <TextField
-                                        name="monto_cheques"
-                                        type="number" 
-                                        defaultValue={0}
-                                        color="primary"
-                                        style={{width: "70%"}}
-                                        onChange={obtenerCamposMontos}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                            <TableRow hover>
-                                <TableCell  align="center" > 
-                                    Vales Despensa
-                                </TableCell>
-                                <TableCell  align="center" > 
-                                    <TextField
-                                        name="monto_vales_despensa"
-                                        type="number" 
-                                        defaultValue={0}
-                                        color="primary"
-                                        style={{width: "70%"}}
-                                        onChange={obtenerCamposMontos}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+            <div className={classes.formInputFlex}>
+                <Box width="100%" textAlign="center">
+                    <Typography variant="h6">Montos a Depositar</Typography>
+                </Box>
+            </div>
+            <div className={classes.formInputFlex}>
+                <Box width="100%">
+                    <Typography> Monto Efectivo:</Typography>
+                    <Box display="flex">
+                        <TextField
+                            name="monto_efectivo"
+                            inputProps={{min: 0}}
+                            type="number"
+                            defaultValue={0}
+                            color="primary"
+                            style={{width: "70%"}}
+                            onChange={obtenerCamposMontos}
+                        />
+                    </Box>
+                </Box>
+                <Box width="100%">
+                    <Typography> Tarjeta Debito:</Typography>
+                    <Box display="flex">
+                        <TextField
+                            name="monto_tarjeta_debito"
+                            inputProps={{min: 0}}
+                            type="number"
+                            defaultValue={0}
+                            color="primary"
+                            style={{width: "70%"}}
+                            onChange={obtenerCamposMontos}
+                        />
+                    </Box>
+                </Box>
+            </div>
+            <div className={classes.formInputFlex}>
+                <Box width="100%">
+                    <Typography> Tarjeta Credito:</Typography>
+                    <Box display="flex">
+                        <TextField
+                            name="monto_tarjeta_credito"
+                            inputProps={{min: 0}}
+                            type="number" 
+                            defaultValue={0}
+                            color="primary"
+                            style={{width: "70%"}}
+                            onChange={obtenerCamposMontos}
+                        />
+                    </Box>
+                </Box>
+                <Box width="100%">
+                    <Typography> Creditos:</Typography>
+                    <Box display="flex">
+                        <TextField
+                            name="monto_creditos"
+                            inputProps={{min: 0}}
+                            type="number" 
+                            defaultValue={0}
+                            color="primary"
+                            style={{width: "70%"}}
+                            onChange={obtenerCamposMontos}
+                        />
+                    </Box>
+                </Box>
+            </div>
+            <div className={classes.formInputFlex}>
+                <Box width="100%">
+                    <Typography>Puntos:</Typography>
+                    <Box display="flex">
+                        <TextField
+                            name="monto_puntos"
+                            inputProps={{min: 0}}
+                            type="number" 
+                            defaultValue={0}
+                            color="primary"
+                            style={{width: "70%"}}
+                            onChange={obtenerCamposMontos}
+                        />
+                    </Box>
+                </Box>
+                <Box width="100%">
+                    <Typography>Transferencias:</Typography>
+                    <Box display="flex">
+                        <TextField
+                            name="monto_transferencia"
+                            inputProps={{min: 0}}
+                            type="number" 
+                            defaultValue={0}
+                            color="primary"
+                            style={{width: "70%"}}
+                            onChange={obtenerCamposMontos}
+                        />
+                    </Box>
+                </Box>
+            </div>
+            <div className={classes.formInputFlex}>
+                <Box width="100%">
+                    <Typography>Cheques:</Typography>
+                    <Box display="flex">
+                        <TextField
+                            name="monto_cheques"
+                            inputProps={{min: 0}}
+                            type="number" 
+                            defaultValue={0}
+                            color="primary"
+                            style={{width: "70%"}}
+                            onChange={obtenerCamposMontos}
+                        />
+                    </Box>
+                </Box>
+                <Box width="100%">
+                    <Typography>Vales de despensa:</Typography>
+                    <Box display="flex">
+                        <TextField
+                            name="monto_vales_despensa"
+                            inputProps={{min: 0}}
+                            type="number" 
+                            defaultValue={0}
+                            color="primary"
+                            style={{width: "70%"}}
+                            onChange={obtenerCamposMontos}
+                        />
+                    </Box>
+                </Box>
+            </div>
                 <Grid container >
                     <Grid item lg={6}>
                         <Box mt={1} textAlign="center">
                             <Typography >
-                                <b>Monto total efectivo:</b>
-                            </Typography>
-                        </Box>
-                        <Box textAlign="center">
-                            <Typography>
-                                <b>Monto en otro tipos:</b>
+                                <b>Monto total efectivo:  </b>
                             </Typography>
                         </Box>
                     </Grid>
                     <Grid item lg={6} justify='flex-end'>
                         <Box mt={1} textAlign="center" >
                             <Typography>
-                                $2,000
-                            </Typography>
-                        </Box>
-                        <Box textAlign="center">
-                            <Typography>
-                                $5,000
+                                 ${montoTurno.monto_efectivo} Mx.
                             </Typography>
                         </Box>
                     </Grid>
@@ -198,7 +284,7 @@ export default function AbrirTurno(handleClickOpen) {
                 <div className={classes.formInputFlex}>
                     <Box width="100%">
                         <Typography>
-                            Turno:
+                            <span className="obligatorio">* </span> Turno:
                         </Typography>
                         <FormControl
                             variant="outlined"
@@ -213,8 +299,8 @@ export default function AbrirTurno(handleClickOpen) {
                                 <MenuItem value="">
                                     <em>Selecciona uno</em>
                                 </MenuItem>
-                                <MenuItem value="Vespertino">Vespertino</MenuItem>
-                                <MenuItem value="Matutino">Matutino</MenuItem>
+                                <MenuItem value="VESPERTINO">Vespertino</MenuItem>
+                                <MenuItem value="MATUTINO">Matutino</MenuItem>
                             </Select>
                         </FormControl>
                     </Box>
@@ -227,7 +313,7 @@ export default function AbrirTurno(handleClickOpen) {
                                 fullWidth
                                 multiline
                                 onChange={obtenerCampos}
-                                rows={1}
+                                rows={2}
                                 size="small"
                                 name="comentarios"
                                 id="form-producto-codigo-barras"
@@ -238,7 +324,16 @@ export default function AbrirTurno(handleClickOpen) {
                 </div>
             </DialogContent>
             <DialogActions>
-
+                <Box display="flex" alignItems='flex-end'>
+                    <Button 
+                        onClick={enviarDatos} 
+                        variant="contained" 
+                        color="primary" 
+                        size="large"
+                    >
+                        Aceptar
+                    </Button>
+                </Box>
             </DialogActions>
         </>
     )

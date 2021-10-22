@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Grid, Box } from '@material-ui/core';
 import Cajas from './Cajas/Cajas';
+import ReportesTurnosUsuarios from './TurnosUsuarios/ReportesTurnosUsuarios';
 import ReportesCompras from './Compras/ReportesCompras';
 import ReportesVentas from './Ventas/ReportesVentas';
 import ReportesAlmacen from './Almacenes/ReportesAlmacen';
@@ -16,6 +17,11 @@ export default function Reportes() {
 				<Grid item lg={2} >
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Cajas />
+					</Box>
+				</Grid>
+				<Grid item lg={2} >
+					<Box display="flex" justifyContent="center" alignItems="center">
+						<ReportesTurnosUsuarios />
 					</Box>
 				</Grid>
 				<Grid item lg={2} >
