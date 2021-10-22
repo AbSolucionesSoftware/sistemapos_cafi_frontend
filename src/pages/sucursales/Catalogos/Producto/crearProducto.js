@@ -245,8 +245,6 @@ export default function CrearProducto({
     }
     setValidacion(validate);
 
-    console.log(unidadesVenta);
-
     let copy_unidadesVenta = [ ...unidadesVenta];
 
     if (copy_unidadesVenta.length === 0) {

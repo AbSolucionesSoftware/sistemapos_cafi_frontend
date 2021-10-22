@@ -58,6 +58,7 @@ export default function PreciosDeCompra() {
     unidad: precios.unidad_de_compra.unidad,
     unidad_principal: false,
   });
+
   const [actualizarUnidad, setActualizarUnidad] = useState(false);
 
   const obtenerUnidadesVentas = (e) => {
@@ -122,6 +123,7 @@ export default function PreciosDeCompra() {
       for (let i = 0; i < unidadesVenta.length; i++) {
         const element = unidadesVenta[i];
         let new_element = {
+          _id: element._id,
           codigo_barras: element.codigo_barras,
           unidad: element.unidad,
           precio: parseFloat(element.precio),
@@ -140,6 +142,7 @@ export default function PreciosDeCompra() {
   const updateUnidadPrincipal = () => {
     setActualizarUnidad(true);
     setUnidades({
+      _id: unidadVentaXDefecto._id,
       codigo_barras: unidadVentaXDefecto.codigo_barras,
       unidad: unidadVentaXDefecto.unidad,
       cantidad: unidadVentaXDefecto.cantidad,
@@ -349,7 +352,8 @@ export default function PreciosDeCompra() {
                 </TableCell>
                 <TableCell>{unidadVentaXDefecto.cantidad}</TableCell>
                 <TableCell>
-                  {unidadVentaXDefecto.descuento_activo !== undefined && unidadVentaXDefecto.descuento_activo !== null ? (
+                  {unidadVentaXDefecto.descuento_activo !== undefined &&
+                  unidadVentaXDefecto.descuento_activo !== null ? (
                     <Box display="flex" alignItems="center">
                       <Checkbox
                         checked={
@@ -436,6 +440,7 @@ const RenderUnidadesRows = ({ unidades, index }) => {
     for (let i = 0; i < unidadesVenta.length; i++) {
       const element = unidadesVenta[i];
       let new_element = {
+		_id: element._id,
         codigo_barras: element.codigo_barras,
         unidad: element.unidad,
         precio: parseFloat(element.precio),
@@ -460,6 +465,7 @@ const RenderUnidadesRows = ({ unidades, index }) => {
       const element = unidadesVenta[i];
 
       let new_element = {
+		_id: element._id,
         codigo_barras: element.codigo_barras,
         unidad: element.unidad,
         precio: parseFloat(element.precio),

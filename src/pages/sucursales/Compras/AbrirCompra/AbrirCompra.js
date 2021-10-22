@@ -24,10 +24,7 @@ import {
   ComprasProvider,
 } from "../../../../context/Compras/comprasContext";
 import { Done, Timer } from "@material-ui/icons";
-import {
-  cleanTypenames,
-  formatoMexico,
-} from "../../../../config/reuserFunctions";
+import { formatoMexico } from "../../../../config/reuserFunctions";
 import {
   initial_state_datosCompra,
   initial_state_datosProducto,
@@ -142,12 +139,14 @@ const ModalCompra = ({ open, handleClose }) => {
     setLoading(true);
     try {
       datosCompra.productos = productosCompra;
-      const clean_data = cleanTypenames(datosCompra);
+     /*  const clean_data = cleanTypenames(datosCompra); */
+
+     /* console.log(datosCompra); */
 
       if (compra_en_espera) {
         const result = await crearCompraEnEspera({
           variables: {
-            input: clean_data,
+            input: datosCompra,
             empresa: sesion.empresa._id,
             sucursal: sesion.sucursal._id,
             usuario: sesion._id,
@@ -161,7 +160,7 @@ const ModalCompra = ({ open, handleClose }) => {
       } else {
         const result = await crearCompra({
           variables: {
-            input: clean_data,
+            input: datosCompra,
             empresa: sesion.empresa._id,
             sucursal: sesion.sucursal._id,
             usuario: sesion._id,

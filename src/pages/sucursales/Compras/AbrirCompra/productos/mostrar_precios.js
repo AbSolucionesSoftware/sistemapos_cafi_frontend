@@ -13,7 +13,9 @@ export default function MostrarPrecios() {
     let cantidad_total = 0;
     presentaciones.forEach((presentacion) => {
       const { cantidad, cantidad_nueva } = presentacion;
-      cantida_suma += cantidad + cantidad_nueva;
+      let nueva = cantidad_nueva ? cantidad_nueva : 0;
+
+      cantida_suma += cantidad + nueva;
     });
     if (isNaN(cantida_suma)) cantidad_total = 0;
     cantidad_total = cantida_suma;

@@ -250,14 +250,15 @@ export default function DatosProducto() {
       return;
     }
 
-    /* poner la unidad de venta por defecto si no agrego */
-    if (unidadesVenta.length === 0) {
-      unidadesVenta.push(unidadVentaXDefecto);
+    let copy_unidadesVenta = [ ...unidadesVenta];
+
+    if (copy_unidadesVenta.length === 0) {
+      copy_unidadesVenta.push(unidadVentaXDefecto);
     } else {
-      const unidadxdefecto = unidadesVenta.filter(
-        (unidades) => unidades.default
+      const unidadxdefecto = copy_unidadesVenta.filter(
+        (unidades) => unidades.default === true
       );
-      if (unidadxdefecto.length === 0) unidadesVenta.push(unidadVentaXDefecto);
+      if (unidadxdefecto.length > 0) copy_unidadesVenta.splice(0,1,unidadVentaXDefecto);
     }
 
     if (actualizar_Precios) {
@@ -279,7 +280,7 @@ export default function DatosProducto() {
       almacen_inicial,
       centro_de_costos,
       unidades_de_venta: await validateJsonEdit(
-        unidadesVenta,
+        copy_unidadesVenta,
         "unidades_de_venta"
       ),
       presentaciones,
@@ -298,7 +299,8 @@ export default function DatosProducto() {
         datosProducto.cantidad = 0;
         datosProducto.producto.presentaciones.forEach((presentacion) => {
           const { cantidad, cantidad_nueva } = presentacion;
-          datosProducto.cantidad += cantidad + cantidad_nueva;
+          let nueva = cantidad_nueva ? cantidad_nueva : 0;
+          datosProducto.cantidad += cantidad + nueva;
         });
         if (isNaN(datosProducto.cantidad)) datosProducto.cantidad = 0;
         datosProducto.cantidad_total = datosProducto.cantidad
@@ -419,7 +421,7 @@ export default function DatosProducto() {
   const setInitialStates = (producto) => {
     const { precios_producto, ...new_precios } = producto.precios;
     const unidadxdefecto = producto.unidades_de_venta.filter(
-      (res) => res.default
+      (res) => res.default === true
     );
 
     setDatosGenerales(producto.datos_generales);
