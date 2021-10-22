@@ -15,9 +15,10 @@ import {
 import { Search } from "@material-ui/icons";
 import useStyles from "./styles";
 import TablaVentas from "./TablaVentas";
+import TablaVentasCheckbox from "./Tabla_ventas_checkbox";
 import { CONSULTA_PRODUCTO_UNITARIO } from "../../gql/Ventas/ventas_generales";
 import { useLazyQuery } from "@apollo/client";
-import ClientesVentas from './ClientesVentas';
+import ClientesVentas from "./ClientesVentas";
 
 import { Fragment } from "react";
 import MonedaCambio from "./Operaciones/MonedaCambio";
@@ -25,7 +26,6 @@ import {
   findProductArray,
   calculatePrices,
 } from "../../config/reuserFunctions";
-
 
 export default function VentasGenerales() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -44,7 +44,7 @@ export default function VentasGenerales() {
     iva: 0,
     ieps: 0,
     descuento: 0,
-    tipo_cambio: {}
+    tipo_cambio: {},
   });
 
   // const [tipoCambioMoneda, setTipoCambioMoneda] = useState({
@@ -89,7 +89,7 @@ export default function VentasGenerales() {
         impuestos: parseFloat(venta.impuestos),
         iva: parseFloat(venta.iva),
         ieps: parseFloat(venta.ieps),
-        descuento: parseFloat(venta.descuento)
+        descuento: parseFloat(venta.descuento),
       });
     }
   }, []);
@@ -98,6 +98,7 @@ export default function VentasGenerales() {
     if (event.code === "Enter" || event.code === "NumpadEnter") {
       const input_value = event.target.value.trim();
       const data = input_value.split("*");
+      console.log(data);
       if (data.length > 1) {
         let data_operation = isNaN(data[0]) ? data[1] : data[0];
         let data_key = isNaN(data[0]) ? data[0] : data[1];
@@ -127,12 +128,13 @@ export default function VentasGenerales() {
 
   const agregarProductos = async (producto) => {
     let venta = JSON.parse(localStorage.getItem("DatosVentas"));
-    let productosVentas = venta === null ? [] : venta.produtos;
+    let productosVentas = venta === null ? [] : venta.productos;
     let venta_actual = venta === null ? [] : venta;
     let venta_existente =
       venta === null
         ? { subTotal: 0, total: 0, impuestos: 0, iva: 0, ieps: 0, descuento: 0 }
         : venta;
+    console.log(productosVentas);
     let productosVentasTemp = productosVentas;
     let subTotal = 0,
       total = 0,
@@ -158,7 +160,7 @@ export default function VentasGenerales() {
         iepsCalculo,
         descuentoCalculo,
       } = await calculatePrices(newP, 0, granelBase);
-      console.log(granelBase);
+      // console.log(granelBase);
       subTotal = subtotalCalculo;
       total = totalCalculo;
       impuestos = impuestoCalculo;
@@ -170,7 +172,7 @@ export default function VentasGenerales() {
       newP.precio_a_vender = totalCalculo;
 
       productosVentasTemp.push(newP);
-    } else if(producto_encontrado.found && producto._id){
+    } else if (producto_encontrado.found && producto._id) {
       const { cantidad_venta, ...newP } =
         producto_encontrado.producto_found.producto;
       const {
@@ -204,15 +206,19 @@ export default function VentasGenerales() {
       impuestos: parseFloat(venta_existente.impuestos) + impuestos,
       iva: parseFloat(venta_existente.iva) + iva,
       ieps: parseFloat(venta_existente.ieps) + ieps,
-      descuento: parseFloat(venta_existente.descuento) + descuento
+      descuento: parseFloat(venta_existente.descuento) + descuento,
     };
     localStorage.setItem(
       "DatosVentas",
       JSON.stringify({
         ...CalculosData,
-        cliente: venta_actual.venta_cliente === true ? venta_actual.cliente : {},
-        venta_cliente: venta_actual.venta_cliente === true ? venta_actual.venta_cliente : false,
-        produtos: productosVentasTemp,
+        cliente:
+          venta_actual.venta_cliente === true ? venta_actual.cliente : {},
+        venta_cliente:
+          venta_actual.venta_cliente === true
+            ? venta_actual.venta_cliente
+            : false,
+        productos: productosVentasTemp,
       })
     );
     setDatosVentasActual({
@@ -359,7 +365,12 @@ export default function VentasGenerales() {
       </Grid>
 
       <Grid item lg={12}>
-        <TablaVentas
+        {/* <TablaVentas
+          newProductoVentas={newProductoVentas}
+          setNewProductoVentas={setNewProductoVentas}
+          setDatosVentasActual={setDatosVentasActual}
+        /> */}
+        <TablaVentasCheckbox
           newProductoVentas={newProductoVentas}
           setNewProductoVentas={setNewProductoVentas}
           setDatosVentasActual={setDatosVentasActual}

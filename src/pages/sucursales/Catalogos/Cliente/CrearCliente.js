@@ -9,6 +9,7 @@ import RegistrarInfoBasica from "./RegistrarInfoBasica";
 import RegistrarInfoCredito from "./RegistroInfoCredito";
 import { Add, Edit } from "@material-ui/icons";
 import { ClienteCtx } from "../../../../context/Catalogos/crearClienteCtx";
+import { VentasContext } from "../../../../context/Ventas/ventasContext";
 import BackdropComponent from "../../../../components/Layouts/BackDrop";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 
@@ -75,6 +76,8 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
   const classes = useStyles();
   const { cliente, setCliente, setError, update, setUpdate } =
     useContext(ClienteCtx);
+    const { setUpdateClientVenta, updateClientVenta } =
+    useContext(VentasContext);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -181,7 +184,9 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
               productos:
                 venta_actual.productos?.length > 0 ? venta_actual.productos : [],
             })
+            
           );
+          setUpdateClientVenta(!updateClientVenta);
           onCloseModal();
           handleClickOpen();
         }
