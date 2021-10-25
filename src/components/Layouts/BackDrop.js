@@ -14,13 +14,13 @@ const useStyles = makeStyles((theme) => ({
 export default function BackdropComponent({loading, setLoading}) {
   const classes = useStyles();
 
-  const handleClose = () => {
+  /* const handleClose = () => {
     setLoading(false);
-  };
+  }; */
 
   return (
     <div>
-      <Backdrop className={classes.backdrop} open={loading} onClick={handleClose}>
+      <Backdrop className={classes.backdrop} open={loading} /* onClick={handleClose} */>
         <CircularProgress color="inherit" />
       </Backdrop>
     </div>

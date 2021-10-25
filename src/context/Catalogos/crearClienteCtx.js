@@ -20,6 +20,7 @@ export const ClienteProvider = ({ children }) => {
 	const [ toUpdate, setToUpdate ] = useState(false);
 	const [ error, setError ] = useState(false);
 	const [ update, setUpdate ] = useState(false);
+	const [updateClientVenta, setUpdateClientVenta] = useState(false);
 
 	return (
 		<ClienteCtx.Provider
@@ -31,7 +32,9 @@ export const ClienteProvider = ({ children }) => {
 				error,
 				setError,
 				update,
-				setUpdate
+				setUpdate,
+				setUpdateClientVenta,
+				updateClientVenta
 			}}
 		>
 			{children}

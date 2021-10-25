@@ -1,9 +1,12 @@
 import React, { useState, Fragment, useContext} from 'react';
-import { Drawer, AppBar, Toolbar, Divider,BottomNavigationAction, BottomNavigation, Button, Grid } from '@material-ui/core';
+import { Drawer, AppBar, Toolbar, Divider, BottomNavigation, Button, Grid, Dialog, Slide, DialogContent, DialogActions } from '@material-ui/core';
 import { CssBaseline, Avatar, Box, Typography } from '@material-ui/core';
 import { withRouter } from 'react-router';
 import { FaPowerOff } from 'react-icons/fa';
 import useStyles from './styles';
+import moment from 'moment';
+import 'moment/locale/es';
+
 // import addIcon from '../../icons/ventas/add.svg'
 // import articuloRapido from '../../icons/ventas/tiempo-rapido.svg'
 // import listaEspera from '../../icons/ventas/lista-de-espera.svg'
@@ -20,7 +23,7 @@ import useStyles from './styles';
 // import tagIcon from '../../icons/ventas/tag.svg'
 // import shoppingcartIcon from '../../icons/ventas/shopping-cart.svg'
 
-import Abonos from '../../pages/ventas/Abonos/Abonos';
+import Abonos from '../../pages/ventas/Abonos/Abonos'; 
 import VentasCredito from '../../pages/ventas/VentasCredito/VentasCredito';
 import DepositoRetiroCaja from '../../pages/ventas/Operaciones/DepositoRetiroCaja';
 import Turnos from '../../pages/ventas/AbrirCerrarTurno/Turnos';
@@ -40,21 +43,40 @@ import ClientesVentas from '../../pages/ventas/ClientesVentas/ClientesVentas';
 import ProductoRapidoIndex from '../../pages/ventas/ArticuloRapido/indexArticuloRapido';
 import SnackBarMessages from '../SnackBarMessages';
 import { VentasContext } from '../../context/Ventas/ventasContext';
+// import { VentasProvider } from '../../context/Ventas/ventasContext'; 
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function NavegacionVentas(props) {
+	const { alert, setAlert,abrirTurnosDialog, setAbrirTurnosDialog } = useContext(VentasContext);
 	const classes = useStyles();
-	const { alert, setAlert } = useContext(VentasContext);
 	const [ value, setValue ] = useState('venta-general');
-
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
 	const [open, setOpen] = useState(false);
+	moment.locale('es');
 
-	const signOut = () => {
-		localStorage.removeItem('sesionCafi');
-		localStorage.removeItem('tokenCafi');
-		props.history.push('/');
+    const handleClickOpen = () => {
+		setOpen(!open);
 	};
 
-	window.addEventListener('keydown', Mi_función); 
+	const abrirDialogTurnos = () => {
+		setOpen(!open);
+		setAbrirTurnosDialog(!abrirTurnosDialog);
+	};
+
+	const signOut = () => {
+		if (sesion.turno_en_caja_activo === true) {
+			handleClickOpen();
+		}else{
+			localStorage.removeItem('sesionCafi');
+			localStorage.removeItem('tokenCafi');
+			props.history.push('/');
+		}
+	};
+
 	function Mi_función(e){
 		if( e.keyCode === 112){ 
 			props.history.push('/admin');
@@ -64,8 +86,10 @@ function NavegacionVentas(props) {
 		}
 	};
 
+	window.addEventListener('keydown', Mi_función); 
+
 	return (
-		<Fragment>
+		<>
 			<CssBaseline />
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<AppBar position="fixed" elevation={1} className={classes.appBar}>
@@ -91,7 +115,7 @@ function NavegacionVentas(props) {
 						<Divider orientation="vertical" />
 					<Button
 						onClick={() => props.history.push('/admin')}
-						style={{textTransform: 'none', height: '100%', width: '70%'}}
+						style={{textTransform: 'none', height: '100%', width: '60%'}}
 					>
 						<Box display="flex" flexDirection="column">
 							<Box display="flex" justifyContent="center" alignItems="center">
@@ -116,10 +140,9 @@ function NavegacionVentas(props) {
 						<Divider orientation="vertical" />
 					<Button
 						onClick={() =>{
-							props.history.push('/')
 							signOut()
 						}}
-						style={{textTransform: 'none', height: '100%', width: '70%'}}
+						style={{textTransform: 'none', height: '100%', width: '40%'}}
 					>
 						<Box display="flex" flexDirection="column" style={{textTransform: 'none', height: '100%', width: '100%'}}>
 							<Box display="flex" justifyContent="center" alignItems="center">
@@ -130,32 +153,33 @@ function NavegacionVentas(props) {
 									<b>Salir</b>
 								</Typography>
 							</Box>
-							<Box>
-								<Typography variant="caption" style={{color: '#808080'}} >
-									{/* <b>F3</b> */}
-								</Typography>
-							</Box>
 						</Box>
 					</Button>
-					<Box width="350px" display="flex" justifyContent="flex-end">
-						<Box display="flex" alignItems="center">
-							<Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" className={classes.avatar} />
+					<Box 
+						display="flex" 
+						justifyContent="flex-end"
+						style={{height: '100%', width: '100%'}}
+					>
+						<Box mr={3} display="flex" alignItems="center">
+							<Avatar alt="Remy Sharp" srsc="/static/images/avatar/1.jpg" className={classes.avatar} />
 							<div>
-								<Box mr={2}>
-									<Typography color="textSecondary">aldo chagollan</Typography>
+								<Box>
+									<Typography color="textSecondary">{sesion.nombre}</Typography>
 									<Typography color="textSecondary">
-										<b>Caja: </b>xx
+										<b>Caja: </b>{turnoEnCurso?.numero_caja}
 									</Typography>
 								</Box>
 							</div>
 						</Box>
-						<Box display="flex" alignItems="center">
+						<Box mr={3} display="flex" alignItems="center">
 							<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/calendario.svg' alt="icono admin" className={classes.avatar} />
 							<div>
-								<Box mr={2}>
-									<Typography color="textSecondary">29/Julio/2021</Typography>
+								<Box>
 									<Typography color="textSecondary">
-										<b>08:00 hrs.</b>
+										{moment().format('MM/DD/YYYY')}
+									</Typography>
+									<Typography color="textSecondary">
+										<b>{moment().format('h:mm')} hrs.</b> 
 									</Typography>
 								</Box>
 							</div>
@@ -202,7 +226,6 @@ function NavegacionVentas(props) {
 						<Abonos />
 					</Grid>
 				</Grid>
-
 				<Grid container className={classes.drawerColor}>
 					<Grid item lg={4} md={4} xs={4}>
 						<CancelarVenta />
@@ -221,7 +244,27 @@ function NavegacionVentas(props) {
 					</Grid>
 				</Grid>
 			</Drawer>
-		</Fragment>
+
+			<Dialog
+				maxWidth='xs'
+				open={open} 
+				onClose={handleClickOpen} 
+				TransitionComponent={Transition}
+			>
+				<DialogContent>
+					<Box textAlign="center" display="flex" justifyContent="center">
+						<Typography variant="h6">
+							Lo sentimos en este momento tienes un turno activo, para poder continuar por favor cierra ese turno
+						</Typography>	
+					</Box>
+				</DialogContent>
+				<DialogActions>
+					<Button color="primary" variant="contained" onClick={abrirDialogTurnos} >
+						Aceptar
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</>
 	);
 }
 

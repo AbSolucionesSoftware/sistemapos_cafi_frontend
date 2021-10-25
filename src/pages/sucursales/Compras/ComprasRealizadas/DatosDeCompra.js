@@ -1,134 +1,161 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
+import React, { Fragment, useEffect, useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Paper from "@material-ui/core/Paper";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
 
-const columns = [
-	{ id: 'name', label: 'Name', minWidth: 170 },
-	{ id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-	{
-		id: 'population',
-		label: 'Population',
-		minWidth: 170,
-		align: 'right',
-		format: (value) => value.toLocaleString('en-US')
-	},
-	{
-		id: 'size',
-		label: 'Size\u00a0(km\u00b2)',
-		minWidth: 170,
-		align: 'right',
-		format: (value) => value.toLocaleString('en-US')
-	},
-	{
-		id: 'density',
-		label: 'Density',
-		minWidth: 170,
-		align: 'right',
-		format: (value) => value.toFixed(2)
-	}
-];
-
-function createData(name, code, population, size) {
-	const density = population / size;
-	return { name, code, population, size, density };
-}
-
-const rows = [
-	createData('India', 'IN', 1324171354, 3287263),
-	createData('China', 'CN', 1403500365, 9596961),
-	createData('Italy', 'IT', 60483973, 301340),
-	createData('United States', 'US', 327167434, 9833520),
-	createData('Canada', 'CA', 37602103, 9984670),
-	createData('Australia', 'AU', 25475400, 7692024),
-	createData('Germany', 'DE', 83019200, 357578),
-	createData('Ireland', 'IE', 4857000, 70273),
-	createData('Mexico', 'MX', 126577691, 1972550),
-	createData('Japan', 'JP', 126317000, 377973),
-	createData('France', 'FR', 67022000, 640679),
-	createData('United Kingdom', 'GB', 67545757, 242495),
-	createData('Russia', 'RU', 146793744, 17098246),
-	createData('Nigeria', 'NG', 200962417, 923768),
-	createData('Brazil', 'BR', 210147125, 8515767)
-];
+import Box from "@material-ui/core/Box";
+import Chip from "@material-ui/core/Chip";
+import Grid from "@material-ui/core/Grid";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+import { useTheme } from "@material-ui/core";
+import SearchOutlinedIcon from "@material-ui/icons/SearchOutlined";
+import { formatoMexico } from "../../../../config/reuserFunctions";
+import ExportarProductosComprasExcel from "./ExportarProductosCompra";
 
 const useStyles = makeStyles({
-	root: {
-		width: '100%'
-	},
-	container: {
-		maxHeight: '40vh'
-	}
+  root: {
+    width: "100%",
+  },
+  container: {
+    height: "50vh",
+  },
 });
 
-export default function DatosDeCompra({datosCompra}) {
-	const classes = useStyles();
-	const [ page, setPage ] = React.useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = React.useState(10);
+export default function DatosDeCompra({ compra }) {
+  const classes = useStyles();
+  const theme = useTheme();
+  const { productos } = compra;
+  const [busqueda, setBusqueda] = useState("");
+  const [productosFiltrados, setProductosFiltrados] = useState([]);
 
-	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
+  const obtenerBusqueda = (value) => setBusqueda(value);
 
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(+event.target.value);
-		setPage(0);
-	};
+  useEffect(() => {
+    setProductosFiltrados(
+      productos.filter((datos) => {
+        return datos.producto.datos_generales.nombre_comercial
+          .toLowerCase()
+          .includes(busqueda.toLowerCase());
+      })
+    );
+  }, [busqueda, productos]);
 
-	return (
-		<Paper className={classes.root}>
-			<TableContainer className={classes.container}>
-				<Table stickyHeader size="small" aria-label="a dense table">
-					<TableHead>
-						<TableRow>
-							{columns.map((column) => (
-								<TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
-									{column.label}
-								</TableCell>
-							))}
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-							return (
-								<TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-									{columns.map((column) => {
-										const value = row[column.id];
-										return (
-											<TableCell 
-												key={column.id} 
-												align={column.align}
-											>
-												{column.format && typeof value === 'number' ? (
-													column.format(value)
-												) : (
-													value
-												)}
-											</TableCell>
-										);
-									})}
-								</TableRow>
-							);
-						})}
-					</TableBody>
-				</Table>
-			</TableContainer>
-			<TablePagination
-				rowsPerPageOptions={[ 10, 25, 100 ]}
-				component="div"
-				count={rows.length}
-				rowsPerPage={rowsPerPage}
-				page={page}
-				onChangePage={handleChangePage}
-				onChangeRowsPerPage={handleChangeRowsPerPage}
-			/>
-
-		</Paper>
-	);
+  return (
+    <Fragment>
+      <Box mb={1} display="flex">
+        <Typography style={{ marginRight: 16 }}>
+          <b>Proveedor: </b>
+          {compra.proveedor.nombre_cliente}
+        </Typography>
+        <Typography style={{ marginRight: 16 }}>
+          <b>Almacen: </b>
+          {compra.almacen.nombre_almacen}
+        </Typography>
+        <Typography style={{ marginRight: 16 }}>
+          <b>Subtotal: ${compra.subtotal}</b>
+        </Typography>
+        <Typography style={{ marginRight: 16 }}>
+          <b>Impuestos: ${compra.impuestos}</b>
+        </Typography>
+        <Typography style={{ marginRight: 16 }}>
+          <b>Total: ${compra.total}</b>
+        </Typography>
+      </Box>
+      <Box mb={2} display="flex">
+        <Grid container>
+          <Grid item sm={6} xs={12}>
+            <TextField
+              fullWidth
+              size="small"
+              variant="outlined"
+              placeholder="Buscar una compra..."
+              onChange={(e) => obtenerBusqueda(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchOutlinedIcon color="action" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+          <Grid item sm={6} xs={12}>
+            <ExportarProductosComprasExcel compra={compra} />
+          </Grid>
+        </Grid>
+      </Box>
+      <Paper className={classes.root}>
+        <TableContainer className={classes.container}>
+          <Table stickyHeader size="small" aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Producto</TableCell>
+                <TableCell>Medida</TableCell>
+                <TableCell>Color</TableCell>
+                <TableCell>Unidad</TableCell>
+                <TableCell>Cantidad</TableCell>
+                <TableCell>C. regalo</TableCell>
+                <TableCell>C. total</TableCell>
+                <TableCell>Descuento</TableCell>
+                <TableCell>Subtotal</TableCell>
+                <TableCell>Impuestos</TableCell>
+                <TableCell>Total</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {productosFiltrados.map((datos, index) => {
+                return (
+                  <TableRow hover tabIndex={-1} key={index}>
+                    <TableCell>
+                      {datos.producto.datos_generales.nombre_comercial}
+                    </TableCell>
+                    <TableCell padding="checkbox">
+                      {datos.medida && datos.medida.medida ? datos.medida.medida : "N/A"}
+                    </TableCell>
+                    <TableCell padding="checkbox">
+                      {datos.color && datos.color.hex ? (
+                        <Chip
+                          label={datos.color.color}
+                          size="small"
+                          style={{
+                            backgroundColor: datos.color.hex,
+                            color: theme.palette.getContrastText(
+                              datos.color.hex
+                            ),
+                          }}
+                        />
+                      ) : (
+                        "N/A"
+                      )}
+                    </TableCell>
+                    <TableCell>{datos.unidad}</TableCell>
+                    <TableCell>{datos.cantidad}</TableCell>
+                    <TableCell>{datos.cantidad_regalo}</TableCell>
+                    <TableCell>{datos.cantidad_total}</TableCell>
+                    <TableCell>{`$${datos.descuento_precio} - %${datos.descuento_porcentaje}`}</TableCell>
+                    <TableCell>
+                      <b>${formatoMexico(datos.subtotal)}</b>
+                    </TableCell>
+                    <TableCell>
+                      <b>${formatoMexico(datos.impuestos)}</b>
+                    </TableCell>
+                    <TableCell>
+                      <b>${formatoMexico(datos.total)}</b>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
+    </Fragment>
+  );
 }

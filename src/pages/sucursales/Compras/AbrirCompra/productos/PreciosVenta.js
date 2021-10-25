@@ -57,9 +57,11 @@ const RenderPrecios = ({ data, tipo, index }) => {
   let copy_preciosVenta = { ...preciosVenta[index] };
 
   let precio_unitario_con_impuesto =
-    datosProducto.costo / datosProducto.cantidad;
+    /* datosProducto.costo / datosProducto.cantidad; */
+    datosProducto.costo / precios.unidad_de_compra.cantidad;
   let precio_unitario_sin_impuesto =
-    precios.precio_de_compra.precio_sin_impuesto / datosProducto.cantidad;
+    /* precios.precio_de_compra.precio_sin_impuesto / datosProducto.cantidad; */
+    precios.precio_de_compra.precio_sin_impuesto / precios.unidad_de_compra.cantidad;
 
   if (isNaN(precio_unitario_sin_impuesto)) precio_unitario_sin_impuesto = 0;
   if (isNaN(precio_unitario_con_impuesto)) precio_unitario_con_impuesto = 0;
@@ -96,7 +98,7 @@ const RenderPrecios = ({ data, tipo, index }) => {
         precio_unitario_sin_impuesto * new_utilidad;
 
       copy_preciosVenta.precio_venta = parseFloat(
-        ganancia_utilidad_sin_impuestos.toFixed(2)
+        ganancia_utilidad_sin_impuestos.toFixed(6)
       );
 
       if (precios.iva_activo || precios.ieps_activo) {
@@ -105,29 +107,33 @@ const RenderPrecios = ({ data, tipo, index }) => {
           precio_unitario_con_impuesto * new_utilidad;
 
         copy_preciosVenta.precio_neto = parseFloat(
-          ganancia_utilidad_con_impuestos.toFixed(2)
+          ganancia_utilidad_con_impuestos.toFixed(6)
         );
 
-        setPrecioNeto(parseFloat(ganancia_utilidad_con_impuestos.toFixed(2)));
+        setPrecioNeto(parseFloat(ganancia_utilidad_con_impuestos.toFixed(6)));
       } else {
         copy_preciosVenta.precio_neto = parseFloat(
-          ganancia_utilidad_sin_impuestos.toFixed(2)
+          ganancia_utilidad_sin_impuestos.toFixed(6)
         );
-        setPrecioNeto(parseFloat(ganancia_utilidad_sin_impuestos.toFixed(2)));
+        setPrecioNeto(parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6)));
       }
       preciosVenta.slice(index, 1, copy_preciosVenta);
     }
   }, [datosProducto.costo, datosProducto.cantidad]);
 
   useEffect(() => {
-    calculosCompra();
+    if(data.numero_precio === 1){
+      calculosCompra();
+    }else if(data.numero_precio > 1 && precio_neto){
+      calculosCompra();
+    }
   }, [calculosCompra]);
 
   switch (tipo) {
     case "Utilidad":
       return <TableCell style={{ border: 0 }}>{data.utilidad}%</TableCell>;
     case "Precio de venta":
-      return <TableCell style={{ border: 0 }}>${precio_neto}</TableCell>;
+      return <TableCell style={{ border: 0 }}>${parseFloat(precio_neto).toFixed(2)}</TableCell>;
     default:
       return null;
   }
