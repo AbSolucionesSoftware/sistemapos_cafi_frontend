@@ -34,7 +34,7 @@ import {
   OBTENER_CLIENTES,
   ACTUALIZAR_CLIENTE,
 } from "../../../../gql/Catalogos/clientes";
-import { VentasContext } from "../../../../context/Ventas/ventasContext";
+// import { VentasContext } from "../../../../context/Ventas/ventasContext";
 
 // const columns = [
 // 	{ id: 1, label: 'No. Cliente', minWidth: 100 },
@@ -47,7 +47,7 @@ import { VentasContext } from "../../../../context/Ventas/ventasContext";
 // 	{ id: 8, label: 'Detalles', minWidth: 50, align: 'right' },
 // 	{ id: 9, label: 'Editar', minWidth: 50, align: 'right' },
 // 	{ id: 10, label: 'Eliminar', minWidth: 50, align: 'right' }
-// ];
+// ]; 
 
 const useStyles = makeStyles({
   root: {
@@ -70,7 +70,7 @@ export default function ListaClientes({
   handleClickOpen,
 }) {
   const classes = useStyles();
-  const { update } = useContext(ClienteCtx);
+  const { update, setUpdateClientVenta, updateClientVenta  } = useContext(ClienteCtx);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [value] = useDebounce(filtro, 1000);
@@ -79,8 +79,6 @@ export default function ListaClientes({
   const { loading, data, error, refetch } = useQuery(OBTENER_CLIENTES, {
     variables: { tipo, filtro: value },
   });
-  const { setUpdateClientVenta, updateClientVenta } =
-  useContext(VentasContext);
 
   useEffect(() => {
     refetch();
@@ -132,6 +130,7 @@ export default function ListaClientes({
             venta_actual.productos?.length > 0 ? venta_actual.productos : [],
         })
       );
+      console.log("Legal");
       setUpdateClientVenta(!updateClientVenta);
       setShowModal(!showModal);
       handleClickOpen();

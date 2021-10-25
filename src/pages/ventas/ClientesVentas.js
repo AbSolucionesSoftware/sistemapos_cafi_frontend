@@ -4,13 +4,14 @@ import { useQuery } from "@apollo/client";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { TextField } from "@material-ui/core";
 // import { BlurLinear } from "@material-ui/icons";
-import { VentasContext } from "../../context/Ventas/ventasContext";
+// import { VentasContext } from "../../context/Ventas/ventasContext";
+import { ClienteCtx } from '../../context/Catalogos/crearClienteCtx';
 
 export default function ClientesVentas() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
   const { setUpdateClientVenta, updateClientVenta } =
-  useContext(VentasContext);
+  useContext(ClienteCtx);
 
   const [selectClient, setSelectClient] = useState({});
 
@@ -41,11 +42,11 @@ export default function ClientesVentas() {
       console.log(value);
       setSelectClient(value);
       let venta = JSON.parse(localStorage.getItem("DatosVentas"));
-      let VentasProducto = venta === null ? [] : venta;
+      let VentasProducto = venta === null ? {} : venta;
       VentasProducto.cliente = value;
       VentasProducto.venta_cliente = true;
       localStorage.setItem("DatosVentas", JSON.stringify(VentasProducto));
-      updateClientVenta(!setUpdateClientVenta);
+      setUpdateClientVenta(!updateClientVenta);
     } catch (error) {
       console.log(error);
     }
@@ -58,6 +59,7 @@ export default function ClientesVentas() {
       <Autocomplete
         id="combo-box-producto-codigo"
         size="small"
+        onClose={() => console.log("datos")}
         fullWidth
         options={obtenerClientes}
         getOptionLabel={(option) =>

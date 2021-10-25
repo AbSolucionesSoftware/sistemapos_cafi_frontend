@@ -9,8 +9,8 @@ import {
   Paper,
   Select,
   Typography,
-  CircularProgress,
-  TextField,
+  // CircularProgress,
+  // TextField,
 } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import useStyles from "./styles";
@@ -26,6 +26,8 @@ import {
   findProductArray,
   calculatePrices,
 } from "../../config/reuserFunctions";
+
+import { ClienteProvider } from '../../context/Catalogos/crearClienteCtx';
 
 export default function VentasGenerales() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -288,7 +290,9 @@ export default function VentasGenerales() {
                 />
               </Box>
               <Box width={250} alignItems="center">
-                <ClientesVentas sesion={sesion} />
+                <ClienteProvider>
+                  <ClientesVentas sesion={sesion} />
+                </ClienteProvider>
                 {/* <Paper className={classes.rootBusqueda}>
                   <InputBase fullWidth placeholder="Buscar cliente..." />
                   <IconButton>

@@ -23,7 +23,7 @@ import 'moment/locale/es';
 // import tagIcon from '../../icons/ventas/tag.svg'
 // import shoppingcartIcon from '../../icons/ventas/shopping-cart.svg'
 
-import Abonos from '../../pages/ventas/Abonos/Abonos';
+import Abonos from '../../pages/ventas/Abonos/Abonos'; 
 import VentasCredito from '../../pages/ventas/VentasCredito/VentasCredito';
 import DepositoRetiroCaja from '../../pages/ventas/Operaciones/DepositoRetiroCaja';
 import Turnos from '../../pages/ventas/AbrirCerrarTurno/Turnos';
@@ -43,6 +43,7 @@ import ClientesVentas from '../../pages/ventas/ClientesVentas/ClientesVentas';
 import ProductoRapidoIndex from '../../pages/ventas/ArticuloRapido/indexArticuloRapido';
 import SnackBarMessages from '../SnackBarMessages';
 import { VentasContext } from '../../context/Ventas/ventasContext';
+// import { VentasProvider } from '../../context/Ventas/ventasContext'; 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
