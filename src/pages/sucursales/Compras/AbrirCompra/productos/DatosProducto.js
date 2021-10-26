@@ -194,6 +194,20 @@ export default function DatosProducto() {
     });
   };
 
+  const obtenerCantidadRegalo = (value) => {
+    if (!value) {
+      setDatosProducto({
+        ...datosProducto,
+        cantidad_regalo: "",
+      });
+      return;
+    }
+    setDatosProducto({
+      ...datosProducto,
+      cantidad_regalo: parseFloat(value),
+    });
+  };
+
   const obtenerUnidadRegalo = (e) => {
     const { value, name } = e.target;
     setDatosProducto({
@@ -639,7 +653,7 @@ export default function DatosProducto() {
                   inputMode="numeric"
                   disabled={!datosProducto.producto.datos_generales}
                   value={datosProducto.cantidad_regalo}
-                  onChange={obtenerCantidad}
+                  onChange={(e) => obtenerCantidadRegalo(e.target.value)}
                 />
               </Box>
             </Grid>
