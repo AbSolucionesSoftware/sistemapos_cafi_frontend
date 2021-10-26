@@ -198,7 +198,9 @@ const RenderPresentacionesRows = ({
     compareFunction(a, b)
   );
   const copy_element_presentacion = { ...copy_presentaciones[index] };
-  const copy_element_presentacion_descuento = { ...copy_presentaciones[index].descuento };
+  const copy_element_presentacion_descuento = {
+    ...copy_presentaciones[index].descuento,
+  };
   const copy_producto = { ...producto };
 
   /* if(from && from === 'compra'){
@@ -230,8 +232,12 @@ const RenderPresentacionesRows = ({
         setPresentaciones(copy_presentaciones);
         return;
       }
+      if (value === "0") {
+        copy_element_presentacion.existencia = false;
+      } else {
+        copy_element_presentacion.existencia = true;
+      }
       copy_element_presentacion.cantidad = parseFloat(value);
-      copy_element_presentacion.existencia = true;
     } else if (name === "cantidad_nueva") {
       if (!value) {
         copy_element_presentacion.cantidad_nueva = "";
@@ -249,14 +255,19 @@ const RenderPresentacionesRows = ({
         setPresentaciones(copy_presentaciones);
         return;
       }
-      if(copy_element_presentacion.descuento_activo && copy_element_presentacion.descuento_activo === true){
+      if (
+        copy_element_presentacion.descuento_activo &&
+        copy_element_presentacion.descuento_activo === true
+      ) {
         let precio_con_descuento = Math.round(
           (value * copy_element_presentacion.descuento.porciento) / 100
         );
-        copy_element_presentacion_descuento.precio_con_descuento = parseFloat(precio_con_descuento);
+        copy_element_presentacion_descuento.precio_con_descuento = parseFloat(
+          precio_con_descuento
+        );
         copy_element_presentacion.precio = parseFloat(value);
-        copy_element_presentacion.descuento = copy_element_presentacion_descuento
-      }else{
+        copy_element_presentacion.descuento = copy_element_presentacion_descuento;
+      } else {
         copy_element_presentacion.precio = parseFloat(value);
       }
     } else {
@@ -380,7 +391,8 @@ const RenderPresentacionesRows = ({
           </TableCell>
           <TableCell width={200}>
             <Box display="flex" alignItems="center">
-              {copy_producto.descuento_activo !== undefined && copy_producto.descuento_activo !== null ? (
+              {copy_producto.descuento_activo !== undefined &&
+              copy_producto.descuento_activo !== null ? (
                 <Fragment>
                   <Checkbox
                     checked={
@@ -395,7 +407,13 @@ const RenderPresentacionesRows = ({
                     color="primary"
                     disabled={copy_producto.descuento_activo === null}
                   />
-                  <Typography color={copy_producto.descuento_activo === true ? "primary" : "textSecondary"}>
+                  <Typography
+                    color={
+                      copy_producto.descuento_activo === true
+                        ? "primary"
+                        : "textSecondary"
+                    }
+                  >
                     %
                     {parseFloat(
                       copy_producto.descuento !== null

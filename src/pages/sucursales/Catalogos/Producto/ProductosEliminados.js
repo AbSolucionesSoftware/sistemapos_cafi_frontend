@@ -5,7 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
-import { ToggleOff, Publish } from '@material-ui/icons';
+import { RestoreFromTrash, Publish } from '@material-ui/icons';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -31,7 +31,7 @@ export default function ProdcutosEliminados({productosActivosRefetch}) {
 
 	return (
 		<div>
-			<Button disableElevation color="inherit" onClick={handleModalToggle} size="large" startIcon={<ToggleOff />}>
+			<Button disableElevation color="primary" onClick={handleModalToggle} size="large" startIcon={<RestoreFromTrash />}>
 				Productos inactivos
 			</Button>
 			<Dialog
@@ -104,7 +104,7 @@ const TablaProductosEliminados = ({productosActivosRefetch}) => {
 					</TableHead>
 					<TableBody>
 						{obtenerProductosInactivos.map((producto, index) => (
-							<RenderProductosTabla key={index} producto={producto} refetch={refetch} productosActivosRefetch={productosActivosRefetch} />
+							<RenderProductosTabla key={index} datos={producto} refetch={refetch} productosActivosRefetch={productosActivosRefetch} />
 						))}
 					</TableBody>
 				</Table>
@@ -113,10 +113,10 @@ const TablaProductosEliminados = ({productosActivosRefetch}) => {
 	);
 };
 
-const RenderProductosTabla = ({ producto, refetch, productosActivosRefetch }) => {
+const RenderProductosTabla = ({ datos, refetch, productosActivosRefetch }) => {
 	const [ open, setOpen ] = useState(false);
 	const [ loading, setLoading ] = useState(false);
-	const { datos_generales } = producto;
+	const { datos_generales } = datos.producto;
     /* const [ alert, setAlert ] = useState({ message: '', status: '', open: false }); */
 	const { setAlert } = useContext(RegProductoContext);
 
@@ -129,7 +129,7 @@ const RenderProductosTabla = ({ producto, refetch, productosActivosRefetch }) =>
 		try {
 			const result = await activarProducto({
 				variables: {
-					id: producto._id
+					id: datos._id
 				}
 			});
             refetch();

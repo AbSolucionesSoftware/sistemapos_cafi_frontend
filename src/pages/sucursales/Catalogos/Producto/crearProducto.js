@@ -455,7 +455,7 @@ export default function CrearProducto({
             onClick={() => toggleModal()}
             startIcon={<Add />}
           >
-            Nuevo producto
+            Nuevo
           </Button>
         )
       ) : (
