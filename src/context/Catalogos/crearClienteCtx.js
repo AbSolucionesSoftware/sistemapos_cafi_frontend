@@ -20,6 +20,7 @@ export const ClienteProvider = ({ children }) => {
 	const [ toUpdate, setToUpdate ] = useState(false);
 	const [ error, setError ] = useState(false);
 	const [ update, setUpdate ] = useState(false);
+	
 	const [updateClientVenta, setUpdateClientVenta] = useState(false);
 
 	return (

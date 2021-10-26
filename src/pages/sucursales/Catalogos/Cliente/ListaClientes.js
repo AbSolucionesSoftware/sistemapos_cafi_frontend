@@ -130,7 +130,6 @@ export default function ListaClientes({
             venta_actual.productos?.length > 0 ? venta_actual.productos : [],
         })
       );
-      console.log("Legal");
       setUpdateClientVenta(!updateClientVenta);
       setShowModal(!showModal);
       handleClickOpen();

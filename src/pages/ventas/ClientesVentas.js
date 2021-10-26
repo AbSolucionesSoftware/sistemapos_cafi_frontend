@@ -29,24 +29,68 @@ export default function ClientesVentas() {
   console.log(obtenerClientes);
 
   useEffect(() => {
-    console.log("llego al final");
-    const venta = JSON.parse(localStorage.getItem("DatosVentas"));
-    if (venta !== null) {
-      setSelectClient(venta.cliente);
+    const data = () => {
+      console.log("llego al final");
+      const venta = JSON.parse(localStorage.getItem("DatosVentas"));
+      if (venta !== null) {
+        setSelectClient(venta.cliente);
+        refetch();
+      }
     }
-    refetch();
-  }, [updateClientVenta]);
+    data();
+  }, [refetch, updateClientVenta]);
 
   const ChangeClientAutocomplate = (value) => {
     try {
       console.log(value);
+      const venta = JSON.parse(localStorage.getItem("DatosVentas"));
+      let venta_actual = venta === null ? {} : venta;
       setSelectClient(value);
-      let venta = JSON.parse(localStorage.getItem("DatosVentas"));
-      let VentasProducto = venta === null ? {} : venta;
-      VentasProducto.cliente = value;
-      VentasProducto.venta_cliente = true;
-      localStorage.setItem("DatosVentas", JSON.stringify(VentasProducto));
-      setUpdateClientVenta(!updateClientVenta);
+      console.log(value);
+      console.log(venta_actual);
+      if(value === null){
+        localStorage.setItem(
+          "DatosVentas",
+          JSON.stringify({
+            subTotal:
+              venta_actual.subTotal === undefined ? 0 : venta_actual.subTotal,
+            total: venta_actual.total === undefined ? 0 : venta_actual.total,
+            impuestos:
+              venta_actual.impuestos === undefined ? 0 : venta_actual.impuestos,
+            iva: venta_actual.iva === undefined ? 0 : venta_actual.iva,
+            ieps: venta_actual.ieps === undefined ? 0 : venta_actual.ieps,
+            descuento:
+              venta_actual.descuento === undefined ? 0 : venta_actual.descuento,
+            tipo_cambio: venta_actual.tipo_cambio ? venta_actual.descuento : {},
+            venta_cliente: false,
+            productos:
+              venta_actual.productos?.length > 0 ? venta_actual. productos : [],
+          })
+        );
+        setUpdateClientVenta(!updateClientVenta);
+      }else{
+        localStorage.setItem(
+          "DatosVentas",
+          JSON.stringify({
+            subTotal:
+              venta_actual.subTotal === undefined ? 0 : venta_actual.subTotal,
+            total: venta_actual.total === undefined ? 0 : venta_actual.total,
+            impuestos:
+              venta_actual.impuestos === undefined ? 0 : venta_actual.impuestos,
+            iva: venta_actual.iva === undefined ? 0 : venta_actual.iva,
+            ieps: venta_actual.ieps === undefined ? 0 : venta_actual.ieps,
+            descuento:
+              venta_actual.descuento === undefined ? 0 : venta_actual.descuento,
+            tipo_cambio: venta_actual.tipo_cambio ? venta_actual.descuento : {},
+            cliente: value,
+            venta_cliente: true,
+            productos:
+              venta_actual.productos?.length > 0 ? venta_actual.productos : [],
+          })
+        );
+        setUpdateClientVenta(!updateClientVenta);
+      }
+
     } catch (error) {
       console.log(error);
     }
@@ -59,7 +103,6 @@ export default function ClientesVentas() {
       <Autocomplete
         id="combo-box-producto-codigo"
         size="small"
-        onClose={() => console.log("datos")}
         fullWidth
         options={obtenerClientes}
         getOptionLabel={(option) =>

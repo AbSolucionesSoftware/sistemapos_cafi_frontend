@@ -290,9 +290,7 @@ export default function VentasGenerales() {
                 />
               </Box>
               <Box width={250} alignItems="center">
-                <ClienteProvider>
                   <ClientesVentas sesion={sesion} />
-                </ClienteProvider>
                 {/* <Paper className={classes.rootBusqueda}>
                   <InputBase fullWidth placeholder="Buscar cliente..." />
                   <IconButton>
