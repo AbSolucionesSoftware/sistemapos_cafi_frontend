@@ -54,21 +54,18 @@ export default function MostrarPrecios() {
       </Grid>
     );
   } else {
-    const cantidad_total =
-      datosProducto.cantidad + datosProducto.cantidad_regalo;
-
     return (
       <Grid container spacing={2}>
         <Grid item>
           <Typography style={{ fontSize: 16 }}>Subtotal:</Typography>
           <Typography style={{ fontSize: 18 }}>
-            <b>${formatoMexico(datosProducto.subtotal * cantidad_total)}</b>
+            <b>${formatoMexico(datosProducto.subtotal * datosProducto.cantidad)}</b>
           </Typography>
         </Grid>
         <Grid item>
           <Typography style={{ fontSize: 16 }}>Impuestos:</Typography>
           <Typography style={{ fontSize: 18 }}>
-            <b>${formatoMexico(datosProducto.impuestos * cantidad_total)}</b>
+            <b>${formatoMexico(datosProducto.impuestos * datosProducto.cantidad)}</b>
           </Typography>
         </Grid>
         <Grid item>
@@ -83,7 +80,7 @@ export default function MostrarPrecios() {
             <b>
               $
               {formatoMexico(
-                datosProducto.total_con_descuento * cantidad_total
+                datosProducto.total_con_descuento * datosProducto.cantidad
               )}
             </b>
           </Typography>

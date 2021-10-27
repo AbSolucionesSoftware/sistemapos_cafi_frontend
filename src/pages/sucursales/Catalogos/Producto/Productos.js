@@ -108,11 +108,17 @@ const RegistroComponent = () => {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const [filtro, setFiltro] = useState("");
   const [busqueda, setBusqueda] = useState("");
-  const [value, setValue] = React.useState(0);
+  const [existencias, setExistencias] = useState(true);
+  const [value, setValue] = useState(0);
   const classes = useStyles();
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const handleChange = (event, value) => {
+    setValue(value);
+	if(value === 0){
+		setExistencias(true)
+	}else{
+		setExistencias(false)
+	}
   };
 
   /* Queries */
@@ -121,7 +127,9 @@ const RegistroComponent = () => {
       sucursal: sesion.sucursal._id,
       empresa: sesion.empresa._id,
       filtro,
+	  existencias,
     },
+	fetchPolicy: "network-only",
   });
 
   if (loading)
@@ -206,7 +214,7 @@ const RegistroComponent = () => {
             value={value}
             onChange={handleChange}
             aria-label="simple tabs example"
-			centered
+			
           >
             <Tab label="Productos de Sucursal" />
             <Tab label="Todos los productos" />

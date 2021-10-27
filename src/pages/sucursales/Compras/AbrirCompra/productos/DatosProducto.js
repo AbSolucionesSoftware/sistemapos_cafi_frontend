@@ -65,6 +65,8 @@ export default function DatosProducto() {
     setIsEditing,
     editFinish,
     setEditFinish,
+    costo, setCosto,
+    cantidad, setCantidad
   } = useContext(ComprasContext);
   const {
     datos_generales,
@@ -95,10 +97,10 @@ export default function DatosProducto() {
     setPresentaciones,
     presentaciones_eliminadas,
     setPresentacionesEliminadas,
+    
   } = useContext(RegProductoContext);
 
-  const [costo, setCosto] = useState(datosProducto.costo);
-  const [cantidad, setCantidad] = useState(datosProducto.cantidad);
+
   const [cargando, setCargando] = useState(false);
 
   const [COSTO] = useDebounce(costo, 500);

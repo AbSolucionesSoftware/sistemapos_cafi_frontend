@@ -64,12 +64,14 @@ export const OBTENER_PRODUCTOS = gql`
     $sucursal: ID!
     $filtro: String
     $almacen: ID
+    $existencias: Boolean
   ) {
     obtenerProductos(
       empresa: $empresa
       sucursal: $sucursal
       filtro: $filtro
       almacen: $almacen
+      existencias: $existencias
     ) {
       _id
       centro_de_costos {

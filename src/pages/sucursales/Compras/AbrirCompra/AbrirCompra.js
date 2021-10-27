@@ -139,10 +139,6 @@ const ModalCompra = ({ open, handleClose }) => {
     setLoading(true);
     try {
       datosCompra.productos = productosCompra;
-     /*  const clean_data = cleanTypenames(datosCompra); */
-
-     /* console.log(datosCompra); */
-     /* console.log(datosCompra); */
 
       if (compra_en_espera) {
         const result = await crearCompraEnEspera({
@@ -184,7 +180,7 @@ const ModalCompra = ({ open, handleClose }) => {
       });
       console.log(error);
       if (error.networkError) {
-        console.log(error.networkError.result.errors);
+        console.log(error.networkError.result);
       } else if (error.graphQLErrors) {
         console.log(error.graphQLErrors);
       }
