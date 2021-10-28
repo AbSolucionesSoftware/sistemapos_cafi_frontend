@@ -125,7 +125,7 @@ export default function PreciosProductos() {
                         <div className={classes.formInputFlex}>
                             <Box width="100%">
                                 <Typography>
-                                   Nombre:  { productoCambioPrecio ? productoCambioPrecio.id_producto.datos_generales.nombre_comercial : ""}
+                                   Nombre:  { productoCambioPrecio ? productoCambioPrecio?.id_producto?.datos_generales?.nombre_comercial : ""}
                                 </Typography>
                             </Box>
                         </div>
