@@ -33,6 +33,7 @@ export const VentasProvider = ({ children }) => {
     );
 
     const [productoCambioPrecio, setProductoCambioPrecio] = useState({});
+    const [precioSelectProductoVenta, setPrecioSelectProductoVenta] = useState([]);
 
     const [ update, setUpdate ] = useState(false);
     const [ error, setError ] = useState(false);
@@ -60,7 +61,9 @@ export const VentasProvider = ({ children }) => {
                 setUpdateClientVenta,
                 updateClientVenta,
                 setProductoCambioPrecio,
-                productoCambioPrecio
+                productoCambioPrecio,
+                setPrecioSelectProductoVenta,
+                precioSelectProductoVenta
             }
         }>
 			{children}

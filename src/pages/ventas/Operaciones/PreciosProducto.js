@@ -3,6 +3,7 @@ import { Box, Button, Dialog, DialogActions, DialogContent, Divider, Grid,   Pap
 import CloseIcon from '@material-ui/icons/Close';
 import useStyles from '../styles';
 import { VentasContext } from '../../../context/Ventas/ventasContext';
+import SnackBarMessages from '../../../components/SnackBarMessages';
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -13,10 +14,14 @@ export default function PreciosProductos() {
     
     const classes = useStyles();
     const [open, setOpen] = useState(false);
-    const [selected, setSelected] = useState([]);
-    const [ setSelectPrisingProduct ] = useState({});
+    // const [selected, setSelected] = useState([]);
 
-    const { productoCambioPrecio } = useContext(VentasContext);
+    const { productoCambioPrecio, precioSelectProductoVenta, setPrecioSelectProductoVenta } = useContext(VentasContext);
+    // console.log(productoCambioPrecio.id_producto.precios.precios_producto[0]);
+    const [ selectPrisingProduct, setSelectPrisingProduct  ] = useState({});
+
+    const [alert, setAlert] = useState({ message: '', status: '', open: false });
+
 
     // console.log(productoCambioPrecio);
     
@@ -24,38 +29,34 @@ export default function PreciosProductos() {
 		setOpen(!open);
 	};
 
-    const handleClick = (name) => {
-        console.log("llego a click");
-        let newSelected = [];
-        const exist = selected.indexOf(name) !== -1;
-        if(exist){
-          newSelected = [];
+    const handleAceptChangePrising = () => {
+        console.log(selectPrisingProduct);
+        console.log(productoCambioPrecio);
+        if(!selectPrisingProduct.precio_neto){
+            console.log("No hay precio seleccionado");
+            return false;
+        }
+        if(selectPrisingProduct.precio_neto > 0){
+            const newProductoPrecio = {};
+
+            //Crear un nuevo arreglo y quitarle descuentos para saber que restar
+
         }else{
-          newSelected = newSelected.concat([], name);
+            setAlert({ message: 'Este precio no es valido.', status: 'error', open: true });
         }
-        setSelectPrisingProduct(name);
-        setSelected(newSelected);
+    }
+
+    const handleClick = (precio) => {
+        let newSelected = [];
+        newSelected = newSelected.concat([], precio);
+        setSelectPrisingProduct(precio);
+        setPrecioSelectProductoVenta(newSelected);
       };
 
-      const TwoClickInRowTableBuy = (e, producto) => {
-        try {
-          let timer;
-          clearTimeout(timer);
-          if (e.detail === 2) {
-            handleClick(producto);
-            setSelectPrisingProduct(producto);
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      };
-
-    const isSelected = (name) => {
-        if(name.precio_neto === productoCambioPrecio.precio) setSelected(name);
-        return selected.indexOf(name) !== -1 || name.precio_neto === productoCambioPrecio.precio;
-      };
+    const isSelected = (name) => precioSelectProductoVenta.indexOf(name) !== -1;
 
     window.addEventListener('keydown', Mi_función); 
+
     function Mi_función(e){
         if(e.keyCode === 114){ 
             handleClickOpen();
@@ -64,6 +65,7 @@ export default function PreciosProductos() {
 
     return (
         <>
+        <SnackBarMessages alert={alert} setAlert={setAlert} />
             <Button 
                 className={classes.borderBotonChico}
                 onClick={handleClickOpen}
@@ -143,6 +145,7 @@ export default function PreciosProductos() {
                                     </TableHead>
                                     <TableBody>
                                         {productoCambioPrecio?.id_producto?.precios?.precios_producto?.map((precio, index) => {
+                                            console.log(productoCambioPrecio);
                                             const isItemSelected = isSelected(precio);
                                             const labelId = `enhanced-table-checkbox-${index}`;
                                             return (
@@ -152,9 +155,6 @@ export default function PreciosProductos() {
                                                   isItemSelected={isItemSelected}
                                                   labelId={labelId}
                                                   handleClick={handleClick}
-                                                  selected={selected}
-                                                  setSelected={setSelected}
-                                                  TwoClickInRowTableBuy={TwoClickInRowTableBuy}
                                                 />
                                               );
                                         })}
@@ -165,7 +165,7 @@ export default function PreciosProductos() {
                     </Grid>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClickOpen} variant="contained" color="primary" size="large">
+                <Button onClick={() => handleAceptChangePrising()} variant="contained" color="primary" size="large">
                     Aceptar
                 </Button>
             </DialogActions>
@@ -178,11 +178,18 @@ const RenderTableRows = ({
     precio,
     isItemSelected,
     labelId,
-    handleClick,
-    selected,
-    setSelected,
-    TwoClickInRowTableBuy
+    handleClick
   }) => {
+
+    const doubleClick = (e) => {
+        try {
+            if (e.detail === 2) {
+                handleClick(precio);
+            }
+          } catch (error) {
+            console.log(error);
+          }
+    }
 
     return (
         <Fragment>
@@ -193,7 +200,7 @@ const RenderTableRows = ({
             key={precio.numero_precio}
             selected={isItemSelected}
             hover
-            onClick={(e) => TwoClickInRowTableBuy(e,precio)}
+            onClick={(e) => doubleClick(e)}
             >
             <TableCell padding="checkbox">
                 <Checkbox

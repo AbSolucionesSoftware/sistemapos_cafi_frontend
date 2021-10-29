@@ -245,7 +245,7 @@ export default function EnhancedTable({
   const classes = useStyles();
   const [ selected, setSelected ] = useState([]);
 
-  const { setProductoCambioPrecio } = useContext(VentasContext);
+  const { setProductoCambioPrecio, setPrecioSelectProductoVenta } = useContext(VentasContext);
 
   const [datosTabla, setDatosTabla] = useState([]);
 
@@ -262,9 +262,17 @@ export default function EnhancedTable({
     }else{
       newSelected = newSelected.concat([], name);
     }
-    console.log(name);
-    setProductoCambioPrecio(name);
-    setSelected(newSelected);
+    // console.log(name);
+    const producto = name.id_producto.precios.precios_producto.filter((p) => p.precio_neto === name.precio);
+    if(producto.length > -0){
+      setPrecioSelectProductoVenta(producto);
+      setProductoCambioPrecio(name);
+      // console.log(name.id_producto.precios.precios_producto[0]);
+      setSelected(newSelected);
+    }else{
+      
+    }
+
   };
 
   const TwoClickInRowTableBuy = (e, producto) => {

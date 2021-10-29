@@ -106,7 +106,8 @@ export const calculatePrices = async (newP, cantidad, granel) => {
     impuestoCalculo = 0,
     ivaCalculo = 0,
     iepsCalculo = 0,
-    descuentoCalculo = 0;
+    descuentoCalculo = 0,
+    monederoCalculo = 0;
 
   const cantidadNueva = cantidad > 0 ? cantidad : 1;
 
@@ -119,32 +120,35 @@ export const calculatePrices = async (newP, cantidad, granel) => {
       newP.id_producto.precios.unidad_de_compra.precio_unitario_sin_impuesto
     ) * parseFloat(`0.${newP.id_producto.precios.ieps}`);
 
+    const precioProducto = parseFloat(newP.precio);
+    const precioDescuentoProducto = newP.descuento_activo ? parseFloat(newP.descuento.precio_con_descuento) : 0;
+
     totalCalculo =
       granel.granel === true
         ? newP.descuento_activo === true
-          ? parseFloat(newP.descuento.precio_con_descuento) *
+          ? precioDescuentoProducto *
             cantidadNueva *
             parseFloat(granel.valor)
-          : parseFloat(newP.precio) * cantidadNueva * parseFloat(granel.valor)
+          : precioProducto * cantidadNueva * parseFloat(granel.valor)
         : newP.descuento_activo === true
-        ? parseFloat(newP.descuento.precio_con_descuento) * cantidadNueva
-        : parseFloat(newP.precio) * cantidadNueva;
+        ? precioDescuentoProducto * cantidadNueva
+        : precioProducto * cantidadNueva;
 
     subtotalCalculo =
       granel.granel === true
         ? newP.descuento_activo === true
-          ? (parseFloat(newP.descuento.precio_con_descuento) -
+          ? (precioDescuentoProducto -
               (iva_producto + ieps_producto)) *
             cantidadNueva *
             parseFloat(granel.valor)
-          : (parseFloat(newP.precio) - (iva_producto + ieps_producto)) *
+          : (precioProducto - (iva_producto + ieps_producto)) *
             cantidadNueva *
             parseFloat(granel.valor)
         : newP.descuento_activo === true
-        ? (parseFloat(newP.descuento.precio_con_descuento) -
+        ? (precioDescuentoProducto -
             (iva_producto + ieps_producto)) *
           cantidadNueva
-        : (parseFloat(newP.precio) - (iva_producto + ieps_producto)) *
+        : (precioProducto - (iva_producto + ieps_producto)) *
           cantidadNueva;
 
     impuestoCalculo =
@@ -176,6 +180,10 @@ export const calculatePrices = async (newP, cantidad, granel) => {
           cantidadNueva
         : 0;
 
+    monederoCalculo = newP.id_producto.precios.monedero ? newP.id_producto.precios.monedero_electronico * cantidadNueva : 0;
+
+    
+
   return {
     totalCalculo,
     subtotalCalculo,
@@ -183,5 +191,6 @@ export const calculatePrices = async (newP, cantidad, granel) => {
     ivaCalculo,
     iepsCalculo,
     descuentoCalculo,
+    monederoCalculo
   };
 };

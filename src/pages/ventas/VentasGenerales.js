@@ -143,7 +143,8 @@ export default function VentasGenerales() {
       impuestos = 0,
       iva = 0,
       ieps = 0,
-      descuento = 0;
+      descuento = 0,
+      monedero = 0;
 
     // if(producto.id_prodo)
 
@@ -161,6 +162,7 @@ export default function VentasGenerales() {
         ivaCalculo,
         iepsCalculo,
         descuentoCalculo,
+        monederoCalculo
       } = await calculatePrices(newP, 0, granelBase);
       // console.log(granelBase);
       subTotal = subtotalCalculo;
@@ -169,6 +171,7 @@ export default function VentasGenerales() {
       iva = ivaCalculo;
       ieps = iepsCalculo;
       descuento = descuentoCalculo;
+      monedero = monederoCalculo;
       newP.cantidad_venta = 1;
       newP.granelProducto = granelBase;
       newP.precio_a_vender = totalCalculo;
@@ -184,6 +187,7 @@ export default function VentasGenerales() {
         ivaCalculo,
         iepsCalculo,
         descuentoCalculo,
+        monederoCalculo
       } = await calculatePrices(newP, 0, granelBase);
       subTotal = subtotalCalculo;
       total = totalCalculo;
@@ -191,6 +195,7 @@ export default function VentasGenerales() {
       iva = ivaCalculo;
       ieps = iepsCalculo;
       descuento = descuentoCalculo;
+      monedero = monederoCalculo;
       console.log(descuento);
       newP.cantidad_venta = parseInt(cantidad_venta) + 1;
       newP.granelProducto = granelBase;
