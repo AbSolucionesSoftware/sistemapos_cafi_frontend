@@ -168,28 +168,7 @@ export default function RegistroInformacionRapido({ setAbrirTallaColor, setCanti
 							<FormHelperText>{validacion.message}</FormHelperText>
 						</FormControl>
 					</Box>
-					{datos_generales.tipo_producto === "OTROS" ? (
-						<Box width="100%">
-							<Typography>
-								<span className="obligatorio">* </span>Cantidad
-							</Typography>
-							<TextField
-								fullWidth
-								size="small"
-								error={validacion.error && !cantidad}
-								name="cantidad"
-								type='number'
-								id="form-producto-nombre-generico"
-								variant="outlined"
-								value={cantidad ? cantidad : ''}
-								helperText={validacion.message}
-								onChange={(e) => setCantidad(parseInt(e.target.value))}
-							/>
-						</Box>
-					):(null)}
-				</div>
-				<div className={classes.formInputFlex}>
-                    <Box width="100%">
+					<Box width="100%">
 						<Typography>
 							<span className="obligatorio">* </span>Nombre comercial
 						</Typography>
@@ -205,6 +184,8 @@ export default function RegistroInformacionRapido({ setAbrirTallaColor, setCanti
 							onChange={obtenerCampos}
 						/>
 					</Box>
+				</div>
+				<div className={classes.formInputFlex}>
 					<Box width="100%">
 						<Typography>
 							<span className="obligatorio">* </span>Nombre genérico
@@ -221,28 +202,48 @@ export default function RegistroInformacionRapido({ setAbrirTallaColor, setCanti
 							onChange={obtenerCampos}
 						/>
 					</Box>
-					<Box width="100%">
-						<Typography>Granel</Typography>
-						<FormControlLabel
-							control={<Checkbox onChange={obtenerChecks} name="granel" />}
-							label="Vender a granel"
-						/>
-					</Box>
-					<Box width="100%">
-						<Typography>Medicamento</Typography>
-						<FormControlLabel
-							control={
-								<Checkbox
-									// checked={datos_generales.receta_farmacia ? datos_generales.receta_farmacia : false}
-									onChange={checkFarmacia}
+					{datos_generales.tipo_producto === "OTROS" ? (
+						<>
+							<Box width="100%">
+								<Typography>
+									<span className="obligatorio">* </span>Cantidad
+								</Typography>
+								<TextField
+									fullWidth
+									size="small"
+									error={validacion.error && !cantidad}
+									name="cantidad"
+									type='number'
+									id="form-producto-nombre-generico"
+									variant="outlined"
+									value={cantidad ? cantidad : ''}
+									helperText={validacion.message}
+									onChange={(e) => setCantidad(parseInt(e.target.value))}
+								/>
+							</Box>
+							<Box width="100%">
+								<Typography>Granel</Typography>
+								<FormControlLabel
+									control={<Checkbox onChange={obtenerChecks} name="granel" />}
+									label="Vender a granel"
+								/>
+							</Box>
+							<Box width="100%">
+								<Typography>Medicamento</Typography>
+								<FormControlLabel
+									control={
+										<Checkbox
+											// checked={datos_generales.receta_farmacia ? datos_generales.receta_farmacia : false}
+											onChange={checkFarmacia}
+											name="receta_farmacia"
+										/>
+									}
+									label="Necesita receta"
 									name="receta_farmacia"
 								/>
-							}
-							label="Necesita receta"
-							name="receta_farmacia"
-						/>
-					</Box>
-					
+							</Box>
+						</>
+					) : null}
                 </div>
         </Fragment>
     )
