@@ -391,6 +391,7 @@ const RenderTableRows = ({
               iva: 0,
               ieps: 0,
               descuento: 0,
+              monedero: 0
             }
           : venta;
       //Calculos de impuestos que se van a restar de la venta;
@@ -456,6 +457,8 @@ const RenderTableRows = ({
           parseFloat(venta_existente.descuento) -
           parseFloat(calculoResta.descuentoCalculo) +
           calculoSuma.descuentoCalculo,
+        monedero: parseFloat(venta_existente.monedero) - parseFloat(calculoResta.monederoCalculo) +
+        calculoSuma.monederoCalculo,
       };
       localStorage.setItem(
         "DatosVentas",

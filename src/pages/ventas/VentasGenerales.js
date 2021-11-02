@@ -46,6 +46,7 @@ export default function VentasGenerales() {
     iva: 0,
     ieps: 0,
     descuento: 0,
+    monedero: 0,
     tipo_cambio: {},
   });
 
@@ -92,6 +93,7 @@ export default function VentasGenerales() {
         iva: parseFloat(venta.iva),
         ieps: parseFloat(venta.ieps),
         descuento: parseFloat(venta.descuento),
+        monedero: parseFloat(venta.monedero),
       });
     }
   }, []);
@@ -100,7 +102,7 @@ export default function VentasGenerales() {
     if (event.code === "Enter" || event.code === "NumpadEnter") {
       const input_value = event.target.value.trim();
       const data = input_value.split("*");
-      console.log(data);
+      // console.log(data);
       if (data.length > 1) {
         let data_operation = isNaN(data[0]) ? data[1] : data[0];
         let data_key = isNaN(data[0]) ? data[0] : data[1];
@@ -114,7 +116,7 @@ export default function VentasGenerales() {
           },
         });
       } else {
-        console.log(input_value);
+        // console.log(input_value);
         setGranelBase({
           granel: false,
           valor: 0,
@@ -134,9 +136,9 @@ export default function VentasGenerales() {
     let venta_actual = venta === null ? [] : venta;
     let venta_existente =
       venta === null
-        ? { subTotal: 0, total: 0, impuestos: 0, iva: 0, ieps: 0, descuento: 0 }
+        ? { subTotal: 0, total: 0, impuestos: 0, iva: 0, ieps: 0, descuento: 0, monedero: 0 }
         : venta;
-    console.log(productosVentas);
+    // console.log(productosVentas);
     let productosVentasTemp = productosVentas;
     let subTotal = 0,
       total = 0,
@@ -164,7 +166,7 @@ export default function VentasGenerales() {
         descuentoCalculo,
         monederoCalculo
       } = await calculatePrices(newP, 0, granelBase);
-      // console.log(granelBase);
+      // console.log(monederoCalculo);
       subTotal = subtotalCalculo;
       total = totalCalculo;
       impuestos = impuestoCalculo;
@@ -172,6 +174,7 @@ export default function VentasGenerales() {
       ieps = iepsCalculo;
       descuento = descuentoCalculo;
       monedero = monederoCalculo;
+      // console.log(monedero);
       newP.cantidad_venta = 1;
       newP.granelProducto = granelBase;
       newP.precio_a_vender = totalCalculo;
@@ -196,7 +199,8 @@ export default function VentasGenerales() {
       ieps = iepsCalculo;
       descuento = descuentoCalculo;
       monedero = monederoCalculo;
-      console.log(descuento);
+      // console.log(monedero);
+      // console.log(descuento);
       newP.cantidad_venta = parseInt(cantidad_venta) + 1;
       newP.granelProducto = granelBase;
       newP.precio_a_vender = totalCalculo;
@@ -214,7 +218,9 @@ export default function VentasGenerales() {
       iva: parseFloat(venta_existente.iva) + iva,
       ieps: parseFloat(venta_existente.ieps) + ieps,
       descuento: parseFloat(venta_existente.descuento) + descuento,
+      monedero: parseFloat(venta_existente.monedero) + monedero
     };
+    console.log(CalculosData);
     localStorage.setItem(
       "DatosVentas",
       JSON.stringify({

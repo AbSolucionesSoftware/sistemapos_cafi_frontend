@@ -41,6 +41,7 @@ export default function EliminarProducto({
 					iva: 0,
 					ieps: 0,
 					descuento: 0,
+					monedero: 0
 				}
 			: venta;
 
@@ -75,6 +76,9 @@ export default function EliminarProducto({
 				descuento: 
 				  parseFloat(venta_existente.descuento) -
 				  parseFloat(calculoResta.descuentoCalculo),
+				monedero: 
+				  parseFloat(venta_existente.monedero) -
+				  parseFloat(calculoResta.monederoCalculo),
 			  };
 			  localStorage.setItem("DatosVentas", JSON.stringify({
 				...CalculosData,
