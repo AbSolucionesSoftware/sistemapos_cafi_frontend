@@ -76,7 +76,6 @@ export default function Turnos() {
 	const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
     const classes = useStyles();
     const [value, setValue] = useState(0);
-	const [loading, setLoading] = useState(false);
 
     const handleChange = (event, newValue) => {
 		setValue(newValue);
@@ -92,19 +91,6 @@ export default function Turnos() {
 			handleClickOpen();
 		} 
 	};
-
-	if (loading) 
-	return (
-		<Box
-		display="flex"
-		flexDirection="column"
-		justifyContent="center"
-		alignItems="center"
-		height="80vh"
-		>
-			<CircularProgress />
-		</Box>
-	);
 
     return (
         <>
@@ -149,16 +135,18 @@ export default function Turnos() {
 						textColor="primary"
 						aria-label="scrollable force tabs example"
 					>
-						<Tab
-							label="Cerrar Turno"
-							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
-							{...a11yProps(0)}
-						/>
-						{sesion?.turno_en_caja_activo === true ? null : (
+						
+						{sesion?.turno_en_caja_activo === true ? (
+							<Tab
+								label="Cerrar Turno"
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
+								{...a11yProps(0)}
+							/>
+						) : (
 							<Tab
 								label="Abrir Turno"
 								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
-								{...a11yProps(1)}
+								{...a11yProps(0)}
 							/>			
 						)}
 						<Grid container justify='flex-end'>
@@ -188,19 +176,42 @@ export default function Turnos() {
 						</Box>
 					</Tabs>
 				</AppBar>
-				
-                <DialogContent style={{padding: 0}}>
-					<TabPanel style={{padding: 0}} value={value} index={0}>
-						<CerrarTurno setLoading={setLoading} handleClickOpen={handleClickOpen} />
-					</TabPanel>
-					{sesion?.turno_en_caja_activo === true ? null : (
-						<TabPanel value={value} index={1}>
-							<AbrirTurno setLoading={setLoading} handleClickOpen={handleClickOpen} />
-						</TabPanel>
-					)}
-				</DialogContent>
-				
+                <ContenidoTurnos handleClickOpen={handleClickOpen} value={value} /> 
 			</Dialog>
         </>
     )
+}
+
+
+const ContenidoTurnos = ({ handleClickOpen, value}) => {
+
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	const [loading, setLoading] = useState(false);
+
+	if (loading) 
+	return (
+		<Box
+		display="flex"
+		flexDirection="column"
+		justifyContent="center"
+		alignItems="center"
+		height="80vh"
+		>
+			<CircularProgress />
+		</Box>
+	);
+
+	return(
+		<DialogContent style={{padding: 0}}>
+			{sesion?.turno_en_caja_activo === true ? (
+				<TabPanel style={{padding: 0}} value={value} index={0}>
+					<CerrarTurno setLoading={setLoading} handleClickOpen={handleClickOpen} />
+				</TabPanel>
+			): (
+				<TabPanel value={value} index={0}>
+					<AbrirTurno setLoading={setLoading} handleClickOpen={handleClickOpen} />
+				</TabPanel>
+			)}
+		</DialogContent>
+	)
 }

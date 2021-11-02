@@ -33,12 +33,18 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
     const input = {
         horario_en_turno: cerrarTurno.horario_en_turno,
         concepto: "CERRAR TURNO",
-        numero_caja: turnoEnCurso ? turnoEnCurso.numero_caja.toString() : "",
+        numero_caja: turnoEnCurso ? turnoEnCurso?.numero_caja.toString() : "",
         comentarios: cerrarTurno.comentarios,
         id_caja: turnoEnCurso ? turnoEnCurso.id_caja : "",
         empresa: sesion.empresa._id,
         sucursal: sesion.sucursal._id,
-        usuario_en_turno: sesion._id,
+        id_usuario: sesion._id,
+        usuario_en_turno: {
+            nombre: sesion.nombre,
+            telefono: sesion.telefono,
+            numero_usuario: sesion.numero_usuario.toString(),
+            email: sesion.email,
+        },
         hora_entrada: {
             hora:  "",
             minutos: "",

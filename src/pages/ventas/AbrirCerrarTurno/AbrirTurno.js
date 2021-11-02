@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import useStyles from '../styles';
 
-import { Box, Button, DialogActions, DialogContent,  FormControl, Grid, MenuItem, Select, TextField, Typography } from '@material-ui/core'
+import { Box, Button, CircularProgress, DialogActions, DialogContent,  FormControl, Grid, MenuItem, Select, TextField, Typography } from '@material-ui/core'
 import { useMutation, useQuery } from '@apollo/client';
 import { OBTENER_CAJAS } from '../../../gql/Cajas/cajas';
 import { REGISTRAR_TURNOS } from '../../../gql/Ventas/abrir_cerrar_turno';
@@ -23,7 +23,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
     const classes = useStyles();
     let obtenerCajasSucursal = [];
 
-    const { data } = useQuery(OBTENER_CAJAS,{
+    const { data, loading, refetch } = useQuery(OBTENER_CAJAS,{
 		variables: {
             empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id
@@ -78,7 +78,13 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                     id_caja: abrirTurno.caja_elegida,
                     empresa: sesion.empresa._id,
                     sucursal: sesion.sucursal._id,
-                    usuario_en_turno: sesion._id,
+                    id_usuario: sesion._id,
+                    usuario_en_turno: {
+                        nombre: sesion.nombre,
+                        telefono: sesion.telefono,
+                        numero_usuario: sesion.numero_usuario.toString(),
+                        email: sesion.email,
+                    },
                     hora_entrada: {
                         hora: moment().format('hh'),
                         minutos: moment().format('mm'),
@@ -132,6 +138,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                     status: "success",
                     open: true,
                 });
+                refetch();
                 setLoading(false);
                 handleClickOpen();
             }
@@ -145,6 +152,19 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
             handleClickOpen();
         }
     };
+
+    if (loading) 
+	return (
+		<Box
+		display="flex"
+		flexDirection="column"
+		justifyContent="center"
+		alignItems="center"
+		height="80vh"
+		>
+			<CircularProgress />
+		</Box>
+	);
 
     return (
         <div>
