@@ -9,14 +9,14 @@ import RegistrarInfoBasica from "./RegistrarInfoBasica";
 import RegistrarInfoCredito from "./RegistroInfoCredito";
 import { Add, Edit } from "@material-ui/icons";
 import { ClienteCtx } from "../../../../context/Catalogos/crearClienteCtx";
-import { VentasContext } from "../../../../context/Ventas/ventasContext";
+// import { VentasContext } from "../../../../context/Ventas/ventasContext";
 import BackdropComponent from "../../../../components/Layouts/BackDrop";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 
 import { useMutation } from "@apollo/client";
 import {
   CREAR_CLIENTE,
-  ACTUALIZAR_CLIENTE,
+  ACTUALIZAR_CLIENTE
 } from "../../../../gql/Catalogos/clientes";
 
 function TabPanel(props) {
@@ -74,10 +74,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CrearCliente({ tipo, accion, datos, refetch, ventas, handleClickOpen }) {
   const classes = useStyles();
-  const { cliente, setCliente, setError, update, setUpdate } =
+  const { cliente, setCliente, setError, update, setUpdate, updateClientVenta, setUpdateClientVenta  } =
     useContext(ClienteCtx);
-    const { setUpdateClientVenta, updateClientVenta } =
-    useContext(VentasContext);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(0);
   const [loading, setLoading] = useState(false);

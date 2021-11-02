@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useRef } from "react";
+import React, { useState, useEffect, Fragment, useRef, useContext } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { lighten, makeStyles } from "@material-ui/core/styles";
@@ -25,20 +25,8 @@ import {
   findProductArray,
   calculatePrices,
 } from "../../config/reuserFunctions";
+import { VentasContext } from '../../context/Ventas/ventasContext';
 
-function createData(name, calories, fat, carbs, protein, a, b) {
-  return { name, calories, fat, carbs, protein, a, b };
-}
-
-const rows = [
-  createData("Cantidad", 305, 3.7, 67, 4.3, 67, 4.3),
-  createData("Descripcion", 452, 25.0, 51, 4.9, 67, 4.3),
-  createData("Existencias", 262, 16.0, 24, 6.0, 67, 4.3),
-  createData("% Desc", 159, 6.0, 24, 4.0, 67, 4.3),
-  createData("Receta", 356, 16.0, 49, 3.9, 67, 4.3),
-  createData("U. Venta", 408, 3.2, 87, 6.5, 67, 4.3),
-  createData("Precio U", 237, 9.0, 37, 4.3, 67, 4.3),
-];
 
 const headCells = [
   {
@@ -255,14 +243,9 @@ export default function EnhancedTable({
   setDatosVentasActual,
 }) {
   const classes = useStyles();
-  const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState("calories");
-  const [selected, setSelected] = React.useState([]);
-  const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [ selected, setSelected ] = useState([]);
 
-  const [productoCambioPrecioSelect, setProductoCambioPrecioSelect] = useState({});
+  const { setProductoCambioPrecio } = useContext(VentasContext);
 
   const [datosTabla, setDatosTabla] = useState([]);
 
@@ -279,32 +262,28 @@ export default function EnhancedTable({
     }else{
       newSelected = newSelected.concat([], name);
     }
-    setProductoCambioPrecioSelect(name);
+    console.log(name);
+    setProductoCambioPrecio(name);
     setSelected(newSelected);
   };
 
-  const TwoClickInRowTableBuy = (e) => {
+  const TwoClickInRowTableBuy = (e, producto) => {
     try {
       let timer;
       clearTimeout(timer);
       if (e.detail === 2) {
-        // timer = setTimeout(e.props.onClick, 200)
-        console.log("doble click");
-      } /*  else if (e.detail === 2) {
-         
-      } */
+        handleClick(producto);
+        setProductoCambioPrecio(producto);
+      }
+      
     } catch (error) {
       console.log(error);
     }
   };
 
   const isSelected = (name) => {
-    console.log(selected.indexOf(name) !== -1);
     return selected.indexOf(name) !== -1;
   };
-
-  const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
@@ -313,7 +292,7 @@ export default function EnhancedTable({
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
+            size={"medium"}
             aria-label="enhanced table"
           >
             <TableHead>
@@ -351,11 +330,6 @@ export default function EnhancedTable({
                   />
                 );
               })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -382,6 +356,7 @@ const RenderTableRows = ({
   );
   const textfield = useRef(null);
   const [value] = useDebounce(newCantidadProduct, 500);
+
 
   useEffect(() => {
     setNewCantidadProduct(producto.cantidad_venta);
@@ -502,7 +477,7 @@ const RenderTableRows = ({
         key={producto._id}
         selected={isItemSelected}
         hover
-        onClick={TwoClickInRowTableBuy}
+        onClick={(e) => TwoClickInRowTableBuy(e,producto)}
       >
         <TableCell padding="checkbox">
           <Checkbox

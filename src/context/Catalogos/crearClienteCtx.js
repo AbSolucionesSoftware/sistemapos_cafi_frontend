@@ -21,6 +21,9 @@ export const ClienteProvider = ({ children }) => {
 	const [ error, setError ] = useState(false);
 	const [ update, setUpdate ] = useState(false);
 
+	const [updateClientVenta, setUpdateClientVenta] = useState(false);
+
+
 	return (
 		<ClienteCtx.Provider
 			value={{
@@ -31,7 +34,9 @@ export const ClienteProvider = ({ children }) => {
 				error,
 				setError,
 				update,
-				setUpdate
+				setUpdate,
+				setUpdateClientVenta,
+				updateClientVenta
 			}}
 		>
 			{children}

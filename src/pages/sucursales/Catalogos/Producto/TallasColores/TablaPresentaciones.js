@@ -1,4 +1,10 @@
-import React, { Fragment, useContext, useRef, useState } from "react";
+import React, {
+  Fragment,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Input from "@material-ui/core/Input";
 import Table from "@material-ui/core/Table";
@@ -10,8 +16,21 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
-import { Box, Chip, IconButton, Tooltip, Zoom } from "@material-ui/core";
-import { Cached, Close, Edit } from "@material-ui/icons";
+import {
+  Box,
+  Chip,
+  IconButton,
+  Tooltip,
+  Typography,
+  Zoom,
+} from "@material-ui/core";
+import {
+  Cached,
+  Close,
+  Edit,
+  LocalOffer,
+  LocalOfferOutlined,
+} from "@material-ui/icons";
 import { fade } from "@material-ui/core/styles/colorManipulator";
 
 const compareFunction = (a, b) => {
@@ -67,11 +86,37 @@ export default function TablaPresentaciones({
   onlyPrice,
 }) {
   const classes = useStyles();
-  const { presentaciones } = useContext(RegProductoContext);
+  const { presentaciones, setPresentaciones } = useContext(RegProductoContext);
 
   let mostrar_presentaciones = [...presentaciones].sort((a, b) =>
     compareFunction(a, b)
   );
+
+  /* useEffect(() => {
+    let nuevo_array = [];
+    mostrar_presentaciones.forEach((element) => {
+      let obj = {
+        codigo_barras: element.codigo_barras,
+        cantidad: parseFloat(element.cantidad),
+        descuento: element.descuento,
+        descuento_activo: element.descuento_activo,
+        color: element.color,
+        existencia: element.existencia,
+        medida: element.medida,
+        nombre_comercial: element.nombre_comercial,
+      };
+
+      if (element.descuento_activo === true) {
+        obj.aplicar_descuento = true;
+        obj.precio = parseFloat(element.descuento.precio_con_descuento);
+      } else {
+        obj.aplicar_descuento = false;
+        obj.precio = parseFloat(element.precio);
+      }
+      nuevo_array.push(obj);
+    });
+    setPresentaciones(nuevo_array);
+  }, []); */
 
   return (
     <div className={classes.root}>
@@ -91,7 +136,12 @@ export default function TablaPresentaciones({
                 <TableCell width={200}>Nombre</TableCell>
                 <TableCell padding="checkbox">Medida</TableCell>
                 <TableCell padding="checkbox">Color</TableCell>
-                {!withoutPrice ? <TableCell>Precio</TableCell> : null}
+                {!withoutPrice ? (
+                  <Fragment>
+                    <TableCell>Precio</TableCell>
+                    <TableCell padding="checkbox">Aplicar descuento</TableCell>
+                  </Fragment>
+                ) : null}
                 {!onlyPrice ? (
                   <Fragment>
                     {from && from === "compra" ? (
@@ -148,6 +198,7 @@ const RenderPresentacionesRows = ({
     compareFunction(a, b)
   );
   const copy_element_presentacion = { ...copy_presentaciones[index] };
+  const copy_element_presentacion_descuento = { ...copy_presentaciones[index].descuento };
   const copy_producto = { ...producto };
 
   /* if(from && from === 'compra'){
@@ -169,43 +220,53 @@ const RenderPresentacionesRows = ({
     setDisabledInput(true);
   };
 
-  const obtenerDatos = (event) => {
-    if (event.target.name === "cantidad") {
-      if (!event.target.value) {
+  const obtenerDatos = (e) => {
+    const { name, value } = e.target;
+    if (name === "cantidad") {
+      if (!value) {
         copy_element_presentacion.cantidad = "";
         copy_element_presentacion.existencia = false;
         copy_presentaciones.splice(index, 1, copy_element_presentacion);
         setPresentaciones(copy_presentaciones);
         return;
       }
-      copy_element_presentacion.cantidad = parseFloat(event.target.value);
+      copy_element_presentacion.cantidad = parseFloat(value);
       copy_element_presentacion.existencia = true;
-    } else if (event.target.name === "cantidad_nueva") {
-      if (!event.target.value) {
+    } else if (name === "cantidad_nueva") {
+      if (!value) {
         copy_element_presentacion.cantidad_nueva = "";
         copy_element_presentacion.existencia = copy_producto.existencia;
         copy_presentaciones.splice(index, 1, copy_element_presentacion);
         setPresentaciones(copy_presentaciones);
         return;
       }
-      copy_element_presentacion.cantidad_nueva = parseFloat(event.target.value);
+      copy_element_presentacion.cantidad_nueva = parseFloat(value);
       copy_element_presentacion.existencia = true;
-    } else if (event.target.name === "precio") {
-      if (!event.target.value) {
+    } else if (name === "precio") {
+      if (!value) {
         copy_element_presentacion.precio = "";
         copy_presentaciones.splice(index, 1, copy_element_presentacion);
         setPresentaciones(copy_presentaciones);
         return;
       }
-      copy_element_presentacion.precio = parseFloat(event.target.value);
+      if(copy_element_presentacion.descuento_activo && copy_element_presentacion.descuento_activo === true){
+        let precio_con_descuento = Math.round(
+          (value * copy_element_presentacion.descuento.porciento) / 100
+        );
+        copy_element_presentacion_descuento.precio_con_descuento = parseFloat(precio_con_descuento);
+        copy_element_presentacion.precio = parseFloat(value);
+        copy_element_presentacion.descuento = copy_element_presentacion_descuento
+      }else{
+        copy_element_presentacion.precio = parseFloat(value);
+      }
     } else {
-      if (!event.target.value) {
+      if (!value) {
         copy_element_presentacion.codigo_barras = "";
         copy_presentaciones.splice(index, 1, copy_element_presentacion);
         setPresentaciones(copy_presentaciones);
         return;
       }
-      copy_element_presentacion.codigo_barras = event.target.value;
+      copy_element_presentacion.codigo_barras = value;
     }
     copy_presentaciones.splice(index, 1, copy_element_presentacion);
     setPresentaciones(copy_presentaciones);
@@ -235,6 +296,12 @@ const RenderPresentacionesRows = ({
     }
   };
 
+  const aplicarDescuento = (value) => {
+    copy_element_presentacion.descuento_activo = value;
+    copy_presentaciones.splice(index, 1, copy_element_presentacion);
+    setPresentaciones(copy_presentaciones);
+  };
+
   return (
     <TableRow hover selected={!disabledInput} className={classes.tableRow}>
       <TableCell align="center" padding="checkbox">
@@ -248,7 +315,7 @@ const RenderPresentacionesRows = ({
             /* disabled={disabledInput} */
             value={copy_producto.codigo_barras}
             type="number"
-            name="precio"
+            name="codigo_barras"
             disabled={
               datos.medidas_registradas && !copy_producto.nuevo
                 ? true
@@ -300,16 +367,53 @@ const RenderPresentacionesRows = ({
         ) : null}
       </TableCell>
       {!withoutPrice ? (
-        <TableCell width={110}>
-          <Input
-            inputRef={textfield}
-            onChange={(e) => obtenerDatos(e)}
-            disabled={disabledInput}
-            value={copy_producto.precio}
-            type="tel"
-            name="precio"
-          />
-        </TableCell>
+        <Fragment>
+          <TableCell width={110}>
+            <Input
+              inputRef={textfield}
+              onChange={(e) => obtenerDatos(e)}
+              disabled={disabledInput}
+              value={copy_producto.precio}
+              type="tel"
+              name="precio"
+            />
+          </TableCell>
+          <TableCell width={200}>
+            <Box display="flex" alignItems="center">
+              {copy_producto.descuento_activo !== undefined && copy_producto.descuento_activo !== null ? (
+                <Fragment>
+                  <Checkbox
+                    checked={
+                      copy_producto.descuento_activo === true
+                        ? copy_producto.descuento_activo
+                        : false
+                    }
+                    onChange={(e) => aplicarDescuento(e.target.checked)}
+                    icon={<LocalOfferOutlined />}
+                    checkedIcon={<LocalOffer />}
+                    inputProps={{ "aria-label": "check descuento" }}
+                    color="primary"
+                    disabled={copy_producto.descuento_activo === null}
+                  />
+                  <Typography color={copy_producto.descuento_activo === true ? "primary" : "textSecondary"}>
+                    %
+                    {parseFloat(
+                      copy_producto.descuento !== null
+                        ? copy_producto.descuento.porciento
+                        : 0
+                    )}{" "}
+                    $
+                    {parseFloat(
+                      copy_producto.descuento !== null
+                        ? copy_producto.descuento.precio_con_descuento
+                        : 0
+                    )}
+                  </Typography>
+                </Fragment>
+              ) : null}
+            </Box>
+          </TableCell>
+        </Fragment>
       ) : null}
       {!onlyPrice ? (
         <Fragment>

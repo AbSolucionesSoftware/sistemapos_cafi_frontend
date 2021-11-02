@@ -37,7 +37,7 @@ export default function ListaCompras() {
   const classes = useStyles();
   const { productosCompra } = useContext(ComprasContext);
 
-  const productos_ordernados = [...productosCompra].reverse();
+  const productos_ordernados = [...productosCompra];
 
   return (
     <Paper className={classes.root}>
@@ -54,6 +54,8 @@ export default function ListaCompras() {
               <TableCell padding="checkbox">Presentaciones</TableCell>
               <TableCell>IVA</TableCell>
               <TableCell>IEPS</TableCell>
+              <TableCell>Total IVA</TableCell>
+              <TableCell>Total IEPS</TableCell>
               <TableCell>Editar</TableCell>
               <TableCell>Remover</TableCell>
             </TableRow>
@@ -170,6 +172,8 @@ const RenderProductosCompra = ({ producto, index }) => {
       </TableCell>
       <TableCell>{producto.producto.precios.iva}%</TableCell>
       <TableCell>{producto.producto.precios.ieps}%</TableCell>
+      <TableCell>${producto.iva_total}</TableCell>
+      <TableCell>${producto.ieps_total}</TableCell>
       <TableCell>
         {isSelected ? (
           <IconButton
@@ -214,7 +218,7 @@ const ModalDeleteProducto = ({ index, isSelected }) => {
   };
 
   const eliminarCompra = () => {
-    let copy_compras = [...productosCompra].reverse();
+    let copy_compras = [...productosCompra];
     let objeto_eliminado = copy_compras.splice(index, 1);
 
     setDatosCompra({
@@ -223,7 +227,7 @@ const ModalDeleteProducto = ({ index, isSelected }) => {
       impuestos: datosCompra.impuestos - objeto_eliminado[0].impuestos,
       total: datosCompra.total - objeto_eliminado[0].total,
     });
-    setProductosCompra([...copy_compras].reverse());
+    setProductosCompra([...copy_compras]);
     handleClose();
   };
 
