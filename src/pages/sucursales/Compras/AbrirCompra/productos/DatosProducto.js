@@ -49,7 +49,7 @@ import { initial_state_datosProducto } from "../initial_states";
 import MostrarPrecios from "./mostrar_precios";
 import { useDebounce } from "use-debounce/lib";
 
-export default function DatosProducto() {
+export default function DatosProducto({status}) {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const {
     datosProducto,
@@ -100,6 +100,9 @@ export default function DatosProducto() {
     
   } = useContext(RegProductoContext);
 
+  let count = 0;
+  if(status === "enEspera" && datosCompra) count = 1
+
 
   const [cargando, setCargando] = useState(false);
 
@@ -122,6 +125,16 @@ export default function DatosProducto() {
       fetchPolicy: "network-only",
     }
   );
+
+  useEffect(() => {
+    if(count === 1){
+      getProductos({
+        variables: {
+          almacen: datosCompra.almacen._id,
+        },
+      });
+    }
+  }, [count])
 
   if (loading)
     return (
@@ -487,6 +500,7 @@ export default function DatosProducto() {
   return (
     <Fragment>
       <DatosProveedorAlmacen
+        status={status}
         refetchProductos={refetch}
         getProductos={getProductos}
       />

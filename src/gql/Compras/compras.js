@@ -202,6 +202,181 @@ export const OBTENER_COMPRAS_REALIZADAS = gql`
   }
 `;
 
+export const OBTENER_COMPRAS_ESPERA = gql`
+  query obtenerComprasEnEspera($empresa: ID!, $sucursal: ID!, $filtro: String) {
+    obtenerComprasEnEspera(
+      empresa: $empresa
+      sucursal: $sucursal
+      filtro: $filtro
+    ) {
+      _id
+      en_espera
+      proveedor {
+        id_proveedor
+        clave_cliente
+        numero_cliente
+        nombre_cliente
+      }
+      almacen {
+        id_almacen
+        nombre_almacen
+      }
+      productos {
+        producto {
+          almacen_inicial {
+            almacen
+            cantidad
+            fecha_de_expiracion
+            id_almacen
+          }
+          datos_generales {
+            codigo_barras
+            clave_alterna
+            tipo_producto
+            nombre_comercial
+            nombre_generico
+            descripcion
+            id_categoria
+            categoria
+            subcategoria
+            id_subcategoria
+            id_departamento
+            departamento
+            id_marca
+            marca
+            clave_producto_sat
+            receta_farmacia
+          }
+          precios {
+            ieps
+            ieps_activo
+            iva
+            iva_activo
+            monedero
+            monedero_electronico
+            precio_de_compra {
+              ieps
+              iva
+              precio_con_impuesto
+              precio_sin_impuesto
+            }
+            precios_producto {
+              numero_precio
+              precio_neto
+              precio_venta
+              unidad_mayoreo
+              utilidad
+            }
+            unidad_de_compra {
+              cantidad
+              precio_unitario_con_impuesto
+              precio_unitario_sin_impuesto
+              unidad
+            }
+            inventario {
+              inventario_minimo
+              inventario_maximo
+              unidad_de_inventario
+            }
+            granel
+          }
+          imagenes {
+            url_imagen
+            location_imagen
+            key_imagen
+            extencion_imagen
+          }
+          centro_de_costos {
+            cuenta
+            id_cuenta
+            id_subcuenta
+            subcuenta
+          }
+          precio_plazos {
+            precio_cajas {
+              plazo
+              unidad
+              precio
+            }
+            precio_costales {
+              plazo
+              unidad
+              precio
+            }
+            precio_piezas {
+              plazo
+              unidad
+              precio
+            }
+          }
+          empresa
+          sucursal
+          usuario
+          unidades_de_venta {
+            _id
+            precio
+            cantidad
+            unidad
+            unidad_principal
+            codigo_barras
+            id_producto
+            descuento {
+              porciento
+              dinero_descontado
+              precio_con_descuento
+            }
+            descuento_activo
+            default
+          }
+          presentaciones {
+            _id
+            cantidad
+            codigo_barras
+            color {
+              hex
+              nombre
+              _id
+            }
+            descuento {
+              porciento
+              dinero_descontado
+              precio_con_descuento
+            }
+            descuento_activo
+            existencia
+            medida {
+              talla
+              tipo
+              _id
+            }
+            nombre_comercial
+            precio
+          }
+        }
+        id_producto
+        cantidad
+        cantidad_regalo
+        unidad_regalo
+        cantidad_total
+        iva_total
+        ieps_total
+        costo
+        descuento_porcentaje
+        descuento_precio
+        impuestos
+        mantener_precio
+        subtotal
+        total
+        total_con_descuento
+      }
+      impuestos
+      subtotal
+      total
+      fecha_registro
+    }
+  }
+`;
+
 export const OBTENER_CONSULTA_GENERAL_PRODUCTO = gql`
   query obtenerConsultaGeneralCompras($empresa: ID!, $sucursal: ID!) {
     obtenerConsultaGeneralCompras(empresa: $empresa, sucursal: $sucursal) {
@@ -403,6 +578,14 @@ export const OBTENER_CONSULTA_GENERAL_PRODUCTO = gql`
           pais
         }
       }
+    }
+  }
+`;
+
+export const ELIMINAR_COMPRA_ESPERA = gql`
+  mutation eliminarCompraEnEspera($id: ID!) {
+    eliminarCompraEnEspera(id: $id) {
+      message
     }
   }
 `;

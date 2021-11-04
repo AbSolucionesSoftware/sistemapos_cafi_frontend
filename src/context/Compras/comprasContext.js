@@ -26,6 +26,7 @@ export const ComprasProvider = ({ children }) => {
   const [datosCompra, setDatosCompra] = useState({
     productos: [],
     proveedor: {},
+    en_espera: false,
     fecha_registro: moment().locale("es-mx").format(),
     almacen: {},
     subtotal: 0,

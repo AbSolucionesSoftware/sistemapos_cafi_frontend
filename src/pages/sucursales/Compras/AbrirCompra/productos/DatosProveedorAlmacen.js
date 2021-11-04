@@ -1,4 +1,4 @@
-import React, { Fragment, useContext } from "react";
+import React, { Fragment, useContext, useEffect } from "react";
 import {
   Box,
   CircularProgress,
@@ -29,6 +29,7 @@ import { ErrorOutline } from "@material-ui/icons";
 export default function DatosProveedorAlmacen({
   refetchProductos,
   getProductos,
+  status
 }) {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const {
