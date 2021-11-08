@@ -7,7 +7,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { Box, Grid, Dialog, DialogContent, Typography} from '@material-ui/core';
+import { Box, Grid, Dialog, DialogContent, Typography, CircularProgress} from '@material-ui/core';
 
 const columns = [
 	{ id: 'fecha', label: 'Fecha', minWidth: 100 },
@@ -23,7 +23,7 @@ const useStyles  = makeStyles((theme) => ({
 		width: '100%'
 	},
 	container: {
-		maxHeight: '100%'
+		maxHeight: 500,
 	},
     appBar: {	
 		position: 'relative'
@@ -38,43 +38,54 @@ const useStyles  = makeStyles((theme) => ({
 	},
 }));
 
-export default function TablaTurnosFiltrados({turnos}) {
-	const classes = useStyles();
 
+export default function TablaTurnosFiltrados({loading, turnos}) {
+	const classes = useStyles();
+	
+	if (loading)
+		return (
+			<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
+				<CircularProgress />
+			</Box>
+		);
+		
 	return (
-        <Box p={2}>
-            <Paper className={classes.root}>
-                <TableContainer className={classes.container}>
-                    <Table stickyHeader size="small" aria-label="a dense table">
-                        <TableHead>
-                            <TableRow>
-                                {columns.map((column) => (
-                                    <TableCell key={column.id} align="center" style={{ minWidth: column.minWidth }}>
-                                        {column.label}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-							{turnos.map((row) => {
-								return (
-									<RowsRender
-										key={row._id}
-										turno={row}
-									/>
-								);
-							})}
-						</TableBody>
-                    </Table>
-                </TableContainer>
-            </Paper>
-        </Box>
+		<>
+			<Box p={2}>
+				<Paper className={classes.root}>
+					<TableContainer className={classes.container}>
+						<Table stickyHeader size="small" aria-label="a dense table">
+							<TableHead>
+								<TableRow>
+									{columns.map((column) => (
+										<TableCell key={column.id} align="center" style={{ minWidth: column.minWidth }}>
+											{column.label}
+										</TableCell>
+									))}
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{turnos.map((row) => {
+									return (
+										<RowsRender
+											key={row._id}
+											turno={row}
+										/>
+									);
+								})}
+							</TableBody>
+						</Table>
+					</TableContainer>
+				</Paper>
+			</Box>
+		</>
 	);
 }
 
+
 function RowsRender({turno}) {
 	const [open, setOpen] = useState(false);
-
+	const classes = useStyles();
 	const handleClickOpen =()=> setOpen(!open);
 
 	return(
@@ -86,16 +97,27 @@ function RowsRender({turno}) {
 				tabIndex={-1}
 				key={turno._id}
 			>
-				<TableCell align="center">20/20/2021</TableCell>
-				<TableCell align="center">15:10:00</TableCell>
-				<TableCell align="center">Luis</TableCell>
+				<TableCell align="center">{turno.fecha_movimiento}</TableCell>
+				<TableCell align="center">
+					{turno.concepto === "ABRIR TURNO" ? (
+						<>
+							{turno.hora_entrada.completa}
+						</>
+						): (
+						<>
+							{turno.hora_salida.completa}
+						</>
+					)}
+				</TableCell>
+				<TableCell align="center">{turno.usuario_en_turno.nombre}</TableCell>
 				<TableCell align="center">{turno.horario_en_turno}</TableCell>
 				<TableCell align="center">{turno.concepto}</TableCell>
 				<TableCell align="center">{turno.numero_caja}</TableCell>
 			</TableRow>
 
 			<Dialog
-				maxWidth='lg'
+				fullWidth={true}
+				maxWidth='md'
 				open={open} 
 				onClose={handleClickOpen} 
 			>
@@ -109,55 +131,102 @@ function RowsRender({turno}) {
 							</Box>
 						</Grid>
 						<Grid lg={6} xs={12}>
-							<Box p={1} >
+							<Box p={1}>
 								<Typography>
-									<b>Usuario</b>: Luis Manuel
+									<b>Usuario</b>: {turno.usuario_en_turno.nombre}
 								</Typography>
 							</Box>
-							<Box p={1} >
+							<Box p={1}>
 								<Typography>
 									<b>Numero de caja</b>: {turno.numero_caja}
 								</Typography>
 							</Box>
-							<Box p={1} >
+							<Box p={1}>
 								<Typography>
 									<b>Moviento de turno</b>: {turno.concepto}
 								</Typography>
 							</Box>
-							<Box p={1} >
+							<Box p={1}>
 								<Typography>
 									<b>Horario de turno</b>: {turno.horario_en_turno}
 								</Typography>
 							</Box>
-							<Box p={1} >
+							<Box p={1}>
 								<Typography>
 									{turno.concepto === "ABRIR TURNO" ? (
 										<>
-											<b>Hora de Entrada de turno: </b>{ turno.horario_en_turno}
+											<b>Hora de Entrada de turno: </b>{turno.hora_entrada.completa}
 										</>
 										): (
 										<>
-											<b>Hora de Salida de turno: </b>{ turno.horario_en_turno}
+											<b>Hora de Salida de turno: </b>{turno.hora_salida.completa}
 										</>
 									)}
 								</Typography>
 							</Box>
-							<Box p={1} >
+							<Box p={1}>
 								<Typography>
 									<b>Comentarios</b>: {turno.comentarios}
 								</Typography>
 							</Box>
-							<Box p={1} >
+							<Box p={1}>
 								<Typography>
 									<b>Fecha de movimiento</b>: {turno.fecha_movimiento}
 								</Typography>
-								{console.log(turno.fecha_movimiento)}
 							</Box>
 						</Grid>
 						<Grid lg={6} xs={12}>
-							<Box>
+							<Paper className={classes.root}>
+								<TableContainer className={classes.container}>
+									<Table stickyHeader size="small" aria-label="a dense table">
+										<TableHead>
+											<TableRow>
+												<TableCell align="center" style={{ minWidth: 100 }}>
+													Concepto
+												</TableCell>
+												<TableCell align="center" style={{ minWidth: 100 }}>
+													Monto depositado
+												</TableCell>
+											</TableRow>
+										</TableHead>
 
-							</Box>
+										<TableBody>
+											<TableRow hover tabIndex={-1} >
+												<TableCell align="center"><b>Monto Total Efectivo:</b></TableCell>
+												<TableCell align="center"><b>${turno.montos_en_caja.monto_efectivo}</b></TableCell>
+											</TableRow>
+											<TableRow hover tabIndex={-1} >
+												<TableCell align="center">Creditos</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_creditos}</TableCell>
+											</TableRow>
+											<TableRow hover tabIndex={-1} >
+												<TableCell align="center">Tarjeta de Credito</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_tarjeta_credito}</TableCell>
+											</TableRow>
+											<TableRow hover tabIndex={-1} >
+												<TableCell align="center">Tarjeta de Debito</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_tarjeta_debito}</TableCell>
+											</TableRow>
+											<TableRow hover tabIndex={-1} >
+												<TableCell align="center">Puntos</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_puntos}</TableCell>
+											</TableRow>
+											<TableRow hover tabIndex={-1} >
+												<TableCell align="center">Cheques</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_cheques}</TableCell>
+											</TableRow>
+											<TableRow hover tabIndex={-1} >
+												<TableCell align="center">Transferencias</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_transferencia}</TableCell>
+											</TableRow>
+											<TableRow hover tabIndex={-1} >
+												<TableCell align="center">Vales de despensa</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_vales_despensa}</TableCell>
+											</TableRow>
+										</TableBody>
+									</Table>
+								</TableContainer>
+							</Paper>
 						</Grid>
 					</Grid>
 				</DialogContent>

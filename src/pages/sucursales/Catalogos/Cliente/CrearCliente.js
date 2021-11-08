@@ -16,7 +16,7 @@ import SnackBarMessages from "../../../../components/SnackBarMessages";
 import { useMutation } from "@apollo/client";
 import {
   CREAR_CLIENTE,
-  ACTUALIZAR_CLIENTE,
+  ACTUALIZAR_CLIENTE
 } from "../../../../gql/Catalogos/clientes";
 
 function TabPanel(props) {
@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CrearCliente({ tipo, accion, datos, refetch, ventas, handleClickOpen }) {
   const classes = useStyles();
-  const { cliente, setCliente, setError, update, setUpdate, setUpdateClientVenta, updateClientVenta } =
+  const { cliente, setCliente, setError, update, setUpdate, updateClientVenta, setUpdateClientVenta  } =
     useContext(ClienteCtx);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(0);

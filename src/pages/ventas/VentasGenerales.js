@@ -27,7 +27,7 @@ import {
   calculatePrices,
 } from "../../config/reuserFunctions";
 
-import { ClienteProvider } from '../../context/Catalogos/crearClienteCtx';
+// import { ClienteProvider } from '../../context/Catalogos/crearClienteCtx';
 
 export default function VentasGenerales() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));

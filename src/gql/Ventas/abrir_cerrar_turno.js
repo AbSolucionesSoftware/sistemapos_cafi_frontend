@@ -42,7 +42,10 @@ export const REGISTRAR_TURNOS = gql`
 				monto_cheques
 				monto_vales_despensa
 			}
-			usuario_en_turno
+			usuario_en_turno {
+				numero_usuario
+				nombre
+			}
 			empresa
 			sucursal
 		}
@@ -96,7 +99,10 @@ export const OBTENER_HISTORIAL_TURNOS = gql`
 				monto_cheques
 				monto_vales_despensa
 			}
-			usuario_en_turno
+			usuario_en_turno {
+				numero_usuario
+				nombre
+			}
 			empresa
 			sucursal
 		}

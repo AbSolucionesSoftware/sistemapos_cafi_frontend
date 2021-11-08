@@ -171,11 +171,10 @@ export default function CrearUsuario({ accion, datos }) {
 					}
 				});
 			} else {
-				const { numero_usuario, _id, sucursal, empresa, estado_usuario, ...input } = usuario;
-				const usuarioActualizado = cleanTypenames(input);
+				const { numero_usuario, _id, sucursal, empresa, turno_en_caja_activo, estado_usuario, ...input } = usuario;
 				await actualizarUsuario({
 					variables: {
-						input: usuarioActualizado,
+						input: input,
 						id: usuario._id
 					}
 				});
@@ -186,7 +185,7 @@ export default function CrearUsuario({ accion, datos }) {
 			setLoading(false);
 			onCloseModal();
 		} catch (error) {
-			setAlert({ message: 'Hubo un error', status: 'error', open: true });
+			setAlert({ message: 'Hubo un error en el servidor', status: 'error', open: true });
 			setLoading(false);
 		}
 	};

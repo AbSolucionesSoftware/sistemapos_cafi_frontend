@@ -165,9 +165,14 @@ function NavegacionVentas(props) {
 							<div>
 								<Box>
 									<Typography color="textSecondary">{sesion.nombre}</Typography>
-									<Typography color="textSecondary">
-										<b>Caja: </b>{turnoEnCurso?.numero_caja}
-									</Typography>
+									{!turnoEnCurso?.numero_caja ? (
+										""
+									) : (
+										<Typography color="textSecondary">
+											<b>Caja: </b>{turnoEnCurso?.numero_caja}
+										</Typography>
+									)}
+									
 								</Box>
 							</div>
 						</Box>
