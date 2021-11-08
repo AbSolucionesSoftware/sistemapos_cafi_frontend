@@ -244,6 +244,19 @@ export default function CrearProducto({
       return;
     }
     setValidacion(validate);
+    if(presentaciones.length > 0){
+      const pres = presentaciones.filter(res => res.color._id && res.medida._id)
+
+      if(pres.length !== presentaciones.length){
+        setValidacion({ error: true, message: 'Faltan medidas o colores a tus presentaciones', vista7: true });
+        setAlert({
+          message: `Faltan medidas o colores en tus presentaciones`,
+          status: "error",
+          open: true,
+        });
+        return
+      }
+    }
 
     let copy_unidadesVenta = [ ...unidadesVenta];
 
@@ -314,9 +327,9 @@ export default function CrearProducto({
           open: true,
         });
       }
-      productosRefetch();
       setLoading(false);
       toggleModal();
+      productosRefetch();
     } catch (error) {
       setLoading(false);
       setAlert({
@@ -356,6 +369,8 @@ export default function CrearProducto({
 
   /* SET STATES WHEN UPDATING */
   const setInitialStates = (producto) => {
+
+    console.log(producto);
     /* const producto = cleanTypenames(product); */
     const { precios_producto, ...new_precios } = producto.precios;
     let unidadxdefecto = producto.unidades_de_venta.filter(
@@ -455,7 +470,7 @@ export default function CrearProducto({
             onClick={() => toggleModal()}
             startIcon={<Add />}
           >
-            Nuevo producto
+            Nuevo
           </Button>
         )
       ) : (

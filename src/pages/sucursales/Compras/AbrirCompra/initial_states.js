@@ -22,6 +22,7 @@ export const initial_state_datosProducto = {
 export const initial_state_datosCompra = {
   productos: [],
   proveedor: {},
+  en_espera: false,
   fecha_registro: moment().locale('es-mx').format(),
   almacen: {},
   subtotal: 0,

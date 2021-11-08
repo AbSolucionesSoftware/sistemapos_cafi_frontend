@@ -1,5 +1,5 @@
 import React, { Fragment, useContext, useState } from "react";
-import { Button, CircularProgress } from "@material-ui/core";
+import { Button, CircularProgress, Tooltip } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -15,7 +15,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AlertDialogSlide() {
+export default function AlertDialogSlide({verificate, setVerificate}) {
   const [open, setOpen] = useState(false);
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const { datosProducto, datosCompra } = useContext(ComprasContext);
@@ -33,7 +33,7 @@ export default function AlertDialogSlide() {
         disabled={true}
         startIcon={<CircularProgress size={16} color="inherit" />}
       >
-        Editar tallas y colores
+        Medidas
       </Button>
     );
 
@@ -41,20 +41,25 @@ export default function AlertDialogSlide() {
 
   const { obtenerConsultasProducto } = data;
 
-  const toggleDrawer = () => setOpen(!open);
+  const toggleDrawer = () => {
+    setOpen(!open);
+    setVerificate(false);
+  }
 
   return (
     <Fragment>
-      <Button
-        color="inherit"
-        variant="outlined"
-        size="medium"
-        onClick={() => toggleDrawer()}
-        startIcon={<SquareFoot />}
-        disabled={!datosProducto.producto.datos_generales}
-      >
-        Medidas
-      </Button>
+      <Tooltip title="Selecciona medidas y colores" disableHoverListener={true} open={verificate} placement="top">
+        <Button
+          color={verificate ? "secondary" :"inherit"}
+          variant="outlined"
+          size="medium"
+          onClick={() => toggleDrawer()}
+          startIcon={<SquareFoot />}
+          disabled={!datosProducto.producto.datos_generales}
+        >
+          Medidas
+        </Button>
+      </Tooltip>
       <Dialog
         open={open}
         TransitionComponent={Transition}

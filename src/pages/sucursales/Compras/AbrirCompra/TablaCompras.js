@@ -86,6 +86,8 @@ const RenderProductosCompra = ({ producto, index }) => {
     isEditing,
     setIsEditing,
     editFinish,
+    setCosto,
+    setCantidad
   } = useContext(ComprasContext);
   const [isSelected, setIsSelected] = useState(false);
   const productoCTX = useContext(RegProductoContext);
@@ -118,6 +120,8 @@ const RenderProductosCompra = ({ producto, index }) => {
     SetOrResetData("SET", seStates, producto.producto);
     setProductoOriginal(producto.producto);
     setPreciosVenta(producto.producto.precios.precios_producto);
+    setCosto(producto.costo);
+    setCantidad(producto.cantidad);
   };
 
   const handleCancelEdit = () => {
@@ -125,6 +129,8 @@ const RenderProductosCompra = ({ producto, index }) => {
     setIsEditing({});
     setDatosProducto(initial_state_datosProducto);
     SetOrResetData("RESET", seStates);
+    setCosto(0);
+    setCantidad(1);
   };
 
   useEffect(() => {
