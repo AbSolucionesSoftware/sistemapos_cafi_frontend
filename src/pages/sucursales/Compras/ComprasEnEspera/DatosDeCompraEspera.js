@@ -173,7 +173,22 @@ export default function DatosDeCompra({
                     selected={datos.conflicto}
                   >
                     {verificado ? (
-                      <TableCell>{datos.conflicto ? <Error color="primary" /> : <CheckCircle style={{color: theme.palette.success.main}} /> }</TableCell>
+                      <TableCell
+                        style={{
+                          paddingTop: 0,
+                          paddingBottom: 0,
+                        }}
+                      >
+                        {datos.conflicto ? (
+                          <Error style={{ fontSize: "1px" }} color="primary" />
+                        ) : (
+                          <CheckCircle
+                            style={{
+                              color: theme.palette.success.main,
+                            }}
+                          />
+                        )}
+                      </TableCell>
                     ) : null}
                     <TableCell>
                       {datos.producto.datos_generales.nombre_comercial}
@@ -295,6 +310,7 @@ const ModalEliminarCompra = ({
             variant="text"
             color="secondary"
             size="large"
+            disabled={loading}
             startIcon={
               loading ? (
                 <CircularProgress size={18} color="inherit" />

@@ -263,6 +263,7 @@ const RenderTallas = ({
     preciosP,
     presentaciones_eliminadas,
     setPresentacionesEliminadas,
+    almacen_inicial
   } = useContext(RegProductoContext);
   const [selected, setSelected] = useState(false);
 
@@ -312,6 +313,7 @@ const RenderTallas = ({
         const producto_medida = medidas_seleccionadas_temp[i];
         presentacion_temp.push({
           _id: "",
+          almacen: almacen_inicial.id_almacen,
           existencia: false,
           codigo_barras: GenCodigoBarras(),
           nombre_comercial: datos_generales.nombre_comercial,
@@ -338,6 +340,7 @@ const RenderTallas = ({
         } else {
           presentacion_temp.push({
             _id: "",
+            almacen: almacen_inicial.id_almacen,
             existencia: false,
             codigo_barras: GenCodigoBarras(),
             nombre_comercial: datos_generales.nombre_comercial,
@@ -360,6 +363,7 @@ const RenderTallas = ({
         for (let k = 0; k < medidas_seleccionadas_temp.length; k++) {
           presentacion_temp.push({
             _id: "",
+            almacen: almacen_inicial.id_almacen,
             existencia: array_medidad_finales[i].existencia,
             codigo_barras: array_medidad_finales[i].codigo_barras,
             nombre_comercial: array_medidad_finales[i].nombre_comercial,
@@ -389,6 +393,7 @@ const RenderTallas = ({
           if (!presentacion_existente.length) {
             presentacion_temp.push({
               _id: "",
+              almacen: almacen_inicial.id_almacen,
               existencia: false,
               codigo_barras: GenCodigoBarras(),
               nombre_comercial: datos_generales.nombre_comercial,
@@ -417,6 +422,7 @@ const RenderTallas = ({
           const objeto_presentaciones_final = array_medidad_finales[x];
           presentacion_temp.push({
             _id: objeto_presentaciones_final._id,
+            almacen: objeto_presentaciones_final.almacen,
             existencia: objeto_presentaciones_final.existencia,
             codigo_barras: objeto_presentaciones_final.codigo_barras,
             nombre_comercial: objeto_presentaciones_final.nombre_comercial,
@@ -480,6 +486,7 @@ const Colores = ({
     preciosP,
     presentaciones_eliminadas,
     setPresentacionesEliminadas,
+    almacen_inicial
   } = useContext(RegProductoContext);
 
   const [selected, setSelected] = useState(false);
@@ -527,6 +534,7 @@ const Colores = ({
         const producto_color = coloresSeleccionados[i];
         presentacion_temp.push({
           _id: "",
+          almacen: almacen_inicial.id_almacen,
           existencia: false,
           codigo_barras: GenCodigoBarras(),
           nombre_comercial: datos_generales.nombre_comercial,
@@ -553,6 +561,7 @@ const Colores = ({
         } else {
           presentacion_temp.push({
             _id: "",
+            almacen: almacen_inicial.id_almacen,
             existencia: false,
             codigo_barras: GenCodigoBarras(),
             nombre_comercial: datos_generales.nombre_comercial,
@@ -575,6 +584,7 @@ const Colores = ({
         for (let k = 0; k < coloresSeleccionados.length; k++) {
           presentacion_temp.push({
             _id: "",
+            almacen: almacen_inicial.id_almacen,
             existencia: array_medidad_finales[i].existencia,
             codigo_barras: array_medidad_finales[i].codigo_barras,
             nombre_comercial: array_medidad_finales[i].nombre_comercial,
@@ -604,6 +614,7 @@ const Colores = ({
           if (!presentacion_existente.length) {
             presentacion_temp.push({
               _id: "",
+              almacen: almacen_inicial.id_almacen,
               existencia: false,
               codigo_barras: GenCodigoBarras(),
               nombre_comercial: datos_generales.nombre_comercial,
@@ -632,6 +643,7 @@ const Colores = ({
           const objeto_presentaciones_final = array_medidad_finales[x];
           presentacion_temp.push({
             _id: objeto_presentaciones_final._id,
+            almacen: objeto_presentaciones_final.almacen,
             existencia: objeto_presentaciones_final.existencia,
             codigo_barras: objeto_presentaciones_final.codigo_barras,
             nombre_comercial: objeto_presentaciones_final.nombre_comercial,

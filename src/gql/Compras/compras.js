@@ -330,7 +330,9 @@ export const OBTENER_COMPRAS_ESPERA = gql`
           }
           presentaciones {
             _id
+            almacen
             cantidad
+            cantidad_nueva
             codigo_barras
             color {
               hex

@@ -174,6 +174,7 @@ export const OBTENER_PRODUCTOS = gql`
       medidas_producto {
         _id
         cantidad
+        almacen
         descuento_activo
         descuento {
           porciento

@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useEffect } from "react";
+import React, { Fragment, useContext } from "react";
 import {
   Box,
   CircularProgress,
@@ -25,6 +25,8 @@ import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProdu
 import { useQuery } from "@apollo/client";
 import { OBTENER_CONSULTA_GENERAL_PRODUCTO } from "../../../../../gql/Compras/compras";
 import { ErrorOutline } from "@material-ui/icons";
+import { initial_state_datosProducto } from "../initial_states";
+import { initial_state_almacen_inicial, initial_state_datos_generales, initial_state_precios, initial_state_preciosP, initial_state_preciosPlazos, initial_state_unidadVentaXDefecto } from "../../../../../context/Catalogos/initialStatesProducto";
 
 export default function DatosProveedorAlmacen({
   refetchProductos,
@@ -36,9 +38,29 @@ export default function DatosProveedorAlmacen({
     datosCompra,
     setDatosCompra,
     datosProducto,
+    setDatosProducto,
     productosCompra,
   } = useContext(ComprasContext);
-  const { almacen_inicial, setAlmacenInicial } = useContext(RegProductoContext);
+
+  const {
+    setDatosGenerales,
+    setPrecios,
+    setValidacion,
+    setPreciosP,
+    setImagenes,
+    setUnidadesVenta,
+    almacen_inicial,
+    setAlmacenInicial,
+    setUnidadVentaXDefecto,
+    setCentroDeCostos,
+    setPreciosPlazos,
+    setSubcategorias,
+    setOnPreview,
+    setSubcostos,
+    setImagenesEliminadas,
+    setPresentaciones,
+    setPresentacionesEliminadas,
+  } = useContext(RegProductoContext);
 
   /* Queries */
   const { loading, data, error, refetch } = useQuery(
@@ -71,6 +93,8 @@ export default function DatosProveedorAlmacen({
           nombre_almacen: value.nombre_almacen,
         },
       });
+      setDatosProducto(initial_state_datosProducto);
+      resetInitialStates();
       if (
         datosProducto.producto &&
         !datosProducto.producto.medidas_registradas
@@ -87,6 +111,25 @@ export default function DatosProveedorAlmacen({
         },
       });
     }
+  };
+
+  const resetInitialStates = () => {
+    setDatosGenerales(initial_state_datos_generales);
+    setPrecios(initial_state_precios);
+    setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
+    setPreciosP(initial_state_preciosP);
+    setUnidadesVenta([]);
+    setAlmacenInicial(initial_state_almacen_inicial);
+    setCentroDeCostos({});
+    setPreciosPlazos(initial_state_preciosPlazos);
+    setSubcategorias([]);
+    setImagenes([]);
+    setOnPreview({ index: "", image: "" });
+    setValidacion({ error: false, message: "" });
+    setSubcostos([]);
+    setImagenesEliminadas([]);
+    setPresentaciones([]);
+    setPresentacionesEliminadas([]);
   };
 
   const errorRender = (

@@ -164,7 +164,7 @@ const ModalContinuarCompra = ({ compra, setAlert, refetch }) => {
             compra={compra}
             refetch={refetch}
             setAlert={setAlert}
-			handleOpenDetalles={handleOpen}
+            handleOpenDetalles={handleOpen}
           />
         </DialogContent>
       </Dialog>
@@ -229,6 +229,7 @@ const ModalEliminarCompra = ({ compra, setAlert, refetch }) => {
             variant="text"
             color="secondary"
             size="large"
+            disabled={loading}
             startIcon={
               loading ? (
                 <CircularProgress size={18} color="inherit" />
