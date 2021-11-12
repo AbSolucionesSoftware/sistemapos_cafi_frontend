@@ -141,11 +141,13 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
       precio: parseFloat(precio.toFixed(6)),
     });
   /* console.log(unidadVentaXDefecto);
-    if (unidadVentaXDefecto.descuento_activo && unidadVentaXDefecto.descuento_activo === true) {
+    if (unidadVentaXDefecto.descuento_activo === true) {
       //calcular nuevo precio entre %
       let precio_con_descuento = Math.round(
-        (precio * unidadVentaXDefecto.descuento.porciento) / 100
+        (parseFloat(precio) * unidadVentaXDefecto.descuento.porciento) / 100
       );
+
+      console.log(precio);
       setUnidadVentaXDefecto({
         ...unidadVentaXDefecto,
         precio: parseFloat(precio.toFixed(6)),
