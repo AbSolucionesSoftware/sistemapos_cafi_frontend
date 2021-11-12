@@ -484,8 +484,6 @@ const RenderUnidadesRows = ({ unidades, index }) => {
     setUnidadesVenta([...nuevo_array]);
   };
 
-  console.log(unidades);
-
   return (
     <TableRow>
       <TableCell>{unidades.codigo_barras}</TableCell>
