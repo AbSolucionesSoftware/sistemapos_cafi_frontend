@@ -21,7 +21,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
 import { ComprasContext } from "../../../../context/Compras/comprasContext";
-import { Close, Edit } from "@material-ui/icons";
+import { Close, Edit, Error } from "@material-ui/icons";
 import { initial_state_datosProducto } from "./initial_states";
 import { SetOrResetData } from "./productos/setOrResetData";
 import { RegProductoContext } from "../../../../context/Catalogos/CtxRegProducto";
@@ -35,13 +35,20 @@ const useStyles = makeStyles({
 
 export default function ListaCompras() {
   const classes = useStyles();
-  const { productosCompra } = useContext(ComprasContext);
+  const { productosCompra, loadingProductos } = useContext(ComprasContext);
 
   const productos_ordernados = [...productosCompra];
 
   return (
     <Paper className={classes.root}>
-      <TableContainer>
+      <TableContainer style={
+       loadingProductos
+          ? {
+              pointerEvents: "none",
+              opacity: 0.4,
+            }
+          : null
+      }>
         <Table stickyHeader size="small">
           <TableHead>
             <TableRow>
@@ -87,7 +94,8 @@ const RenderProductosCompra = ({ producto, index }) => {
     setIsEditing,
     editFinish,
     setCosto,
-    setCantidad
+    setCantidad,
+    setIssue
   } = useContext(ComprasContext);
   const [isSelected, setIsSelected] = useState(false);
   const productoCTX = useContext(RegProductoContext);
@@ -137,15 +145,25 @@ const RenderProductosCompra = ({ producto, index }) => {
     setIsSelected(false);
   }, [editFinish]);
 
+  useEffect(() => {
+    if(!producto.cantidad){
+      
+    }else{
+      setIssue(false);
+    }
+  }, [producto.cantidad]);
+
+  console.log("infin");
+
   const unidad_producto = producto.producto.precios.unidad_de_compra.unidad;
-  const unidad_regalo = producto.unidad_regalo;
   const { cantidad, cantidad_regalo, cantidad_total } = producto;
+
   return (
     <TableRow
       hover
       role="checkbox"
       tabIndex={-1}
-      selected={isSelected}
+      selected={isSelected || !cantidad}
       style={
         isEditing.producto && !isSelected
           ? {
@@ -166,11 +184,24 @@ const RenderProductosCompra = ({ producto, index }) => {
         {producto.producto.datos_generales.nombre_comercial}
       </TableCell>
       <TableCell width={180}>
-        <b>$ {formatoMexico(producto.total)}</b>
+        {!cantidad ? (
+          <Error color="error" />
+        ) : (
+          <b>$ {formatoMexico(producto.total)}</b>
+        )}
       </TableCell>
-      <TableCell>{cantidad}<b>({unidad_producto})</b></TableCell>
-      <TableCell>{cantidad_regalo}<b>({unidad_producto})</b></TableCell>
-      <TableCell>{cantidad_total}<b>({unidad_producto})</b></TableCell>
+      <TableCell>
+        {cantidad}
+        <b>({unidad_producto})</b>
+      </TableCell>
+      <TableCell>
+        {cantidad_regalo}
+        <b>({unidad_producto})</b>
+      </TableCell>
+      <TableCell>
+        {cantidad_total}
+        <b>({unidad_producto})</b>
+      </TableCell>
       <TableCell>
         {producto.producto.presentaciones.length > 0
           ? producto.producto.presentaciones.length

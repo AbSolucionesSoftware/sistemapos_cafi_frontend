@@ -88,13 +88,13 @@ export default function DatosDeCompra({
           {compra_temp.almacen.nombre_almacen}
         </Typography>
         <Typography style={{ marginRight: 16 }}>
-          <b>Subtotal: ${compra_temp.subtotal}</b>
+          <b>Subtotal: ${parseFloat(compra_temp.subtotal).toFixed(2)}</b>
         </Typography>
         <Typography style={{ marginRight: 16 }}>
-          <b>Impuestos: ${compra_temp.impuestos}</b>
+          <b>Impuestos: ${parseFloat(compra_temp.impuestos).toFixed(2)}</b>
         </Typography>
         <Typography style={{ marginRight: 16 }}>
-          <b>Total: ${compra_temp.total}</b>
+          <b>Total: ${formatoMexico(parseFloat(compra_temp.total).toFixed(2))}</b>
         </Typography>
       </Box>
       <Box mb={2} display="flex">
@@ -180,7 +180,7 @@ export default function DatosDeCompra({
                         }}
                       >
                         {datos.conflicto ? (
-                          <Error style={{ fontSize: "1px" }} color="primary" />
+                          <Error color="primary" />
                         ) : (
                           <CheckCircle
                             style={{

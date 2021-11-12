@@ -10,7 +10,7 @@ export const ComprasProvider = ({ children }) => {
     costo: 0,
     cantidad: 1,
     cantidad_regalo: 0,
-    unidad_regalo: '',
+    unidad_regalo: "",
     cantidad_total: 0,
     descuento_porcentaje: 0,
     descuento_precio: 0,
@@ -84,9 +84,11 @@ export const ComprasProvider = ({ children }) => {
   });
   const [productosCompra, setProductosCompra] = useState([]);
   const [isEditing, setIsEditing] = useState({});
-  const [ editFinish, setEditFinish ] = useState(false)
+  const [editFinish, setEditFinish] = useState(false);
   const [costo, setCosto] = useState(0);
   const [cantidad, setCantidad] = useState(1);
+  const [issue, setIssue] = useState(false);
+  const [loadingProductos, setLoadingProductos] = useState(false);
 
   return (
     <ComprasContext.Provider
@@ -101,12 +103,18 @@ export const ComprasProvider = ({ children }) => {
         setProductoOriginal,
         preciosVenta,
         setPreciosVenta,
-        isEditing, 
+        isEditing,
         setIsEditing,
         editFinish,
-         setEditFinish,
-         costo, setCosto,
-         cantidad, setCantidad
+        setEditFinish,
+        costo,
+        setCosto,
+        cantidad,
+        setCantidad,
+        issue, 
+        setIssue,
+        loadingProductos, 
+        setLoadingProductos
       }}
     >
       {children}
