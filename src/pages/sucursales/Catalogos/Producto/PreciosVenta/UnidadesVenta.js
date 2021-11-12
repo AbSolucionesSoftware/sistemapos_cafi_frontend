@@ -22,15 +22,15 @@ import {
 import { Dialog, DialogActions, DialogTitle } from "@material-ui/core";
 import {
   Add,
-  Close,
+  /* Close, */
   DeleteOutline,
-  EditOutlined,
+  /* EditOutlined, */
   LocalOffer,
 } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core";
 import { FormControl } from "@material-ui/core";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
-import Done from "@material-ui/icons/Done";
+/* import Done from "@material-ui/icons/Done"; */
 import { formatoMexico } from "../../../../../config/reuserFunctions";
 
 const useStyles = makeStyles((theme) => ({
@@ -59,7 +59,7 @@ export default function PreciosDeCompra() {
     unidad_principal: false,
   });
 
-  const [actualizarUnidad, setActualizarUnidad] = useState(false);
+  /* const [actualizarUnidad, setActualizarUnidad] = useState(false); */
 
   const obtenerUnidadesVentas = (e) => {
     if (e.target.name === "cantidad") {
@@ -79,7 +79,8 @@ export default function PreciosDeCompra() {
     if (unidades.descuento_activo && unidades.descuento_activo === true) {
       //calcular nuevo precio entre %
       let precio_con_descuento = Math.round(
-        (value * unidades.descuento.porciento) / 100
+        value -
+              value * parseFloat("." + unidades.descuento.porciento)
       );
       setUnidades({
         ...unidades,
@@ -96,17 +97,19 @@ export default function PreciosDeCompra() {
 
   const agregarNuevaUnidad = () => {
     if (!unidades.unidad || !unidades.precio || !unidades.cantidad) return;
+    unidades.descuento_activo = null
 
-    if (actualizarUnidad) {
+    /* if (actualizarUnidad) {
       setUnidadVentaXDefecto(unidades);
       setDatosGenerales({
         ...datos_generales,
         codigo_barras: unidades.codigo_barras,
       });
       setActualizarUnidad(false);
-    } else {
+    } else { 
       setUnidadesVenta([...unidadesVenta, unidades]);
-    }
+    }*/
+    setUnidadesVenta([...unidadesVenta, unidades]);
     setUnidades({
       unidad: "Pz",
       unidad_principal: false,
@@ -139,7 +142,7 @@ export default function PreciosDeCompra() {
     }
   };
 
-  const updateUnidadPrincipal = () => {
+  /* const updateUnidadPrincipal = () => {
     setActualizarUnidad(true);
     setUnidades({
       _id: unidadVentaXDefecto._id,
@@ -152,15 +155,15 @@ export default function PreciosDeCompra() {
       descuento: unidadVentaXDefecto.descuento,
       descuento_activo: unidadVentaXDefecto.descuento_activo,
     });
-  };
+  }; */
 
-  const cancelarUpdate = () => {
+  /* const cancelarUpdate = () => {
     setActualizarUnidad(false);
     setUnidades({
       unidad: "Pz",
       unidad_principal: false,
     });
-  };
+  }; */
 
   const GenCodigoBarras = () => {
     const max = 999999999999;
@@ -177,7 +180,7 @@ export default function PreciosDeCompra() {
   return (
     <Fragment>
       <Box className={classes.formInputFlex} justifyContent="center">
-        <Box>
+        <Box width={100}>
           <Typography>Unidad</Typography>
           <Box display="flex">
             <FormControl
@@ -209,28 +212,6 @@ export default function PreciosDeCompra() {
             </FormControl>
           </Box>
         </Box>
-        <Box width={100}>
-          <Typography>
-            Cantidad{" "}
-            <b>
-              {unidades.unidad === "Caja"
-                ? "(pz por caja)"
-                : unidades.unidad === "Costal"
-                ? "(kg por costal)"
-                : ""}
-            </b>
-          </Typography>
-          <TextField
-            type="number"
-            InputProps={{ inputProps: { min: 0 } }}
-            size="small"
-            name="cantidad"
-            variant="outlined"
-            onChange={obtenerUnidadesVentas}
-            value={unidades.cantidad ? unidades.cantidad : ""}
-            fullWidth
-          />
-        </Box>
         <Box width={130}>
           <Typography>
             Precio por <b>{unidades.unidad}</b>
@@ -260,6 +241,28 @@ export default function PreciosDeCompra() {
             />
           </Box>
         ) : null}
+        <Box width={100}>
+          <Typography>
+            Cantidad{" "}
+            <b>
+              {unidades.unidad === "Caja"
+                ? "(pz por caja)"
+                : unidades.unidad === "Costal"
+                ? "(kg por costal)"
+                : ""}
+            </b>
+          </Typography>
+          <TextField
+            type="number"
+            InputProps={{ inputProps: { min: 0 } }}
+            size="small"
+            name="cantidad"
+            variant="outlined"
+            onChange={obtenerUnidadesVentas}
+            value={unidades.cantidad ? unidades.cantidad : ""}
+            fullWidth
+          />
+        </Box>
         <Box width={240}>
           <FormControl
             variant="outlined"
@@ -294,13 +297,14 @@ export default function PreciosDeCompra() {
           <Button
             color="primary"
             onClick={() => agregarNuevaUnidad()}
-            startIcon={
+            startIcon={<Add fontSize="large" />}
+            /* startIcon={
               actualizarUnidad ? (
                 <Done fontSize="large" />
               ) : (
                 <Add fontSize="large" />
               )
-            }
+            } */
             variant="outlined"
             size="large"
           >
@@ -323,7 +327,7 @@ export default function PreciosDeCompra() {
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow selected={actualizarUnidad ? true : false}>
+              <TableRow /* selected={actualizarUnidad ? true : false} */>
                 <TableCell>{datos_generales.codigo_barras}</TableCell>
                 <TableCell>{unidadVentaXDefecto.unidad}</TableCell>
                 <TableCell>
@@ -391,7 +395,7 @@ export default function PreciosDeCompra() {
                   />
                 </TableCell>
                 <TableCell>
-                  {actualizarUnidad ? (
+                  {/* {actualizarUnidad ? (
                     <IconButton
                       color="primary"
                       onClick={() => cancelarUpdate()}
@@ -405,7 +409,7 @@ export default function PreciosDeCompra() {
                     >
                       <EditOutlined color="primary" />
                     </IconButton>
-                  )}
+                  )} */}
                 </TableCell>
               </TableRow>
               {unidadesVenta.map((unidades, index) => {
@@ -479,6 +483,8 @@ const RenderUnidadesRows = ({ unidades, index }) => {
     }
     setUnidadesVenta([...nuevo_array]);
   };
+
+  console.log(unidades);
 
   return (
     <TableRow>
