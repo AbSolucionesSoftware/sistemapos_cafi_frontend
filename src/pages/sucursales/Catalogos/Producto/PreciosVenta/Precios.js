@@ -92,7 +92,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     preciosVenta.precio_venta = parseFloat(
       ganancia_utilidad_sin_impuestos.toFixed(6)
     );
-
+    let precio = 0;
     if (precios.iva_activo || precios.ieps_activo) {
       const ganancia_utilidad_con_impuestos =
         precios.unidad_de_compra.precio_unitario_con_impuesto +
@@ -101,7 +101,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
         ganancia_utilidad_con_impuestos.toFixed(6)
       );
       if (preciosVenta.numero_precio === 1) {
-        let precio = parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
+        precio = parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
         if (
           unidadVentaXDefecto.unidad === "Caja" ||
           unidadVentaXDefecto.unidad === "Costal"
@@ -110,17 +110,17 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
             unidadVentaXDefecto.cantidad *
             parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
         }
-        setUnidadVentaXDefecto({
+        /* setUnidadVentaXDefecto({
           ...unidadVentaXDefecto,
           precio: parseFloat(precio.toFixed(6)),
-        });
+        }); */
       }
     } else {
       preciosVenta.precio_neto = parseFloat(
         ganancia_utilidad_sin_impuestos.toFixed(6)
       );
       if (preciosVenta.numero_precio === 1) {
-        let precio = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
+        precio = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
         if (
           unidadVentaXDefecto.unidad === "Caja" ||
           unidadVentaXDefecto.unidad === "Costal"
@@ -129,12 +129,31 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
             unidadVentaXDefecto.cantidad *
             parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
         }
-        setUnidadVentaXDefecto({
+        /* setUnidadVentaXDefecto({
           ...unidadVentaXDefecto,
           precio: parseFloat(precio.toFixed(6)),
-        });
+        }); */
       }
     }
+
+    setUnidadVentaXDefecto({
+      ...unidadVentaXDefecto,
+      precio: parseFloat(precio.toFixed(6)),
+    });
+  /* console.log(unidadVentaXDefecto);
+    if (unidadVentaXDefecto.descuento_activo === true) {
+      //calcular nuevo precio entre %
+      let precio_con_descuento = Math.round(
+        (parseFloat(precio) * unidadVentaXDefecto.descuento.porciento) / 100
+      );
+
+      console.log(precio);
+      setUnidadVentaXDefecto({
+        ...unidadVentaXDefecto,
+        precio: parseFloat(precio.toFixed(6)),
+        descuento: { ...unidadVentaXDefecto.descuento, precio_con_descuento },
+      });
+    }  */
 
     newPreciosP.splice(index, 1, preciosVenta);
     setPreciosP(newPreciosP);
@@ -207,10 +226,9 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     }
     preciosVenta.unidad_mayoreo = parseInt(value);
     newPreciosP.splice(index, 1, preciosVenta);
-
     setPreciosP(newPreciosP);
   };
-  
+
   const calculos = () =>{
     const utilidad = preciosVenta.utilidad;
     if (!utilidad) {
@@ -497,12 +515,12 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
               size="small"
               name="unidad_mayoreo"
               variant="outlined"
-              value={preciosVenta.mayoreo}
+              value={preciosVenta.unidad_mayoreo}
               onChange={(e) => obtenerMayoreo(e.target.value)}
               onBlur={() =>
-                verificarCampoVacio("unidad_mayoreo", preciosVenta.mayoreo)
+                verificarCampoVacio("unidad_mayoreo", preciosVenta.unidad_mayoreo)
               }
-              error={preciosVenta.mayoreo === ""}
+              error={preciosVenta.unidad_mayoreo === ""}
             />
           </Box>
         ) : null}

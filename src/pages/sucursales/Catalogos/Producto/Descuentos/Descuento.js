@@ -181,6 +181,7 @@ export default function DescuentoProductos({datos, productosRefetch}) {
             <IconButton
                 color={validacion()}
                 onClick={handleCloseDescuentos}
+                disabled={datos.inventario_general && datos.inventario_general.length > 0 && datos.inventario_general[0].eliminado === true}
             >
                <LocalOfferIcon />
             </IconButton>
