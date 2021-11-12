@@ -241,7 +241,7 @@ export default function PreciosDeCompra() {
             />
           </Box>
         ) : null}
-        <Box width={100}>
+        <Box width={180}>
           <Typography>
             Cantidad{" "}
             <b>
