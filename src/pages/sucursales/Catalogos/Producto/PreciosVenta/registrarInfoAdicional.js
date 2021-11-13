@@ -56,7 +56,7 @@ export default function RegistroInfoAdidional() {
     setPrecios,
     validacion,
     preciosP,
-    unidadesVenta,
+    update,
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
   } = useContext(RegProductoContext);
@@ -589,6 +589,7 @@ export default function RegistroInfoAdidional() {
               >
                 {precios.granel ? (
                   <Select
+                    disabled={update}
                     id="form-producto-categoria"
                     name="unidad"
                     value={precios.unidad_de_compra.unidad}
@@ -600,6 +601,7 @@ export default function RegistroInfoAdidional() {
                   </Select>
                 ) : (
                   <Select
+                    disabled={update}
                     id="form-producto-categoria"
                     name="unidad"
                     value={precios.unidad_de_compra.unidad}

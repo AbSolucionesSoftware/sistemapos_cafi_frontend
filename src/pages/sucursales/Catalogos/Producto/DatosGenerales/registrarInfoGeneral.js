@@ -422,7 +422,8 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 					</Box>
 				</div>
 				<Box display="flex">
-					<Box>
+					{!update ? (
+						<Box>
 						<Box>
 							<Typography>
 								<b>Granel</b>
@@ -436,6 +437,8 @@ export default function RegistroInfoGenerales({ obtenerConsultasProducto, refetc
 							/>
 						</div>
 					</Box>
+					) : null}
+					
 					<Box>
 						<Box>
 							<Typography>
