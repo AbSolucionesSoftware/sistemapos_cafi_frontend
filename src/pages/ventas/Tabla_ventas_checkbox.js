@@ -238,23 +238,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function EnhancedTable({
-  newProductoVentas,
-  setNewProductoVentas,
   setDatosVentasActual,
 }) {
   const classes = useStyles();
   const [ selected, setSelected ] = useState([]);
 
-  const { setProductoCambioPrecio, setPrecioSelectProductoVenta } = useContext(VentasContext);
+  const { setProductoCambioPrecio, setPrecioSelectProductoVenta, updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
 
   const [datosTabla, setDatosTabla] = useState([]);
 
   useEffect(() => {
     const venta = JSON.parse(localStorage.getItem("DatosVentas"));
     setDatosTabla(venta === null ? [] : venta.productos);
-  }, [newProductoVentas]);
+  }, [updateTablaVentas]);
 
   const handleClick = (name) => {
+    console.log("name",name);
     let newSelected = [];
     const exist = selected.indexOf(name) !== -1;
     if(exist){
@@ -262,17 +261,18 @@ export default function EnhancedTable({
     }else{
       newSelected = newSelected.concat([], name);
     }
-    // console.log(name);
-    const producto = name.id_producto.precios.precios_producto.filter((p) => p.precio_neto === name.precio);
-    if(producto.length > -0){
+    console.log("selected",selected);
+    console.log("newSelected",newSelected);
+    const producto = name.id_producto.precios.precios_producto.filter((p) => p.precio_neto === name.precio_actual_producto);
+    console.log("producto",producto);
+   
+    if(producto.length > 0){
+      console.log(producto);
       setPrecioSelectProductoVenta(producto);
-      setProductoCambioPrecio(name);
-      // console.log(name.id_producto.precios.precios_producto[0]);
-      setSelected(newSelected);
-    }else{
-      
     }
-
+    setProductoCambioPrecio(name);
+    // console.log(name.id_producto.precios.precios_producto[0]);
+    setSelected(newSelected);
   };
 
   const TwoClickInRowTableBuy = (e, producto) => {
@@ -281,6 +281,7 @@ export default function EnhancedTable({
       clearTimeout(timer);
       if (e.detail === 2) {
         handleClick(producto);
+        console.log(producto);
         setProductoCambioPrecio(producto);
       }
       
@@ -326,8 +327,8 @@ export default function EnhancedTable({
                   <RenderTableRows
                     key={index}
                     producto={producto}
-                    setNewProductoVentas={setNewProductoVentas}
-                    newProductoVentas={newProductoVentas}
+                    setUpdateTablaVentas={setUpdateTablaVentas}
+                    updateTablaVentas={updateTablaVentas}
                     setDatosVentasActual={setDatosVentasActual}
                     isItemSelected={isItemSelected}
                     labelId={labelId}
@@ -348,8 +349,8 @@ export default function EnhancedTable({
 
 const RenderTableRows = ({
   producto,
-  setNewProductoVentas,
-  newProductoVentas,
+  setUpdateTablaVentas,
+  updateTablaVentas,
   setDatosVentasActual,
   TwoClickInRowTableBuy,
   handleClick,
@@ -407,18 +408,24 @@ const RenderTableRows = ({
       if (producto_encontrado.found) {
         const { cantidad_venta, ...newP } =
           producto_encontrado.producto_found.producto;
+        // newP.precio_actual_producto = newP.descuento_activo ? newP.descuento.precio_con_descuento :  newP.precio;
+        // newP.precio_actual_producto = newP.descuento_activo ? newP.descuento.precio_con_descuento :  newP.precio;
         //Sacar los impuestos que se van a restar
         calculoResta = await calculatePrices(
           newP,
           cantidad_venta,
-          newP.granelProducto
+          newP.granelProducto,
+          newP.precio_actual_producto,
+          "TABLA"
         );
         // console.log(calculoResta);
         //Sacar los impuestos que se van a sumar
         calculoSuma = await calculatePrices(
           newP,
           new_cant,
-          newP.granelProducto
+          newP.granelProducto,
+          newP.precio_actual_producto,
+          "TABLA"
         );
         newP.cantidad_venta = parseInt(new_cant);
         newP.precio_a_vender = calculoSuma.totalCalculo;
@@ -475,7 +482,7 @@ const RenderTableRows = ({
       );
       setDatosVentasActual(CalculosData);
       //Recargar la tabla de los productos
-      setNewProductoVentas(!newProductoVentas);
+      setUpdateTablaVentas(!updateTablaVentas);
     }
   };
 
@@ -536,7 +543,7 @@ const RenderTableRows = ({
           )}
         </TableCell>
         <TableCell>
-          $ {producto.precio_a_vender.toFixed(2)}
+          $ {producto.precio_actual_producto.toFixed(2)}
           {/* {producto.descuento_activo === true
             ? producto.descuento.precio_con_descuento
             : producto.precio} */}
@@ -544,8 +551,6 @@ const RenderTableRows = ({
         <TableCell>
           <EliminarProductoVenta
             producto={producto}
-            setNewProductoVentas={setNewProductoVentas}
-            newProductoVentas={newProductoVentas}
             setDatosVentasActual={setDatosVentasActual}
           />
         </TableCell>

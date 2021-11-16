@@ -15,8 +15,8 @@ export default function ClientesVentas() {
 
   const [selectClient, setSelectClient] = useState({});
 
-  console.log(sesion.empresa._id);
-  console.log(sesion.sucursal._id);
+  // console.log(sesion.empresa._id);
+  // console.log(sesion.sucursal._id);
 
   const { loading, data, error, refetch } = useQuery(OBTENER_CLIENTES_VENTAS, {
     variables: {
@@ -26,8 +26,7 @@ export default function ClientesVentas() {
     fetchPolicy: "network-only"
   });
 
-  console.log(error);
-
+  // console.log(error);
   // console.log("data",data);
   let obtenerClientes = [];
   if (data) obtenerClientes = data.obtenerClientesVentas;
@@ -35,7 +34,7 @@ export default function ClientesVentas() {
 
   useEffect(() => {
     const data = () => {
-      console.log("llego al final");
+      // console.log("llego al final");
       const venta = JSON.parse(localStorage.getItem("DatosVentas"));
       if (venta !== null) {
         setSelectClient(venta.cliente);
@@ -64,7 +63,7 @@ export default function ClientesVentas() {
           descuento:
             venta_actual.descuento === undefined ? 0 : venta_actual.descuento,
           monedero: venta_actual.monedero === undefined ? 0 : venta_actual.monedero,
-          tipo_cambio: venta_actual.tipo_cambio ? venta_actual.descuento : {},
+          tipo_cambio: venta_actual.tipo_cambio ? venta_actual.tipo_cambio : {},
           venta_cliente: value === null ? false : true,
           productos:
             venta_actual.productos?.length > 0 ? venta_actual. productos : [],

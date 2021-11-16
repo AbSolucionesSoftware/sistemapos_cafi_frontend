@@ -41,6 +41,8 @@ export const VentasProvider = ({ children }) => {
     const [abrirTurnosDialog, setAbrirTurnosDialog] = useState(false);
     const [updateClientVenta, setUpdateClientVenta] = useState(false);
 
+    const [updateTablaVentas, setUpdateTablaVentas] = useState(false);
+
 	return (
 		<VentasContext.Provider value={
             { 
@@ -63,7 +65,9 @@ export const VentasProvider = ({ children }) => {
                 setProductoCambioPrecio,
                 productoCambioPrecio,
                 setPrecioSelectProductoVenta,
-                precioSelectProductoVenta
+                precioSelectProductoVenta,
+                setUpdateTablaVentas,
+                updateTablaVentas
             }
         }>
 			{children}

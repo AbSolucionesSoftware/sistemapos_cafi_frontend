@@ -99,8 +99,8 @@ export const findProductArray = async (productosVentas, producto) => {
   }
 };
 
-export const calculatePrices = async (newP, cantidad, granel) => {
-  console.log(newP);
+export const calculatePrices = async ( newP, cantidad, granel, newPrising = 0, data ) => {
+
   let subtotalCalculo = 0,
     totalCalculo = 0,
     impuestoCalculo = 0,
@@ -108,48 +108,28 @@ export const calculatePrices = async (newP, cantidad, granel) => {
     iepsCalculo = 0,
     descuentoCalculo = 0,
     monederoCalculo = 0;
-
+console.log("newPrising",newPrising);
   const cantidadNueva = cantidad > 0 ? cantidad : 1;
-
+  // console.log(newP);
   const iva_producto =
     parseFloat(
       newP.id_producto.precios.unidad_de_compra.precio_unitario_sin_impuesto
-    ) * parseFloat(`0.${newP.id_producto.precios.iva}`);
+    ) * parseFloat(`0.${newP.id_producto.precios.iva  < 9 ? `0${newP.id_producto.precios.iva}` : newP.id_producto.precios.iva}`);
   const ieps_producto =
     parseFloat(
       newP.id_producto.precios.unidad_de_compra.precio_unitario_sin_impuesto
-    ) * parseFloat(`0.${newP.id_producto.precios.ieps}`);
+    ) * parseFloat(`0.${newP.id_producto.precios.ieps < 9 ? `0${newP.id_producto.precios.ieps}` : newP.id_producto.precios.ieps}`);
 
-    const precioProducto = parseFloat(newP.precio);
-    const precioDescuentoProducto = newP.descuento_activo ? parseFloat(newP.descuento.precio_con_descuento) : 0;
+    const precioProducto = newPrising;
+    // const precioDescuentoProducto = newP.descuento_activo ? parseFloat(newP.descuento.precio_con_descuento) : 0;
 
-    totalCalculo =
-      granel.granel === true
-        ? newP.descuento_activo === true
-          ? precioDescuentoProducto *
-            cantidadNueva *
-            parseFloat(granel.valor)
-          : precioProducto * cantidadNueva * parseFloat(granel.valor)
-        : newP.descuento_activo === true
-        ? precioDescuentoProducto * cantidadNueva
-        : precioProducto * cantidadNueva;
+    totalCalculo = granel.granel === true 
+      ? precioProducto * cantidadNueva * parseFloat(granel.valor)
+      : precioProducto * cantidadNueva;
 
-    subtotalCalculo =
-      granel.granel === true
-        ? newP.descuento_activo === true
-          ? (precioDescuentoProducto -
-              (iva_producto + ieps_producto)) *
-            cantidadNueva *
-            parseFloat(granel.valor)
-          : (precioProducto - (iva_producto + ieps_producto)) *
-            cantidadNueva *
-            parseFloat(granel.valor)
-        : newP.descuento_activo === true
-        ? (precioDescuentoProducto -
-            (iva_producto + ieps_producto)) *
-          cantidadNueva
-        : (precioProducto - (iva_producto + ieps_producto)) *
-          cantidadNueva;
+    subtotalCalculo = granel.granel === true 
+      ? (precioProducto - (iva_producto + ieps_producto)) * cantidadNueva * parseFloat(granel.valor) 
+      : (precioProducto - (iva_producto + ieps_producto)) * cantidadNueva;
 
     impuestoCalculo =
       granel.granel === true
@@ -182,8 +162,6 @@ export const calculatePrices = async (newP, cantidad, granel) => {
 
     monederoCalculo = newP.id_producto.precios.monedero ? newP.id_producto.precios.monedero_electronico * cantidadNueva : 0;
 
-    
-
   return {
     totalCalculo,
     subtotalCalculo,
@@ -194,3 +172,36 @@ export const calculatePrices = async (newP, cantidad, granel) => {
     monederoCalculo
   };
 };
+
+export const verifiPrising = async (newP) => {
+  try {
+    if(!newP) return false;
+    const amount = newP.cantidad_venta;
+    const pricings = newP.id_producto.precios.precios_producto;
+
+    let finalPrising = {
+      found: false,
+      pricing: 0,
+      number_pricing: 0
+    };
+
+    for (let i = 0; i < pricings.length; i++) {
+      // const objectPrising = pricings[i];
+      console.log("Unidad mayoreo",pricings[i].unidad_mayoreo);
+      console.log("Amopunt",amount);
+      if(pricings[i].unidad_mayoreo > 1 && amount >= pricings[i].unidad_mayoreo){
+        console.log(pricings[i]);
+        finalPrising = {
+          found: true,
+          pricing: pricings[i].precio_neto,
+          number_pricing: pricings[i].numero_precio
+        }
+      }
+    }
+
+    return finalPrising;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}

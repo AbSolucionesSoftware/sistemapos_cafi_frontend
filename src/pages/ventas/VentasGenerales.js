@@ -1,30 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Box,
-  FormControl,
+  // FormControl,
   Grid,
   IconButton,
   InputBase,
-  MenuItem,
+  // MenuItem,
   Paper,
-  Select,
+  // Select,
   Typography,
   // CircularProgress,
   // TextField,
 } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import useStyles from "./styles";
-import TablaVentas from "./TablaVentas";
+// import TablaVentas from "./TablaVentas";
 import TablaVentasCheckbox from "./Tabla_ventas_checkbox";
 import { CONSULTA_PRODUCTO_UNITARIO } from "../../gql/Ventas/ventas_generales";
 import { useLazyQuery } from "@apollo/client";
 import ClientesVentas from "./ClientesVentas";
+import { VentasContext } from '../../context/Ventas/ventasContext';
 
 import { Fragment } from "react";
 import MonedaCambio from "./Operaciones/MonedaCambio";
 import {
   findProductArray,
   calculatePrices,
+  verifiPrising
 } from "../../config/reuserFunctions";
 
 // import { ClienteProvider } from '../../context/Catalogos/crearClienteCtx';
@@ -33,11 +35,13 @@ export default function VentasGenerales() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   // const productosVentas = JSON.parse(localStorage.getItem('productosVentas'));
   const classes = useStyles();
-  const [newProductoVentas, setNewProductoVentas] = useState(false);
+  // const [newProductoVentas, setNewProductoVentas] = useState(false);
   const [granelBase, setGranelBase] = useState({
     granel: false,
     valor: 0,
   });
+
+  const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
 
   const [DatosVentasActual, setDatosVentasActual] = useState({
     subTotal: 0,
@@ -50,18 +54,7 @@ export default function VentasGenerales() {
     tipo_cambio: {},
   });
 
-  // const [tipoCambioMoneda, setTipoCambioMoneda] = useState({
-  //   cambio_actual: {
-  //     tipo: "MXM",
-  //     valor: 1,
-  //   },
-  //   cambio_convertir: {
-  //     tipo: "USD",
-  //     valor: 20,
-  //   },
-  // });
-
-  const [obtenerProductos, { data /* error */ }] = useLazyQuery(
+  const [obtenerProductos, { data, loading /* error */ }] = useLazyQuery(
     CONSULTA_PRODUCTO_UNITARIO,
     {
       variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id },
@@ -73,10 +66,10 @@ export default function VentasGenerales() {
   if (data) productosBase = data.obtenerUnProductoVentas;
 
   useEffect(() => {
-    if (productosBase !== null) {
+    if(!loading && productosBase !== null){
       agregarProductos(productosBase);
     }
-  }, [productosBase]);
+  }, [loading]);
 
   useEffect(() => {
     setGranelBase({
@@ -96,7 +89,7 @@ export default function VentasGenerales() {
         monedero: parseFloat(venta.monedero),
       });
     }
-  }, []);
+  }, [updateTablaVentas]);
 
   const keyUpEvent = async (event) => {
     if (event.code === "Enter" || event.code === "NumpadEnter") {
@@ -131,6 +124,8 @@ export default function VentasGenerales() {
   };
 
   const agregarProductos = async (producto) => {
+    console.log(producto);
+    console.log(granelBase);
     let venta = JSON.parse(localStorage.getItem("DatosVentas"));
     let productosVentas = venta === null ? [] : venta.productos;
     let venta_actual = venta === null ? [] : venta;
@@ -148,8 +143,6 @@ export default function VentasGenerales() {
       descuento = 0,
       monedero = 0;
 
-    // if(producto.id_prodo)
-
     const producto_encontrado = await findProductArray(
       productosVentas,
       producto
@@ -157,6 +150,8 @@ export default function VentasGenerales() {
 
     if (!producto_encontrado.found && producto._id) {
       const newP = { ...producto };
+      // newP.precio_actual_producto = 
+      const productoPrecioFinal = newP.descuento_activo ? newP.descuento.precio_con_descuento :  newP.precio;
       const {
         subtotalCalculo,
         totalCalculo,
@@ -165,7 +160,7 @@ export default function VentasGenerales() {
         iepsCalculo,
         descuentoCalculo,
         monederoCalculo
-      } = await calculatePrices(newP, 0, granelBase);
+      } = await calculatePrices(newP, 0, granelBase, productoPrecioFinal);
       // console.log(monederoCalculo);
       subTotal = subtotalCalculo;
       total = totalCalculo;
@@ -178,11 +173,16 @@ export default function VentasGenerales() {
       newP.cantidad_venta = 1;
       newP.granelProducto = granelBase;
       newP.precio_a_vender = totalCalculo;
-
+      newP.precio_actual_producto = productoPrecioFinal;
       productosVentasTemp.push(newP);
     } else if (producto_encontrado.found && producto._id) {
       const { cantidad_venta, ...newP } =
         producto_encontrado.producto_found.producto;
+      newP.cantidad_venta = parseInt(cantidad_venta) + 1;
+      const verify_prising = await verifiPrising(newP);
+      console.log(verify_prising);
+      const productoPrecioFinal = verify_prising.found ? verify_prising.pricing : newP.descuento_activo ? newP.descuento.precio_con_descuento : newP.precio;
+      
       const {
         subtotalCalculo,
         totalCalculo,
@@ -191,7 +191,7 @@ export default function VentasGenerales() {
         iepsCalculo,
         descuentoCalculo,
         monederoCalculo
-      } = await calculatePrices(newP, 0, granelBase);
+      } = await calculatePrices(newP, 0, granelBase, productoPrecioFinal);
       subTotal = subtotalCalculo;
       total = totalCalculo;
       impuestos = impuestoCalculo;
@@ -199,11 +199,10 @@ export default function VentasGenerales() {
       ieps = iepsCalculo;
       descuento = descuentoCalculo;
       monedero = monederoCalculo;
-      // console.log(monedero);
-      // console.log(descuento);
-      newP.cantidad_venta = parseInt(cantidad_venta) + 1;
+      
       newP.granelProducto = granelBase;
       newP.precio_a_vender = totalCalculo;
+      newP.precio_actual_producto = productoPrecioFinal;
       productosVentasTemp.splice(
         producto_encontrado.producto_found.index,
         1,
@@ -220,7 +219,7 @@ export default function VentasGenerales() {
       descuento: parseFloat(venta_existente.descuento) + descuento,
       monedero: parseFloat(venta_existente.monedero) + monedero
     };
-    console.log(CalculosData);
+    // console.log(CalculosData);
     localStorage.setItem(
       "DatosVentas",
       JSON.stringify({
@@ -238,7 +237,9 @@ export default function VentasGenerales() {
       ...CalculosData,
     });
     //Recargar la tabla de los productos
-    setNewProductoVentas(!newProductoVentas);
+    // setNewProductoVentas(!newProductoVentas);
+    setUpdateTablaVentas(!updateTablaVentas);
+    // console.log(JSON.parse(localStorage.getItem("DatosVentas")));
   };
 
   return (
@@ -347,7 +348,7 @@ export default function VentasGenerales() {
                   className={classes.iconSize}
                 />
               </Box>
-              <Box>
+              {/* <Box>
                 <FormControl variant="outlined" fullWidth size="small">
                   <Select id="tipo_documento" name="tipo_documento">
                     <MenuItem value="TICKET">
@@ -358,7 +359,7 @@ export default function VentasGenerales() {
                     <MenuItem value="NOTA REMISION">NOTA REMISION</MenuItem>
                   </Select>
                 </FormControl>
-              </Box>
+              </Box> */}
             </Box>
           </div>
         </Grid>
@@ -384,8 +385,6 @@ export default function VentasGenerales() {
           setDatosVentasActual={setDatosVentasActual}
         /> */}
         <TablaVentasCheckbox
-          newProductoVentas={newProductoVentas}
-          setNewProductoVentas={setNewProductoVentas}
           setDatosVentasActual={setDatosVentasActual}
         />
       </Grid>
@@ -428,6 +427,11 @@ export default function VentasGenerales() {
             <Box display="flex" flexDirection="row-reverse" mr={1}>
               <Typography variant="subtitle1">
                 Impuestos: $ {DatosVentasActual.impuestos.toFixed(2)}
+              </Typography>
+            </Box>
+            <Box display="flex" flexDirection="row-reverse" mr={1}>
+              <Typography variant="subtitle1">
+                Monedero: $ {DatosVentasActual.monedero.toFixed(2)}
               </Typography>
             </Box>
             <Box display="flex" flexDirection="row-reverse" mr={1} mt={1}>
