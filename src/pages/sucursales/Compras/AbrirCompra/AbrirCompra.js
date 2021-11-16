@@ -171,7 +171,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     setLoading(true);
     try {
       datosCompra.productos = productos;
-      console.log(datosCompra);
+      /* console.log(datosCompra); */
 
       if (compra_en_espera) {
         datosCompra.en_espera = true;

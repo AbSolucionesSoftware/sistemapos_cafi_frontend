@@ -173,7 +173,7 @@ export default function DatosProducto({ status }) {
   if (data) obtenerProductos = data.obtenerProductos;
 
   const obtenerSelectsProducto = (producto) => {
-    console.log(producto);
+    /* console.log(producto); */
     if (!producto) {
       setDatosProducto(initial_state_datosProducto);
       setCosto(0);
@@ -531,7 +531,7 @@ export default function DatosProducto({ status }) {
     setPresentaciones(
       producto.medidas_producto ? producto.medidas_producto : []
     );
-    if (datosCompra.almacen.id_almacen && !producto.medidas_registradas) {
+    if (datosCompra.almacen.id_almacen && producto.medidas_producto.length === 0) {
       setAlmacenInicial({
         ...almacen_inicial,
         id_almacen: datosCompra.almacen.id_almacen,
