@@ -103,11 +103,13 @@ export default function ColoresTallas({
     obtenerColoresSeleccinados();
   }, [obtenerColoresSeleccinados]);
 
+  console.log(datos);
+
   return (
     <div>
       <Box>
         <Grid container spacing={2}>
-          {!datos.medidas_registradas ? (
+          {datos.presentaciones.length === 0 ? (
             <Grid item md={4}>
               <Box width="100%">
                 <Typography>Almacen</Typography>
@@ -164,7 +166,7 @@ export default function ColoresTallas({
             </Grid>
           ) : null}
 
-          <Grid item md={!datos.medidas_registradas ? 4 : 6}>
+          <Grid item md={datos.presentaciones.length === 0 ? 4 : 6}>
             <Box
               width="100%"
               style={
@@ -202,7 +204,7 @@ export default function ColoresTallas({
               </Grid>
             </Box>
           </Grid>
-          <Grid item md={!datos.medidas_registradas ? 4 : 6}>
+          <Grid item md={datos.presentaciones.length === 0 ? 4 : 6}>
             <Box
               width="100%"
               style={
@@ -274,7 +276,7 @@ const RenderTallas = ({
   }, [talla._id, medidasSeleccionadas]);
 
   useEffect(() => {
-    if (datos.medidas_registradas) {
+    if (datos.presentaciones.length > 0) {
       return seleccionarMedidas();
     }
   }, [seleccionarMedidas]);
@@ -498,7 +500,7 @@ const Colores = ({
   }, [color._id, coloresSeleccionados]);
 
   useEffect(() => {
-    if (datos.medidas_registradas) {
+    if (datos.presentaciones.length > 0) {
       return seleccionarColores();
     }
   }, [seleccionarColores]);

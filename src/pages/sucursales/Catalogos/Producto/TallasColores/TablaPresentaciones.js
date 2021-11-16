@@ -328,12 +328,12 @@ const RenderPresentacionesRows = ({
             type="number"
             name="codigo_barras"
             disabled={
-              datos.medidas_registradas && !copy_producto.nuevo
+              datos.presentaciones.length > 0 && !copy_producto.nuevo
                 ? true
                 : disabledInput
             }
           />
-          {!datos.medidas_registradas && copy_producto.nuevo ? (
+          {datos.presentaciones.length === 0 && copy_producto.nuevo ? (
             <IconButton
               color="primary"
               size="small"
@@ -341,7 +341,7 @@ const RenderPresentacionesRows = ({
             >
               <Cached />
             </IconButton>
-          ) : datos.medidas_registradas && copy_producto.nuevo ? (
+          ) : datos.presentaciones.length > 0 && copy_producto.nuevo ? (
             <IconButton
               color="primary"
               size="small"
