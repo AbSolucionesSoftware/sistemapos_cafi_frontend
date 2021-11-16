@@ -269,8 +269,8 @@ export default function RegistroInfoAdidional() {
     precios.precio_de_compra.precio_sin_impuesto
   );
 
-  const [PCI] = useDebounce(precioConImpuesto, 500);
-  const [PSI] = useDebounce(precioSinImpuesto, 500);
+  const [PCI] = useDebounce(precioConImpuesto, 800);
+  const [PSI] = useDebounce(precioSinImpuesto, 800);
 
   /* ARMAR OBJETO DE PRECIOS DE COMPRA */
   const obtenerPrecioConImpuesto = (value) => {

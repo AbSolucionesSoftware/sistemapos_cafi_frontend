@@ -258,29 +258,48 @@ export default function DatosProducto({ status }) {
       return;
     }
 
+    const { iva, ieps, precio_de_compra } = datosProducto.producto.precios;
+
+    console.log(datosProducto.producto.precios);
+
     let total = value;
     let total_con_descuento;
     let descuento_precio;
+
+    let precio_sin_impuesto = total - (precio_de_compra.iva + precio_de_compra.ieps)
+    let nuevo_iva = iva;
+    let nuevo_ieps = ieps;
+    let impuestos = 0;
+
+    nuevo_iva =
+      parseFloat(precio_sin_impuesto) *
+      parseFloat(iva < 10 ? ".0" + iva : "." + iva);
+    nuevo_ieps =
+      parseFloat(precio_sin_impuesto) *
+      parseFloat(ieps < 10 ? ".0" + ieps : "." + ieps);
+
+    impuestos = nuevo_ieps + nuevo_iva;
+
     if (datosProducto.descuento_porcentaje > 0) {
       descuento_precio = Math.round(
-        (value * datosProducto.descuento_porcentaje) / 100
+        (total * datosProducto.descuento_porcentaje) / 100
       );
       total_con_descuento = total - descuento_precio;
 
       setDatosProducto({
         ...datosProducto,
-        costo: parseFloat(value),
+        costo: parseFloat(total),
         descuento_precio: parseFloat(descuento_precio),
         total_con_descuento: parseFloat(total_con_descuento),
-        subtotal: parseFloat(total) - datosProducto.impuestos,
+        subtotal: parseFloat(total) - impuestos,
       });
       return;
     }
     setDatosProducto({
       ...datosProducto,
-      costo: parseFloat(value),
+      costo: parseFloat(total),
       total_con_descuento: parseFloat(total),
-      subtotal: parseFloat(total) - datosProducto.impuestos,
+      subtotal: parseFloat(total) - impuestos,
     });
   };
 
@@ -531,7 +550,10 @@ export default function DatosProducto({ status }) {
     setPresentaciones(
       producto.medidas_producto ? producto.medidas_producto : []
     );
-    if (datosCompra.almacen.id_almacen && producto.medidas_producto.length === 0) {
+    if (
+      datosCompra.almacen.id_almacen &&
+      producto.medidas_producto.length === 0
+    ) {
       setAlmacenInicial({
         ...almacen_inicial,
         id_almacen: datosCompra.almacen.id_almacen,

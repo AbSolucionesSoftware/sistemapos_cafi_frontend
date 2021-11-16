@@ -153,8 +153,6 @@ const RenderProductosCompra = ({ producto, index }) => {
     }
   }, [producto.cantidad]);
 
-  console.log("infin");
-
   const unidad_producto = producto.producto.precios.unidad_de_compra.unidad;
   const { cantidad, cantidad_regalo, cantidad_total } = producto;
 
