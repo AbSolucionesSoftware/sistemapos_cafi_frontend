@@ -111,7 +111,88 @@ export const OBTENER_CATEGORIAS = gql`
 export const REALIZAR_TRASPASO = gql`
 	mutation CrearTraspaso($input: CrearTraspasoInput, $usuario: ID!, $empresa: ID!) {
 		crearTraspaso(input: $input, usuario: $usuario, empresa: $empresa) {
-			 message
+            message
+            resp
+		}
+	}
+`;
+
+export const OBTENER_PRODUCTOS_EMPRESA = gql`
+	query obtenerProductosPorEmpresa($empresa: ID!) {
+		obtenerProductosPorEmpresa(empresa: $empresa) {
+			_id
+			datos_generales {
+				codigo_barras
+				clave_alterna
+				tipo_producto
+				nombre_comercial
+				nombre_generico
+				descripcion
+				id_categoria
+				categoria
+				subcategoria
+				id_subcategoria
+				id_departamento
+				departamento
+				id_marca
+				marca
+				clave_producto_sat
+				receta_farmacia
+			}
+			precio_plazos {
+				precio_cajas {
+					plazo
+					unidad
+					precio
+				}
+				precio_piezas {
+					plazo
+					unidad
+					precio
+				}
+				precio_costales {
+					plazo
+					unidad
+					precio
+				}
+			}
+			precios {
+				ieps
+				ieps_activo
+				iva
+				iva_activo
+				monedero
+				monedero_electronico
+				precio_de_compra {
+					ieps
+					iva
+					precio_con_impuesto
+					precio_sin_impuesto
+				}
+				precios_producto {
+					numero_precio
+					precio_neto
+					precio_venta
+					unidad_mayoreo
+					utilidad
+				}
+				unidad_de_compra {
+					cantidad
+					precio_unitario_con_impuesto
+					precio_unitario_sin_impuesto
+					unidad
+				}
+				inventario {
+					inventario_minimo
+					inventario_maximo
+					unidad_de_inventario
+				}
+				granel
+			}
+			sucursal
+			usuario
+			empresa
+		
 		}
 	}
 `;

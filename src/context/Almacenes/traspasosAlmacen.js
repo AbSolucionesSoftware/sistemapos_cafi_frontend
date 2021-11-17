@@ -10,11 +10,14 @@ export const TraspasosProvider = ({ children }) => {
     const [ openRegistro, setOpenRegistro ] = useState(false);
     const [ productos, setProductos ] = useState([]);
     const [ productosTo, setProductosTo ] = useState([]);
+     const [ productosEmpTo, setProductosEmpTo ] = useState([]);
     const [ productosTras, setProductosTras ] = useState([]);
-useEffect(() => {
-   console.log("CONTEXT",productosTras)
-  
-}, [productosTras])
+
+    useEffect(() => {
+        console.log("CONTEXT",productosEmpTo);
+     
+    
+    }, [productosEmpTo])
   
 	return (
 		<TraspasosAlmacenContext.Provider value={
@@ -31,7 +34,9 @@ useEffect(() => {
                 productosTras,
                 setProductosTras,
                 productosTo,
-                setProductosTo
+                setProductosTo,
+                productosEmpTo, 
+                setProductosEmpTo
             }
         }>
 			{children}

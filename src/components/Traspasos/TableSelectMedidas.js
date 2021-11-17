@@ -114,7 +114,7 @@ const handleChangePage = (event, newPage) => {
 	return (
 		<div className={classes.root}>
 			<Paper className={classes.paper}>
-				<TableContainer >
+				<TableContainer style={{height:400}}>
 					<Table
 						className={classes.table}
 						aria-labelledby="tableTitle"
@@ -130,10 +130,10 @@ const handleChangePage = (event, newPage) => {
                             </TableRow>
 						</TableHead>
 						<TableBody>
-							{stableSort(producto.medidas_producto, getComparator(order, orderBy))
+							{/* {stableSort(producto.medidas_producto, getComparator(order, orderBy))
                 			.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-							.map((item, index) => {
-								
+							.map((item, index) => { */}
+							{producto.medidas_producto.map((item, index) => {	
 								return (
 									<RenderPresentacionesRows
 										idProducto={producto._id}
@@ -150,7 +150,7 @@ const handleChangePage = (event, newPage) => {
 						</TableBody>
 					</Table>
 				</TableContainer>
-				<TablePagination
+			{/* 	<TablePagination
 					rowsPerPageOptions={[5, 10, 25]}
 					component="div"
 					count={producto.medidas_producto.length}
@@ -158,7 +158,7 @@ const handleChangePage = (event, newPage) => {
 					page={page}
 					onChangePage={handleChangePage}
 					// onRowsPerPageChange={handleChangeRowsPerPage}
-				/>
+				/> */}
 			</Paper>
 		</div>
 	);
@@ -180,7 +180,7 @@ const RenderPresentacionesRows = ({ medida, index, setOnUpdate, onUpdate,new_med
  
 	useEffect(() => {
 		productosTras.forEach(producto => {
-			console.log("SELECTMEDIDAS",producto)
+			//console.log("SELECTMEDIDAS",producto)
 		if(producto.product_selected._id === idProducto){
 			let new_medidasCopia = [];
 			let element = null;
@@ -193,8 +193,8 @@ const RenderPresentacionesRows = ({ medida, index, setOnUpdate, onUpdate,new_med
 					new_medidasCopia.push(element)
 					
 					if(medida._id === element.medida._id){
-						console.log(element.nuevaCantidad)	
-						setCantidad( element.nuevaCantidad);		
+						//console.log(element.cantidad)	
+						setCantidad( element.cantidad);		
 					}
 					
 				}
@@ -221,7 +221,7 @@ const RenderPresentacionesRows = ({ medida, index, setOnUpdate, onUpdate,new_med
 	
 	const obtenerDatos = (value) => {
 		let cant = (cantidadAnt > 0) ? parseInt(value - cantidadAnt)   : value;
-		console.log("CANT",cantidad)
+		//console.log("CANT",cantidad)
 
 		if(cant <= medida.cantidad){
 			setCantidad(value);
@@ -269,7 +269,7 @@ const RenderPresentacionesRows = ({ medida, index, setOnUpdate, onUpdate,new_med
 					type="number"
 					value={cantidad}
 					onChange={(value) => obtenerDatos(value.target.value)}
-					name="cantidad_nueva"
+					name="nuevaCantidad"
 				/>
             </TableCell>    
 		</TableRow>

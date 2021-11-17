@@ -1,11 +1,12 @@
 import React, { forwardRef, useEffect, useContext, useState,useCallback } from 'react';
 import { AppBar, Toolbar, Typography, IconButton, Slide,
-         Button, Box, Dialog, Grid, DialogActions, CircularProgress, TextField,Divider,
+         Button, Box, Dialog, Grid, DialogActions, TextField,Divider,
          InputLabel, Select, Input, MenuItem, FormControl, useTheme, OutlinedInput, InputAdornment,
          Stepper, Step, StepLabel, DialogTitle } from '@material-ui/core';
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { makeStyles } from '@material-ui/core/styles';
 import moment from "moment";
+import BackdropComponent from '../../../../components/Layouts/BackDrop';
 import ErrorPage from '../../../../components/ErrorPage';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 
@@ -15,7 +16,7 @@ import TableSelectProducts from '../../../../components/Traspasos/TableSelectPro
 
 import { useQuery, useMutation } from '@apollo/client';
 import { OBTENER_CONCEPTOS_ALMACEN} from '../../../../gql/Catalogos/conceptosAlmacen';
-import { OBTENER_ALMACENES, REALIZAR_TRASPASO, OBTENER_CATEGORIAS} from '../../../../gql/Almacenes/Almacen';
+import { OBTENER_ALMACENES, REALIZAR_TRASPASO, OBTENER_CATEGORIAS, OBTENER_PRODUCTOS_EMPRESA} from '../../../../gql/Almacenes/Almacen';
 
 import { OBTENER_PRODUCTOS } from "../../../../gql/Catalogos/productos";
 
@@ -123,29 +124,13 @@ const transportes = [
     'Carro',
     'Camioneta'
 ];
+
 function createData(name, cantidad, precio, unidad) {
     return { name, cantidad, precio, unidad };
     } 
 
-/* const data = [
-    createData('Mermelada', 200, 25.50,'pz'),
-    createData('Cacahuates', 452, 25.0,'pz'),
-    createData('Galletas', 262, 16.0,'pz'),
-    createData('Salsa de chipotle', 452, 25.0,'pz'),
-    createData('Perro negro', 262, 16.0,'pz'),
-    createData('Kakacafé', 200, 25.50,'pz'),
-    createData('Pitayas', 452, 25.0,'pz'),
-    createData('Leche', 262, 16.0,'pz'),
-    createData('Salsa de habanero', 452, 25.0,'pz'),
-    createData('Perro blanco', 262, 16.0,'pz'),
-]; */
 
 const steps = ['Datos traspaso', 'Seleccionar productos'];
-
-
-
-
-
 
 export default function Traspasos() {
     const classes = useStyles();
@@ -156,6 +141,8 @@ export default function Traspasos() {
         productos,
         setProductosTras,
         setProductosTo,
+        setProductosEmpTo,
+     
         productosTo,
         productosTras
     } = useContext(TraspasosAlmacenContext);
@@ -172,13 +159,14 @@ export default function Traspasos() {
 	const [ subcategoria ] = useState('');
 	const [ subcategorias, setSubcategorias ] = useState([]);
     
+    const [ haveConcepto, setHaveConcepto ] = useState(false);
     const [ conceptoTraspaso, setConceptoTraspaso ] = useState(null);
     const [ isAlmacenOrigen, setIsAlmacenOrigen ] = useState(false);
     const [ isAlmacenDestino, setIsAlmacenDestino ] = useState(false);
 
     const [ almacenOrigen, setAlmacenOrigen ] = useState(null);
     const [ almacenDestino, setAlmacenDestino ] = useState(null);
-
+    const [almacenesDestino, setAlmacenesDestino] =useState([])
     const [ transporte, setTransporte ] = useState('');
     const [ placas, setPlacas ] = useState('');
     const [ nombreQuien, setNombreQuien ] = useState('');
@@ -193,7 +181,7 @@ export default function Traspasos() {
     let categorias = [];
    
     let almacenes = [];
-
+ 
     const queryObtenerAlmacenes = useQuery(OBTENER_ALMACENES,{
         variables: {
             id: sesion.sucursal._id
@@ -211,7 +199,8 @@ export default function Traspasos() {
 		variables: {
             empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id,	
-		}
+		},
+        fetchPolicy: "network-only"
 	});
 
     const productosQuery = useQuery(
@@ -223,23 +212,90 @@ export default function Traspasos() {
           almacen: (almacenOrigen ) ? almacenOrigen._id : "",
           existencias: true
       },
+      fetchPolicy: "network-only"
+
+    }
+  );
+
+    const productosEmpresaQuery = useQuery(
+    OBTENER_PRODUCTOS_EMPRESA,
+    {
+      variables: { 
+          empresa: sesion.empresa._id 
+      },
+      fetchPolicy: "network-only"
+
     }
   );
   
+    useEffect(() => {
+        if(almacenOrigen){
+            setAlmacenesDestino(queryObtenerAlmacenes.data.obtenerAlmacenes.filter(element => element._id !== almacenOrigen._id));
+        }
+    }, [almacenOrigen, setAlmacenesDestino, queryObtenerAlmacenes])
  
+    useEffect(() => {
+        if(conceptoTraspaso!== null){
+            if(conceptoTraspaso.origen === 'N/A'){
+                productosEmpresaQuery.refetch();
+            }       
+        }
+    }, [conceptoTraspaso, productosEmpresaQuery])    
+
+    useEffect(() => {
+			dataConceptos.refetch();
+	},[ dataConceptos ]); 
+
+     useEffect(() => {
+        if(conceptoTraspaso !== null){
+            if(conceptoTraspaso.destino === 'N/A'){
+                if(almacenOrigen !== null){
+                    setHaveConcepto(true)
+                }else{
+                     setHaveConcepto(false)
+                }
+            
+            }else{
+                if(conceptoTraspaso.origen === 'N/A'){
+                    if(almacenDestino !== null){
+                        setHaveConcepto(true);
+                    }else{
+                        setHaveConcepto(false);
+                    } 
+                }else{
+                    if(almacenOrigen !== null && almacenDestino !== null){
+                        setHaveConcepto(true);
+                    }else{
+                        setHaveConcepto(false);
+                    } 
+                }
+                
+            }    
+        }
+       
+	},[ conceptoTraspaso, almacenOrigen, almacenDestino, setHaveConcepto ]); 
+
+    
+
+
     useEffect(
 		() => {
-			dataConceptos.refetch();
-		},
-		[ dataConceptos ]
-	); 
+			 if(productosEmpresaQuery.data){
+                
+                //setProductos(productosEmpresaQuery.data.obtenerProductosPorEmpresa);
+                //console.log(productosEmpresaQuery.data)
+                setProductosEmpTo(productosEmpresaQuery.data.obtenerProductosPorEmpresa);
+            }
+    },[ productosEmpresaQuery, setProductosEmpTo ]);  
+
+
      useEffect(
 		() => {
 		     if(productosQuery.data){
                
                 setProductos(productosQuery.data.obtenerProductos);
                 setProductosTo(productosQuery.data.obtenerProductos)
-            
+         
                 return;
             }
             
@@ -268,28 +324,47 @@ export default function Traspasos() {
      const handleChange = (event) => {
         
         setAlmacenOrigen(event.target.value);
-         productosQuery.refetch();
+       /*  productosQuery.refetch({
+            variables: { 
+            
+                almacen: event.target.value._id,
+                existencias: true
+            },
+        }); */
+
+
         setProductosTras([]);
         return;
     };
+
     const handleChangeDestino = (event) => {
-        console.log(event)
+        //console.log(event)
         setAlmacenDestino(event.target.value);
         setProductosTras([]);
     };
+
      const handleChangeConcepto = (event) => {
         try {
-          
-            let concepto = event.target.value;  
-             setAlmacenOrigen(null); 
-            setAlmacenDestino(null);
-           
             
+            let concepto = event.target.value;  
+            setAlmacenesDestino([]);
+            almacenes = [];
+            setAlmacenOrigen(null); 
+            setAlmacenDestino(null);
+            if(concepto.origen === 'N/A'){
+               
+                
+                setAlmacenesDestino( queryObtenerAlmacenes.data.obtenerAlmacenes)
+            }else{
+                  setAlmacenesDestino([])
+            }
+          
             setIsAlmacenOrigen((concepto.origen === 'N/A') ? false:true);
             setIsAlmacenDestino((concepto.destino === 'N/A') ? false:true);
+           
             setConceptoTraspaso(concepto);    
         } catch (error) {
-            console.log('')
+            //console.log(error)
         }
       
     };
@@ -313,8 +388,8 @@ export default function Traspasos() {
         
         let newSkipped = skipped;
         if (isStepSkipped(activeStep)) {
-        newSkipped = new Set(newSkipped.values());
-        newSkipped.delete(activeStep);
+            newSkipped = new Set(newSkipped.values());
+            newSkipped.delete(activeStep);
         }
 
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -368,6 +443,7 @@ export default function Traspasos() {
 
     if(queryObtenerAlmacenes.data){
         almacenes = queryObtenerAlmacenes.data.obtenerAlmacenes;
+       
     }
 
     const obtenerSelectsProducto = (producto) => {
@@ -385,11 +461,13 @@ export default function Traspasos() {
 
     const traspasar = async () => {
         try {
+          
             if(productosTras.length){
-                console.log(productosTras)
-                let productTrasTo = productosTras;
-                
-                await CrearTraspaso({
+                setOpenEnd(false)
+               setLoading(true)
+                //let productTrasTo = productosTras;
+                //console.log("traspasar",productosTras)
+            const traspaso =    await CrearTraspaso({
                 variables: {
                     input: {
                         concepto_traspaso: {
@@ -415,26 +493,46 @@ export default function Traspasos() {
                     empresa: sesion.empresa._id
                 }
             }) 
-           
+                //console.log(traspaso)
+                setAlert({message: traspaso.data.crearTraspaso.message, status: traspaso.data.crearTraspaso.resp, open: true })
+                if(traspaso.data.crearTraspaso.resp !== 'error'){
+                    setProductosTras([]);
+                    setAlmacenOrigen(null);
+                    setAlmacenDestino(null);
+                    setConceptoTraspaso(null);
+                    handleBack();
+                }
+                
             }else{
                 
                 setAlert({message:'No es posible realizar un traspaso sin agregar productos.', status: 'error', open: true })
             }
            
-            setOpenEnd(false)
+            
+           
+            setLoading(false);
         } catch (error) {
+             setLoading(false);
               setOpenEnd(false)
-            console.log(error)
-           if(error.networkError.result){
-				console.log(error.networkError.result.errors);
-			  }else if(error.graphQLErrors){
-				console.log(error.graphQLErrors.message);
-			  }
+
+           //console.log('traspaso', error)
+           if(error.networkError !== undefined){
+				//console.log(error.networkError.result.errors);
+            }else if(error.graphQLErrors!== undefined){
+            //console.log(error.graphQLEr∂rors.message);
+            }else{
+                 //console.log(error);
+                setAlert({message: 'Ocurrió un error al realizar el traspaso...', status: 'error', open: true })
+            }
            
         }
     }
+
+   
+
     return (
         <Box sx={{ width: '100%' }}>
+        
             <Button fullWidth onClick={handleClickOpen}>
                 <Box display="flex" flexDirection="column">
                     <Box display="flex" justifyContent="center" alignItems="center">
@@ -463,8 +561,9 @@ export default function Traspasos() {
 					
 			</Button>
 			<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-				
+                <BackdropComponent loading={loading} setLoading={setLoading} />
                 <AppBar className={classes.appBar}>
+               
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
                                 Traspasos
@@ -480,6 +579,7 @@ export default function Traspasos() {
 					</Toolbar>
 				</AppBar>
                 <Box style={{ width: '50%',alignSelf:'center' }}>
+                  
                     <Stepper activeStep={activeStep}>
                         {steps.map((label, index) => {
                         const stepProps = {};
@@ -496,6 +596,7 @@ export default function Traspasos() {
                         })}
                     </Stepper>
                 </Box>
+                
                 <Box style={{ width: '98%',alignSelf:'center', alignContent:'center' }}>
                     
                     {
@@ -545,6 +646,10 @@ export default function Traspasos() {
                                             </Select>
                                         </FormControl>
                                         {
+                                        (conceptoTraspaso !== null) ? 
+                                        <div>
+                                        {   
+                                         
                                             (isAlmacenOrigen) ? 
                                                 <FormControl className={classes.formControl}>
                                                     <InputLabel id="almacen-origen-label">Almacén origen</InputLabel>
@@ -580,7 +685,7 @@ export default function Traspasos() {
                                                 input={<Input />}
                                                 MenuProps={MenuProps}
                                                 >
-                                                {almacenes.map((almacen) => (
+                                                {almacenesDestino.map((almacen) => (
                                                     <MenuItem key={almacen._id} value={almacen} >
                                                     {almacen.nombre_almacen}
                                                     </MenuItem>
@@ -590,7 +695,10 @@ export default function Traspasos() {
                                             :
                                             <div/>
                                         }
-                                        
+                                    </div>    
+                                    :
+                                    <div/>
+                                    }    
                                     </Grid>
                                 </Box>
                                 <Box style={{width:'100%'}} mt={5} mb={5} >
@@ -657,9 +765,13 @@ export default function Traspasos() {
                                
                             </Grid>
                         :
-
-                        <Box   >
+                         
+                        <Box>
+                       
+                            
                             <Box style={{width:'100%'}} ml={1} >
+                                 
+                               
                                 <Typography className={classes.subtitle}>
                                     <b>Buscar producto</b>
                                 </Typography>
@@ -832,12 +944,20 @@ export default function Traspasos() {
                           
                                 <Box  mt={2}>
                                     <Grid container style={{width:'100%', flexDirection:'row'}}>
-                                        <TableSelectProducts title='Productos' add={true} />
-                                        <TableSelectProducts title='Productos a traspasar' add={false}   />
+                                        {
+                                            (isAlmacenOrigen) ? 
+                                            <TableSelectProducts title='Productos' add={true} almacenOrigen={almacenOrigen} />
+                                            :
+                                             <TableSelectProducts title='Productos' add={true} almacenOrigen={null} />   
+                                        }
+                                        
+                                        <TableSelectProducts title='Productos a traspasar' add={false} almacenOrigen={almacenOrigen}  />
                                     </Grid>
                                 </Box>
-                            </Box>
+                                     
                             
+                            </Box>
+                          
                     </Box>
                     }
 
@@ -860,13 +980,14 @@ export default function Traspasos() {
                                 </Button>
                                 )} */}
                             
-                                <Button onClick={() => (activeStep < steps.length -1) ? handleNext() : handleModal()}>
+                                <Button disabled={!haveConcepto} onClick={() => (activeStep < steps.length -1) ? handleNext() : handleModal()}>
                                     {activeStep < steps.length -1   ? 'Siguiente' : 'Terminar'}
                                 </Button>
                         
                         </Box>
                   
                 </Box>
+                
                 <Dialog open={openEnd} onClose={handleModal}>
                     <DialogTitle>{'¿Está seguro de realizar este traspaso?'}</DialogTitle>
                     <DialogActions>
@@ -879,9 +1000,11 @@ export default function Traspasos() {
                     </DialogActions>
                 </Dialog>
                
-	        <SnackBarMessages alert={alert} setAlert={setAlert} />    
+	        <SnackBarMessages alert={alert} setAlert={setAlert} />  
+            
 			</Dialog>
-
+            
+               
         </Box>
     )
 }
