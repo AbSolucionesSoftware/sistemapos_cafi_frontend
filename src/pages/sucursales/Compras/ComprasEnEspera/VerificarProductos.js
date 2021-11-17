@@ -191,7 +191,6 @@ const ModalVerificacion = ({
       const presentaciones_base = productos_filtrados[0].medidas_producto;
 
       //verificacion de Precios
-      console.log(precios.unidad_de_compra, precios_base.unidad_de_compra);
       if (
         precios.unidad_de_compra.cantidad !==
           precios_base.unidad_de_compra.cantidad ||
@@ -199,7 +198,7 @@ const ModalVerificacion = ({
           precios_base.unidad_de_compra.precio_unitario_con_impuesto ||
         precios.unidad_de_compra.unidad !== precios_base.unidad_de_compra.unidad
       ) {
-        console.log("conflicto precios");
+        /* console.log("conflicto precios"); */
         //si son diferentes se agrega los precios_base al compra_nueva
         copy_producto.precios = precios_base;
         copy_producto_compra.producto = copy_producto;
@@ -218,16 +217,18 @@ const ModalVerificacion = ({
         u_default[0].unidad !== u_default_base[0].unidad
       ) {
         //si son diferentes se agrega los precios_base al compra_nueva
-        productos_nuevos[i].producto.unidades_de_venta = unidades_base;
-        productos_nuevos[i].conflicto = true;
+        copy_producto.unidades_de_venta = unidades_base;
+        copy_producto_compra.producto = copy_producto;
+        copy_producto_compra.conflicto = true;
+        productos_nuevos[i] = copy_producto_compra;
         conflicto = true;
-        console.log("conflicto unidades");
+        /* console.log("conflicto unidades"); */
       }
 
       //verificacion de Presentaciones si hay presentaciones
 
       if (presentaciones.length > 0) {
-        console.log(presentaciones, presentaciones_base);
+        /* console.log(presentaciones, presentaciones_base); */
         if (presentaciones_base.length > 0) {
           if (presentaciones.length === presentaciones_base.length) {
             for (let x = 0; x < presentaciones.length; x++) {
@@ -250,38 +251,35 @@ const ModalVerificacion = ({
                     copy_producto_compra.conflicto = true;
                     productos_nuevos[i] = copy_producto_compra;
                     conflicto = true;
-                    console.log("conflicto presentaciones");
+                    /* console.log("conflicto presentaciones"); */
                   }
                 }
               }
             }
           } else {
             //si son diferentes se agrega las presentaciones al compra_nueva
-            console.log(presentaciones, presentaciones_base);
             copy_producto.presentaciones = presentaciones_base;
             copy_producto_compra.producto = copy_producto;
             copy_producto_compra.conflicto = true;
             productos_nuevos[i] = copy_producto_compra;
             conflicto = true;
-            console.log("conflicto diferentes presentaciones ");
+            /* console.log("conflicto diferentes presentaciones "); */
           }
         } else {
           //si no hay se agrega las presentaciones al compra_nueva
-          console.log(presentaciones, presentaciones_base);
           copy_producto_compra.conflicto = true;
           productos_nuevos[i] = copy_producto_compra;
           conflicto = true;
-          console.log("conflicto sin presentaciones ");
+          /* console.log("conflicto sin presentaciones "); */
         }
       }
     }
 
     const nuevo_producto_compra = [];
-    let subtotal = compra.subtotal;
-    let impuestos = compra.impuestos;
-    let total = compra.total;
+    let subtotal = 0;
+    let impuestos = 0;
+    let total = 0;
     if (conflicto) {
-      console.log(compra);
       for (let k = 0; k < productos_nuevos.length; k++) {
         const datosProducto = { ...productos_nuevos[k] };
 

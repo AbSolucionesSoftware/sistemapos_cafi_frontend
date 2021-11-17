@@ -51,7 +51,7 @@ export default function DescuentoProductos({datos, productosRefetch}) {
     const classes = useStyles();
 
     const handleCloseDescuentos = () => {
-        if (datos.medidas_registradas === true) {
+        if (datos.presentaciones.length > 0) {
             setDatosPreciosProducto(datos.medidas_producto);
         }else{
             setDatosPreciosProducto(datos.unidades_de_venta);

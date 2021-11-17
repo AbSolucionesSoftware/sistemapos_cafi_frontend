@@ -74,6 +74,8 @@ export default function DatosProducto({ status }) {
     setCosto,
     cantidad,
     setCantidad,
+    loadingProductos,
+    setLoadingProductos,
   } = useContext(ComprasContext);
   const {
     datos_generales,
@@ -112,17 +114,6 @@ export default function DatosProducto({ status }) {
 
   const [cargando, setCargando] = useState(false);
 
-  const [COSTO] = useDebounce(costo, 500);
-  const [CANTIDAD] = useDebounce(cantidad, 500);
-
-  useEffect(() => {
-    obtenerCosto(COSTO);
-  }, [COSTO]);
-
-  useEffect(() => {
-    obtenerCantidad(CANTIDAD);
-  }, [CANTIDAD]);
-
   /* Queries */
   const [getProductos, { loading, data, error, refetch }] = useLazyQuery(
     OBTENER_PRODUCTOS,
@@ -131,6 +122,25 @@ export default function DatosProducto({ status }) {
       fetchPolicy: "network-only",
     }
   );
+
+  const [COSTO] = useDebounce(costo, 500);
+  const [CANTIDAD] = useDebounce(cantidad, 500);
+
+  useEffect(() => {
+    if (loading) {
+      setLoadingProductos(true);
+    } else {
+      setLoadingProductos(false);
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    if (data) obtenerCosto(COSTO);
+  }, [COSTO]);
+
+  useEffect(() => {
+    if (data) obtenerCantidad(CANTIDAD);
+  }, [CANTIDAD]);
 
   useEffect(() => {
     if (count === 1) {
@@ -163,6 +173,7 @@ export default function DatosProducto({ status }) {
   if (data) obtenerProductos = data.obtenerProductos;
 
   const obtenerSelectsProducto = (producto) => {
+    /* console.log(producto); */
     if (!producto) {
       setDatosProducto(initial_state_datosProducto);
       setCosto(0);
@@ -247,29 +258,48 @@ export default function DatosProducto({ status }) {
       return;
     }
 
+    const { iva, ieps, precio_de_compra } = datosProducto.producto.precios;
+
+    console.log(datosProducto.producto.precios);
+
     let total = value;
     let total_con_descuento;
     let descuento_precio;
+
+    let precio_sin_impuesto = total - (precio_de_compra.iva + precio_de_compra.ieps)
+    let nuevo_iva = iva;
+    let nuevo_ieps = ieps;
+    let impuestos = 0;
+
+    nuevo_iva =
+      parseFloat(precio_sin_impuesto) *
+      parseFloat(iva < 10 ? ".0" + iva : "." + iva);
+    nuevo_ieps =
+      parseFloat(precio_sin_impuesto) *
+      parseFloat(ieps < 10 ? ".0" + ieps : "." + ieps);
+
+    impuestos = nuevo_ieps + nuevo_iva;
+
     if (datosProducto.descuento_porcentaje > 0) {
       descuento_precio = Math.round(
-        (value * datosProducto.descuento_porcentaje) / 100
+        (total * datosProducto.descuento_porcentaje) / 100
       );
       total_con_descuento = total - descuento_precio;
 
       setDatosProducto({
         ...datosProducto,
-        costo: parseFloat(value),
+        costo: parseFloat(total),
         descuento_precio: parseFloat(descuento_precio),
         total_con_descuento: parseFloat(total_con_descuento),
-        subtotal: parseFloat(total) - datosProducto.impuestos,
+        subtotal: parseFloat(total) - impuestos,
       });
       return;
     }
     setDatosProducto({
       ...datosProducto,
-      costo: parseFloat(value),
+      costo: parseFloat(total),
       total_con_descuento: parseFloat(total),
-      subtotal: parseFloat(total) - datosProducto.impuestos,
+      subtotal: parseFloat(total) - impuestos,
     });
   };
 
@@ -295,7 +325,7 @@ export default function DatosProducto({ status }) {
           setCargando(false);
           return;
         }
-      }else{
+      } else {
         setVerificate(true);
         setCargando(false);
         return;
@@ -394,13 +424,24 @@ export default function DatosProducto({ status }) {
 
       datosProducto.iva_total = iva * datosProducto.cantidad_total;
       datosProducto.ieps_total = ieps * datosProducto.cantidad_total;
-      datosProducto.subtotal = datosProducto.subtotal * datosProducto.cantidad_total;
-      datosProducto.impuestos = datosProducto.impuestos * datosProducto.cantidad_total;
+      datosProducto.subtotal =
+        datosProducto.subtotal * datosProducto.cantidad_total;
+      datosProducto.impuestos =
+        datosProducto.impuestos * datosProducto.cantidad_total;
       datosProducto.total = datosProducto.total * datosProducto.cantidad_total;
 
-      let subtotal = datosCompra.subtotal + ( datosProducto.subtotal * datosProducto.cantidad_total) - isEditing.producto.subtotal;
-      let impuestos = datosCompra.impuestos + ( datosProducto.impuestos * datosProducto.cantidad_total) - isEditing.producto.impuestos;
-      let total = datosCompra.total + ( datosProducto.total * datosProducto.cantidad_total) - isEditing.producto.total;
+      let subtotal =
+        datosCompra.subtotal +
+        datosProducto.subtotal * datosProducto.cantidad_total -
+        isEditing.producto.subtotal;
+      let impuestos =
+        datosCompra.impuestos +
+        datosProducto.impuestos * datosProducto.cantidad_total -
+        isEditing.producto.impuestos;
+      let total =
+        datosCompra.total +
+        datosProducto.total * datosProducto.cantidad_total -
+        isEditing.producto.total;
 
       productosCompra_ordenados.splice(isEditing.index, 1, datosProducto);
 
@@ -434,17 +475,7 @@ export default function DatosProducto({ status }) {
       if (existente.length > 0) {
         let productosCompra_ordenados = [...productosCompra];
         const { index, prod_exist } = existente[0];
-        console.log(datosProducto, prod_exist);
-        /* let producto_actual = productosCompra.filter(res => res.id_producto === datosProducto.id_producto);
-      console.log(datosProducto, productosCompra_ordenados); */
-
-      //sumar nueva cant y la cantidad actual
-
-      //hacer los calculos de totales subtotales e impuestos
-
-      //calculos de totales, subtotales e impuestos de compra general
-
-      /* const { iva, ieps } = datosProducto.producto.precios.precio_de_compra;
+        const { iva, ieps } = datosProducto.producto.precios.precio_de_compra;
 
         datosProducto.iva_total = iva * datosProducto.cantidad_total;
         datosProducto.ieps_total = ieps * datosProducto.cantidad_total;
@@ -453,21 +484,19 @@ export default function DatosProducto({ status }) {
         datosProducto.impuestos =
           datosProducto.impuestos * datosProducto.cantidad_total;
         datosProducto.total =
-          datosProducto.total * datosProducto.cantidad_total; */
-        
-
-
-
+          datosProducto.total * datosProducto.cantidad_total;
 
         productosCompra_ordenados.splice(index, 1, datosProducto);
         setProductosCompra(productosCompra_ordenados);
         setDatosCompra({
           ...datosCompra,
           subtotal:
-            datosCompra.subtotal + datosProducto.subtotal - prod_exist.subtotal,
+            datosCompra.subtotal - prod_exist.subtotal + datosProducto.subtotal,
           impuestos:
-            datosCompra.impuestos + datosProducto.impuestos - prod_exist.impuestos,
-          total: datosCompra.total + datosProducto.total - prod_exist.total,
+            datosCompra.impuestos -
+            prod_exist.impuestos +
+            datosProducto.impuestos,
+          total: datosCompra.total - prod_exist.total + datosProducto.total,
         });
       } else {
         let array_ordenado = [...productosCompra];
@@ -521,7 +550,10 @@ export default function DatosProducto({ status }) {
     setPresentaciones(
       producto.medidas_producto ? producto.medidas_producto : []
     );
-    if (datosCompra.almacen.id_almacen && !producto.medidas_registradas) {
+    if (
+      datosCompra.almacen.id_almacen &&
+      producto.medidas_producto.length === 0
+    ) {
       setAlmacenInicial({
         ...almacen_inicial,
         id_almacen: datosCompra.almacen.id_almacen,
@@ -793,7 +825,10 @@ export default function DatosProducto({ status }) {
               {datosProducto.producto.datos_generales &&
               datosProducto.producto.datos_generales.tipo_producto !==
                 "OTROS" ? (
-                <TallasProductos verificate={verificate} setVerificate={setVerificate} />
+                <TallasProductos
+                  verificate={verificate}
+                  setVerificate={setVerificate}
+                />
               ) : null}
 
               <Box mx={1} />
@@ -805,6 +840,14 @@ export default function DatosProducto({ status }) {
                 />
               ) : (
                 <Button
+                  style={
+                    loadingProductos
+                      ? {
+                          pointerEvents: "none",
+                          opacity: 0.4,
+                        }
+                      : null
+                  }
                   variant="contained"
                   color="primary"
                   startIcon={
@@ -851,7 +894,12 @@ const Transition = forwardRef(function Transition(props, ref) {
 
 const ModalAgregarCompra = ({ agregarCompra, cargando }) => {
   const [open, setOpen] = useState(false);
-  const { datosProducto, datosCompra, isEditing } = useContext(ComprasContext);
+  const {
+    datosProducto,
+    datosCompra,
+    isEditing,
+    loadingProductos,
+  } = useContext(ComprasContext);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -864,6 +912,14 @@ const ModalAgregarCompra = ({ agregarCompra, cargando }) => {
   return (
     <div>
       <Button
+        style={
+          loadingProductos
+            ? {
+                pointerEvents: "none",
+                opacity: 0.4,
+              }
+            : null
+        }
         variant="contained"
         color="primary"
         startIcon={<Add />}

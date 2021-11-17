@@ -235,8 +235,7 @@ export default function CrearProducto({
       datos_generales,
       precios,
       almacen_inicial,
-      presentaciones,
-      datos
+      presentaciones
     );
 
     if (validate.error) {

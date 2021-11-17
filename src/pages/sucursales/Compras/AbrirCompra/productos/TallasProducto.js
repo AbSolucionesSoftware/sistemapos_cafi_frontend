@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { Button, CircularProgress, Tooltip } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -18,12 +18,20 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function AlertDialogSlide({verificate, setVerificate}) {
   const [open, setOpen] = useState(false);
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-  const { datosProducto, datosCompra } = useContext(ComprasContext);
+  const { datosProducto, datosCompra, setLoadingProductos } = useContext(ComprasContext);
 
   /* Queries */
   const { loading, data, error, refetch } = useQuery(OBTENER_CONSULTAS, {
     variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
   });
+
+  useEffect(() => {
+    if(loading){
+      setLoadingProductos(true);
+    }else{
+      setLoadingProductos(false);
+    }
+  }, [loading]);
 
   if (loading)
     return (
