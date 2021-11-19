@@ -24,6 +24,7 @@ import { useDebounce } from "use-debounce";
 import {
   findProductArray,
   calculatePrices,
+  verifiPrising
 } from "../../config/reuserFunctions";
 import { VentasContext } from '../../context/Ventas/ventasContext';
 
@@ -399,6 +400,9 @@ const RenderTableRows = ({
       let calculoResta = {};
       //Calculos de impuestos que se van a sumar a la venta
       let calculoSuma = {};
+
+      let CalculosData = {};
+
       //Buscar y obtener ese producto en el array de ventas
       const producto_encontrado = await findProductArray(
         productosVentas,
@@ -406,67 +410,139 @@ const RenderTableRows = ({
       );
 
       if (producto_encontrado.found) {
-        const { cantidad_venta, ...newP } =
+        // console.log("se encontro");
+        const newP =
           producto_encontrado.producto_found.producto;
         // newP.precio_actual_producto = newP.descuento_activo ? newP.descuento.precio_con_descuento :  newP.precio;
         // newP.precio_actual_producto = newP.descuento_activo ? newP.descuento.precio_con_descuento :  newP.precio;
-        //Sacar los impuestos que se van a restar
-        calculoResta = await calculatePrices(
-          newP,
-          cantidad_venta,
-          newP.granelProducto,
-          newP.precio_actual_producto,
-          "TABLA"
-        );
-        // console.log(calculoResta);
-        //Sacar los impuestos que se van a sumar
-        calculoSuma = await calculatePrices(
-          newP,
-          new_cant,
-          newP.granelProducto,
-          newP.precio_actual_producto,
-          "TABLA"
-        );
-        newP.cantidad_venta = parseInt(new_cant);
-        newP.precio_a_vender = calculoSuma.totalCalculo;
-        productosVentasTemp.splice(
-          producto_encontrado.producto_found.index,
-          1,
-          newP
-        );
+        const verify_prising = await verifiPrising(newP);
+        // console.log(verify_prising);
+        if (verify_prising.found) {
+
+          // console.log("llego linea 420");
+          calculoResta = await calculatePrices(
+            newP,
+            newP.cantidad_venta,
+            newP.granelProducto,
+            newP.precio_actual_producto,
+            "TABLA"
+          );
+          // console.log(verify_prising.pricing);
+          //Sacar los impuestos que se van a sumar
+          calculoSuma = await calculatePrices(
+            newP,
+            newP.cantidad_venta,
+            newP.granelProducto,
+            verify_prising.pricing,
+            "TABLA"
+          );
+
+          console.log(calculoSuma);
+          console.log(calculoResta);
+  
+          newP.precio_a_vender = calculoSuma.totalCalculo;
+          newP.precio_anterior = newP.precio_actual_porducto;
+          newP.precio_actual_producto = verify_prising.pricing;
+          productosVentasTemp.splice(
+            producto_encontrado.producto_found.index,
+            1,
+            newP
+          );
+          
+  
+          CalculosData = {
+            subTotal:
+              parseFloat(venta_existente.subTotal) -
+              parseFloat(calculoResta.subtotalCalculo) +
+              calculoSuma.subtotalCalculo,
+            total:
+              parseFloat(venta_existente.total) -
+              parseFloat(calculoResta.totalCalculo) +
+              calculoSuma.totalCalculo,
+            impuestos:
+              parseFloat(venta_existente.impuestos) -
+              parseFloat(calculoResta.impuestoCalculo) +
+              calculoSuma.impuestoCalculo,
+            iva:
+              parseFloat(venta_existente.iva) -
+              parseFloat(calculoResta.ivaCalculo) +
+              calculoSuma.ivaCalculo,
+            ieps:
+              parseFloat(venta_existente.ieps) -
+              parseFloat(calculoResta.iepsCalculo) +
+              calculoSuma.iepsCalculo,
+            descuento:
+              parseFloat(venta_existente.descuento) -
+              parseFloat(calculoResta.descuentoCalculo) +
+              calculoSuma.descuentoCalculo,
+            monedero:
+              parseFloat(venta_existente.monedero) -
+              parseFloat(calculoResta.monederoCalculo) +
+              calculoSuma.monederoCalculo,
+          };
+        }else{
+          //Sacar los impuestos que se van a restar
+          // console.log("Entro a cantidad", newP.cantidad_venta);
+          calculoResta = await calculatePrices(
+            newP,
+            newP.cantidad_venta,
+            newP.granelProducto,
+            newP.precio_actual_producto,
+            "TABLA"
+          );
+          // console.log(calculoResta);
+          //Sacar los impuestos que se van a sumar
+          calculoSuma = await calculatePrices(
+            newP,
+            new_cant,
+            newP.granelProducto,
+            newP.precio_actual_producto,
+            "TABLA"
+          );
+          newP.cantidad_venta = parseInt(new_cant);
+          newP.precio_anterior = newP.precio_actual_producto;
+          newP.precio_a_vender = calculoSuma.totalCalculo;
+          productosVentasTemp.splice(
+            producto_encontrado.producto_found.index,
+            1,
+            newP
+          );
+
+          CalculosData = {
+            subTotal:
+              parseFloat(venta_existente.subTotal) -
+              parseFloat(calculoResta.subtotalCalculo) +
+              calculoSuma.subtotalCalculo,
+            total:
+              parseFloat(venta_existente.total) -
+              parseFloat(calculoResta.totalCalculo) +
+              calculoSuma.totalCalculo,
+            impuestos:
+              parseFloat(venta_existente.impuestos) -
+              parseFloat(calculoResta.impuestoCalculo) +
+              calculoSuma.impuestoCalculo,
+            iva:
+              parseFloat(venta_existente.iva) -
+              parseFloat(calculoResta.ivaCalculo) +
+              calculoSuma.ivaCalculo,
+            ieps:
+              parseFloat(venta_existente.ieps) -
+              parseFloat(calculoResta.iepsCalculo) +
+              calculoSuma.iepsCalculo,
+            descuento:
+              parseFloat(venta_existente.descuento) -
+              parseFloat(calculoResta.descuentoCalculo) +
+              calculoSuma.descuentoCalculo,
+            monedero: parseFloat(venta_existente.monedero) - parseFloat(calculoResta.monederoCalculo) +
+            calculoSuma.monederoCalculo,
+          };
+        }
         // console.log(calculoSuma);
       } else {
         console.log("El producto no existe");
       }
       //Crear copia y guardar los impuestos a sumar
-      const CalculosData = {
-        subTotal:
-          parseFloat(venta_existente.subTotal) -
-          parseFloat(calculoResta.subtotalCalculo) +
-          calculoSuma.subtotalCalculo,
-        total:
-          parseFloat(venta_existente.total) -
-          parseFloat(calculoResta.totalCalculo) +
-          calculoSuma.totalCalculo,
-        impuestos:
-          parseFloat(venta_existente.impuestos) -
-          parseFloat(calculoResta.impuestoCalculo) +
-          calculoSuma.impuestoCalculo,
-        iva:
-          parseFloat(venta_existente.iva) -
-          parseFloat(calculoResta.ivaCalculo) +
-          calculoSuma.ivaCalculo,
-        ieps:
-          parseFloat(venta_existente.ieps) -
-          parseFloat(calculoResta.iepsCalculo) +
-          calculoSuma.iepsCalculo,
-        descuento:
-          parseFloat(venta_existente.descuento) -
-          parseFloat(calculoResta.descuentoCalculo) +
-          calculoSuma.descuentoCalculo,
-        monedero: parseFloat(venta_existente.monedero) - parseFloat(calculoResta.monederoCalculo) +
-        calculoSuma.monederoCalculo,
-      };
+      // console.log("Datos de tabla",CalculosData);
       localStorage.setItem(
         "DatosVentas",
         JSON.stringify({

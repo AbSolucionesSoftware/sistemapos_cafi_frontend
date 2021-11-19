@@ -176,6 +176,8 @@ console.log("newPrising",newPrising);
 export const verifiPrising = async (newP) => {
   try {
     if(!newP) return false;
+    console.log(newP);
+    console.log(newP.cantidad_venta);
     const amount = newP.cantidad_venta;
     const pricings = newP.id_producto.precios.precios_producto;
 
@@ -187,8 +189,8 @@ export const verifiPrising = async (newP) => {
 
     for (let i = 0; i < pricings.length; i++) {
       // const objectPrising = pricings[i];
-      console.log("Unidad mayoreo",pricings[i].unidad_mayoreo);
-      console.log("Amopunt",amount);
+      // console.log("Unidad mayoreo",pricings[i].unidad_mayoreo);
+      // console.log("Amount",amount);
       if(pricings[i].unidad_mayoreo > 1 && amount >= pricings[i].unidad_mayoreo){
         console.log(pricings[i]);
         finalPrising = {
@@ -199,9 +201,222 @@ export const verifiPrising = async (newP) => {
       }
     }
 
+    console.log(finalPrising);
+
     return finalPrising;
   } catch (error) {
     console.log(error);
+    return false;
+  }
+}
+
+export const PricingProductVenta = async (producto,origen, granelBase) => {
+  try {
+    let venta = JSON.parse(localStorage.getItem("DatosVentas"));
+    let productosVentas = venta === null ? [] : venta.productos;
+    let venta_actual = venta === null ? [] : venta;
+    let venta_existente =
+      venta === null
+        ? {
+            subTotal: 0,
+            total: 0,
+            impuestos: 0,
+            iva: 0,
+            ieps: 0,
+            descuento: 0,
+            monedero: 0,
+          }
+        : venta;
+    let productosVentasTemp = productosVentas;
+    let subTotal = 0,
+      total = 0,
+      impuestos = 0,
+      iva = 0,
+      ieps = 0,
+      descuento = 0,
+      monedero = 0;
+
+    let calculoResta = {};
+    let calculoSuma = {};
+
+    let CalculosData = {};
+
+    const producto_encontrado = await findProductArray(
+      productosVentas,
+      producto
+    );
+
+    if(origen === "principal"){
+      if (!producto_encontrado.found && producto._id) {
+        const newP = { ...producto };
+        const productoPrecioFinal = newP.descuento_activo
+          ? newP.descuento.precio_con_descuento
+          : newP.precio;
+        const {
+          subtotalCalculo,
+          totalCalculo,
+          impuestoCalculo,
+          ivaCalculo,
+          iepsCalculo,
+          descuentoCalculo,
+          monederoCalculo,
+        } = await calculatePrices(newP, 0, granelBase, productoPrecioFinal);
+        subTotal = subtotalCalculo;
+        total = totalCalculo;
+        impuestos = impuestoCalculo;
+        iva = ivaCalculo;
+        ieps = iepsCalculo;
+        descuento = descuentoCalculo;
+        monedero = monederoCalculo;
+        // console.log(monedero);
+        newP.cantidad_venta = 1;
+        newP.granelProducto = granelBase;
+        newP.precio_a_vender = totalCalculo;
+        newP.precio_actual_producto = productoPrecioFinal;
+        newP.precio_anterior = productoPrecioFinal;
+        productosVentasTemp.push(newP);
+        CalculosData = {
+          subTotal: parseFloat(venta_existente.subTotal) + subTotal,
+          total: parseFloat(venta_existente.total) + total,
+          impuestos: parseFloat(venta_existente.impuestos) + impuestos,
+          iva: parseFloat(venta_existente.iva) + iva,
+          ieps: parseFloat(venta_existente.ieps) + ieps,
+          descuento: parseFloat(venta_existente.descuento) + descuento,
+          monedero: parseFloat(venta_existente.monedero) + monedero,
+        };
+      } else if (producto_encontrado.found && producto._id) {
+        const { cantidad_venta, ...newP } =
+          producto_encontrado.producto_found.producto;
+        newP.cantidad_venta = parseInt(cantidad_venta) + 1;
+        const verify_prising = await verifiPrising(newP);
+  
+        //Verificar si el precio fue encontrado
+        if (verify_prising.found) {
+          // console.log("Entro a aqui nuevo precio");
+          calculoResta = await calculatePrices(
+            newP,
+            cantidad_venta,
+            newP.granelProducto,
+            newP.precio_actual_producto,
+            "TABLA"
+          );
+  
+          //Sacar los impuestos que se van a sumar
+          calculoSuma = await calculatePrices(
+            newP,
+            cantidad_venta,
+            newP.granelProducto,
+            verify_prising.pricing,
+            "TABLA"
+          );
+  
+          newP.precio_a_vender = calculoSuma.totalCalculo;
+          newP.precio_anterior = newP.precio_actual_producto;
+          newP.precio_actual_producto = verify_prising.pricing;
+          productosVentasTemp.splice(
+            producto_encontrado.producto_found.index,
+            1,
+            newP
+          );
+  
+          CalculosData = {
+            subTotal:
+              parseFloat(venta_existente.subTotal) -
+              parseFloat(calculoResta.subtotalCalculo) +
+              calculoSuma.subtotalCalculo,
+            total:
+              parseFloat(venta_existente.total) -
+              parseFloat(calculoResta.totalCalculo) +
+              calculoSuma.totalCalculo,
+            impuestos:
+              parseFloat(venta_existente.impuestos) -
+              parseFloat(calculoResta.impuestoCalculo) +
+              calculoSuma.impuestoCalculo,
+            iva:
+              parseFloat(venta_existente.iva) -
+              parseFloat(calculoResta.ivaCalculo) +
+              calculoSuma.ivaCalculo,
+            ieps:
+              parseFloat(venta_existente.ieps) -
+              parseFloat(calculoResta.iepsCalculo) +
+              calculoSuma.iepsCalculo,
+            descuento:
+              parseFloat(venta_existente.descuento) -
+              parseFloat(calculoResta.descuentoCalculo) +
+              calculoSuma.descuentoCalculo,
+            monedero:
+              parseFloat(venta_existente.monedero) -
+              parseFloat(calculoResta.monederoCalculo) +
+              calculoSuma.monederoCalculo,
+          }; 
+        } else {
+          const productoPrecioFinal = newP.descuento_activo
+            ? newP.descuento.precio_con_descuento
+            : newP.precio;
+          const {
+            subtotalCalculo,
+            totalCalculo,
+            impuestoCalculo,
+            ivaCalculo,
+            iepsCalculo,
+            descuentoCalculo,
+            monederoCalculo,
+          } = await calculatePrices(newP, 0, granelBase, productoPrecioFinal);
+          subTotal = subtotalCalculo;
+          total = totalCalculo;
+          impuestos = impuestoCalculo;
+          iva = ivaCalculo;
+          ieps = iepsCalculo;
+          descuento = descuentoCalculo;
+          monedero = monederoCalculo;
+  
+          newP.granelProducto = granelBase;
+          newP.precio_a_vender = totalCalculo;
+          newP.precio_anterior = newP.precio_actual_producto;
+          newP.precio_actual_producto = productoPrecioFinal;
+          productosVentasTemp.splice(
+            producto_encontrado.producto_found.index,
+            1,
+            newP
+          );
+  
+          CalculosData = {
+            subTotal: parseFloat(venta_existente.subTotal) + subTotal,
+            total: parseFloat(venta_existente.total) + total,
+            impuestos: parseFloat(venta_existente.impuestos) + impuestos,
+            iva: parseFloat(venta_existente.iva) + iva,
+            ieps: parseFloat(venta_existente.ieps) + ieps,
+            descuento: parseFloat(venta_existente.descuento) + descuento,
+            monedero: parseFloat(venta_existente.monedero) + monedero,
+          };
+          // console.log("Precio normal",CalculosData);
+          // setDatosVentasActual({
+          //   ...CalculosData,
+          // });
+          // //Recargar la tabla de los productos
+          // setUpdateTablaVentas(!updateTablaVentas);
+        }
+      }
+    }
+
+    localStorage.setItem(
+      "DatosVentas",
+      JSON.stringify({
+        ...CalculosData,
+        cliente:
+          venta_actual.venta_cliente === true ? venta_actual.cliente : {},
+        venta_cliente:
+          venta_actual.venta_cliente === true
+            ? venta_actual.venta_cliente
+            : false,
+        productos: productosVentasTemp,
+      })
+    );
+
+    return CalculosData;
+
+    
+  } catch (error) {
     return false;
   }
 }
