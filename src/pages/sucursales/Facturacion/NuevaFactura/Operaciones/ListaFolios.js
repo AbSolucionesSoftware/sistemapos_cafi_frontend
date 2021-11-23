@@ -1,7 +1,7 @@
 import React, { Fragment, useContext, useState } from "react";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import CircularProgress from "@material-ui/core/CircularProgress";
+/* import CircularProgress from "@material-ui/core/CircularProgress"; */
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Paper from "@material-ui/core/Paper";
@@ -19,12 +19,13 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { makeStyles } from "@material-ui/core";
+import { formatoMexico } from "../../../../../config/reuserFunctions"
 
 import { Search } from "@material-ui/icons";
-import ErrorPage from "../../../../../components/ErrorPage";
+/* import ErrorPage from "../../../../../components/ErrorPage"; */
 import Done from "@material-ui/icons/Done";
-import { useQuery } from "@apollo/client";
-import { OBTENER_CLIENTES } from "../../../../../gql/Catalogos/clientes";
+/* import { useQuery } from "@apollo/client"; */
+/* import { OBTENER_CLIENTES } from "../../../../../gql/Catalogos/clientes"; */
 import { FacturacionCtx } from "../../../../../context/Facturacion/facturacionCtx";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -37,7 +38,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ListaClientesFacturas() {
+function createData(folio, serie, cliente, fecha, total) {
+  return { folio, serie, cliente, fecha, total };
+}
+
+const rows = [
+  createData("00234", "123543563", "Juanito", "19/nov/2021", 246342.34),
+  createData("00235", "123345563", "Panchito", "18/nov/2021", 2354.234),
+  createData("00236", "122309563", "Alfredito", "17/nov/2021", 23523.32),
+  createData("00237", "123287443", "Marianita", "17/nov/2021", 1234.54),
+];
+
+export default function ListaFoliosFactura() {
   const [open, setOpen] = useState(false);
   const { datosFactura, setDatosFactura } = useContext(FacturacionCtx);
 
@@ -56,7 +68,7 @@ export default function ListaClientesFacturas() {
         onClose={() => handleClose()}
         TransitionComponent={Transition}
       >
-        <DialogTitle>Seleccionar cliente</DialogTitle>
+        <DialogTitle>Seleccionar Folio</DialogTitle>
         <DialogContent>
           <RenderLista />
         </DialogContent>
@@ -64,7 +76,7 @@ export default function ListaClientesFacturas() {
           <Button
             onClick={() => {
               handleClose();
-              setDatosFactura({ ...datosFactura, cliente: "" });
+              setDatosFactura({ ...datosFactura, folio: "", serie: "", concepto: [] });
             }}
           >
             Cancelar
@@ -73,7 +85,7 @@ export default function ListaClientesFacturas() {
             color="primary"
             startIcon={<Done />}
             onClick={() => handleClose()}
-            disabled={!datosFactura.cliente}
+            disabled={!datosFactura.folio}
           >
             Seleccionar
           </Button>
@@ -90,15 +102,15 @@ const RenderLista = () => {
   const { datosFactura, setDatosFactura } = useContext(FacturacionCtx);
 
   /* Queries */
-  const { loading, data, error } = useQuery(OBTENER_CLIENTES, {
+  /* const { loading, data, error } = useQuery(OBTENER_CLIENTES, {
     variables: { tipo: "CLIENTE", filtro },
-  });
+  }); */
 
   const pressEnter = (e) => {
     if (e.key === "Enter") setFiltro(e.target.value);
   };
 
-  if (loading)
+  /* if (loading)
     return (
       <Box
         display="flex"
@@ -111,9 +123,9 @@ const RenderLista = () => {
     );
   if (error) {
     return <ErrorPage />;
-  }
+  } */
 
-  const { obtenerClientes } = data;
+  /* const { obtenerClientes } = data; */
 
   return (
     <Fragment>
@@ -142,14 +154,15 @@ const RenderLista = () => {
           <Table stickyHeader size="small" aria-label="a dense table">
             <TableHead>
               <TableRow>
-                <TableCell minwidth="100">No. Cliente</TableCell>
-                <TableCell minwidth="100">Clave</TableCell>
-                <TableCell minwidth="150">Nombre</TableCell>
-                <TableCell minwidth="150">Razon Social</TableCell>
+                <TableCell minwidth="100">Folio</TableCell>
+                <TableCell minwidth="100">Serie</TableCell>
+                <TableCell minwidth="100">Cliente</TableCell>
+                <TableCell minwidth="100">Fecha</TableCell>
+                <TableCell minwidth="150">total</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {obtenerClientes.map((row, index) => {
+              {rows.map((row, index) => {
                 return (
                   <TableRow
                     key={index}
@@ -159,22 +172,27 @@ const RenderLista = () => {
                     onClick={() =>
                       setDatosFactura({
                         ...datosFactura,
-                        cliente: row.nombre_cliente,
+                        folio: row.folio,
+                        serie: row.serie,
+                        concepto: [row]
                       })
                     }
-                    selected={row.nombre_cliente === datosFactura.cliente}
+                    selected={row.folio === datosFactura.folio}
                   >
                     <TableCell>
-                      <Typography>{row.numero_cliente}</Typography>
+                      <Typography>{row.folio}</Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography>{row.clave_cliente}</Typography>
+                      <Typography>{row.serie}</Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography>{row.nombre_cliente}</Typography>
+                      <Typography>{row.cliente}</Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography>{row.razon_social}</Typography>
+                      <Typography>{row.fecha}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>$ {formatoMexico(row.total)}</Typography>
                     </TableCell>
                   </TableRow>
                 );
