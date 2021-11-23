@@ -364,22 +364,36 @@ const RenderTableRows = ({
   const [newCantidadProduct, setNewCantidadProduct] = useState(
     producto.cantidad_venta
   );
+
+  const [ tempAmount, setTempAmount ] = useState(producto.cantidad_venta);
+
   const textfield = useRef(null);
   const [value] = useDebounce(newCantidadProduct, 500);
 
 
   useEffect(() => {
-    setNewCantidadProduct(producto.cantidad_venta);
+    setTempAmount(producto.cantidad_venta);
   }, [producto.cantidad_venta]);
 
   useEffect(() => {
     CalculeDataPricing(value);
   }, [value]);
 
+  const calculateNewPricingAmount = (cantidad) => {
+    try {
+      setTempAmount(cantidad);
+      setNewCantidadProduct(cantidad);
+      console.log("cantidad",cantidad);
+    } catch (error) {
+      return false;
+    }
+  }
+
   const CalculeDataPricing = async (new_cant) => {
-    if (new_cant === "") {
-      setNewCantidadProduct(producto.cantidad_venta);
-    } else {
+    if(new_cant === "" || new_cant == 0){
+      setTempAmount(producto.cantidad_venta);
+    }else{
+      console.log("entro a tabla");
       let venta = JSON.parse(localStorage.getItem("DatosVentas"));
       let productosVentas = venta === null ? [] : venta.productos;
       const venta_actual = venta === null ? [] : venta;
@@ -586,8 +600,8 @@ const RenderTableRows = ({
         <TableCell>
           <Input
             inputRef={textfield}
-            onChange={(e) => setNewCantidadProduct(e.target.value)}
-            value={newCantidadProduct}
+            onChange={(e) => calculateNewPricingAmount(e.target.value)}
+            value={tempAmount}
             type="number"
             name="cantidad_venta"
           />

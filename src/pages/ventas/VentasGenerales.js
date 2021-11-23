@@ -241,14 +241,18 @@ export default function VentasGenerales() {
           "TABLA"
         );
 
+        console.log(calculoResta);
+
         //Sacar los impuestos que se van a sumar
         calculoSuma = await calculatePrices(
           newP,
-          cantidad_venta,
+          newP.cantidad_venta,
           newP.granelProducto,
           verify_prising.pricing,
           "TABLA"
         );
+
+        console.log(calculoSuma);
 
         newP.precio_a_vender = calculoSuma.totalCalculo;
         newP.precio_anterior = newP.precio_actual_producto;
@@ -290,7 +294,7 @@ export default function VentasGenerales() {
             calculoSuma.monederoCalculo,
         }; 
 
-        // console.log("Llego a nuevo precio",CalculosData);
+        console.log("Llego a nuevo precio",CalculosData);
         localStorage.setItem(
           "DatosVentas",
           JSON.stringify({
