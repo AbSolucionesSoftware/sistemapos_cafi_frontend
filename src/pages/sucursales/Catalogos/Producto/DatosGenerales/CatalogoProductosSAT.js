@@ -18,7 +18,7 @@ import Divider from "@material-ui/core/Divider";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
 import { Search } from "@material-ui/icons";
 import { IconButton, InputAdornment } from "@material-ui/core";
-import valuesFacturama from "../../../../../config/facturama";
+import Facturama from '../../../../../billing/Facturama/facturama.api'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -54,10 +54,16 @@ export default function CatalogosProductosSAT() {
     });
   };
 
+
+
+  /* const Facturama = require('../../../../../billing/Facturama/facturama.api') */
+  /* console.log(Facturama); */
+
   const buscarCatalogo = (e) => {
     e.preventDefault();
     console.log(busqueda);
-    /* Facturama.Catalogs.ProductsOrServices(
+
+    Facturama.Catalogs.ProductsOrServices(
       "desarrollo",
       function (result) {
         console.log("Lista de códigos de producto: ", result);
@@ -66,8 +72,8 @@ export default function CatalogosProductosSAT() {
         if (error && error.responseJSON) {
           console.log("errores", error.responseJSON);
         }
-      }
-    ); */
+      } 
+    );
   };
 
   const top100Films = [
