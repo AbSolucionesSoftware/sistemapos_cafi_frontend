@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Button,
@@ -33,7 +33,10 @@ import {
   initial_state_productosCompra,
 } from "./initial_states";
 import { useMutation } from "@apollo/client";
-import { CREAR_COMPRA, CREAR_COMPRA_ESPERA } from "../../../../gql/Compras/compras";
+import {
+  CREAR_COMPRA,
+  CREAR_COMPRA_ESPERA,
+} from "../../../../gql/Compras/compras";
 import Close from "@material-ui/icons/Close";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 import BackdropComponent from "../../../../components/Layouts/BackDrop";
@@ -67,7 +70,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AbrirCompra({ status }) {
+export default function AbrirCompra({ compra, status, handleOpenDetalles, refetchEspera }) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -77,6 +80,10 @@ export default function AbrirCompra({ status }) {
 
   const handleClose = () => {
     setOpen(false);
+    if(status === "enEspera"){
+      handleOpenDetalles();
+      refetchEspera();
+    }
   };
 
   return (
@@ -88,6 +95,7 @@ export default function AbrirCompra({ status }) {
           color="primary"
           variant="contained"
           size="large"
+          startIcon={<Done />}
         >
           continuar compra
         </Button>
@@ -102,13 +110,18 @@ export default function AbrirCompra({ status }) {
         </Button>
       )}
       <ComprasProvider>
-        <ModalCompra open={open} handleClose={handleClose} />
+        <ModalCompra
+          open={open}
+          handleClose={handleClose}
+          status={status}
+          compra={compra}
+        />
       </ComprasProvider>
     </div>
   );
 }
 
-const ModalCompra = ({ open, handleClose }) => {
+const ModalCompra = ({ open, handleClose, compra, status }) => {
   const classes = useStyles();
   const {
     productosCompra,
@@ -118,6 +131,7 @@ const ModalCompra = ({ open, handleClose }) => {
     setDatosCompra,
     setProductoOriginal,
     setPreciosVenta,
+    issue
   } = useContext(ComprasContext);
   const [openDelete, setOpenDelete] = useState(false);
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -125,7 +139,7 @@ const ModalCompra = ({ open, handleClose }) => {
   const [loading, setLoading] = useState(false);
 
   const [crearCompra] = useMutation(CREAR_COMPRA);
-  const [crearCompraEnEspera] = useMutation(CREAR_COMPRA_ESPERA)
+  const [crearCompraEnEspera] = useMutation(CREAR_COMPRA_ESPERA);
 
   const limpiarCampos = () => {
     setDatosProducto(initial_state_datosProducto);
@@ -135,16 +149,32 @@ const ModalCompra = ({ open, handleClose }) => {
     setPreciosVenta(initial_state_precios_venta);
   };
 
+  useEffect(() => {
+    if (status === "enEspera" && compra && open === true) {
+      setDatosCompra(compra);
+      setProductosCompra(compra.productos);
+    }
+  }, [open]);
+
   const realizarCompraBD = async (compra_en_espera) => {
+    let productos = productosCompra
+    if(status === "enEspera"){
+      productos = productosCompra.map((res) => {
+        delete res.conflicto
+        return res
+      })
+      delete datosCompra.empresa
+      delete datosCompra.sucursal
+      delete datosCompra.usuario
+    }
+    
     setLoading(true);
     try {
-      datosCompra.productos = productosCompra;
-     /*  const clean_data = cleanTypenames(datosCompra); */
-
-     /* console.log(datosCompra); */
-     /* console.log(datosCompra); */
+      datosCompra.productos = productos;
+      /* console.log(datosCompra); */
 
       if (compra_en_espera) {
+        datosCompra.en_espera = true;
         const result = await crearCompraEnEspera({
           variables: {
             input: datosCompra,
@@ -174,7 +204,7 @@ const ModalCompra = ({ open, handleClose }) => {
         });
       }
       setLoading(false);
-      limpiarCampos();
+      limpiarCampos(); 
     } catch (error) {
       setLoading(false);
       setAlert({
@@ -184,7 +214,7 @@ const ModalCompra = ({ open, handleClose }) => {
       });
       console.log(error);
       if (error.networkError) {
-        console.log(error.networkError.result.errors);
+        console.log(error.networkError.result);
       } else if (error.graphQLErrors) {
         console.log(error.graphQLErrors);
       }
@@ -234,7 +264,7 @@ const ModalCompra = ({ open, handleClose }) => {
       <DialogContent>
         <SnackBarMessages alert={alert} setAlert={setAlert} />
         <BackdropComponent loading={loading} setLoading={setLoading} />
-        <DatosProducto />
+        <DatosProducto status={status} />
         <Box my={2} />
         <ListaCompras />
       </DialogContent>
@@ -276,24 +306,27 @@ const ModalCompra = ({ open, handleClose }) => {
         >
           Cancelar
         </Button>
-        <Button
-          autoFocus
-          color="primary"
-          variant="text"
-          size="large"
-          onClick={() => realizarCompraBD(true)}//realiza la compra en espera en la funcion
-          disabled={!productosCompra.length}
-          startIcon={<Timer />}
-        >
-          Compra en espera
-        </Button>
+        {status === "enEspera" ? null : (
+          <Button
+            autoFocus
+            color="primary"
+            variant="text"
+            size="large"
+            onClick={() => realizarCompraBD(true)} //realiza la compra en espera en la funcion
+            disabled={!productosCompra.length}
+            startIcon={<Timer />}
+          >
+            Compra en espera
+          </Button>
+        )}
+
         <Button
           autoFocus
           color="primary"
           variant="contained"
           size="large"
           onClick={() => realizarCompraBD(false)}
-          disabled={!productosCompra.length}
+          disabled={!productosCompra.length || issue}
           startIcon={<Done />}
         >
           Realizar compra
@@ -309,7 +342,7 @@ const CancelarCompra = ({ handleClose, handleToggleDelete, openDelete }) => {
     setDatosCompra,
     setPreciosVenta,
     setProductoOriginal,
-    setDatosProducto
+    setDatosProducto,
   } = useContext(ComprasContext);
 
   const cancelarCompra = () => {

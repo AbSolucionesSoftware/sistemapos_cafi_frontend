@@ -63,15 +63,18 @@ export default function InventariosPorAlmacen() {
     const classes = useStyles();
 	const theme = useTheme();
 	const [ open, setOpen ] = React.useState(false);
-	const [ loading, setLoading ] = React.useState(false);
+	const [ loading, setLoading ] = React.useState(true);
 	  
 	const [ filtro, setFiltro ] = React.useState({  codigo_barras: '',clave_alterna: '',tipo_producto: '',nombre_comercial: '',
         nombre_generico: '',categoria: '',subcategoria: ''});
+		
 	const [ filtroTo, setFiltroTo ] = React.useState({});
-	// const [ tipo, setTipo ] = React.useState('');
+
 	// const [ almacen, setAlmacen ] = React.useState('');
 	const [ categoria ] = React.useState('');
 	const [ subcategoria ] = React.useState('');
+	const [ categoriaTo, setCategoriaTo ] = React.useState('');
+	const [ subcategoriaTo, setSubCategoriaTo ] = React.useState('');
 	const [ subcategorias, setSubcategorias ] = React.useState([]);
 	const [value] = useDebounce(filtro, 1000);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
@@ -83,7 +86,8 @@ export default function InventariosPorAlmacen() {
 	let obtenerAlmacenes = [];
 
 	/* Queries */
-	const {  data, error, refetch } = useQuery(OBTENER_PRODUCTOS_ALMACEN,{
+	//const {  data, error, refetch } = useQuery(OBTENER_PRODUCTOS_ALMACEN,{
+    const productosAlmacenQuery = useQuery(OBTENER_PRODUCTOS_ALMACEN,{
 		variables: {
             empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id,
@@ -114,38 +118,38 @@ export default function InventariosPorAlmacen() {
 	React.useEffect(
 		() => {
 		
-			refetch();
+			productosAlmacenQuery.refetch();
 		},
-		[ filtroTo ]
+		[ filtroTo, productosAlmacenQuery ]
 	);
 	React.useEffect(
 		() => {
 			queryObtenerAlmacenes.refetch();
 		},
-		[ queryObtenerAlmacenes.update, queryObtenerAlmacenes.refetch ]
+		[ queryObtenerAlmacenes.update, queryObtenerAlmacenes ]
 	);
 
 	React.useEffect(
 		() => {
-			setLoading(true);
-			refetch();
+		
+			productosAlmacenQuery.refetch();
 			setLoading(false);
 		},
-		[ refetch ]
+		[ productosAlmacenQuery ]
 	);
 
 	React.useEffect(
 		() => {
-			setLoading(true);
+		
 			categoriasQuery.refetch();
-			setLoading(false);
+			
 		},
 		[ categoriasQuery.refetch ]
 	); 
 
 
-	if(data){
-		productos = data.obtenerProductosAlmacenes;
+	if(productosAlmacenQuery.data){
+		productos = productosAlmacenQuery.data.obtenerProductosAlmacenes;
 	}
 	if(categoriasQuery.data){
 		categorias = categoriasQuery.data.obtenerCategorias;
@@ -165,25 +169,47 @@ export default function InventariosPorAlmacen() {
 	
 	const setValToFilter = (label,value) => {
 		try {
+			setLoading(true);
+		
 			if(label === 'categoria' && value !== ''){
-			
 				const cat = categorias.find(element => element.categoria === value);
 				setSubcategorias(cat.subcategorias)
-				
 			}
+		
+				
+			
 
-			setFiltro({...filtro, [label] : value});
+			if(label === 'categoria' ){
+				
+				let fil = {...filtro, subcategoria : subcategoriaTo, categoria:value}
+			
+				productosAlmacenQuery.refetch(
+					{
+						filtro: fil
+					}
+				)
+				setCategoriaTo((value !== '') ? value : '')
+				setSubCategoriaTo('');
+			} 
+			if(label === 'subcategoria'&& value !== '' ){
+			
+				productosAlmacenQuery.refetch(
+					{
+						filtro: {...filtro, subcategoria : value, categoria:categoriaTo}
+					}
+				)
+				setSubCategoriaTo((value !== '') ? value : '')
+			}
+			if(label !== 'categoria' && label !== 'subcategoria' ){
+				setFiltro({...filtro, [label] : value, subcategoria : value, categoria:categoriaTo});
+			}
+			//setLoading(false)	
 		} catch (error) {
 			
 		}
     };
 
-	if (loading)
-	return (
-		<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
-			<CircularProgress />
-		</Box>
-	);
+
 
 
     return (
@@ -302,7 +328,7 @@ export default function InventariosPorAlmacen() {
                             <Select
                             labelId="categoria-label"
                             id="categoria"
-                            value={filtro.categoria}
+                            value={categoriaTo}
                             onChange={(e) => setValToFilter('categoria', e.target.value )}
                             input={<Input />}
                             MenuProps={MenuProps}
@@ -324,7 +350,7 @@ export default function InventariosPorAlmacen() {
                             <Select
                             labelId="subcategoria-label"
                             id="subcategoria"
-                            value={filtro.subcategoria}
+                            value={subcategoriaTo}
                             onChange={(e) => setValToFilter('subcategoria', e.target.value )}
                             input={<Input />}
                             MenuProps={MenuProps}
@@ -341,18 +367,24 @@ export default function InventariosPorAlmacen() {
                             
                         </FormControl>
                     
-                        <Button  variant="contained" color="primary" className={classes.button} style={{width:"20%"}} >
+                      {/*   <Button  variant="contained" color="primary" className={classes.button} style={{width:"20%"}} >
                             Buscar producto
-                        </Button>
+                        </Button> */}
                     </Grid> 
 
 				{
-					(error || categoriasQuery.error) ?
-						<ErrorPage error={error} />
-					:
-					<Box mx={5}>
-						<ListaProductos productos={productos} obtenerAlmacenes={obtenerAlmacenes} />
+					(loading) ?
+		
+					<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
+						<CircularProgress />
 					</Box>
+					: 
+						(productosAlmacenQuery.error || categoriasQuery.error) ?
+							<ErrorPage error={productosAlmacenQuery.error} />
+						:
+						<Box mx={5}>
+							<ListaProductos productos={productos} obtenerAlmacenes={obtenerAlmacenes} />
+						</Box>
 					
 				}
 			</Dialog>

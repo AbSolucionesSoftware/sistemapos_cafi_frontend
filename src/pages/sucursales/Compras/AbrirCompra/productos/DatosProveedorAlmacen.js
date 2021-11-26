@@ -25,19 +25,41 @@ import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProdu
 import { useQuery } from "@apollo/client";
 import { OBTENER_CONSULTA_GENERAL_PRODUCTO } from "../../../../../gql/Compras/compras";
 import { ErrorOutline } from "@material-ui/icons";
+import { initial_state_datosProducto } from "../initial_states";
+import { initial_state_almacen_inicial, initial_state_datos_generales, initial_state_precios, initial_state_preciosP, initial_state_preciosPlazos, initial_state_unidadVentaXDefecto } from "../../../../../context/Catalogos/initialStatesProducto";
 
 export default function DatosProveedorAlmacen({
   refetchProductos,
   getProductos,
+  status
 }) {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const {
     datosCompra,
     setDatosCompra,
-    datosProducto,
+    setDatosProducto,
     productosCompra,
   } = useContext(ComprasContext);
-  const { almacen_inicial, setAlmacenInicial } = useContext(RegProductoContext);
+
+  const {
+    setDatosGenerales,
+    setPrecios,
+    setValidacion,
+    setPreciosP,
+    setImagenes,
+    setUnidadesVenta,
+    almacen_inicial,
+    setAlmacenInicial,
+    setUnidadVentaXDefecto,
+    setCentroDeCostos,
+    setPreciosPlazos,
+    setSubcategorias,
+    setOnPreview,
+    setSubcostos,
+    setImagenesEliminadas,
+    setPresentaciones,
+    setPresentacionesEliminadas,
+  } = useContext(RegProductoContext);
 
   /* Queries */
   const { loading, data, error, refetch } = useQuery(
@@ -63,6 +85,8 @@ export default function DatosProveedorAlmacen({
         },
       });
     } else {
+      setDatosProducto(initial_state_datosProducto);
+      resetInitialStates();
       setDatosCompra({
         ...datosCompra,
         almacen: {
@@ -70,22 +94,37 @@ export default function DatosProveedorAlmacen({
           nombre_almacen: value.nombre_almacen,
         },
       });
-      if (
-        datosProducto.producto &&
-        !datosProducto.producto.medidas_registradas
-      ) {
-        setAlmacenInicial({
-          ...almacen_inicial,
-          id_almacen: value._id,
-          almacen: value.nombre_almacen,
-        });
-      }
+      setAlmacenInicial({
+        ...almacen_inicial,
+        id_almacen: value._id,
+        almacen: value.nombre_almacen,
+      });
       getProductos({
         variables: {
           almacen: value._id,
+          empresa: sesion.empresa._id, sucursal: sesion.sucursal._id
         },
       });
     }
+  };
+
+  const resetInitialStates = () => {
+    setDatosGenerales(initial_state_datos_generales);
+    setPrecios(initial_state_precios);
+    setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
+    setPreciosP(initial_state_preciosP);
+    setUnidadesVenta([]);
+    setAlmacenInicial(initial_state_almacen_inicial);
+    setCentroDeCostos({});
+    setPreciosPlazos(initial_state_preciosPlazos);
+    setSubcategorias([]);
+    setImagenes([]);
+    setOnPreview({ index: "", image: "" });
+    setValidacion({ error: false, message: "" });
+    setSubcostos([]);
+    setImagenesEliminadas([]);
+    setPresentaciones([]);
+    setPresentacionesEliminadas([]);
   };
 
   const errorRender = (

@@ -7,7 +7,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { Box, TablePagination, Typography } from '@material-ui/core';
+import { Box, Typography } from '@material-ui/core';
 
 const columns = [
 	{ id: 'cantidad', label: 'cantidad', minWidth: 200, align: 'center' },
@@ -33,8 +33,6 @@ const rows = [
 	createData(2, 'Jabon', 50, 10),
 	createData(2, 'Jabon', 50, 10),
 	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
 ];
 
 const useStyles = makeStyles({
@@ -42,50 +40,39 @@ const useStyles = makeStyles({
 		width: '100%'
 	},
 	container: {
-		maxHeight: '50vh'
+		height: '35vh'
 	}
 });
 
 export default function DetallesFactura() {
 	const classes = useStyles();
-	const [ page, setPage ] = React.useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = React.useState(4);
-
-	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
-
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(+event.target.value);
-		setPage(0);
-	};
 
 	return (
-		<Paper className={classes.root}>
+		<Paper className={classes.root} variant="outlined">
             <Box textAlign="center">
                 <Typography variant="h6">
-                    Detalles de Venta
+                    Concepto
                 </Typography>
             </Box>
 			<TableContainer className={classes.container}>
 				<Table stickyHeader size="small" aria-label="a dense table">
 					<TableHead>
 						<TableRow>
-							{columns.map((column) => (
-								<TableCell key={column.id} align={column.align} style={{ width: column.minWidth }}>
+							{columns.map((column, index) => (
+								<TableCell key={index} align={column.align} style={{ width: column.minWidth }}>
 									{column.label}
 								</TableCell>
 							))}
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+						{rows.map((row, index) => {
 							return (
-								<TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-									{columns.map((column) => {
+								<TableRow hover role="checkbox" tabIndex={-1} key={index}>
+									{columns.map((column, indx) => {
 										const value = row[column.id];
 										return (
-											<TableCell key={column.id} align={column.align}>
+											<TableCell key={indx} align={column.align}>
 												{column.format && typeof value === 'number' ? (
 													column.format(value)
 												) : (
@@ -100,15 +87,6 @@ export default function DetallesFactura() {
 					</TableBody>
 				</Table>
 			</TableContainer>
-			<TablePagination
-				rowsPerPageOptions={[ 10, 25, 100 ]}
-				component="div"
-				count={rows.length}
-				rowsPerPage={rowsPerPage}
-				page={page}
-				onChangePage={handleChangePage}
-				onChangeRowsPerPage={handleChangeRowsPerPage}
-			/>
 		</Paper>
 	);
 }

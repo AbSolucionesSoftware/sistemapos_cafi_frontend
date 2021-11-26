@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
 export const TraspasosAlmacenContext = createContext();
 
@@ -8,7 +8,17 @@ export const TraspasosProvider = ({ children }) => {
     const [ update, setUpdate ] = useState(false);
     const [ error, setError ] = useState(false);
     const [ openRegistro, setOpenRegistro ] = useState(false);
+    const [ productos, setProductos ] = useState([]);
+    const [ productosTo, setProductosTo ] = useState([]);
+     const [ productosEmpTo, setProductosEmpTo ] = useState([]);
+    const [ productosTras, setProductosTras ] = useState([]);
 
+    useEffect(() => {
+        console.log("CONTEXT",productosEmpTo);
+     
+    
+    }, [productosEmpTo])
+  
 	return (
 		<TraspasosAlmacenContext.Provider value={
             { 
@@ -18,7 +28,15 @@ export const TraspasosProvider = ({ children }) => {
                 error,
                 setError,
                 openRegistro,
-                setOpenRegistro
+                setOpenRegistro,
+                productos,
+                setProductos,
+                productosTras,
+                setProductosTras,
+                productosTo,
+                setProductosTo,
+                productosEmpTo, 
+                setProductosEmpTo
             }
         }>
 			{children}

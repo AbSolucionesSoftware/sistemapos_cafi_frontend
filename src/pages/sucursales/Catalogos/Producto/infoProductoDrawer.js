@@ -89,7 +89,7 @@ export default function InfoProductoDrawer({producto }) {
 								</Typography>
 								<Typography>
 									<b>Clave producto del SAT: </b>
-									{datos_generales.clave_producto_sat ? datos_generales.clave_producto_sat : '-'}
+									{datos_generales.clave_producto_sat && datos_generales.clave_producto_sat.Name ? `${datos_generales.clave_producto_sat.Value} - ${datos_generales.clave_producto_sat.Name}` : '-'}
 								</Typography>
 								<Typography>
 									<b>Nombre comercial: </b>

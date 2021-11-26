@@ -5,7 +5,9 @@ export const OBTENER_CONCEPTOS_ALMACEN = gql`
         obtenerConceptosAlmacen(empresa: $empresa, sucursal: $sucursal){
                 _id
             nombre_concepto
-            tipo
+            destino
+            origen
+            editable
             empresa{
                 _id
                 nombre_empresa

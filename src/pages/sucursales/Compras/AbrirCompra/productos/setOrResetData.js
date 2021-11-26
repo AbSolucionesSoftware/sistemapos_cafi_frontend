@@ -52,7 +52,8 @@ export const SetOrResetData = (accion,setStates, producto) => {
     setPresentaciones(
       producto.presentaciones ? producto.presentaciones : []
     );
-    if (datosCompra.almacen.id_almacen && !producto.medidas_registradas) {
+    /* if (datosCompra.almacen.id_almacen && !producto.medidas_registradas) */
+    if (datosCompra.almacen.id_almacen && producto.presentaciones.length === 0) {
       setAlmacenInicial({
         ...almacen_inicial,
         id_almacen: datosCompra.almacen.id_almacen,
