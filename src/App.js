@@ -9,6 +9,7 @@ import { ApolloProvider } from '@apollo/client';
 
 function App() {
 	return (
+		
 		<ApolloProvider client={client}>
 			<div className="App">
 				<ThemeProvider theme={theme}>
