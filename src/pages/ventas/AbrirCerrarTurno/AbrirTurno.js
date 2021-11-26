@@ -12,10 +12,12 @@ import 'moment/locale/es';
 moment.locale('es');
 
 export default function AbrirTurno({handleClickOpen, setLoading}) {
-    const [ CrearRegistroDeTurno ] = useMutation(REGISTRAR_TURNOS);
-    const { setAlert } = useContext(VentasContext);
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const turnoEnCurso = JSON.parse(localStorage.getItem('cajaEnCurso'));
+
+    const [ CrearRegistroDeTurno ] = useMutation(REGISTRAR_TURNOS);
+    const { setAlert } = useContext(VentasContext);
+
     const [ error, setError ] = useState(false);
     const [ abrirTurno, setAbrirTurno ] = useState([]);
     const [ numeroCaja, setNumeroCaja ] = useState('');
@@ -99,8 +101,8 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                     },
                     fecha_entrada:{
                         year: moment().format('YYYY'),
-                        mes: moment().format('DD'),
-                        dia: moment().format('MM'),
+                        mes: moment().format('MM'),
+                        dia: moment().format('DD'),
                         no_semana_year: moment().week().toString(),
                         no_dia_year: moment().dayOfYear().toString(),
                         completa: moment().format("YYYY-MM-DD")
@@ -113,7 +115,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                         no_dia_year: "",
                         completa: ""
                     },
-                    fecha_movimiento: moment().format("YYYY-MM-DD"),
+                    fecha_movimiento: moment().locale('es-mx').format(),
                     montos_en_caja: {
                         monto_efectivo: parseFloat(abrirTurno.monto_abrir),
                         monto_tarjeta_debito: 0,
@@ -131,8 +133,10 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                         input
                     }
                 });
+
                 localStorage.setItem('turnoEnCurso', JSON.stringify(variableTurnoAbierto.data.crearRegistroDeTurno));
                 localStorage.setItem('sesionCafi', JSON.stringify(arraySesion));
+                
                 setAlert({
                     message: `Turno abierto con exito`,
                     status: "success",

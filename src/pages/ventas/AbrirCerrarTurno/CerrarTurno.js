@@ -33,6 +33,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
     const input = {
         horario_en_turno: cerrarTurno.horario_en_turno,
         concepto: "CERRAR TURNO",
+        token_turno_user: turnoEnCurso ? turnoEnCurso.token_turno_user : "",
         numero_caja: turnoEnCurso ? turnoEnCurso?.numero_caja.toString() : "",
         comentarios: cerrarTurno.comentarios,
         id_caja: turnoEnCurso ? turnoEnCurso.id_caja : "",
@@ -67,13 +68,13 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
         },
         fecha_salida:{
             year: moment().format('YYYY'),
-            mes: moment().format('DD'),
-            dia: moment().format('MM'),
+            mes: moment().format('MM'),
+            dia: moment().format('DD'),
             no_semana_year: moment().week().toString(),
             no_dia_year: moment().dayOfYear().toString(),
             completa: moment().format("YYYY-MM-DD")
         },
-        fecha_movimiento: moment().format("YYYY-MM-DD"),
+        fecha_movimiento: moment().locale('es-mx').format(),
         montos_en_caja: {
             monto_efectivo: parseFloat(montoTurno.monto_efectivo ? montoTurno.monto_efectivo : 0),
             monto_tarjeta_debito: parseFloat(montoTurno.monto_tarjeta_debito ? montoTurno.monto_tarjeta_debito : 0),

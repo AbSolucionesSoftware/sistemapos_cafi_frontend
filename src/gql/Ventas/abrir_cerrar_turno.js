@@ -4,6 +4,7 @@ export const REGISTRAR_TURNOS = gql`
 	mutation crearRegistroDeTurno( $input: AbrirCerrarTurnoInput, $activa: Boolean) {
 		crearRegistroDeTurno(input: $input, activa: $activa) {
 			horario_en_turno
+			token_turno_user
 			concepto
 			numero_caja
 			id_caja
