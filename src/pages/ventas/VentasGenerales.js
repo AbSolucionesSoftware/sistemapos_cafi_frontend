@@ -20,13 +20,15 @@ import { CONSULTA_PRODUCTO_UNITARIO } from "../../gql/Ventas/ventas_generales";
 import { useLazyQuery } from "@apollo/client";
 import ClientesVentas from "./ClientesVentas";
 import { VentasContext } from "../../context/Ventas/ventasContext";
+import SnackBarMessages from '../../components/SnackBarMessages';
 
 import { Fragment } from "react";
 import MonedaCambio from "./Operaciones/MonedaCambio";
+
 import {
   findProductArray,
   calculatePrices,
-  verifiPrising,
+  verifiPrising
 } from "../../config/reuserFunctions";
 
 // import { ClienteProvider } from '../../context/Catalogos/crearClienteCtx';
@@ -41,7 +43,7 @@ export default function VentasGenerales() {
     valor: 0,
   });
 
-  const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
+  const { updateTablaVentas, setUpdateTablaVentas, open, setOpen } = useContext(VentasContext);
 
   const [DatosVentasActual, setDatosVentasActual] = useState({
     subTotal: 0,
@@ -54,7 +56,9 @@ export default function VentasGenerales() {
     tipo_cambio: {},
   });
 
-  const [obtenerProductos, { data, loading /* error */ }] = useLazyQuery(
+  const [alert, setAlert] = useState({ message: '', status: '', open: false });
+
+  const [obtenerProductos, { data, loading, error }] = useLazyQuery(
     CONSULTA_PRODUCTO_UNITARIO,
     {
       variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id },
@@ -62,12 +66,35 @@ export default function VentasGenerales() {
     }
   );
 
+  // console.log(error);
+
   let productosBase = null;
   if (data) productosBase = data.obtenerUnProductoVentas;
 
+  // console.log(productosBase);
+
   useEffect(() => {
-    if (!loading && productosBase !== null) {
-      agregarProductos(productosBase);
+    // console.log("Entro");
+    // console.log(productosBase);
+    if(error){
+      if(error.networkError){
+          console.log(error.networkError.result.errors);
+          setAlert({ message: `Error de servidor`, status: 'error', open: true });
+        }else if(error.graphQLErrors){
+          console.log();
+          setAlert({ message: `${error.graphQLErrors[0]?.message}`, status: 'error', open: true });
+        }
+    }else{
+      // console.log(productosBase);
+      if(productosBase !== null){
+        if (productosBase.cantidad !== null) {
+          agregarProductos(productosBase);
+        }else{
+          setOpen(true);
+          setAlert({ message: `Este producto no existe`, status: 'error', open: true });
+          // console.log("El producto no existe");
+        }
+      }
     }
   }, [loading]);
 
@@ -124,8 +151,8 @@ export default function VentasGenerales() {
   };
 
   const agregarProductos = async (producto) => {
-    console.log(producto);
-    console.log(granelBase);
+    // console.log(producto);
+    // console.log(granelBase);
     let venta = JSON.parse(localStorage.getItem("DatosVentas"));
     let productosVentas = venta === null ? [] : venta.productos;
     let venta_actual = venta === null ? [] : venta;
@@ -162,8 +189,6 @@ export default function VentasGenerales() {
       productosVentas,
       producto
     );
-
-
 
     if (!producto_encontrado.found && producto._id) {
       const newP = { ...producto };
@@ -228,8 +253,9 @@ export default function VentasGenerales() {
       const { cantidad_venta, ...newP } =
         producto_encontrado.producto_found.producto;
       newP.cantidad_venta = parseInt(cantidad_venta) + 1;
+      // console.log(newP);
       const verify_prising = await verifiPrising(newP);
-
+      // console.log(verify_prising);
       //Verificar si el precio fue encontrado
       if (verify_prising.found) {
         console.log("Entro a aqui nuevo precio");
@@ -241,8 +267,6 @@ export default function VentasGenerales() {
           "TABLA"
         );
 
-        console.log(calculoResta);
-
         //Sacar los impuestos que se van a sumar
         calculoSuma = await calculatePrices(
           newP,
@@ -252,7 +276,8 @@ export default function VentasGenerales() {
           "TABLA"
         );
 
-        console.log(calculoSuma);
+        // console.log(calculoSuma);
+        // console.log(calculoSuma);
 
         newP.precio_a_vender = calculoSuma.totalCalculo;
         newP.precio_anterior = newP.precio_actual_producto;
@@ -293,8 +318,7 @@ export default function VentasGenerales() {
             parseFloat(calculoResta.monederoCalculo) +
             calculoSuma.monederoCalculo,
         }; 
-
-        console.log("Llego a nuevo precio",CalculosData);
+        // console.log("Llego a nuevo precio",CalculosData);
         localStorage.setItem(
           "DatosVentas",
           JSON.stringify({
@@ -314,7 +338,7 @@ export default function VentasGenerales() {
         //Recargar la tabla de los productos
         setUpdateTablaVentas(!updateTablaVentas);
       } else {
-        console.log("Entro a aqui");
+        // console.log("Entro a aqui");
         // console.log(verify_prising);
         const productoPrecioFinal = newP.descuento_activo
           ? newP.descuento.precio_con_descuento
@@ -355,8 +379,7 @@ export default function VentasGenerales() {
           descuento: parseFloat(venta_existente.descuento) + descuento,
           monedero: parseFloat(venta_existente.monedero) + monedero,
         };
-
-        console.log("Precio normal",CalculosData);
+        // console.log("Precio normal",CalculosData);
         localStorage.setItem(
           "DatosVentas",
           JSON.stringify({
@@ -383,6 +406,7 @@ export default function VentasGenerales() {
 
   return (
     <Fragment>
+      <SnackBarMessages alert={alert} setAlert={setAlert} />
       <Grid container>
         <Grid item lg={2}>
           {sesion.empresa.imagen ? (
@@ -573,7 +597,7 @@ export default function VentasGenerales() {
             </Box>
             <Box display="flex" flexDirection="row-reverse" mr={1} mt={1}>
               <Typography variant="h5">
-                Total: $ {DatosVentasActual?.total ? DatosVentasActual?.total?.toFixed(2) : 0}
+                Total: {DatosVentasActual?.total ? DatosVentasActual?.total.toFixed(2) : 0}
               </Typography>
             </Box>
           </Paper>

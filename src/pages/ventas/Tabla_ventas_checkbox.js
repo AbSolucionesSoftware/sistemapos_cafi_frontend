@@ -24,7 +24,8 @@ import { useDebounce } from "use-debounce";
 import {
   findProductArray,
   calculatePrices,
-  verifiPrising
+  verifiPrising,
+  formatCurrency
 } from "../../config/reuserFunctions";
 import { VentasContext } from '../../context/Ventas/ventasContext';
 
@@ -254,7 +255,7 @@ export default function EnhancedTable({
   }, [updateTablaVentas]);
 
   const handleClick = (name) => {
-    console.log("name",name);
+    // console.log("name",name);
     let newSelected = [];
     const exist = selected.indexOf(name) !== -1;
     if(exist){
@@ -262,13 +263,13 @@ export default function EnhancedTable({
     }else{
       newSelected = newSelected.concat([], name);
     }
-    console.log("selected",selected);
-    console.log("newSelected",newSelected);
+    // console.log("selected",selected);
+    // console.log("newSelected",newSelected);
     const producto = name.id_producto.precios.precios_producto.filter((p) => p.precio_neto === name.precio_actual_producto);
-    console.log("producto",producto);
+    // console.log("producto",producto);
    
     if(producto.length > 0){
-      console.log(producto);
+      // console.log(producto);
       setPrecioSelectProductoVenta(producto);
     }
     setProductoCambioPrecio(name);
@@ -282,7 +283,7 @@ export default function EnhancedTable({
       clearTimeout(timer);
       if (e.detail === 2) {
         handleClick(producto);
-        console.log(producto);
+        // console.log(producto);
         setProductoCambioPrecio(producto);
       }
       
@@ -383,7 +384,7 @@ const RenderTableRows = ({
     try {
       setTempAmount(cantidad);
       setNewCantidadProduct(cantidad);
-      console.log("cantidad",cantidad);
+      // console.log("cantidad",cantidad);
     } catch (error) {
       return false;
     }
@@ -393,7 +394,7 @@ const RenderTableRows = ({
     if(new_cant === "" || new_cant == 0){
       setTempAmount(producto.cantidad_venta);
     }else{
-      console.log("entro a tabla");
+      // console.log("entro a tabla");
       let venta = JSON.parse(localStorage.getItem("DatosVentas"));
       let productosVentas = venta === null ? [] : venta.productos;
       const venta_actual = venta === null ? [] : venta;
@@ -422,21 +423,24 @@ const RenderTableRows = ({
         productosVentas,
         producto
       );
-
+        // console.log(new_cant);
       if (producto_encontrado.found) {
         // console.log("se encontro");
-        const newP =
+        const { cantidad_venta, ...newP } =
           producto_encontrado.producto_found.producto;
+        newP.cantidad_venta = new_cant
         // newP.precio_actual_producto = newP.descuento_activo ? newP.descuento.precio_con_descuento :  newP.precio;
         // newP.precio_actual_producto = newP.descuento_activo ? newP.descuento.precio_con_descuento :  newP.precio;
+        // console.log(newP);
         const verify_prising = await verifiPrising(newP);
         // console.log(verify_prising);
+        // console.log("llego linea 434");
         if (verify_prising.found) {
-
-          // console.log("llego linea 420");
+          // console.log("llego linea 436");
+          // console.log(verify_prising);
           calculoResta = await calculatePrices(
             newP,
-            newP.cantidad_venta,
+            cantidad_venta,
             newP.granelProducto,
             newP.precio_actual_producto,
             "TABLA"
@@ -445,14 +449,14 @@ const RenderTableRows = ({
           //Sacar los impuestos que se van a sumar
           calculoSuma = await calculatePrices(
             newP,
-            newP.cantidad_venta,
+            new_cant,
             newP.granelProducto,
             verify_prising.pricing,
             "TABLA"
           );
 
-          console.log(calculoSuma);
-          console.log(calculoResta);
+          // console.log(calculoSuma);
+          // console.log(calculoResta);
   
           newP.precio_a_vender = calculoSuma.totalCalculo;
           newP.precio_anterior = newP.precio_actual_porducto;
@@ -499,7 +503,7 @@ const RenderTableRows = ({
           // console.log("Entro a cantidad", newP.cantidad_venta);
           calculoResta = await calculatePrices(
             newP,
-            newP.cantidad_venta,
+            cantidad_venta,
             newP.granelProducto,
             newP.precio_actual_producto,
             "TABLA"
@@ -633,10 +637,7 @@ const RenderTableRows = ({
           )}
         </TableCell>
         <TableCell>
-          $ {producto.precio_actual_producto.toFixed(2)}
-          {/* {producto.descuento_activo === true
-            ? producto.descuento.precio_con_descuento
-            : producto.precio} */}
+          $ { producto.precio_actual_producto % 1 === 0 ? producto.precio_actual_producto : producto.precio_actual_producto.toFixed(4)}
         </TableCell>
         <TableCell>
           <EliminarProductoVenta

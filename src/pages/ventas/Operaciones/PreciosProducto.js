@@ -74,12 +74,9 @@ export default function PreciosProductos() {
       selectPrisingProduct.precio_neto > 0 ||
       precioSelectProductoVenta.length > 0
     ) {
-      // console.log(precioSelectProductoVenta[0]);
+
       const newProductoPrecioNuevo = { ...productoCambioPrecio };
       const newProductoPrecioActual = { ...productoCambioPrecio };
-
-      // console.log(productoCambioPrecio);
-      // console.log(productosVentas); 
 
       //Calculos de impuestos que se van a restar de la venta;
       let calculoResta = {};
@@ -109,8 +106,9 @@ export default function PreciosProductos() {
         );
 
         newProductoPrecioActual.precio_a_vender = precioSelectProductoVenta[0].precio_neto;
+        newProductoPrecioActual.precio_seleccionado = true;
         newProductoPrecioActual.precio_actual_producto = precioSelectProductoVenta[0].precio_neto;
-        // console.log(newProductoPrecioActual);
+        console.log(newProductoPrecioActual);
         productosVentasTemp.splice(
           producto_encontrado.producto_found.index,
           1,
@@ -165,6 +163,8 @@ export default function PreciosProductos() {
       );
       // newProductoPrecio = {...newProductoPrecio};
       setUpdateTablaVentas(!updateTablaVentas);
+      setPrecioSelectProductoVenta([]);
+      setPreciosProductos({});
       //Cerrar modal
       handleClickOpen();
     } else {
@@ -349,7 +349,7 @@ const RenderTableRows = ({ precio, isItemSelected, labelId, handleClick }) => {
           />
         </TableCell>
         <TableCell align={"center"}>{precio.numero_precio}</TableCell>
-        <TableCell align={"center"}>{precio.precio_neto}</TableCell>
+        <TableCell align={"center"}>{precio.precio_neto > 0 ? precio.precio_neto.toFixed(4) : 0}</TableCell>
         <TableCell align={"center"}>{precio.unidad_mayoreo}</TableCell>
         <TableCell align={"center"}>{precio.utilidad}</TableCell>
       </TableRow>
