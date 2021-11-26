@@ -1,5 +1,9 @@
 export const initial_state_datos_generales = {
     receta_farmacia: false,
+    clave_producto_sat: {
+        Name: '',
+        Value: ''
+    }
 };
 export const initial_state_precios = {
     monedero: false,

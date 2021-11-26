@@ -17,8 +17,14 @@ import Divider from "@material-ui/core/Divider";
 
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
 import { Search } from "@material-ui/icons";
-import { IconButton, InputAdornment } from "@material-ui/core";
-import Facturama from '../../../../../billing/Facturama/facturama.api'
+import {
+  CircularProgress,
+  IconButton,
+  InputAdornment,
+} from "@material-ui/core";
+import Facturama from "../../../../../billing/Facturama/facturama.api";
+import { CREAR_CODIGO_PRODUCTO } from "../../../../../gql/CatalogosSat/catalogoProductosSat";
+import { useMutation } from "@apollo/client";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -33,57 +39,119 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CatalogosProductosSAT() {
   const classes = useStyles();
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const [open, setOpen] = React.useState(false);
   const { datos_generales, setDatosGenerales } = useContext(RegProductoContext);
   const [busqueda, setBusqueda] = useState("");
-  /* const Facturama = new valuesFacturama;
- */
-  const handleClickOpen = () => {
-    setOpen(true);
+  const [productos, setProductos] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState({});
+  const [error, setError] = useState("");
+
+  const [crearCodigoProducto] = useMutation(CREAR_CODIGO_PRODUCTO);
+
+  const handleClickOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const limpiarDataModal = () => {
+    setSelectedIndex({});
+    setProductos([]);
+    setBusqueda("");
+    handleClose();
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleOk = async () => {
+    const { Name, Value } = selectedIndex;
+    setDatosGenerales({
+      ...datos_generales,
+      clave_producto_sat: {
+        Name,
+        Value,
+      },
+    });
+    //Crear Codigo product a la BD
+    // antes buscar si ya existe, si existe no hacer la consulta
+
+    const result = await crearCodigoProducto({
+      variables: {
+        input: {
+          Name,
+          Value,
+          empresa: sesion.empresa._id,
+          sucursal: sesion.sucursal._id,
+        },
+      },
+    });
+
+    console.log(result);
+    /* limpiarDataModal(); */
+  };
+
+  const handleCancel = () => {
+    limpiarDataModal();
   };
 
   const obtenerCampos = (data) => {
     console.log(data);
+    if (!data) {
+      setDatosGenerales({
+        ...datos_generales,
+        clave_producto_sat: {
+          Name: "",
+          Value: "",
+        },
+      });
+      return null;
+    }
+    console.log(data);
     setDatosGenerales({
       ...datos_generales,
-      clave_producto_sat: data.value,
+      clave_producto_sat: {
+        Name: data.Name,
+        Value: data.Value,
+      },
     });
   };
 
-
-
-  /* const Facturama = require('../../../../../billing/Facturama/facturama.api') */
-  /* console.log(Facturama); */
-
-  const buscarCatalogo = (e) => {
+  const buscarCatalogo = async (e) => {
     e.preventDefault();
-    console.log(busqueda);
-
-    Facturama.Catalogs.ProductsOrServices(
-      "desarrollo",
-      function (result) {
-        console.log("Lista de códigos de producto: ", result);
-      },
-      function (error) {
-        if (error && error.responseJSON) {
-          console.log("errores", error.responseJSON);
+    if (!busqueda) {
+      setProductos([]);
+      return;
+    }
+    setLoading(true);
+    try {
+      await Facturama.Catalogs.ProductsOrServices(
+        busqueda,
+        function (result) {
+          setProductos(result);
+          setLoading(false);
+        },
+        function (error) {
+          if (error && error.responseJSON) {
+            console.log("errores", error.responseJSON);
+            setError(error.responseJSON);
+          }
+          setLoading(false);
         }
-      } 
-    );
+      );
+    } catch (error) {
+      if (error && error.responseJSON) {
+        setError(error.responseJSON.Message);
+      }
+      setLoading(false);
+    }
   };
 
   const top100Films = [
-    { product: "The Shawshank Redemption", value: 1994 },
-    { product: "The Godfather", value: 1972 },
-    { product: "The Godfather: Part II", value: 1974 },
-    { product: "The Dark Knight", value: 2008 },
-    { product: "12 Angry Men", value: 1957 },
-    { product: "Schindler's List", value: 1993 },
-    { product: "Pulp Fiction", value: 1999 },
+    { Name: "The Shawshank Redemption", Value: "1994" },
+    { Name: "The Godfather", Value: "1972" },
+    { Name: "The Godfather: Part II", Value: "1974" },
+    { Name: "The Dark Knight", Value: "2008" },
+    { Name: "12 Angry Men", Value: "1957" },
+    { Name: "Schindler's List", Value: "1993" },
+    { Name: "Pulp Fiction", Value: "1999" },
+    { Name: "Sistemas de exploración y desarrollo", Value: "20102000" },
   ];
 
   return (
@@ -92,19 +160,14 @@ export default function CatalogosProductosSAT() {
       <Box display="flex">
         <Autocomplete
           id="catalogos-bd-productos"
+          size="small"
           options={top100Films}
-          getOptionLabel={(option) => `${option.value} - ${option.product}`}
+          getOptionLabel={(option) => `${option.Value} - ${option.Name}`}
           fullWidth
-          renderInput={(params) => (
-            <TextField {...params} variant="outlined" size="small" />
-          )}
+          renderInput={(params) => <TextField {...params} variant="outlined" />}
           onChange={(_, data) => obtenerCampos(data)}
-          /*  getOptionSelected={(option) => option.value} */
-          /* value={
-            datos_generales.clave_producto_sat
-              ? datos_generales.clave_producto_sat
-              : null
-          } */
+          getOptionSelected={(option) => `${option.Value} - ${option.Name}`}
+          value={datos_generales.clave_producto_sat}
         />
         <Button color="primary" onClick={handleClickOpen}>
           <Search />
@@ -114,7 +177,7 @@ export default function CatalogosProductosSAT() {
         open={open}
         TransitionComponent={Transition}
         keepMounted
-        onClose={handleClose}
+        onClose={handleCancel}
         aria-labelledby="alert-dialog-clave-producto"
         fullWidth
         maxWidth="sm"
@@ -130,7 +193,11 @@ export default function CatalogosProductosSAT() {
                 label="producto, servicio o giro de la empresa"
                 fullWidth
                 size="small"
-                onChange={(e) => setBusqueda(e.target.value)}
+                onChange={(e) => {
+                  setBusqueda(e.target.value);
+                  setError("");
+                }}
+                value={busqueda}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -140,18 +207,39 @@ export default function CatalogosProductosSAT() {
                     </InputAdornment>
                   ),
                 }}
+                error={error ? true : false}
+                helperText={error ? error : ""}
               />
             </form>
           </Box>
           <Box my={3} className={classes.root}>
-            <List dense component="nav" aria-label="main mailbox folders">
-              <SelectedListItem />
-            </List>
+            {loading ? (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="25vh"
+              >
+                <CircularProgress />
+              </Box>
+            ) : (
+              <List dense component="nav" aria-label="main mailbox folders">
+                {productos.map((res, index) => (
+                  <SelectedListItem
+                    key={index}
+                    producto={res}
+                    busqueda={busqueda}
+                    selectedIndex={selectedIndex}
+                    setSelectedIndex={setSelectedIndex}
+                  />
+                ))}
+              </List>
+            )}
           </Box>
         </DialogContent>
         <DialogActions style={{ justifyContent: "center" }}>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={() => handleCancel()}>Cancelar</Button>
+          <Button onClick={() => handleOk()} color="primary">
             Seleccionar
           </Button>
         </DialogActions>
@@ -160,30 +248,32 @@ export default function CatalogosProductosSAT() {
   );
 }
 
-const SelectedListItem = () => {
-  const [selectedIndex, setSelectedIndex] = useState(1);
-
-  const handleListItemClick = (event, index) => {
-    setSelectedIndex(index);
+const SelectedListItem = ({
+  producto,
+  busqueda,
+  selectedIndex,
+  setSelectedIndex,
+}) => {
+  const handleListItemClick = (data) => {
+    console.log(data);
+    setSelectedIndex(data);
   };
+
+  const contiene = busqueda.includes("potacio");
+  if (producto.Value === "0" && !contiene) {
+    return null;
+  }
 
   return (
     <Fragment>
       <ListItem
         button
-        selected={selectedIndex === 0}
-        onClick={(event) => handleListItemClick(event, 0)}
+        selected={selectedIndex.Value === producto.Value}
+        onClick={() => handleListItemClick(producto)}
       >
-        <ListItemText primary="Inbox" />
+        <ListItemText primary={`${producto.Value} - ${producto.Name}`} />
       </ListItem>
       <Divider />
-      <ListItem
-        button
-        selected={selectedIndex === 1}
-        onClick={(event) => handleListItemClick(event, 1)}
-      >
-        <ListItemText primary="Drafts" />
-      </ListItem>
     </Fragment>
   );
 };

@@ -2,7 +2,7 @@ import $ from "jquery"
 import jQuery from "jquery"
 
 var valuesFacturama = {
-    token: "cHJ1ZWJhczpwcnVlYmFzMjAxMQ==",
+    token: "QUJTT0xVQ0lPTkVTOkxlb24yMDE4Iw==",
     url: "https://apisandbox.facturama.mx/"
 };
 

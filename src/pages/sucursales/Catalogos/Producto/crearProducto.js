@@ -482,12 +482,15 @@ export default function CrearProducto({
       )}
       <Dialog
         open={open}
-        onClose={toggleModal}
         fullWidth
         maxWidth="lg"
         scroll="paper"
         disableEscapeKeyDown
-        disableBackdropClick
+        onClose={(_, reason) => {
+          if (reason !== 'backdropClick') {
+            toggleModal()
+          }
+      }}
       >
         <AppBar position="static" color="default" elevation={0}>
           <Box display="flex" justifyContent="space-between">

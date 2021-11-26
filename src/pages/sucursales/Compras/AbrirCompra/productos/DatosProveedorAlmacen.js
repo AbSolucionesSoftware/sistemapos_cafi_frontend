@@ -102,6 +102,7 @@ export default function DatosProveedorAlmacen({
       getProductos({
         variables: {
           almacen: value._id,
+          empresa: sesion.empresa._id, sucursal: sesion.sucursal._id
         },
       });
     }

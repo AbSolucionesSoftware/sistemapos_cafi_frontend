@@ -123,6 +123,8 @@ export default function DatosProducto({ status }) {
     }
   );
 
+  /* console.log(error.networkError.result); */
+
   const [COSTO] = useDebounce(costo, 500);
   const [CANTIDAD] = useDebounce(cantidad, 500);
 

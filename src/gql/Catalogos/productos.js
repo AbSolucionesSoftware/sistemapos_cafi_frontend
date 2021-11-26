@@ -111,7 +111,10 @@ export const OBTENER_PRODUCTOS = gql`
         departamento
         id_marca
         marca
-        clave_producto_sat
+        clave_producto_sat {
+          Name
+          Value
+        }
         receta_farmacia
       }
       empresa
@@ -250,7 +253,10 @@ export const PRODUCTOS_ELIMINADOS = gql`
           departamento
           id_marca
           marca
-          clave_producto_sat
+          clave_producto_sat {
+            Name
+            Value
+          }
           receta_farmacia
         }
         precios {
