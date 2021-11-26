@@ -37,7 +37,6 @@ export default function DatosProveedorAlmacen({
   const {
     datosCompra,
     setDatosCompra,
-    datosProducto,
     setDatosProducto,
     productosCompra,
   } = useContext(ComprasContext);
@@ -86,6 +85,8 @@ export default function DatosProveedorAlmacen({
         },
       });
     } else {
+      setDatosProducto(initial_state_datosProducto);
+      resetInitialStates();
       setDatosCompra({
         ...datosCompra,
         almacen: {
@@ -93,21 +94,15 @@ export default function DatosProveedorAlmacen({
           nombre_almacen: value.nombre_almacen,
         },
       });
-      setDatosProducto(initial_state_datosProducto);
-      resetInitialStates();
-      if (
-        datosProducto.producto &&
-        !datosProducto.producto.medidas_registradas
-      ) {
-        setAlmacenInicial({
-          ...almacen_inicial,
-          id_almacen: value._id,
-          almacen: value.nombre_almacen,
-        });
-      }
+      setAlmacenInicial({
+        ...almacen_inicial,
+        id_almacen: value._id,
+        almacen: value.nombre_almacen,
+      });
       getProductos({
         variables: {
           almacen: value._id,
+          empresa: sesion.empresa._id, sucursal: sesion.sucursal._id
         },
       });
     }

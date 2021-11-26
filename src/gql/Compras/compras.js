@@ -102,7 +102,10 @@ export const OBTENER_COMPRAS_REALIZADAS = gql`
             departamento
             id_marca
             marca
-            clave_producto_sat
+            clave_producto_sat {
+              Name
+              Value
+            }
             receta_farmacia
           }
           precios {
@@ -244,7 +247,10 @@ export const OBTENER_COMPRAS_ESPERA = gql`
             departamento
             id_marca
             marca
-            clave_producto_sat
+            clave_producto_sat {
+              Name
+              Value
+            }
             receta_farmacia
           }
           precios {
@@ -400,7 +406,10 @@ export const OBTENER_CONSULTA_GENERAL_PRODUCTO = gql`
           departamento
           id_marca
           marca
-          clave_producto_sat
+          clave_producto_sat {
+            Name
+            Value
+          }
           receta_farmacia
         }
         precios {

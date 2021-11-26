@@ -5,6 +5,7 @@ import { Box, Container, Grid } from '@material-ui/core'
 import NuevaFactura from './NuevaFactura/NuevaFactura';
 import SeriesCDFI from './CDFISeries/SeriesCdfi';
 import SellosCDFI from './CDFISellos/SellosCdfi';
+import FacturasRealizadas from './FacturasRealizadas/FacturasRealizadas';
 
 export default function Facturacion() {
     return (
@@ -14,6 +15,11 @@ export default function Facturacion() {
                     <Grid item lg={2}>
                         <Box display="flex" justifyContent="center" alignItems="center">
                             <NuevaFactura />
+                        </Box>
+                    </Grid>
+                    <Grid item lg={2}>
+                        <Box display="flex" justifyContent="center" alignItems="center">
+                            <FacturasRealizadas />
                         </Box>
                     </Grid>
                     <Grid item lg={2}>

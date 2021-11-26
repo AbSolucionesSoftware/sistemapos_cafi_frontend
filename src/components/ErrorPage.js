@@ -9,7 +9,7 @@ export default function ErrorPage({ error, altura}) {
 		<Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" height={height}>
 			<ErrorOutlineIcon style={{ fontSize: 100, color: 'rgba(17,85,204, 0.7)' }} />
 			<Typography align="center" style={{ fontSize: 18, color: 'rgba(17,85,204)' }}>
-				Ups... hay un problema
+				Hubo un problema
 			</Typography>
 		</Box>
 	);

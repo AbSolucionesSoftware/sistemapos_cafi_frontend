@@ -131,6 +131,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     setDatosCompra,
     setProductoOriginal,
     setPreciosVenta,
+    issue
   } = useContext(ComprasContext);
   const [openDelete, setOpenDelete] = useState(false);
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -170,7 +171,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     setLoading(true);
     try {
       datosCompra.productos = productos;
-      console.log(datosCompra);
+      /* console.log(datosCompra); */
 
       if (compra_en_espera) {
         datosCompra.en_espera = true;
@@ -325,7 +326,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
           variant="contained"
           size="large"
           onClick={() => realizarCompraBD(false)}
-          disabled={!productosCompra.length}
+          disabled={!productosCompra.length || issue}
           startIcon={<Done />}
         >
           Realizar compra

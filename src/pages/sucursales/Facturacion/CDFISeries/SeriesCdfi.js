@@ -32,7 +32,7 @@ export default function SeriesCDFI() {
             <Button fullWidth onClick={handleClickOpen}>
                 <Box display="flex" flexDirection="column">
                     <Box display="flex" justifyContent="center" alignItems="center" mb={2}>
-                        <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/numero-de-serie.svg' alt="icono Factura" style={{width: 100}} />
+                        <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/factura-1.png' alt="icono Factura" style={{width: 100}} />
                     </Box>
                     Registrar Series CDFI
                 </Box>

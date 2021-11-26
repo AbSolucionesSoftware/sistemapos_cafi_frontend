@@ -56,7 +56,7 @@ export default function RegistroInfoAdidional() {
     setPrecios,
     validacion,
     preciosP,
-    unidadesVenta,
+    update,
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
   } = useContext(RegProductoContext);
@@ -269,8 +269,8 @@ export default function RegistroInfoAdidional() {
     precios.precio_de_compra.precio_sin_impuesto
   );
 
-  const [PCI] = useDebounce(precioConImpuesto, 500);
-  const [PSI] = useDebounce(precioSinImpuesto, 500);
+  const [PCI] = useDebounce(precioConImpuesto, 800);
+  const [PSI] = useDebounce(precioSinImpuesto, 800);
 
   /* ARMAR OBJETO DE PRECIOS DE COMPRA */
   const obtenerPrecioConImpuesto = (value) => {
@@ -589,6 +589,7 @@ export default function RegistroInfoAdidional() {
               >
                 {precios.granel ? (
                   <Select
+                    disabled={update}
                     id="form-producto-categoria"
                     name="unidad"
                     value={precios.unidad_de_compra.unidad}
@@ -600,6 +601,7 @@ export default function RegistroInfoAdidional() {
                   </Select>
                 ) : (
                   <Select
+                    disabled={update}
                     id="form-producto-categoria"
                     name="unidad"
                     value={precios.unidad_de_compra.unidad}

@@ -140,20 +140,19 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
       ...unidadVentaXDefecto,
       precio: parseFloat(precio.toFixed(6)),
     });
-  /* console.log(unidadVentaXDefecto);
     if (unidadVentaXDefecto.descuento_activo === true) {
       //calcular nuevo precio entre %
       let precio_con_descuento = Math.round(
-        (parseFloat(precio) * unidadVentaXDefecto.descuento.porciento) / 100
+        precio -
+          precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
       );
 
-      console.log(precio);
       setUnidadVentaXDefecto({
         ...unidadVentaXDefecto,
         precio: parseFloat(precio.toFixed(6)),
         descuento: { ...unidadVentaXDefecto.descuento, precio_con_descuento },
       });
-    }  */
+    }
 
     newPreciosP.splice(index, 1, preciosVenta);
     setPreciosP(newPreciosP);
@@ -182,6 +181,19 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
         ...unidadVentaXDefecto,
         precio: parseFloat(precio.toFixed(6)),
       });
+      if (unidadVentaXDefecto.descuento_activo === true) {
+        //calcular nuevo precio entre %
+        let precio_con_descuento = Math.round(
+          precio -
+            precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
+        );
+
+        setUnidadVentaXDefecto({
+          ...unidadVentaXDefecto,
+          precio: parseFloat(precio.toFixed(6)),
+          descuento: { ...unidadVentaXDefecto.descuento, precio_con_descuento },
+        });
+      }
     }
 
     //calculamos el precio de venta y la utilidad
@@ -229,7 +241,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     setPreciosP(newPreciosP);
   };
 
-  const calculos = () =>{
+  const calculos = () => {
     const utilidad = preciosVenta.utilidad;
     if (!utilidad) {
       preciosVenta.precio_venta =
@@ -253,6 +265,22 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
           ...unidadVentaXDefecto,
           precio: parseFloat(precio.toFixed(6)),
         });
+        if (unidadVentaXDefecto.descuento_activo === true) {
+          //calcular nuevo precio entre %
+          let precio_con_descuento = Math.round(
+            precio -
+              precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
+          );
+
+          setUnidadVentaXDefecto({
+            ...unidadVentaXDefecto,
+            precio: parseFloat(precio.toFixed(6)),
+            descuento: {
+              ...unidadVentaXDefecto.descuento,
+              precio_con_descuento,
+            },
+          });
+        }
       }
     } else {
       preciosVenta.precio_neto =
@@ -271,6 +299,22 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
           ...unidadVentaXDefecto,
           precio: parseFloat(precio.toFixed(6)),
         });
+        if (unidadVentaXDefecto.descuento_activo === true) {
+          //calcular nuevo precio entre %
+          let precio_con_descuento = Math.round(
+            precio -
+              precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
+          );
+
+          setUnidadVentaXDefecto({
+            ...unidadVentaXDefecto,
+            precio: parseFloat(precio.toFixed(6)),
+            descuento: {
+              ...unidadVentaXDefecto.descuento,
+              precio_con_descuento,
+            },
+          });
+        }
       }
     }
 
@@ -321,6 +365,22 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
           ...unidadVentaXDefecto,
           precio: parseFloat(precio.toFixed(6)),
         });
+        if (unidadVentaXDefecto.descuento_activo === true) {
+          //calcular nuevo precio entre %
+          let precio_con_descuento = Math.round(
+            precio -
+              precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
+          );
+
+          setUnidadVentaXDefecto({
+            ...unidadVentaXDefecto,
+            precio: parseFloat(precio.toFixed(6)),
+            descuento: {
+              ...unidadVentaXDefecto.descuento,
+              precio_con_descuento,
+            },
+          });
+        }
       }
     } else {
       preciosVenta.precio_neto = parseFloat(
@@ -340,16 +400,32 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
           ...unidadVentaXDefecto,
           precio: parseFloat(precio.toFixed(6)),
         });
+        if (unidadVentaXDefecto.descuento_activo === true) {
+          //calcular nuevo precio entre %
+          let precio_con_descuento = Math.round(
+            precio -
+              precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
+          );
+
+          setUnidadVentaXDefecto({
+            ...unidadVentaXDefecto,
+            precio: parseFloat(precio.toFixed(6)),
+            descuento: {
+              ...unidadVentaXDefecto.descuento,
+              precio_con_descuento,
+            },
+          });
+        }
       }
     }
 
     newPreciosP.splice(index, 1, preciosVenta);
     setPreciosP(newPreciosP);
-  }
+  };
   useEffect(() => {
-    if(preciosVenta.numero_precio === 1){
+    if (preciosVenta.numero_precio === 1) {
       calculos();
-    }else if(preciosVenta.numero_precio > 1 && preciosVenta.precio_neto){
+    } else if (preciosVenta.numero_precio > 1 && preciosVenta.precio_neto) {
       calculos();
     }
 
@@ -518,7 +594,10 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
               value={preciosVenta.unidad_mayoreo}
               onChange={(e) => obtenerMayoreo(e.target.value)}
               onBlur={() =>
-                verificarCampoVacio("unidad_mayoreo", preciosVenta.unidad_mayoreo)
+                verificarCampoVacio(
+                  "unidad_mayoreo",
+                  preciosVenta.unidad_mayoreo
+                )
               }
               error={preciosVenta.unidad_mayoreo === ""}
             />
