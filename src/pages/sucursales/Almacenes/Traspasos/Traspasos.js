@@ -463,10 +463,10 @@ export default function Traspasos() {
         try {
           
             if(productosTras.length){
-                setOpenEnd(false)
+               setOpenEnd(false)
                setLoading(true)
                 //let productTrasTo = productosTras;
-                //console.log("traspasar",productosTras)
+                console.log("traspasar",productosTras)
             const traspaso =    await CrearTraspaso({
                 variables: {
                     input: {
@@ -515,13 +515,13 @@ export default function Traspasos() {
              setLoading(false);
               setOpenEnd(false)
 
-           //console.log('traspaso', error)
+           console.log('traspaso', error)
            if(error.networkError !== undefined){
-				//console.log(error.networkError.result.errors);
+				console.log(error.networkError.result.errors);
             }else if(error.graphQLErrors!== undefined){
-            //console.log(error.graphQLEr∂rors.message);
+            console.log(error.graphQLErrors.message);
             }else{
-                 //console.log(error);
+                 console.log(error);
                 setAlert({message: 'Ocurrió un error al realizar el traspaso...', status: 'error', open: true })
             }
            
