@@ -74,6 +74,7 @@ export default function Turnos() {
 	const { abrirTurnosDialog, setAbrirTurnosDialog } = useContext(VentasContext);
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
+
     const classes = useStyles();
     const [value, setValue] = useState(0);
 
@@ -86,6 +87,7 @@ export default function Turnos() {
 	};
 
 	window.addEventListener('keydown', Mi_función); 
+
 	function Mi_función(e){
 		if(e.altKey && e.keyCode === 85){ 
 			handleClickOpen();
