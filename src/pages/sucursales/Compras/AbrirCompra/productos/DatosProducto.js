@@ -149,6 +149,7 @@ export default function DatosProducto({ status }) {
       getProductos({
         variables: {
           almacen: datosCompra.almacen._id,
+          empresa: sesion.empresa._id, sucursal: sesion.sucursal._id
         },
       });
     }
