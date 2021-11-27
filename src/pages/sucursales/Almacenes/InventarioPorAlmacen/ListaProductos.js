@@ -171,7 +171,6 @@ export default function ListaAlmacenes(props) {
 			:
 			<div/>
 		}
-		
 		</div>
 	);
 }

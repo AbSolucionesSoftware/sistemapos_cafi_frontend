@@ -72,7 +72,7 @@ export default function RegistroFactura() {
     });
   };
 
-  console.log(datosFactura);
+  
 
   return (
     <div>
