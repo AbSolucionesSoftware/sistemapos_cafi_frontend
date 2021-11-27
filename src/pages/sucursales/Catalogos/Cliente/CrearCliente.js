@@ -174,8 +174,9 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
                 venta_actual.descuento === undefined
                   ? 0
                   : venta_actual.descuento,
+              monedero: venta_actual.monedero === undefined ? 0 : venta_actual.monedero,
               tipo_cambio: venta_actual.tipo_cambio
-                ? venta_actual.descuento
+                ? venta_actual.tipo_cambio
                 : {},
               cliente: clienteBase.data.crearCliente,
               venta_cliente: true,

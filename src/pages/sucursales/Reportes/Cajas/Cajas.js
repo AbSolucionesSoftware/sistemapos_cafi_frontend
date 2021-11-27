@@ -86,14 +86,14 @@ export default function Cajas() {
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/cajas.svg' alt="icono numero calzado" className={classes.icon} />
 					</Box>
-					Cajas
+					Historial de Cajas
 				</Box>
 			</Button>
 			<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-							Cajas
+							Historial de Cajas
 						</Typography>
 						<Box m={1}>
 							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
@@ -102,16 +102,15 @@ export default function Cajas() {
 						</Box>
 					</Toolbar>
 				</AppBar>
-
-            <Grid container spacing={1} justify="center" >
-               {  obtenerCajasSucursal?.map((caja, index) => {
-                    return(
-                        <Button key={index} onClick={()=>{handleClickOpenHistorial(); setCajaSelected(caja)}}>
-                            <CardCaja name={caja.numero_caja} activa={caja.activa} cantidad_efectivo_actual={caja.cantidad_efectivo_actual} />
-                        </Button>
-                    )	
-                }) } 
-            </Grid> 	
+				<Grid container spacing={1} justify="center" >
+					{obtenerCajasSucursal?.map((caja, index) => {
+						return(
+							<Button key={index} onClick={()=>{handleClickOpenHistorial(); setCajaSelected(caja)}}>
+								<CardCaja name={caja.numero_caja} activa={caja.activa} cantidad_efectivo_actual={caja.cantidad_efectivo_actual} />
+							</Button>
+						)	
+					})} 
+				</Grid> 	
 			</Dialog>
             <HistorialCaja open={openHistorial} fetchCajas={refetch} handleClickOpen={handleClickOpenHistorial} cajaSelected={cajaSelected} handleClose={handleCloseHistorial} obtenerCajasSucursal={obtenerCajasSucursal} />
 		</div>

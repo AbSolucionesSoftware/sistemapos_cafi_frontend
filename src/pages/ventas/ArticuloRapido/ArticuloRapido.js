@@ -127,7 +127,7 @@ export default function ArticuloRapido() {
     presentaciones,
     setPresentaciones,
   } = useContext(RegProductoContext);
-  const { setAlert } = useContext(VentasContext);
+  const { setAlert, open, setOpen } = useContext(VentasContext);
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const [ crearProductoRapido ] = useMutation(CREAR_PRODUCTO_RAPIDO);
   const {  data, refetch, loading } = useQuery(OBTENER_CONSULTAS, {
@@ -145,8 +145,7 @@ export default function ArticuloRapido() {
     setPresentaciones([]);
     setValue(0);
   };
-
-  const [open, setOpen] = useState(false);
+  
   const [abrirTallaColor, setAbrirTallaColor] = useState(false);
   const [cantidad, setCantidad] = useState(0);
 

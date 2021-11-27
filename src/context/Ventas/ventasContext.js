@@ -33,12 +33,19 @@ export const VentasProvider = ({ children }) => {
     );
 
     const [productoCambioPrecio, setProductoCambioPrecio] = useState({});
+    const [precioSelectProductoVenta, setPrecioSelectProductoVenta] = useState([]);
 
     const [ update, setUpdate ] = useState(false);
     const [ error, setError ] = useState(false);
     const [ alert, setAlert ] = useState({ message: "", status: "", open: false });
     const [abrirTurnosDialog, setAbrirTurnosDialog] = useState(false);
     const [updateClientVenta, setUpdateClientVenta] = useState(false);
+
+    const [open, setOpen] = useState(false);
+
+    // const [precioSeleccionadoTabla, setPrecioSeleccionadoTabla] = useState(false);
+
+    const [updateTablaVentas, setUpdateTablaVentas] = useState(false);
 
 	return (
 		<VentasContext.Provider value={
@@ -60,7 +67,15 @@ export const VentasProvider = ({ children }) => {
                 setUpdateClientVenta,
                 updateClientVenta,
                 setProductoCambioPrecio,
-                productoCambioPrecio
+                productoCambioPrecio,
+                setPrecioSelectProductoVenta,
+                precioSelectProductoVenta,
+                setUpdateTablaVentas,
+                updateTablaVentas,
+                setOpen,
+                open
+                // precioSeleccionadoTabla,
+                // setPrecioSeleccionadoTabla
             }
         }>
 			{children}

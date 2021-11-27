@@ -132,7 +132,7 @@ const FiltroTablaTurnos = () => {
 		[ refetch ]
 	);
 
-    const obtenerDatos =(e)=>{  
+    const obtenerDatos = (e) => {  
         setFiltros({...filtros, [e.target.name]: e.target.value.toString()});
     };
 
@@ -166,15 +166,15 @@ const FiltroTablaTurnos = () => {
 		return <ErrorPage error={error} />;
 	}
 
-    const limpiarFiltros=()=>{
-        setFiltros([]);
-    };
-
-
     const filtrarProductos = (event) => {
 		event.preventDefault();
         refetch();
 	};
+    
+    const limpiarFiltros = () => {
+        setFiltros([]);
+    };
+    
     return(
         <>
         <Grid container>
@@ -218,8 +218,8 @@ const FiltroTablaTurnos = () => {
                             name="fechaInicio"
                             variant="outlined"
                             type="date"
-                            value={filtros.fechaInicio ? filtros.fechaInicio : ""}
                             onChange={obtenerDatos}
+                            value={filtros.fechaInicio ? filtros.fechaInicio : ""}
                         />
                     </Box>
                     <Box width="100%">
@@ -232,8 +232,8 @@ const FiltroTablaTurnos = () => {
                             name="fechaFin"
                             variant="outlined"
                             type="date"
-                            value={filtros.fechaFin ? filtros.fechaFin : ""}
                             onChange={obtenerDatos}
+                            value={filtros.fechaFin ? filtros.fechaFin : ""}
                         />
                     </Box>
                     <form onSubmit={filtrarProductos} style={{ display: 'flex', alignItems: 'center', width: "100%" }}>
@@ -263,8 +263,8 @@ const FiltroTablaTurnos = () => {
                             <Select
                                 id="form-producto-tipo"
                                 name="numero_caja"
-                                value={filtros.numero_caja ? filtros.numero_caja : ""}
                                 onChange={obtenerDatos}
+                                value={filtros.numero_caja ? filtros.numero_caja : ""}
                             >
                                 <MenuItem value="">
                                     <em>Selecciona uno</em>
@@ -312,7 +312,7 @@ const FiltroTablaTurnos = () => {
                                 variant="contained"
                                 onClick={limpiarFiltros}
                             >
-                                Limpiar filtro
+                                Limpiar
                             </Button>
                         </Box>
                     </Box>
