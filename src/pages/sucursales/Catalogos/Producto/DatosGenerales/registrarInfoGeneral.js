@@ -11,6 +11,7 @@ import {
   OutlinedInput,
   InputAdornment,
   Grid,
+  IconButton,
 } from "@material-ui/core";
 import {
   TextField,
@@ -26,7 +27,7 @@ import {
   DialogTitle,
   CircularProgress,
 } from "@material-ui/core";
-import { Add } from "@material-ui/icons";
+import { Add, Autorenew } from "@material-ui/icons";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
 import CatalogosProductosSAT from "./CatalogoProductosSAT";
 
@@ -80,6 +81,7 @@ export default function RegistroInfoGenerales({
     departamentos,
     marcas,
     centro_costos,
+    codigos,
   } = obtenerConsultasProducto;
 
   const obtenerCampos = (e) => {
@@ -212,7 +214,7 @@ export default function RegistroInfoGenerales({
     <Fragment>
       <Container maxWidth="lg">
         <Grid container spacing={2}>
-          <Grid item md={4} xs={12}>
+          <Grid item md={3} xs={12}>
             <FormControl
               variant="outlined"
               size="small"
@@ -232,17 +234,16 @@ export default function RegistroInfoGenerales({
                 }
                 onChange={obtenerCampos}
                 endAdornment={
-                  <InputAdornment position="end">
-                    <Button
+                  <InputAdornment position="start">
+                    <IconButton
                       disabled={update && datos_generales.codigo_barras}
                       onClick={() => GenCodigoBarras()}
                       /* edge="end" */
                       color="primary"
-                      variant="outlined"
-                      size="large"
+                      size="small"
                     >
-                      Generar
-                    </Button>
+                      <Autorenew />
+                    </IconButton>
                   </InputAdornment>
                 }
               />
@@ -298,8 +299,8 @@ export default function RegistroInfoGenerales({
               <FormHelperText>{validacion.message}</FormHelperText>
             </FormControl>
           </Grid>
-          <Grid item md={4} xs={12}>
-            <CatalogosProductosSAT />
+          <Grid item md={5} xs={12}>
+            <CatalogosProductosSAT codigos={codigos} refetch={refetch} />
           </Grid>
 
           <Grid item md={4} xs={12}>
