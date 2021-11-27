@@ -16,15 +16,19 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
 
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
-import { Search } from "@material-ui/icons";
+import { Close, Done, Search } from "@material-ui/icons";
 import {
   CircularProgress,
   IconButton,
   InputAdornment,
 } from "@material-ui/core";
 import Facturama from "../../../../../billing/Facturama/facturama.api";
-import { CREAR_CODIGO_PRODUCTO } from "../../../../../gql/CatalogosSat/catalogoProductosSat";
+import {
+  CREAR_CODIGO_PRODUCTO,
+  ELIMINAR_CODIGO_PRODUCTO,
+} from "../../../../../gql/CatalogosSat/catalogoProductosSat";
 import { useMutation } from "@apollo/client";
+import SnackBarMessages from "../../../../../components/SnackBarMessages";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -37,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CatalogosProductosSAT() {
+export default function CatalogosProductosSAT({ codigos, refetch }) {
   const classes = useStyles();
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const [open, setOpen] = React.useState(false);
@@ -45,10 +49,14 @@ export default function CatalogosProductosSAT() {
   const [busqueda, setBusqueda] = useState("");
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loading_save, setLoadingSave] = useState(false);
+  const [loading_delete, setLoadingDelete] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState({});
   const [error, setError] = useState("");
+  const [alert, setAlert] = useState({ message: "", status: "", open: false });
 
   const [crearCodigoProducto] = useMutation(CREAR_CODIGO_PRODUCTO);
+  const [eliminarCodigoProducto] = useMutation(ELIMINAR_CODIGO_PRODUCTO);
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -70,21 +78,74 @@ export default function CatalogosProductosSAT() {
       },
     });
     //Crear Codigo product a la BD
-    // antes buscar si ya existe, si existe no hacer la consulta
-
-    const result = await crearCodigoProducto({
-      variables: {
-        input: {
-          Name,
-          Value,
-          empresa: sesion.empresa._id,
-          sucursal: sesion.sucursal._id,
+    try {
+      setLoadingSave(true);
+      const result = await crearCodigoProducto({
+        variables: {
+          input: {
+            Name,
+            Value,
+            empresa: sesion.empresa._id,
+            sucursal: sesion.sucursal._id,
+          },
         },
-      },
-    });
+      });
 
-    console.log(result);
-    /* limpiarDataModal(); */
+      if (result) {
+        const { message } = result.data.crearCodigoProducto;
+        setAlert({
+          message: message,
+          status: "success",
+          open: true,
+        });
+        setLoadingSave(false);
+        refetch();
+        limpiarDataModal();
+      }
+    } catch (error) {
+      setLoadingSave(false);
+      setAlert({
+        message: `Error: ${error.message}`,
+        status: "error",
+        open: true,
+      });
+    }
+  };
+
+  const eliminarCodigoBD = async (data) => {
+    try {
+      setLoadingDelete(true);
+      const result = await eliminarCodigoProducto({
+        variables: {
+          id: data._id,
+        },
+      });
+
+      if (result) {
+        const { message } = result.data.eliminarCodigoProducto;
+        setAlert({
+          message: message,
+          status: "success",
+          open: true,
+        });
+        setDatosGenerales({
+          ...datos_generales,
+          clave_producto_sat: {
+            Name: "",
+            Value: "",
+          },
+        });
+        setLoadingDelete(false);
+        refetch();
+      }
+    } catch (error) {
+      setLoadingDelete(false);
+      setAlert({
+        message: `Error: ${error.message}`,
+        status: "error",
+        open: true,
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -92,7 +153,6 @@ export default function CatalogosProductosSAT() {
   };
 
   const obtenerCampos = (data) => {
-    console.log(data);
     if (!data) {
       setDatosGenerales({
         ...datos_generales,
@@ -103,7 +163,6 @@ export default function CatalogosProductosSAT() {
       });
       return null;
     }
-    console.log(data);
     setDatosGenerales({
       ...datos_generales,
       clave_producto_sat: {
@@ -129,7 +188,6 @@ export default function CatalogosProductosSAT() {
         },
         function (error) {
           if (error && error.responseJSON) {
-            console.log("errores", error.responseJSON);
             setError(error.responseJSON);
           }
           setLoading(false);
@@ -143,30 +201,48 @@ export default function CatalogosProductosSAT() {
     }
   };
 
-  const top100Films = [
-    { Name: "The Shawshank Redemption", Value: "1994" },
-    { Name: "The Godfather", Value: "1972" },
-    { Name: "The Godfather: Part II", Value: "1974" },
-    { Name: "The Dark Knight", Value: "2008" },
-    { Name: "12 Angry Men", Value: "1957" },
-    { Name: "Schindler's List", Value: "1993" },
-    { Name: "Pulp Fiction", Value: "1999" },
-    { Name: "Sistemas de exploración y desarrollo", Value: "20102000" },
-  ];
-
   return (
     <div>
+      <SnackBarMessages alert={alert} setAlert={setAlert} />
       <Typography>Clave de producto SAT</Typography>
       <Box display="flex">
         <Autocomplete
           id="catalogos-bd-productos"
           size="small"
-          options={top100Films}
-          getOptionLabel={(option) => `${option.Value} - ${option.Name}`}
+          options={codigos}
+          disabled={loading_delete}
+          getOptionLabel={(option) =>
+            option.Name ? `${option.Value} - ${option.Name}` : ""
+          }
           fullWidth
-          renderInput={(params) => <TextField {...params} variant="outlined" />}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="outlined"
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <Fragment>
+                    {loading_delete ? <CircularProgress size={20} /> : null}
+                    {params.InputProps.endAdornment}
+                  </Fragment>
+                ),
+              }}
+            />
+          )}
+          renderOption={(option) => (
+            <Fragment>
+              {`${option.Value} - ${option.Name}`}
+              <div style={{ flexGrow: 1 }} />
+              <IconButton size="small" onClick={() => eliminarCodigoBD(option)}>
+                <Close />
+              </IconButton>
+            </Fragment>
+          )}
           onChange={(_, data) => obtenerCampos(data)}
-          getOptionSelected={(option) => `${option.Value} - ${option.Name}`}
+          getOptionSelected={(option, value) =>
+            option.Value === value.Value
+          }
           value={datos_generales.clave_producto_sat}
         />
         <Button color="primary" onClick={handleClickOpen}>
@@ -239,7 +315,12 @@ export default function CatalogosProductosSAT() {
         </DialogContent>
         <DialogActions style={{ justifyContent: "center" }}>
           <Button onClick={() => handleCancel()}>Cancelar</Button>
-          <Button onClick={() => handleOk()} color="primary">
+          <Button
+            onClick={() => handleOk()}
+            color="primary"
+            disabled={loading_save}
+            startIcon={loading_save ? <CircularProgress size={18} /> : <Done />}
+          >
             Seleccionar
           </Button>
         </DialogActions>
@@ -255,7 +336,6 @@ const SelectedListItem = ({
   setSelectedIndex,
 }) => {
   const handleListItemClick = (data) => {
-    console.log(data);
     setSelectedIndex(data);
   };
 

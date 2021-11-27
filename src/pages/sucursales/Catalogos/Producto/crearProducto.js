@@ -368,8 +368,6 @@ export default function CrearProducto({
 
   /* SET STATES WHEN UPDATING */
   const setInitialStates = (producto) => {
-
-    console.log(producto);
     /* const producto = cleanTypenames(product); */
     const { precios_producto, ...new_precios } = producto.precios;
     let unidadxdefecto = producto.unidades_de_venta.filter(
@@ -644,7 +642,7 @@ export default function CrearProducto({
           <Backdrop className={classes.backdrop} open={loading}>
             <CircularProgress color="inherit" />
           </Backdrop>
-          <ContenidoModal value={value} datos={datos} />
+          <ContenidoModal value={value} />
         </DialogContent>
         <DialogActions style={{ display: "flex", justifyContent: "center" }}>
           <Button
@@ -674,7 +672,7 @@ export default function CrearProducto({
   );
 }
 
-const ContenidoModal = ({ value, datos }) => {
+const ContenidoModal = ({ value }) => {
   const classes = useStyles();
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
@@ -740,7 +738,6 @@ const ContenidoModal = ({ value, datos }) => {
         <ColoresTallas
           obtenerConsultasProducto={obtenerConsultasProducto}
           refetch={refetch}
-          datos={datos}
         />
       </TabPanel>
     </div>

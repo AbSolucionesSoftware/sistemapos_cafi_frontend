@@ -352,7 +352,7 @@ export default function RegistroInfoAdidional() {
       precio_con_impuesto / precios.unidad_de_compra.cantidad;
     if (!precios.iva_activo && !precios.ieps_activo) {
       precio_con_impuesto =
-        precio_sin_impuesto / precios.unidad_de_compra.cantidad;
+        precio_sin_impuesto/*  / precios.unidad_de_compra.cantidad */;
       precio_unitario_con_impuesto =
         precio_sin_impuesto / precios.unidad_de_compra.cantidad;
     }
