@@ -63,6 +63,37 @@ export default function InventariosPorAlmacen() {
     const classes = useStyles();
 	const theme = useTheme();
 	const [ open, setOpen ] = React.useState(false);
+
+
+
+	const handleClickOpen = () => {
+		setOpen(true);
+	};
+
+	const handleClose = () => {
+		setOpen(false);
+	};
+	
+	
+
+    return (
+        <div>
+            <Button fullWidth onClick={handleClickOpen}>
+				<Box display="flex" flexDirection="column">
+					<Box display="flex" justifyContent="center" alignItems="center">
+						<img src={'https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/conceptosAlmacen.svg'} alt="icono almacen" className={classes.imagen}/>
+					</Box>
+					Inventario por almacen
+				</Box>
+			</Button>
+			<InventarioPorAlmacen open={open} handleClose={handleClose} />
+        </div>
+    )
+}
+
+const InventarioPorAlmacen = (props) =>{
+	const classes = useStyles();
+	const theme = useTheme();
 	const [ loading, setLoading ] = React.useState(true);
 	  
 	const [ filtro, setFiltro ] = React.useState({  codigo_barras: '',clave_alterna: '',tipo_producto: '',nombre_comercial: '',
@@ -84,8 +115,7 @@ export default function InventariosPorAlmacen() {
 	let categorias = [];
 	
 	let obtenerAlmacenes = [];
-
-	/* Queries */
+	 	/* Queries */
 	//const {  data, error, refetch } = useQuery(OBTENER_PRODUCTOS_ALMACEN,{
     const productosAlmacenQuery = useQuery(OBTENER_PRODUCTOS_ALMACEN,{
 		variables: {
@@ -159,15 +189,7 @@ export default function InventariosPorAlmacen() {
 		obtenerAlmacenes = queryObtenerAlmacenes.data.obtenerAlmacenes;
 	}
 	
-	const handleClickOpen = () => {
-		setOpen(true);
-	};
-
-	const handleClose = () => {
-		setOpen(false);
-	};
-	
-	const setValToFilter = (label,value) => {
+	 const setValToFilter = (label,value) => {
 		try {
 			setLoading(true);
 		
@@ -175,9 +197,6 @@ export default function InventariosPorAlmacen() {
 				const cat = categorias.find(element => element.categoria === value);
 				setSubcategorias(cat.subcategorias)
 			}
-		
-				
-			
 
 			if(label === 'categoria' ){
 				
@@ -208,21 +227,8 @@ export default function InventariosPorAlmacen() {
 			
 		}
     };
-
-
-
-
-    return (
-        <div>
-            <Button fullWidth onClick={handleClickOpen}>
-				<Box display="flex" flexDirection="column">
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<img src={'https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/conceptosAlmacen.svg'} alt="icono almacen" className={classes.imagen}/>
-					</Box>
-					Inventario por almacen
-				</Box>
-			</Button>
-			<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+	return(
+		<Dialog fullScreen open={props.open} onClose={props.handleClose} TransitionComponent={Transition}>
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
@@ -230,12 +236,12 @@ export default function InventariosPorAlmacen() {
 						</Typography>
 						<Box mx={3}>
 							<Box m={1}>
-								<Button variant="contained" color="secondary" onClick={handleClose} size="large">
+								<Button variant="contained" color="secondary" onClick={props.handleClose} size="large">
 									<Close style={{ fontSize: 30}}/>
 								</Button>
 							</Box>
                         </Box>
-                        <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+                        <IconButton edge="start" color="inherit" onClick={props.handleClose} aria-label="close">
 							
 						</IconButton>
 					</Toolbar>
@@ -388,6 +394,5 @@ export default function InventariosPorAlmacen() {
 					
 				}
 			</Dialog>
-        </div>
-    )
+	)
 }
