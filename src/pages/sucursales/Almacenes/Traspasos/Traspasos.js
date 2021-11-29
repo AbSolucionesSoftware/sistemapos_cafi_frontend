@@ -231,6 +231,7 @@ export default function Traspasos() {
     useEffect(() => {
         if(almacenOrigen){
             setAlmacenesDestino(queryObtenerAlmacenes.data.obtenerAlmacenes.filter(element => element._id !== almacenOrigen._id));
+            productosQuery.refetch();
         }
     }, [almacenOrigen, setAlmacenesDestino, queryObtenerAlmacenes])
  
@@ -281,7 +282,7 @@ export default function Traspasos() {
     useEffect(
 		() => {
 			 if(productosEmpresaQuery.data){
-                
+                console.log(productosEmpresaQuery.data)
                 //setProductos(productosEmpresaQuery.data.obtenerProductosPorEmpresa);
                 //console.log(productosEmpresaQuery.data)
                 setProductosEmpTo(productosEmpresaQuery.data.obtenerProductosPorEmpresa);
