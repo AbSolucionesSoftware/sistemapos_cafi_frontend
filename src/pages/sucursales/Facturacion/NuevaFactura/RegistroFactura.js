@@ -171,9 +171,6 @@ export default function RegistroFactura() {
               <MenuItem value={moment().subtract(2, "d").format("LL")}>
                 {moment().subtract(2, "d").format("LL")}
               </MenuItem>
-              <MenuItem value={moment().subtract(3, "d").format("LL")}>
-                {moment().subtract(3, "d").format("LL")}
-              </MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -181,24 +178,15 @@ export default function RegistroFactura() {
           <Typography>Folio:</Typography>
           <TextField
             value={datosFactura.folio}
-            placeholder="Selecciona un folio"
             fullWidth
             size="small"
             variant="outlined"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <ListaFoliosFactura />
-                </InputAdornment>
-              ),
-            }}
           />
         </Grid>
         <Grid item md={2}>
           <Typography>Serie:</Typography>
           <TextField
             fullWidth
-            type="number"
             size="small"
             variant="outlined"
             value={datosFactura.serie}
