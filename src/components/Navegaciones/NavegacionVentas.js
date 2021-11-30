@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useContext} from 'react';
+import React, { useState, useContext} from 'react';
 import { Drawer, AppBar, Toolbar, Divider, BottomNavigation, Button, Grid, Dialog, Slide, DialogContent, DialogActions } from '@material-ui/core';
 import { CssBaseline, Avatar, Box, Typography } from '@material-ui/core';
 import { withRouter } from 'react-router';
@@ -27,7 +27,7 @@ import Abonos from '../../pages/ventas/Abonos/Abonos';
 import VentasCredito from '../../pages/ventas/VentasCredito/VentasCredito';
 import DepositoRetiroCaja from '../../pages/ventas/Operaciones/DepositoRetiroCaja';
 import Turnos from '../../pages/ventas/AbrirCerrarTurno/Turnos';
-import CerrarCaja from '../../pages/ventas/Operaciones/CerrarCaja';
+import PreCorteCaja from '../../pages/ventas/Operaciones/PreCorteCaja';
 import VentasEspera from '../../pages/ventas/VentasEspera/VentasEspera';
 import AbrirCajon from '../../pages/ventas/Operaciones/AbrirCajon';
 import VentasRealizadas from '../../pages/ventas/VentasRealizadas/VentasRealizadas';
@@ -109,7 +109,7 @@ function NavegacionVentas(props) {
 						<Divider orientation="vertical" />
 					<Turnos />
 						<Divider orientation="vertical" />
-					<CerrarCaja />
+					<PreCorteCaja />
 						<Divider orientation="vertical" />
 					<VentaEnEspera />
 						<Divider orientation="vertical" />
