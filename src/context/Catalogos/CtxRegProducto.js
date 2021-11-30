@@ -60,6 +60,12 @@ export const RegProductoProvider = ({ children }) => {
   const [actualizarLista, setActualizarLista] = React.useState(false);
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
 
+  // USESTATES DE DESCUENTOS DE PRODUCTOS
+  const [ datosPreciosProducto, setDatosPreciosProducto ] = useState([]);
+  const [ preciosDescuentos, setPreciosDescuentos] = useState([]);
+  const [ preciosProductos, setPreciosProductos ] = useState([]);
+  const [ datosEnDescuentos, setDatosEnDescuentos ] = useState([]);
+
   return (
     <RegProductoContext.Provider
       value={{
@@ -103,6 +109,15 @@ export const RegProductoProvider = ({ children }) => {
         setActualizarLista,
         alert,
         setAlert,
+
+        datosPreciosProducto, 
+        setDatosPreciosProducto,
+        preciosDescuentos, 
+        setPreciosDescuentos,
+        preciosProductos, 
+        setPreciosProductos,
+        datosEnDescuentos, 
+        setDatosEnDescuentos 
       }}
     >
       {children}

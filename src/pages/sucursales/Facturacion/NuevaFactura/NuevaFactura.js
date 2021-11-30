@@ -17,6 +17,9 @@ import ListaDocumentos from "./TablaDocumento";
 import { ClienteProvider } from "../../../../context/Catalogos/crearClienteCtx";
 import { FacturacionProvider } from "../../../../context/Facturacion/facturacionCtx";
 
+import { useMutation, useQuery } from '@apollo/client';
+import { CREAR_FACTURA, CONSULTA_POSTAL_CODES_SAT_API } from '../../../../gql/Facturacion/Facturacion';
+
 const useStyles = makeStyles((theme) => ({
   appBar: {
     position: "relative",
@@ -42,6 +45,8 @@ export default function NuevaFactura() {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
+
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -49,7 +54,8 @@ export default function NuevaFactura() {
   const handleClose = () => {
     setOpen(false);
   };
-
+ 
+  
   return (
     <div>
       <ClienteProvider>
@@ -103,6 +109,50 @@ export default function NuevaFactura() {
 }
 
 const FacturaModalContent = ({ handleClose }) => {
+  const [CrearFactura] = useMutation(CREAR_FACTURA);
+
+  const {  data, error, refetch } = useQuery(CONSULTA_POSTAL_CODES_SAT_API,{
+		variables: {
+       input: {texto:'ALOHA'}
+		
+		}
+	});	
+
+React.useEffect(() => {
+ console.log('====================================');
+ console.log(data);
+ console.log('====================================');
+}, [data])
+
+  const consultar = () => {
+    try {
+    
+      refetch();
+    } catch (error) {
+      console.log(error)
+         if(error.networkError.result){
+      console.log(error.networkError.result.errors);
+      }else if(error.graphQLErrors){
+      console.log(error.graphQLErrors.message);
+      }
+    }
+  }
+  const crearFactura = async() => {
+    try {
+     
+      let resp = await CrearFactura({
+      variables: {
+          input : {
+            value: 'SORAYA'
+          }
+          
+      }
+     }) 
+      console.log('fffd', resp);
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <Fragment>
       <DialogContent>
@@ -142,7 +192,9 @@ const FacturaModalContent = ({ handleClose }) => {
           color="primary"
           startIcon={<DoneIcon />}
           size="large"
-          onClick={() => handleClose()}
+          //onClick={() => handleClose()}
+          onClick={() => consultar()}
+          
         >
           Generar CFDI
         </Button>

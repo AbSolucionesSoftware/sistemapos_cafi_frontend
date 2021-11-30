@@ -47,7 +47,6 @@ const GenCodigoBarras = () => {
 export default function ColoresTallas({
   obtenerConsultasProducto,
   refetch,
-  datos,
   from,
   withoutPrice,
 }) {
@@ -103,13 +102,11 @@ export default function ColoresTallas({
     obtenerColoresSeleccinados();
   }, [obtenerColoresSeleccinados]);
 
-  console.log(datos);
-
   return (
     <div>
       <Box>
         <Grid container spacing={2}>
-          {datos.presentaciones.length === 0 ? (
+          {presentaciones.length === 0 ? (
             <Grid item md={4}>
               <Box width="100%">
                 <Typography>Almacen</Typography>
@@ -166,7 +163,7 @@ export default function ColoresTallas({
             </Grid>
           ) : null}
 
-          <Grid item md={datos.presentaciones.length === 0 ? 4 : 6}>
+          <Grid item md={presentaciones.length === 0 ? 4 : 6}>
             <Box
               width="100%"
               style={
@@ -198,13 +195,12 @@ export default function ColoresTallas({
                     coloresSeleccionados={coloresSeleccionados}
                     medidasSeleccionadas={medidasSeleccionadas}
                     setMedidasSeleccionadas={setMedidasSeleccionadas}
-                    datos={datos}
                   />
                 ))}
               </Grid>
             </Box>
           </Grid>
-          <Grid item md={datos.presentaciones.length === 0 ? 4 : 6}>
+          <Grid item md={presentaciones.length === 0 ? 4 : 6}>
             <Box
               width="100%"
               style={
@@ -229,7 +225,6 @@ export default function ColoresTallas({
                     coloresSeleccionados={coloresSeleccionados}
                     setColoresSeleccionados={setColoresSeleccionados}
                     medidasSeleccionadas={medidasSeleccionadas}
-                    datos={datos}
                   />
                 ))}
               </Grid>
@@ -240,7 +235,6 @@ export default function ColoresTallas({
         <TablaPresentaciones
           from={from}
           withoutPrice={withoutPrice}
-          datos={datos}
           setOnUpdate={setOnUpdate}
           onUpdate={onUpdate}
         />
@@ -254,7 +248,6 @@ const RenderTallas = ({
   coloresSeleccionados,
   medidasSeleccionadas,
   setMedidasSeleccionadas,
-  datos,
 }) => {
   const classes = useStyles();
   const theme = useTheme();
@@ -275,7 +268,7 @@ const RenderTallas = ({
   }, [talla._id, medidasSeleccionadas]);
 
   useEffect(() => {
-    if (datos.presentaciones.length > 0) {
+    if (presentaciones.length > 0) {
       return seleccionarMedidas();
     }
   }, [seleccionarMedidas]);
@@ -471,7 +464,6 @@ const Colores = ({
   coloresSeleccionados,
   setColoresSeleccionados,
   medidasSeleccionadas,
-  datos,
 }) => {
   const classes = useStyles();
   const theme = useTheme();
@@ -493,7 +485,7 @@ const Colores = ({
   }, [color._id, coloresSeleccionados]);
 
   useEffect(() => {
-    if (datos.presentaciones.length > 0) {
+    if (presentaciones.length > 0) {
       return seleccionarColores();
     }
   }, [seleccionarColores]);

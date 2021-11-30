@@ -45,6 +45,11 @@ export const OBTENER_CONSULTAS = gql`
           _id
           subcuenta
         }
+      },
+      codigos {
+        _id
+        Name
+        Value
       }
     }
   }

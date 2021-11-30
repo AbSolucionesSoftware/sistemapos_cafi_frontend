@@ -1,7 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
-import { Button, Dialog, makeStyles, DialogTitle, DialogContent,  Grid, Box, Typography, TextField, Slider, IconButton } from '@material-ui/core';
+import { Button, Dialog, makeStyles, DialogTitle, DialogContent, Grid, Box, Typography, TextField, Slider, IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
 import TablaPreciosDescuentos from './ListaPrecios';
@@ -10,6 +10,7 @@ import {  REGISTRAR_DESCUENTOS } from '../../../../../gql/Catalogos/descuentos';
 import { useMutation } from '@apollo/client';
 import SnackBarMessages from '../../../../../components/SnackBarMessages';
 import BackdropComponent from '../../../../../components/Layouts/BackDrop';
+import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
 
 const useStyles = makeStyles((theme) => ({
 	avatarGroup: {
@@ -34,16 +35,19 @@ const useStyles = makeStyles((theme) => ({
 
 export default function DescuentoProductos({datos, productosRefetch}) {
     const [ CrearDescuentoUnidad ] = useMutation(REGISTRAR_DESCUENTOS);
+    const { 
+        setDatosPreciosProducto,
+        preciosDescuentos, 
+        setPreciosDescuentos,
+        preciosProductos, 
+        setPreciosProductos,
+    } = useContext(RegProductoContext);
+
     const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
     const [ openDescuento, setOpenDescuento ] = useState(false);
-    const [ cleanList, setCleanList] = useState(false);
-    const [ descuentoPresente, setDescuentoPresente] = useState(false);
+    const [ cleanList, setCleanList ] = useState(false);
     const [ validate ] = useState(false);
-    const [ loading, setLoading] = useState(false);
-
-    const [ datosPreciosProducto, setDatosPreciosProducto ] = useState([]);
-    const [ preciosDescuentos, setPreciosDescuentos] = useState([]);
-    const [ preciosProductos, setPreciosProductos ] = useState([]);
+    const [ loading, setLoading ] = useState(false);
 
     const [ precioPrueba, setPrecioPrueba ] = useState(0);
     const [ value, setValue] =  useState(0);
@@ -51,16 +55,22 @@ export default function DescuentoProductos({datos, productosRefetch}) {
     const classes = useStyles();
 
     const handleCloseDescuentos = () => {
-        if (datos.presentaciones.length > 0) {
+        if (datos.medidas_producto.length > 0) {
             setDatosPreciosProducto(datos.medidas_producto);
+            setLoading(false);
         }else{
             setDatosPreciosProducto(datos.unidades_de_venta);
+            setLoading(false);
         }
-        setOpenDescuento(!openDescuento);
         setPrecioPrueba(0);
         setValue(0);
         preciosDescuentos.splice(0, preciosDescuentos.length);
     };
+
+    const cerrarModal =()=>{
+        setOpenDescuento(!openDescuento);
+        handleCloseDescuentos();
+    }
 
     const verificarDatos = useCallback(
         (datos) => {
@@ -72,15 +82,13 @@ export default function DescuentoProductos({datos, productosRefetch}) {
                             setPrecioPrueba(datos[i].descuento.precio_con_descuento);
                         }
                     }
-                    
                 }
-            }
+            };
     },
         [datos]
     );
     
     let arrayDescuento = [];
-
 
     const obtenerPorcientoSlide = (event, newValue) => {
         setValue(newValue);
@@ -142,13 +150,12 @@ export default function DescuentoProductos({datos, productosRefetch}) {
                     }
                 }
             });
-            setLoading(false);
+            handleCloseDescuentos()
             productosRefetch();
             setValue(0);
             setPreciosProductos([]);
             setPreciosDescuentos([]);
             setCleanList(!cleanList);
-            handleCloseDescuentos();
             setAlert({ message: '¡Listo descuentos realizados!', status: 'success', open: true });
 		} catch (error) {
 		}
@@ -174,13 +181,12 @@ export default function DescuentoProductos({datos, productosRefetch}) {
         }
     }
 
-    
     return (
         <div>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
             <IconButton
                 color={validacion()}
-                onClick={handleCloseDescuentos}
+                onClick={cerrarModal}
                 disabled={datos.inventario_general && datos.inventario_general.length > 0 && datos.inventario_general[0].eliminado === true}
             >
                <LocalOfferIcon />
@@ -193,7 +199,7 @@ export default function DescuentoProductos({datos, productosRefetch}) {
                             {'Descuento de Producto'}
                         </Box>
                         <Box m={1}>
-                            <Button variant="contained" color="secondary" onClick={() => handleCloseDescuentos()} size="large">
+                            <Button variant="contained" color="secondary" onClick={cerrarModal} size="large">
                                 <CloseIcon />
                             </Button>
                         </Box>
@@ -223,10 +229,8 @@ export default function DescuentoProductos({datos, productosRefetch}) {
                                     cleanList={cleanList}
                                     setCleanList={setCleanList}
                                     setPrecioPrueba={setPrecioPrueba}
-                                    datosPrecios={datosPreciosProducto} 
-                                    preciosProductos={preciosProductos} 
-                                    setPreciosProductos={setPreciosProductos} 
                                     setLoading={setLoading}
+                                    loading={loading}
                                 />
                             </Box>
                         </Grid>
@@ -243,7 +247,7 @@ export default function DescuentoProductos({datos, productosRefetch}) {
                                         <Slider
                                             disabled={preciosProductos.length === 0 ? true : false}
                                             getAriaValueText={valuetext}
-                                            value={value}
+                                            value={value.toFixed(2)}
                                             aria-labelledby="discrete-slider-small-steps"
                                             valueLabelDisplay="auto"
                                             onChange={obtenerPorcientoSlide} 

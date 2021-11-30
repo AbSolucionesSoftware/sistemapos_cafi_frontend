@@ -75,11 +75,23 @@ const useStyles = makeStyles((theme) => ({
     width: 30,
     borderRadius: "15%",
   },
+  input: {
+    "& input[type=number]": {
+      "-moz-appearance": "textfield",
+    },
+    "& input[type=number]::-webkit-outer-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    },
+    "& input[type=number]::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    },
+  },
 }));
 
 export default function TablaPresentaciones({
   from,
-  datos,
   setOnUpdate,
   onUpdate,
   withoutPrice,
@@ -160,7 +172,6 @@ export default function TablaPresentaciones({
                     key={index}
                     producto={producto}
                     index={index}
-                    datos={datos}
                     from={from}
                     setOnUpdate={setOnUpdate}
                     onUpdate={onUpdate}
@@ -180,7 +191,6 @@ export default function TablaPresentaciones({
 const RenderPresentacionesRows = ({
   producto,
   index,
-  datos,
   from,
   setOnUpdate,
   onUpdate,
@@ -328,12 +338,12 @@ const RenderPresentacionesRows = ({
             type="number"
             name="codigo_barras"
             disabled={
-              datos.presentaciones.length > 0 && !copy_producto.nuevo
+              presentaciones.length > 0 && !copy_producto.nuevo
                 ? true
                 : disabledInput
             }
           />
-          {datos.presentaciones.length === 0 && copy_producto.nuevo ? (
+          {presentaciones.length === 0 && copy_producto.nuevo ? (
             <IconButton
               color="primary"
               size="small"
@@ -341,7 +351,7 @@ const RenderPresentacionesRows = ({
             >
               <Cached />
             </IconButton>
-          ) : datos.presentaciones.length > 0 && copy_producto.nuevo ? (
+          ) : presentaciones.length > 0 && copy_producto.nuevo ? (
             <IconButton
               color="primary"
               size="small"
@@ -379,13 +389,13 @@ const RenderPresentacionesRows = ({
       </TableCell>
       {!withoutPrice ? (
         <Fragment>
-          <TableCell width={110}>
+          <TableCell width={110} className={classes.input}>
             <Input
               inputRef={textfield}
               onChange={(e) => obtenerDatos(e)}
               disabled={disabledInput}
               value={copy_producto.precio}
-              type="tel"
+              type="number"
               name="precio"
             />
           </TableCell>
