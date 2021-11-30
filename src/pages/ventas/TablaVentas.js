@@ -152,14 +152,14 @@ const RenderTableRows = ({
         calculoResta = await calculatePrices(
           newP,
           cantidad_venta,
-          newP.granelProducto
+          newP.granel_producto
         );
         // console.log(calculoResta);
         //Sacar los impuestos que se van a sumar
         calculoSuma = await calculatePrices(
           newP,
           new_cant,
-          newP.granelProducto
+          newP.granel_producto
         );
         newP.cantidad_venta = parseInt(new_cant);
         newP.precio_a_vender = calculoSuma.totalCalculo;

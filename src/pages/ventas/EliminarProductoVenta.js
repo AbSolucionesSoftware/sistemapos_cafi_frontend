@@ -6,6 +6,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import { CircularProgress, IconButton } from '@material-ui/core';
 import { Delete } from '@material-ui/icons';
+import { VentasContext } from '../../context/Ventas/ventasContext';
 
 import {findProductArray, calculatePrices } from '../../config/reuserFunctions';
 
@@ -23,10 +24,12 @@ export default function EliminarProducto({
 	const [ loading, setLoading ] = useState(false);
 	/* const [ alert, setAlert ] = useState({ message: '', status: '', open: false }); */
 
+	const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
+
 	const handleToggleModal = () => setOpen(!open);
 
 	const eliminarProductoBD = async () => {
-		console.log(producto);
+		// console.log(producto);
 		let venta = JSON.parse(localStorage.getItem("DatosVentas"));
 		let productosVentas = venta === null ? [] : venta.productos;
 		const venta_actual = venta === null ? [] : venta;
@@ -41,6 +44,7 @@ export default function EliminarProducto({
 					iva: 0,
 					ieps: 0,
 					descuento: 0,
+					monedero: 0
 				}
 			: venta;
 
@@ -50,8 +54,9 @@ export default function EliminarProducto({
 		);
 		if (producto_encontrado.found) {
 			const { cantidad_venta, ...newP } = producto;
+			// newP.precio_actual_producto = newP.descuento_activo ? newP.descuento.precio_con_descuento :  newP.precio;
 			//Sacar los impuestos que se van a restar
-			let calculoResta = await calculatePrices(newP, cantidad_venta, newP.granelProducto);
+			let calculoResta = await calculatePrices(newP, cantidad_venta, newP.granel_producto, newP.precio_actual_producto);
 			productosVentasTemp.splice(
 				producto_encontrado.producto_found.index,
 				1
@@ -75,6 +80,9 @@ export default function EliminarProducto({
 				descuento: 
 				  parseFloat(venta_existente.descuento) -
 				  parseFloat(calculoResta.descuentoCalculo),
+				monedero: 
+				  parseFloat(venta_existente.monedero) -
+				  parseFloat(calculoResta.monederoCalculo),
 			  };
 			  localStorage.setItem("DatosVentas", JSON.stringify({
 				...CalculosData,
@@ -84,7 +92,8 @@ export default function EliminarProducto({
 			  }));
 			  setDatosVentasActual(CalculosData);
 			  //Recargar la tabla de los productos
-			  setNewProductoVentas(!newProductoVentas);
+			//   setNewProductoVentas(!newProductoVentas);
+			  setUpdateTablaVentas(!updateTablaVentas);
 		}
 		
 	};
