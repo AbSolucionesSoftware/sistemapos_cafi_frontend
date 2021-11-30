@@ -38,9 +38,8 @@ export default function ExportExcel({historialCortes}) {
                 caja: historialCortes[i].numero_caja,
                 monto_efectivo: historialCortes[i].montos_en_caja.monto_efectivo , 
                 monto_creditos: historialCortes[i].montos_en_caja.monto_creditos , 
-                monto_tarjeta_credito: historialCortes[i].montos_en_caja.monto_tarjeta_credito , 
-                monto_tarjeta_debito: historialCortes[i].montos_en_caja.monto_tarjeta_debito , 
-                monto_puntos: historialCortes[i].montos_en_caja.monto_puntos , 
+                monto_tarjeta: historialCortes[i].montos_en_caja.monto_tarjeta, 
+                monto_monedero: historialCortes[i].montos_en_caja.monto_monedero , 
                 monto_cheques: historialCortes[i].montos_en_caja.monto_cheques , 
                 monto_transferencia: historialCortes[i].montos_en_caja.monto_transferencia ,
                 monto_vales_despensa: historialCortes[i].montos_en_caja.monto_vales_despensa , 
@@ -78,9 +77,8 @@ export default function ExportExcel({historialCortes}) {
                     <ExcelColumn label='No. de Caja' value='caja' />
                     <ExcelColumn label='M. en Efectivo' value='monto_efectivo' />
                     <ExcelColumn label='M. en Creditos' value='monto_creditos' />
-                    <ExcelColumn label='M. en T. Credito' value='monto_tarjeta_credito' />
-                    <ExcelColumn label='M. en T. Debito' value='monto_tarjeta_debito' />
-                    <ExcelColumn label='M. en Puntos' value='monto_puntos' />
+                    <ExcelColumn label='M. en Tarjetas' value='monto_tarjeta' />
+                    <ExcelColumn label='M. en Monedero' value='monto_monedero' />
                     <ExcelColumn label='M. en Cheques' value='monto_cheques' />
                     <ExcelColumn label='M. en Transferencia' value='monto_transferencia' />
                     <ExcelColumn label='M. en Vale Despensa' value='monto_vales_despensa' />

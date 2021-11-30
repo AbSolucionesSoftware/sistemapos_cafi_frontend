@@ -118,10 +118,9 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                     fecha_movimiento: moment().locale('es-mx').format(),
                     montos_en_caja: {
                         monto_efectivo: parseFloat(abrirTurno.monto_abrir),
-                        monto_tarjeta_debito: 0,
-                        monto_tarjeta_credito: 0,
+                        monto_tarjeta: 0,
                         monto_creditos: 0,
-                        monto_puntos: 0,
+                        monto_monedero: 0,
                         monto_transferencia: 0,
                         monto_cheques: 0,
                         monto_vales_despensa: 0,
