@@ -206,7 +206,7 @@ function RowsRender({turno}) {
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center">Monedero</TableCell>
 												<TableCell align="center">${turno.montos_en_caja.monto_monedero}</TableCell>
-											</TableRow>*
+											</TableRow>
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center">Cheques</TableCell>
 												<TableCell align="center">${turno.montos_en_caja.monto_cheques}</TableCell>
