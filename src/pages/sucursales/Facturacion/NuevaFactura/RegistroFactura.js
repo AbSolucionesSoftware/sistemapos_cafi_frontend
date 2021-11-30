@@ -175,24 +175,6 @@ export default function RegistroFactura() {
           </FormControl>
         </Grid>
         <Grid item md={2}>
-          <Typography>Folio:</Typography>
-          <TextField
-            value={datosFactura.folio}
-            fullWidth
-            size="small"
-            variant="outlined"
-          />
-        </Grid>
-        <Grid item md={2}>
-          <Typography>Serie:</Typography>
-          <TextField
-            fullWidth
-            size="small"
-            variant="outlined"
-            value={datosFactura.serie}
-          />
-        </Grid>
-        <Grid item md={2}>
           <Typography>Código postal:</Typography>
           <TextField
             fullWidth
@@ -234,6 +216,12 @@ export default function RegistroFactura() {
               <MenuItem value="PPD - Pago en parcialidades">PPD - Pago en parcialidades</MenuItem>
             </Select>
           </FormControl>
+        </Grid>
+        <Grid item md={2} style={{display: "flex", alignItems: 'center', justifyContent: "center"}}>
+          <Typography>{`Folio: ${datosFactura.folio}`}</Typography>
+        </Grid>
+        <Grid item md={2} style={{display: "flex", alignItems: 'center', justifyContent: "center"}}>
+          <Typography>{`Serie: ${datosFactura.serie}`}</Typography>
         </Grid>
       </Grid>
       <Dialog
