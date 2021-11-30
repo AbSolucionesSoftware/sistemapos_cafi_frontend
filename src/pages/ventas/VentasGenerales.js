@@ -215,7 +215,7 @@ export default function VentasGenerales() {
       monedero = monederoCalculo;
       // console.log(monedero);
       newP.cantidad_venta = 1;
-      newP.granelProducto = granelBase;
+      newP.granel_producto = granelBase;
       newP.precio_a_vender = totalCalculo;
       newP.precio_actual_producto = productoPrecioFinal;
       newP.precio_anterior = productoPrecioFinal;
@@ -262,7 +262,7 @@ export default function VentasGenerales() {
         calculoResta = await calculatePrices(
           newP,
           cantidad_venta,
-          newP.granelProducto,
+          newP.granel_producto,
           newP.precio_actual_producto,
           "TABLA"
         );
@@ -271,7 +271,7 @@ export default function VentasGenerales() {
         calculoSuma = await calculatePrices(
           newP,
           newP.cantidad_venta,
-          newP.granelProducto,
+          newP.granel_producto,
           verify_prising.pricing,
           "TABLA"
         );
@@ -360,7 +360,7 @@ export default function VentasGenerales() {
         descuento = descuentoCalculo;
         monedero = monederoCalculo;
 
-        newP.granelProducto = granelBase;
+        newP.granel_producto = granelBase;
         newP.precio_a_vender = totalCalculo;
         newP.precio_anterior = newP.precio_actual_producto;
         newP.precio_actual_producto = productoPrecioFinal;

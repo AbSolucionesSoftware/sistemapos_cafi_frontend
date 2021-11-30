@@ -441,7 +441,7 @@ const RenderTableRows = ({
           calculoResta = await calculatePrices(
             newP,
             cantidad_venta,
-            newP.granelProducto,
+            newP.granel_producto,
             newP.precio_actual_producto,
             "TABLA"
           );
@@ -450,7 +450,7 @@ const RenderTableRows = ({
           calculoSuma = await calculatePrices(
             newP,
             new_cant,
-            newP.granelProducto,
+            newP.granel_producto,
             verify_prising.pricing,
             "TABLA"
           );
@@ -504,7 +504,7 @@ const RenderTableRows = ({
           calculoResta = await calculatePrices(
             newP,
             cantidad_venta,
-            newP.granelProducto,
+            newP.granel_producto,
             newP.precio_actual_producto,
             "TABLA"
           );
@@ -513,7 +513,7 @@ const RenderTableRows = ({
           calculoSuma = await calculatePrices(
             newP,
             new_cant,
-            newP.granelProducto,
+            newP.granel_producto,
             newP.precio_actual_producto,
             "TABLA"
           );
