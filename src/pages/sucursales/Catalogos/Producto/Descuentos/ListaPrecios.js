@@ -7,7 +7,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -160,15 +159,6 @@ export default function TablaPreciosDescuentos(
 		setSelected(newSelected);
 	};
 	
-	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
-
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(parseInt(event.target.value, 10));
-		setPage(0);
-	};
-
 	useEffect(() => {
 		setSelected([]);
 		setCleanList(false);
@@ -225,15 +215,7 @@ export default function TablaPreciosDescuentos(
 						</TableBody>
 					</Table>
 				</TableContainer>
-				{/* <TablePagination
-                    rowsPerPageOptions={[]}
-					component="div"
-					count={datosPrecios.length}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onChangePage={handleChangePage}
-					onChangeRowsPerPage={handleChangeRowsPerPage}
-				/> */}
+				
 			</Paper>
 		</div>
 	);
@@ -271,6 +253,7 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId, setAlert, 
 	};
 
 	const handleDelete = async () => {
+		productosRefetch();
 		setLoading(true);
 		try {
 			const resultado = await ELiminarDescuentoUnidad({

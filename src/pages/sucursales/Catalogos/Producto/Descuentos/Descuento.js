@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
-import { Button, Dialog, makeStyles, DialogTitle, DialogContent,  Grid, Box, Typography, TextField, Slider, IconButton } from '@material-ui/core';
+import { Button, Dialog, makeStyles, DialogTitle, DialogContent, Grid, Box, Typography, TextField, Slider, IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
 import TablaPreciosDescuentos from './ListaPrecios';
@@ -36,10 +36,9 @@ export default function DescuentoProductos({datos, productosRefetch}) {
     const [ CrearDescuentoUnidad ] = useMutation(REGISTRAR_DESCUENTOS);
     const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
     const [ openDescuento, setOpenDescuento ] = useState(false);
-    const [ cleanList, setCleanList] = useState(false);
-    const [ descuentoPresente, setDescuentoPresente] = useState(false);
+    const [ cleanList, setCleanList ] = useState(false);
     const [ validate ] = useState(false);
-    const [ loading, setLoading] = useState(false);
+    const [ loading, setLoading ] = useState(false);
 
     const [ datosPreciosProducto, setDatosPreciosProducto ] = useState([]);
     const [ preciosDescuentos, setPreciosDescuentos] = useState([]);
@@ -50,7 +49,6 @@ export default function DescuentoProductos({datos, productosRefetch}) {
 
     const classes = useStyles();
 
-    console.log(datos)
     const handleCloseDescuentos = () => {
         if (datos.medidas_producto.length > 0) {
             setDatosPreciosProducto(datos.medidas_producto);
@@ -63,6 +61,7 @@ export default function DescuentoProductos({datos, productosRefetch}) {
         preciosDescuentos.splice(0, preciosDescuentos.length);
     };
 
+
     const verificarDatos = useCallback(
         (datos) => {
             for (let i = 0; i < datos.length; i++) {
@@ -73,9 +72,8 @@ export default function DescuentoProductos({datos, productosRefetch}) {
                             setPrecioPrueba(datos[i].descuento.precio_con_descuento);
                         }
                     }
-                    
                 }
-            }
+            };
     },
         [datos]
     );
@@ -175,7 +173,6 @@ export default function DescuentoProductos({datos, productosRefetch}) {
         }
     }
 
-    
     return (
         <div>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
@@ -244,7 +241,7 @@ export default function DescuentoProductos({datos, productosRefetch}) {
                                         <Slider
                                             disabled={preciosProductos.length === 0 ? true : false}
                                             getAriaValueText={valuetext}
-                                            value={value}
+                                            value={value.toFixed(2)}
                                             aria-labelledby="discrete-slider-small-steps"
                                             valueLabelDisplay="auto"
                                             onChange={obtenerPorcientoSlide} 
