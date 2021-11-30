@@ -24,6 +24,8 @@ import { useDebounce } from "use-debounce";
 import {
   findProductArray,
   calculatePrices,
+  verifiPrising,
+  formatCurrency
 } from "../../config/reuserFunctions";
 import { VentasContext } from '../../context/Ventas/ventasContext';
 
@@ -238,23 +240,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function EnhancedTable({
-  newProductoVentas,
-  setNewProductoVentas,
   setDatosVentasActual,
 }) {
   const classes = useStyles();
   const [ selected, setSelected ] = useState([]);
 
-  const { setProductoCambioPrecio } = useContext(VentasContext);
+  const { setProductoCambioPrecio, setPrecioSelectProductoVenta, updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
 
   const [datosTabla, setDatosTabla] = useState([]);
 
   useEffect(() => {
     const venta = JSON.parse(localStorage.getItem("DatosVentas"));
     setDatosTabla(venta === null ? [] : venta.productos);
-  }, [newProductoVentas]);
+  }, [updateTablaVentas]);
 
   const handleClick = (name) => {
+    // console.log("name",name);
     let newSelected = [];
     const exist = selected.indexOf(name) !== -1;
     if(exist){
@@ -262,8 +263,17 @@ export default function EnhancedTable({
     }else{
       newSelected = newSelected.concat([], name);
     }
-    console.log(name);
+    // console.log("selected",selected);
+    // console.log("newSelected",newSelected);
+    const producto = name.id_producto.precios.precios_producto.filter((p) => p.precio_neto === name.precio_actual_producto);
+    // console.log("producto",producto);
+   
+    if(producto.length > 0){
+      // console.log(producto);
+      setPrecioSelectProductoVenta(producto);
+    }
     setProductoCambioPrecio(name);
+    // console.log(name.id_producto.precios.precios_producto[0]);
     setSelected(newSelected);
   };
 
@@ -273,6 +283,7 @@ export default function EnhancedTable({
       clearTimeout(timer);
       if (e.detail === 2) {
         handleClick(producto);
+        // console.log(producto);
         setProductoCambioPrecio(producto);
       }
       
@@ -318,8 +329,8 @@ export default function EnhancedTable({
                   <RenderTableRows
                     key={index}
                     producto={producto}
-                    setNewProductoVentas={setNewProductoVentas}
-                    newProductoVentas={newProductoVentas}
+                    setUpdateTablaVentas={setUpdateTablaVentas}
+                    updateTablaVentas={updateTablaVentas}
                     setDatosVentasActual={setDatosVentasActual}
                     isItemSelected={isItemSelected}
                     labelId={labelId}
@@ -340,8 +351,8 @@ export default function EnhancedTable({
 
 const RenderTableRows = ({
   producto,
-  setNewProductoVentas,
-  newProductoVentas,
+  setUpdateTablaVentas,
+  updateTablaVentas,
   setDatosVentasActual,
   TwoClickInRowTableBuy,
   handleClick,
@@ -354,22 +365,36 @@ const RenderTableRows = ({
   const [newCantidadProduct, setNewCantidadProduct] = useState(
     producto.cantidad_venta
   );
+
+  const [ tempAmount, setTempAmount ] = useState(producto.cantidad_venta);
+
   const textfield = useRef(null);
   const [value] = useDebounce(newCantidadProduct, 500);
 
 
   useEffect(() => {
-    setNewCantidadProduct(producto.cantidad_venta);
+    setTempAmount(producto.cantidad_venta);
   }, [producto.cantidad_venta]);
 
   useEffect(() => {
     CalculeDataPricing(value);
   }, [value]);
 
+  const calculateNewPricingAmount = (cantidad) => {
+    try {
+      setTempAmount(cantidad);
+      setNewCantidadProduct(cantidad);
+      // console.log("cantidad",cantidad);
+    } catch (error) {
+      return false;
+    }
+  }
+
   const CalculeDataPricing = async (new_cant) => {
-    if (new_cant === "") {
-      setNewCantidadProduct(producto.cantidad_venta);
-    } else {
+    if(new_cant === "" || new_cant == 0){
+      setTempAmount(producto.cantidad_venta);
+    }else{
+      // console.log("entro a tabla");
       let venta = JSON.parse(localStorage.getItem("DatosVentas"));
       let productosVentas = venta === null ? [] : venta.productos;
       const venta_actual = venta === null ? [] : venta;
@@ -383,72 +408,159 @@ const RenderTableRows = ({
               iva: 0,
               ieps: 0,
               descuento: 0,
+              monedero: 0
             }
           : venta;
       //Calculos de impuestos que se van a restar de la venta;
       let calculoResta = {};
       //Calculos de impuestos que se van a sumar a la venta
       let calculoSuma = {};
+
+      let CalculosData = {};
+
       //Buscar y obtener ese producto en el array de ventas
       const producto_encontrado = await findProductArray(
         productosVentas,
         producto
       );
-
+        // console.log(new_cant);
       if (producto_encontrado.found) {
+        // console.log("se encontro");
         const { cantidad_venta, ...newP } =
           producto_encontrado.producto_found.producto;
-        //Sacar los impuestos que se van a restar
-        calculoResta = await calculatePrices(
-          newP,
-          cantidad_venta,
-          newP.granelProducto
-        );
-        // console.log(calculoResta);
-        //Sacar los impuestos que se van a sumar
-        calculoSuma = await calculatePrices(
-          newP,
-          new_cant,
-          newP.granelProducto
-        );
-        newP.cantidad_venta = parseInt(new_cant);
-        newP.precio_a_vender = calculoSuma.totalCalculo;
-        productosVentasTemp.splice(
-          producto_encontrado.producto_found.index,
-          1,
-          newP
-        );
+        newP.cantidad_venta = new_cant
+        // newP.precio_actual_producto = newP.descuento_activo ? newP.descuento.precio_con_descuento :  newP.precio;
+        // newP.precio_actual_producto = newP.descuento_activo ? newP.descuento.precio_con_descuento :  newP.precio;
+        // console.log(newP);
+        const verify_prising = await verifiPrising(newP);
+        // console.log(verify_prising);
+        // console.log("llego linea 434");
+        if (verify_prising.found) {
+          // console.log("llego linea 436");
+          // console.log(verify_prising);
+          calculoResta = await calculatePrices(
+            newP,
+            cantidad_venta,
+            newP.granel_producto,
+            newP.precio_actual_producto,
+            "TABLA"
+          );
+          // console.log(verify_prising.pricing);
+          //Sacar los impuestos que se van a sumar
+          calculoSuma = await calculatePrices(
+            newP,
+            new_cant,
+            newP.granel_producto,
+            verify_prising.pricing,
+            "TABLA"
+          );
+
+          // console.log(calculoSuma);
+          // console.log(calculoResta);
+  
+          newP.precio_a_vender = calculoSuma.totalCalculo;
+          newP.precio_anterior = newP.precio_actual_porducto;
+          newP.precio_actual_producto = verify_prising.pricing;
+          productosVentasTemp.splice(
+            producto_encontrado.producto_found.index,
+            1,
+            newP
+          );
+          
+  
+          CalculosData = {
+            subTotal:
+              parseFloat(venta_existente.subTotal) -
+              parseFloat(calculoResta.subtotalCalculo) +
+              calculoSuma.subtotalCalculo,
+            total:
+              parseFloat(venta_existente.total) -
+              parseFloat(calculoResta.totalCalculo) +
+              calculoSuma.totalCalculo,
+            impuestos:
+              parseFloat(venta_existente.impuestos) -
+              parseFloat(calculoResta.impuestoCalculo) +
+              calculoSuma.impuestoCalculo,
+            iva:
+              parseFloat(venta_existente.iva) -
+              parseFloat(calculoResta.ivaCalculo) +
+              calculoSuma.ivaCalculo,
+            ieps:
+              parseFloat(venta_existente.ieps) -
+              parseFloat(calculoResta.iepsCalculo) +
+              calculoSuma.iepsCalculo,
+            descuento:
+              parseFloat(venta_existente.descuento) -
+              parseFloat(calculoResta.descuentoCalculo) +
+              calculoSuma.descuentoCalculo,
+            monedero:
+              parseFloat(venta_existente.monedero) -
+              parseFloat(calculoResta.monederoCalculo) +
+              calculoSuma.monederoCalculo,
+          };
+        }else{
+          //Sacar los impuestos que se van a restar
+          // console.log("Entro a cantidad", newP.cantidad_venta);
+          calculoResta = await calculatePrices(
+            newP,
+            cantidad_venta,
+            newP.granel_producto,
+            newP.precio_actual_producto,
+            "TABLA"
+          );
+          // console.log(calculoResta);
+          //Sacar los impuestos que se van a sumar
+          calculoSuma = await calculatePrices(
+            newP,
+            new_cant,
+            newP.granel_producto,
+            newP.precio_actual_producto,
+            "TABLA"
+          );
+          newP.cantidad_venta = parseInt(new_cant);
+          newP.precio_anterior = newP.precio_actual_producto;
+          newP.precio_a_vender = calculoSuma.totalCalculo;
+          productosVentasTemp.splice(
+            producto_encontrado.producto_found.index,
+            1,
+            newP
+          );
+
+          CalculosData = {
+            subTotal:
+              parseFloat(venta_existente.subTotal) -
+              parseFloat(calculoResta.subtotalCalculo) +
+              calculoSuma.subtotalCalculo,
+            total:
+              parseFloat(venta_existente.total) -
+              parseFloat(calculoResta.totalCalculo) +
+              calculoSuma.totalCalculo,
+            impuestos:
+              parseFloat(venta_existente.impuestos) -
+              parseFloat(calculoResta.impuestoCalculo) +
+              calculoSuma.impuestoCalculo,
+            iva:
+              parseFloat(venta_existente.iva) -
+              parseFloat(calculoResta.ivaCalculo) +
+              calculoSuma.ivaCalculo,
+            ieps:
+              parseFloat(venta_existente.ieps) -
+              parseFloat(calculoResta.iepsCalculo) +
+              calculoSuma.iepsCalculo,
+            descuento:
+              parseFloat(venta_existente.descuento) -
+              parseFloat(calculoResta.descuentoCalculo) +
+              calculoSuma.descuentoCalculo,
+            monedero: parseFloat(venta_existente.monedero) - parseFloat(calculoResta.monederoCalculo) +
+            calculoSuma.monederoCalculo,
+          };
+        }
         // console.log(calculoSuma);
       } else {
         console.log("El producto no existe");
       }
       //Crear copia y guardar los impuestos a sumar
-      const CalculosData = {
-        subTotal:
-          parseFloat(venta_existente.subTotal) -
-          parseFloat(calculoResta.subtotalCalculo) +
-          calculoSuma.subtotalCalculo,
-        total:
-          parseFloat(venta_existente.total) -
-          parseFloat(calculoResta.totalCalculo) +
-          calculoSuma.totalCalculo,
-        impuestos:
-          parseFloat(venta_existente.impuestos) -
-          parseFloat(calculoResta.impuestoCalculo) +
-          calculoSuma.impuestoCalculo,
-        iva:
-          parseFloat(venta_existente.iva) -
-          parseFloat(calculoResta.ivaCalculo) +
-          calculoSuma.ivaCalculo,
-        ieps:
-          parseFloat(venta_existente.ieps) -
-          parseFloat(calculoResta.iepsCalculo) +
-          calculoSuma.iepsCalculo,
-        descuento:
-          parseFloat(venta_existente.descuento) -
-          parseFloat(calculoResta.descuentoCalculo) +
-          calculoSuma.descuentoCalculo,
-      };
+      // console.log("Datos de tabla",CalculosData);
       localStorage.setItem(
         "DatosVentas",
         JSON.stringify({
@@ -464,7 +576,7 @@ const RenderTableRows = ({
       );
       setDatosVentasActual(CalculosData);
       //Recargar la tabla de los productos
-      setNewProductoVentas(!newProductoVentas);
+      setUpdateTablaVentas(!updateTablaVentas);
     }
   };
 
@@ -492,8 +604,8 @@ const RenderTableRows = ({
         <TableCell>
           <Input
             inputRef={textfield}
-            onChange={(e) => setNewCantidadProduct(e.target.value)}
-            value={newCantidadProduct}
+            onChange={(e) => calculateNewPricingAmount(e.target.value)}
+            value={tempAmount}
             type="number"
             name="cantidad_venta"
           />
@@ -525,16 +637,11 @@ const RenderTableRows = ({
           )}
         </TableCell>
         <TableCell>
-          $ {producto.precio_a_vender.toFixed(2)}
-          {/* {producto.descuento_activo === true
-            ? producto.descuento.precio_con_descuento
-            : producto.precio} */}
+          $ { producto.precio_actual_producto % 1 === 0 ? producto.precio_actual_producto : producto.precio_actual_producto.toFixed(4)}
         </TableCell>
         <TableCell>
           <EliminarProductoVenta
             producto={producto}
-            setNewProductoVentas={setNewProductoVentas}
-            newProductoVentas={newProductoVentas}
             setDatosVentasActual={setDatosVentasActual}
           />
         </TableCell>

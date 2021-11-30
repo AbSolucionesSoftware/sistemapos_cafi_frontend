@@ -123,7 +123,8 @@ export default function ListaClientes({
           ieps: venta_actual.ieps === undefined ? 0 : venta_actual.ieps,
           descuento:
             venta_actual.descuento === undefined ? 0 : venta_actual.descuento,
-          tipo_cambio: venta_actual.tipo_cambio ? venta_actual.descuento : {},
+          monedero: venta_actual.monedero === undefined ? 0 : venta_actual.monedero,
+          tipo_cambio: venta_actual.tipo_cambio ? venta_actual.tipo_cambio : {},
           cliente: dataSelectRowClient,
           venta_cliente: true,
           productos:
