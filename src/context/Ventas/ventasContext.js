@@ -49,12 +49,6 @@ export const VentasProvider = ({ children }) => {
 
     const [updateTablaVentas, setUpdateTablaVentas] = useState(false);
 
-    const [open, setOpen] = useState(false);
-
-    // const [precioSeleccionadoTabla, setPrecioSeleccionadoTabla] = useState(false);
-
-    const [updateTablaVentas, setUpdateTablaVentas] = useState(false);
-
 	return (
 		<VentasContext.Provider value={
             { 

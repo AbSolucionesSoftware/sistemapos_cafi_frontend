@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import {
   Box,
-  // FormControl,
+  FormControl,
   Grid,
   IconButton,
   InputBase,
-  // MenuItem,
+  MenuItem,
   Paper,
-  // Select,
+  Select,
   Typography,
   // CircularProgress,
   // TextField,
@@ -144,7 +144,7 @@ export default function VentasGenerales() {
           fetchPolicy: "network-only"
         });
       } else {
-        // console.log(input_value);
+        // console.log(input_value);444567890-
         setGranelBase({
           granel: false,
           valor: 0,
