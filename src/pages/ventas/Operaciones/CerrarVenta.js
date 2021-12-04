@@ -7,6 +7,7 @@ import { FcDonate, FcShop } from 'react-icons/fc';
 import { Search } from '@material-ui/icons';
 import CloseIcon from '@material-ui/icons/Close';
 
+
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -18,12 +19,22 @@ export default function CerrarVenta() {
 
     const abrirCajon = () => {setCambio(!cambio)};
     const [open, setOpen] = useState(false);
+
+    const [totalVenta, setTotalVenta] = useState(0);
+    const [valorActual, setValorActual] = useState('EFECTIVO')
+    const [totalARestar, setTotalARestar] = useState(0);
     
     const handleClickOpen = () => { 
         let venta = JSON.parse(localStorage.getItem("DatosVentas"));
+        const total = venta === null ? 0 : venta.total;
         console.log(venta);
+        setTotalVenta(total)
+        setTotalARestar(total);
 		setOpen(!open);
 	};
+
+    console.log(totalVenta);
+    console.log(totalARestar);
 
     function funcion_tecla(event) {
 		const tecla_escape = event.keyCode;
@@ -31,6 +42,11 @@ export default function CerrarVenta() {
             handleClickOpen();
 		}
 	}
+
+    const changeValue = (e) => {
+        setValorActual(e)
+    }
+
 	window.onkeydown = funcion_tecla;
 
     return (
@@ -68,8 +84,11 @@ export default function CerrarVenta() {
                 <DialogContent>
                     <Grid container item lg={12} justify="center">
                         <Box display="flex" justifyContent="center" flexGrow={1}>
-                            <Box>
-                                <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cart.svg' alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
+                            <Box> 
+                                <img 
+                                    src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cart.svg' 
+                                    alt="icono ventas" className={classes.iconSizeDialogsPequeno} 
+                                />
                             </Box>
                             <Box m={2} >
                                 <Divider orientation="vertical" />
@@ -93,7 +112,7 @@ export default function CerrarVenta() {
                                     Total a pagar:
                                 </Typography>
                                 <Typography variant='h3' style={{color: 'green'}}>
-                                    $150.000
+                                    ${totalVenta}
                                 </Typography>
                                 <Typography variant='caption'>
                                     (CIENTO CICUENTA PESOS 00/100 MNX)
@@ -103,7 +122,12 @@ export default function CerrarVenta() {
                         <div className={classes.formInputFlex}>
                             <Box width="25%" textAlign="center">
                                 <Box>
-                                    <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/money.svg' alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
+                                    <img
+                                        src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/money.svg' 
+                                        alt="icono ventas" className={classes.iconSizeDialogsPequeno} 
+                                        onClick={() => changeValue("EFECTIVO")}
+                                        style={{cursor: 'pointer'}}
+                                    />
                                 </Box>
                                 <Typography variant='caption'>
                                     Efectivo
@@ -115,12 +139,19 @@ export default function CerrarVenta() {
                                         name="codigo_barras"
                                         id="form-producto-codigo-barras"
                                         variant="outlined"
+                                        value={valorActual === "EFECTIVO" ?  totalVenta : ''}
+                                        
                                     />
                                 </Box>
                             </Box>
                             <Box width="25%" textAlign="center">
                                 <Box>
-                                    <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tarjeta-de-credito.svg' alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
+                                    <img
+                                        src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tarjeta-de-credito.svg' 
+                                        alt="icono ventas" className={classes.iconSizeDialogsPequeno} 
+                                        onClick={() => changeValue("TARJETA")}
+                                        style={{cursor: 'pointer'}}
+                                    />
                                 </Box>
                                 <Typography variant='caption'>
                                     Tarjeta
@@ -132,12 +163,16 @@ export default function CerrarVenta() {
                                         name="codigo_barras"
                                         id="form-producto-codigo-barras"
                                         variant="outlined"
+                                        value={valorActual === "TARJETA" ?  totalVenta : ''}
                                     />
                                 </Box>
                             </Box>
                             <Box width="25%" textAlign="center">
                                 <Box> 
-                                    <FcShop style={{fontSize: 40}} />
+                                    <FcShop 
+                                        style={{fontSize: 50,cursor: 'pointer'}} 
+                                        onClick={() => changeValue("PUNTOS")}
+                                    />
                                 </Box>
                                 <Typography variant='caption'>
                                     Puntos
@@ -149,12 +184,20 @@ export default function CerrarVenta() {
                                         name="codigo_barras"
                                         id="form-producto-codigo-barras"
                                         variant="outlined"
+                                        value={valorActual === "PUNTOS" ?  totalVenta : ''}
                                     />
                                 </Box>
                             </Box>
                             <Box width="25%" textAlign="center">
-                                <Box p={0}>
-                                    <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/transferencia-bancaria.svg' alt="icono ventas" className={classes.iconSizeDialogsPequeno} />
+                                <Box 
+                                    p={0}
+                                >
+                                    <img 
+                                        src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/transferencia-bancaria.svg' 
+                                        alt="icono ventas" className={classes.iconSizeDialogsPequeno} 
+                                        onClick={() => changeValue("TRANSFERENCIA")}
+                                        style={{cursor: 'pointer'}}
+                                    />
                                 </Box>
                                 <Typography variant='caption'>
                                     Transferencia
@@ -166,6 +209,32 @@ export default function CerrarVenta() {
                                         name="codigo_barras"
                                         id="form-producto-codigo-barras"
                                         variant="outlined"
+                                        value={valorActual === "TRANSFERENCIA" ?  totalVenta : ''}
+                                    />
+                                </Box>
+                            </Box>
+                            <Box width="25%" textAlign="center">
+                                <Box 
+                                    p={0}
+                                >
+                                    <img 
+                                        src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/cheque.png' 
+                                        alt="icono ventas" className={classes.iconSizeDialogsPequeno} 
+                                        onClick={() => changeValue("CHEQUE")}
+                                        style={{cursor: 'pointer'}}
+                                    />
+                                </Box>
+                                <Typography variant='caption'>
+                                    Cheque
+                                </Typography>
+                                <Box display="flex">
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        name="codigo_barras"
+                                        id="form-producto-codigo-barras"
+                                        variant="outlined"
+                                        value={valorActual === "CHEQUE" ?  totalVenta : ''}
                                     />
                                 </Box>
                             </Box>
@@ -219,7 +288,7 @@ export default function CerrarVenta() {
                                         <b>Su cambio:</b>
                                     </Typography>
                                     <Typography variant='h4' style={{color: 'red'}}>
-                                        $150.000
+                                        {totalVenta > 0 && totalARestar > 0 ? totalARestar - totalVenta : 0}
                                     </Typography>
                                     <Typography variant='caption'>
                                         (CIENTO CICUENTA PESOS 00/100 MNX)

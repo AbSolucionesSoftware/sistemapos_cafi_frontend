@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
         width: 80,
     },
     iconSizeDialogsPequeno:{
-        width: 40,
+        width: 50,
     },
     containerImagenesProducto:{
         maxHeight: 320,
