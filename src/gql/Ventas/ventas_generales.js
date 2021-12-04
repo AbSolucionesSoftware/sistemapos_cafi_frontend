@@ -61,6 +61,9 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
       descuento_activo
       default
       id_producto {
+        imagenes{
+          url_imagen
+        }
         _id
         datos_generales {
           nombre_comercial

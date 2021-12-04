@@ -12,7 +12,7 @@ moment.locale('es');
 
 export default function AbrirTurno({handleClickOpen, setLoading}) {
     const [ CrearRegistroDeTurno ] = useMutation(REGISTRAR_TURNOS);
-    const { setAlert } = useContext(VentasContext);
+    const { setAlert, setTurnoActivo } = useContext(VentasContext);
     const [ error, setError] = useState(false);
 
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
@@ -130,6 +130,8 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                 localStorage.removeItem('turnoEnCurso');
                 setLoading(false);
                 handleClickOpen();
+                setTurnoActivo(true);
+
             }
         } catch (error) {
             setAlert({

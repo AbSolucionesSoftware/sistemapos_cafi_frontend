@@ -1,7 +1,11 @@
 import React, { useContext, useState } from 'react';
-import { Box, Button,  CircularProgress,  Dialog, DialogActions, DialogContent, Divider, FormControl, Grid,  MenuItem, Select, Slide, TextField, Typography } from '@material-ui/core'
-
+import { Box, Button, CircularProgress,  Dialog, DialogActions, 
+    DialogContent, Divider, FormControl, Grid,  MenuItem, 
+    Select, Slide, TextField, Typography } 
+from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
+import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import { FcBearish, FcBullish  } from "react-icons/fc";
 import { OBTENER_CONTABILIDAD } from '../../../gql/Catalogos/contabilidad';
 import { CREAR_HISTORIAL_CAJA, OBTENER_PRE_CORTE_CAJA } from '../../../gql/Cajas/cajas';
 
@@ -26,6 +30,7 @@ export default function DepositoRetiroCaja() {
     const { setAlert } = useContext(VentasContext);
     const [open, setOpen] = useState(false);
     const [cargando, setCargando] = useState(false);
+    const [movimiento, setMovimiento] = useState('');
     const [datosMovimiento, setDatosMovimiento] = useState([]);
 
 	const { loading, data } = useQuery(OBTENER_CONTABILIDAD, {
@@ -178,6 +183,11 @@ export default function DepositoRetiroCaja() {
         }
     };
 
+    const handleAlignment = (event, newAlignment) => {
+        setMovimiento(newAlignment);
+        setDatosMovimiento({...datosMovimiento, tipo_movimiento: newAlignment})
+    };
+
     return (
         <>
             <Button
@@ -264,7 +274,7 @@ export default function DepositoRetiroCaja() {
                             {turnoEnCurso ? (
                                 <>
                                 <div className={classes.formInputFlex}>
-                                    <Box width="100%">
+                                    {/* <Box width="100%">
                                         <Typography>
                                             Movimiento
                                         </Typography>
@@ -285,6 +295,32 @@ export default function DepositoRetiroCaja() {
                                                 <MenuItem value="RETIRO">Retiro</MenuItem>
                                             </Select>
                                         </FormControl>
+                                    </Box> */}
+                                    <Box width="100%" textAlign="center">
+                                        <ToggleButtonGroup 
+                                            onChange={handleAlignment}
+                                            value={movimiento}
+                                            exclusive 
+                                        >
+                                            <ToggleButton 
+                                                value="DEPOSITO" 
+                                            >
+                                                <Box p={1}>
+                                                    <Typography variant="h4">
+                                                        <b>DEPOSITO</b>
+                                                    </Typography>
+                                                </Box>
+                                            </ToggleButton>
+                                            <ToggleButton 
+                                                value="RETIRO"
+                                            >
+                                                <Box p={1}>
+                                                    <Typography variant="h4">
+                                                        <b>RETIRO</b>
+                                                    </Typography>
+                                                </Box>
+                                            </ToggleButton>
+                                        </ToggleButtonGroup>
                                     </Box>
                                 </div>
                                 <div className={classes.formInputFlex}>

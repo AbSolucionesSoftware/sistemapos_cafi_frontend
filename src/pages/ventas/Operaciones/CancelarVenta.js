@@ -35,7 +35,7 @@ export default function CancelarVenta() {
                         <img 
                             src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shopping-cart.svg' 
                             alt="icono cancelarventa" 
-                            style={{width: 38}}
+                            style={{width: 35}}
                         />
                     </Box>
                     <Box>
@@ -57,11 +57,6 @@ export default function CancelarVenta() {
 				TransitionComponent={Transition}
 			>
                 <DialogContent>
-                    <Box display="flex" alignItems="center" justifyContent="flex-end">
-                        <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
-                            <CloseIcon />
-                        </Button>
-                    </Box>
                     <Grid container item lg={12}>
                         <Box
                             display="flex"
@@ -89,13 +84,25 @@ export default function CancelarVenta() {
                 </DialogContent>
                 <DialogActions>
                     <Button 
-                        onClick={handleClickOpen} 
+                        onClick={()=>{
+                            localStorage.removeItem('DatosVentas');
+                            handleClickOpen();
+                        }} 
                         variant="contained" 
                         color="primary"
                         size="large"
                         autoFocus
                     >
                         Aceptar
+                    </Button>
+                    <Button 
+                        onClick={handleClickOpen} 
+                        variant="contained" 
+                        color="secondary"
+                        size="large"
+                        autoFocus
+                    >
+                        Cancelar
                     </Button>
                 </DialogActions>
             </Dialog>

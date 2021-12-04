@@ -11,12 +11,12 @@ import moment from 'moment';
 import 'moment/locale/es';
 moment.locale('es');
 
-export default function AbrirTurno({handleClickOpen, setLoading}) {
+export default function AbrirTurno({handleClickOpen, type, setLoading}) {
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const turnoEnCurso = JSON.parse(localStorage.getItem('cajaEnCurso'));
 
     const [ CrearRegistroDeTurno ] = useMutation(REGISTRAR_TURNOS);
-    const { setAlert } = useContext(VentasContext);
+    const { setTurnoActivo, setAlert } = useContext(VentasContext);
 
     const [ error, setError ] = useState(false);
     const [ abrirTurno, setAbrirTurno ] = useState([]);
@@ -135,7 +135,8 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
 
                 localStorage.setItem('turnoEnCurso', JSON.stringify(variableTurnoAbierto.data.crearRegistroDeTurno));
                 localStorage.setItem('sesionCafi', JSON.stringify(arraySesion));
-                
+                setTurnoActivo(true);
+
                 setAlert({
                     message: `Turno abierto con exito`,
                     status: "success",
@@ -143,7 +144,9 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                 });
                 refetch();
                 setLoading(false);
-                handleClickOpen();
+                if (type !== "FRENTE") {
+                    handleClickOpen();
+                }
             }
         } catch (error) {
             setLoading(false);
@@ -152,7 +155,9 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                 status: "error",
                 open: true,
             });
-            handleClickOpen();
+            if (type !== "FRENTE") {
+                handleClickOpen();
+            }
         }
     };
 
@@ -289,7 +294,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                         color="primary" 
                         size="large"
                     >
-                        Aceptar
+                        ABRIR TURNO
                     </Button>
                 </Box>
             </DialogActions>

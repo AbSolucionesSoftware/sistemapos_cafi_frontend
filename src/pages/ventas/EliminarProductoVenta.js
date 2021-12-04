@@ -101,8 +101,8 @@ export default function EliminarProducto({
 	return (
 		<Fragment>
 			{/* <SnackBarMessages alert={alert} setAlert={setAlert} /> */}
-			<IconButton onClick={() => handleToggleModal()}>
-				<Delete color="error" />
+			<IconButton size="small" onClick={() => handleToggleModal()}>
+				<Delete size="small" color="error" />
 			</IconButton>
 			<Dialog
 				open={open}
