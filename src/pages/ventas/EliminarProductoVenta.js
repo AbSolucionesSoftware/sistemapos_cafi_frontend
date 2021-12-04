@@ -56,7 +56,7 @@ export default function EliminarProducto({
 			const { cantidad_venta, ...newP } = producto;
 			// newP.precio_actual_producto = newP.descuento_activo ? newP.descuento.precio_con_descuento :  newP.precio;
 			//Sacar los impuestos que se van a restar
-			let calculoResta = await calculatePrices(newP, cantidad_venta, newP.granelProducto, newP.precio_actual_producto);
+			let calculoResta = await calculatePrices(newP, cantidad_venta, newP.granel_producto, newP.precio_actual_producto);
 			productosVentasTemp.splice(
 				producto_encontrado.producto_found.index,
 				1
@@ -101,8 +101,8 @@ export default function EliminarProducto({
 	return (
 		<Fragment>
 			{/* <SnackBarMessages alert={alert} setAlert={setAlert} /> */}
-			<IconButton onClick={() => handleToggleModal()}>
-				<Delete color="error" />
+			<IconButton size="small" onClick={() => handleToggleModal()}>
+				<Delete size="small" color="error" />
 			</IconButton>
 			<Dialog
 				open={open}

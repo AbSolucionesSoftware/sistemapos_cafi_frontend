@@ -72,7 +72,7 @@ export default function RegistroFactura() {
     });
   };
 
-  console.log(datosFactura);
+  
 
   return (
     <div>
@@ -171,38 +171,8 @@ export default function RegistroFactura() {
               <MenuItem value={moment().subtract(2, "d").format("LL")}>
                 {moment().subtract(2, "d").format("LL")}
               </MenuItem>
-              <MenuItem value={moment().subtract(3, "d").format("LL")}>
-                {moment().subtract(3, "d").format("LL")}
-              </MenuItem>
             </Select>
           </FormControl>
-        </Grid>
-        <Grid item md={2}>
-          <Typography>Folio:</Typography>
-          <TextField
-            value={datosFactura.folio}
-            placeholder="Selecciona un folio"
-            fullWidth
-            size="small"
-            variant="outlined"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <ListaFoliosFactura />
-                </InputAdornment>
-              ),
-            }}
-          />
-        </Grid>
-        <Grid item md={2}>
-          <Typography>Serie:</Typography>
-          <TextField
-            fullWidth
-            type="number"
-            size="small"
-            variant="outlined"
-            value={datosFactura.serie}
-          />
         </Grid>
         <Grid item md={2}>
           <Typography>Código postal:</Typography>
@@ -246,6 +216,12 @@ export default function RegistroFactura() {
               <MenuItem value="PPD - Pago en parcialidades">PPD - Pago en parcialidades</MenuItem>
             </Select>
           </FormControl>
+        </Grid>
+        <Grid item md={2} style={{display: "flex", alignItems: 'center', justifyContent: "center"}}>
+          <Typography>{`Folio: ${datosFactura.folio}`}</Typography>
+        </Grid>
+        <Grid item md={2} style={{display: "flex", alignItems: 'center', justifyContent: "center"}}>
+          <Typography>{`Serie: ${datosFactura.serie}`}</Typography>
         </Grid>
       </Grid>
       <Dialog

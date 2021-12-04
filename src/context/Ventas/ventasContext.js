@@ -32,14 +32,22 @@ export const VentasProvider = ({ children }) => {
         }
     );
 
-    const [productoCambioPrecio, setProductoCambioPrecio] = useState({});
-    const [precioSelectProductoVenta, setPrecioSelectProductoVenta] = useState([]);
+    const [ productoCambioPrecio, setProductoCambioPrecio ] = useState({});
+    const [ precioSelectProductoVenta, setPrecioSelectProductoVenta ] = useState([]);
+    const [ clientesVentas, setClientesVentas ] = useState([]);
+    const [ turnoActivo, setTurnoActivo ] = useState();
 
     const [ update, setUpdate ] = useState(false);
     const [ error, setError ] = useState(false);
-    const [ alert, setAlert ] = useState({ message: "", status: "", open: false });
-    const [abrirTurnosDialog, setAbrirTurnosDialog] = useState(false);
-    const [updateClientVenta, setUpdateClientVenta] = useState(false);
+    const [  alert, setAlert ] = useState({ message: "", status: "", open: false });
+    const [ abrirTurnosDialog, setAbrirTurnosDialog ] = useState(false);
+    const [ updateClientVenta, setUpdateClientVenta ] = useState(false);
+
+    const [open, setOpen] = useState(false);
+
+    // const [precioSeleccionadoTabla, setPrecioSeleccionadoTabla] = useState(false);
+
+    const [updateTablaVentas, setUpdateTablaVentas] = useState(false);
 
     const [open, setOpen] = useState(false);
 
@@ -73,7 +81,11 @@ export const VentasProvider = ({ children }) => {
                 setUpdateTablaVentas,
                 updateTablaVentas,
                 setOpen,
-                open
+                open,
+                clientesVentas, 
+                setClientesVentas,
+                turnoActivo, 
+                setTurnoActivo
                 // precioSeleccionadoTabla,
                 // setPrecioSeleccionadoTabla
             }

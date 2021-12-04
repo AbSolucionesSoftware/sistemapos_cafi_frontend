@@ -12,9 +12,14 @@ import {
   // CircularProgress,
   // TextField,
 } from "@material-ui/core";
-import { Search } from "@material-ui/icons";
 import useStyles from "./styles";
-// import TablaVentas from "./TablaVentas";
+
+import { FcRating, FcBusinessman, FcCalendar, FcSalesPerformance } from 'react-icons/fc';
+import { FaBarcode, FaMoneyCheckAlt } from "react-icons/fa";
+import { AiOutlineFieldNumber } from "react-icons/ai";
+import { Search } from "@material-ui/icons";
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
+
 import TablaVentasCheckbox from "./Tabla_ventas_checkbox";
 import { CONSULTA_PRODUCTO_UNITARIO } from "../../gql/Ventas/ventas_generales";
 import { useLazyQuery } from "@apollo/client";
@@ -43,7 +48,7 @@ export default function VentasGenerales() {
     valor: 0,
   });
 
-  const { updateTablaVentas, setUpdateTablaVentas, open, setOpen } = useContext(VentasContext);
+  const { updateTablaVentas, setUpdateTablaVentas, setOpen, clientesVentas  } = useContext(VentasContext);
 
   const [DatosVentasActual, setDatosVentasActual] = useState({
     subTotal: 0,
@@ -133,7 +138,10 @@ export default function VentasGenerales() {
         obtenerProductos({
           variables: {
             datosProductos: data_key,
+            sucursal: sesion.sucursal._id, 
+            empresa: sesion.empresa._id
           },
+          fetchPolicy: "network-only"
         });
       } else {
         // console.log(input_value);
@@ -144,7 +152,10 @@ export default function VentasGenerales() {
         obtenerProductos({
           variables: {
             datosProductos: input_value,
+            sucursal: sesion.sucursal._id,
+            empresa: sesion.empresa._id
           },
+          fetchPolicy: "network-only"
         });
       }
     }
@@ -215,7 +226,7 @@ export default function VentasGenerales() {
       monedero = monederoCalculo;
       // console.log(monedero);
       newP.cantidad_venta = 1;
-      newP.granelProducto = granelBase;
+      newP.granel_producto = granelBase;
       newP.precio_a_vender = totalCalculo;
       newP.precio_actual_producto = productoPrecioFinal;
       newP.precio_anterior = productoPrecioFinal;
@@ -262,7 +273,7 @@ export default function VentasGenerales() {
         calculoResta = await calculatePrices(
           newP,
           cantidad_venta,
-          newP.granelProducto,
+          newP.granel_producto,
           newP.precio_actual_producto,
           "TABLA"
         );
@@ -271,7 +282,7 @@ export default function VentasGenerales() {
         calculoSuma = await calculatePrices(
           newP,
           newP.cantidad_venta,
-          newP.granelProducto,
+          newP.granel_producto,
           verify_prising.pricing,
           "TABLA"
         );
@@ -360,7 +371,7 @@ export default function VentasGenerales() {
         descuento = descuentoCalculo;
         monedero = monederoCalculo;
 
-        newP.granelProducto = granelBase;
+        newP.granel_producto = granelBase;
         newP.precio_a_vender = totalCalculo;
         newP.precio_anterior = newP.precio_actual_producto;
         newP.precio_actual_producto = productoPrecioFinal;
@@ -400,26 +411,13 @@ export default function VentasGenerales() {
         setUpdateTablaVentas(!updateTablaVentas);
       }
     }
-
-
   };
 
   return (
     <Fragment>
       <SnackBarMessages alert={alert} setAlert={setAlert} />
-      <Grid container>
-        <Grid item lg={2}>
-          {sesion.empresa.imagen ? (
-            <Box className={classes.containerImage}>
-              <img
-                alt="imagen de empresa"
-                src={sesion.empresa.imagen}
-                className={classes.imagen}
-              />
-            </Box>
-          ) : null}
-        </Grid>
-        <Grid item lg={8}>
+      {/* <Grid container> */}
+        <Grid item lg={12}>
           <div className={classes.formInputFlex}>
             <Box
               width="100%"
@@ -429,16 +427,17 @@ export default function VentasGenerales() {
               justifySelf="center"
               alignItems="center"
             >
-              <Box mt={2} mr={1}>
+              <Box mt={1} mr={1}>
                 <img
                   src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/busqueda-de-codigos-de-barras.svg"
                   alt="iconoBander"
                   className={classes.iconSize}
                 />
               </Box>
-              <Box>
+              <Box width="100%">
                 <Paper className={classes.rootBusqueda}>
                   <InputBase
+                    width="100%"
                     fullWidth
                     placeholder="Buscar producto..."
                     onKeyUp={keyUpEvent}
@@ -457,14 +456,14 @@ export default function VentasGenerales() {
               justifySelf="center"
               alignItems="center"
             >
-              <Box mt={2} mr={1}>
+              <Box mt={1} mr={1}>
                 <img
                   src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/usuarios.svg"
                   alt="iconoBander"
                   className={classes.iconSize}
                 />
               </Box>
-              <Box width={250} alignItems="center">
+              <Box width="100%" alignItems="center">
                 <ClientesVentas sesion={sesion} />
                 {/* <Paper className={classes.rootBusqueda}>
                   <InputBase fullWidth placeholder="Buscar cliente..." />
@@ -474,32 +473,6 @@ export default function VentasGenerales() {
                 </Paper> */}
               </Box>
             </Box>
-            <Box
-              width="100%"
-              display="flex"
-              justifyItems="center"
-              alignSelf="center"
-              justifySelf="center"
-              alignItems="center"
-            >
-              <Box mt={2} mr={1}>
-                <img
-                  src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/admin.svg"
-                  alt="iconoBander"
-                  className={classes.iconSize}
-                />
-              </Box>
-              <Box>
-                <Paper className={classes.rootBusqueda}>
-                  <InputBase fullWidth placeholder="Buscar vendedor..." />
-                  <IconButton>
-                    <Search />
-                  </IconButton>
-                </Paper>
-              </Box>
-            </Box>
-          </div>
-          <div className={classes.formInputFlex}>
             <Box width="100%">
               <MonedaCambio />
             </Box>
@@ -511,10 +484,10 @@ export default function VentasGenerales() {
                   className={classes.iconSize}
                 />
               </Box>
-              {/* <Box>
+              <Box width="100%" >
                 <FormControl variant="outlined" fullWidth size="small">
                   <Select id="tipo_documento" name="tipo_documento">
-                    <MenuItem value="TICKET">
+                    <MenuItem value="">
                       <em>Selecciona uno</em>
                     </MenuItem>
                     <MenuItem value="TICKET">TICKET</MenuItem>
@@ -522,7 +495,7 @@ export default function VentasGenerales() {
                     <MenuItem value="NOTA REMISION">NOTA REMISION</MenuItem>
                   </Select>
                 </FormControl>
-              </Box> */}
+              </Box> 
             </Box>
           </div>
         </Grid>
@@ -539,70 +512,179 @@ export default function VentasGenerales() {
             </Box>
           </Box>
         </Grid> */}
-      </Grid>
+      {/* </Grid> */}
 
       <Grid item lg={12}>
-        {/* <TablaVentas
-          newProductoVentas={newProductoVentas}
-          setNewProductoVentas={setNewProductoVentas}
-          setDatosVentasActual={setDatosVentasActual}
-        /> */}
         <TablaVentasCheckbox setDatosVentasActual={setDatosVentasActual} />
       </Grid>
+      
+      <Paper elevantion={3} style={{padding: 2, marginTop: 2}}> 
+        <Grid container>
+          <Grid item lg={7}>
+            {clientesVentas ? (
+              <Grid 
+                container
+                direction="row"
+                justifyContent="flex-end"
+                alignItems="center"  
+              >
+                <Grid item lg={7}>
+                  <Box
+                    flexDirection="row-reverse"
+                    display="flex"
+                    alignItems="center"
+                  >
+                    <Box>
+                      <Typography variant="subtitle1">
+                        Cliente: <b style={{fontSize: 16}}>{clientesVentas.nombre_cliente}</b>
+                      </Typography>
+                    </Box>
+                    <Box mt={.5}>
+                      <FcBusinessman style={{fontSize: 19}} />
+                    </Box>
+                  </Box>
+                  <Box
+                    flexDirection="row-reverse"
+                    display="flex"
+                    alignItems="center"
+                  >
+                    <Box>
+                     <Typography variant="subtitle1">
+                         Cliente.: <b style={{fontSize: 16}}>{clientesVentas.numero_cliente}</b>
+                      </Typography>
+                    </Box>
+                    <Box mt={.5}>
+                      <AiOutlineFieldNumber style={{fontSize: 22}} />
+                    </Box>
+                  </Box>
+                  <Box
+                    flexDirection="row-reverse"
+                    display="flex"
+                    alignItems="center"
+                  >
+                    <Box>
+                      <Typography variant="subtitle1">
+                        Clave Clte.: <b style={{fontSize: 16}}>{clientesVentas.clave_cliente}</b>
+                      </Typography>
+                    </Box>
+                    <Box mt={.5}>
+                      <FaBarcode style={{fontSize: 19}} />
+                    </Box>
+                  </Box>
+                </Grid>
+                <Grid item lg={5}>
+                  <Box
+                    flexDirection="row-reverse"
+                    display="flex"
+                    alignItems="center"
+                  >
+                    <Box>
+                      <Typography variant="subtitle1">
+                        Limite Credito: <b style={{fontSize: 16}}>${clientesVentas.limite_credito ? clientesVentas.limite_credito : 0}</b>
+                      </Typography>
+                    </Box>
+                    <Box mt={.5}>
+                      <FaMoneyCheckAlt style={{fontSize: 19}} />
+                    </Box>
+                  </Box>
+                  <Box
+                    flexDirection="row-reverse"
+                    display="flex"
+                    alignItems="center"
+                  >
+                    <Box>
+                      <Typography variant="subtitle1">
+                       Descs.: <b style={{fontSize: 16}}>{clientesVentas.numero_descuento ? clientesVentas.numero_descuento : 0}%</b>
+                      </Typography>
+                    </Box>
+                    <Box mt={.5}>
+                      <AiOutlineFieldNumber style={{fontSize: 22}} />
+                    </Box>
+                  </Box>
+                  <Box
+                    flexDirection="row-reverse"
+                    display="flex"
+                    alignItems="center"
+                  >
+                    <Box>
+                      <Typography variant="subtitle1">
+                        Dias Credito: <b style={{fontSize: 16}}>{clientesVentas.dias_credito ? clientesVentas.dias_credito : 0} Dias</b>
+                      </Typography>
+                    </Box>
+                    <Box mt={.5}>
+                      <FcCalendar style={{fontSize: 19}} />
+                    </Box>
+                  </Box>
+                </Grid>
+              </Grid>
+            ):(null)}
+          </Grid>
+          <Grid item lg={5}>
+            <Grid container>
+              <Grid item lg={7}>
+                <Box display="flex" alignItems="center" flexDirection="row-reverse" >
+                  <Box>
+                    <Typography variant="subtitle1">
+                      Monedero : <b style={{fontSize: 17}}>$ {DatosVentasActual?.monedero ? DatosVentasActual?.monedero?.toFixed(2) : 0}</b>
+                    </Typography>
+                  </Box>
+                  <Box mt={.5}>
+                    <FcSalesPerformance style={{fontSize: 19}} />
+                  </Box>
+                </Box>
+                <Box
+                  flexDirection="row-reverse"
+                  alignItems="center"
+                  display="flex"
+                >
+                  <Box>
+                    <Typography variant="subtitle1">
+                      Descuento: <b style={{fontSize: 17}}>${DatosVentasActual?.descuento ? DatosVentasActual?.descuento?.toFixed(2) : 0}</b>
+                    </Typography>
+                  </Box>
+                  <Box mt={.5}>
+                    <FcRating style={{fontSize: 19}} />
+                  </Box>
+                </Box>
+              </Grid>
 
-      <Grid container item lg={12} justify="flex-end">
-        <Box p={1}>
-          <Paper elevation={3}>
-            <Box display="flex">
-              <Box
-                p={1}
-                display="flex"
-                justifySelf="center"
-                alignItems="center"
-              >
-                <Typography variant="subtitle1">
-                  Iva: $ {DatosVentasActual?.iva ? DatosVentasActual.iva.toFixed(2) : 0}
-                </Typography>
-              </Box>
-              <Box
-                p={1}
-                display="flex"
-                justifySelf="center"
-                alignItems="center"
-              >
-                <Typography variant="subtitle1">
-                  Descuento: ${DatosVentasActual?.descuento ? DatosVentasActual?.descuento?.toFixed(2) : 0}
-                </Typography>
-              </Box>
-              <Box
-                mr={1}
-                display="flex"
-                justifySelf="center"
-                alignItems="center"
-              >
-                <Typography variant="subtitle1">
-                  Subtotal: $ {DatosVentasActual?.subTotal ? DatosVentasActual?.subTotal?.toFixed(2) : 0}
-                </Typography>
-              </Box>
-            </Box>
-            <Box display="flex" flexDirection="row-reverse" mr={1}>
-              <Typography variant="subtitle1">
-                Impuestos: $ {DatosVentasActual?.impuestos ? DatosVentasActual?.impuestos?.toFixed(2) : 0}
+              <Grid item lg={5}>
+                  <Box
+                    flexDirection="row-reverse"
+                    display="flex"
+                    mr={1}
+                  >
+                    <Typography variant="subtitle1">
+                      Subtotal: <b style={{fontSize: 17}}>$ {DatosVentasActual?.subTotal ? DatosVentasActual?.subTotal?.toFixed(2) : 0}</b>
+                    </Typography>
+                  </Box>
+                  <Box display="flex" flexDirection="row-reverse" mr={1}>
+                    <Typography variant="subtitle1">
+                      Impuestos: <b style={{fontSize: 17}}>$ {DatosVentasActual?.impuestos ? DatosVentasActual?.impuestos?.toFixed(2) : 0}</b>
+                    </Typography>
+                  </Box>
+                  <Box
+                    flexDirection="row-reverse"
+                    display="flex"
+                    mr={1}
+                  >
+                    <Typography variant="subtitle1" >
+                      Iva: <b style={{fontSize: 17}}>$ {DatosVentasActual?.iva ? DatosVentasActual.iva.toFixed(2) : 0}</b>
+                    </Typography>
+                  </Box>
+              </Grid>
+            </Grid>
+            <Box display="flex" flexDirection="row-reverse" p={1}>
+              <Typography variant="h4">
+                Total: <b style={{color: "green"}}>${DatosVentasActual?.total ? DatosVentasActual?.total.toFixed(2) : 0}</b>
               </Typography>
+              <Box mt={.5} >
+                <MonetizationOnIcon style={{fontSize: 37, color: "green"}} />
+              </Box>
             </Box>
-            <Box display="flex" flexDirection="row-reverse" mr={1}>
-              <Typography variant="subtitle1">
-                Monedero: $ {DatosVentasActual?.monedero ? DatosVentasActual?.monedero?.toFixed(2) : 0}
-              </Typography>
-            </Box>
-            <Box display="flex" flexDirection="row-reverse" mr={1} mt={1}>
-              <Typography variant="h5">
-                Total: {DatosVentasActual?.total ? DatosVentasActual?.total.toFixed(2) : 0}
-              </Typography>
-            </Box>
-          </Paper>
-        </Box>
-      </Grid>
+          </Grid>
+        </Grid>
+      </Paper>
     </Fragment>
   );
 }

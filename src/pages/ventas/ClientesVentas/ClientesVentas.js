@@ -56,13 +56,12 @@ export default function ClientesVentas() {
         <>
             <ClienteProvider>
             <Button 
-                className={classes.borderBotonChico}
+                style={{height: '100%', width: '100%', border: '.6px solid #DBDBDB'}}
                 onClick={handleClickOpen}
-                style={{height: 'auto', width: '100%'}}
             >
                 <Box>
                     <Box> 
-                        <FcBusinessman style={{ fontSize: 48 }}/>
+                        <FcBusinessman style={{ fontSize: 45 }}/>
                     </Box>
                     <Box>
                         <Typography variant="body2" >

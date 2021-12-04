@@ -25,7 +25,6 @@ import {
   findProductArray,
   calculatePrices,
   verifiPrising,
-  formatCurrency
 } from "../../config/reuserFunctions";
 import { VentasContext } from '../../context/Ventas/ventasContext';
 
@@ -218,13 +217,21 @@ EnhancedTableToolbar.propTypes = {
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
+    marginTop: 7
   },
   paper: {
     width: "100%",
     marginBottom: theme.spacing(2),
   },
+  container: {
+    maxHeight: "60vh",
+    '& ::-webkit-scrollbar': {
+      display: 'none'
+    }
+  },
   table: {
     minWidth: 750,
+    minHeight: "50vh",
   },
   visuallyHidden: {
     border: 0,
@@ -236,7 +243,7 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     top: 20,
     width: 1,
-  },
+  }
 }));
 
 export default function EnhancedTable({
@@ -298,27 +305,26 @@ export default function EnhancedTable({
 
   return (
     <div className={classes.root}>
-      <Paper className={classes.paper}>
-        <TableContainer>
+      <Paper>
+        <TableContainer className={classes.container} >
           <Table
+            stickyHeader
             className={classes.table}
+            size="small"
             aria-labelledby="tableTitle"
-            size={"medium"}
-            aria-label="enhanced table"
+            aria-label="a dense table"
           >
             <TableHead>
               <TableRow>
-                <TableCell style={{ width: 25 }}></TableCell>
-                <TableCell style={{ width: 25 }}>Cantidad</TableCell>
-                <TableCell style={{ width: 330 }}>Descripcion</TableCell>
-                <TableCell style={{ width: 100 }}>Existencias</TableCell>
-                <TableCell style={{ width: 100 }}>% Desc</TableCell>
-                <TableCell style={{ width: 100 }}>Receta</TableCell>
-                <TableCell style={{ width: 100 }}>U. Venta</TableCell>
-                <TableCell style={{ width: 100 }}>Precio U</TableCell>
-                <TableCell key={1} align="center" style={{ width: 35 }}>
-                  Eliminar
-                </TableCell>
+                <TableCell style={{ width: 25, textAlign:"center" }}></TableCell>
+                <TableCell style={{ width: 25, textAlign:"center" }}>Cantidad</TableCell>
+                <TableCell style={{ width: 340 }}>Descripcion</TableCell>
+                <TableCell style={{ width: 40, textAlign:"center" }}>Exis.</TableCell>
+                <TableCell style={{ width: 50, textAlign:"center" }}><b>% Desct.</b></TableCell>
+                <TableCell style={{ width: 40, textAlign:"center" }}>Rx.</TableCell>
+                <TableCell style={{ width: 50, textAlign:"center" }}>U. Venta</TableCell>
+                <TableCell style={{ width: 100, textAlign:"center" }}>Precio U</TableCell>
+                <TableCell align="center" style={{ width: 10 }} />
               </TableRow>
             </TableHead>
             <TableBody>
@@ -365,7 +371,7 @@ const RenderTableRows = ({
   const [newCantidadProduct, setNewCantidadProduct] = useState(
     producto.cantidad_venta
   );
-
+  
   const [ tempAmount, setTempAmount ] = useState(producto.cantidad_venta);
 
   const textfield = useRef(null);
@@ -441,7 +447,7 @@ const RenderTableRows = ({
           calculoResta = await calculatePrices(
             newP,
             cantidad_venta,
-            newP.granelProducto,
+            newP.granel_producto,
             newP.precio_actual_producto,
             "TABLA"
           );
@@ -450,7 +456,7 @@ const RenderTableRows = ({
           calculoSuma = await calculatePrices(
             newP,
             new_cant,
-            newP.granelProducto,
+            newP.granel_producto,
             verify_prising.pricing,
             "TABLA"
           );
@@ -504,7 +510,7 @@ const RenderTableRows = ({
           calculoResta = await calculatePrices(
             newP,
             cantidad_venta,
-            newP.granelProducto,
+            newP.granel_producto,
             newP.precio_actual_producto,
             "TABLA"
           );
@@ -513,7 +519,7 @@ const RenderTableRows = ({
           calculoSuma = await calculatePrices(
             newP,
             new_cant,
-            newP.granelProducto,
+            newP.granel_producto,
             newP.precio_actual_producto,
             "TABLA"
           );
@@ -613,33 +619,33 @@ const RenderTableRows = ({
         <TableCell>
           {producto.id_producto.datos_generales.nombre_comercial}
         </TableCell>
-        <TableCell>
+        <TableCell  style={{ textAlign:"center"}} >
           {producto.concepto === "medida"
             ? producto.cantidad
             : producto.inventario_general.map(
                 (existencia) => `${existencia.cantidad_existente}`
               )}
         </TableCell>
-        <TableCell>
+        <TableCell  style={{ textAlign:"center"}} >
           %{" "}
           {producto.descuento_activo === true
             ? producto.descuento.porciento
             : 0}
         </TableCell>
-        <TableCell>
+        <TableCell style={{ textAlign:"center"}} >
           {producto.id_producto.datos_generales.receta_farmacia === true
             ? "Si"
             : "No"}
         </TableCell>
-        <TableCell>
+        <TableCell style={{ textAlign:"center"}} >
           {producto.inventario_general.map(
             (existencia) => `${existencia.unidad_inventario}`
           )}
         </TableCell>
-        <TableCell>
+        <TableCell style={{ textAlign:"center"}} >
           $ { producto.precio_actual_producto % 1 === 0 ? producto.precio_actual_producto : producto.precio_actual_producto.toFixed(4)}
         </TableCell>
-        <TableCell>
+        <TableCell style={{ textAlign:"center"}} >
           <EliminarProductoVenta
             producto={producto}
             setDatosVentasActual={setDatosVentasActual}

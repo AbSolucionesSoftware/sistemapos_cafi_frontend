@@ -6,12 +6,13 @@ import { TextField } from "@material-ui/core";
 // import { BlurLinear } from "@material-ui/icons";
 // import { VentasContext } from "../../context/Ventas/ventasContext";
 import { ClienteCtx } from '../../context/Catalogos/crearClienteCtx';
+import { VentasContext } from "../../context/Ventas/ventasContext";
 
 export default function ClientesVentas() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
-  const { setUpdateClientVenta, updateClientVenta } =
-  useContext(ClienteCtx);
+  const { setUpdateClientVenta, updateClientVenta } = useContext(ClienteCtx);
+  const { setClientesVentas } = useContext(VentasContext);
 
   const [selectClient, setSelectClient] = useState({});
 
@@ -38,6 +39,7 @@ export default function ClientesVentas() {
       const venta = JSON.parse(localStorage.getItem("DatosVentas"));
       if (venta !== null) {
         setSelectClient(venta.cliente);
+        setClientesVentas(venta.cliente);
         refetch();
       }
     }
@@ -50,7 +52,7 @@ export default function ClientesVentas() {
       const venta = JSON.parse(localStorage.getItem("DatosVentas"));
       let venta_actual = venta === null ? {} : venta;
       setSelectClient(value);
-      // console.log(value);
+      
       // console.log(venta_actual);
       let dataCliente = {
           subTotal:

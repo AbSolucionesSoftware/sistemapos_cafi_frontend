@@ -232,19 +232,11 @@ function InformacionCorteCaja({corte, montos_sistema, loading}) {
 								</TableCell>
 							</TableBody>
 							<TableBody>
-								<TableCell align="center"><b>TARJETA DE CREDITO</b></TableCell>
-								<TableCell align="center">${corte.montos_en_caja.monto_tarjeta_credito}</TableCell>
-								<TableCell align="center">${montos_sistema.monto_tarjeta_credito}</TableCell>
+								<TableCell align="center"><b>TARJETA DE TARJETA</b></TableCell>
+								<TableCell align="center">${corte.montos_en_caja.monto_tarjeta}</TableCell>
+								<TableCell align="center">${montos_sistema.monto_tarjeta}</TableCell>
 								<TableCell align="center">
-									${( corte.montos_en_caja.monto_tarjeta_credito - montos_sistema.monto_tarjeta_credito)}
-								</TableCell>
-							</TableBody>
-							<TableBody>
-								<TableCell align="center"><b>TARJETA DE DEBITO</b></TableCell>
-								<TableCell align="center">${corte.montos_en_caja.monto_tarjeta_debito}</TableCell>
-								<TableCell align="center">${montos_sistema.monto_tarjeta_debito}</TableCell>
-								<TableCell align="center">
-									${( corte.montos_en_caja.monto_tarjeta_debito - montos_sistema.monto_tarjeta_debito)}
+									${( corte.montos_en_caja.monto_tarjeta - montos_sistema.monto_tarjeta)}
 								</TableCell>
 							</TableBody>
 							<TableBody>
@@ -256,11 +248,11 @@ function InformacionCorteCaja({corte, montos_sistema, loading}) {
 								</TableCell>
 							</TableBody>
 							<TableBody>
-								<TableCell align="center"><b>MONTO EN PUNTOS</b></TableCell>
-								<TableCell align="center">${corte.montos_en_caja.monto_puntos}</TableCell>
-								<TableCell align="center">${montos_sistema.monto_puntos}</TableCell>
+								<TableCell align="center"><b>MONTO EN MONEDERO</b></TableCell>
+								<TableCell align="center">${corte.montos_en_caja.monto_monedero}</TableCell>
+								<TableCell align="center">${montos_sistema.monto_monedero}</TableCell>
 								<TableCell align="center">
-									${( corte.montos_en_caja.monto_puntos - montos_sistema.monto_puntos)}
+									${( corte.montos_en_caja.monto_monedero - montos_sistema.monto_monedero)}
 								</TableCell>
 							</TableBody>
 							<TableBody>

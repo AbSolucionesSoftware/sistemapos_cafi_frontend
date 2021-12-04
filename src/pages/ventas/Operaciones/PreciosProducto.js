@@ -93,7 +93,7 @@ export default function PreciosProductos() {
         calculoResta = await calculatePrices(
           newProductoPrecioNuevo,
           newProductoPrecioNuevo.cantidad_venta,
-          newProductoPrecioNuevo.granelProducto,
+          newProductoPrecioNuevo.granel_producto,
           newProductoPrecioNuevo.precio_actual_producto
         );
 
@@ -101,7 +101,7 @@ export default function PreciosProductos() {
         calculoSuma = await calculatePrices(
           newProductoPrecioActual,
           newProductoPrecioActual.cantidad_venta,
-          newProductoPrecioActual.granelProducto,
+          newProductoPrecioActual.granel_producto,
           precioSelectProductoVenta[0].precio_neto
         );
 
@@ -202,7 +202,7 @@ export default function PreciosProductos() {
             <img
               src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/money.svg"
               alt="icono money"
-              style={{ fontSize: 35 }}
+              style={{ fontSize: 25 }}
             />
           </Box>
           <Box>

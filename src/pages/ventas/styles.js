@@ -5,6 +5,9 @@ const useStyles = makeStyles((theme) => ({
 	root:{
         marginTop: theme.spacing(2)
     },
+    rootPrecioProductos:{
+        minHeight: '40vh',
+    },
     containerImage:{
         maxWidth: 150,
         maxHeight: 150,
@@ -25,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
         height: 35,
 		display: 'flex',
 		padding: theme.spacing(1),
-        marginTop: theme.spacing(1)
+        // marginTop: theme.spacing(1)
 	},
     rootFecha: {
         height: 40,
@@ -35,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     formInputFlex: {
 		display: 'flex',
 		'& > *': {
-			margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
+			margin: `${theme.spacing(1)}px ${theme.spacing(.5)}px`
 		},
 		'& .obligatorio': {
 			color: 'red'
@@ -71,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
     },
 	borderBotonChico:{
 		minWidth: '100%',
-		height: '35%',
+		height: '100%',
         border: '.6px solid #DBDBDB'
     }
 }));

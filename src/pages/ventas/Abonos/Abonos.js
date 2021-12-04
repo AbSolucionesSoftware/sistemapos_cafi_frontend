@@ -25,12 +25,12 @@ export default function Abonos() {
     return (
         <>
             <Button 
-                className={classes.borderBoton}
+                className={classes.borderBotonChico}
                 onClick={handleClickOpen}
             >
                 <Box>
                     <Box>
-                        <FcDonate style={{fontSize: 100}} />
+                        <FcDonate style={{fontSize: 35}} />
                     </Box>
                     <Box>
                         <Typography variant="body2" >
