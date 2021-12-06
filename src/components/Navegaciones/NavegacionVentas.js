@@ -34,7 +34,7 @@ import CancelarVenta from '../../pages/ventas/Operaciones/CancelarVenta';
 import CerrarVenta from '../../pages/ventas/Operaciones/CerrarVenta';
 import ConsultarPrecio from '../../pages/ventas/Operaciones/ConsultarPrecio';
 import Cotizacion from '../../pages/ventas/Cotizacion/Cotizacion';
-import BuscarProducto from '../../pages/ventas/Operaciones/BuscarProducto';
+import BuscarProducto from '../../pages/ventas/BuscarProductos/BuscarProducto';
 import VentaEnEspera from '../../pages/ventas/Operaciones/VentaEnEspera';
 import ProductoRapidoIndex from '../../pages/ventas/ArticuloRapido/indexArticuloRapido';
 import ClientesVentas from '../../pages/ventas/ClientesVentas/ClientesVentas';

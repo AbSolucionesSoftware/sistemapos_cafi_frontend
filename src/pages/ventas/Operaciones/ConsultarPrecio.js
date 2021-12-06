@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-
-import { Box, Button,  CircularProgress,  Dialog,  DialogActions, DialogContent, Divider, Grid,  IconButton,  InputBase,  Paper,  Slide,  Typography } from '@material-ui/core'
+import { Box, Button,  CircularProgress,  Dialog,  DialogActions, 
+        DialogContent, Divider, Grid,  IconButton,  
+        InputBase,  Paper,  Slide,  Typography } 
+from '@material-ui/core'
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import CloseIcon from '@material-ui/icons/Close';
-
 import useStyles from '../styles';
 import { Search } from '@material-ui/icons';
 import { useLazyQuery } from '@apollo/client';
 import { CONSULTA_PRODUCTO_UNITARIO } from '../../../gql/Ventas/ventas_generales';
-import { useDebounce } from 'use-debounce/lib';
-
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -18,7 +17,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function ConsultarPrecio() {
     const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
-    const [obtenerProductos, { data, loading, error }] = useLazyQuery(
+    const [obtenerProductos, { data, loading }] = useLazyQuery(
         CONSULTA_PRODUCTO_UNITARIO,
         {
           variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id },
@@ -125,8 +124,8 @@ export default function ConsultarPrecio() {
                         </Box>
                     </Grid>
                     <div className={classes.formInputFlex}>
-                        <Box width="100%">
-                            <Paper className={classes.rootBusqueda}>
+                        <Box width="50%">
+                            <Paper className={classes.rootBusquedaProductos}>
                                 <InputBase
                                     fullWidth
                                     onKeyUp={keyUpEvent}
@@ -165,8 +164,6 @@ export default function ConsultarPrecio() {
                                             <PhotoLibraryIcon style={{fontSize: 40}} />
                                         </Box>
                                     )}
-                                    
-                                    
                                 </Box>
                             </Grid>
                             <Grid item lg={6} md={6}>
@@ -192,7 +189,7 @@ export default function ConsultarPrecio() {
                                             </Typography>
                                             <Typography variant="h3">
                                                 {productoBase?.descuento_activo === true ? 
-                                                    (<b style={{color: "red"}}>${productoBase?.descuento?.precio_con_descuento.toFixed(2)}</b>) :
+                                                    (<b style={{color: "green"}}>${productoBase?.descuento?.precio_con_descuento.toFixed(2)}</b>) :
                                                     (<b style={{color: "green"}}>${productoBase?.precio}</b>)}
                                             </Typography>
                                         </Box>
@@ -203,7 +200,7 @@ export default function ConsultarPrecio() {
                                                 <Typography>
                                                     <b>Precio S/D</b>
                                                 </Typography>
-                                                <Typography variant="h5" style={{color: "green"}}>
+                                                <Typography variant="h6" style={{color: "#BCBCBC", textDecoration: 'line-through'}}>
                                                     <b> ${productoBase?.precio} </b>
                                                 </Typography>
                                             </Box>

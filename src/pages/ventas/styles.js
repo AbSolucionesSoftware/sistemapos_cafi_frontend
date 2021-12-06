@@ -30,6 +30,12 @@ const useStyles = makeStyles((theme) => ({
 		padding: theme.spacing(1),
         // marginTop: theme.spacing(1)
 	},
+    rootBusquedaProductos: {
+        height: 35,
+		display: 'flex',
+		padding: theme.spacing(1),
+        // marginTop: theme.spacing(1)
+	},
     rootFecha: {
         height: 40,
         maxWidth: 150,
