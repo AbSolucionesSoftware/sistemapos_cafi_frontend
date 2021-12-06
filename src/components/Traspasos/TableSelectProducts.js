@@ -796,7 +796,7 @@ export default function EnhancedTable(props) {
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
-            size={'medium'}
+            size={'large'}
             aria-label="enhanced table"
           >
             <EnhancedTableHead
@@ -908,6 +908,7 @@ export default function EnhancedTable(props) {
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}
+          labelRowsPerPage={""}
           // onRowsPerPageChange={handleChangeRowsPerPage}
         />
        

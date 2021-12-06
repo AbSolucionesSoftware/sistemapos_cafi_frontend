@@ -240,8 +240,8 @@ export default function Traspasos() {
 
     useEffect(() => {
         if(almacenOrigen){
-            obtenerAlmacenes()
-            
+            obtenerAlmacenes();
+            obtenerProductosAlmacen();
         }
 <<<<<<< HEAD
     }, [almacenOrigen ])
@@ -984,15 +984,19 @@ export default function Traspasos() {
                                 </Grid> 
                           
                                 <Box  mt={2}>
-                                    <Grid container style={{width:'100%', flexDirection:'row'}}>
+                                    <Grid container spacing={2} style={{width:'100%'}}>
+                                         <Grid item md={6}>
                                         {
                                             (isAlmacenOrigen) ? 
+                                           
                                             <TableSelectProducts title='Productos' add={true} almacenOrigen={almacenOrigen} />
                                             :
                                              <TableSelectProducts title='Productos' add={true} almacenOrigen={null} />   
                                         }
-                                        
-                                        <TableSelectProducts title='Productos a traspasar' add={false} almacenOrigen={almacenOrigen}  />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TableSelectProducts title='Productos a traspasar' add={false} almacenOrigen={almacenOrigen}  />
+                                        </Grid>
                                     </Grid>
                                 </Box>
                                      
