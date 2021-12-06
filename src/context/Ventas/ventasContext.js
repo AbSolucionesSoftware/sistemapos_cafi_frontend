@@ -36,6 +36,7 @@ export const VentasProvider = ({ children }) => {
     const [ precioSelectProductoVenta, setPrecioSelectProductoVenta ] = useState([]);
     const [ clientesVentas, setClientesVentas ] = useState([]);
     const [ turnoActivo, setTurnoActivo ] = useState();
+    const [ ubicacionTurno, setUbicacionTurno ] = useState('');
 
     const [ update, setUpdate ] = useState(false);
     const [ error, setError ] = useState(false);
@@ -79,7 +80,9 @@ export const VentasProvider = ({ children }) => {
                 clientesVentas, 
                 setClientesVentas,
                 turnoActivo, 
-                setTurnoActivo
+                setTurnoActivo,
+                ubicacionTurno, 
+                setUbicacionTurno
                 // precioSeleccionadoTabla,
                 // setPrecioSeleccionadoTabla
             }

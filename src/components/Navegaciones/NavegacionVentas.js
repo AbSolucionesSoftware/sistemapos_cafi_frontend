@@ -52,26 +52,18 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 function NavegacionVentas(props) {
-	const { alert, setAlert,abrirTurnosDialog, setAbrirTurnosDialog } = useContext(VentasContext);
+	const { alert, setAlert, abrirTurnosDialog, setAbrirTurnosDialog, setUbicacionTurno } = useContext(VentasContext);
 	const classes = useStyles();
 	const [ value, setValue ] = useState('venta-general');
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
-	const [open, setOpen] = useState(false);
+
 	moment.locale('es');
-
-    const handleClickOpen = () => {
-		setOpen(!open);
-	};
-
-	const abrirDialogTurnos = () => {
-		setOpen(!open);
-		setAbrirTurnosDialog(!abrirTurnosDialog);
-	};
 
 	const signOut = () => {
 		if (sesion.turno_en_caja_activo === true) {
-			handleClickOpen();
+			setAbrirTurnosDialog(!abrirTurnosDialog);
+			setUbicacionTurno('SESION');
 		}else{
 			localStorage.removeItem('sesionCafi');
 			localStorage.removeItem('tokenCafi');
@@ -166,7 +158,7 @@ function NavegacionVentas(props) {
 							<Avatar alt="Remy Sharp" srsc="/static/images/avatar/1.jpg" className={classes.avatar} />
 							<div>
 								<Box>
-									<Typography color="textSecondary">{sesion.nombre}</Typography>
+									<Typography color="textSecondary">{sesion?.nombre}</Typography>
 									{!turnoEnCurso?.numero_caja ? (
 										""
 									) : (
@@ -243,25 +235,6 @@ function NavegacionVentas(props) {
 				</Grid>
 			</Drawer>
 
-			<Dialog
-				maxWidth='xs'
-				open={open} 
-				onClose={handleClickOpen} 
-				TransitionComponent={Transition}
-			>
-				<DialogContent>
-					<Box textAlign="center" display="flex" justifyContent="center">
-						<Typography variant="h6">
-							Lo sentimos en este momento tienes un turno activo, para poder continuar por favor cierra ese turno
-						</Typography>	
-					</Box>
-				</DialogContent>
-				<DialogActions>
-					<Button color="primary" variant="contained" onClick={abrirDialogTurnos} >
-						Aceptar
-					</Button>
-				</DialogActions>
-			</Dialog>
 		</>
 	);
 }

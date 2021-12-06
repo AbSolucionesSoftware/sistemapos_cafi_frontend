@@ -271,7 +271,7 @@ export default function DepositoRetiroCaja() {
                         </Box>
                         </Grid>
                         <Grid>
-                            {turnoEnCurso ? (
+                            {sesion.turno_en_caja_activo === true ? (
                                 <>
                                 <div className={classes.formInputFlex}>
                                     {/* <Box width="100%">

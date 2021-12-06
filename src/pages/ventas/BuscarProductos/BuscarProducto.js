@@ -4,6 +4,7 @@ import { Box, Button, DialogActions, Dialog,
         Typography, Slide, InputBase, Paper, 
         IconButton } from '@material-ui/core'
 import useStyles from '../styles';
+import { useDebounce } from 'use-debounce/lib';
 import { FcSearch } from 'react-icons/fc';
 import CloseIcon from '@material-ui/icons/Close';
 import { Search } from '@material-ui/icons';
@@ -16,6 +17,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function BuscarProducto() {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
+	const [ value ] = useDebounce("", 500);
 
     const handleClickOpen = () => { 
 		setOpen(!open);
@@ -56,7 +58,6 @@ export default function BuscarProducto() {
 				onClose={handleClickOpen} 
 				TransitionComponent={Transition}
 			>
-
                 <DialogContent>
                     <Grid container item lg={12}>
                         <Box

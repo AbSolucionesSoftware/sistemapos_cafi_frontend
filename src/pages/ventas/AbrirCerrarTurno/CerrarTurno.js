@@ -1,7 +1,10 @@
 import React, { useContext, useState } from 'react'
 import useStyles from '../styles';
-
-import { Box,  Button,  DialogActions,  DialogContent,  FormControl, Grid, MenuItem, Select, TextField, Typography } from '@material-ui/core'
+import { Box,  Button,  DialogActions, 
+        DialogContent,  FormControl, 
+        Grid, MenuItem, Select, 
+        TextField, Typography 
+    } from '@material-ui/core'
 import { REGISTRAR_TURNOS } from '../../../gql/Ventas/abrir_cerrar_turno';
 
 import moment from 'moment';
@@ -10,9 +13,9 @@ import { VentasContext } from '../../../context/Ventas/ventasContext';
 import { useMutation } from '@apollo/client';
 moment.locale('es');
 
-export default function AbrirTurno({handleClickOpen, setLoading}) {
+export default function AbrirTurno({handleClickOpen, setLoading, props}) {
     const [ CrearRegistroDeTurno ] = useMutation(REGISTRAR_TURNOS);
-    const { setAlert, setTurnoActivo } = useContext(VentasContext);
+    const { setAlert, setTurnoActivo, ubicacionTurno } = useContext(VentasContext);
     const [ error, setError] = useState(false);
 
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
@@ -102,6 +105,20 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
         _id: sesion._id,
     };
 
+    const actualizarTurnoSesion  = (ubicacionTurno) => {
+        if (ubicacionTurno === 'SESION') {
+            localStorage.removeItem('sesionCafi');
+			localStorage.removeItem('tokenCafi');
+            localStorage.removeItem('turnoEnCurso');
+            localStorage.removeItem('DatosVentas');
+			props.history.push('/');
+        }else{
+            localStorage.setItem('sesionCafi', JSON.stringify(arraySesion));
+            localStorage.removeItem('DatosVentas');
+            localStorage.removeItem('turnoEnCurso');
+        }
+    }
+
     const enviarDatos  = async () => {
         setLoading(true);
         try {
@@ -126,12 +143,12 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                     status: "success",
                     open: true,
                 });
-                localStorage.setItem('sesionCafi', JSON.stringify(arraySesion));
-                localStorage.removeItem('turnoEnCurso');
+
+                actualizarTurnoSesion(ubicacionTurno);
+
                 setLoading(false);
                 handleClickOpen();
                 setTurnoActivo(true);
-
             }
         } catch (error) {
             setAlert({

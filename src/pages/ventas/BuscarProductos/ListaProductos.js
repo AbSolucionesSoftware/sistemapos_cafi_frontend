@@ -7,8 +7,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { IconButton, TablePagination } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
+import { TablePagination } from '@material-ui/core';
 
 const columns = [
 	{ id: 'folio', label: 'Folio', minWidth: 20, align: 'center' },

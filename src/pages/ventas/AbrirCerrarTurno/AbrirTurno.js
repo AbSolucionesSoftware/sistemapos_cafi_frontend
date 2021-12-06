@@ -146,7 +146,8 @@ export default function AbrirTurno({handleClickOpen, type, setLoading}) {
                 setLoading(false);
                 if (type !== "FRENTE") {
                     handleClickOpen();
-                }
+                };
+                
             }
         } catch (error) {
             setLoading(false);

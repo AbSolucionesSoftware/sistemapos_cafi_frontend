@@ -120,7 +120,7 @@ export default function PreCorteCaja() {
                     </Grid>
                     <Grid>
                         <Box p={2}>
-                        {turnoEnCurso ? (
+                        {sesion.turno_en_caja_activo === true ? (
                             <>
                                 <Box>
                                     <Typography variant="subtitle1"> 
