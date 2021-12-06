@@ -27,14 +27,14 @@ export default function CerrarVenta() {
     const handleClickOpen = () => { 
         let venta = JSON.parse(localStorage.getItem("DatosVentas"));
         const total = venta === null ? 0 : venta.total;
-        console.log(venta);
-        setTotalVenta(total)
-        setTotalARestar(total);
+        // console.log(venta);
+        setTotalVenta(total.toFixed(2))
+        setTotalARestar(total.toFixed(2));
 		setOpen(!open);
 	};
 
-    console.log(totalVenta);
-    console.log(totalARestar);
+    // console.log(totalVenta);
+    // console.log(totalARestar);
 
     function funcion_tecla(event) {
 		const tecla_escape = event.keyCode;
@@ -45,6 +45,10 @@ export default function CerrarVenta() {
 
     const changeValue = (e) => {
         setValorActual(e)
+    }
+
+    const handlerChangeValue = (e) => {
+        setTotalARestar(e);
     }
 
 	window.onkeydown = funcion_tecla;
@@ -136,11 +140,11 @@ export default function CerrarVenta() {
                                     <TextField
                                         fullWidth
                                         size="small"
-                                        name="codigo_barras"
-                                        id="form-producto-codigo-barras"
+                                        name="efectivo"
+                                        id="form-producto-efectivo"
                                         variant="outlined"
                                         value={valorActual === "EFECTIVO" ?  totalVenta : ''}
-                                        
+                                        onChange={(e) => handlerChangeValue(e)}
                                     />
                                 </Box>
                             </Box>
@@ -164,6 +168,7 @@ export default function CerrarVenta() {
                                         id="form-producto-codigo-barras"
                                         variant="outlined"
                                         value={valorActual === "TARJETA" ?  totalVenta : ''}
+                                        onChange={(e) => handlerChangeValue(e)}
                                     />
                                 </Box>
                             </Box>
@@ -185,6 +190,7 @@ export default function CerrarVenta() {
                                         id="form-producto-codigo-barras"
                                         variant="outlined"
                                         value={valorActual === "PUNTOS" ?  totalVenta : ''}
+                                        onChange={(e) => handlerChangeValue(e)}
                                     />
                                 </Box>
                             </Box>
@@ -210,6 +216,7 @@ export default function CerrarVenta() {
                                         id="form-producto-codigo-barras"
                                         variant="outlined"
                                         value={valorActual === "TRANSFERENCIA" ?  totalVenta : ''}
+                                        onChange={(e) => handlerChangeValue(e)}
                                     />
                                 </Box>
                             </Box>
@@ -235,6 +242,7 @@ export default function CerrarVenta() {
                                         id="form-producto-codigo-barras"
                                         variant="outlined"
                                         value={valorActual === "CHEQUE" ?  totalVenta : ''}
+                                        onChange={(e) => handlerChangeValue(e)}
                                     />
                                 </Box>
                             </Box>
