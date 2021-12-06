@@ -185,14 +185,16 @@ export default function Traspasos() {
     const queryObtenerAlmacenes = useQuery(OBTENER_ALMACENES,{
         variables: {
             id: sesion.sucursal._id
-        }
+        },
+         fetchPolicy: "network-only"
     });	
 
 	const dataConceptos = useQuery(OBTENER_CONCEPTOS_ALMACEN,{
 		variables: {
 			empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id
-		}
+		},
+         fetchPolicy: "network-only"
 	});
    
     const categoriasQuery = useQuery(OBTENER_CATEGORIAS,{
@@ -251,9 +253,9 @@ export default function Traspasos() {
         }
     }, [conceptoTraspaso])    
 
-    useEffect(() => {
+ /*    useEffect(() => {
 			dataConceptos.refetch();
-	},[ dataConceptos ]); 
+	},[ dataConceptos ]);  */
 
      useEffect(() => {
         if(conceptoTraspaso !== null){
@@ -286,7 +288,7 @@ export default function Traspasos() {
 
     
 
-
+     
     useEffect(
 		() => {
 			 if(productosEmpresaQuery.data){
