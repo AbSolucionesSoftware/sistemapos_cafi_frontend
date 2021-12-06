@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Delete } from '@material-ui/icons';
 import { makeStyles, useTheme } from "@material-ui/core";
@@ -7,7 +7,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -17,6 +16,8 @@ import Zoom from "@material-ui/core/Zoom";
 import {  DESACTIVAR_DESCUENTOS, ELIMINAR_DESCUENTOS } from '../../../../../gql/Catalogos/descuentos';
 import { useMutation } from '@apollo/client';
 import SnackBarMessages from '../../../../../components/SnackBarMessages';
+import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
+import BackdropComponent from '../../../../../components/Layouts/BackDrop';
 
 const headCells = [
 	{ id: 'cantidad',  label: 'Cantidad' },
@@ -113,26 +114,41 @@ const useStyles = makeStyles((theme) => ({
 export default function TablaPreciosDescuentos(
 	{ 
 		value,
+		datos,
 		setCleanList, 
 		cleanList, 
 		verificarDatos, 
 		setPrecioPrueba,
 		productosRefetch,
-		setPreciosProductos, 
-		datosPrecios,
-		setLoading
+		setLoading,
+		loading
 	}
 	) {
 	const classes = useStyles();
+	const { 
+		//es este 
+		datosPreciosProducto, 
+        setPreciosProductos,
+		setDatosPreciosProducto
+    } = useContext(RegProductoContext);
+
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 	var porcentaje  =  parseFloat((100 - value).toFixed(6));
 	const [ selected, setSelected ] = useState([]);
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(5);
 
+	if(datos){
+		if (datos.medidas_producto.length > 0) {
+			setDatosPreciosProducto(datos.medidas_producto);
+		}else{
+			setDatosPreciosProducto(datos.unidades_de_venta);
+		}
+	}
+
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {
-			const newSelecteds = datosPrecios.map((n) => n);
+			const newSelecteds = datosPreciosProducto.map((n) => n);
 			setSelected(newSelecteds); 
 			verificarDatos(newSelecteds);
 			setPreciosProductos(newSelecteds);
@@ -160,15 +176,6 @@ export default function TablaPreciosDescuentos(
 		setSelected(newSelected);
 	};
 	
-	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
-
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(parseInt(event.target.value, 10));
-		setPage(0);
-	};
-
 	useEffect(() => {
 		setSelected([]);
 		setCleanList(false);
@@ -176,12 +183,13 @@ export default function TablaPreciosDescuentos(
 
 	const isSelected = (_id) => selected.indexOf(_id) !== -1;
 
-	const emptyRows = rowsPerPage - Math.min(rowsPerPage, datosPrecios.length - page * rowsPerPage);
+	const emptyRows = rowsPerPage - Math.min(rowsPerPage, datosPreciosProducto.length - page * rowsPerPage);
 
 	return (
 		<div className={classes.root}>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<Paper className={classes.paper}>
+				<BackdropComponent loading={loading} setLoading={setLoading} />
 				<TableContainer className={classes.table}>
 					<Table
 						className={classes.table}
@@ -193,11 +201,11 @@ export default function TablaPreciosDescuentos(
 							classes={classes}
 							numSelected={selected.length}
 							onSelectAllClick={handleSelectAllClick}
-							rowCount={datosPrecios.length}
-							datosPrecios={datosPrecios}
+							rowCount={datosPreciosProducto.length}
+							datosPrecios={datosPreciosProducto}
 						/>
 						<TableBody>
-							{datosPrecios.map((row, index) => {
+							{datosPreciosProducto.map((row, index) => {
 								const isItemSelected = isSelected(row);
 								const labelId = `enhanced-table-checkbox-${index}`;
 								return (
@@ -211,7 +219,7 @@ export default function TablaPreciosDescuentos(
 										setAlert={setAlert}
 										porcentaje={porcentaje}
 										value={value}
-										datosPrecios={datosPrecios}
+										datos={datos}
 										isItemSelected={isItemSelected} 
 										labelId={labelId} 
 									/>
@@ -225,28 +233,23 @@ export default function TablaPreciosDescuentos(
 						</TableBody>
 					</Table>
 				</TableContainer>
-				{/* <TablePagination
-                    rowsPerPageOptions={[]}
-					component="div"
-					count={datosPrecios.length}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onChangePage={handleChangePage}
-					onChangeRowsPerPage={handleChangeRowsPerPage}
-				/> */}
+				
 			</Paper>
 		</div>
 	);
 }
 
-function RowsRender({row, value, isItemSelected, setLoading, labelId, setAlert, porcentaje, productosRefetch, handleClick, selected}) {
+function RowsRender({row, value, isItemSelected, setLoading, datos, labelId, setAlert, porcentaje, productosRefetch, handleClick, selected}) {
 
 	const classes = useStyles();
 	const theme = useTheme();
 	const [openModal, setOpenModal] = useState(false);
-
+	const { 
+        setDatosPreciosProducto,
+    } = useContext(RegProductoContext);
 	const [ DesactivarDescuentoUnidad ] = useMutation(DESACTIVAR_DESCUENTOS);
 	const [ ELiminarDescuentoUnidad ] = useMutation(ELIMINAR_DESCUENTOS);
+
 	const handleChangeActivo = async () => {
 		setLoading(true);
 		try {
@@ -266,21 +269,32 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId, setAlert, 
 		}
 	};
 
-	const handleModal =()=>{
+	const handleModal = () => {
 		setOpenModal(!openModal);
+		editarDatos();
+	};
+	
+	const editarDatos = () => {
+		if (datos.medidas_producto.length > 0) {
+            setDatosPreciosProducto(datos.medidas_producto);
+			setLoading(false);
+        }else{
+			setDatosPreciosProducto(datos.unidades_de_venta);
+			setLoading(false);
+        }
 	};
 
 	const handleDelete = async () => {
 		setLoading(true);
 		try {
+			productosRefetch();
 			const resultado = await ELiminarDescuentoUnidad({
 				variables: {
 					id: row._id,
 				}
 			});
-			setLoading(false);
-			productosRefetch();
 			handleModal();
+			editarDatos();
 			setAlert({ message: resultado.data.eliminarDescuentoUnidad.message, status: 'success', open: true });
 		} catch (error) {
 			setAlert({ message: error.message, status: 'error', open: true });
@@ -369,6 +383,7 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId, setAlert, 
 
 // MODAL PARA ELIMINAR EL DESCUENTO DE LOS PRODUCTOS
 const Modal = ({row, handleModal, openModal, handleDelete }) => {
+
 	return (
 		<div>
 			<IconButton 

@@ -1,12 +1,10 @@
-import React, {  useContext,useState, useEffect, Fragment } from 'react';
+import React, {  useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { DialogActions, Toolbar,Dialog,DialogTitle, Paper, DialogContent, Slide, ButtonGroup, Box, Grid,Button, Typography} from '@material-ui/core';
-import {Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel} from '@material-ui/core';
+import { Toolbar,Dialog, Paper,  Slide, Box, Grid,Button, Typography} from '@material-ui/core';
+import {Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@material-ui/core';
 import SnackBarMessages from '../../../components/SnackBarMessages';
 import BackdropComponent from '../../../components/Layouts/BackDrop';
-import ErrorPage from '../../../components/ErrorPage';
 import { useQuery, useMutation } from '@apollo/client';
-import { FcDocument } from 'react-icons/fc';
 import CloseIcon from '@material-ui/icons/Close';
 import depositoIcon from '../../../icons/depositar.svg'
 import retiroIcon from '../../../icons/retiro-de-dinero.svg'
@@ -248,7 +246,6 @@ export default function HistorialCaja(props) {
                             <Box display="flex" justifyContent="center" alignItems="center">
                                 <img src={transferIcon} alt="icono depostio" className={classes.icon} />
                             </Box>
-                            
                             Transferir
                         </Box>
                     </Button>

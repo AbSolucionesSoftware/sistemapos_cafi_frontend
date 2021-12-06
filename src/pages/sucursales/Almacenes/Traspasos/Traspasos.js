@@ -234,14 +234,22 @@ export default function Traspasos() {
             productosQuery.refetch();
         }
     }, [almacenOrigen, setAlmacenesDestino, queryObtenerAlmacenes])
- 
+
+    const obtenerProductosEmpresa = useCallback(async() =>{
+        try {
+            productosEmpresaQuery.refetch();
+        } catch (error) {
+            
+        }   
+    },[productosEmpresaQuery]);
+
     useEffect(() => {
         if(conceptoTraspaso!== null){
             if(conceptoTraspaso.origen === 'N/A'){
-                productosEmpresaQuery.refetch();
+                obtenerProductosEmpresa();
             }       
         }
-    }, [conceptoTraspaso, productosEmpresaQuery])    
+    }, [conceptoTraspaso])    
 
     useEffect(() => {
 			dataConceptos.refetch();

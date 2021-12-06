@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const drawerWidth = '30%';
+const drawerWidth = '22%';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
 		backgroundColor: 'white',
 	},
 	drawerColor:{
-		height: '50%',
+		height: '100%',
 		backgroundColor: 'white',
 	},
 	drawerPaper: {
@@ -62,7 +62,6 @@ const useStyles = makeStyles((theme) => ({
     },
 	borderBotonChico:{
 		minWidth: '100%',
-		height: '35%',
         border: '.6px solid #DBDBDB'
     }
 }));

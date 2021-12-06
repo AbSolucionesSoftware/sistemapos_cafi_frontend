@@ -5,7 +5,7 @@ import NavegacionVentas from '../Navegaciones/NavegacionVentas';
 import { Grid, Toolbar } from '@material-ui/core';
 import { VentasProvider } from '../../context/Ventas/ventasContext';
 
-const drawerWidth = '30%';
+const drawerWidth = '22%';
 
 const useStyles = makeStyles((theme) => ({
 	root: {

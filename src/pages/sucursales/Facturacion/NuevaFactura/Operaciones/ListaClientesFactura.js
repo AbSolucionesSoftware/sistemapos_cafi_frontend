@@ -26,6 +26,7 @@ import Done from "@material-ui/icons/Done";
 import { useQuery } from "@apollo/client";
 import { OBTENER_CLIENTES } from "../../../../../gql/Catalogos/clientes";
 import { FacturacionCtx } from "../../../../../context/Facturacion/facturacionCtx";
+import Autocomplete from "@material-ui/lab/Autocomplete"
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -115,10 +116,31 @@ const RenderLista = () => {
 
   const { obtenerClientes } = data;
 
+  const obtenerCliente = (value) => {
+    console.log(value);
+  }
+
   return (
     <Fragment>
       <Box mb={2}>
-        <TextField
+        <Autocomplete
+          id="usuarios-factura"
+          size="small"
+          placeholder="Buscar por: Numero de cliente, clave o nombre"
+          options={obtenerClientes}
+          getOptionLabel={(option) => option.nombre_cliente}
+          fullWidth
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="outlined"
+            />
+          )}
+          onChange={(_, data) => obtenerCliente(data)}
+          getOptionSelected={(option, value) => option.nombre_cliente === value.nombre_cliente}
+        />
+
+        {/* <TextField
           fullWidth
           size="small"
           placeholder="Buscar por: Numero de cliente, clave o nombre"
@@ -135,7 +157,7 @@ const RenderLista = () => {
               </InputAdornment>
             ),
           }}
-        />
+        /> */}
       </Box>
       <Paper variant="outlined">
         <TableContainer className={classes.container}>

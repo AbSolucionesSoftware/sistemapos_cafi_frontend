@@ -200,16 +200,12 @@ function RowsRender({turno}) {
 												<TableCell align="center">${turno.montos_en_caja.monto_creditos}</TableCell>
 											</TableRow>
 											<TableRow hover tabIndex={-1} >
-												<TableCell align="center">Tarjeta de Credito</TableCell>
-												<TableCell align="center">${turno.montos_en_caja.monto_tarjeta_credito}</TableCell>
+												<TableCell align="center">Tarjetas</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_tarjeta}</TableCell>
 											</TableRow>
 											<TableRow hover tabIndex={-1} >
-												<TableCell align="center">Tarjeta de Debito</TableCell>
-												<TableCell align="center">${turno.montos_en_caja.monto_tarjeta_debito}</TableCell>
-											</TableRow>
-											<TableRow hover tabIndex={-1} >
-												<TableCell align="center">Puntos</TableCell>
-												<TableCell align="center">${turno.montos_en_caja.monto_puntos}</TableCell>
+												<TableCell align="center">Monedero</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_monedero}</TableCell>
 											</TableRow>
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center">Cheques</TableCell>

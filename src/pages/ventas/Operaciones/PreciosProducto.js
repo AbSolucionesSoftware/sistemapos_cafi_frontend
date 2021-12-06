@@ -202,7 +202,7 @@ export default function PreciosProductos() {
             <img
               src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/money.svg"
               alt="icono money"
-              style={{ fontSize: 35 }}
+              style={{ fontSize: 25 }}
             />
           </Box>
           <Box>
