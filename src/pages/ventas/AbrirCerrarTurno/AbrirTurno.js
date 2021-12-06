@@ -146,12 +146,8 @@ export default function AbrirTurno({handleClickOpen, type, setLoading}) {
                 setLoading(false);
                 if (type !== "FRENTE") {
                     handleClickOpen();
-<<<<<<< HEAD
                 };
                 
-=======
-                }
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
             }
         } catch (error) {
             setLoading(false);

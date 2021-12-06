@@ -240,15 +240,11 @@ export default function Traspasos() {
 
     useEffect(() => {
         if(almacenOrigen){
-            obtenerAlmacenes()
-            
+            obtenerAlmacenes();
+            obtenerProductosAlmacen();
         }
-<<<<<<< HEAD
     }, [almacenOrigen ])
 
-=======
-    }, [almacenOrigen, setAlmacenesDestino, queryObtenerAlmacenes])
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
 
     const obtenerProductosEmpresa = useCallback(async() =>{
         try {
@@ -258,7 +254,6 @@ export default function Traspasos() {
         }   
     },[productosEmpresaQuery]);
 
-<<<<<<< HEAD
     const obtenerProductosAlmacen = useCallback(async() =>{
         try {
            productosQuery.refetch();
@@ -267,19 +262,13 @@ export default function Traspasos() {
         }   
     },[productosQuery]);
 
-=======
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
     useEffect(() => {
         if(conceptoTraspaso!== null){
             if(conceptoTraspaso.origen === 'N/A'){
                 obtenerProductosEmpresa();
-<<<<<<< HEAD
             } else{
                 obtenerProductosAlmacen();
             }      
-=======
-            }       
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
         }
     }, [conceptoTraspaso])    
 
@@ -984,15 +973,19 @@ export default function Traspasos() {
                                 </Grid> 
                           
                                 <Box  mt={2}>
-                                    <Grid container style={{width:'100%', flexDirection:'row'}}>
+                                    <Grid container spacing={2} style={{width:'100%'}}>
+                                         <Grid item md={6}>
                                         {
                                             (isAlmacenOrigen) ? 
+                                           
                                             <TableSelectProducts title='Productos' add={true} almacenOrigen={almacenOrigen} />
                                             :
                                              <TableSelectProducts title='Productos' add={true} almacenOrigen={null} />   
                                         }
-                                        
-                                        <TableSelectProducts title='Productos a traspasar' add={false} almacenOrigen={almacenOrigen}  />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TableSelectProducts title='Productos a traspasar' add={false} almacenOrigen={almacenOrigen}  />
+                                        </Grid>
                                     </Grid>
                                 </Box>
                                      
@@ -1049,6 +1042,3 @@ export default function Traspasos() {
         </Box>
     )
 }
-
-
-		

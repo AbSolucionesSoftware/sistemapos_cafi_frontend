@@ -29,15 +29,12 @@ const useStyles = makeStyles((theme) => ({
 		display: 'flex',
 		padding: theme.spacing(1),
         // marginTop: theme.spacing(1)
-<<<<<<< HEAD
 	},
     rootBusquedaProductos: {
         height: 35,
 		display: 'flex',
 		padding: theme.spacing(1),
         // marginTop: theme.spacing(1)
-=======
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
 	},
     rootFecha: {
         height: 40,
