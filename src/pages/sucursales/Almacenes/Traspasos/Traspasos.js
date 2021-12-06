@@ -237,6 +237,7 @@ export default function Traspasos() {
         }
     }, [almacenOrigen, setAlmacenesDestino, queryObtenerAlmacenes])
 
+        
     const obtenerProductosEmpresa = useCallback(async() =>{
         try {
             productosEmpresaQuery.refetch();
@@ -297,7 +298,7 @@ export default function Traspasos() {
                 //console.log(productosEmpresaQuery.data)
                 setProductosEmpTo(productosEmpresaQuery.data.obtenerProductosPorEmpresa);
             }
-    },[ productosEmpresaQuery, setProductosEmpTo ]);  
+    },[ productosEmpresaQuery.data, setProductosEmpTo ]);  
 
 
      useEffect(
