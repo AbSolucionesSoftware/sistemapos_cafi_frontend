@@ -36,10 +36,7 @@ export const VentasProvider = ({ children }) => {
     const [ precioSelectProductoVenta, setPrecioSelectProductoVenta ] = useState([]);
     const [ clientesVentas, setClientesVentas ] = useState([]);
     const [ turnoActivo, setTurnoActivo ] = useState();
-<<<<<<< HEAD
     const [ ubicacionTurno, setUbicacionTurno ] = useState('');
-=======
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
 
     const [ update, setUpdate ] = useState(false);
     const [ error, setError ] = useState(false);
@@ -83,13 +80,9 @@ export const VentasProvider = ({ children }) => {
                 clientesVentas, 
                 setClientesVentas,
                 turnoActivo, 
-<<<<<<< HEAD
                 setTurnoActivo,
                 ubicacionTurno, 
                 setUbicacionTurno
-=======
-                setTurnoActivo
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
                 // precioSeleccionadoTabla,
                 // setPrecioSeleccionadoTabla
             }

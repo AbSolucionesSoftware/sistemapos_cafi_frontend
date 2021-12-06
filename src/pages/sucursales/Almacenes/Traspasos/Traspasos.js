@@ -243,12 +243,8 @@ export default function Traspasos() {
             obtenerAlmacenes();
             obtenerProductosAlmacen();
         }
-<<<<<<< HEAD
     }, [almacenOrigen ])
 
-=======
-    }, [almacenOrigen, setAlmacenesDestino, queryObtenerAlmacenes])
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
 
     const obtenerProductosEmpresa = useCallback(async() =>{
         try {
@@ -258,7 +254,6 @@ export default function Traspasos() {
         }   
     },[productosEmpresaQuery]);
 
-<<<<<<< HEAD
     const obtenerProductosAlmacen = useCallback(async() =>{
         try {
            productosQuery.refetch();
@@ -267,19 +262,13 @@ export default function Traspasos() {
         }   
     },[productosQuery]);
 
-=======
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
     useEffect(() => {
         if(conceptoTraspaso!== null){
             if(conceptoTraspaso.origen === 'N/A'){
                 obtenerProductosEmpresa();
-<<<<<<< HEAD
             } else{
                 obtenerProductosAlmacen();
             }      
-=======
-            }       
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
         }
     }, [conceptoTraspaso])    
 
@@ -1053,6 +1042,3 @@ export default function Traspasos() {
         </Box>
     )
 }
-
-
-		
