@@ -15,7 +15,11 @@ moment.locale('es');
 
 export default function AbrirTurno({handleClickOpen, setLoading, props}) {
     const [ CrearRegistroDeTurno ] = useMutation(REGISTRAR_TURNOS);
+<<<<<<< HEAD
     const { setAlert, setTurnoActivo, ubicacionTurno } = useContext(VentasContext);
+=======
+    const { setAlert, setTurnoActivo } = useContext(VentasContext);
+>>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
     const [ error, setError] = useState(false);
 
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
@@ -149,6 +153,10 @@ export default function AbrirTurno({handleClickOpen, setLoading, props}) {
                 setLoading(false);
                 handleClickOpen();
                 setTurnoActivo(true);
+<<<<<<< HEAD
+=======
+
+>>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
             }
         } catch (error) {
             setAlert({

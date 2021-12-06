@@ -224,7 +224,11 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   container: {
+<<<<<<< HEAD
     height: "60vh",
+=======
+    maxHeight: "60vh",
+>>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
     '& ::-webkit-scrollbar': {
       display: 'none'
     }

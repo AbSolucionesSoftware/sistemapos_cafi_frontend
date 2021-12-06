@@ -1,14 +1,24 @@
 import React, { useState } from 'react';
+<<<<<<< HEAD
 import { Box, Button,  CircularProgress,  Dialog,  DialogActions, 
         DialogContent, Divider, Grid,  IconButton,  
         InputBase,  Paper,  Slide,  Typography } 
 from '@material-ui/core'
+=======
+
+import { Box, Button,  CircularProgress,  Dialog,  DialogActions, DialogContent, Divider, Grid,  IconButton,  InputBase,  Paper,  Slide,  Typography } from '@material-ui/core'
+>>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import CloseIcon from '@material-ui/icons/Close';
 import useStyles from '../styles';
 import { Search } from '@material-ui/icons';
 import { useLazyQuery } from '@apollo/client';
 import { CONSULTA_PRODUCTO_UNITARIO } from '../../../gql/Ventas/ventas_generales';
+<<<<<<< HEAD
+=======
+import { useDebounce } from 'use-debounce/lib';
+
+>>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -17,7 +27,11 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function ConsultarPrecio() {
     const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
+<<<<<<< HEAD
     const [obtenerProductos, { data, loading }] = useLazyQuery(
+=======
+    const [obtenerProductos, { data, loading, error }] = useLazyQuery(
+>>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
         CONSULTA_PRODUCTO_UNITARIO,
         {
           variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id },
@@ -164,6 +178,11 @@ export default function ConsultarPrecio() {
                                             <PhotoLibraryIcon style={{fontSize: 40}} />
                                         </Box>
                                     )}
+<<<<<<< HEAD
+=======
+                                    
+                                    
+>>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
                                 </Box>
                             </Grid>
                             <Grid item lg={6} md={6}>
@@ -189,7 +208,11 @@ export default function ConsultarPrecio() {
                                             </Typography>
                                             <Typography variant="h3">
                                                 {productoBase?.descuento_activo === true ? 
+<<<<<<< HEAD
                                                     (<b style={{color: "green"}}>${productoBase?.descuento?.precio_con_descuento.toFixed(2)}</b>) :
+=======
+                                                    (<b style={{color: "red"}}>${productoBase?.descuento?.precio_con_descuento.toFixed(2)}</b>) :
+>>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
                                                     (<b style={{color: "green"}}>${productoBase?.precio}</b>)}
                                             </Typography>
                                         </Box>
@@ -200,7 +223,11 @@ export default function ConsultarPrecio() {
                                                 <Typography>
                                                     <b>Precio S/D</b>
                                                 </Typography>
+<<<<<<< HEAD
                                                 <Typography variant="h6" style={{color: "#BCBCBC", textDecoration: 'line-through'}}>
+=======
+                                                <Typography variant="h5" style={{color: "green"}}>
+>>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
                                                     <b> ${productoBase?.precio} </b>
                                                 </Typography>
                                             </Box>
