@@ -229,15 +229,23 @@ export default function Traspasos() {
 
     }
   );
-  
+    
+    const obtenerAlmacenes= () =>{
+        try {
+            setAlmacenesDestino(queryObtenerAlmacenes.data.obtenerAlmacenes.filter(element => element._id !== almacenOrigen._id));
+        } catch (error) {
+           console.log(error)
+        }   
+    };
+
     useEffect(() => {
         if(almacenOrigen){
-            setAlmacenesDestino(queryObtenerAlmacenes.data.obtenerAlmacenes.filter(element => element._id !== almacenOrigen._id));
-            productosQuery.refetch();
+            obtenerAlmacenes()
+            
         }
-    }, [almacenOrigen, setAlmacenesDestino, queryObtenerAlmacenes])
+    }, [almacenOrigen ])
 
-        
+
     const obtenerProductosEmpresa = useCallback(async() =>{
         try {
             productosEmpresaQuery.refetch();
@@ -246,11 +254,21 @@ export default function Traspasos() {
         }   
     },[productosEmpresaQuery]);
 
+    const obtenerProductosAlmacen = useCallback(async() =>{
+        try {
+           productosQuery.refetch();
+        } catch (error) {
+            
+        }   
+    },[productosQuery]);
+
     useEffect(() => {
         if(conceptoTraspaso!== null){
             if(conceptoTraspaso.origen === 'N/A'){
                 obtenerProductosEmpresa();
-            }       
+            } else{
+                obtenerProductosAlmacen();
+            }      
         }
     }, [conceptoTraspaso])    
 
