@@ -1,11 +1,9 @@
 import React, { forwardRef, useContext, useState } from "react";
 
 import {
-  Box,
   Dialog,
   FormControl,
   Grid,
-  IconButton,
   InputAdornment,
   makeStyles,
   MenuItem,
@@ -14,12 +12,18 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Search } from "@material-ui/icons";
-import TipoCDFI from "./Operaciones/TipoCDFI.js";
-import ListaClientesFactura from "./Operaciones/ListaClientesFactura.js";
+import ListaClientesFactura from "./ListaClientesFactura.js";
 import { FacturacionCtx } from "../../../../context/Facturacion/facturacionCtx.js";
 import moment from "moment";
-import ListaFoliosFactura from "./Operaciones/ListaFolios.js";
+import ListaFoliosFactura from "./Catalogos/ListaFolios.js";
+import CodigosPostales from "./Catalogos/CodigoPostal.js";
+import {
+  usosCfdi,
+  tiposCfdi,
+  tipoCambio,
+  formaPago,
+  metodoPago,
+} from "../catalogos";
 
 const useStyles = makeStyles((theme) => ({
   formInputFlex: {
@@ -43,25 +47,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 
 export default function RegistroFactura() {
-  const classes = useStyles();
-  const [open, setOpen] = useState(false);
-  const [ventana, setVentana] = useState("");
   const { datosFactura, setDatosFactura } = useContext(FacturacionCtx);
-
-  const handleClickOpen = () => {
-    setOpen(!open);
-  };
-
-  const ventanas = () => {
-    switch (ventana) {
-      case "tipocdfi":
-        return <TipoCDFI handleClickOpen={handleClickOpen} />;
-      case "clientes":
-        return <ListaClientesFactura />;
-      default:
-        break;
-    }
-  };
 
   const obtenerDatos = (e) => {
     const { name, value } = e.target;
@@ -72,16 +58,14 @@ export default function RegistroFactura() {
     });
   };
 
-  
-
   return (
     <div>
       <Grid container spacing={2}>
         <Grid item md={3}>
-          <Typography>Cliente:</Typography>
+          <Typography>Venta:</Typography>
           <TextField
             value={datosFactura.cliente}
-            placeholder="Selecciona un cliente"
+            placeholder="Selecciona venta a facturar"
             fullWidth
             size="small"
             variant="outlined"
@@ -110,24 +94,12 @@ export default function RegistroFactura() {
               <MenuItem value="">
                 <em>Selecciona uno</em>
               </MenuItem>
-              <MenuItem value="Comprobante de ingreso">
-                Comprobante de ingreso
-              </MenuItem>
-              <MenuItem value="Comprobante de egreso">
-                Comprobante de egreso
-              </MenuItem>
-              <MenuItem value="Comprobante de nómina">
-                Comprobante de nómina
-              </MenuItem>
-              <MenuItem value="Comprobante de traslado">
-                Comprobante de traslado
-              </MenuItem>
-              <MenuItem value="Comprobante de recepción de pagos">
-                Comprobante de recepción de pagos
-              </MenuItem>
-              <MenuItem value="Comprobante de retenciones e información de pagos">
-                Comprobante de retenciones e información de pagos
-              </MenuItem>
+              {tiposCfdi.map((res, index) => (
+                <MenuItem
+                  key={index}
+                  value={res.Value}
+                >{`${res.Value} - ${res.Name}`}</MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
@@ -139,13 +111,20 @@ export default function RegistroFactura() {
             size="small"
             name="uso_cfdi"
           >
-            <Select value={datosFactura.uso_cfdi} name="uso_cfdi" onChange={obtenerDatos}>
+            <Select
+              value={datosFactura.uso_cfdi}
+              name="uso_cfdi"
+              onChange={obtenerDatos}
+            >
               <MenuItem value="">
-                <em>Seleccione uno</em>
+                <em>Selecciona uno</em>
               </MenuItem>
-              <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={20}>20</MenuItem>
-              <MenuItem value={30}>30</MenuItem>
+              {usosCfdi.map((res, index) => (
+                <MenuItem
+                  key={index}
+                  value={res.Value}
+                >{`${res.Value} - ${res.Name}`}</MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
@@ -175,63 +154,102 @@ export default function RegistroFactura() {
           </FormControl>
         </Grid>
         <Grid item md={2}>
-          <Typography>Código postal:</Typography>
-          <TextField
-            fullWidth
-            name="codigo_postal"
-            size="small"
-            variant="outlined"
-            value={datosFactura.codigo_postal}
-            onChange={obtenerDatos}
-          />
+          <CodigosPostales />
         </Grid>
         <Grid item md={2}>
           <Typography>Moneda:</Typography>
-          <FormControl variant="outlined" fullWidth size="small" name="moneda">
-            <Select value={datosFactura.moneda} name="moneda" onChange={obtenerDatos}>
-              <MenuItem value="MXN">MXN</MenuItem>
-              <MenuItem value="EUR">EUR</MenuItem>
-              <MenuItem value="USD">USD</MenuItem>
+          <FormControl variant="outlined" fullWidth size="small" name="currency">
+            <Select
+              value={datosFactura.currency}
+              name="currency"
+              onChange={obtenerDatos}
+            >
+              <MenuItem value="">
+                <em>Selecciona uno</em>
+              </MenuItem>
+              {tipoCambio.map((res, index) => (
+                <MenuItem
+                  key={index}
+                  value={res.Value}
+                >{`${res.Value} - ${res.Name}`}</MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
         <Grid item md={2}>
           <Typography>Forma de pago:</Typography>
-          <FormControl variant="outlined" fullWidth size="small" name="forma_pago">
-            <Select value={datosFactura.forma_pago} name="forma_pago" onChange={obtenerDatos}>
-              <MenuItem value="Efectivo">Efectivo</MenuItem>
-              <MenuItem value="Tarjeta Credito">Tarjeta Credito</MenuItem>
-              <MenuItem value="Tarjeta Debito">Tarjeta Debito</MenuItem>
-              <MenuItem value="Credito">Credito</MenuItem>
-              <MenuItem value="Modenedero Electronico">Modenedero Electronico</MenuItem>
-              <MenuItem value="Vales despensa">Vales despensa</MenuItem>
+          <FormControl
+            variant="outlined"
+            fullWidth
+            size="small"
+            name="forma_pago"
+          >
+            <Select
+              value={datosFactura.forma_pago}
+              name="forma_pago"
+              onChange={obtenerDatos}
+            >
+              <MenuItem value="">
+                <em>Selecciona uno</em>
+              </MenuItem>
+              {formaPago.map((res, index) => (
+                <MenuItem
+                  key={index}
+                  value={res.Value}
+                >{`${res.Value} - ${res.Name}`}</MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
         <Grid item md={2}>
           <Typography>Metodo de pago:</Typography>
-          <FormControl variant="outlined" fullWidth size="small" name="metodo_pago">
-            <Select value={datosFactura.metodo_pago} name="metodo_pago" onChange={obtenerDatos}>
-              <MenuItem value="PUE - Pago en una sola exhibición">PUE - Pago en una sola exhibición</MenuItem>
-              <MenuItem value="PPD - Pago en parcialidades">PPD - Pago en parcialidades</MenuItem>
+          <FormControl
+            variant="outlined"
+            fullWidth
+            size="small"
+            name="metodo_pago"
+          >
+            <Select
+              value={datosFactura.metodo_pago}
+              name="metodo_pago"
+              onChange={obtenerDatos}
+              value={datosFactura.metodo_pago}
+            >
+              <MenuItem value="">
+                <em>Selecciona uno</em>
+              </MenuItem>
+              {metodoPago.map((res, index) => (
+                <MenuItem
+                  key={index}
+                  value={res.Value}
+                >{`${res.Value} - ${res.Name}`}</MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Grid>
-        <Grid item md={2} style={{display: "flex", alignItems: 'center', justifyContent: "center"}}>
+        <Grid
+          item
+          md={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <Typography>{`Folio: ${datosFactura.folio}`}</Typography>
         </Grid>
-        <Grid item md={2} style={{display: "flex", alignItems: 'center', justifyContent: "center"}}>
+        <Grid
+          item
+          md={2}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <Typography>{`Serie: ${datosFactura.serie}`}</Typography>
         </Grid>
       </Grid>
-      <Dialog
-        maxWidth="lg"
-        open={open}
-        onClose={handleClickOpen}
-        TransitionComponent={Transition}
-      >
-        {ventanas()}
-      </Dialog>
     </div>
   );
 }

@@ -21,11 +21,11 @@ import TableRow from "@material-ui/core/TableRow";
 import { makeStyles } from "@material-ui/core";
 
 import { Search } from "@material-ui/icons";
-import ErrorPage from "../../../../../components/ErrorPage";
+import ErrorPage from "../../../../components/ErrorPage";
 import Done from "@material-ui/icons/Done";
 import { useQuery } from "@apollo/client";
-import { OBTENER_CLIENTES } from "../../../../../gql/Catalogos/clientes";
-import { FacturacionCtx } from "../../../../../context/Facturacion/facturacionCtx";
+import { OBTENER_CLIENTES } from "../../../../gql/Catalogos/clientes";
+import { FacturacionCtx } from "../../../../context/Facturacion/facturacionCtx";
 import Autocomplete from "@material-ui/lab/Autocomplete"
 
 const Transition = React.forwardRef(function Transition(props, ref) {
