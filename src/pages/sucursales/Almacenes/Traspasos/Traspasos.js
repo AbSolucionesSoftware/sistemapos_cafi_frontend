@@ -185,14 +185,16 @@ export default function Traspasos() {
     const queryObtenerAlmacenes = useQuery(OBTENER_ALMACENES,{
         variables: {
             id: sesion.sucursal._id
-        }
+        },
+         fetchPolicy: "network-only"
     });	
 
 	const dataConceptos = useQuery(OBTENER_CONCEPTOS_ALMACEN,{
 		variables: {
 			empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id
-		}
+		},
+         fetchPolicy: "network-only"
 	});
    
     const categoriasQuery = useQuery(OBTENER_CATEGORIAS,{
@@ -227,13 +229,22 @@ export default function Traspasos() {
 
     }
   );
-  
+    
+    const obtenerAlmacenes= () =>{
+        try {
+            setAlmacenesDestino(queryObtenerAlmacenes.data.obtenerAlmacenes.filter(element => element._id !== almacenOrigen._id));
+        } catch (error) {
+           console.log(error)
+        }   
+    };
+
     useEffect(() => {
         if(almacenOrigen){
-            setAlmacenesDestino(queryObtenerAlmacenes.data.obtenerAlmacenes.filter(element => element._id !== almacenOrigen._id));
-            productosQuery.refetch();
+            obtenerAlmacenes();
+            obtenerProductosAlmacen();
         }
-    }, [almacenOrigen, setAlmacenesDestino, queryObtenerAlmacenes])
+    }, [almacenOrigen ])
+
 
     const obtenerProductosEmpresa = useCallback(async() =>{
         try {
@@ -243,17 +254,27 @@ export default function Traspasos() {
         }   
     },[productosEmpresaQuery]);
 
+    const obtenerProductosAlmacen = useCallback(async() =>{
+        try {
+           productosQuery.refetch();
+        } catch (error) {
+            
+        }   
+    },[productosQuery]);
+
     useEffect(() => {
         if(conceptoTraspaso!== null){
             if(conceptoTraspaso.origen === 'N/A'){
                 obtenerProductosEmpresa();
-            }       
+            } else{
+                obtenerProductosAlmacen();
+            }      
         }
     }, [conceptoTraspaso])    
 
-    useEffect(() => {
+ /*    useEffect(() => {
 			dataConceptos.refetch();
-	},[ dataConceptos ]); 
+	},[ dataConceptos ]);  */
 
      useEffect(() => {
         if(conceptoTraspaso !== null){
@@ -286,7 +307,7 @@ export default function Traspasos() {
 
     
 
-
+     
     useEffect(
 		() => {
 			 if(productosEmpresaQuery.data){
@@ -295,7 +316,7 @@ export default function Traspasos() {
                 //console.log(productosEmpresaQuery.data)
                 setProductosEmpTo(productosEmpresaQuery.data.obtenerProductosPorEmpresa);
             }
-    },[ productosEmpresaQuery, setProductosEmpTo ]);  
+    },[ productosEmpresaQuery.data, setProductosEmpTo ]);  
 
 
      useEffect(
@@ -952,15 +973,19 @@ export default function Traspasos() {
                                 </Grid> 
                           
                                 <Box  mt={2}>
-                                    <Grid container style={{width:'100%', flexDirection:'row'}}>
+                                    <Grid container spacing={2} style={{width:'100%'}}>
+                                         <Grid item md={6}>
                                         {
                                             (isAlmacenOrigen) ? 
+                                           
                                             <TableSelectProducts title='Productos' add={true} almacenOrigen={almacenOrigen} />
                                             :
                                              <TableSelectProducts title='Productos' add={true} almacenOrigen={null} />   
                                         }
-                                        
-                                        <TableSelectProducts title='Productos a traspasar' add={false} almacenOrigen={almacenOrigen}  />
+                                        </Grid>
+                                        <Grid item md={6}>
+                                            <TableSelectProducts title='Productos a traspasar' add={false} almacenOrigen={almacenOrigen}  />
+                                        </Grid>
                                     </Grid>
                                 </Box>
                                      
@@ -1017,6 +1042,3 @@ export default function Traspasos() {
         </Box>
     )
 }
-
-
-		

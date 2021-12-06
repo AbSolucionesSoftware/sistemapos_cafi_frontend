@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Box, Button,  CircularProgress,  Dialog,  DialogActions, DialogContent, Divider, Grid,  IconButton,  InputBase,  Paper,  Slide,  Typography } from '@material-ui/core'
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import CloseIcon from '@material-ui/icons/Close';
-
 import useStyles from '../styles';
 import { Search } from '@material-ui/icons';
 import { useLazyQuery } from '@apollo/client';
@@ -18,7 +17,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function ConsultarPrecio() {
     const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
-    const [obtenerProductos, { data, loading, error }] = useLazyQuery(
+    const [obtenerProductos, { data, loading }] = useLazyQuery(
         CONSULTA_PRODUCTO_UNITARIO,
         {
           variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id },
@@ -125,8 +124,8 @@ export default function ConsultarPrecio() {
                         </Box>
                     </Grid>
                     <div className={classes.formInputFlex}>
-                        <Box width="100%">
-                            <Paper className={classes.rootBusqueda}>
+                        <Box width="50%">
+                            <Paper className={classes.rootBusquedaProductos}>
                                 <InputBase
                                     fullWidth
                                     onKeyUp={keyUpEvent}
@@ -165,8 +164,6 @@ export default function ConsultarPrecio() {
                                             <PhotoLibraryIcon style={{fontSize: 40}} />
                                         </Box>
                                     )}
-                                    
-                                    
                                 </Box>
                             </Grid>
                             <Grid item lg={6} md={6}>
