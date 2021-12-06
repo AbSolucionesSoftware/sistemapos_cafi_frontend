@@ -37,10 +37,10 @@ export default function TipoDeCfdi({ obtenerDatos }) {
   return (
     <React.Fragment>
       <Typography>Tipo de factura:</Typography>
-      <FormControl variant="outlined" fullWidth size="small" name="tipo_factura">
+      <FormControl variant="outlined" fullWidth size="small" name="cfdi_type">
         <Select
-          value={loading ? "cargando" : datosFactura.tipo_factura}
-          name="tipo_factura"
+          value={loading ? "cargando" : datosFactura.cfdi_type}
+          name="cfdi_type"
           onChange={obtenerDatos}
           disabled={loading}
         >

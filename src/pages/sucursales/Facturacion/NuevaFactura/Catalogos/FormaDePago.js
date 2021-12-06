@@ -37,10 +37,10 @@ export default function FormaDePago({ obtenerDatos }) {
   return (
     <React.Fragment>
       <Typography>Forma de pago:</Typography>
-      <FormControl variant="outlined" fullWidth size="small" name="forma_pago">
+      <FormControl variant="outlined" fullWidth size="small" name="payment_form">
         <Select
-          value={loading ? "cargando" : datosFactura.forma_pago}
-          name="forma_pago"
+          value={loading ? "cargando" : datosFactura.payment_form}
+          name="payment_form"
           onChange={obtenerDatos}
           disabled={loading}
         >

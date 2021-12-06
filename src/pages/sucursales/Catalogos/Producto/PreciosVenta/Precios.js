@@ -251,7 +251,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
       preciosVenta.precio_neto =
         precios.unidad_de_compra.precio_unitario_sin_impuesto;
 
-      if (preciosVenta.numero_precio === 1) {
+      /* if (preciosVenta.numero_precio === 1) { */
         let precio = precios.unidad_de_compra.precio_unitario_sin_impuesto;
         if (
           unidadVentaXDefecto.unidad === "Caja" ||
@@ -281,11 +281,11 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
             },
           });
         }
-      }
+      /* } */
     } else {
       preciosVenta.precio_neto =
         precios.unidad_de_compra.precio_unitario_con_impuesto;
-      if (preciosVenta.numero_precio === 1) {
+      /* if (preciosVenta.numero_precio === 1) { */
         let precio = precios.unidad_de_compra.precio_unitario_con_impuesto;
         if (
           unidadVentaXDefecto.unidad === "Caja" ||
@@ -314,7 +314,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
               precio_con_descuento,
             },
           });
-        }
+        /* } */
       }
     }
 
@@ -351,7 +351,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
         ganancia_utilidad_con_impuestos.toFixed(6)
       );
 
-      if (preciosVenta.numero_precio === 1) {
+     /*  if (preciosVenta.numero_precio === 1) { */
         let precio = parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
         if (
           unidadVentaXDefecto.unidad === "Caja" ||
@@ -381,12 +381,12 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
             },
           });
         }
-      }
+      /* } */
     } else {
       preciosVenta.precio_neto = parseFloat(
         ganancia_utilidad_sin_impuestos.toFixed(6)
       );
-      if (preciosVenta.numero_precio === 1) {
+      /* if (preciosVenta.numero_precio === 1) { */
         let precio = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
         if (
           unidadVentaXDefecto.unidad === "Caja" ||
@@ -415,7 +415,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
               precio_con_descuento,
             },
           });
-        }
+        /* } */
       }
     }
 

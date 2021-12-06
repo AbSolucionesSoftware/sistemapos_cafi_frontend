@@ -84,11 +84,11 @@ export default function RegistroFactura() {
             variant="outlined"
             fullWidth
             size="small"
-            name="tipo_factura"
+            name="cfdi_type"
           >
             <Select
-              value={datosFactura.tipo_factura}
-              name="tipo_factura"
+              value={datosFactura.cfdi_type}
+              name="cfdi_type"
               onChange={obtenerDatos}
             >
               <MenuItem value="">
@@ -182,11 +182,11 @@ export default function RegistroFactura() {
             variant="outlined"
             fullWidth
             size="small"
-            name="forma_pago"
+            name="payment_form"
           >
             <Select
-              value={datosFactura.forma_pago}
-              name="forma_pago"
+              value={datosFactura.payment_form}
+              name="payment_form"
               onChange={obtenerDatos}
             >
               <MenuItem value="">
@@ -207,13 +207,13 @@ export default function RegistroFactura() {
             variant="outlined"
             fullWidth
             size="small"
-            name="metodo_pago"
+            name="payment_method"
           >
             <Select
-              value={datosFactura.metodo_pago}
-              name="metodo_pago"
+              value={datosFactura.payment_method}
+              name="payment_method"
               onChange={obtenerDatos}
-              value={datosFactura.metodo_pago}
+              value={datosFactura.payment_method}
             >
               <MenuItem value="">
                 <em>Selecciona uno</em>

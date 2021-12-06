@@ -37,10 +37,10 @@ export default function MetodoDePago({ obtenerDatos }) {
   return (
     <React.Fragment>
       <Typography>Metodo de pago:</Typography>
-      <FormControl variant="outlined" fullWidth size="small" name="metodo_pago">
+      <FormControl variant="outlined" fullWidth size="small" name="payment_method">
         <Select
-          value={loading ? "cargando" : datosFactura.metodo_pago}
-          name="metodo_pago"
+          value={loading ? "cargando" : datosFactura.payment_method}
+          name="payment_method"
           onChange={obtenerDatos}
           disabled={loading}
         >
