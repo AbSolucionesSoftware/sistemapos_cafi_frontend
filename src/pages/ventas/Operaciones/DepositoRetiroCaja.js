@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
-
-import { Box, Button,  Dialog, DialogActions, DialogContent, Divider, FormControl, Grid,  MenuItem, Select, Slide, TextField, Typography } from '@material-ui/core'
-
+import React, { useContext, useState } from 'react';
+import { Box, Button, CircularProgress,  Dialog, DialogActions, 
+    DialogContent, Divider, FormControl, Grid,  MenuItem, 
+    Select, Slide, TextField, Typography } 
+from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
+import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import { FcBearish, FcBullish  } from "react-icons/fc";
+import { OBTENER_CONTABILIDAD } from '../../../gql/Catalogos/contabilidad';
+import { CREAR_HISTORIAL_CAJA, OBTENER_PRE_CORTE_CAJA } from '../../../gql/Cajas/cajas';
 
 import useStyles from '../styles';
 import moment from 'moment';
 import 'moment/locale/es';
+import { useMutation, useQuery } from '@apollo/client';
+import { VentasContext } from '../../../context/Ventas/ventasContext';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -14,19 +21,171 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function DepositoRetiroCaja() {
     const turnoEnCurso =JSON.parse(localStorage.getItem('turnoEnCurso'));
-    moment.locale('es');
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+    const [ CrearHistorialCaja ] = useMutation(CREAR_HISTORIAL_CAJA);
 
+    moment.locale('es');
     const classes = useStyles();
+
+    const { setAlert } = useContext(VentasContext);
     const [open, setOpen] = useState(false);
+    const [cargando, setCargando] = useState(false);
+    const [movimiento, setMovimiento] = useState('');
+    const [datosMovimiento, setDatosMovimiento] = useState([]);
+
+	const { loading, data } = useQuery(OBTENER_CONTABILIDAD, {
+		variables: {
+			empresa: sesion.empresa._id,
+			sucursal: sesion.sucursal._id
+		}
+	});
+
+    const input = { 
+        horario_en_turno: "ABRIR TURNO",
+        id_caja: turnoEnCurso ? turnoEnCurso.id_caja : "",
+        id_usuario: sesion._id,
+        token_turno_user: turnoEnCurso ? turnoEnCurso.token_turno_user : "",
+    };
+
+    const preCorteDeCaja = useQuery(OBTENER_PRE_CORTE_CAJA, {
+        variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id, input: input},
+    });
+
     const handleClickOpen = () => { 
 		setOpen(!open);
+        preCorteDeCaja.refetch();
 	};
+
+    var dineroEnCaja = 0;
+    
+    if(!data || !preCorteDeCaja.data){
+        return null;
+    } else{
+        dineroEnCaja = preCorteDeCaja.data.obtenerPreCorteCaja.monto_efectivo_precorte;
+    }
+
+    if (loading || cargando || preCorteDeCaja.loading) 
+	return (
+		<Box
+		display="flex"
+		flexDirection="column"
+		justifyContent="center"
+		alignItems="center"
+		height="80vh"
+		>
+			<CircularProgress />
+		</Box>
+	);
 
     window.addEventListener('keydown', Mi_función); 
     function Mi_función(e){
         if(e.altKey && e.keyCode === 68){ 
             handleClickOpen();
         } 
+    };
+
+    const obtenerDatos = (e) =>{
+        setDatosMovimiento({...datosMovimiento, [e.target.name]: e.target.value})
+    };
+
+    const enviarDatos = async () => {
+        setCargando(true);
+        try {
+            if(!turnoEnCurso){
+                setCargando(false);
+                setAlert({
+                    message: `Por el momento no hay ningun turno activo.`,
+                    status: "error",
+                    open: true,
+                });
+                return null;
+            }else{
+                if(!datosMovimiento.tipo_movimiento ||
+                    !datosMovimiento.monto_efectivo ||
+                    !datosMovimiento.concepto
+                ){
+                    setCargando(false);
+                    setAlert({
+                        message: `Por favor complete los datos.`,
+                        status: "error",
+                        open: true,
+                    });
+                    return null;
+                }else{
+                    if(datosMovimiento.tipo_movimiento === "RETIRO" && dineroEnCaja <  parseFloat(datosMovimiento.monto_efectivo)){
+                        setCargando(false);
+                        setAlert({
+                            message: 'Lo sentimos no hay dinero suficiente en la caja para esta acción.',
+                            status: "error",
+                            open: true,
+                        });
+                        return null;
+                    }
+                    const input = {
+                        tipo_movimiento: datosMovimiento.tipo_movimiento,
+                        concepto: datosMovimiento.concepto,
+                        numero_caja: parseInt(turnoEnCurso.numero_caja),
+                        id_Caja: turnoEnCurso.id_caja,
+                        horario_turno: turnoEnCurso.horario_en_turno,
+                        hora_moviento: {
+                            hora: moment().format('hh'),
+                            minutos: moment().format('mm'),
+                            segundos: moment().format('ss'),
+                            completa: moment().format('HH:mm:ss')
+                        },
+                        fecha_movimiento: {
+                            year: moment().format('YYYY'),
+                            mes: moment().format('DD'),
+                            dia: moment().format('MM'),
+                            no_semana_year: moment().week().toString(),
+                            no_dia_year: moment().dayOfYear().toString(),
+                            completa: moment().locale('es-mx').format()
+                        },
+                        id_User: sesion._id,
+                        numero_usuario_creador: sesion.numero_usuario,
+                        nombre_usuario_creador: sesion.nombre,
+                        montos_en_caja: {
+                            monto_efectivo: parseFloat(datosMovimiento.monto_efectivo),
+                            monto_tarjeta: 0,
+                            monto_creditos: 0,
+                            monto_monedero: 0,
+                            monto_transferencia: 0,
+                            monto_cheques: 0,
+                            monto_vales_despensa: 0
+                        },
+                        empresa: sesion.empresa._id,
+                        sucursal: sesion.sucursal._id
+                    };
+                    await CrearHistorialCaja({
+                        variables: {
+                            empresa: sesion.empresa._id,
+                            sucursal: sesion.sucursal._id,
+                            input
+                        }
+                    });
+                    setAlert({
+                        message: `Registro de movimiento exitoso.`,
+                        status: "success",
+                        open: true,
+                    });
+                    handleClickOpen();
+                    setCargando(false);
+                }
+            }
+        } catch (error) {
+            setCargando(false);
+            setAlert({
+                message: `Error: ${error.message}`,
+                status: "error",
+                open: true,
+            });
+            handleClickOpen();
+        }
+    };
+
+    const handleAlignment = (event, newAlignment) => {
+        setMovimiento(newAlignment);
+        setDatosMovimiento({...datosMovimiento, tipo_movimiento: newAlignment})
     };
 
     return (
@@ -112,108 +271,122 @@ export default function DepositoRetiroCaja() {
                         </Box>
                         </Grid>
                         <Grid>
-                            <div className={classes.formInputFlex}>
-                                <Box width="100%">
-                                    <Typography>
-                                        Movimiento
-                                    </Typography>
-                                    <FormControl
-                                        variant="outlined"
-                                        fullWidth
-                                        size="small"
-                                    >
-                                        <Select
-                                            id="form-producto-tipo"
-                                            name="tipo_producto"
+                            {turnoEnCurso ? (
+                                <>
+                                <div className={classes.formInputFlex}>
+                                    {/* <Box width="100%">
+                                        <Typography>
+                                            Movimiento
+                                        </Typography>
+                                        <FormControl
+                                            variant="outlined"
+                                            fullWidth
+                                            size="small"
                                         >
-                                            <MenuItem value="">
-                                                <em>Selecciona uno</em>
-                                            </MenuItem>
-                                            <MenuItem value="ENTRADA">Entrada</MenuItem>
-                                            <MenuItem value="RETIRO">Retiro</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Box>
-                                <Box width="100%">
-                                    <Typography>
-                                        Tipo:
-                                    </Typography>
-                                    <FormControl
-                                        variant="outlined"
-                                        fullWidth
-                                        size="small"
-                                    >
-                                        <Select
-                                            id="form-producto-tipo"
-                                            name="tipo_producto"
+                                            <Select
+                                                id="form-producto-tipo"
+                                                name="tipo_movimiento"
+                                                onChange={obtenerDatos}
+                                            >
+                                                <MenuItem value="">
+                                                    <em>Selecciona uno</em>
+                                                </MenuItem>
+                                                <MenuItem value="DEPOSITO">Deposito</MenuItem>
+                                                <MenuItem value="RETIRO">Retiro</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </Box> */}
+                                    <Box width="100%" textAlign="center">
+                                        <ToggleButtonGroup 
+                                            onChange={handleAlignment}
+                                            value={movimiento}
+                                            exclusive 
                                         >
-                                            <MenuItem value="">
-                                                <em>Selecciona uno</em>
-                                            </MenuItem>
-                                            <MenuItem value="Cheque">Cheque</MenuItem>
-                                            <MenuItem value="Efectivo">Efectivo</MenuItem>
-                                            <MenuItem value="Transferencia">Transferencia</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Box>
-                            </div>
-                            <div className={classes.formInputFlex}>
-                                <Box width="100%">
-                                    <Typography>Monto:</Typography>
-                                    <Box display="flex">
-                                        <TextField
+                                            <ToggleButton 
+                                                value="DEPOSITO" 
+                                            >
+                                                <Box p={1}>
+                                                    <Typography variant="h4">
+                                                        <b>DEPOSITO</b>
+                                                    </Typography>
+                                                </Box>
+                                            </ToggleButton>
+                                            <ToggleButton 
+                                                value="RETIRO"
+                                            >
+                                                <Box p={1}>
+                                                    <Typography variant="h4">
+                                                        <b>RETIRO</b>
+                                                    </Typography>
+                                                </Box>
+                                            </ToggleButton>
+                                        </ToggleButtonGroup>
+                                    </Box>
+                                </div>
+                                <div className={classes.formInputFlex}>
+                                    <Box width="100%">
+                                        <Typography>Monto:</Typography>
+                                        <Box display="flex">
+                                            <TextField
+                                                fullWidth
+                                                size="small"
+                                                type="number"
+                                                name="monto_efectivo"
+                                                onChange={obtenerDatos}
+                                                id="form-producto-codigo-barras"
+                                                variant="outlined"
+                                            />
+                                        </Box>
+                                    </Box>
+                                </div>
+                                <div className={classes.formInputFlex}>
+                                    <Box width="100%">
+                                        <Typography>
+                                            Concepto de Movimiento:
+                                        </Typography>
+                                        <FormControl
+                                            variant="outlined"
                                             fullWidth
                                             size="small"
-                                            name="codigo_barras"
-                                            id="form-producto-codigo-barras"
-                                            variant="outlined"
-                                        />
+                                        >
+                                            <Select
+                                                id="form-producto-tipo"
+                                                onChange={obtenerDatos}
+                                                name="concepto"
+                                            >
+                                                <MenuItem value="">
+                                                    <em>Selecciona uno</em>
+                                                </MenuItem>
+                                                {data?.obtenerContabilidad.map((concepto)=> {
+                                                    return(
+                                                        <MenuItem value={concepto.nombre_servicio}>{concepto.nombre_servicio}</MenuItem>
+                                                    )
+                                                })}
+                                            </Select>
+                                        </FormControl>
                                     </Box>
+                                </div>
+                                </>
+                            ) : (
+                                <Box textAlign="center" p={2}>
+                                    <Typography variant="h6"> 
+                                        <b>Por el momento no hay un turno en sesión</b> 
+                                    </Typography>
                                 </Box>
-                                <Box width="100%">
-                                    <Typography>Moneda:</Typography>
-                                    <Box display="flex">
-                                        <TextField
-                                            fullWidth
-                                            value="Moneda Local"
-                                            size="small"
-                                            name="codigo_barras"
-                                            id="form-producto-codigo-barras"
-                                            variant="outlined"
-                                        />
-                                    </Box>
-                                </Box>
-                            </div>
-                            <div className={classes.formInputFlex}>
-                                <Box width="100%">
-                                    <Typography>Comentarios:</Typography>
-                                    <Box display="flex">
-                                        <TextField
-                                            fullWidth
-                                            multiline
-                                            rows={3}
-                                            size="small"
-                                            name="codigo_barras"
-                                            id="form-producto-codigo-barras"
-                                            variant="outlined"
-                                        />
-                                    </Box>
-                                </Box>
-                            </div>
+                            )}
                         </Grid>
                 </DialogContent>
                 <DialogActions>
                     <Button 
-                        onClick={handleClickOpen} 
+                        onClick={enviarDatos} 
                         variant="contained" 
                         color="primary" 
                         size="large"
                     >
-                        Aceptar
+                        Registrar
                     </Button>
                 </DialogActions>
-
             </Dialog>
         </>
     )
-}
+};

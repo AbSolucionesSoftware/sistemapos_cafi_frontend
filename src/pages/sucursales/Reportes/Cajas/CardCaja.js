@@ -69,8 +69,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CardCaja(props) {
     const styleProps={
-       color: (props.activa)  ? '#44b700' : 'red'
-      
+      color: (props.activa)  ? '#44b700' : 'red'
     }
     const classes = useStyles();
  
@@ -99,14 +98,14 @@ export default function CardCaja(props) {
                             Caja {props.name}
                     </Typography>
                     </Box>
-                    <CardActions disableSpacing  >
+                    {/* <CardActions disableSpacing  >
                         <Typography style={{fontWeight: 'bold'}} color="textSecondary" component="p">
                            Total en caja: 
                         </Typography>
                         <Typography style={{margin: '0px 10px', color: 'green'}} variant="h6" color="textSecondary" component="p">
                            $ {parseFloat(props.cantidad_efectivo_actual)}
                         </Typography>
-                    </CardActions>
+                    </CardActions> */}
                 </Card>
         </div>
     )

@@ -6,10 +6,10 @@ import moneda from '../../../icons/ventas/peso.svg';
 import CloseIcon from '@material-ui/icons/Close';
 
 const columns = [
-	{ id: 'icono', label: 'Icono', minWidth: 50 },
-    { id: 'moneda', label: 'Moneda', minWidth: 50 },
-	{ id: 'descripcion', label: 'Descripcion', minWidth: 190 },
-	{ id: 'cambio', label: 'Cambio', minWidth: 20 },
+	{ id: "icono", label: 'Icono', minWidth: 50 },
+    { id: "moneda", label: 'Moneda', minWidth: 50 },
+	{ id: "descripcion", label: 'Descripcion', minWidth: 190 },
+	{ id: "cambio", label: 'Cambio', minWidth: 20 },
 
 ];
 
@@ -44,10 +44,9 @@ const useStyles = makeStyles((theme) => ({
     iconSize: {
 		width: 28,
 	},
-    rootFecha: {
-        height: 40,
-        maxWidth: 150,
-		display: 'flex',
+    rootBusqueda: {
+        height: 35,
+		display: 'flex'
 	},
 }));
 
@@ -65,13 +64,20 @@ export default function MonedaCambio() {
 
     return (
         <div>
-             <Box display='flex'>
-                <Box mt={2}>
+            <Box 
+                width="100%"
+                display="flex"
+                justifyItems="center"
+                alignSelf="center"
+                justifySelf="center"
+                alignItems="center"
+            >
+                <Box mt={1}>
                     <img src={moneda} alt="iconoBander" className={classes.iconSize} /> 
                 </Box>
-                <Box p={1} onClick={() => handleClickOpen()}>
-                    <Paper className={classes.rootFecha}>
-                        <InputBase />
+                <Box width="100%" ml={1} onClick={() => handleClickOpen()}>
+                    <Paper width="100%">
+                        <InputBase className={classes.rootBusqueda} />
                     </Paper>
                 </Box>
             </Box>
@@ -93,21 +99,21 @@ export default function MonedaCambio() {
                             <Table stickyHeader size="small" aria-label="a dense table">
                                 <TableHead>
                                     <TableRow>
-                                        {columns.map((column) => (
-                                            <TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
+                                        {columns.map((column, index) => (
+                                            <TableCell key={index} style={{ minWidth: column.minWidth }}>
                                                 {column.label}
                                             </TableCell>
                                         ))}
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {rows.map((row) => {
+                                    {rows.map((row, index) => {
                                         return (
-                                            <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                                                {columns.map((column) => {
+                                            <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                                                {columns.map((column, index) => {
                                                     const value = row[column.id];
                                                     return (
-                                                        <TableCell key={column.id} align={column.align}>
+                                                        <TableCell key={index} align={column.align}>
                                                             {column.format && typeof value === 'number' ? (
                                                                 column.format(value)
                                                             ) : (

@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useContext} from 'react';
+import React, { useState, useContext} from 'react';
 import { Drawer, AppBar, Toolbar, Divider, BottomNavigation, Button, Grid, Dialog, Slide, DialogContent, DialogActions } from '@material-ui/core';
 import { CssBaseline, Avatar, Box, Typography } from '@material-ui/core';
 import { withRouter } from 'react-router';
@@ -6,7 +6,6 @@ import { FaPowerOff } from 'react-icons/fa';
 import useStyles from './styles';
 import moment from 'moment';
 import 'moment/locale/es';
-
 // import addIcon from '../../icons/ventas/add.svg'
 // import articuloRapido from '../../icons/ventas/tiempo-rapido.svg'
 // import listaEspera from '../../icons/ventas/lista-de-espera.svg'
@@ -24,10 +23,9 @@ import 'moment/locale/es';
 // import shoppingcartIcon from '../../icons/ventas/shopping-cart.svg'
 
 import Abonos from '../../pages/ventas/Abonos/Abonos'; 
-import VentasCredito from '../../pages/ventas/VentasCredito/VentasCredito';
 import DepositoRetiroCaja from '../../pages/ventas/Operaciones/DepositoRetiroCaja';
 import Turnos from '../../pages/ventas/AbrirCerrarTurno/Turnos';
-import CerrarCaja from '../../pages/ventas/Operaciones/CerrarCaja';
+import PreCorteCaja from '../../pages/ventas/Operaciones/PreCorteCaja';
 import VentasEspera from '../../pages/ventas/VentasEspera/VentasEspera';
 import AbrirCajon from '../../pages/ventas/Operaciones/AbrirCajon';
 import VentasRealizadas from '../../pages/ventas/VentasRealizadas/VentasRealizadas';
@@ -36,11 +34,15 @@ import CancelarVenta from '../../pages/ventas/Operaciones/CancelarVenta';
 import CerrarVenta from '../../pages/ventas/Operaciones/CerrarVenta';
 import ConsultarPrecio from '../../pages/ventas/Operaciones/ConsultarPrecio';
 import Cotizacion from '../../pages/ventas/Cotizacion/Cotizacion';
+import BuscarProducto from '../../pages/ventas/Operaciones/BuscarProducto';
 import VentaEnEspera from '../../pages/ventas/Operaciones/VentaEnEspera';
-import ListaApartados from '../../pages/ventas/Apartados/ListaApartados';
-import CrearApartado from '../../pages/ventas/Apartados/CrearApartado';
-import ClientesVentas from '../../pages/ventas/ClientesVentas/ClientesVentas';
 import ProductoRapidoIndex from '../../pages/ventas/ArticuloRapido/indexArticuloRapido';
+import ClientesVentas from '../../pages/ventas/ClientesVentas/ClientesVentas';
+
+// import VentasCredito from '../../pages/ventas/VentasCredito/VentasCredito';
+// import ListaApartados from '../../pages/ventas/Apartados/ListaApartados';
+// import CrearApartado from '../../pages/ventas/Apartados/CrearApartado';
+
 import SnackBarMessages from '../SnackBarMessages';
 import { VentasContext } from '../../context/Ventas/ventasContext';
 // import { VentasProvider } from '../../context/Ventas/ventasContext'; 
@@ -109,7 +111,7 @@ function NavegacionVentas(props) {
 						<Divider orientation="vertical" />
 					<Turnos />
 						<Divider orientation="vertical" />
-					<CerrarCaja />
+					<PreCorteCaja />
 						<Divider orientation="vertical" />
 					<VentaEnEspera />
 						<Divider orientation="vertical" />
@@ -201,52 +203,43 @@ function NavegacionVentas(props) {
 				}}
 			>
 				<Toolbar className={classes.navigationTop} />
-				<Grid container className={classes.drawerColor}>
+				{/* <Grid container className={classes.drawerColor}>
 					<Grid item lg={6} xs={6} md={6}>
 						<VentasCredito />
-						<CrearApartado />
 					</Grid>
-					<Grid item  lg={6} xs={6} md={6}>
-						<Button className={classes.borderBoton}>
-							<Box>
-								<Box>
-									<img 
-										src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cart-add.svg' 
-										alt="icono general" 
-										className={classes.iconSizeSecondInferiorGrande} 
-									/>
-								</Box>
-								<Box>
-									<Typography variant="body2" >
-										<b>Venta General</b>
-									</Typography>
-								</Box>
-								<Box>
-									<Typography variant="caption" style={{color: '#808080'}} >
-										<b>F4</b>
-									</Typography>
-								</Box>
-							</Box>
-						</Button>
-						<Abonos />
-					</Grid>
-				</Grid>
+				</Grid> */}
 				<Grid container className={classes.drawerColor}>
-					<Grid item lg={4} md={4} xs={4}>
+					<Grid item lg={6} md={6} xs={6}>
+						<CerrarVenta />
+					</Grid>
+					<Grid item lg={6} md={6} xs={6}>
+						<BuscarProducto />
+					</Grid>
+					<Grid item lg={6} md={6} xs={6}>
 						<CancelarVenta />
+					</Grid>
+					<Grid item lg={6} md={6} xs={6}>
 						<AbrirCajon />
+					</Grid>
+					<Grid item lg={6} md={6} xs={6}>
+						<PreciosProductos />
+					</Grid>
+					<Grid item lg={6} md={6} xs={6}>
+						<VentasEspera />
+					</Grid>
+					<Grid item lg={6} md={6} xs={6}>
 						<ClientesVentas />
 					</Grid>
-					<Grid item lg={4} md={4} xs={4}>
-						<CerrarVenta />
-						<VentasEspera />
+					<Grid item lg={6} md={6} xs={6}>
+						<VentasRealizadas />
+					</Grid>
+					<Grid item lg={6} md={6} xs={6}>
 						<ConsultarPrecio />
 					</Grid>
-					<Grid item lg={4} md={4} xs={4}>
-						<VentasRealizadas />
-						<PreciosProductos />
-						<ListaApartados />
+					<Grid item lg={6} md={6} xs={6}>
+						<Abonos />
 					</Grid>
+					
 				</Grid>
 			</Drawer>
 

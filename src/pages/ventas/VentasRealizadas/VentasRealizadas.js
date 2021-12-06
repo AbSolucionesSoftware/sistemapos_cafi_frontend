@@ -5,7 +5,7 @@ import { Box, Button, Dialog, DialogActions, DialogContent, Divider,Grid, IconBu
 import { Search } from '@material-ui/icons';
 import ListaVentasRealizadas from './ListaVentasRealizadas';
 import CloseIcon from '@material-ui/icons/Close';
-import { FcPaid } from 'react-icons/fc';
+import { FcPaid, FcSearch } from 'react-icons/fc';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -36,11 +36,11 @@ export default function VentasRealizadas() {
             >
                 <Box>
                     <Box>
-                        <FcPaid style={{ fontSize: 45 }}/>
+                        <FcSearch style={{fontSize: 45}} />
                     </Box>
                     <Box>
                         <Typography variant="body2" >
-                            <b>Ventas Realizadas</b>
+                            <b>Buscar Folio</b>
                         </Typography>
                     </Box>
                     <Box>

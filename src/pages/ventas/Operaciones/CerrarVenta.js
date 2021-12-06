@@ -20,6 +20,8 @@ export default function CerrarVenta() {
     const [open, setOpen] = useState(false);
     
     const handleClickOpen = () => { 
+        let venta = JSON.parse(localStorage.getItem("DatosVentas"));
+        console.log(venta);
 		setOpen(!open);
 	};
 

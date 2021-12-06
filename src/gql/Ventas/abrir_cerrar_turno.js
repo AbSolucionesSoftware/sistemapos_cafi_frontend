@@ -4,6 +4,7 @@ export const REGISTRAR_TURNOS = gql`
 	mutation crearRegistroDeTurno( $input: AbrirCerrarTurnoInput, $activa: Boolean) {
 		crearRegistroDeTurno(input: $input, activa: $activa) {
 			horario_en_turno
+			token_turno_user
 			concepto
 			numero_caja
 			id_caja
@@ -34,10 +35,9 @@ export const REGISTRAR_TURNOS = gql`
 			}
 			montos_en_caja {
 				monto_efectivo
-				monto_tarjeta_debito
-				monto_tarjeta_credito
+				monto_tarjeta
 				monto_creditos
-				monto_puntos
+				monto_monedero
 				monto_transferencia
 				monto_cheques
 				monto_vales_despensa
@@ -91,10 +91,9 @@ export const OBTENER_HISTORIAL_TURNOS = gql`
 			fecha_movimiento
 			montos_en_caja {
 				monto_efectivo
-				monto_tarjeta_debito
-				monto_tarjeta_credito
+				monto_tarjeta
 				monto_creditos
-				monto_puntos
+				monto_monedero
 				monto_transferencia
 				monto_cheques
 				monto_vales_despensa

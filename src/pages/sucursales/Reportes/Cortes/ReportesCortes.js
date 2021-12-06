@@ -3,8 +3,11 @@ import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import TablaComprasFiltradas from './TablaCortesFiltradas';
-import SaveIcon from '@material-ui/icons/Save';
+import ExportExcel from './ExportExcel';
 
+import { useQuery } from '@apollo/client';
+import { OBTENER_CAJAS, OBTENER_CORTES_CAJA } from '../../../../gql/Cajas/cajas';
+import { useDebounce } from 'use-debounce/lib';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -45,13 +48,55 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function ReportesCortes() {
-
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const classes = useStyles();
 
-    const [open, setOpen] = useState(false);
+    const [ open, setOpen ] = useState(false);
+    const [ datosFiltro, setDatosFiltro ] = useState([]);
+    const [value] = useDebounce(datosFiltro, 500);
 
-    const handleClickOpen =()=>{setOpen(!open)};
+    let cajas = [];
+    let historialCortes = [];
 
+    const cajasBase = useQuery(OBTENER_CAJAS,{
+		variables: {
+            empresa: sesion.empresa._id,
+			sucursal: sesion.sucursal._id,
+		}
+	});
+
+    const { loading, data, error, refetch  }= useQuery( OBTENER_CORTES_CAJA,{
+		variables: {
+            empresa: sesion.empresa._id,
+			sucursal: sesion.sucursal._id,
+            input: {
+                fecha_consulta: datosFiltro.fecha_consulta ? datosFiltro.fecha_consulta : "",
+                usuario: value.usuario ? value.usuario : "", 
+                numero_caja: datosFiltro.numero_caja ? parseInt(datosFiltro.numero_caja) : null
+            }
+		}
+	});
+
+    if(cajasBase.loading === false && loading === false){
+        cajas = cajasBase.data.obtenerCajasSucursal;
+        historialCortes = data.obtenerCortesDeCaja;
+    }
+
+    const handleClickOpen = () => {setOpen(!open)};
+
+    const obtenerDatos = (e) => { 
+        setDatosFiltro({...datosFiltro, [e.target.name]: e.target.value})
+    };
+
+    const filtrarProductos = (event) => {
+		event.preventDefault();
+        refetch();
+	};
+    
+    const limpiarDatos = () => {
+        setDatosFiltro([]);
+    };
+    
     return (
         <>
             <Button fullWidth onClick={handleClickOpen}>
@@ -80,73 +125,39 @@ export default function ReportesCortes() {
 					</Toolbar>
 				</AppBar>
                 <Grid container>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        aria-label="Guardar"
-                        className={classes.iconSave}
-                    >
-                        <SaveIcon className={classes.margin} />
-                        Exportar
-                    </Button>
-                    <Grid item lg={12}>
+                    <ExportExcel historialCortes={historialCortes} /> 
+                    
+                    <Grid item lg={12} md={12} xs={12}>
                         <div className={classes.formInputFlex}>
                             <Box width="100%">
                                 <Typography>
-                                    Fecha inicio:
+                                    Fecha de corte:
                                 </Typography>
                                 <TextField 
                                     fullWidth
                                     size="small"
-                                    name="fechaInicio"
+                                    name="fecha_consulta"
                                     variant="outlined"
                                     type="date"
+                                    onChange={obtenerDatos}
+                                    value={datosFiltro.fecha_consulta ? datosFiltro.fecha_consulta : ""}
                                 />
                             </Box>
-                            <Box width="100%">
-                                <Typography>
-                                    Fecha fin:
-                                </Typography>
-                                <TextField 
-                                    fullWidth
-                                    size="small"
-                                    name="fechaFin"
-                                    variant="outlined"
-                                    type="date"
-                                />
-                            </Box>
-                            <Box width="100%">
-                                <Typography>
-                                    Usuario:
-                                </Typography>
-                                <TextField
-                                    fullWidth
-                                    size="small"
-                                    name="provedor"
-                                    variant="outlined"
-                                />
-                            </Box>
-                            <Box width="100%">
-                                <Typography>
-                                    Metodos de Pago:
-                                </Typography>
-                                <FormControl
-                                    variant="outlined"
-                                    fullWidth
-                                    size="small"
-                                >
-                                    <Select
-                                        id="form-producto-tipo"
-                                        name="tipo_producto"
-                                    >
-                                        <MenuItem value="">
-                                            <em>Selecciona uno</em>
-                                        </MenuItem>
-                                        <MenuItem value="TARJETA">Tarjeta</MenuItem>
-                                        <MenuItem value="EFECTIVO">Efectivo</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>
+                            <form onSubmit={filtrarProductos} style={{ display: 'flex', alignItems: 'center', width: "100%" }}>
+                                <Box width="100%">
+                                    <Typography>
+                                        Usuario:
+                                    </Typography>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        name="usuario"
+                                        variant="outlined"
+                                        onChange={obtenerDatos}
+                                        value={datosFiltro.usuario ? datosFiltro.usuario : ""}
+                                    />
+                                </Box>
+                            </form>
                             <Box width="100%">
                                 <Typography>
                                     Caja:
@@ -158,26 +169,46 @@ export default function ReportesCortes() {
                                 >
                                     <Select
                                         id="form-producto-tipo"
-                                        name="tipo_producto"
+                                        name="numero_caja"
+                                        onChange={obtenerDatos}
+                                        value={datosFiltro.numero_caja ? datosFiltro.numero_caja : ""}
                                     >
                                         <MenuItem value="">
                                             <em>Selecciona uno</em>
                                         </MenuItem>
-                                        <MenuItem value="TARJETA">Caja 1</MenuItem>
-                                        <MenuItem value="TARJETA">Caja 2</MenuItem>
-                                        <MenuItem value="TARJETA">Caja 3</MenuItem>
-                                        <MenuItem value="TARJETA">Caja 4</MenuItem>
-                                        <MenuItem value="TARJETA">Caja 5</MenuItem>
-                                        <MenuItem value="TARJETA">Caja 6</MenuItem>
+                                        {
+                                            cajas?.map((caja) =>{
+                                                return(
+                                                    <MenuItem key={caja.numero_caja} value={caja.numero_caja}>
+                                                        Caja {caja.numero_caja}
+                                                    </MenuItem>
+                                                );
+                                            })
+                                        }
                                     </Select>
                                 </FormControl>
                             </Box>
+                            <Box 
+                                width="100%" 
+                                display="flex" 
+                                justifyContent="center" 
+                                alignItems="center"
+                                mt={2}
+                            >
+                                <Button
+                                    color="primary"
+                                    size="large"
+                                    variant="contained"
+                                    onClick={limpiarDatos}
+                                >
+                                    Limpiar Filtro
+                                </Button>
+                            </Box>
                         </div>
                     </Grid> 
-                    <Grid item lg={12}>
-                        <TablaComprasFiltradas />
+                    <Grid item lg={12} md={12} xs={12}>
+                        <TablaComprasFiltradas cortes={historialCortes} loading={loading} />
                     </Grid>
-                    
                 </Grid>            
 			</Dialog> 
         </>

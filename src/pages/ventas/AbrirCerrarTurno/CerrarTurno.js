@@ -12,7 +12,7 @@ moment.locale('es');
 
 export default function AbrirTurno({handleClickOpen, setLoading}) {
     const [ CrearRegistroDeTurno ] = useMutation(REGISTRAR_TURNOS);
-    const { setAlert } = useContext(VentasContext);
+    const { setAlert, setTurnoActivo } = useContext(VentasContext);
     const [ error, setError] = useState(false);
 
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
@@ -33,6 +33,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
     const input = {
         horario_en_turno: cerrarTurno.horario_en_turno,
         concepto: "CERRAR TURNO",
+        token_turno_user: turnoEnCurso ? turnoEnCurso.token_turno_user : "",
         numero_caja: turnoEnCurso ? turnoEnCurso?.numero_caja.toString() : "",
         comentarios: cerrarTurno.comentarios,
         id_caja: turnoEnCurso ? turnoEnCurso.id_caja : "",
@@ -67,19 +68,18 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
         },
         fecha_salida:{
             year: moment().format('YYYY'),
-            mes: moment().format('DD'),
-            dia: moment().format('MM'),
+            mes: moment().format('MM'),
+            dia: moment().format('DD'),
             no_semana_year: moment().week().toString(),
             no_dia_year: moment().dayOfYear().toString(),
             completa: moment().format("YYYY-MM-DD")
         },
-        fecha_movimiento: moment().format("YYYY-MM-DD"),
+        fecha_movimiento: moment().locale('es-mx').format(),
         montos_en_caja: {
             monto_efectivo: parseFloat(montoTurno.monto_efectivo ? montoTurno.monto_efectivo : 0),
-            monto_tarjeta_debito: parseFloat(montoTurno.monto_tarjeta_debito ? montoTurno.monto_tarjeta_debito : 0),
-            monto_tarjeta_credito: parseFloat(montoTurno.monto_tarjeta_credito ? montoTurno.monto_tarjeta_credito : 0),
+            monto_tarjeta: parseFloat(montoTurno.monto_tarjeta_credito ? montoTurno.monto_tarjeta_credito : 0),
             monto_creditos: parseFloat(montoTurno.monto_creditos ? montoTurno.monto_creditos : 0 ),
-            monto_puntos: parseFloat(montoTurno.monto_puntos ? montoTurno.monto_puntos : 0),
+            monto_monedero: parseFloat(montoTurno.monto_puntos ? montoTurno.monto_puntos : 0),
             monto_transferencia: parseFloat(montoTurno.monto_transferencia ? montoTurno.monto_transferencia : 0),
             monto_cheques: parseFloat(montoTurno.monto_cheques ? montoTurno.monto_cheques : 0),
             monto_vales_despensa: parseFloat(montoTurno.monto_vales_despensa ? montoTurno.monto_vales_despensa : 0)
@@ -130,6 +130,8 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                 localStorage.removeItem('turnoEnCurso');
                 setLoading(false);
                 handleClickOpen();
+                setTurnoActivo(true);
+
             }
         } catch (error) {
             setAlert({
@@ -166,29 +168,15 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
                         />
                     </Box>
                 </Box>
+            </div>
+            <div className={classes.formInputFlex}>
                 <Box width="100%">
-                    <Typography> Tarjeta Debito:</Typography>
+                    <Typography> Tarjeta:</Typography>
                     <Box display="flex">
                         <TextField
                             name="monto_tarjeta_debito"
                             inputProps={{min: 0}}
                             type="number"
-                            defaultValue={0}
-                            color="primary"
-                            style={{width: "70%"}}
-                            onChange={obtenerCamposMontos}
-                        />
-                    </Box>
-                </Box>
-            </div>
-            <div className={classes.formInputFlex}>
-                <Box width="100%">
-                    <Typography> Tarjeta Credito:</Typography>
-                    <Box display="flex">
-                        <TextField
-                            name="monto_tarjeta_credito"
-                            inputProps={{min: 0}}
-                            type="number" 
                             defaultValue={0}
                             color="primary"
                             style={{width: "70%"}}
@@ -213,7 +201,7 @@ export default function AbrirTurno({handleClickOpen, setLoading}) {
             </div>
             <div className={classes.formInputFlex}>
                 <Box width="100%">
-                    <Typography>Puntos:</Typography>
+                    <Typography>Monedero:</Typography>
                     <Box display="flex">
                         <TextField
                             name="monto_puntos"
