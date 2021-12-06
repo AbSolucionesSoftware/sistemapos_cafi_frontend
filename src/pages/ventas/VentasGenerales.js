@@ -539,11 +539,7 @@ export default function VentasGenerales() {
                         Cliente: <b style={{fontSize: 16}}>{clientesVentas.nombre_cliente}</b>
                       </Typography>
                     </Box>
-<<<<<<< HEAD
                     <Box mt={.5} mr={1}>
-=======
-                    <Box mt={.5}>
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
                       <FcBusinessman style={{fontSize: 19}} />
                     </Box>
                   </Box>
@@ -557,11 +553,7 @@ export default function VentasGenerales() {
                          Cliente.: <b style={{fontSize: 16}}>{clientesVentas.numero_cliente}</b>
                       </Typography>
                     </Box>
-<<<<<<< HEAD
                     <Box mt={.5} mr={1} >
-=======
-                    <Box mt={.5}>
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
                       <AiOutlineFieldNumber style={{fontSize: 22}} />
                     </Box>
                   </Box>
@@ -575,11 +567,7 @@ export default function VentasGenerales() {
                         Clave Clte.: <b style={{fontSize: 16}}>{clientesVentas.clave_cliente}</b>
                       </Typography>
                     </Box>
-<<<<<<< HEAD
                     <Box mt={.5} mr={1}>
-=======
-                    <Box mt={.5}>
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
                       <FaBarcode style={{fontSize: 19}} />
                     </Box>
                   </Box>
@@ -595,11 +583,7 @@ export default function VentasGenerales() {
                         Limite Credito: <b style={{fontSize: 16}}>${clientesVentas.limite_credito ? clientesVentas.limite_credito : 0}</b>
                       </Typography>
                     </Box>
-<<<<<<< HEAD
                     <Box mt={.5} mr={1}>
-=======
-                    <Box mt={.5}>
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
                       <FaMoneyCheckAlt style={{fontSize: 19}} />
                     </Box>
                   </Box>
@@ -613,11 +597,7 @@ export default function VentasGenerales() {
                        Descs.: <b style={{fontSize: 16}}>{clientesVentas.numero_descuento ? clientesVentas.numero_descuento : 0}%</b>
                       </Typography>
                     </Box>
-<<<<<<< HEAD
                     <Box mt={.5} mr={1}>
-=======
-                    <Box mt={.5}>
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
                       <AiOutlineFieldNumber style={{fontSize: 22}} />
                     </Box>
                   </Box>
@@ -631,11 +611,7 @@ export default function VentasGenerales() {
                         Dias Credito: <b style={{fontSize: 16}}>{clientesVentas.dias_credito ? clientesVentas.dias_credito : 0} Dias</b>
                       </Typography>
                     </Box>
-<<<<<<< HEAD
                     <Box mt={.5} mr={1}>
-=======
-                    <Box mt={.5}>
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
                       <FcCalendar style={{fontSize: 19}} />
                     </Box>
                   </Box>
@@ -652,11 +628,7 @@ export default function VentasGenerales() {
                       Monedero : <b style={{fontSize: 17}}>$ {DatosVentasActual?.monedero ? DatosVentasActual?.monedero?.toFixed(2) : 0}</b>
                     </Typography>
                   </Box>
-<<<<<<< HEAD
                   <Box mt={.5} mr={1}>
-=======
-                  <Box mt={.5}>
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
                     <FcSalesPerformance style={{fontSize: 19}} />
                   </Box>
                 </Box>
@@ -670,11 +642,7 @@ export default function VentasGenerales() {
                       Descuento: <b style={{fontSize: 17}}>${DatosVentasActual?.descuento ? DatosVentasActual?.descuento?.toFixed(2) : 0}</b>
                     </Typography>
                   </Box>
-<<<<<<< HEAD
                   <Box mt={.5} mr={1}>
-=======
-                  <Box mt={.5}>
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
                     <FcRating style={{fontSize: 19}} />
                   </Box>
                 </Box>
@@ -710,11 +678,7 @@ export default function VentasGenerales() {
               <Typography variant="h4">
                 Total: <b style={{color: "green"}}>${DatosVentasActual?.total ? DatosVentasActual?.total.toFixed(2) : 0}</b>
               </Typography>
-<<<<<<< HEAD
               <Box mt={.5} mr={1}>
-=======
-              <Box mt={.5} >
->>>>>>> c41abf451eee8747498f22488e5c2f575717cf81
                 <MonetizationOnIcon style={{fontSize: 37, color: "green"}} />
               </Box>
             </Box>
