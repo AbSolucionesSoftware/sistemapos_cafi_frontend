@@ -86,7 +86,7 @@ export default function VentasGenerales() {
           console.log(error.networkError.result.errors);
           setAlert({ message: `Error de servidor`, status: 'error', open: true });
         }else if(error.graphQLErrors){
-          console.log();
+          console.log(error.graphQLErrors);
           setAlert({ message: `${error.graphQLErrors[0]?.message}`, status: 'error', open: true });
         }
     }else{
