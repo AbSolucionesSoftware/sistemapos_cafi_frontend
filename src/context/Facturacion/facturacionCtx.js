@@ -5,33 +5,41 @@ export const FacturacionCtx = createContext();
 
 export const FacturacionProvider = ({ children }) => {
   const [datosFactura, setDatosFactura] = useState({
-    rfc_empresa: "",
-    razon_social_empresa: "",
-    regimen_fiscal_empresa: "",
-    tipo_factura: "",
-    cliente: "",
-    uso_cfdi: "",
-    fecha_expedicion: moment().format('LL'),
-    codigo_postal: "",
-    moneda: "",
-    forma_pago: "",
-    metodo_pago: "",
     serie: "",
+    currency: "",
+    expedition_place: "",
     folio: "",
-    tipo_relacion: "",
-    folio_cfdi_relacion: "",
-    subtotal: "",
-    impuestos: "",
-    total: "",
-    concepto: [],
-    articulos: []
+    cfdi_type: "",
+    payment_form: "",
+    payment_method: "",
+    logo_url: "",
+    date: moment().format("LL"),
+    issuer: {
+      FiscalRegime: "",
+      Rfc: "",
+      Name: "",
+    },
+    receiver: {
+      Rfc: "",
+      Name: "",
+      CfdiUse: "",
+    },
+    items: [],
+    empresa: "",
+    sucursal: "",
   });
+
+  const [productoFactura, setProductoFactura] = useState([]);
+
+  const [cp_valido, setCPValido] = useState(false);
 
   return (
     <FacturacionCtx.Provider
       value={{
         datosFactura,
-        setDatosFactura
+        setDatosFactura,
+        cp_valido,
+        setCPValido,
       }}
     >
       {children}

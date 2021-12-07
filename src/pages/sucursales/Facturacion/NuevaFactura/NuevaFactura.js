@@ -10,6 +10,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import { DialogContent, makeStyles } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import DoneIcon from "@material-ui/icons/Done";
+import Alert from "@material-ui/lab/Alert"
 
 import RegistroFactura from "./RegistroFactura";
 import DetallesFactura from "./TablaDetallesFactura";
@@ -111,20 +112,20 @@ export default function NuevaFactura() {
 const FacturaModalContent = ({ handleClose }) => {
   const [CrearFactura] = useMutation(CREAR_FACTURA);
 
-  const {  data, error, refetch } = useQuery(CONSULTA_POSTAL_CODES_SAT_API,{
+  /* const {  data, error, refetch } = useQuery(CONSULTA_POSTAL_CODES_SAT_API,{
 		variables: {
        input: {texto:'ALOHA'}
 		
 		}
-	});	
+	});	 */
 
-React.useEffect(() => {
+/* React.useEffect(() => {
  console.log('====================================');
  console.log(data);
  console.log('====================================');
-}, [data])
+}, [data]) */
 
-  const consultar = () => {
+  /* const consultar = () => {
     try {
     
       refetch();
@@ -136,8 +137,8 @@ React.useEffect(() => {
       console.log(error.graphQLErrors.message);
       }
     }
-  }
-  const crearFactura = async() => {
+  } */
+  /* const crearFactura = async() => {
     try {
      
       let resp = await CrearFactura({
@@ -152,10 +153,13 @@ React.useEffect(() => {
     } catch (error) {
       console.log(error)
     }
-  }
+  } */
   return (
     <Fragment>
       <DialogContent>
+        <Alert severity="warning">No tienes Series CFDI registradas</Alert>
+        <Box mt={1} />
+        <Alert severity="warning">No tienes una firma digital para facturar</Alert>
         <Box my={2}>
           <RegistroFactura />
         </Box>
@@ -193,7 +197,7 @@ React.useEffect(() => {
           startIcon={<DoneIcon />}
           size="large"
           //onClick={() => handleClose()}
-          onClick={() => consultar()}
+         /*  onClick={() => consultar()} */
           
         >
           Generar CFDI
