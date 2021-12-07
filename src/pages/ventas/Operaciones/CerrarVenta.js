@@ -1,11 +1,30 @@
 import React, { useState } from 'react'
 import useStyles from '../styles';
 
-import { Box, Button, Dialog, DialogActions, DialogContent, Divider, Grid,  IconButton,  Paper,  Slide,  TextField, Typography } from '@material-ui/core'
+import { 
+    Box, 
+    Button, 
+    Dialog, 
+    DialogActions, 
+    DialogContent, 
+    Divider, 
+    Grid,  
+    IconButton,  
+    Paper,  
+    Slide,  
+    TextField, 
+    Typography 
+} from '@material-ui/core'
 import tarjeta from '../../../icons/ventas/tarjeta-de-credito.svg';
 import { FcDonate, FcShop } from 'react-icons/fc';
 import { Search } from '@material-ui/icons';
 import CloseIcon from '@material-ui/icons/Close';
+
+import {
+    Edit
+  } from "@material-ui/icons";
+
+import { FcBusinessman, FcSalesPerformance } from 'react-icons/fc';
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -23,6 +42,9 @@ export default function CerrarVenta() {
     const [totalVenta, setTotalVenta] = useState(0);
     const [valorActual, setValorActual] = useState('EFECTIVO')
     const [totalARestar, setTotalARestar] = useState(0);
+    const [cambioVenta, setCambioVenta] = useState(0);
+    const [datosCliente, setDatosCliente] = useState({});
+    const [monedero, setMonedero] = useState();
     
     const handleClickOpen = () => { 
         let venta = JSON.parse(localStorage.getItem("DatosVentas"));
@@ -31,6 +53,8 @@ export default function CerrarVenta() {
         setTotalVenta(total.toFixed(2))
         setTotalARestar(total.toFixed(2));
 		setOpen(!open);
+        setDatosCliente(venta === null ? {} : venta.cliente);
+        setMonedero(venta === null ? 0 : venta.monedero);
 	};
 
     // console.log(totalVenta);
@@ -47,8 +71,11 @@ export default function CerrarVenta() {
         setValorActual(e)
     }
 
-    const handlerChangeValue = (e) => {
-        setTotalARestar(e);
+    const handlerChangeValue = (e,location) => {
+        if(valorActual === location){
+            setTotalARestar(e.target.value);
+            setCambioVenta(e.target.value - parseFloat(totalVenta));
+        }
     }
 
 	window.onkeydown = funcion_tecla;
@@ -143,8 +170,8 @@ export default function CerrarVenta() {
                                         name="efectivo"
                                         id="form-producto-efectivo"
                                         variant="outlined"
-                                        value={valorActual === "EFECTIVO" ?  totalVenta : ''}
-                                        onChange={(e) => handlerChangeValue(e)}
+                                        value={valorActual === "EFECTIVO" ?  totalARestar : '0.00'}
+                                        onChange={(e) => handlerChangeValue(e,"EFECTIVO")}
                                     />
                                 </Box>
                             </Box>
@@ -167,8 +194,8 @@ export default function CerrarVenta() {
                                         name="codigo_barras"
                                         id="form-producto-codigo-barras"
                                         variant="outlined"
-                                        value={valorActual === "TARJETA" ?  totalVenta : ''}
-                                        onChange={(e) => handlerChangeValue(e)}
+                                        value={valorActual === "TARJETA" ?  totalARestar : '0.00'}
+                                        onChange={(e) => handlerChangeValue(e,"TARJETA")}
                                     />
                                 </Box>
                             </Box>
@@ -189,8 +216,8 @@ export default function CerrarVenta() {
                                         name="codigo_barras"
                                         id="form-producto-codigo-barras"
                                         variant="outlined"
-                                        value={valorActual === "PUNTOS" ?  totalVenta : ''}
-                                        onChange={(e) => handlerChangeValue(e)}
+                                        value={valorActual === "PUNTOS" ?  totalARestar : '0.00'}
+                                        onChange={(e) => handlerChangeValue(e,"PUNTOS")}
                                     />
                                 </Box>
                             </Box>
@@ -215,8 +242,8 @@ export default function CerrarVenta() {
                                         name="codigo_barras"
                                         id="form-producto-codigo-barras"
                                         variant="outlined"
-                                        value={valorActual === "TRANSFERENCIA" ?  totalVenta : ''}
-                                        onChange={(e) => handlerChangeValue(e)}
+                                        value={valorActual === "TRANSFERENCIA" ?  totalARestar : '0.00'}
+                                        onChange={(e) => handlerChangeValue(e,"TRANSFERENCIA")}
                                     />
                                 </Box>
                             </Box>
@@ -241,69 +268,222 @@ export default function CerrarVenta() {
                                         name="codigo_barras"
                                         id="form-producto-codigo-barras"
                                         variant="outlined"
-                                        value={valorActual === "CHEQUE" ?  totalVenta : ''}
-                                        onChange={(e) => handlerChangeValue(e)}
+                                        value={valorActual === "CHEQUE" ?  totalARestar : '0.00'}
+                                        onChange={(e) => handlerChangeValue(e,"CHEQUE")}
                                     />
                                 </Box>
                             </Box>
                         </div>
-                        <Paper elevation={3} >
-                            <div className={classes.formInputFlex}>
-                                <Box width="40%">
-                                    <Typography variant='caption'>
-                                        <b>Puntos Generados:</b>
-                                    </Typography>
+                        <div className={classes.formInputFlex}>
+                            <Box width="40%">
+                                <Box
+                                    display="flex"
+                                    alignItems="center"
+                                >
+                                    <Box mt={.5} mr={.5} >
+                                        <FcBusinessman style={{fontSize: 19}} />
+                                    </Box>
                                     <Box>
-                                        <Typography variant='subtitle1'>
-                                        800
+                                        <Typography variant="caption">
+                                            <b>Cliente:</b>
                                         </Typography>
                                     </Box>
                                 </Box>
-                                <Box width="100%">
-                                    <Typography variant='caption'>
-                                        <b>Cliente:</b>
-                                    </Typography>
-                                    <Box display="flex" alignItems="center">
-                                        <Typography variant='caption'>
-                                            Jerusalen Martinez
+                                <Box display="flex" alignItems="center">
+                                    <Typography variant='subtitle1' >
+                                        <b style={{fontSize: 16}} >{datosCliente ? datosCliente.nombre_cliente : "Sin cliente" }</b>
+                                    </Typography> 
+                                </Box>
+                            </Box>
+
+                            <Box width="60%">
+                                <Box
+                                    display="flex"
+                                    alignItems="center"
+                                >
+                                    <Box mt={.5} mr={.5} >
+                                        <FcSalesPerformance style={{fontSize: 19}} />
+                                    </Box>
+                                    <Box 
+                                        display="flex"
+                                        alignItems="center"
+                                    >
+                                        <Typography variant="caption" align="center" >
+                                            <b>Puntos Generados:</b>
                                         </Typography>
-                                        <IconButton>
-                                            <Search />
-                                        </IconButton>
                                     </Box>
                                 </Box>
-                                <Box width="40%">
-                                    <Typography variant='caption'>
-                                        <b>Puntos Dsiponibles:</b>
-                                    </Typography>
+                                <Box display="flex" alignItems="center">
+                                    <Typography variant='subtitle1'>
+                                        $ {monedero}
+                                    </Typography> 
+                                </Box>
+                            </Box>
+
+                            <Box width="60%">
+                                <Box
+                                    display="flex"
+                                    alignItems="center"
+                                >
+                                    <Box mt={.5} mr={.5} >
+                                        <FcSalesPerformance style={{fontSize: 19}} />
+                                    </Box>
                                     <Box>
-                                        <Typography variant='subtitle1'>
-                                        800
+                                        <Typography variant="caption">
+                                            <b>Puntos Disponibles:</b>
                                         </Typography>
                                     </Box>
                                 </Box>
-                                <Box width="100%">
+                                <Box display="flex" alignItems="center">
+                                    <Typography variant='subtitle1'>
+                                        $ 800
+                                    </Typography> 
+                                </Box>
+                            </Box>
+
+
+                            {/* <Box width="50%">
+                                <Typography variant='caption'>
+                                    <b>Puntos Dsiponibles:</b>
+                                </Typography>
+                                <Box>
+                                    <Typography variant='subtitle1'>
+                                        $ 800
+                                    </Typography>
+                                </Box>
+                            </Box> */}
+                            
+                            <Box width="100%" textAlign="right">
+                                <Typography variant='caption'>
+                                    <b>Su cambio:</b>
+                                </Typography>
+                                <Typography variant='h4' style={{color: 'green'}}>
+                                    $ { cambioVenta }
+                                </Typography>
+                                <Typography variant='caption'>
+                                    (CIENTO CICUENTA PESOS 00/100 MNX)
+                                </Typography>
+                            </Box>
+                        </div>
+
+                        <Box>
+                            <Box width="100%">
+                                <Button
+                                    color="primary" 
+                                    variant="outlined"
+                                    startIcon={<img src={tarjeta} alt="icono ventas" style={{width: 30}} />}
+                                >
+                                    Venta a Credito
+                                </Button>
+                            </Box>
+                        </Box>
+                        
+                        <div className={classes.formInputFlex}>
+                            <Box width="20%">
+                                <Typography variant='caption'>
+                                    <b>Dias de Crédito:</b>
+                                </Typography>
+                                <Box display="flex" alignItems="center">
+                                    <TextField 
+                                        fullWidth
+                                        size="small"
+                                        name="codigo_barras"
+                                        id="form-producto-codigo-barras"
+                                        variant="outlined"
+                                    />
+                                </Box>
+                            </Box>
+                            <Box width="20%">
+                                <Typography variant='caption'>
+                                    <b>Límite de Crédito:</b>
+                                </Typography>
+                                <Box display="flex" alignItems="center">
+                                    <TextField 
+                                        fullWidth
+                                        size="small"
+                                        name="codigo_barras"
+                                        id="form-producto-codigo-barras"
+                                        variant="outlined"
+                                    />
+                                </Box>
+                            </Box>
+                            <Box width="20%">
+                                <Typography variant='caption'>
+                                    <b>Crédito Disponible:</b>
+                                </Typography>
+                                <Box display="flex" alignItems="center">
+                                    <TextField 
+                                        fullWidth
+                                        size="small"
+                                        name="codigo_barras"
+                                        id="form-producto-codigo-barras"
+                                        variant="outlined"
+                                    />
+                                </Box>
+                            </Box>
+
+                            <Box>
+                                <Box width="100%" mt={2.5} >
                                     <Button
                                         color="primary" 
                                         variant="outlined"
-                                        startIcon={<img src={tarjeta} alt="icono ventas" style={{width: 30}} />}
+                                        size="large"
+                                        startIcon={<Edit />}
                                     >
-                                        Venta a Credito
+                                        Editar
                                     </Button>
                                 </Box>
-                                <Box width="100%" textAlign="right">
-                                    <Typography variant='caption'>
-                                        <b>Su cambio:</b>
-                                    </Typography>
-                                    <Typography variant='h4' style={{color: 'red'}}>
-                                        {totalVenta > 0 && totalARestar > 0 ? totalARestar - totalVenta : 0}
-                                    </Typography>
-                                    <Typography variant='caption'>
-                                        (CIENTO CICUENTA PESOS 00/100 MNX)
-                                    </Typography>
+                            </Box>
+                        </div>
+
+                        <div className={classes.formInputFlex}>
+                            <Box width="20%">
+                                <Typography variant='caption'>
+                                    <b>Total a Crédito:</b>
+                                </Typography>
+                                <Box display="flex" alignItems="center">
+                                    <TextField 
+                                        fullWidth
+                                        size="small"
+                                        name="codigo_barras"
+                                        id="form-producto-codigo-barras"
+                                        variant="outlined"
+                                    />
                                 </Box>
-                            </div>
-                        </Paper>
+                            </Box>
+
+                            <Box width="20%" >
+                                <Typography variant='caption'>
+                                    <b>Dias de Crédito:</b>
+                                </Typography>
+                                <Box display="flex" alignItems="center">
+                                    <TextField 
+                                        fullWidth
+                                        size="small"
+                                        name="codigo_barras"
+                                        id="form-producto-codigo-barras"
+                                        variant="outlined"
+                                    />
+                                </Box>
+                            </Box>
+
+                            <Box width="20%">
+                                <Typography variant='caption'>
+                                    <b>Fecha de Vencimiento:</b>
+                                </Typography>
+                                <Box display="flex" alignItems="center">
+                                    <TextField 
+                                        fullWidth
+                                        size="small"
+                                        name="codigo_barras"
+                                        id="form-producto-codigo-barras"
+                                        variant="outlined"
+                                        type="date"
+                                    />
+                                </Box>
+                            </Box>
+                        </div>
+
                     </Grid>
                 </DialogContent>
                 <DialogActions>

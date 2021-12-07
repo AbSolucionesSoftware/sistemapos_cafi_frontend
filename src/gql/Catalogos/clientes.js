@@ -82,6 +82,7 @@ export const OBTENER_CLIENTES = gql`
 				nombre_sucursal
 				descripcion
 			}
+			monedero_electronico
 		}
 	}
 `;
