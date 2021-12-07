@@ -7,58 +7,47 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { TablePagination } from '@material-ui/core';
+import { Box, CircularProgress } from '@material-ui/core';
 
 const columns = [
-	{ id: 'folio', label: 'Folio', minWidth: 20, align: 'center' },
-	{ id: 'cliente', label: 'Cliente', minWidth: 330 },
-	{ id: 'fecha', label: 'Fecha.', minWidth: 100, align: 'center'},
-	{ id: 'total', label: 'Total', minWidth: 100, align: 'center'},
-];
-
-function createData(folio, cliente, fecha, total) {
-	return { folio, cliente, fecha, total};
-}
-
-const rows = [
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
+	{ id: 'clave', label: 'Clave', minWidth: 40, align: 'center' },
+	{ id: 'codigo', label: 'C. Barras', minWidth: 40, align: 'center' },
+	{ id: 'descripcion', label: 'Nombre/Descrip.', minWidth: 330 },
+	{ id: 'existencia', label: 'Exist.', minWidth: 30, align: 'center'},
+	{ id: 'unidad', label: 'Unidad', minWidth: 30, align: 'center'},
+	{ id: 'precio', label: 'Precio', minWidth: 30, align: 'center'},
 ];
 
 const useStyles = makeStyles({
 	root: {
-		width: '100%'
+		width: '100%',
+		marginTop: 15
 	},
 	container: {
-		maxHeight: '50vh'
+		height: '40vh'
 	}
 });
 
-export default function ListaProductos() {
+export default function ListaProductos({
+	productosBusqueda, 
+	setProductoSeleccionado, 
+	loading
+}) {
+
 	const classes = useStyles();
-	const [ page, setPage ] = React.useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = React.useState(8);
 
-	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
-
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(+event.target.value);
-		setPage(0);
-	};
+	if (loading)
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        height="50vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
 
 	return (
 		<Paper className={classes.root}>
@@ -74,36 +63,52 @@ export default function ListaProductos() {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+						{productosBusqueda.map((producto) => {
 							return (
-								<TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-									{columns.map((column) => {
-										const value = row[column.id];
-										return (
-											<TableCell key={column.id} align={column.align}>
-												{column.format && typeof value === 'number' ? (
-													column.format(value)
-												) : (
-													value
-												)}
-											</TableCell>
-										);
-									})}
-								</TableRow>
+								<RowsProductos 
+									producto={producto}
+									setProductoSeleccionado={setProductoSeleccionado}
+								/>
 							);
 						})}
 					</TableBody>
 				</Table>
 			</TableContainer>
-			<TablePagination
-				rowsPerPageOptions={[ 10, 25, 100 ]}
-				component="div"
-				count={rows.length}
-				rowsPerPage={rowsPerPage}
-				page={page}
-				onChangePage={handleChangePage}
-				onChangeRowsPerPage={handleChangeRowsPerPage}
-			/>
 		</Paper>
 	);
+};
+
+function RowsProductos({producto, setProductoSeleccionado}) {
+
+	return(
+		<>
+			<TableRow 
+				hover 
+				role="checkbox" 
+				tabIndex={-1} 
+				key={producto._id}
+				onClick={() => setProductoSeleccionado(producto)}
+			>
+				<TableCell align="center" >
+					{producto.id_producto.datos_generales.clave_alterna}
+				</TableCell>
+				<TableCell align="center">
+					{producto.id_producto.datos_generales.codigo_barras}
+				</TableCell>
+				<TableCell >
+					{producto.id_producto.datos_generales.nombre_comercial}
+				</TableCell>
+				<TableCell align="center">
+					{producto.cantidad}
+				</TableCell>
+				<TableCell align="center">
+					{producto.unidad}
+				</TableCell>
+				<TableCell align="center">
+					{producto.precio}
+				</TableCell>
+			</TableRow>
+		</>	
+	);
+	
 }

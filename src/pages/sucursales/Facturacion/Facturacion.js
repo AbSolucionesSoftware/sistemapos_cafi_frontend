@@ -3,8 +3,8 @@ import React from 'react'
 import { Box, Container, Grid } from '@material-ui/core'
 
 import NuevaFactura from './NuevaFactura/NuevaFactura';
-import SeriesCDFI from './CDFISeries/SeriesCdfi';
-import SellosCDFI from './CDFISellos/SellosCdfi';
+import SeriesCDFI from './CFDISeries/SeriesCdfi';
+import SellosCDFI from './CFDISellos/SellosCdfi';
 import FacturasRealizadas from './FacturasRealizadas/FacturasRealizadas';
 
 export default function Facturacion() {

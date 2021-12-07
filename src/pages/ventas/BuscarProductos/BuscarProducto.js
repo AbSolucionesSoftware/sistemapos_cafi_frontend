@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { Box, Button, DialogActions, Dialog, 
         DialogContent, Divider, Grid, 
         Typography, Slide, InputBase, Paper, 
-        IconButton } from '@material-ui/core'
+        IconButton} from '@material-ui/core'
+import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import useStyles from '../styles';
 import { useDebounce } from 'use-debounce/lib';
 import { FcSearch } from 'react-icons/fc';
 import CloseIcon from '@material-ui/icons/Close';
 import { Search } from '@material-ui/icons';
 import ListaProductos from './ListaProductos';
+import { useQuery } from '@apollo/client';
+import { CONSULTA_PRODUCTOS_VENTAS } from '../../../gql/Ventas/ventas_generales';
+import InformacionProducto from './InformacionProducto';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -16,8 +20,38 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function BuscarProducto() {
     const classes = useStyles();
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
     const [open, setOpen] = useState(false);
-	const [ value ] = useDebounce("", 500);
+    const [ searchProducto, setSearchProducto ] = useState([]);
+    const [ productoSeleccionado, setProductoSeleccionado ] = useState([]);
+    
+	const [ value ] = useDebounce(searchProducto, 500);
+
+    const { data, refetch, loading } = useQuery(CONSULTA_PRODUCTOS_VENTAS, {
+		variables: {
+            empresa: sesion.empresa._id,
+			sucursal: sesion.sucursal._id,
+            input: {
+                producto: value.producto ? value.producto : ""
+            }
+		}
+	});
+    
+    let productosBusqueda = [];
+
+    if(data) productosBusqueda = data.obtenerProductosVentas;
+
+    const obtenerDatos = (e) => {
+        setSearchProducto({...searchProducto, [e.target.name]: e.target.value})
+    };
+
+    const keyUpEvent = async (e) => {
+        if (e.code === "Enter" || e.code === "NumpadEnter") {
+            setSearchProducto({...searchProducto, [e.target.name]: e.target.value});
+            refetch();
+        }   
+    };
 
     const handleClickOpen = () => { 
 		setOpen(!open);
@@ -29,6 +63,8 @@ export default function BuscarProducto() {
             handleClickOpen();
         } 
     };
+
+    console.log(productoSeleccionado);
 
     return (
         <>
@@ -53,42 +89,58 @@ export default function BuscarProducto() {
                 </Box>
             </Button>
             <Dialog
-				maxWidth='lg'
+				maxWidth='md'
+                fullWidth
 				open={open} 
 				onClose={handleClickOpen} 
 				TransitionComponent={Transition}
 			>
                 <DialogContent>
-                    <Grid container item lg={12}>
-                        <Box
-                            display="flex"
-                            flexGrow={1}
-                        >
-                            <Box>
-                                <FcSearch style={{fontSize: 65}} />
+                    <Grid container>
+                        <Grid item lg={3}>
+                            <Box display="flex" justifyContent="center" alignItems="center" width="100%">
+                                {productoSeleccionado?.id_producto?.imagenes.length > 0 ? (
+                                    <Box className={classes.containerImage}>
+                                        <img 
+                                            alt="Imagen producto" 
+                                            src={productoSeleccionado?.id_producto?.imagenes[0].url_imagen} 
+                                            className={classes.imagen}
+                                        />
+                                    </Box>
+                                ) : (
+                                    <Box p={8} display="flex" justifyContent="center" alignItems="center">
+                                        <PhotoLibraryIcon style={{fontSize: 40}} />
+                                    </Box>
+                                )}
                             </Box>
-                            <Box m={2} >
-                                <Divider orientation="vertical" />
-                            </Box>
-                            <Box mt={3}>
-                                <Typography variant="h6">
-                                   Buscar Productos
-                                </Typography>
-                            </Box>
-                        </Box>
-                        <Box>
-                            <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
-                                <CloseIcon />
-                            </Button>
-                        </Box>
                         </Grid>
-                        <Grid>
+                        <Grid item lg={9}>
+                            <Box display="flex">
+                                <Box
+                                    display="flex"
+                                    flexGrow={1}
+                                >
+                                    <Box>
+                                        <Typography variant="h6">
+                                            Buscar Productos
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                                <Box>
+                                    <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                                        <CloseIcon />
+                                    </Button>
+                                </Box>
+                            </Box>
                             <div className={classes.formInputFlex}>
                                 <Box width="50%">
                                     <Paper className={classes.rootBusqueda}>
                                         <InputBase
                                             fullWidth
+                                            name="producto"
                                             placeholder="Buscar producto..."
+                                            onChange={obtenerDatos}
+                                            onKeyUp={keyUpEvent}
                                         />
                                         <IconButton >
                                             <Search />
@@ -96,15 +148,23 @@ export default function BuscarProducto() {
                                     </Paper>
                                 </Box>
                             </div>
-                            <ListaProductos />
                         </Grid>
+                    </Grid>
+                    <InformacionProducto productoSeleccionado={productoSeleccionado} />
+                    <Grid>
+                        <ListaProductos 
+                            productosBusqueda={productosBusqueda}
+                            setProductoSeleccionado={setProductoSeleccionado}
+                            loading={loading}
+                        />
+                    </Grid>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClickOpen} variant="contained" color="primary" size="large">
-                        Aceptar
+                        AGREGAR
                     </Button>
                 </DialogActions>
             </Dialog>
         </>
     )
-}
+};

@@ -100,83 +100,45 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
       preciosVenta.precio_neto = parseFloat(
         ganancia_utilidad_con_impuestos.toFixed(6)
       );
-      if (preciosVenta.numero_precio === 1) {
-        precio = parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
-        if (
-          unidadVentaXDefecto.unidad === "Caja" ||
-          unidadVentaXDefecto.unidad === "Costal"
-        ) {
-          precio =
-            unidadVentaXDefecto.cantidad *
-            parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
-        }
-        /* setUnidadVentaXDefecto({
-          ...unidadVentaXDefecto,
-          precio: parseFloat(precio.toFixed(6)),
-        }); */
-      }
-    } else {
-      preciosVenta.precio_neto = parseFloat(
-        ganancia_utilidad_sin_impuestos.toFixed(6)
-      );
-      if (preciosVenta.numero_precio === 1) {
-        precio = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
-        if (
-          unidadVentaXDefecto.unidad === "Caja" ||
-          unidadVentaXDefecto.unidad === "Costal"
-        ) {
-          precio =
-            unidadVentaXDefecto.cantidad *
-            parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
-        }
-        /* setUnidadVentaXDefecto({
-          ...unidadVentaXDefecto,
-          precio: parseFloat(precio.toFixed(6)),
-        }); */
-      }
-    }
-
-    setUnidadVentaXDefecto({
-      ...unidadVentaXDefecto,
-      precio: parseFloat(precio.toFixed(6)),
-    });
-    if (unidadVentaXDefecto.descuento_activo === true) {
-      //calcular nuevo precio entre %
-      let precio_con_descuento = Math.round(
-        precio -
-          precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
-      );
-
-      setUnidadVentaXDefecto({
-        ...unidadVentaXDefecto,
-        precio: parseFloat(precio.toFixed(6)),
-        descuento: { ...unidadVentaXDefecto.descuento, precio_con_descuento },
-      });
-    }
-
-    newPreciosP.splice(index, 1, preciosVenta);
-    setPreciosP(newPreciosP);
-  };
-
-  const obtenerPrecioNeto = (value) => {
-    if (!value) {
-      preciosVenta.precio_neto = "";
-      newPreciosP.splice(index, 1, preciosVenta);
-      setPreciosP(newPreciosP);
-      return;
-    }
-    //obtenermos el precio neto
-    preciosVenta.precio_neto = parseFloat(value);
-
-    //si es el primer precio ponerlo en la unidad de venta por defecto
-    if (preciosVenta.numero_precio === 1) {
-      let precio = parseFloat(value);
+      /* if (preciosVenta.numero_precio === 1) { */
+      precio = parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
       if (
         unidadVentaXDefecto.unidad === "Caja" ||
         unidadVentaXDefecto.unidad === "Costal"
       ) {
-        precio = unidadVentaXDefecto.cantidad * parseFloat(value);
+        precio =
+          unidadVentaXDefecto.cantidad *
+          parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
       }
+      /* setUnidadVentaXDefecto({
+          ...unidadVentaXDefecto,
+          precio: parseFloat(precio.toFixed(6)),
+        }); */
+      /* } */
+    } else {
+      preciosVenta.precio_neto = parseFloat(
+        ganancia_utilidad_sin_impuestos.toFixed(6)
+      );
+      /* if (preciosVenta.numero_precio === 1) { */
+      precio = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
+      if (
+        unidadVentaXDefecto.unidad === "Caja" ||
+        unidadVentaXDefecto.unidad === "Costal"
+      ) {
+        precio =
+          unidadVentaXDefecto.cantidad *
+          parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
+      }
+      /* setUnidadVentaXDefecto({
+          ...unidadVentaXDefecto,
+          precio: parseFloat(precio.toFixed(6)),
+        }); */
+      /* } */
+    }
+
+    if (preciosVenta.numero_precio > 1) {
+      setUnidadVentaXDefecto(unidadVentaXDefecto);
+    } else {
       setUnidadVentaXDefecto({
         ...unidadVentaXDefecto,
         precio: parseFloat(precio.toFixed(6)),
@@ -195,6 +157,53 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
         });
       }
     }
+
+    newPreciosP.splice(index, 1, preciosVenta);
+    setPreciosP(newPreciosP);
+  };
+
+  const obtenerPrecioNeto = (value) => {
+    if (!value) {
+      preciosVenta.precio_neto = "";
+      newPreciosP.splice(index, 1, preciosVenta);
+      setPreciosP(newPreciosP);
+      return;
+    }
+    //obtenermos el precio neto
+    preciosVenta.precio_neto = parseFloat(value);
+
+    //si es el primer precio ponerlo en la unidad de venta por defecto
+    /* if (preciosVenta.numero_precio === 1) { */
+      let precio = parseFloat(value);
+      if (
+        unidadVentaXDefecto.unidad === "Caja" ||
+        unidadVentaXDefecto.unidad === "Costal"
+      ) {
+        precio = unidadVentaXDefecto.cantidad * parseFloat(value);
+      }
+      if (preciosVenta.numero_precio > 1) {
+        setUnidadVentaXDefecto(unidadVentaXDefecto);
+      }else{
+        setUnidadVentaXDefecto({
+        ...unidadVentaXDefecto,
+        precio: parseFloat(precio.toFixed(6)),
+      });
+      if (unidadVentaXDefecto.descuento_activo === true) {
+        //calcular nuevo precio entre %
+        let precio_con_descuento = Math.round(
+          precio -
+            precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
+        );
+
+        setUnidadVentaXDefecto({
+          ...unidadVentaXDefecto,
+          precio: parseFloat(precio.toFixed(6)),
+          descuento: { ...unidadVentaXDefecto.descuento, precio_con_descuento },
+        });
+      }
+      }
+      
+    /* } */
 
     //calculamos el precio de venta y la utilidad
     let new_utilidad;
@@ -218,11 +227,11 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     utilidad = "." + valor;
     if (valor < 10) utilidad = ".0" + valor;
     if (valor % 100 === 0) utilidad = valor / 100;
-    const precio = (
+    const precio_venta = (
       precios.unidad_de_compra.precio_unitario_sin_impuesto +
       precios.unidad_de_compra.precio_unitario_sin_impuesto * utilidad
     ).toFixed(6);
-    preciosVenta.precio_venta = parseFloat(precio);
+    preciosVenta.precio_venta = parseFloat(precio_venta);
 
     //se agrega al array original
     newPreciosP.splice(index, 1, preciosVenta);
@@ -251,70 +260,88 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
       preciosVenta.precio_neto =
         precios.unidad_de_compra.precio_unitario_sin_impuesto;
 
-      if (preciosVenta.numero_precio === 1) {
-        let precio = precios.unidad_de_compra.precio_unitario_sin_impuesto;
-        if (
-          unidadVentaXDefecto.unidad === "Caja" ||
-          unidadVentaXDefecto.unidad === "Costal"
-        ) {
-          precio =
-            unidadVentaXDefecto.cantidad *
-            precios.unidad_de_compra.precio_unitario_sin_impuesto;
-        }
+      /* if (preciosVenta.numero_precio === 1) { */
+      let precio = precios.unidad_de_compra.precio_unitario_sin_impuesto;
+      if (
+        unidadVentaXDefecto.unidad === "Caja" ||
+        unidadVentaXDefecto.unidad === "Costal"
+      ) {
+        precio =
+          unidadVentaXDefecto.cantidad *
+          precios.unidad_de_compra.precio_unitario_sin_impuesto;
+      }
+      if (preciosVenta.numero_precio > 1) {
+        setUnidadVentaXDefecto(unidadVentaXDefecto);
+      }else{
         setUnidadVentaXDefecto({
+        ...unidadVentaXDefecto,
+        precio: parseFloat(precio.toFixed(6)),
+      });
+      }
+      
+      if (unidadVentaXDefecto.descuento_activo === true) {
+        //calcular nuevo precio entre %
+        let precio_con_descuento = Math.round(
+          precio -
+            precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
+        );
+        if (preciosVenta.numero_precio > 1) {
+          setUnidadVentaXDefecto(unidadVentaXDefecto);
+        }else{
+          setUnidadVentaXDefecto({
           ...unidadVentaXDefecto,
           precio: parseFloat(precio.toFixed(6)),
+          descuento: {
+            ...unidadVentaXDefecto.descuento,
+            precio_con_descuento,
+          },
         });
-        if (unidadVentaXDefecto.descuento_activo === true) {
-          //calcular nuevo precio entre %
-          let precio_con_descuento = Math.round(
-            precio -
-              precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
-          );
-
-          setUnidadVentaXDefecto({
-            ...unidadVentaXDefecto,
-            precio: parseFloat(precio.toFixed(6)),
-            descuento: {
-              ...unidadVentaXDefecto.descuento,
-              precio_con_descuento,
-            },
-          });
         }
+        
       }
+      /* } */
     } else {
       preciosVenta.precio_neto =
         precios.unidad_de_compra.precio_unitario_con_impuesto;
-      if (preciosVenta.numero_precio === 1) {
-        let precio = precios.unidad_de_compra.precio_unitario_con_impuesto;
-        if (
-          unidadVentaXDefecto.unidad === "Caja" ||
-          unidadVentaXDefecto.unidad === "Costal"
-        ) {
-          precio =
-            unidadVentaXDefecto.cantidad *
-            precios.unidad_de_compra.precio_unitario_con_impuesto;
-        }
+      /* if (preciosVenta.numero_precio === 1) { */
+      let precio = precios.unidad_de_compra.precio_unitario_con_impuesto;
+      if (
+        unidadVentaXDefecto.unidad === "Caja" ||
+        unidadVentaXDefecto.unidad === "Costal"
+      ) {
+        precio =
+          unidadVentaXDefecto.cantidad *
+          precios.unidad_de_compra.precio_unitario_con_impuesto;
+      }
+      if (preciosVenta.numero_precio > 1) {
+        setUnidadVentaXDefecto(unidadVentaXDefecto);
+      }else{
         setUnidadVentaXDefecto({
+        ...unidadVentaXDefecto,
+        precio: parseFloat(precio.toFixed(6)),
+      });
+      }
+      
+      if (unidadVentaXDefecto.descuento_activo === true) {
+        //calcular nuevo precio entre %
+        let precio_con_descuento = Math.round(
+          precio -
+            precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
+        );
+        if (preciosVenta.numero_precio > 1) {
+          setUnidadVentaXDefecto(unidadVentaXDefecto);
+        }else{
+          setUnidadVentaXDefecto({
           ...unidadVentaXDefecto,
           precio: parseFloat(precio.toFixed(6)),
+          descuento: {
+            ...unidadVentaXDefecto.descuento,
+            precio_con_descuento,
+          },
         });
-        if (unidadVentaXDefecto.descuento_activo === true) {
-          //calcular nuevo precio entre %
-          let precio_con_descuento = Math.round(
-            precio -
-              precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
-          );
-
-          setUnidadVentaXDefecto({
-            ...unidadVentaXDefecto,
-            precio: parseFloat(precio.toFixed(6)),
-            descuento: {
-              ...unidadVentaXDefecto.descuento,
-              precio_con_descuento,
-            },
-          });
         }
+        
+        /* } */
       }
     }
 
@@ -351,72 +378,82 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
         ganancia_utilidad_con_impuestos.toFixed(6)
       );
 
-      if (preciosVenta.numero_precio === 1) {
-        let precio = parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
-        if (
-          unidadVentaXDefecto.unidad === "Caja" ||
-          unidadVentaXDefecto.unidad === "Costal"
-        ) {
-          precio =
-            unidadVentaXDefecto.cantidad *
-            parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
-        }
+      /*  if (preciosVenta.numero_precio === 1) { */
+      let precio = parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
+      if (
+        unidadVentaXDefecto.unidad === "Caja" ||
+        unidadVentaXDefecto.unidad === "Costal"
+      ) {
+        precio =
+          unidadVentaXDefecto.cantidad *
+          parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
+      }
+      if(preciosVenta.numero_precio > 1){
+        setUnidadVentaXDefecto(unidadVentaXDefecto);
+      }else{
+        setUnidadVentaXDefecto({
+        ...unidadVentaXDefecto,
+        precio: parseFloat(precio.toFixed(6)),
+      });
+      if (unidadVentaXDefecto.descuento_activo === true) {
+        //calcular nuevo precio entre %
+        let precio_con_descuento = Math.round(
+          precio -
+            precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
+        );
+
         setUnidadVentaXDefecto({
           ...unidadVentaXDefecto,
           precio: parseFloat(precio.toFixed(6)),
+          descuento: {
+            ...unidadVentaXDefecto.descuento,
+            precio_con_descuento,
+          },
         });
-        if (unidadVentaXDefecto.descuento_activo === true) {
-          //calcular nuevo precio entre %
-          let precio_con_descuento = Math.round(
-            precio -
-              precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
-          );
-
-          setUnidadVentaXDefecto({
-            ...unidadVentaXDefecto,
-            precio: parseFloat(precio.toFixed(6)),
-            descuento: {
-              ...unidadVentaXDefecto.descuento,
-              precio_con_descuento,
-            },
-          });
-        }
       }
+      }
+      
+      /* } */
     } else {
       preciosVenta.precio_neto = parseFloat(
         ganancia_utilidad_sin_impuestos.toFixed(6)
       );
-      if (preciosVenta.numero_precio === 1) {
-        let precio = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
-        if (
-          unidadVentaXDefecto.unidad === "Caja" ||
-          unidadVentaXDefecto.unidad === "Costal"
-        ) {
-          precio =
-            unidadVentaXDefecto.cantidad *
-            parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
-        }
+      /* if (preciosVenta.numero_precio === 1) { */
+      let precio = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
+      if (
+        unidadVentaXDefecto.unidad === "Caja" ||
+        unidadVentaXDefecto.unidad === "Costal"
+      ) {
+        precio =
+          unidadVentaXDefecto.cantidad *
+          parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
+      }
+      if(preciosVenta.numero_precio > 1) {
+        setUnidadVentaXDefecto(unidadVentaXDefecto);
+      }else{
+        setUnidadVentaXDefecto({
+        ...unidadVentaXDefecto,
+        precio: parseFloat(precio.toFixed(6)),
+      });
+      if (unidadVentaXDefecto.descuento_activo === true) {
+        //calcular nuevo precio entre %
+        let precio_con_descuento = Math.round(
+          precio -
+            precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
+        );
+
         setUnidadVentaXDefecto({
           ...unidadVentaXDefecto,
           precio: parseFloat(precio.toFixed(6)),
+          descuento: {
+            ...unidadVentaXDefecto.descuento,
+            precio_con_descuento,
+          },
         });
-        if (unidadVentaXDefecto.descuento_activo === true) {
-          //calcular nuevo precio entre %
-          let precio_con_descuento = Math.round(
-            precio -
-              precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
-          );
-
-          setUnidadVentaXDefecto({
-            ...unidadVentaXDefecto,
-            precio: parseFloat(precio.toFixed(6)),
-            descuento: {
-              ...unidadVentaXDefecto.descuento,
-              precio_con_descuento,
-            },
-          });
-        }
+        /* } */
       }
+      }
+      
     }
 
     newPreciosP.splice(index, 1, preciosVenta);

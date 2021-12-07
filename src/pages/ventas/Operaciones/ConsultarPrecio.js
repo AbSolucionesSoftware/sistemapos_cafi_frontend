@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import { Box, Button,  CircularProgress,  Dialog,  DialogActions, DialogContent, Divider, Grid,  IconButton,  InputBase,  Paper,  Slide,  Typography } from '@material-ui/core'
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import CloseIcon from '@material-ui/icons/Close';
@@ -7,8 +6,6 @@ import useStyles from '../styles';
 import { Search } from '@material-ui/icons';
 import { useLazyQuery } from '@apollo/client';
 import { CONSULTA_PRODUCTO_UNITARIO } from '../../../gql/Ventas/ventas_generales';
-import { useDebounce } from 'use-debounce/lib';
-
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -92,13 +89,11 @@ export default function ConsultarPrecio() {
 				onClose={handleClickOpen} 
 				TransitionComponent={Transition}
             >
-               
                 <DialogContent
                     open={open} 
                     onClose={handleClickOpen} 
                     TransitionComponent={Transition}
                 >
-                
                     <Grid container item lg={12}>
                         <Box
                             display="flex" 
