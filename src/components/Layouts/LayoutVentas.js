@@ -33,7 +33,7 @@ export default function LayoutVentas(props) {
 	return (
 		<div className={classes.root}>
 			<VentasProvider>
-				<Grid style={{ width: `calc(100% - ${drawerWidth})`}}>
+				<Grid style={{width: `calc(100% - ${drawerWidth})`}}>
 					<Toolbar className={classes.toolbar} />
 					<LoadRoutes routes={routes} />
 				</Grid>

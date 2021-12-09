@@ -6,7 +6,6 @@ import { Box,  Button,  DialogActions,
         TextField, Typography 
     } from '@material-ui/core'
 import { REGISTRAR_TURNOS } from '../../../gql/Ventas/abrir_cerrar_turno';
-
 import moment from 'moment';
 import 'moment/locale/es';
 import { VentasContext } from '../../../context/Ventas/ventasContext';
@@ -107,11 +106,11 @@ export default function AbrirTurno({handleClickOpen, setLoading, props}) {
 
     const actualizarTurnoSesion  = (ubicacionTurno) => {
         if (ubicacionTurno === 'SESION') {
+			props.history.push('/');
             localStorage.removeItem('sesionCafi');
 			localStorage.removeItem('tokenCafi');
             localStorage.removeItem('turnoEnCurso');
             localStorage.removeItem('DatosVentas');
-			props.history.push('/');
         }else{
             localStorage.setItem('sesionCafi', JSON.stringify(arraySesion));
             localStorage.removeItem('DatosVentas');

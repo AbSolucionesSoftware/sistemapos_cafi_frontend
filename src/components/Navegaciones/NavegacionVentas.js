@@ -65,9 +65,9 @@ function NavegacionVentas(props) {
 			setAbrirTurnosDialog(!abrirTurnosDialog);
 			setUbicacionTurno('SESION');
 		}else{
+			props.history.push('/');
 			localStorage.removeItem('sesionCafi');
 			localStorage.removeItem('tokenCafi');
-			props.history.push('/');
 		}
 	};
 

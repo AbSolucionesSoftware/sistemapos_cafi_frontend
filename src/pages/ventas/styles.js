@@ -66,8 +66,13 @@ const useStyles = makeStyles((theme) => ({
         width: 50,
     },
     containerImagenesProducto:{
-        maxHeight: 320,
-        maxWidth: 300
+        maxHeight: 300,
+        maxWidth: 300,
+        display: 'flex',
+        justifyItems: 'center',
+        alignContent: 'center',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     imagenProducto:{
         height: '100%',
