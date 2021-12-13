@@ -5,7 +5,6 @@ import { Box, Button, CircularProgress,  Dialog, DialogActions,
 from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
-import { FcBearish, FcBullish  } from "react-icons/fc";
 import { OBTENER_CONTABILIDAD } from '../../../gql/Catalogos/contabilidad';
 import { CREAR_HISTORIAL_CAJA, OBTENER_PRE_CORTE_CAJA } from '../../../gql/Cajas/cajas';
 
@@ -30,7 +29,7 @@ export default function DepositoRetiroCaja() {
     const { setAlert } = useContext(VentasContext);
     const [open, setOpen] = useState(false);
     const [cargando, setCargando] = useState(false);
-    const [movimiento, setMovimiento] = useState('');
+    const [movimiento, setMovimiento] = useState('DEPOSITO');
     const [datosMovimiento, setDatosMovimiento] = useState([]);
 
 	const { loading, data } = useQuery(OBTENER_CONTABILIDAD, {

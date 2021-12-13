@@ -54,6 +54,8 @@ export default function BuscarProducto() {
     };
 
     const handleClickOpen = () => { 
+        setProductoSeleccionado([]);
+        refetch();
 		setOpen(!open);
 	};
 
@@ -61,10 +63,8 @@ export default function BuscarProducto() {
     function Mi_función(e){
         if(e.altKey && e.keyCode === 80){ 
             handleClickOpen();
-        } 
+        }
     };
-
-    console.log(productoSeleccionado);
 
     return (
         <>

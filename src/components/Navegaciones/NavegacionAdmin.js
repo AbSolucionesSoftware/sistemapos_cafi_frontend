@@ -30,6 +30,7 @@ function NavegacionAdmin(props) {
     const signOut = () => {
 		localStorage.removeItem('sesionCafi');
 		localStorage.removeItem('tokenCafi');
+		localStorage.removeItem('ListaEnEspera');
 		props.history.push('/');
 	};
 

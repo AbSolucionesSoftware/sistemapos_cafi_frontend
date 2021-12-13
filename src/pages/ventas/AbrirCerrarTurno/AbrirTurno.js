@@ -1,7 +1,11 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import useStyles from '../styles';
 
-import { Box, Button, CircularProgress, DialogActions, DialogContent,  FormControl, Grid, MenuItem, Select, TextField, Typography } from '@material-ui/core'
+import { Box, Button, CircularProgress, 
+        DialogActions, DialogContent,  
+        FormControl, Grid, MenuItem, 
+        Select, TextField, Typography 
+    } from '@material-ui/core'
 import { useMutation, useQuery } from '@apollo/client';
 import { OBTENER_CAJAS } from '../../../gql/Cajas/cajas';
 import { REGISTRAR_TURNOS } from '../../../gql/Ventas/abrir_cerrar_turno';
@@ -11,7 +15,7 @@ import moment from 'moment';
 import 'moment/locale/es';
 moment.locale('es');
 
-export default function AbrirTurno({handleClickOpen, type, setLoading}) {
+export default function AbrirTurno({handleClickOpen, loading, type, setLoading}) {
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const turnoEnCurso = JSON.parse(localStorage.getItem('cajaEnCurso'));
 
@@ -25,7 +29,7 @@ export default function AbrirTurno({handleClickOpen, type, setLoading}) {
     const classes = useStyles();
     let obtenerCajasSucursal = [];
 
-    const { data, loading, refetch } = useQuery(OBTENER_CAJAS,{
+    const cajas = useQuery(OBTENER_CAJAS,{
 		variables: {
             empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id
@@ -36,8 +40,8 @@ export default function AbrirTurno({handleClickOpen, type, setLoading}) {
         setAbrirTurno({...abrirTurno, [e.target.name]: e.target.value});
     };
 
-    if(data){
-		obtenerCajasSucursal = data.obtenerCajasSucursal;
+    if(cajas.data){
+		obtenerCajasSucursal = cajas.data.obtenerCajasSucursal;
 	};
 
     let arraySesion = {
@@ -55,6 +59,10 @@ export default function AbrirTurno({handleClickOpen, type, setLoading}) {
         turno_en_caja_activo: true, 
         _id: sesion._id,
     };
+
+    useEffect(() => {
+        cajas.refetch();
+    }, [loading]);
 
     const enviarDatos = async () => {
         setLoading(true);
@@ -126,6 +134,7 @@ export default function AbrirTurno({handleClickOpen, type, setLoading}) {
                         monto_vales_despensa: 0,
                     }
                 };
+
                 const variableTurnoAbierto = await CrearRegistroDeTurno({
                     variables: {
                         activa: true,
@@ -133,21 +142,28 @@ export default function AbrirTurno({handleClickOpen, type, setLoading}) {
                     }
                 });
 
-                localStorage.setItem('turnoEnCurso', JSON.stringify(variableTurnoAbierto.data.crearRegistroDeTurno));
-                localStorage.setItem('sesionCafi', JSON.stringify(arraySesion));
-                setTurnoActivo(true);
-
-                setAlert({
-                    message: `Turno abierto con exito`,
-                    status: "success",
-                    open: true,
-                });
-                refetch();
-                setLoading(false);
-                if (type !== "FRENTE") {
-                    handleClickOpen();
-                };
-                
+                if(variableTurnoAbierto.data.crearRegistroDeTurno === null){
+                    setLoading(false);
+                    cajas.refetch();
+                    setAlert({
+                        message: `Lo sentimos esta caja ya esta en uso`,
+                        status: "error",
+                        open: true,
+                    });
+                }else{
+                    localStorage.setItem('turnoEnCurso', JSON.stringify(variableTurnoAbierto.data.crearRegistroDeTurno));
+                    localStorage.setItem('sesionCafi', JSON.stringify(arraySesion));
+                    setTurnoActivo(true);
+                    setAlert({
+                        message: `Turno abierto con exito`,
+                        status: "success",
+                        open: true,
+                    });
+                    cajas.refetch();
+                    if (type !== "FRENTE") {
+                        handleClickOpen();
+                    };
+                }
             }
         } catch (error) {
             setLoading(false);
@@ -162,7 +178,7 @@ export default function AbrirTurno({handleClickOpen, type, setLoading}) {
         }
     };
 
-    if (loading) 
+    if (cajas.loading) 
 	return (
 		<Box
 		display="flex"
@@ -254,7 +270,7 @@ export default function AbrirTurno({handleClickOpen, type, setLoading}) {
                         </Box>
                         <Box width="100%">
                             <Typography> <span className="obligatorio">* </span>Monto para abrir:</Typography>
-                            <Box display="flex">
+                            <Box display="flex" className={classes.input}>
                                 <TextField
                                     fullWidth
                                     size="small"

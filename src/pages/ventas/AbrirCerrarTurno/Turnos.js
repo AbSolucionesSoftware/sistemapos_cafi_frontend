@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types';
-import { AppBar, Box, Button, CircularProgress, Dialog, DialogContent, Grid, makeStyles, Slide, StepButton, Tab, Tabs, Typography } from '@material-ui/core'
+import { AppBar, Box, Button, CircularProgress, Dialog, DialogContent, Grid, makeStyles, Slide, Tab, Tabs, Typography } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
 
 import AbrirTurno from './AbrirTurno';
@@ -209,11 +209,11 @@ const ContenidoTurnos = ({ handleClickOpen, value}) => {
 		<DialogContent style={{padding: 0}}>
 			{sesion?.turno_en_caja_activo === true ? (
 				<TabPanel style={{padding: 0}} value={value} index={0}>
-					<CerrarTurno setLoading={setLoading} handleClickOpen={handleClickOpen} />
+					<CerrarTurno  setLoading={setLoading} handleClickOpen={handleClickOpen} />
 				</TabPanel>
 			): (
 				<TabPanel value={value} index={0}>
-					<AbrirTurno setLoading={setLoading} handleClickOpen={handleClickOpen} />
+					<AbrirTurno loading={loading} setLoading={setLoading} handleClickOpen={handleClickOpen} />
 				</TabPanel>
 			)}
 		</DialogContent>

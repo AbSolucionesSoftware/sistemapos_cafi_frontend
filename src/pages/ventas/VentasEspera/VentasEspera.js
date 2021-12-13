@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import useStyles from '../styles';
 
-import { Box, Button, DialogActions,Dialog, DialogContent, Divider,Grid, IconButton, InputBase,  Paper, Typography, Slide, Badge } from '@material-ui/core'
-import { Search } from '@material-ui/icons';
+import { Box, Button, DialogActions,Dialog, DialogContent, Divider,Grid, Typography, Slide, Badge } from '@material-ui/core'
 import ListaVentas from './ListaVentas';
 import CloseIcon from '@material-ui/icons/Close';
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 export default function VentasEspera() {
+	let listaEnEspera = JSON.parse(localStorage.getItem("ListaEnEspera"));
 
     const classes = useStyles();
     const [open, setOpen] = useState(false);
@@ -32,7 +32,11 @@ export default function VentasEspera() {
             >
                 <Box>
                     <Box>
-                        <Badge badgeContent={4} color="primary">
+                        <Badge 
+                            badgeContent={listaEnEspera ? listaEnEspera.length : 0 } 
+                            color="primary" 
+                            style={{fontSize: 45}}
+                        >
                             <img 
                                 src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/lista-de-espera.svg' 
                                 alt="icono caja2" 
@@ -42,7 +46,7 @@ export default function VentasEspera() {
                     </Box>
                     <Box>
                         <Typography variant="body2" >
-                            <b>Lista Espera</b>
+                            <b>Ventas en Espera</b>
                         </Typography>
                     </Box>
                     <Box>
@@ -83,19 +87,6 @@ export default function VentasEspera() {
                         </Box>
                         </Grid>
                         <Grid>
-                            <div className={classes.formInputFlex}>
-                                <Box width="100%">
-                                    <Paper className={classes.rootBusqueda}>
-                                        <InputBase
-                                            fullWidth
-                                            placeholder="Buscar venta..."
-                                        />
-                                        <IconButton >
-                                            <Search />
-                                        </IconButton>
-                                    </Paper>
-                                </Box>
-                            </div>
                             <ListaVentas />
                         </Grid>
                 </DialogContent>
