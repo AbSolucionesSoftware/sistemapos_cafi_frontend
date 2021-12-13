@@ -212,6 +212,8 @@ export const OBTENER_CLIENTES_VENTAS = gql`
       imagen
       banco
       numero_cuenta
+      monedero_electronico
+      credito_disponible
     }
   }
 `;
