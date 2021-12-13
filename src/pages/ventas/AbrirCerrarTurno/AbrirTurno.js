@@ -270,7 +270,7 @@ export default function AbrirTurno({handleClickOpen, loading, type, setLoading})
                         </Box>
                         <Box width="100%">
                             <Typography> <span className="obligatorio">* </span>Monto para abrir:</Typography>
-                            <Box display="flex">
+                            <Box display="flex" className={classes.input}>
                                 <TextField
                                     fullWidth
                                     size="small"

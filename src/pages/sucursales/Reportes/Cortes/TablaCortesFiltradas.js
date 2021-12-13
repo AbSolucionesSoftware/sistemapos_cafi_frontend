@@ -26,7 +26,10 @@ const useStyles  = makeStyles((theme) => ({
 		width: '100%'
 	},
 	container: {
-		maxHeight: '100%'
+		maxHeight: "70vh",
+    	'& ::-webkit-scrollbar': {
+      		display: 'none'
+    	}
 	},
     appBar: {	
 		position: 'relative'

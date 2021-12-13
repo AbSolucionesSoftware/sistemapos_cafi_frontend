@@ -87,7 +87,20 @@ const useStyles = makeStyles((theme) => ({
 		minWidth: '100%',
 		height: '100%',
         border: '.6px solid #DBDBDB'
-    }
+    },
+    input: {
+        "& input[type=number]": {
+          "-moz-appearance": "textfield",
+        },
+        "& input[type=number]::-webkit-outer-spin-button": {
+          "-webkit-appearance": "none",
+          margin: 0,
+        },
+        "& input[type=number]::-webkit-inner-spin-button": {
+          "-webkit-appearance": "none",
+          margin: 0,
+        },
+    },
 }));
 
 export default useStyles

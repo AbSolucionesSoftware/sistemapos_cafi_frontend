@@ -6,6 +6,7 @@ import { Box,  Button,  DialogActions,
         TextField, Typography 
     } from '@material-ui/core'
 import { REGISTRAR_TURNOS } from '../../../gql/Ventas/abrir_cerrar_turno';
+
 import moment from 'moment';
 import 'moment/locale/es';
 import { VentasContext } from '../../../context/Ventas/ventasContext';
@@ -110,10 +111,12 @@ export default function AbrirTurno({handleClickOpen, setLoading, props}) {
             localStorage.removeItem('sesionCafi');
 			localStorage.removeItem('tokenCafi');
             localStorage.removeItem('turnoEnCurso');
+            localStorage.removeItem('ListaEnEspera');
             localStorage.removeItem('DatosVentas');
         }else{
             localStorage.setItem('sesionCafi', JSON.stringify(arraySesion));
             localStorage.removeItem('DatosVentas');
+            localStorage.removeItem('ListaEnEspera');
             localStorage.removeItem('turnoEnCurso');
         }
     }
@@ -164,112 +167,117 @@ export default function AbrirTurno({handleClickOpen, setLoading, props}) {
     return (
         <>
             <DialogContent style={{padding: 0}}>
+            <Box width="100%" textAlign="center">
+                <Typography variant="h6">Montos a Depositar</Typography>
+            </Box>
             <div className={classes.formInputFlex}>
-                <Box width="100%" textAlign="center">
-                    <Typography variant="h6">Montos a Depositar</Typography>
-                </Box>
-            </div>
-            <div className={classes.formInputFlex}>
-                <Box width="100%">
+                <Box width="100%" className={classes.input}>
                     <Typography> Monto Efectivo:</Typography>
                     <Box display="flex">
                         <TextField
                             name="monto_efectivo"
+                            variant="outlined"
+                            size="small"
                             inputProps={{min: 0}}
                             type="number"
                             defaultValue={0}
                             color="primary"
-                            style={{width: "70%"}}
                             onChange={obtenerCamposMontos}
                         />
                     </Box>
                 </Box>
             </div>
             <div className={classes.formInputFlex}>
-                <Box width="100%">
+                <Box width="100%" className={classes.input}>
                     <Typography> Tarjeta:</Typography>
                     <Box display="flex">
                         <TextField
                             name="monto_tarjeta_debito"
+                            variant="outlined"
+                            size="small"
                             inputProps={{min: 0}}
                             type="number"
                             defaultValue={0}
                             color="primary"
-                            style={{width: "70%"}}
                             onChange={obtenerCamposMontos}
                         />
                     </Box>
                 </Box>
-                <Box width="100%">
+                <Box width="100%" className={classes.input}>
                     <Typography> Creditos:</Typography>
                     <Box display="flex">
                         <TextField
                             name="monto_creditos"
+                            variant="outlined"
+                            size="small"
                             inputProps={{min: 0}}
                             type="number" 
                             defaultValue={0}
                             color="primary"
-                            style={{width: "70%"}}
                             onChange={obtenerCamposMontos}
                         />
                     </Box>
                 </Box>
             </div>
             <div className={classes.formInputFlex}>
-                <Box width="100%">
+                <Box width="100%" className={classes.input}>
                     <Typography>Monedero:</Typography>
                     <Box display="flex">
                         <TextField
                             name="monto_puntos"
+                            variant="outlined"
+                            size="small"
                             inputProps={{min: 0}}
                             type="number" 
                             defaultValue={0}
                             color="primary"
-                            style={{width: "70%"}}
                             onChange={obtenerCamposMontos}
                         />
                     </Box>
                 </Box>
-                <Box width="100%">
+                <Box width="100%" className={classes.input}>
                     <Typography>Transferencias:</Typography>
                     <Box display="flex">
                         <TextField
                             name="monto_transferencia"
+                            variant="outlined"
+                            size="small"
                             inputProps={{min: 0}}
                             type="number" 
                             defaultValue={0}
                             color="primary"
-                            style={{width: "70%"}}
                             onChange={obtenerCamposMontos}
                         />
                     </Box>
                 </Box>
             </div>
             <div className={classes.formInputFlex}>
-                <Box width="100%">
+                <Box width="100%" className={classes.input}>
                     <Typography>Cheques:</Typography>
                     <Box display="flex">
                         <TextField
                             name="monto_cheques"
+                            variant="outlined"
+                            size="small"
                             inputProps={{min: 0}}
                             type="number" 
                             defaultValue={0}
                             color="primary"
-                            style={{width: "70%"}}
                             onChange={obtenerCamposMontos}
                         />
                     </Box>
                 </Box>
-                <Box width="100%">
+                <Box width="100%" className={classes.input}>
                     <Typography>Vales de despensa:</Typography>
                     <Box display="flex">
                         <TextField
                             name="monto_vales_despensa"
+                            variant="outlined"
+                            size="small"
                             inputProps={{min: 0}}
                             type="number" 
                             defaultValue={0}
                             color="primary"
-                            style={{width: "70%"}}
                             onChange={obtenerCamposMontos}
                         />
                     </Box>

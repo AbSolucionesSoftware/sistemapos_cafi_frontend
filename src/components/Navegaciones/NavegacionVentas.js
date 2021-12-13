@@ -68,6 +68,7 @@ function NavegacionVentas(props) {
 			props.history.push('/');
 			localStorage.removeItem('sesionCafi');
 			localStorage.removeItem('tokenCafi');
+			localStorage.removeItem('ListaEnEspera');
 		}
 	};
 

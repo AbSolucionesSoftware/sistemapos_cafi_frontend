@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
-
-import { Box, Button, Dialog, DialogActions, DialogContent, Divider, Grid, Slide, Typography } from '@material-ui/core'
+import React, { useContext, useState } from 'react';
+import { Box, Button, Dialog, DialogActions, 
+        DialogContent, Divider, Grid, 
+        Slide, Typography 
+    } from '@material-ui/core'
 import { FcExpired } from 'react-icons/fc';
+import moment from 'moment';
+import 'moment/locale/es';
+import { VentasContext } from '../../../context/Ventas/ventasContext';
+moment.locale('es');
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function VentaEnEspera() {
+    const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
 
     const [open, setOpen] = useState(false);
+
     const handleClickOpen = () => { 
 		setOpen(!open);
 	};
@@ -21,10 +29,28 @@ export default function VentaEnEspera() {
         } 
     };
 
+    const agregarVentaEnEspera = () => {
+        let VentaEnEspera = JSON.parse(localStorage.getItem("DatosVentas"));
+        let datos = localStorage.getItem("ListaEnEspera");
+        if(VentaEnEspera !== null){
+            if(datos === null){
+                localStorage.setItem('ListaEnEspera', JSON.stringify([{VentaEnEspera, fecha: moment().format('MM/DD/YYYY') }]));
+                localStorage.removeItem('DatosVentas');
+                setUpdateTablaVentas(!updateTablaVentas);
+            }else{
+                let data = JSON.parse(datos);
+                data.push({VentaEnEspera, fecha: moment().format('MM/DD/YYYY') });
+                localStorage.setItem("ListaEnEspera", JSON.stringify(data));
+                localStorage.removeItem('DatosVentas');
+                setUpdateTablaVentas(!updateTablaVentas);
+            }
+        }
+    };
+
     return (
         <>
            <Button
-                onClick={() =>{handleClickOpen();}}
+                onClick={() => agregarVentaEnEspera()} 
                 style={{textTransform: 'none', height: '100%', width: '60%'}}
             >
                 <Box display="flex" flexDirection="column">
@@ -76,7 +102,7 @@ export default function VentaEnEspera() {
                 </DialogContent>
                 <DialogActions>
                     <Button 
-                        onClick={handleClickOpen} 
+                        onClick={() =>{handleClickOpen();}}
                         variant="contained" 
                         color="primary"
                         size="large"
