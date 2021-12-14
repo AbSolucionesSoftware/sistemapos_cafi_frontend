@@ -17,6 +17,7 @@ export const initial_state_precios = {
         inventario_minimo: 0,
         inventario_maximo: 0,
         unidad_de_inventario: 'Pz',
+        codigo_unidad: "H87"
     },
     precio_de_compra: {
         precio_con_impuesto: 0,
@@ -26,6 +27,7 @@ export const initial_state_precios = {
     },
     unidad_de_compra: {
         unidad: "Pz",
+        codigo_unidad: "H87",
         cantidad: 1,
         precio_unitario_sin_impuesto: 0,
         precio_unitario_con_impuesto: 0,
@@ -36,6 +38,7 @@ export const initial_state_precios = {
 export const initial_state_unidadVentaXDefecto = {
     codigo_barras: '',
     unidad: 'Pz',
+    codigo_unidad: "H87",
     cantidad: 1,
     precio: 0,
     unidad_principal: true,

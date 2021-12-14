@@ -39,8 +39,6 @@ export default function ListaProductos({ obtenerProductos, productosRefetch }) {
               <TableCell>Codigo barras</TableCell>
               <TableCell>Clave alterna</TableCell>
               <TableCell>Nombre comercial</TableCell>
-              <TableCell>Nombre genérico</TableCell>
-              <TableCell>Descripción</TableCell>
               <TableCell>Existencia</TableCell>
               <TableCell>Tipo</TableCell>
               <TableCell>Información</TableCell>
@@ -73,8 +71,6 @@ const RenderTableRows = ({ producto, productosRefetch }) => {
         <TableCell>{producto.datos_generales.codigo_barras}</TableCell>
         <TableCell>{producto.datos_generales.clave_alterna}</TableCell>
         <TableCell>{producto.datos_generales.nombre_comercial}</TableCell>
-        <TableCell>{producto.datos_generales.nombre_generico}</TableCell>
-        <TableCell>{producto.datos_generales.descripcion}</TableCell>
         <TableCell align="center" padding="checkbox">
           {producto.inventario_general.map(
             (existencia) =>

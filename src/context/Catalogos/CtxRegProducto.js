@@ -65,6 +65,7 @@ export const RegProductoProvider = ({ children }) => {
   const [ preciosDescuentos, setPreciosDescuentos] = useState([]);
   const [ preciosProductos, setPreciosProductos ] = useState([]);
   const [ datosEnDescuentos, setDatosEnDescuentos ] = useState([]);
+  const [ almacen_existente, setAlmacenExistente] = useState(false);
 
   return (
     <RegProductoContext.Provider
@@ -117,7 +118,9 @@ export const RegProductoProvider = ({ children }) => {
         preciosProductos, 
         setPreciosProductos,
         datosEnDescuentos, 
-        setDatosEnDescuentos 
+        setDatosEnDescuentos,
+        almacen_existente, 
+        setAlmacenExistente
       }}
     >
       {children}

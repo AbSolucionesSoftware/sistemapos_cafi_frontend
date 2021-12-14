@@ -268,7 +268,7 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
                 {...a11yProps(0)}
               />
               <Tab
-                label="Datos Crediticios"
+                label="Datos fiscales"
                 icon={
                   <img
                     src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/fiscal.svg"

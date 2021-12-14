@@ -15,6 +15,7 @@ import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProdu
 import { Alert } from "@material-ui/lab";
 import { useDebounce } from "use-debounce/lib";
 import PreciosDeVenta from "./Precios";
+import { unitCodes, unitCodes_granel } from "../unidades";
 
 const useStyles = makeStyles((theme) => ({
   formInputFlex: {
@@ -46,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
       "-webkit-appearance": "none",
       margin: 0,
     },
-  }
+  },
 }));
 
 export default function RegistroInfoAdidional() {
@@ -60,7 +61,7 @@ export default function RegistroInfoAdidional() {
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
   } = useContext(RegProductoContext);
-  
+
   /* CHECKBOX IVA */
   const obtenerIva = (e) => {
     if (e.target.name === "iva" && !e.target.value) {
@@ -351,8 +352,7 @@ export default function RegistroInfoAdidional() {
     precio_unitario_con_impuesto =
       precio_con_impuesto / precios.unidad_de_compra.cantidad;
     if (!precios.iva_activo && !precios.ieps_activo) {
-      precio_con_impuesto =
-        precio_sin_impuesto/*  / precios.unidad_de_compra.cantidad */;
+      precio_con_impuesto = precio_sin_impuesto /*  / precios.unidad_de_compra.cantidad */;
       precio_unitario_con_impuesto =
         precio_sin_impuesto / precios.unidad_de_compra.cantidad;
     }
@@ -387,23 +387,28 @@ export default function RegistroInfoAdidional() {
   };
 
   /* ARMAR OBJETO DE UNIDAD DE COMPRA */
-  const obtenerUnidadCompra = (e) => {
+  const obtenerUnidadCompra = (e, child) => {
     if (e.target.name === "unidad") {
-      if (e.target.value === "Caja" || e.target.value === "Costal") {
+      const { codigo_unidad, unidad } = child.props.unidad;
+      if (unidad === "Caja" || unidad === "Costal") {
         let precio = unidadVentaXDefecto.cantidad * unidadVentaXDefecto.precio;
         setUnidadVentaXDefecto({
           ...unidadVentaXDefecto,
           precio: parseFloat(precio.toFixed(6)),
+          codigo_unidad,
+          unidad,
         });
         setPrecios({
           ...precios,
           unidad_de_compra: {
             ...precios.unidad_de_compra,
-            [e.target.name]: e.target.value,
+            unidad,
+            codigo_unidad,
           },
           inventario: {
             ...precios.inventario,
-            unidad_de_inventario: e.target.value,
+            unidad_de_inventario: unidad,
+            codigo_unidad,
           },
         });
       } else {
@@ -595,9 +600,11 @@ export default function RegistroInfoAdidional() {
                     value={precios.unidad_de_compra.unidad}
                     onChange={obtenerUnidadCompra}
                   >
-                    <MenuItem value="Kg">Kg</MenuItem>
-                    <MenuItem value="Costal">Costal</MenuItem>
-                    <MenuItem value="Lt">Lt</MenuItem>
+                    {unitCodes_granel.map((res, index) => (
+                      <MenuItem key={index} unidad={res} value={res.unidad}>
+                        {res.unidad}
+                      </MenuItem>
+                    ))}
                   </Select>
                 ) : (
                   <Select
@@ -607,8 +614,11 @@ export default function RegistroInfoAdidional() {
                     value={precios.unidad_de_compra.unidad}
                     onChange={obtenerUnidadCompra}
                   >
-                    <MenuItem value="Caja">Caja</MenuItem>
-                    <MenuItem value="Pz">Pz</MenuItem>
+                    {unitCodes.map((res, index) => (
+                      <MenuItem key={index} unidad={res} value={res.unidad}>
+                        {res.unidad}
+                      </MenuItem>
+                    ))}
                   </Select>
                 )}
                 <FormHelperText>{validacion.message}</FormHelperText>
@@ -704,7 +714,12 @@ export default function RegistroInfoAdidional() {
               Precio unitario sin impuestos
             </Typography>
             <Typography align="center" variant="h6">
-              <b>$ {parseFloat(precios.unidad_de_compra.precio_unitario_sin_impuesto).toFixed(3)}</b>
+              <b>
+                ${" "}
+                {parseFloat(
+                  precios.unidad_de_compra.precio_unitario_sin_impuesto
+                ).toFixed(3)}
+              </b>
             </Typography>
           </Box>
           <Box>
@@ -712,7 +727,12 @@ export default function RegistroInfoAdidional() {
               Precio unitario con impuestos
             </Typography>
             <Typography align="center" variant="h6">
-              <b>$ {parseFloat(precios.unidad_de_compra.precio_unitario_con_impuesto).toFixed(3)}</b>
+              <b>
+                ${" "}
+                {parseFloat(
+                  precios.unidad_de_compra.precio_unitario_con_impuesto
+                ).toFixed(3)}
+              </b>
             </Typography>
           </Box>
         </Box>

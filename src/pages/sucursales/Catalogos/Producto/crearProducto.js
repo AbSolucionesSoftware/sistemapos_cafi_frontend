@@ -201,6 +201,8 @@ export default function CrearProducto({
     setPresentaciones,
     presentaciones_eliminadas,
     setPresentacionesEliminadas,
+    setAlmacenExistente,
+    almacen_existente
   } = useContext(RegProductoContext);
 
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -235,7 +237,8 @@ export default function CrearProducto({
       datos_generales,
       precios,
       almacen_inicial,
-      presentaciones
+      presentaciones,
+      almacen_existente
     );
 
     if (validate.error) {
@@ -341,8 +344,8 @@ export default function CrearProducto({
         console.log(error.networkError.result);
       } else if (error.graphQLErrors) {
         console.log(error.graphQLErrors);
-      }
-    }
+     
+    } }
   };
 
   /* ###### RESET STATES ###### */
@@ -369,11 +372,11 @@ export default function CrearProducto({
   /* SET STATES WHEN UPDATING */
   const setInitialStates = (producto) => {
     /* const producto = cleanTypenames(product); */
+    /* console.log(producto); */
     const { precios_producto, ...new_precios } = producto.precios;
     let unidadxdefecto = producto.unidades_de_venta.filter(
       (res) => res.default
     );
-
     setDatosGenerales(producto.datos_generales);
     setPrecios(new_precios);
     setCentroDeCostos(
@@ -389,6 +392,11 @@ export default function CrearProducto({
     setPresentaciones(
       producto.medidas_producto ? producto.medidas_producto : []
     );
+    if(producto.inventario_general.length > 0){
+      setAlmacenExistente(true);
+    }else{
+      setAlmacenExistente(false);
+    }
   };
 
   function funcion_tecla(event) {

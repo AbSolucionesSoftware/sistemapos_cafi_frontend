@@ -135,23 +135,25 @@ export default function RegistroInfoGenerales({
       setPrecios({
         ...precios,
         [e.target.name]: e.target.checked,
-        inventario: { ...precios.inventario, unidad_de_inventario: "Kg" },
-        unidad_de_compra: { ...precios.unidad_de_compra, unidad: "Kg" },
+        inventario: { ...precios.inventario, unidad_de_inventario: "Kg", codigo_unidad: "KGM" },
+        unidad_de_compra: { ...precios.unidad_de_compra, unidad: "Kg", codigo_unidad: "KGM" },
       });
       setUnidadVentaXDefecto({
         ...unidadVentaXDefecto,
         unidad: "Kg",
+        codigo_unidad: "KGM"
       });
     } else {
       setPrecios({
         ...precios,
         [e.target.name]: e.target.checked,
-        inventario: { ...precios.inventario, unidad_de_inventario: "Pz" },
-        unidad_de_compra: { ...precios.unidad_de_compra, unidad: "Pz" },
+        inventario: { ...precios.inventario, unidad_de_inventario: "Pz", codigo_unidad: "H87" },
+        unidad_de_compra: { ...precios.unidad_de_compra, unidad: "Pz", codigo_unidad: "H87" },
       });
       setUnidadVentaXDefecto({
         ...unidadVentaXDefecto,
         unidad: "Pz",
+        codigo_unidad: "H87"
       });
     }
   };
