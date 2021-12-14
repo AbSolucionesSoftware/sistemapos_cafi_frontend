@@ -218,4 +218,4 @@ const ContenidoTurnos = ({ handleClickOpen, value}) => {
 			)}
 		</DialogContent>
 	)
-}
+};

@@ -7,13 +7,14 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { IconButton, TablePagination } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
+import { TablePagination } from '@material-ui/core';
 
 const columns = [
-	{ id: 'folio', label: 'Folio', minWidth: 20, align: 'center' },
-	{ id: 'cliente', label: 'Cliente', minWidth: 330 },
-	{ id: 'fecha', label: 'Fecha.', minWidth: 100, align: 'center'},
+    { id: 'clave', label: 'Clave', minWidth: 20, align: 'center' },
+	{ id: 'codigo', label: 'C. Barras', minWidth: 20, align: 'center' },
+	{ id: 'producto', label: 'Nombre/Descrip.', minWidth: 330 },
+	{ id: 'cantidad', label: 'Cant.', minWidth: 100, align: 'center'},
+	{ id: 'precio', label: 'Precio U.', minWidth: 100, align: 'center'},
 	{ id: 'total', label: 'Total', minWidth: 100, align: 'center'},
 ];
 
@@ -43,7 +44,7 @@ const useStyles = makeStyles({
 		width: '100%'
 	},
 	container: {
-		maxHeight: '30vh'
+		maxHeight: '45vh'
 	}
 });
 
@@ -72,9 +73,6 @@ export default function ListaCotizacion() {
 									{column.label}
 								</TableCell>
 							))}
-							<TableCell align='center' style={{ width: 35 }}>
-								Eliminar
-							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -93,11 +91,6 @@ export default function ListaCotizacion() {
 											</TableCell>
 										);
 									})}
-									<TableCell align='center' >
-										<IconButton aria-label="delete" size='small'>
-											<DeleteIcon fontSize="small" />
-										</IconButton>
-									</TableCell>
 								</TableRow>
 							);
 						})}

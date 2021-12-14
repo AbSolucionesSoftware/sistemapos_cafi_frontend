@@ -1,29 +1,67 @@
 import React, { useState } from 'react'
 import useStyles from '../styles';
-
-import { Box, Button, Dialog, DialogActions, DialogContent, Divider, FormControl, Grid, IconButton, InputBase, MenuItem, Paper, Select, Slide, TextField, Typography } from '@material-ui/core'
+import PropTypes from 'prop-types';
+import { AppBar, Box, Button, CircularProgress, Dialog,  DialogContent, Tab, Grid, Slide, Tabs, Typography } from '@material-ui/core'
 import { FcCurrencyExchange } from 'react-icons/fc';
-import ListaCotizacion from './ListaCotizacion';
-import { Search } from '@material-ui/icons';
+import NuevaCotizacion from './NuevaCotizacion';
 import CloseIcon from '@material-ui/icons/Close';
 import moment from 'moment';
 import 'moment/locale/es';
+import CotizacionesPendientes from './CotizacionesPendientes';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
+function TabPanel(props) {
+	const { children, value, index, ...other } = props;
+
+	return (
+		<div
+			role="tabpanel"
+			hidden={value !== index}
+			id={`tabpanel-reg-product-${index}`}
+			aria-labelledby={`reg-product-tab-${index}`}
+			{...other}
+		>
+			{value === index && (
+				<Box p={3} height="70vh">
+					{children}
+				</Box>
+			)}
+		</div>
+	);
+}
+
+TabPanel.propTypes = {
+	children: PropTypes.node,
+	index: PropTypes.any.isRequired,
+	value: PropTypes.any.isRequired
+};
+
+function a11yProps(index) {
+	return {
+		id: `reg-product-tab-${index}`,
+		'aria-controls': `tabpanel-reg-product-${index}`
+	};
+}
+
 export default function Cotizacion() {
     moment.locale('es');
     const turnoEnCurso =JSON.parse(localStorage.getItem('turnoEnCurso'));
+    const classes = useStyles();
 
     const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(0);
+
+    const handleChange = (event, newValue) => {
+		setValue(newValue);
+	};
 
     const handleClickOpen = () => {
 		setOpen(!open);
 	};
 
-    const classes = useStyles();
 
     window.addEventListener('keydown', Mi_función); 
     function Mi_función(e){
@@ -44,7 +82,7 @@ export default function Cotizacion() {
                     </Box>
                     <Box>
                         <Typography variant="body2" >
-                            <b>Cotización</b>
+                            <b>Cotizaciones</b>
                         </Typography>
                     </Box>
                     <Box>
@@ -55,181 +93,95 @@ export default function Cotizacion() {
                 </Box>
             </Button>	
         	<Dialog
-				maxWidth='lg'
+				fullScreen
 				open={open} 
 				onClose={handleClickOpen} 
 				TransitionComponent={Transition}
 			>
-                <DialogContent style={{width: 800}}>
-                    <Grid container>
-                        <Grid item lg={12}>
-                            <Box
-                                display="flex" 
-                                textAlign="center" 
-                            >
-                                <Box>
-                                    <FcCurrencyExchange style={{fontSize: 85}} />
-                                </Box>
-                                <Box m={2} >
-                                    <Divider orientation="vertical" />
-                                </Box>
-                                <Box  flexGrow={1}>
-                                    <Box display="flex">
-                                        <Box mt={2}>
-                                            <Typography variant="h6">
-                                                Cotizacion
-                                            </Typography>
-                                        </Box>
-                                        <Box ml={2} mt={1}  display="flex" justifyContent="flex-end">
-                                            <Paper className={classes.rootBusqueda}>
-                                                <InputBase
-                                                    fullWidth
-                                                    placeholder="Buscar cotizacion..."
-                                                />
-                                                <IconButton>
-                                                    <Search />
-                                                </IconButton>
-                                            </Paper>
-                                        </Box>
-                                    </Box>
-                                    <Box  mt={1} display="flex" textAlign="right">
-                                        <Box textAlign="right">
-                                            <Typography variant="caption">
-                                                {moment().format('MM/DD/YYYY')}
-                                            </Typography>
-                                        </Box>
-                                        <Box textAlign="right" ml={2}>
-                                            <Typography variant="caption">
-                                                <b>{moment().format('h:mm')} hrs.</b> 
-                                            </Typography>
-                                        </Box>
-                                        <Box textAlign="right" ml={2}>
-                                            <Typography variant="caption">
-                                                <b>Caja: </b>{turnoEnCurso?.numero_caja}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                                <Box>
-                                    <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
-                                        <CloseIcon />
-                                    </Button>
-                                </Box>
-                            </Box>
-                        </Grid>
-                    </Grid>
-                    <Grid item lg={12}>
-                        <div className={classes.formInputFlex}>
-                            <Box width="100%">
-                                <Typography>
-                                    Cliente:
-                                </Typography>
-                                <Box display="flex">
-                                    <TextField
-                                        fullWidth
-                                        size="small"
-                                        variant="outlined"
-                                    />
-                                </Box>
-                            </Box>
-                            <Box width="100%">
-                                <Typography>
-                                    Vendedor:
-                                </Typography>
-                                <Box display="flex">
-                                    <TextField
-                                        fullWidth
-                                        size="small"
-                                        variant="outlined"
-                                    />
-                                </Box>
-                            </Box>
-                            
-                            <Box width="100%">
-                                <Typography>
-                                    Fecha Vencimiento:
-                                </Typography>
-                                <Box display="flex">
-                                    <TextField
-                                        fullWidth
-                                        type='number'
-                                        size="small"
-                                        variant="outlined"
-                                    />
-                                </Box>
-                            </Box>
-                        </div>
-                        <div className={classes.formInputFlex}>
-                            <Box width="80%" pt={2}>
-                                <Paper className={classes.rootBusqueda}>
-                                    <InputBase
-                                        fullWidth
-                                        placeholder="Buscar producto..."
-                                    />
-                                    <IconButton>
-                                        <Search />
-                                    </IconButton>
-                                </Paper>
-                            </Box>
-                            <Box width="50%">
-                                <Typography>
-                                    Tipo de Venta:
-                                </Typography>
-                                <FormControl
-                                    variant="outlined"
-                                    fullWidth
-                                    size="small"
-                                >
-                                    <Select
-                                        id="form-producto-tipo"
-                                        name="tipo_producto"
-                                    >
-                                        <MenuItem value="">
-                                            <em>Selecciona uno</em>
-                                        </MenuItem>
-                                        <MenuItem value="Credito">Credito</MenuItem>
-                                        <MenuItem value="Contado">Contado</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>
-                            <Box width="20%">
-                                <Typography>
-                                    Cantidad:
-                                </Typography>
-                                <Box display="flex">
-                                    <TextField
-                                        fullWidth
-                                        type='number'
-                                        size="small"
-                                        variant="outlined"
-                                    />
-                                </Box>
-                            </Box>
-                        </div>
-                    </Grid>
-                    <ListaCotizacion />
-                    <div className={classes.formInputFlex}>
-                        <Box display="flex" justifyContent="flex-end" width="100%">
-                            <Box textAlign="right">
-                                <Typography>
-                                    <b>SUBTOTAL:</b> $185.00
-                                </Typography>
-                                <Typography>
-                                    <b>IMPUESTOS:</b> $185.00
-                                </Typography>
-                                <Typography>
-                                    <b>TOTAL:</b> $185.00
-                                </Typography>
-                            </Box>
-                        </Box>
-                    </div>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClickOpen} variant="contained" color="primary" size="large">
-                        Aceptar
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </>
-    )
-}
+                <AppBar position="static" color="default" elevation={0}>
+					<Tabs
+						value={value}
+						onChange={handleChange}
+						variant="scrollable"
+						scrollButtons="on"
+						indicatorColor="primary"
+						textColor="primary"
+						aria-label="scrollable force tabs example"
+					>
+                        <Tab
+                            label="Nueva Cotización"
+                            icon={ <FcCurrencyExchange style={{fontSize: 60}} />}
+                            {...a11yProps(0)}
+                        />
+                        <Tab
+                            label="Cotizaciones pendientes"
+                            icon={
+                                <img 
+                                src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/lista-de-espera.svg' 
+                                alt="icono caja2" 
+                                style={{width: 58}} 
+                            />
+                            }
+                            {...a11yProps(1)}
+                        />			
+						<Grid container justify='flex-end'>
+							<Box mt={2} textAlign="right">
+								<Box textAlign="right">
+									<Typography variant="caption">
+										{moment().format('L')}
+									</Typography>
+								</Box>
+								<Box textAlign="right">
+									<Typography variant="caption">
+										{moment().format('LT')} hrs.
+									</Typography>
+								</Box>
+								<Box textAlign="right">
+									<Typography variant="caption">
+										Caja {!turnoEnCurso ? null : turnoEnCurso.numero_caja }
+									</Typography>
+								</Box>
+							</Box>
+						</Grid>
+						<Box mt={3} ml={3}>
+							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="medium">
+								<CloseIcon />
+							</Button>
+						</Box>
+					</Tabs>
+				</AppBar>
+                <VentanasCotizaciones handleClickOpen={handleClickOpen} value={value} /> 
+				</Dialog>
+			</>
+		)
+	};
+
+
+const VentanasCotizaciones = ({ handleClickOpen, value}) => {
+
+	const [ loading, setLoading ] = useState(false);
+
+	if (loading) 
+	return (
+		<Box
+		display="flex"
+		flexDirection="column"
+		justifyContent="center"
+		alignItems="center"
+		height="80vh"
+		>
+			<CircularProgress />
+		</Box>
+	);
+
+	return(
+		<DialogContent style={{padding: 0}}>
+            <TabPanel style={{padding: 0}} value={value} index={0}>
+                <NuevaCotizacion handleClickOpen={handleClickOpen} />
+            </TabPanel>
+            <TabPanel style={{padding: 0}} value={value} index={1}>
+                <CotizacionesPendientes handleClickOpen={handleClickOpen} /> 
+            </TabPanel>
+		</DialogContent>
+	)
+};
