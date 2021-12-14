@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import { Button, Dialog, makeStyles, DialogTitle, DialogContent, Grid, Box, Typography, TextField, Slider, IconButton } from '@material-ui/core';
@@ -54,7 +54,6 @@ export default function DescuentoProductos({datos, productosRefetch}) {
 
     const classes = useStyles();
 
-    console.log(datos)
     const handleCloseDescuentos = () => {
         if (datos.medidas_producto.length > 0) {
             setDatosPreciosProducto(datos.medidas_producto);

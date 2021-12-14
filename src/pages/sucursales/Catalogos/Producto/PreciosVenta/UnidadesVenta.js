@@ -32,6 +32,7 @@ import { FormControl } from "@material-ui/core";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
 /* import Done from "@material-ui/icons/Done"; */
 import { formatoMexico } from "../../../../../config/reuserFunctions";
+import { unitCodes, unitCodes_granel } from "../unidades";
 
 const useStyles = makeStyles((theme) => ({
   formInputFlex: {
@@ -56,16 +57,25 @@ export default function PreciosDeCompra() {
   } = useContext(RegProductoContext);
   const [unidades, setUnidades] = useState({
     unidad: precios.unidad_de_compra.unidad,
+    codigo_unidad: precios.unidad_de_compra.codigo_unidad,
     unidad_principal: false,
   });
 
   /* const [actualizarUnidad, setActualizarUnidad] = useState(false); */
 
-  const obtenerUnidadesVentas = (e) => {
+  const obtenerUnidadesVentas = (e, child) => {
     if (e.target.name === "cantidad") {
       setUnidades({
         ...unidades,
         [e.target.name]: parseFloat(e.target.value),
+      });
+    } else if (e.target.name === "unidad") {
+      const { codigo_unidad, unidad } = child.props.unidad;
+
+      setUnidades({
+        ...unidades,
+        [e.target.name]: unidad,
+        codigo_unidad,
       });
     } else {
       setUnidades({
@@ -79,8 +89,7 @@ export default function PreciosDeCompra() {
     if (unidades.descuento_activo && unidades.descuento_activo === true) {
       //calcular nuevo precio entre %
       let precio_con_descuento = Math.round(
-        value -
-              value * parseFloat("." + unidades.descuento.porciento)
+        value - value * parseFloat("." + unidades.descuento.porciento)
       );
       setUnidades({
         ...unidades,
@@ -97,7 +106,7 @@ export default function PreciosDeCompra() {
 
   const agregarNuevaUnidad = () => {
     if (!unidades.unidad || !unidades.precio || !unidades.cantidad) return;
-    unidades.descuento_activo = null
+    unidades.descuento_activo = null;
 
     /* if (actualizarUnidad) {
       setUnidadVentaXDefecto(unidades);
@@ -112,6 +121,7 @@ export default function PreciosDeCompra() {
     setUnidadesVenta([...unidadesVenta, unidades]);
     setUnidades({
       unidad: "Pz",
+      codigo_unidad: "H87",
       unidad_principal: false,
     });
   };
@@ -129,6 +139,7 @@ export default function PreciosDeCompra() {
           _id: element._id,
           codigo_barras: element.codigo_barras,
           unidad: element.unidad,
+          codigo_unidad: element.codigo_unidad,
           precio: parseFloat(element.precio),
           cantidad: parseFloat(element.cantidad),
           unidad_principal: false,
@@ -195,9 +206,11 @@ export default function PreciosDeCompra() {
                   value={unidades.unidad}
                   onChange={obtenerUnidadesVentas}
                 >
-                  <MenuItem value="Kg">Kg</MenuItem>
-                  <MenuItem value="Costal">Costal</MenuItem>
-                  <MenuItem value="Lt">Lt</MenuItem>
+                  {unitCodes_granel.map((res, index) => (
+                    <MenuItem key={index} unidad={res} value={res.unidad}>
+                      {res.unidad}
+                    </MenuItem>
+                  ))}
                 </Select>
               ) : (
                 <Select
@@ -205,8 +218,11 @@ export default function PreciosDeCompra() {
                   value={unidades.unidad}
                   onChange={obtenerUnidadesVentas}
                 >
-                  <MenuItem value="Caja">Caja</MenuItem>
-                  <MenuItem value="Pz">Pz</MenuItem>
+                  {unitCodes.map((res, index) => (
+                    <MenuItem key={index} unidad={res} value={res.unidad}>
+                      {res.unidad}
+                    </MenuItem>
+                  ))}
                 </Select>
               )}
             </FormControl>
@@ -444,9 +460,10 @@ const RenderUnidadesRows = ({ unidades, index }) => {
     for (let i = 0; i < unidadesVenta.length; i++) {
       const element = unidadesVenta[i];
       let new_element = {
-		_id: element._id,
+        _id: element._id,
         codigo_barras: element.codigo_barras,
         unidad: element.unidad,
+        codigo_unidad: element.codigo_unidad,
         precio: parseFloat(element.precio),
         cantidad: parseFloat(element.cantidad),
         unidad_principal: i === index ? true : false,
@@ -469,9 +486,10 @@ const RenderUnidadesRows = ({ unidades, index }) => {
       const element = unidadesVenta[i];
 
       let new_element = {
-		_id: element._id,
+        _id: element._id,
         codigo_barras: element.codigo_barras,
         unidad: element.unidad,
+        codigo_unidad: element.codigo_unidad,
         precio: parseFloat(element.precio),
         cantidad: parseFloat(element.cantidad),
         unidad_principal: element.unidad_principal,

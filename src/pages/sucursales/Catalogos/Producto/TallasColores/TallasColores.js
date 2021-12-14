@@ -51,12 +51,12 @@ export default function ColoresTallas({
   withoutPrice,
 }) {
   const {
-    almacen_inicial,
-    setAlmacenInicial,
+    /* almacen_inicial,
+    setAlmacenInicial, */
     presentaciones,
     datos_generales,
   } = useContext(RegProductoContext);
-  const { almacenes, colores, tallas, calzados } = obtenerConsultasProducto;
+  const { /* almacenes, */ colores, tallas, calzados } = obtenerConsultasProducto;
   const [medidasSeleccionadas, setMedidasSeleccionadas] = useState([]);
   const [coloresSeleccionados, setColoresSeleccionados] = useState([]);
   const medidas =
@@ -90,13 +90,13 @@ export default function ColoresTallas({
     setMedidasSeleccionadas([...medidas_existentes]);
   }, [presentaciones]);
 
-  const obtenerAlmacenes = (event, child) => {
+  /* const obtenerAlmacenes = (event, child) => {
     setAlmacenInicial({
       ...almacen_inicial,
       [event.target.name]: event.target.value,
       [child.props.name]: child.props.id,
     });
-  };
+  }; */
 
   useEffect(() => {
     obtenerColoresSeleccinados();
@@ -106,11 +106,11 @@ export default function ColoresTallas({
     <div>
       <Box>
         <Grid container spacing={2}>
-          {presentaciones.length === 0 ? (
+          {/* {!almacen_existente ? (
             <Grid item md={4}>
               <Box width="100%">
                 <Typography>Almacen</Typography>
-                <Box display="flex">
+                <Box display="flex" >
                   <FormControl
                     disabled={presentaciones.length === 0 || from === "compra"}
                     variant="outlined"
@@ -161,9 +161,9 @@ export default function ColoresTallas({
                 </Box>
               </Box>
             </Grid>
-          ) : null}
+          ) : null} */}
 
-          <Grid item md={presentaciones.length === 0 ? 4 : 6}>
+          <Grid item md={6}>
             <Box
               width="100%"
               style={
@@ -200,7 +200,7 @@ export default function ColoresTallas({
               </Grid>
             </Box>
           </Grid>
-          <Grid item md={presentaciones.length === 0 ? 4 : 6}>
+          <Grid item md={6}>
             <Box
               width="100%"
               style={
@@ -258,6 +258,7 @@ const RenderTallas = ({
     preciosP,
     presentaciones_eliminadas,
     setPresentacionesEliminadas,
+    almacen_existente
   } = useContext(RegProductoContext);
   const [selected, setSelected] = useState(false);
 
@@ -267,8 +268,10 @@ const RenderTallas = ({
     });
   }, [talla._id, medidasSeleccionadas]);
 
+/*   console.log(almacen_existente); */
+
   useEffect(() => {
-    if (presentaciones.length > 0) {
+    if (almacen_existente) {
       return seleccionarMedidas();
     }
   }, [seleccionarMedidas]);
@@ -474,6 +477,7 @@ const Colores = ({
     preciosP,
     presentaciones_eliminadas,
     setPresentacionesEliminadas,
+    almacen_existente
   } = useContext(RegProductoContext);
 
   const [selected, setSelected] = useState(false);
@@ -485,7 +489,7 @@ const Colores = ({
   }, [color._id, coloresSeleccionados]);
 
   useEffect(() => {
-    if (presentaciones.length > 0) {
+    if (almacen_existente) {
       return seleccionarColores();
     }
   }, [seleccionarColores]);

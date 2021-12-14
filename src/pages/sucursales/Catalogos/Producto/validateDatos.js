@@ -43,6 +43,7 @@ export const validateJsonEdit = async (data, tipo) => {
           precio: data[i].precio,
           unidad_principal: data[i].unidad_principal,
           unidad: data[i].unidad,
+          codigo_unidad: data[i].codigo_unidad,
         };
         if (data[i].codigo_barras !== null && data[i].codigo_barras !== "")
           object = { ...object, codigo_barras: data[i].codigo_barras };

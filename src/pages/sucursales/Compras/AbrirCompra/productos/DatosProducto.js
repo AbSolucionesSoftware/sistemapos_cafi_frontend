@@ -106,6 +106,7 @@ export default function DatosProducto({ status }) {
     setPresentaciones,
     presentaciones_eliminadas,
     setPresentacionesEliminadas,
+    setAlmacenExistente
   } = useContext(RegProductoContext);
   const [verificate, setVerificate] = useState(false);
 
@@ -263,7 +264,7 @@ export default function DatosProducto({ status }) {
 
     const { iva, ieps, precio_de_compra } = datosProducto.producto.precios;
 
-    console.log(datosProducto.producto.precios);
+    /* console.log(datosProducto.producto); */
 
     let total = value;
     let total_con_descuento;
@@ -562,6 +563,12 @@ export default function DatosProducto({ status }) {
         id_almacen: datosCompra.almacen.id_almacen,
         almacen: datosCompra.almacen.nombre_almacen,
       });
+    }
+
+    if(producto.inventario_general.length > 0){
+      setAlmacenExistente(true);
+    }else{
+      setAlmacenExistente(false);
     }
   };
 

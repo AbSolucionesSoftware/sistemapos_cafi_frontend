@@ -4,6 +4,9 @@ export const CREAR_FACTURA = gql`
   mutation crearFactura($input: CrearFacturaInput) {
     crearFactura(input: $input) {
       message
+      success
+      pdf
+      xml
     }
   }
 `;

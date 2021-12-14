@@ -90,6 +90,7 @@ export const OBTENER_PRODUCTOS = gql`
         precio
         cantidad
         unidad
+        codigo_unidad
         unidad_principal
         codigo_barras
         id_producto
@@ -134,15 +135,18 @@ export const OBTENER_PRODUCTOS = gql`
           plazo
           unidad
           precio
+          codigo_unidad
         }
         precio_piezas {
           plazo
           unidad
           precio
+          codigo_unidad
         }
         precio_costales {
           plazo
           unidad
+          codigo_unidad
           precio
         }
       }
@@ -171,11 +175,13 @@ export const OBTENER_PRODUCTOS = gql`
           precio_unitario_con_impuesto
           precio_unitario_sin_impuesto
           unidad
+          codigo_unidad
         }
         inventario {
           inventario_minimo
           inventario_maximo
           unidad_de_inventario
+          codigo_unidad
         }
         granel
       }
@@ -208,7 +214,7 @@ export const OBTENER_PRODUCTOS = gql`
         _id
         cantidad_existente
         unidad_inventario
-        unidad_inventario
+        codigo_unidad
         cantidad_existente_maxima
         unidad_maxima
         id_almacen_general
