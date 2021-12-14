@@ -21,7 +21,8 @@ const useStyles = makeStyles((theme) => ({
 
 function NavegacionAdmin(props) {
 	const classes = useStyles();
-	const token = localStorage.getItem('sesionCafi')
+	const token = localStorage.getItem('sesionCafi');
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	let usuario;
 	
 	if (token !== null) usuario = JSON.parse(localStorage.getItem('sesionCafi'));
@@ -29,6 +30,7 @@ function NavegacionAdmin(props) {
     const signOut = () => {
 		localStorage.removeItem('sesionCafi');
 		localStorage.removeItem('tokenCafi');
+		localStorage.removeItem('ListaEnEspera');
 		props.history.push('/');
 	};
 
@@ -49,16 +51,30 @@ function NavegacionAdmin(props) {
 					>
 						Inicio
 					</Button> */}
-					<Button
-						color="secondary"
-						size="large"
-						className={classes.menuButton}
-						startIcon={<PowerSettingsNewIcon />}
-						variant="contained"
-                        onClick={signOut}
-					>
-						Cerrar sesión
-					</Button>
+					{
+						sesion.turno_en_caja_activo === true ? (
+							<Button
+								color="secondary"
+								size="large"
+								className={classes.menuButton}
+								variant="contained"
+								disabled={true}
+							>
+								TURNO ACTIVO
+							</Button>
+						):(
+							<Button
+								color="secondary"
+								size="large"
+								className={classes.menuButton}
+								startIcon={<PowerSettingsNewIcon />}
+								variant="contained"
+								onClick={signOut}
+							>
+								Cerrar sesión
+							</Button>
+						)
+					}
 				</Toolbar>
 			</AppBar>
 		</div>

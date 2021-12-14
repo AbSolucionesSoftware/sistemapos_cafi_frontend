@@ -9,8 +9,6 @@ import {
   Paper,
   Select,
   Typography,
-  // CircularProgress,
-  // TextField,
 } from "@material-ui/core";
 import useStyles from "./styles";
 
@@ -86,7 +84,7 @@ export default function VentasGenerales() {
           console.log(error.networkError.result.errors);
           setAlert({ message: `Error de servidor`, status: 'error', open: true });
         }else if(error.graphQLErrors){
-          console.log();
+          console.log(error.graphQLErrors);
           setAlert({ message: `${error.graphQLErrors[0]?.message}`, status: 'error', open: true });
         }
     }else{
@@ -521,7 +519,6 @@ export default function VentasGenerales() {
       <Paper elevantion={3} style={{padding: 2, marginTop: 2}}> 
         <Grid container>
           <Grid item lg={7}>
-            {clientesVentas ? (
               <Grid 
                 container
                 direction="row"
@@ -536,10 +533,10 @@ export default function VentasGenerales() {
                   >
                     <Box>
                       <Typography variant="subtitle1">
-                        Cliente: <b style={{fontSize: 16}}>{clientesVentas.nombre_cliente}</b>
+                        Cliente: <b style={{fontSize: 16}}>{clientesVentas ? clientesVentas.nombre_cliente : ""}</b>
                       </Typography>
                     </Box>
-                    <Box mt={.5}>
+                    <Box mt={.5} mr={1}>
                       <FcBusinessman style={{fontSize: 19}} />
                     </Box>
                   </Box>
@@ -550,10 +547,10 @@ export default function VentasGenerales() {
                   >
                     <Box>
                      <Typography variant="subtitle1">
-                         Cliente.: <b style={{fontSize: 16}}>{clientesVentas.numero_cliente}</b>
+                         Cliente.: <b style={{fontSize: 16}}>{clientesVentas ? clientesVentas.numero_cliente : ""}</b>
                       </Typography>
                     </Box>
-                    <Box mt={.5}>
+                    <Box mt={.5} mr={1} >
                       <AiOutlineFieldNumber style={{fontSize: 22}} />
                     </Box>
                   </Box>
@@ -564,10 +561,10 @@ export default function VentasGenerales() {
                   >
                     <Box>
                       <Typography variant="subtitle1">
-                        Clave Clte.: <b style={{fontSize: 16}}>{clientesVentas.clave_cliente}</b>
+                        Clave Clte.: <b style={{fontSize: 16}}>{clientesVentas ? clientesVentas.clave_cliente : ""}</b>
                       </Typography>
                     </Box>
-                    <Box mt={.5}>
+                    <Box mt={.5} mr={1}>
                       <FaBarcode style={{fontSize: 19}} />
                     </Box>
                   </Box>
@@ -580,10 +577,10 @@ export default function VentasGenerales() {
                   >
                     <Box>
                       <Typography variant="subtitle1">
-                        Limite Credito: <b style={{fontSize: 16}}>${clientesVentas.limite_credito ? clientesVentas.limite_credito : 0}</b>
+                        Limite Credito: <b style={{fontSize: 16}}>${clientesVentas ? clientesVentas.limite_credito : 0}</b>
                       </Typography>
                     </Box>
-                    <Box mt={.5}>
+                    <Box mt={.5} mr={1}>
                       <FaMoneyCheckAlt style={{fontSize: 19}} />
                     </Box>
                   </Box>
@@ -594,10 +591,10 @@ export default function VentasGenerales() {
                   >
                     <Box>
                       <Typography variant="subtitle1">
-                       Descs.: <b style={{fontSize: 16}}>{clientesVentas.numero_descuento ? clientesVentas.numero_descuento : 0}%</b>
+                       Descs.: <b style={{fontSize: 16}}>{clientesVentas ? clientesVentas.numero_descuento : 0}%</b>
                       </Typography>
                     </Box>
-                    <Box mt={.5}>
+                    <Box mt={.5} mr={1}>
                       <AiOutlineFieldNumber style={{fontSize: 22}} />
                     </Box>
                   </Box>
@@ -608,16 +605,15 @@ export default function VentasGenerales() {
                   >
                     <Box>
                       <Typography variant="subtitle1">
-                        Dias Credito: <b style={{fontSize: 16}}>{clientesVentas.dias_credito ? clientesVentas.dias_credito : 0} Dias</b>
+                        Dias Credito: <b style={{fontSize: 16}}>{clientesVentas ? clientesVentas.dias_credito : 0} Dias</b>
                       </Typography>
                     </Box>
-                    <Box mt={.5}>
+                    <Box mt={.5} mr={1}>
                       <FcCalendar style={{fontSize: 19}} />
                     </Box>
                   </Box>
                 </Grid>
               </Grid>
-            ):(null)}
           </Grid>
           <Grid item lg={5}>
             <Grid container>
@@ -625,10 +621,10 @@ export default function VentasGenerales() {
                 <Box display="flex" alignItems="center" flexDirection="row-reverse" >
                   <Box>
                     <Typography variant="subtitle1">
-                      Monedero : <b style={{fontSize: 17}}>$ {DatosVentasActual?.monedero ? DatosVentasActual?.monedero?.toFixed(2) : 0}</b>
+                      Monedero : <b style={{fontSize: 17}}>$ {DatosVentasActual ? DatosVentasActual?.monedero?.toFixed(2) : 0}</b>
                     </Typography>
                   </Box>
-                  <Box mt={.5}>
+                  <Box mt={.5} mr={1}>
                     <FcSalesPerformance style={{fontSize: 19}} />
                   </Box>
                 </Box>
@@ -639,10 +635,10 @@ export default function VentasGenerales() {
                 >
                   <Box>
                     <Typography variant="subtitle1">
-                      Descuento: <b style={{fontSize: 17}}>${DatosVentasActual?.descuento ? DatosVentasActual?.descuento?.toFixed(2) : 0}</b>
+                      Descuento: <b style={{fontSize: 17}}>${DatosVentasActual ? DatosVentasActual?.descuento?.toFixed(2) : 0}</b>
                     </Typography>
                   </Box>
-                  <Box mt={.5}>
+                  <Box mt={.5} mr={1}>
                     <FcRating style={{fontSize: 19}} />
                   </Box>
                 </Box>
@@ -678,7 +674,7 @@ export default function VentasGenerales() {
               <Typography variant="h4">
                 Total: <b style={{color: "green"}}>${DatosVentasActual?.total ? DatosVentasActual?.total.toFixed(2) : 0}</b>
               </Typography>
-              <Box mt={.5} >
+              <Box mt={.5} mr={1}>
                 <MonetizationOnIcon style={{fontSize: 37, color: "green"}} />
               </Box>
             </Box>

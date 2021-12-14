@@ -30,6 +30,12 @@ const useStyles = makeStyles((theme) => ({
 		padding: theme.spacing(1),
         // marginTop: theme.spacing(1)
 	},
+    rootBusquedaProductos: {
+        height: 35,
+		display: 'flex',
+		padding: theme.spacing(1),
+        // marginTop: theme.spacing(1)
+	},
     rootFecha: {
         height: 40,
         maxWidth: 150,
@@ -57,11 +63,16 @@ const useStyles = makeStyles((theme) => ({
         width: 80,
     },
     iconSizeDialogsPequeno:{
-        width: 40,
+        width: 50,
     },
     containerImagenesProducto:{
-        maxHeight: 320,
-        maxWidth: 300
+        maxHeight: 300,
+        maxWidth: 300,
+        display: 'flex',
+        justifyItems: 'center',
+        alignContent: 'center',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     imagenProducto:{
         height: '100%',
@@ -76,7 +87,20 @@ const useStyles = makeStyles((theme) => ({
 		minWidth: '100%',
 		height: '100%',
         border: '.6px solid #DBDBDB'
-    }
+    },
+    input: {
+        "& input[type=number]": {
+          "-moz-appearance": "textfield",
+        },
+        "& input[type=number]::-webkit-outer-spin-button": {
+          "-webkit-appearance": "none",
+          margin: 0,
+        },
+        "& input[type=number]::-webkit-inner-spin-button": {
+          "-webkit-appearance": "none",
+          margin: 0,
+        },
+    },
 }));
 
 export default useStyles

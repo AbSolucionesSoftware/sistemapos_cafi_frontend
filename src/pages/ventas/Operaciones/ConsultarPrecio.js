@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
-
-import { Box, Button,  CircularProgress,  Dialog,  DialogActions, DialogContent, Divider, Grid,  IconButton,  InputBase,  Paper,  Slide,  Typography } from '@material-ui/core'
+import { Box, Button,  CircularProgress,  Dialog,  
+        DialogActions, DialogContent, Divider, Grid,  
+        IconButton,  InputBase,  Paper,  Slide,  
+        Typography 
+    } from '@material-ui/core';
+import ItemsCarousel from 'react-items-carousel';
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import CloseIcon from '@material-ui/icons/Close';
-
 import useStyles from '../styles';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { Search } from '@material-ui/icons';
 import { useLazyQuery } from '@apollo/client';
 import { CONSULTA_PRODUCTO_UNITARIO } from '../../../gql/Ventas/ventas_generales';
-import { useDebounce } from 'use-debounce/lib';
-
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -17,8 +20,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function ConsultarPrecio() {
     const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+    const [activeItemIndex, setActiveItemIndex] = useState(0);
 
-    const [obtenerProductos, { data, loading, error }] = useLazyQuery(
+    const [obtenerProductos, { data, loading }] = useLazyQuery(
         CONSULTA_PRODUCTO_UNITARIO,
         {
           variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id },
@@ -41,7 +45,6 @@ export default function ConsultarPrecio() {
     const keyUpEvent = async (event) => {
         if (event.code === "Enter" || event.code === "NumpadEnter") {
             const input_value = event.target.value;
-            console.log(input_value)
             obtenerProductos({
                 variables: {
                     datosProductos: input_value,
@@ -59,6 +62,7 @@ export default function ConsultarPrecio() {
             handleClickOpen();
         } 
     };
+    const chevronWidth = 40;
 
     return (
         <>
@@ -93,13 +97,11 @@ export default function ConsultarPrecio() {
 				onClose={handleClickOpen} 
 				TransitionComponent={Transition}
             >
-               
                 <DialogContent
                     open={open} 
                     onClose={handleClickOpen} 
                     TransitionComponent={Transition}
                 >
-                
                     <Grid container item lg={12}>
                         <Box
                             display="flex" 
@@ -125,8 +127,8 @@ export default function ConsultarPrecio() {
                         </Box>
                     </Grid>
                     <div className={classes.formInputFlex}>
-                        <Box width="100%">
-                            <Paper className={classes.rootBusqueda}>
+                        <Box width="50%">
+                            <Paper className={classes.rootBusquedaProductos}>
                                 <InputBase
                                     fullWidth
                                     onKeyUp={keyUpEvent}
@@ -151,24 +153,51 @@ export default function ConsultarPrecio() {
                     ) : (<>
                         <Grid container>
                             <Grid item lg={6} md={6}>
-                                <Box display="flex" justifyContent="center" alignItems="center" width="100%">
                                     {productoBase?.id_producto?.imagenes.length > 0 ? (
-                                        <Box className={classes.containerImagenesProducto}>
-                                            <img 
-                                                alt="Imagen producto" 
-                                                src={productoBase?.id_producto?.imagenes[0].url_imagen} 
-                                                className={classes.imagenProducto}
-                                            />
+                                        <Box p={7}>
+                                        <ItemsCarousel
+                                            requestToChangeActive={setActiveItemIndex}
+                                            activeItemIndex={activeItemIndex}
+                                            numberOfCards={1}
+                                            leftChevron={
+                                                <IconButton aria-label="delete" disabled color="primary">
+                                                    <ArrowBackIosIcon />
+                                                </IconButton>
+                                            }
+                                            rightChevron={
+                                                <IconButton aria-label="delete" disabled color="primary">
+                                                    <ArrowForwardIosIcon />
+                                                </IconButton>
+                                            }
+                                            infiniteLoop={true}
+                                            outsideChevron
+                                            chevronWidth={chevronWidth}
+                                        >
+                                            {productoBase?.id_producto?.imagenes.map((image)=>{
+                                                return(
+                                                    <Box 
+                                                        className={classes.containerImagenesProducto}
+                                                        display="flex"
+                                                        justifyContent="center"
+                                                        alignItems="center"
+                                                    >
+                                                        <img 
+                                                            alt="Imagen producto" 
+                                                            src={image.url_imagen} 
+                                                            className={classes.imagenProducto}
+                                                        />
+                                                    </Box>
+                                                )
+                                            })}
+                                        </ItemsCarousel>
                                         </Box>
                                     ) : (
-                                        <Box p={1} display="flex" justifyContent="center" alignItems="center">
+                                        <Box p={1} mt={15} display="flex" justifyContent="center" alignItems="center">
                                             <PhotoLibraryIcon style={{fontSize: 40}} />
                                         </Box>
                                     )}
-                                    
-                                    
-                                </Box>
                             </Grid>
+
                             <Grid item lg={6} md={6}>
                                 <Paper elevation={3} className={classes.rootPrecioProductos}>
                                     <div className={classes.formInputFlex}>

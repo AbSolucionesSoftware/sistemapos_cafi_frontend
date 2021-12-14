@@ -1042,6 +1042,3 @@ export default function Traspasos() {
         </Box>
     )
 }
-
-
-		

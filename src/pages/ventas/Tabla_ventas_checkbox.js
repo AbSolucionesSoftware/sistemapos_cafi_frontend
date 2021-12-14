@@ -27,6 +27,7 @@ import {
   verifiPrising,
 } from "../../config/reuserFunctions";
 import { VentasContext } from '../../context/Ventas/ventasContext';
+import { Avatar } from "@material-ui/core";
 
 
 const headCells = [
@@ -35,35 +36,35 @@ const headCells = [
     numeric: false,
     disablePadding: true,
     label: "Cantidad",
-    width: 25,
+    width: 20,
   },
   {
     id: "Descripcion",
     numeric: true,
     disablePadding: false,
     label: "Descripcion",
-    width: 330,
+    width: 340,
   },
   {
     id: "Existencias",
     numeric: true,
     disablePadding: false,
     label: "Existencias",
-    width: 100,
+    width: 40,
   },
   {
     id: "% Desc",
     numeric: true,
     disablePadding: false,
     label: "% Desc",
-    width: 100,
+    width: 50,
   },
   {
     id: "U. Venta",
     numeric: true,
     disablePadding: false,
     label: "U. Venta",
-    width: 100,
+    width: 50,
   },
   {
     id: "Precio U",
@@ -77,7 +78,7 @@ const headCells = [
     numeric: true,
     disablePadding: false,
     label: "Eliminar",
-    width: 100,
+    width: 10,
   },
 ];
 
@@ -224,14 +225,14 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   container: {
-    maxHeight: "60vh",
+    height: "55vh",
     '& ::-webkit-scrollbar': {
       display: 'none'
     }
   },
   table: {
     minWidth: 750,
-    minHeight: "50vh",
+    height: "55vh",
   },
   visuallyHidden: {
     border: 0,
@@ -243,7 +244,8 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     top: 20,
     width: 1,
-  }
+  },
+
 }));
 
 export default function EnhancedTable({
@@ -251,6 +253,7 @@ export default function EnhancedTable({
 }) {
   const classes = useStyles();
   const [ selected, setSelected ] = useState([]);
+	const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
   const { setProductoCambioPrecio, setPrecioSelectProductoVenta, updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
 
@@ -269,7 +272,7 @@ export default function EnhancedTable({
       newSelected = [];
     }else{
       newSelected = newSelected.concat([], name);
-    }
+    } 
     // console.log("selected",selected);
     // console.log("newSelected",newSelected);
     const producto = name.id_producto.precios.precios_producto.filter((p) => p.precio_neto === name.precio_actual_producto);
@@ -306,10 +309,37 @@ export default function EnhancedTable({
   return (
     <div className={classes.root}>
       <Paper>
-        <TableContainer className={classes.container} >
+        <TableContainer className={classes.container}>
+          <div
+            style={{
+              display: 'flex', 
+              width: '80%', 
+              height: '60%', 
+              alignItems: 'center',
+              backgroundPosition: 'center',
+              justifyContent: 'center',
+              zIndex: 'auto',
+              position: 'absolute',
+            }}
+          >
+            <div
+              style={{
+                maxWidth: '40%'
+              }}
+            >
+              <Avatar
+                alt="Imagen fondo empresa"
+                src={sesion.empresa.imagen}
+                style={{
+                  height: '100%',
+                  width: '100%',
+                  opacity: .2
+                }}
+              />
+            </div>
+          </div>
           <Table
             stickyHeader
-            className={classes.table}
             size="small"
             aria-labelledby="tableTitle"
             aria-label="a dense table"
@@ -317,7 +347,7 @@ export default function EnhancedTable({
             <TableHead>
               <TableRow>
                 <TableCell style={{ width: 25, textAlign:"center" }}></TableCell>
-                <TableCell style={{ width: 25, textAlign:"center" }}>Cantidad</TableCell>
+                <TableCell style={{ width: 20, textAlign:"center" }}>Cantidad</TableCell>
                 <TableCell style={{ width: 340 }}>Descripcion</TableCell>
                 <TableCell style={{ width: 40, textAlign:"center" }}>Exis.</TableCell>
                 <TableCell style={{ width: 50, textAlign:"center" }}><b>% Desct.</b></TableCell>
@@ -590,6 +620,7 @@ const RenderTableRows = ({
     <Fragment>
       <TableRow
         role="checkbox"
+        style={{height: '15px'}}
         aria-checked={isItemSelected}
         tabIndex={-1}
         key={producto._id}
