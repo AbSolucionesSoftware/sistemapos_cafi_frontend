@@ -74,7 +74,7 @@ export default function Turnos() {
 	const { abrirTurnosDialog, setAbrirTurnosDialog, setTurnoActivo } = useContext(VentasContext);
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
-	
+	console.log(turnoEnCurso);
 
     const classes = useStyles();
     const [value, setValue] = useState(0);
@@ -140,7 +140,7 @@ export default function Turnos() {
 						aria-label="scrollable force tabs example"
 					>
 						
-						{sesion?.turno_en_caja_activo === true ? (
+						{sesion?.turno_en_caja_activo === true  ? (
 							<Tab
 								label="Cerrar Turno"
 								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}

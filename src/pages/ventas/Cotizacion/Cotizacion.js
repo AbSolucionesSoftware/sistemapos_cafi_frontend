@@ -46,9 +46,14 @@ function a11yProps(index) {
 	};
 }
 
-export default function Cotizacion() {
+export default function Cotizacion({type}) {
+
     moment.locale('es');
-    const turnoEnCurso =JSON.parse(localStorage.getItem('turnoEnCurso'));
+
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+    const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
+    const datosVentas = JSON.parse(localStorage.getItem('DatosVentas'));
+
     const classes = useStyles();
 
     const [open, setOpen] = useState(false);
@@ -72,29 +77,45 @@ export default function Cotizacion() {
 
     return (
         <>
-			<Button
-                onClick={() =>{handleClickOpen();}}
-                style={{textTransform: 'none', height: '100%', width: '60%'}}
-            >
-                <Box display="flex" flexDirection="column">
-                    <Box display="flex" justifyContent="center" alignItems="center">
-                        <FcCurrencyExchange style={{fontSize: 25}} />
-                    </Box>
-                    <Box>
-                        <Typography variant="body2" >
-                            <b>Cotizaciones</b>
-                        </Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="caption" style={{color: '#808080'}} >
-                            <b>Alt + T</b>
-                        </Typography>
-                    </Box>
-                </Box>
-            </Button>	
+			{
+				type === "GENERAR" ? (
+					datosVentas ? (
+						<Button
+							variant="outlined"
+							color="primary"
+							startIcon={<FcCurrencyExchange style={{fontSize: 30}} />}
+							onClick={() =>{handleClickOpen()}}
+						>
+							Generar Cotización
+						</Button>	
+					) : ""
+			) : (
+				<Button
+					onClick={() =>{handleClickOpen();}}
+					style={{textTransform: 'none', height: '100%', width: '60%'}}
+				>
+					<Box display="flex" flexDirection="column">
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<FcCurrencyExchange style={{fontSize: 25}} />
+						</Box>
+						<Box>
+							<Typography variant="body2" >
+								<b>Cotizaciones</b>
+							</Typography>
+						</Box>
+						<Box>
+							<Typography variant="caption" style={{color: '#808080'}} >
+								<b>Alt + T</b>
+							</Typography>
+						</Box>
+					</Box>
+				</Button>
+				)
+			}
         	<Dialog
-				fullScreen
+				fullWidth
 				open={open} 
+				maxWidth={type==="GENERAR"?'sm':'lg'}
 				onClose={handleClickOpen} 
 				TransitionComponent={Transition}
 			>
@@ -108,22 +129,25 @@ export default function Cotizacion() {
 						textColor="primary"
 						aria-label="scrollable force tabs example"
 					>
-                        <Tab
-                            label="Nueva Cotización"
-                            icon={ <FcCurrencyExchange style={{fontSize: 60}} />}
-                            {...a11yProps(0)}
-                        />
-                        <Tab
-                            label="Cotizaciones pendientes"
-                            icon={
-                                <img 
-                                src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/lista-de-espera.svg' 
-                                alt="icono caja2" 
-                                style={{width: 58}} 
-                            />
-                            }
-                            {...a11yProps(1)}
-                        />			
+						{type === "GENERAR" ? (
+							<Tab
+								label="Nueva Cotización"
+								icon={ <FcCurrencyExchange style={{fontSize: 60}} />}
+								{...a11yProps(0)}
+							/>
+						) : (
+							<Tab
+								label="Cotizaciones pendientes"
+								icon={
+									<img 
+										src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/lista-de-espera.svg' 
+										alt="icono caja2" 
+										style={{width: 58}} 
+									/>
+								}
+								{...a11yProps(1)}
+							/>		
+						)}	
 						<Grid container justify='flex-end'>
 							<Box mt={2} textAlign="right">
 								<Box textAlign="right">
@@ -134,6 +158,11 @@ export default function Cotizacion() {
 								<Box textAlign="right">
 									<Typography variant="caption">
 										{moment().format('LT')} hrs.
+									</Typography>
+								</Box>
+								<Box textAlign="right">
+									<Typography variant="caption">
+										{sesion?.nombre}
 									</Typography>
 								</Box>
 								<Box textAlign="right">
@@ -150,14 +179,19 @@ export default function Cotizacion() {
 						</Box>
 					</Tabs>
 				</AppBar>
-                <VentanasCotizaciones handleClickOpen={handleClickOpen} value={value} /> 
+                	<VentanasCotizaciones 
+						handleClickOpen={handleClickOpen} 
+						value={value} 
+						type={type} 
+					/> 
 				</Dialog>
 			</>
 		)
 	};
 
 
-const VentanasCotizaciones = ({ handleClickOpen, value}) => {
+const VentanasCotizaciones = ({ handleClickOpen, value, type}) => {
+
 
 	const [ loading, setLoading ] = useState(false);
 
@@ -176,12 +210,16 @@ const VentanasCotizaciones = ({ handleClickOpen, value}) => {
 
 	return(
 		<DialogContent style={{padding: 0}}>
-            <TabPanel style={{padding: 0}} value={value} index={0}>
-                <NuevaCotizacion handleClickOpen={handleClickOpen} />
-            </TabPanel>
-            <TabPanel style={{padding: 0}} value={value} index={1}>
-                <CotizacionesPendientes handleClickOpen={handleClickOpen} /> 
-            </TabPanel>
+			{type === "GENERAR" ? (
+				<TabPanel style={{padding: 0}} value={value} index={0}>
+					<NuevaCotizacion handleClickOpen={handleClickOpen} />
+				</TabPanel>
+			) : (
+				<TabPanel style={{padding: 0}} value={value} index={0}>
+					<CotizacionesPendientes handleClickOpen={handleClickOpen} /> 
+				</TabPanel>
+			)}
+
 		</DialogContent>
 	)
 };

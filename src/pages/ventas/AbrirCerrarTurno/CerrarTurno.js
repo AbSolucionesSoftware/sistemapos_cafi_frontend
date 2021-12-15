@@ -11,9 +11,11 @@ import moment from 'moment';
 import 'moment/locale/es';
 import { VentasContext } from '../../../context/Ventas/ventasContext';
 import { useMutation } from '@apollo/client';
+import { withRouter } from 'react-router-dom';
 moment.locale('es');
 
-export default function AbrirTurno({handleClickOpen, setLoading, props}) {
+function  CerrarTurno(props) {
+    const { handleClickOpen, setLoading } = props;
     const [ CrearRegistroDeTurno ] = useMutation(REGISTRAR_TURNOS);
     const { setAlert, setTurnoActivo, ubicacionTurno } = useContext(VentasContext);
     const [ error, setError] = useState(false);
@@ -153,6 +155,7 @@ export default function AbrirTurno({handleClickOpen, setLoading, props}) {
                 setTurnoActivo(true);
             }
         } catch (error) {
+            console.log(error);
             setAlert({
                 message: `Error: ${error.message}`,
                 status: "error",
@@ -355,4 +358,6 @@ export default function AbrirTurno({handleClickOpen, setLoading, props}) {
             </DialogActions>
         </>
     )
-}
+};
+
+export default withRouter(CerrarTurno);
