@@ -61,13 +61,15 @@ function NavegacionVentas(props) {
 	moment.locale('es');
 
 	const signOut = () => {
-		if (sesion.turno_en_caja_activo === true) {
+		if (sesion.turno_en_caja_activo === true && turnoEnCurso) {
 			setAbrirTurnosDialog(!abrirTurnosDialog);
 			setUbicacionTurno('SESION');
 		}else{
 			props.history.push('/');
 			localStorage.removeItem('sesionCafi');
 			localStorage.removeItem('tokenCafi');
+            localStorage.removeItem('DatosVentas');
+			localStorage.removeItem('turnoEnCurso');
 			localStorage.removeItem('ListaEnEspera');
 		}
 	};

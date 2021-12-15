@@ -90,7 +90,7 @@ export default function DepositoRetiroCaja() {
     const enviarDatos = async () => {
         setCargando(true);
         try {
-            if(!turnoEnCurso){
+            if(!turnoEnCurso && sesion?.turno_en_caja_activo === false ){
                 setCargando(false);
                 setAlert({
                     message: `Por el momento no hay ningun turno activo.`,
@@ -147,7 +147,7 @@ export default function DepositoRetiroCaja() {
                             monto_efectivo: parseFloat(datosMovimiento.monto_efectivo),
                             monto_tarjeta: 0,
                             monto_creditos: 0,
-                            monto_monedero: 0,
+                            monto_monedero: 0,  
                             monto_transferencia: 0,
                             monto_cheques: 0,
                             monto_vales_despensa: 0

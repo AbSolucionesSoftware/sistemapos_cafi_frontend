@@ -9,8 +9,7 @@ export default function Venta_index() {
 
     const { turnoActivo, setTurnoActivo } = useContext(VentasContext);
     const [ varActive, setVarActive ] = useState(false);
-
-    console.log(turnoActivo);
+    const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
 
     useEffect(() => {
         const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
@@ -20,7 +19,7 @@ export default function Venta_index() {
 
     return (
         <ClienteProvider>
-            {varActive === true ? (
+            {varActive === true && turnoEnCurso ? (
                 <VentasGenerales />
             ) : (
                 <AbrirTurnoEnVentas />

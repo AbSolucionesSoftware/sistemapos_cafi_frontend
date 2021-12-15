@@ -121,7 +121,7 @@ function  CerrarTurno(props) {
             localStorage.removeItem('ListaEnEspera');
             localStorage.removeItem('turnoEnCurso');
         }
-    }
+    };
 
     const enviarDatos  = async () => {
         setLoading(true);
@@ -155,7 +155,6 @@ function  CerrarTurno(props) {
                 setTurnoActivo(true);
             }
         } catch (error) {
-            console.log(error);
             setAlert({
                 message: `Error: ${error.message}`,
                 status: "error",
