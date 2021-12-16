@@ -39,6 +39,8 @@ export default function CerrarVenta() {
     const abrirCajon = () => {setCambio(!cambio)};
     const [open, setOpen] = useState(false);
 
+    const [openModalDescuento, setOpenModalDescuento] = useState(false);
+
     const [totalVenta, setTotalVenta] = useState(0);
     const [valorActual, setValorActual] = useState('EFECTIVO')
     const [totalARestar, setTotalARestar] = useState(0);
@@ -366,14 +368,23 @@ export default function CerrarVenta() {
                             </Box>
                         </div>
 
-                        <Box>
-                            <Box width="100%">
+                        <Box display="flex" >
+                            <Box width="20%">
                                 <Button
                                     color="primary" 
                                     variant="outlined"
                                     startIcon={<img src={tarjeta} alt="icono ventas" style={{width: 30}} />}
                                 >
                                     Venta a Credito
+                                </Button>
+                            </Box>
+                            <Box width="50%">
+                                <Button
+                                    color="primary" 
+                                    variant="outlined"
+                                    startIcon={<img src={tarjeta} alt="icono ventas" style={{width: 30}} />}
+                                >
+                                    Agregar Descuento
                                 </Button>
                             </Box>
                         </Box>
@@ -500,6 +511,49 @@ export default function CerrarVenta() {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <Dialog
+				open={openModalDescuento} 
+				onClose={abrirCajon} 
+				TransitionComponent={Transition}
+			> 
+                <DialogContent>
+                    <Box textAlign="center" >
+                        <Box>
+                            <FcDonate style={{fontSize: 80}} />
+                        </Box>
+                        <Box textAlign="center">
+                            <Typography variant="h5">
+                                Su cambio
+                            </Typography>
+                        </Box>
+                    </Box>
+                    <Grid item lg={12}>
+                        <Paper elevation={3}>
+                            <Box p={3} width="100%" textAlign="center">
+                                <Typography variant='h3' style={{color: 'red'}}>
+                                    $150.000
+                                </Typography>
+                                <Typography variant='caption'>
+                                    (CIENTO CICUENTA PESOS 00/100 MNX)
+                                </Typography>
+                            </Box>
+                        </Paper>
+                    </Grid>
+                </DialogContent>
+
+                <DialogActions>
+                    <Button 
+                        onClick={handleClickOpen}
+                        variant="contained" 
+                        size="large"
+                        color="primary" 
+                        autoFocus
+                    >
+                        Aceptar
+                    </Button>
+                </DialogActions>
+			</Dialog>
 
             <Dialog
 				open={cambio} 
