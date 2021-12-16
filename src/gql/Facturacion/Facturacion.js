@@ -51,6 +51,15 @@ export const OBTENER_SERIES = gql`
   }
 `;
 
+export const CREAR_SELLO_CFDI = gql`
+  mutation crearCSDS($input: CrearCSDSInput!) {
+    crearCSDS(input: $input) {
+      message
+      success
+    }
+  }
+`;
+
 export const CONSULTA_CATALOGOS_SAT_API = gql`
   query obtenerCatalogosSAT($input: CrearFacturaInput!) {
     obtenerCatalogosSAT(input: $input) {

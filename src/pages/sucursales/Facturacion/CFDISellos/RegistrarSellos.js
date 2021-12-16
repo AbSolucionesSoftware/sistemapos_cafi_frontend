@@ -12,26 +12,47 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Close, CloudUpload, Done, Visibility, VisibilityOff } from "@material-ui/icons";
+import {
+  Close,
+  CloudUpload,
+  Done,
+  Visibility,
+  VisibilityOff,
+} from "@material-ui/icons";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
+import { CREAR_SELLO_CFDI } from "../../../../gql/Facturacion/Facturacion";
+import { useMutation } from "@apollo/client";
+import { data } from "jquery";
 
 export default function RegistroSellos() {
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const [open, setOpen] = useState(false);
   const [datos, setDatos] = useState({
     certificate: "",
     private_key: "",
     private_key_password: "",
+    rfc: sesion && sesion.empresa.rfc ? sesion.empresa.rfc : "",
+    empresa: sesion && sesion.empresa._id ? sesion.empresa._id : "",
+    sucursal: sesion && sesion.sucursal._id ? sesion.sucursal._id : "",
   });
-  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const [show, setShow] = useState(false);
-  const [ loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
-    setDatos({ certificate: "", private_key: "", private_key_password: "" });
+    setDatos({
+      certificate: "",
+      private_key: "",
+      private_key_password: "",
+      rfc: sesion && sesion.empresa.rfc ? sesion.empresa.rfc : "",
+      empresa: sesion && sesion.empresa._id ? sesion.empresa._id : "",
+      sucursal: sesion && sesion.sucursal._id ? sesion.sucursal._id : "",
+    });
   };
+
+  const [crearCSDS] = useMutation(CREAR_SELLO_CFDI);
 
   const handleClickShowPassword = () => setShow(!show);
   const handleMouseDownPassword = (event) => event.preventDefault();
@@ -63,45 +84,62 @@ export default function RegistroSellos() {
     });
   };
 
-  const guardarBD = () => {
-    if( !datos.certificate || !datos.private_key || !datos.private_key_password) return
-    let data = { ...datos };
-    let cer = data.certificate;
-    let key = data.private_key;
-    getBase64(cer)
-      .then((result) => {
-        data.certificate = result;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    getBase64(key)
-      .then((result) => {
-        data.private_key = result;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    /* METER RFC */
-    data.rfc = sesion.empresa.rfc;
-
-    console.log(data);
+  const guardarBD = async () => {
+    if (
+      !datos.certificate ||
+      !datos.private_key ||
+      !datos.private_key_password ||
+      !datos.rfc
+    )
+      return;
 
     try {
-      setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-        handleClose();
-        /* refetch(); */
-        /* message: `¡Listo! ${result.data.crearSerieCFDI.message}`, */
-        setAlert({
-          message: `¡Listo! `,
-          status: "success",
-          open: true,
+      let data = { ...datos };
+      let cer = data.certificate;
+      let key = data.private_key;
+      getBase64(cer)
+        .then((result) => {
+          const base = result.split(",");
+          data.certificate = base[1];
+        })
+        .catch((err) => {
+          console.log(err);
         });
-        
-      }, 2000);
+      getBase64(key)
+        .then((result) => {
+          const base = result.split(",");
+          data.private_key = base[1];
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+      setLoading(true);
+      const result = await crearCSDS({
+        variables: {
+          input: {
+            certificate: JSON.stringify(data.certificate),
+            private_key: JSON.stringify(data.private_key),
+            private_key_password: data.private_key_password,
+            rfc: data.rfc,
+            empresa: data.empresa,
+            sucursal: data.sucursal,
+          },
+        },
+      });
+
+      console.log(result);
+      /* if(){
+
+      } */
+      setAlert({
+        message: `¡Listo! ${result.data.crearCSDS.message}`,
+        status: "success",
+        open: true,
+      });
+      setLoading(false);
+      handleClose();
+      /* refetch(); */
     } catch (error) {
       setLoading(false);
       setAlert({
@@ -135,10 +173,13 @@ export default function RegistroSellos() {
         <DialogTitle>Registrar sello digital</DialogTitle>
         <DialogContent>
           <Box mb={2}>
-          {sesion.empresa.rfc ? (
-            <Typography>{`RFC: ${sesion.empresa.rfc}`}</Typography>
-          ) : 
-          (<Typography color="error">*No tienes registrado un RFC</Typography>)}
+            {sesion.empresa.rfc ? (
+              <Typography>{`RFC: ${sesion.empresa.rfc}`}</Typography>
+            ) : (
+              <Typography color="error">
+                *No tienes registrado un RFC
+              </Typography>
+            )}
           </Box>
           <Box width="100%">
             <Typography>
@@ -225,7 +266,7 @@ export default function RegistroSellos() {
             <Box display="flex" alignItems="center">
               <TextField
                 fullWidth
-                type={show ? 'text' : 'password'}
+                type={show ? "text" : "password"}
                 size="small"
                 variant="outlined"
                 name="private_key_password"
@@ -241,7 +282,7 @@ export default function RegistroSellos() {
                         {show ? <Visibility /> : <VisibilityOff />}
                       </IconButton>
                     </InputAdornment>
-                  )
+                  ),
                 }}
               />
             </Box>
@@ -260,7 +301,7 @@ export default function RegistroSellos() {
             color="primary"
             size="large"
             onClick={() => guardarBD()}
-            disabled={loading || !sesion.empresa.rfc}
+            disabled={loading || !datos.rfc}
           >
             Guardar
           </Button>
