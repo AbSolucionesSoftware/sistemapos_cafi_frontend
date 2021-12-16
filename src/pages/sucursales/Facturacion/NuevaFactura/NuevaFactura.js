@@ -213,11 +213,11 @@ const FacturaModalContent = ({ handleClose }) => {
       nuevo_obj.expedition_place = codigo_postal;
 
       /* validar todos los datos */
-      const result = verificarDatosFactura(nuevo_obj);
+      const validate = verificarDatosFactura(nuevo_obj);
 
-      console.log(result);
-      if (result.length) {
-        setError({ status: true, message: result[0].message });
+      console.log(validate);
+      if (validate.length) {
+        setError({ status: true, message: validate[0].message });
         setLoading(false);
         return;
       }

@@ -74,7 +74,6 @@ export default function Turnos() {
 	const { abrirTurnosDialog, setAbrirTurnosDialog, setTurnoActivo } = useContext(VentasContext);
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
-	
 
     const classes = useStyles();
     const [value, setValue] = useState(0);
@@ -89,6 +88,12 @@ export default function Turnos() {
 	};
 
 	window.addEventListener('keydown', Mi_función); 
+
+	if(!turnoEnCurso){
+		console.log(true);
+	}else{
+		console.log(false);
+	}
 
 	function Mi_función(e){
 		if(e.altKey && e.keyCode === 85){ 
@@ -140,7 +145,7 @@ export default function Turnos() {
 						aria-label="scrollable force tabs example"
 					>
 						
-						{sesion?.turno_en_caja_activo === true ? (
+						{sesion?.turno_en_caja_activo === true && turnoEnCurso ? (
 							<Tab
 								label="Cerrar Turno"
 								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
@@ -189,7 +194,9 @@ export default function Turnos() {
 
 const ContenidoTurnos = ({ handleClickOpen, value}) => {
 
+	const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
 	const [loading, setLoading] = useState(false);
 
 	if (loading) 
@@ -207,7 +214,7 @@ const ContenidoTurnos = ({ handleClickOpen, value}) => {
 
 	return(
 		<DialogContent style={{padding: 0}}>
-			{sesion?.turno_en_caja_activo === true ? (
+			{sesion?.turno_en_caja_activo === true && turnoEnCurso ? (
 				<TabPanel style={{padding: 0}} value={value} index={0}>
 					<CerrarTurno  setLoading={setLoading} handleClickOpen={handleClickOpen} />
 				</TabPanel>
@@ -218,4 +225,4 @@ const ContenidoTurnos = ({ handleClickOpen, value}) => {
 			)}
 		</DialogContent>
 	)
-}
+};

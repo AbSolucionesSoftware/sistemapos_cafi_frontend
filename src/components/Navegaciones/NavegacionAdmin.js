@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
 function NavegacionAdmin(props) {
 	const classes = useStyles();
 	const token = localStorage.getItem('sesionCafi');
+	const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	let usuario;
 	
@@ -51,8 +52,7 @@ function NavegacionAdmin(props) {
 					>
 						Inicio
 					</Button> */}
-					{
-						sesion.turno_en_caja_activo === true ? (
+					{sesion.turno_en_caja_activo === true && turnoEnCurso ? (
 							<Button
 								color="secondary"
 								size="large"

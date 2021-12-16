@@ -120,7 +120,7 @@ export default function PreCorteCaja() {
                     </Grid>
                     <Grid>
                         <Box p={2}>
-                        {sesion.turno_en_caja_activo === true ? (
+                        {sesion.turno_en_caja_activo === true && turnoEnCurso ? (
                             <>
                                 <Box>
                                     <Typography variant="subtitle1"> 
@@ -161,7 +161,7 @@ export default function PreCorteCaja() {
                 </DialogContent>
                 
                 <DialogActions>
-                    {turnoEnCurso ? (
+                    {sesion.turno_en_caja_activo === true && turnoEnCurso ? (
                         <Button 
                             onClick={handleClickOpen} 
                             color="primary"

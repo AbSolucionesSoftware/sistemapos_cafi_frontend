@@ -27,6 +27,7 @@ import SnackBarMessages from '../../components/SnackBarMessages';
 
 import { Fragment } from "react";
 import MonedaCambio from "./Operaciones/MonedaCambio";
+import Cotizacion from './Cotizacion/Cotizacion'
 
 import {
   findProductArray,
@@ -639,11 +640,16 @@ export default function VentasGenerales() {
                     </Typography>
                   </Box>
                   <Box mt={.5} mr={1}>
-                    <FcRating style={{fontSize: 19}} />
+                    <Box display="flex" justifyContent="center" alignItems="center">
+                        <img 
+                          src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/price-tag.png' 
+                          alt="icono admin" 
+                          style={{width: 20}}                                   
+                        />
+                    </Box>
                   </Box>
                 </Box>
               </Grid>
-
               <Grid item lg={5}>
                   <Box
                     flexDirection="row-reverse"
@@ -670,16 +676,19 @@ export default function VentasGenerales() {
                   </Box>
               </Grid>
             </Grid>
-            <Box display="flex" flexDirection="row-reverse" p={1}>
-              <Typography variant="h4">
-                Total: <b style={{color: "green"}}>${DatosVentasActual?.total ? DatosVentasActual?.total.toFixed(2) : 0}</b>
-              </Typography>
-              <Box mt={.5} mr={1}>
-                <MonetizationOnIcon style={{fontSize: 37, color: "green"}} />
-              </Box>
-            </Box>
           </Grid>
         </Grid>
+        <Box display="flex" flexDirection="row-reverse" p={1}>
+          <Typography variant="h4">
+            Total: <b style={{color: "green"}}>${DatosVentasActual?.total ? DatosVentasActual?.total.toFixed(2) : 0}</b>
+          </Typography>
+          <Box mt={.5} mr={1}>
+            <MonetizationOnIcon style={{fontSize: 37, color: "green"}} />
+          </Box>
+          <Box p={1}>
+            <Cotizacion type="GENERAR" />
+          </Box>
+        </Box>
       </Paper>
     </Fragment>
   );

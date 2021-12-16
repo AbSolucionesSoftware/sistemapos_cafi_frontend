@@ -13,8 +13,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 const columns = [
 	{ id: 'folio', label: 'Folio', minWidth: 20, align: 'center' },
 	{ id: 'cliente', label: 'Cliente', minWidth: 330 },
-	{ id: 'fecha', label: 'Fecha.', minWidth: 100, align: 'center'},
-	{ id: 'total', label: 'Total', minWidth: 100, align: 'center'},
+	{ id: 'fecha', label: 'Fecha', minWidth: 100, align: 'center'},
+	{ id: 'total', label: 'Total', minWidth: 100, align: 'center'}
 ];
 
 function createData(folio, cliente, fecha, total) {
@@ -36,6 +36,14 @@ const rows = [
 	createData(2, 'Jabon', 50, 10),
 	createData(2, 'Jabon', 50, 10),
 	createData(2, 'Jabon', 50, 10),
+	createData(2, 'Jabon', 50, 10),
+	createData(2, 'Jabon', 50, 10),
+	createData(2, 'Jabon', 50, 10),
+	createData(2, 'Jabon', 50, 10),
+	createData(2, 'Jabon', 50, 10),
+	createData(2, 'Jabon', 50, 10),
+	createData(2, 'Jabon', 50, 10),
+	createData(2, 'Jabon', 50, 10)
 ];
 
 const useStyles = makeStyles({
@@ -43,14 +51,14 @@ const useStyles = makeStyles({
 		width: '100%'
 	},
 	container: {
-		maxHeight: '30vh'
+		maxHeight: '65vh'
 	}
 });
 
-export default function ListaCotizacion() {
+export default function CotizacionesPendientes({ handleClickOpen }) {
 	const classes = useStyles();
 	const [ page, setPage ] = React.useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = React.useState(8);
+	const [ rowsPerPage, setRowsPerPage ] = React.useState(10);
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
@@ -73,6 +81,9 @@ export default function ListaCotizacion() {
 								</TableCell>
 							))}
 							<TableCell align='center' style={{ width: 35 }}>
+								Retomar
+							</TableCell>
+							<TableCell align='center' style={{ width: 35 }}>
 								Eliminar
 							</TableCell>
 						</TableRow>
@@ -80,25 +91,7 @@ export default function ListaCotizacion() {
 					<TableBody>
 						{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
 							return (
-								<TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-									{columns.map((column) => {
-										const value = row[column.id];
-										return (
-											<TableCell key={column.id} align={column.align}>
-												{column.format && typeof value === 'number' ? (
-													column.format(value)
-												) : (
-													value
-												)}
-											</TableCell>
-										);
-									})}
-									<TableCell align='center' >
-										<IconButton aria-label="delete" size='small'>
-											<DeleteIcon fontSize="small" />
-										</IconButton>
-									</TableCell>
-								</TableRow>
+								<CotizacionesRows row={row} />
 							);
 						})}
 					</TableBody>
@@ -115,4 +108,38 @@ export default function ListaCotizacion() {
 			/>
 		</Paper>
 	);
+};
+
+
+const CotizacionesRows = ({row}) => {
+
+	return(
+		<>
+			<TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+				<TableCell align='center' >
+					uno
+				</TableCell>
+				<TableCell >
+					uno
+				</TableCell>
+				<TableCell align='center' >
+					uno
+				</TableCell>
+				<TableCell align='center' >
+					uno
+				</TableCell>
+				<TableCell align='center' >
+					<IconButton aria-label="delete" size='small'>
+						<DeleteIcon fontSize="small" />
+					</IconButton>
+				</TableCell>
+				<TableCell align='center' >
+					<IconButton aria-label="delete" size='small'>
+						<DeleteIcon fontSize="small" />
+					</IconButton>
+				</TableCell>
+			</TableRow>
+		</>
+	);
+
 }

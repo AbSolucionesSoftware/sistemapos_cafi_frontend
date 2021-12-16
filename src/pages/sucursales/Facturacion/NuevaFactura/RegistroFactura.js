@@ -57,8 +57,6 @@ export default function RegistroFactura({ serie_default }) {
     });
   };
 
-  console.log(error_validation);
-
   return (
     <div>
       <Grid container spacing={5}>
