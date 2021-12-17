@@ -97,7 +97,7 @@ export default function RegistroSellos() {
       let data = { ...datos };
       let cer = data.certificate;
       let key = data.private_key;
-      getBase64(cer)
+      await getBase64(cer)
         .then((result) => {
           const base = result.split(",");
           data.certificate = base[1];
@@ -105,7 +105,7 @@ export default function RegistroSellos() {
         .catch((err) => {
           console.log(err);
         });
-      getBase64(key)
+      await getBase64(key)
         .then((result) => {
           const base = result.split(",");
           data.private_key = base[1];
@@ -113,13 +113,21 @@ export default function RegistroSellos() {
         .catch((err) => {
           console.log(err);
         });
+        console.log({
+          certificate: data.certificate,
+          private_key: data.private_key,
+          private_key_password: data.private_key_password,
+          rfc: data.rfc,
+          empresa: data.empresa,
+          sucursal: data.sucursal,
+        });
 
       setLoading(true);
       const result = await crearCSDS({
         variables: {
           input: {
-            certificate: JSON.stringify(data.certificate),
-            private_key: JSON.stringify(data.private_key),
+            certificate: data.certificate,
+            private_key: data.private_key,
             private_key_password: data.private_key_password,
             rfc: data.rfc,
             empresa: data.empresa,
@@ -129,9 +137,6 @@ export default function RegistroSellos() {
       });
 
       console.log(result);
-      /* if(){
-
-      } */
       setAlert({
         message: `¡Listo! ${result.data.crearCSDS.message}`,
         status: "success",
