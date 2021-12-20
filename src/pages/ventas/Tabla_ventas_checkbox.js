@@ -312,7 +312,7 @@ export default function EnhancedTable({
     <div className={classes.root}>
       <Paper>
         <TableContainer className={classes.container}>
-          <div
+          {/* <div
             style={{
               display: 'flex', 
               width: '80%', 
@@ -339,7 +339,7 @@ export default function EnhancedTable({
                 }}
               />
             </div>
-          </div>
+          </div> */}
           <Table
             stickyHeader
             size="small"
