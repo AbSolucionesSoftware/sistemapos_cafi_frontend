@@ -289,9 +289,11 @@ export default function EnhancedTable({
 
   const TwoClickInRowTableBuy = (e, producto) => {
     try {
+      console.log("llego");
       let timer;
       clearTimeout(timer);
       if (e.detail === 2) {
+
         handleClick(producto);
         // console.log(producto);
         setProductoCambioPrecio(producto);
