@@ -1,55 +1,21 @@
-import React, { useState, useContext} from 'react';
-import { Drawer, AppBar, Toolbar, Divider, BottomNavigation, Button, Grid, Dialog, Slide, DialogContent, DialogActions } from '@material-ui/core';
+import React, { useState, useContext, Fragment} from 'react';
+import { Divider, BottomNavigation, Button } from '@material-ui/core';
 import { CssBaseline, Avatar, Box, Typography } from '@material-ui/core';
 import { withRouter } from 'react-router';
 import { FaPowerOff } from 'react-icons/fa';
 import useStyles from './styles';
 import moment from 'moment';
 import 'moment/locale/es';
-// import addIcon from '../../icons/ventas/add.svg'
-// import articuloRapido from '../../icons/ventas/tiempo-rapido.svg'
-// import listaEspera from '../../icons/ventas/lista-de-espera.svg'
-// import calendario from '../../icons/ventas/calendario.svg'
-// import buscarPrecio from '../../icons/ventas/precios.svg'
-// import cartIcon from '../../icons/ventas/cart.svg'
-// import moneyIcon from '../../icons/money.svg';
-// import cartaddIcon from '../../icons/ventas/cart-add.svg'
-// import cajon from '../../icons/ventas/cajon.svg'
-// import cashregisterIcon from '../../icons/ventas/cash-register.svg'
-// import cashregister2Icon from '../../icons/ventas/cash-register2.svg'
-// import adminIcon from '../../icons/ventas/admin.svg'
-// import shiftIcon from '../../icons/ventas/shift.svg'
-// import tagIcon from '../../icons/ventas/tag.svg'
-// import shoppingcartIcon from '../../icons/ventas/shopping-cart.svg'
 
-import Abonos from '../../pages/ventas/Abonos/Abonos'; 
 import DepositoRetiroCaja from '../../pages/ventas/Operaciones/DepositoRetiroCaja';
 import Turnos from '../../pages/ventas/AbrirCerrarTurno/Turnos';
 import PreCorteCaja from '../../pages/ventas/Operaciones/PreCorteCaja';
-import VentasEspera from '../../pages/ventas/VentasEspera/VentasEspera';
-import AbrirCajon from '../../pages/ventas/Operaciones/AbrirCajon';
-import VentasRealizadas from '../../pages/ventas/VentasRealizadas/VentasRealizadas';
-import PreciosProductos from '../../pages/ventas/Operaciones/PreciosProducto';
-import CancelarVenta from '../../pages/ventas/Operaciones/CancelarVenta';
-import CerrarVenta from '../../pages/ventas/Operaciones/CerrarVenta';
-import ConsultarPrecio from '../../pages/ventas/Operaciones/ConsultarPrecio';
 import Cotizacion from '../../pages/ventas/Cotizacion/Cotizacion';
-import BuscarProducto from '../../pages/ventas/BuscarProductos/BuscarProducto';
 import VentaEnEspera from '../../pages/ventas/Operaciones/VentaEnEspera';
 import ProductoRapidoIndex from '../../pages/ventas/ArticuloRapido/indexArticuloRapido';
-import ClientesVentas from '../../pages/ventas/ClientesVentas/ClientesVentas';
-
-// import VentasCredito from '../../pages/ventas/VentasCredito/VentasCredito';
-// import ListaApartados from '../../pages/ventas/Apartados/ListaApartados';
-// import CrearApartado from '../../pages/ventas/Apartados/CrearApartado';
 
 import SnackBarMessages from '../SnackBarMessages';
 import { VentasContext } from '../../context/Ventas/ventasContext';
-// import { VentasProvider } from '../../context/Ventas/ventasContext'; 
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-	return <Slide direction="up" ref={ref} {...props} />;
-});
 
 function NavegacionVentas(props) {
 	const { alert, setAlert, abrirTurnosDialog, setAbrirTurnosDialog, setUbicacionTurno } = useContext(VentasContext);
@@ -86,10 +52,8 @@ function NavegacionVentas(props) {
 	window.addEventListener('keydown', Mi_función); 
 
 	return (
-		<>
-			<CssBaseline />
+		<Fragment>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
-			<AppBar position="fixed" elevation={1} className={classes.appBar}>
 				<BottomNavigation
 					value={value}
 					onChange={(event, newValue) => {
@@ -188,57 +152,7 @@ function NavegacionVentas(props) {
 						</Box>
 					</Box>
 				</BottomNavigation>
-			</AppBar>
-			<Drawer
-				className={classes.drawer}
-				variant="permanent"
-				anchor= 'right'
-				classes={{
-					paper: classes.drawerPaper
-				}}
-			>
-				<Toolbar className={classes.navigationTop} />
-				{/* <Grid container className={classes.drawerColor}>
-					<Grid item lg={6} xs={6} md={6}>
-						<VentasCredito />
-					</Grid>
-				</Grid> */}
-				<Grid container className={classes.drawerColor}>
-					<Grid item lg={6} md={6} xs={6}>
-						<CerrarVenta />
-					</Grid>
-					<Grid item lg={6} md={6} xs={6}>
-						<BuscarProducto />
-					</Grid>
-					<Grid item lg={6} md={6} xs={6}>
-						<CancelarVenta />
-					</Grid>
-					<Grid item lg={6} md={6} xs={6}>
-						<AbrirCajon />
-					</Grid>
-					<Grid item lg={6} md={6} xs={6}>
-						<PreciosProductos />
-					</Grid>
-					<Grid item lg={6} md={6} xs={6}>
-						<VentasEspera />
-					</Grid>
-					<Grid item lg={6} md={6} xs={6}>
-						<ClientesVentas />
-					</Grid>
-					<Grid item lg={6} md={6} xs={6}>
-						<VentasRealizadas />
-					</Grid>
-					<Grid item lg={6} md={6} xs={6}>
-						<ConsultarPrecio />
-					</Grid>
-					<Grid item lg={6} md={6} xs={6}>
-						<Abonos />
-					</Grid>
-					
-				</Grid>
-			</Drawer>
-
-		</>
+		</Fragment>
 	);
 }
 

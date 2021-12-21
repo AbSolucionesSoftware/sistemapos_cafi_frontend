@@ -1,9 +1,12 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { BrowserRouter as Switch, Route } from 'react-router-dom';
+// import { BrowserRouter as Switch, Route } from 'react-router-dom';
 import NavegacionVentas from '../Navegaciones/NavegacionVentas';
-import { Grid, Toolbar } from '@material-ui/core';
+import NavegacionVentasLateral from '../Navegaciones/NavegacionVentasLateral';
+import { Grid, Toolbar, Box } from '@material-ui/core';
 import { VentasProvider } from '../../context/Ventas/ventasContext';
+import VentaIndex from '../../pages/ventas/venta_index';
+
 
 const drawerWidth = '22%';
 
@@ -13,43 +16,33 @@ const useStyles = makeStyles((theme) => ({
 	},
 	content: {
 		flexGrow: 1,
-		// padding: theme.spacing(1)
 	},
     toolbar: {
 		height: theme.spacing(9)
-	},
-	// drawerPaper: {
-	// 	width: drawerWidth,
-	// },
+	}
 }));
 
 export default function LayoutVentas(props) {
-    const { routes } = props
 	const classes = useStyles();
     const sesion = localStorage.getItem("sesionCafi");
 
     if(!sesion) props.history.push('/');
 
 	return (
-		<div className={classes.root}>
+		<Box height='100vh'>
 			<VentasProvider>
-				<Grid style={{width: `calc(100% - ${drawerWidth})`}}>
-					<Toolbar className={classes.toolbar} />
-					<LoadRoutes routes={routes} />
+				<Grid lg={12} style={{height: '10vh'}}>
+					<NavegacionVentas />
 				</Grid>
-				<NavegacionVentas />
+				<Grid container style={{height: '90vh'}}>
+					<Grid lg={9}>
+						<VentaIndex />
+					</Grid>
+					<Grid lg={3}>
+						<NavegacionVentasLateral />
+					</Grid>
+				</Grid>
 			</VentasProvider>
-		</div>
-	);
-}
-
-
-function LoadRoutes({ routes }) {
-	return (
-		<Switch>
-			{routes.map((route, index) => (
-				<Route key={index} path={route.path} exact={route.exact} component={route.component} />
-			))}
-		</Switch>
+		</Box>
 	);
 }
