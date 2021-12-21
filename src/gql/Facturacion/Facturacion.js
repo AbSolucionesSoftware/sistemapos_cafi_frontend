@@ -60,6 +60,14 @@ export const CREAR_SELLO_CFDI = gql`
   }
 `;
 
+export const ELIMINAR_SELLO_CFDI = gql`
+  mutation eliminarCSD($rfc: String, $empresa: ID!) {
+    eliminarCSD(rfc: $rfc, empresa: $empresa) {
+      message
+    }
+  }
+`;
+
 export const CONSULTA_CATALOGOS_SAT_API = gql`
   query obtenerCatalogosSAT($input: CrearFacturaInput!) {
     obtenerCatalogosSAT(input: $input) {
