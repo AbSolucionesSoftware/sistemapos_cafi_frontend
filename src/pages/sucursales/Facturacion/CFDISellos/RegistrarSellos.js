@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import {
+  Add,
   Close,
   CloudUpload,
   Done,
@@ -22,16 +23,19 @@ import {
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 import { CREAR_SELLO_CFDI } from "../../../../gql/Facturacion/Facturacion";
 import { useMutation } from "@apollo/client";
-import { data } from "jquery";
 
-export default function RegistroSellos() {
+export default function RegistroSellos({
+  datosEmpresa,
+  firma_disabled,
+  refetch,
+}) {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const [open, setOpen] = useState(false);
   const [datos, setDatos] = useState({
     certificate: "",
     private_key: "",
     private_key_password: "",
-    rfc: sesion && sesion.empresa.rfc ? sesion.empresa.rfc : "",
+    rfc: sesion && datosEmpresa.rfc ? datosEmpresa.rfc : "",
     empresa: sesion && sesion.empresa._id ? sesion.empresa._id : "",
     sucursal: sesion && sesion.sucursal._id ? sesion.sucursal._id : "",
   });
@@ -46,7 +50,7 @@ export default function RegistroSellos() {
       certificate: "",
       private_key: "",
       private_key_password: "",
-      rfc: sesion && sesion.empresa.rfc ? sesion.empresa.rfc : "",
+      rfc: sesion && datosEmpresa.rfc ? datosEmpresa.rfc : "",
       empresa: sesion && sesion.empresa._id ? sesion.empresa._id : "",
       sucursal: sesion && sesion.sucursal._id ? sesion.sucursal._id : "",
     });
@@ -97,18 +101,20 @@ export default function RegistroSellos() {
       let data = { ...datos };
       let cer = data.certificate;
       let key = data.private_key;
-      getBase64(cer)
+      await getBase64(cer)
         .then((result) => {
           const base = result.split(",");
           data.certificate = base[1];
+          data.nombre_cer = cer.name;
         })
         .catch((err) => {
           console.log(err);
         });
-      getBase64(key)
+      await getBase64(key)
         .then((result) => {
           const base = result.split(",");
           data.private_key = base[1];
+          data.nombre_key = key.name;
         })
         .catch((err) => {
           console.log(err);
@@ -118,20 +124,17 @@ export default function RegistroSellos() {
       const result = await crearCSDS({
         variables: {
           input: {
-            certificate: JSON.stringify(data.certificate),
-            private_key: JSON.stringify(data.private_key),
+            certificate: data.certificate,
+            private_key: data.private_key,
             private_key_password: data.private_key_password,
             rfc: data.rfc,
             empresa: data.empresa,
             sucursal: data.sucursal,
+            nombre_cer: data.nombre_cer,
+            nombre_key: data.nombre_key,
           },
         },
       });
-
-      console.log(result);
-      /* if(){
-
-      } */
       setAlert({
         message: `¡Listo! ${result.data.crearCSDS.message}`,
         status: "success",
@@ -139,7 +142,7 @@ export default function RegistroSellos() {
       });
       setLoading(false);
       handleClose();
-      /* refetch(); */
+      refetch();
     } catch (error) {
       setLoading(false);
       setAlert({
@@ -162,19 +165,19 @@ export default function RegistroSellos() {
       <Box display="flex" justifyContent="flex-end">
         <Button
           onClick={() => handleClickOpen()}
-          color="primary"
-          variant="contained"
-          size="large"
+          color="inherit"
+          startIcon={<Add />}
+          disabled={firma_disabled}
         >
-          Registrar sello CFDi
+          Agregar CSD
         </Button>
       </Box>
       <Dialog maxWidth="xs" fullWidth open={open} onClose={() => handleClose()}>
-        <DialogTitle>Registrar sello digital</DialogTitle>
+        <DialogTitle>Registrar firma digital</DialogTitle>
         <DialogContent>
           <Box mb={2}>
-            {sesion.empresa.rfc ? (
-              <Typography>{`RFC: ${sesion.empresa.rfc}`}</Typography>
+            {datosEmpresa.rfc ? (
+              <Typography>{`RFC: ${datosEmpresa.rfc}`}</Typography>
             ) : (
               <Typography color="error">
                 *No tienes registrado un RFC
@@ -183,7 +186,7 @@ export default function RegistroSellos() {
           </Box>
           <Box width="100%">
             <Typography>
-              Archivo *.cer <b>Certificado de Sello Digital</b>
+              Archivo *.cer <b>Certificado de la firma Digital</b>
             </Typography>
             <Box display="flex" alignItems="center">
               <TextField
@@ -222,7 +225,7 @@ export default function RegistroSellos() {
           </Box>
           <Box width="100%" mt={2}>
             <Typography>
-              Archivo *.key <b>Llave Privada de Sello Digital</b>
+              Archivo *.key <b>Llave Privada de la Firma Digital</b>
             </Typography>
             <Box display="flex" alignItems="center">
               <TextField
@@ -261,7 +264,7 @@ export default function RegistroSellos() {
           </Box>
           <Box width="100%" my={2}>
             <Typography>
-              Contraseña de la llave <b>Privada de Sello Digital</b>
+              Contraseña de la llave <b>Privada de la Firma Digital</b>
             </Typography>
             <Box display="flex" alignItems="center">
               <TextField

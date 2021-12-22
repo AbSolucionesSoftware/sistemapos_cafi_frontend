@@ -35,6 +35,9 @@ import {
 } from "../../../../gql/Empresa/empresa";
 import { cleanTypenames } from "../../../../config/reuserFunctions";
 import { regimenFiscal } from "../../Facturacion/catalogos";
+import { Alert, AlertTitle } from "@material-ui/lab";
+import RegistroSellos from "../../Facturacion/CFDISellos/RegistrarSellos";
+import EliminarSellos from "../../Facturacion/CFDISellos/EliminarCSD";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -75,8 +78,9 @@ export default function InformacionFiscal() {
   const [bloqueo] = useState(
     sesion.accesos.mi_empresa.informacion_fiscal.editar === false ? true : false
   );
-  const { empresa, update, setEmpresa, setUpdate } = useContext(EmpresaContext);
+  const { empresa, setEmpresa } = useContext(EmpresaContext);
   const [actualizarEmpresa] = useMutation(ACTUALIZAR_EMPRESA);
+  const [firma_disabled, setFirmaDisabled] = useState(false);
   const [empresaFiscal, setEmpresaFiscal] = useState({
     nombre_fiscal: "",
     rfc: "",
@@ -107,14 +111,6 @@ export default function InformacionFiscal() {
 
   useEffect(() => {
     try {
-      refetch();
-    } catch (errorCatch) {
-      // console.log("SESSIONREFECTUPDATE",errorCatch)
-    }
-  }, [update, refetch]);
-
-  useEffect(() => {
-    try {
       setErrorPage(error);
     } catch (errorCatch) {
       // console.log("SESSIONREFECT",errorCatch)
@@ -125,6 +121,15 @@ export default function InformacionFiscal() {
     try {
       if (data !== undefined) {
         setEmpresa(data.obtenerEmpresa);
+        let new_sesion = sesion;
+        new_sesion.empresa = data.obtenerEmpresa;
+        localStorage.setItem("sesionCafi", JSON.stringify(new_sesion));
+        console.log(data);
+        if (!data.obtenerEmpresa.rfc) {
+          setFirmaDisabled(true);
+        } else {
+          setFirmaDisabled(false);
+        }
       }
     } catch (errorCatch) {
       // console.log("SESSIONREFECT",errorCatch)
@@ -156,6 +161,11 @@ export default function InformacionFiscal() {
 
         info_adicio: empresa.info_adicio,
         regimen_fiscal: empresa.regimen_fiscal,
+        sello_sat: empresa.sello_sat,
+        nombre_cer: empresa.nombre_cer,
+        nombre_key: empresa.nombre_key,
+        limite_timbres: empresa.limite_timbres,
+        timbres_usados: empresa.timbres_usados,
         direccionFiscal: {
           calle: empresa.direccionFiscal.calle,
           no_ext: empresa.direccionFiscal.no_ext,
@@ -179,14 +189,13 @@ export default function InformacionFiscal() {
   const actEmp = async () => {
     try {
       setLoadingPage(true);
-      const input = cleanTypenames(empresaFiscal);
+      /* const input = cleanTypenames(empresaFiscal); */
       await actualizarEmpresa({
         variables: {
           id: sesion.empresa._id,
-          input,
+          input: empresaFiscal,
         },
       });
-      setUpdate(true);
       setLoadingPage(false);
       setAlert({
         message: "Se han actualizado correctamente los datos.",
@@ -194,6 +203,7 @@ export default function InformacionFiscal() {
         open: true,
       });
       setErrorForm(false);
+      refetch();
     } catch (errorCatch) {
       setLoadingPage(false);
       setAlert({ message: "Hubo un error", status: "error", open: true });
@@ -272,13 +282,8 @@ export default function InformacionFiscal() {
             <ErrorPage error={errorPage} />
           ) : (
             <Container>
-              <Grid
-                container
-                spacing={3}
-                className={classes.require}
-                style={{ marginTop: 8 }}
-              >
-                <Grid item md={6}>
+              <Grid container spacing={3} style={{ marginTop: 8 }}>
+                <Grid item md={6} xs={12} className={classes.require}>
                   <Box my={1}>
                     <Typography>
                       <span>* </span>Nombre fiscal
@@ -346,8 +351,6 @@ export default function InformacionFiscal() {
                       </Select>
                     </FormControl>
                   </Box>
-                </Grid>
-                <Grid item md={6}>
                   <Box my={1}>
                     <Typography>CURP</Typography>
                     <TextField
@@ -375,19 +378,84 @@ export default function InformacionFiscal() {
                       }
                       onChange={obtenerCampos}
                       multiline
-                      rows={5}
+                    />
+                  </Box>
+                </Grid>
+                <Grid item md={6} xs={12}>
+                  <Typography className={classes.subtitle}>
+                    <b>Firma digital</b>
+                  </Typography>
+                  <Divider />
+                  <Box m={1}>
+                    {empresaFiscal.sello_sat === true ? (
+                      <Alert
+                        severity="success"
+                        action={
+                          <EliminarSellos
+                            firma_disabled={firma_disabled}
+                            datosEmpresa={empresaFiscal}
+                            refetch={refetch}
+                          />
+                        }
+                      >
+                        <AlertTitle>Firma Digital Activa</AlertTitle>
+                      </Alert>
+                    ) : (
+                      <Alert
+                        severity="info"
+                        action={
+                          <RegistroSellos
+                            firma_disabled={firma_disabled}
+                            datosEmpresa={empresaFiscal}
+                            refetch={refetch}
+                          />
+                        }
+                      >
+                        <AlertTitle>Sin Firma Digital</AlertTitle>
+                        Sin esta firma no prodrás realizar facturas
+                        {firma_disabled ? (
+                          <li>Necesitas tener un RFC registrado</li>
+                        ) : null}
+                      </Alert>
+                    )}
+                  </Box>
+                  <Box my={1}>
+                    <Typography>Archivo *.cer</Typography>
+                    <TextField
+                      disabled
+                      fullWidth
+                      size="small"
+                      variant="outlined"
+                    />
+                  </Box>
+                  <Box my={1}>
+                    <Typography>Archivo *.key</Typography>
+                    <TextField
+                      disabled
+                      fullWidth
+                      size="small"
+                      variant="outlined"
+                    />
+                  </Box>
+                  <Box my={1}>
+                    <Typography>Fecha de registro</Typography>
+                    <TextField
+                      disabled
+                      fullWidth
+                      size="small"
+                      variant="outlined"
                     />
                   </Box>
                 </Grid>
               </Grid>
               <Box mt={2}>
                 <Typography className={classes.subtitle}>
-                  <b>Domicilio fiscal</b>
+                  <b>Domicilio</b>
                 </Typography>
                 <Divider />
               </Box>
               <Grid container spacing={3}>
-                <Grid item md={4}>
+                <Grid item xs={12} sm={4}>
                   <Box>
                     <Typography>Calle</Typography>
                     <TextField
@@ -437,7 +505,7 @@ export default function InformacionFiscal() {
                     />
                   </Box>
                 </Grid>
-                <Grid item md={4}>
+                <Grid item xs={12} sm={4}>
                   <Box>
                     <Typography>C.P.</Typography>
                     <TextField
@@ -487,7 +555,7 @@ export default function InformacionFiscal() {
                     />
                   </Box>
                 </Grid>
-                <Grid item md={4}>
+                <Grid item xs={12} sm={4}>
                   <Box>
                     <Typography>Localidad</Typography>
                     <TextField
@@ -545,7 +613,7 @@ export default function InformacionFiscal() {
                 <Divider />
               </Box>
               <Grid container spacing={3}>
-                <Grid item md={4}>
+                <Grid item xs={12} md={4}>
                   <Box>
                     <Typography>Cuenta</Typography>
                     <TextField
@@ -563,7 +631,7 @@ export default function InformacionFiscal() {
                     />
                   </Box>
                 </Grid>
-                <Grid item md={4}>
+                <Grid item xs={12} md={4}>
                   <Box>
                     <Typography>Sucursal</Typography>
                     <TextField
@@ -581,7 +649,7 @@ export default function InformacionFiscal() {
                     />
                   </Box>
                 </Grid>
-                <Grid item md={4}>
+                <Grid item xs={12} md={4}>
                   <Box>
                     <Typography>Clave de banco</Typography>
                     <TextField
@@ -605,7 +673,7 @@ export default function InformacionFiscal() {
         </DialogContent>
         {sesion.accesos.mi_empresa.informacion_fiscal.editar ===
         false ? null : (
-          <DialogActions style={{justifyContent: "center"}}>
+          <DialogActions style={{ justifyContent: "center" }}>
             <Button onClick={handleClose} color="primary">
               Cancelar
             </Button>
