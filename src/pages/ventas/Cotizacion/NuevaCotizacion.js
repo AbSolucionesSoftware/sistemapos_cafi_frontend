@@ -115,8 +115,7 @@ export default function NuevaCotizacion({ handleClickOpen }) {
             "telefono": "1212",
             "monedero_electronico": null
         },
-        "productos": [
-        {
+        "productos":[{
             "cantidad": 1,
             "cantidad_venta": 1,
             "codigo_barras": "226216505720",
@@ -248,6 +247,7 @@ export default function NuevaCotizacion({ handleClickOpen }) {
             "medida": null,
             "color": null
         }]
+
     };
 
     const crearCotizacion = async () => {
