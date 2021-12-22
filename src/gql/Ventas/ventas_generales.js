@@ -120,6 +120,7 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
             numero_precio
             precio_neto
             unidad_mayoreo
+            precio_venta
             utilidad
             
           }

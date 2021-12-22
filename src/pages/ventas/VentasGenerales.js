@@ -65,38 +65,31 @@ export default function VentasGenerales() {
   const [obtenerProductos, { data, loading, error }] = useLazyQuery(
     CONSULTA_PRODUCTO_UNITARIO,
     {
-      variables: { sucursal: sesion.sucursal._id, empresa: sesion.empresa._id },
-      fetchPolicy: "network-only",
+      fetchPolicy: "network-only"
     }
   );
 
-  // console.log(error);
+  const [consultaBase, setConsultaBase] = useState(false);
 
   let productosBase = null;
+  console.log(data,loading, error);
   if (data) productosBase = data.obtenerUnProductoVentas;
 
-  // console.log(productosBase);
-
   useEffect(() => {
-    // console.log("Entro");
-    // console.log(productosBase);
     if(error){
       if(error.networkError){
-          console.log(error.networkError.result.errors);
           setAlert({ message: `Error de servidor`, status: 'error', open: true });
         }else if(error.graphQLErrors){
-          console.log(error.graphQLErrors);
           setAlert({ message: `${error.graphQLErrors[0]?.message}`, status: 'error', open: true });
         }
     }else{
-      // console.log(productosBase);
       if(productosBase !== null){
         if (productosBase.cantidad !== null) {
+          console.log(productosBase);
           agregarProductos(productosBase);
         }else{
           setOpen(true);
           setAlert({ message: `Este producto no existe`, status: 'error', open: true });
-          // console.log("El producto no existe");
         }
       }
     }
@@ -107,7 +100,6 @@ export default function VentasGenerales() {
       granel: false,
       valor: 0,
     });
-
     const venta = JSON.parse(localStorage.getItem("DatosVentas"));
     if (venta !== null) {
       setDatosVentasActual({
@@ -126,7 +118,6 @@ export default function VentasGenerales() {
     if (event.code === "Enter" || event.code === "NumpadEnter") {
       const input_value = event.target.value.trim();
       const data = input_value.split("*");
-      // console.log(data);
       if (data.length > 1) {
         let data_operation = isNaN(data[0]) ? data[1] : data[0];
         let data_key = isNaN(data[0]) ? data[0] : data[1];
@@ -142,20 +133,20 @@ export default function VentasGenerales() {
           },
           fetchPolicy: "network-only"
         });
+        setConsultaBase(!consultaBase);
       } else {
-        // console.log(input_value);444567890-
         setGranelBase({
           granel: false,
           valor: 0,
         });
         obtenerProductos({
-          variables: {
-            datosProductos: input_value,
+          variables: {            datosProductos: input_value,
             sucursal: sesion.sucursal._id,
             empresa: sesion.empresa._id
           },
           fetchPolicy: "network-only"
         });
+        setConsultaBase(!consultaBase);
       }
     }
   };
@@ -229,6 +220,7 @@ export default function VentasGenerales() {
       newP.precio_a_vender = totalCalculo;
       newP.precio_actual_producto = productoPrecioFinal;
       newP.precio_anterior = productoPrecioFinal;
+      newP.iva_total_producto = parseFloat(iva);
       productosVentasTemp.push(newP);
       const CalculosData = {
         subTotal: parseFloat(venta_existente.subTotal) + subTotal,
@@ -410,6 +402,8 @@ export default function VentasGenerales() {
         setUpdateTablaVentas(!updateTablaVentas);
       }
     }
+
+    productosBase = null;
   };
 
   return (

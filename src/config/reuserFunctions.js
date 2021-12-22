@@ -135,14 +135,16 @@ export const calculatePrices = async ( newP, cantidad, granel, newPrising = 0, d
     monederoCalculo = 0;
 // console.log("newPrising",newPrising);
   const cantidadNueva = cantidad > 0 ? cantidad : 1;
+  console.log(newP.id_producto.precios.precios_producto[0].precio_venta);
   // console.log(newP);
   const iva_producto =
     parseFloat(
-      newP.id_producto.precios.unidad_de_compra.precio_unitario_sin_impuesto
+      newP.id_producto.precios.precios_producto[0].precio_venta
     ) * parseFloat(`0.${newP.id_producto.precios.iva  < 9 ? `0${newP.id_producto.precios.iva}` : newP.id_producto.precios.iva}`);
-  const ieps_producto =
+  
+    const ieps_producto =
     parseFloat(
-      newP.id_producto.precios.unidad_de_compra.precio_unitario_sin_impuesto
+      newP.id_producto.precios.precios_producto[0].precio_venta
     ) * parseFloat(`0.${newP.id_producto.precios.ieps < 9 ? `0${newP.id_producto.precios.ieps}` : newP.id_producto.precios.ieps}`);
 
     const precioProducto = newPrising;
@@ -162,6 +164,8 @@ export const calculatePrices = async ( newP, cantidad, granel, newPrising = 0, d
           cantidadNueva *
           parseFloat(granel.valor)
         : (iva_producto + ieps_producto) * cantidadNueva;
+
+        console.log(cantidadNueva);
 
     ivaCalculo =
       granel.granel === true
