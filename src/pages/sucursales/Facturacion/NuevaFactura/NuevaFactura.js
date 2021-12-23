@@ -178,36 +178,37 @@ const FacturaModalContent = ({ handleClose }) => {
       let nuevo_obj = { ...datosFactura };
       const productos = [
         {
-          ProductCode: "50161509",
-          IdentificationNumber: "61ae61a6360b5eb744c95158",
-          Description: "AZUCAR MORENA",
+          ProductCode: "50202306",
+          IdentificationNumber: "61b7bf6e3454b727a0c2e357",
+          Description: "COCACOLA",
           /* Unit: "Unidad de Servicio", */
-          UnitCode: "E48",
-          UnitPrice: "0.50",
-          Quantity: "100",
-          Subtotal: "50.00",
-          Discount: "10",
+          UnitCode: "XBX",
+          UnitPrice: "36",
+          Quantity: "1",
+          Subtotal: "36",
+          Discount: "5.4",
           Taxes: [
             {
-              Total: "6.4",
+              Total: "4.89",
               Name: "IVA",
-              Base: "40",
+              Base: "30.6",
               Rate: "0.16",
               IsRetention: "false",
             },
           ],
-          Total: "46.40",
+          Total: "35.49",
         },
       ];
 
       //poner la fecha de facturacion
       if (datosFactura.date === "1") {
-        nuevo_obj.date = moment().subtract(1, "d").format();
+        nuevo_obj.date = moment().subtract(1, "d").format('YYYY-MM-DDTHH:mm:ss');
       } else if (datosFactura.date === "2") {
-        nuevo_obj.date = moment().subtract(2, "d").format();
+        nuevo_obj.date = moment().subtract(2, "d").format('YYYY-MM-DDTHH:mm:ss');
       } else {
-        nuevo_obj.date = moment().format();
+        nuevo_obj.date = moment().format('YYYY-MM-DDTHH:mm:ss');
       }
+
 
       nuevo_obj.items = productos;
       nuevo_obj.expedition_place = codigo_postal;
@@ -215,7 +216,7 @@ const FacturaModalContent = ({ handleClose }) => {
       /* validar todos los datos */
       const validate = verificarDatosFactura(nuevo_obj);
 
-      console.log(validate);
+      console.log(nuevo_obj);
       if (validate.length) {
         setError({ status: true, message: validate[0].message });
         setLoading(false);
@@ -225,10 +226,10 @@ const FacturaModalContent = ({ handleClose }) => {
 
       /* let result = await CrearFactura({
         variables: {
-          input: datosFactura,
+          input: nuevo_obj,
         },
-      }); */
-      /* console.log("result", result); */
+      });
+      console.log("result", result); */
       setLoading(false);
       /* setAlert({
         message: `¡Listo! ${result.data.crearFactura.message}`,

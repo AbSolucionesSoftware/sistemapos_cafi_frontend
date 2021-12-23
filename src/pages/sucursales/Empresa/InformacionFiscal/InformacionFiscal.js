@@ -124,7 +124,6 @@ export default function InformacionFiscal() {
         let new_sesion = sesion;
         new_sesion.empresa = data.obtenerEmpresa;
         localStorage.setItem("sesionCafi", JSON.stringify(new_sesion));
-        console.log(data);
         if (!data.obtenerEmpresa.rfc) {
           setFirmaDisabled(true);
         } else {
@@ -204,9 +203,17 @@ export default function InformacionFiscal() {
       });
       setErrorForm(false);
       refetch();
-    } catch (errorCatch) {
+    } catch (error) {
       setLoadingPage(false);
       setAlert({ message: "Hubo un error", status: "error", open: true });
+      console.log(error);
+      if (error.response) {
+        console.log(error.response);
+      } else if (error.networkError) {
+        console.log(error.networkError.result);
+      } else if (error.graphQLErrors) {
+        console.log(error.graphQLErrors);
+      }
     }
   };
 
