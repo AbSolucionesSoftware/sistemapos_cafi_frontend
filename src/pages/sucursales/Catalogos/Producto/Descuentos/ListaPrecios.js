@@ -144,7 +144,7 @@ export default function TablaPreciosDescuentos(
 		}else{
 			setDatosPreciosProducto(datos.unidades_de_venta);
 		}
-	}
+	};
 
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {

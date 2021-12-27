@@ -54,6 +54,8 @@ export default function DescuentoProductos({datos, productosRefetch}) {
 
     const classes = useStyles();
 
+    console.log(datos)
+
     const handleCloseDescuentos = () => {
         if (datos.medidas_producto.length > 0) {
             setDatosPreciosProducto(datos.medidas_producto);
