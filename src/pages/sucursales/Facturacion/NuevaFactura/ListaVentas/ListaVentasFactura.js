@@ -21,12 +21,13 @@ import TableRow from "@material-ui/core/TableRow";
 import { makeStyles } from "@material-ui/core";
 
 import { Search } from "@material-ui/icons";
-import ErrorPage from "../../../../components/ErrorPage";
+import ErrorPage from "../../../../../components/ErrorPage";
 import Done from "@material-ui/icons/Done";
 import { useQuery } from "@apollo/client";
-import { OBTENER_CLIENTES } from "../../../../gql/Catalogos/clientes";
-import { FacturacionCtx } from "../../../../context/Facturacion/facturacionCtx";
+import { OBTENER_CLIENTES } from "../../../../../gql/Catalogos/clientes";
+import { FacturacionCtx } from "../../../../../context/Facturacion/facturacionCtx";
 import Autocomplete from "@material-ui/lab/Autocomplete"
+import DetallesDeVenta from "./DetallesVenta";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -38,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ListaClientesFacturas() {
+export default function ListaVentasFactura() {
   const [open, setOpen] = useState(false);
   const { datosFactura, setDatosFactura } = useContext(FacturacionCtx);
 
@@ -63,10 +64,10 @@ export default function ListaClientesFacturas() {
         </DialogContent>
         <DialogActions style={{ justifyContent: "center" }}>
           <Button
-            onClick={() => {
+            /* onClick={() => {
               handleClose();
               setDatosFactura({ ...datosFactura, cliente: "" });
-            }}
+            }} */
           >
             Cancelar
           </Button>
@@ -164,10 +165,13 @@ const RenderLista = () => {
           <Table stickyHeader size="small" aria-label="a dense table">
             <TableHead>
               <TableRow>
-                <TableCell minwidth="100">No. Cliente</TableCell>
-                <TableCell minwidth="100">Clave</TableCell>
-                <TableCell minwidth="150">Nombre</TableCell>
-                <TableCell minwidth="150">Razon Social</TableCell>
+                <TableCell>Folio</TableCell>
+                <TableCell>Cliente</TableCell>
+                <TableCell>Subtotal</TableCell>
+                <TableCell>Descuento</TableCell>
+                <TableCell>Impuestos</TableCell>
+                <TableCell>Total</TableCell>
+                <TableCell>Detalles</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -178,12 +182,12 @@ const RenderLista = () => {
                     hover
                     role="checkbox"
                     tabIndex={-1}
-                    onClick={() =>
+                    /* onClick={() =>
                       setDatosFactura({
                         ...datosFactura,
                         cliente: row.nombre_cliente,
                       })
-                    }
+                    } */
                     selected={row.nombre_cliente === datosFactura.cliente}
                   >
                     <TableCell>
@@ -197,6 +201,15 @@ const RenderLista = () => {
                     </TableCell>
                     <TableCell>
                       <Typography>{row.razon_social}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>{row.razon_social}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>{row.razon_social}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <DetallesDeVenta />
                     </TableCell>
                   </TableRow>
                 );
