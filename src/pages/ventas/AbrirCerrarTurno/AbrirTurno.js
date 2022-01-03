@@ -17,7 +17,7 @@ moment.locale('es');
 
 export default function AbrirTurno({handleClickOpen, loading, type, setLoading}) {
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
-    const turnoEnCurso = JSON.parse(localStorage.getItem('cajaEnCurso'));
+    const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
 
     const [ CrearRegistroDeTurno ] = useMutation(REGISTRAR_TURNOS);
     const { setTurnoActivo, setAlert } = useContext(VentasContext);

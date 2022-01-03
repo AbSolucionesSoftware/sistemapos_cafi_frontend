@@ -126,6 +126,7 @@ export default function DepositoRetiroCaja() {
                         numero_caja: parseInt(turnoEnCurso.numero_caja),
                         id_Caja: turnoEnCurso.id_caja,
                         horario_turno: turnoEnCurso.horario_en_turno,
+                        rol_movimiento: 'CAJA',
                         hora_moviento: {
                             hora: moment().format('hh'),
                             minutos: moment().format('mm'),

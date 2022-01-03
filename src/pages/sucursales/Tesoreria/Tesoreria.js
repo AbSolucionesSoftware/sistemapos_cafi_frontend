@@ -1,11 +1,11 @@
 import React from 'react';
 import { Box, Container, Grid } from '@material-ui/core';
-import RetirosDepositos from './Retiros_Depositos/RetirosDepositos';
+import CuentasEmpresaSucursales from './CuentasEmpresaSucursales/CuentasEmpresaSucursales';
 import Egresos from './Egresos/Egresos';
 import AbonosProveedores from './AbonoProveedores/AbonosProovedores';
 import AbonosClientes from './AbonoClientes/AbonosClientes';
-import Transferencias from './Transferencias/Transferencias';
-import ReportesTesoreria from './Reporte_Tesoreria/Reporte_Tesoreria';
+// import Transferencias from './Transferencias/Transferencias';
+// import ReportesTesoreria from './Reporte_Tesoreria/Reporte_Tesoreria';
 
 export default function Tesoreria() {
 
@@ -14,7 +14,7 @@ export default function Tesoreria() {
 			<Grid container spacing={2} justify="center">
 				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<RetirosDepositos />
+						<CuentasEmpresaSucursales />
 					</Box>
 				</Grid>
 				<Grid item lg={2}>
@@ -32,11 +32,11 @@ export default function Tesoreria() {
 						<AbonosClientes />
 					</Box>
 				</Grid>
-                <Grid item lg={2}>
+                {/* <Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Transferencias />
 					</Box>
-				</Grid>
+				</Grid> */}
 				{/* <Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<ReportesTesoreria />
