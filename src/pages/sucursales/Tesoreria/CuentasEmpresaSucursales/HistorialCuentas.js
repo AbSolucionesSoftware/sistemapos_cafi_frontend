@@ -31,7 +31,8 @@ const columns = [
 
 const useStyles  = makeStyles((theme) => ({
 	root: {
-		width: '100%'
+		width: '100%',
+        height: '50vh'
 	},
 	container: {
 		maxHeight: '100%'
@@ -113,7 +114,7 @@ export default function HistorialCuentas({cuenta, tipo}) {
                 <Button
                     color='primary'
                     onClick={handleClickOpen}
-                    size="medium"
+                    size="small"
                     endIcon={<VisibilityIcon style={{fontSize: 35}}  />}
                 >
                     Ver
@@ -202,9 +203,10 @@ export default function HistorialCuentas({cuenta, tipo}) {
                                     </TableHead>
                                     <TableBody> 
                                         {
-                                            historialCuenta?.map((row) => {
+                                            historialCuenta?.map((row, index) => {
                                                 return(
                                                     <RowsHistorial 
+                                                        key={index}
                                                         row={row}
                                                         loading={loading}
                                                     />
@@ -255,13 +257,16 @@ function RowsHistorial ({ row, loading }) {
             tabIndex={-1}
         >
             <TableCell>Caja {row.numero_caja !== "" ? row.numero_caja : ""}</TableCell>
-            <TableCell>{moment(row?.fecha_movimiento.completa).format('D - MM - YYYY')}</TableCell>
+            <TableCell>{moment(row?.fecha_movimiento.completa).format('D MMMM YYYY')}</TableCell>
             <TableCell>{row?.nombre_usuario_creador}</TableCell>
             <TableCell >
                 <b style={{fontSize: 17}}>${formatoMexico(row.montos_en_caja.monto_efectivo)}</b>
             </TableCell>
             <TableCell>{row?.concepto}</TableCell>
-            <TableCell>{row?.tipo_movimiento}</TableCell>
+            <TableCell>{
+                row?.tipo_movimiento === "CUENTA-DEPOSITO" ? 'DEPOSITO' : 'RETIRO'    
+            }</TableCell>
+
         </TableRow>
     );
 }

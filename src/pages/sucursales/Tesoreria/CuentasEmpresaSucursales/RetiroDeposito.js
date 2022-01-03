@@ -102,6 +102,11 @@ export default function RetiroDeposito({cuenta, refetch, tipo}) {
     const enviarDatos = async () => { 
         try {
             if (!datosMovimiento.concepto || !datosMovimiento.tipo_movimiento || !datosMovimiento.cantidad ) {
+                setAlert({
+                    message: 'Por favor complete los datos',
+                    status: "error",
+                    open: true,
+                });
                 return null;
             }
             const movimiento = await CrearMovimientoCuenta({
@@ -135,7 +140,7 @@ export default function RetiroDeposito({cuenta, refetch, tipo}) {
                 <IconButton
                     color='primary'
                     onClick={handleClickOpen}
-                    size="medium"
+                    size="small"
                 >
                     <CompareArrowsIcon style={{fontSize: 35}} />
                 </IconButton>

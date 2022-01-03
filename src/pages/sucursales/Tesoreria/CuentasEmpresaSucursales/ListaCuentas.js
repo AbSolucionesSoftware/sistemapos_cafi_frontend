@@ -26,7 +26,8 @@ const columns = [
 
 const useStyles  = makeStyles((theme) => ({
 	root: {
-		width: '100%'
+		width: '100%',
+        height: '50vh'
 	},
 	container: {
 		maxHeight: '100%'
@@ -59,7 +60,6 @@ export default function ListaCuentas() {
             id: sesion.empresa._id
 		}
 	});	
-    console.log(cuentaEmpresa);
 
 	const classes = useStyles();
     let cuentasSucursalesEmpresa = [];
@@ -74,7 +74,19 @@ export default function ListaCuentas() {
         cuentasSucursalesEmpresa = data.obtenerSucursalesEmpresa
     };
 
-
+    if (loading && cuentaEmpresa.loading) 
+        return (
+            <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            height="50vh"
+            >
+                <CircularProgress/>
+            </Box>
+        );
+    
 	return (
         <Box p={2}>
             <Paper className={classes.root}>
@@ -103,9 +115,10 @@ export default function ListaCuentas() {
                             <TableCell align='center'> <RetiroDeposito cuenta={cuentaPrincipal} refetch={cuentaEmpresa.refetch} tipo={true} /> </TableCell>
                             <TableCell align='center'> <HistorialCuentas cuenta={cuentaPrincipal}  tipo={true} /> </TableCell>
                         </TableRow>
-                            {cuentasSucursalesEmpresa?.map((cuenta) => {
+                            {cuentasSucursalesEmpresa?.map((cuenta, index) => {
                                 return(
                                     <RowsCuentas 
+                                        key={index}
                                         refetch={refetch}
                                         cuenta={cuenta}
                                         loading={loading}
@@ -121,20 +134,8 @@ export default function ListaCuentas() {
 	);
 };
 
-function RowsCuentas ({cuenta, loading, refetch}) {
+function RowsCuentas ({cuenta, refetch}) {
 
-    if (loading) 
-	return (
-		<Box
-		display="flex"
-		flexDirection="column"
-		justifyContent="center"
-		alignItems="center"
-		height="80vh"
-		>
-			<CircularProgress/>
-		</Box>
-	);
 
     return(
         <TableRow

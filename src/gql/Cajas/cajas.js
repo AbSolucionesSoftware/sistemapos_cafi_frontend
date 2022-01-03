@@ -63,6 +63,7 @@ export const OBTENER_HISTORIAL_CAJA = gql`
                 completa
             }
             montos_en_caja{
+                monto_efectivo
                 monto_tarjeta
                 monto_creditos
                 monto_monedero
