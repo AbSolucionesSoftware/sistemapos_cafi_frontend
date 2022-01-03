@@ -36,7 +36,7 @@ export const CONSULTA_PRODUCTOS = gql`
 `;
 
 export const CONSULTA_PRODUCTO_UNITARIO = gql`
-  query ObtenerUnProductoVentas(
+   query ObtenerUnProductoVentas(
     $empresa: ID!
     $sucursal: ID!
     $datosProductos: ID!
@@ -53,10 +53,21 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
       unidad
       unidad_principal
       codigo_barras
+      codigo_unidad
       descuento {
         porciento
         dinero_descontado
         precio_con_descuento
+      }
+      medida{
+        talla
+        tipo
+        _id
+      }
+      color{
+        hex
+        nombre
+        _id
       }
       descuento_activo
       default
@@ -70,6 +81,21 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
           codigo_barras
           tipo_producto
           clave_alterna
+          nombre_generico
+          descripcion
+          id_categoria
+          categoria
+          subcategoria
+          id_subcategoria
+          id_departamento
+          departamento
+          id_marca
+          marca
+          clave_producto_sat{
+            Name
+            Value
+          }
+          receta_farmacia
         }
         precios {
           ieps
@@ -78,6 +104,7 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
             inventario_minimo
             inventario_maximo
             unidad_de_inventario
+            codigo_unidad
           }
           iva
           iva_activo
@@ -93,13 +120,16 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
             numero_precio
             precio_neto
             unidad_mayoreo
+            precio_venta
             utilidad
+            
           }
           unidad_de_compra {
             cantidad
             precio_unitario_con_impuesto
             precio_unitario_sin_impuesto
             unidad
+            codigo_unidad
           }
         }
       }
@@ -108,7 +138,9 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
         unidad_inventario
         cantidad_existente_maxima
         unidad_maxima
+        codigo_unidad
       }
+      
     }
   }
 `;

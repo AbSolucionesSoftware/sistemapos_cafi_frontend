@@ -1,5 +1,5 @@
 import React from 'react';
-import { CssBaseline, ThemeProvider } from '@material-ui/core';
+import { Box, CssBaseline, ThemeProvider } from '@material-ui/core';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import routes from './config/routes';
 import theme from './config/colors';
@@ -9,17 +9,18 @@ import { ApolloProvider } from '@apollo/client';
 
 function App() {
 	return (
-		
-		<ApolloProvider client={client}>
-			<div className="App">
-				<ThemeProvider theme={theme}>
-					<CssBaseline />
-					<Router>
-						<Switch>{routes.map((route, index) => <RoutesWithSubRoutes key={index} {...route} />)}</Switch>
-					</Router>
-				</ThemeProvider>
-			</div>
-		</ApolloProvider>
+		<Box height='100vh' >
+			<ApolloProvider client={client}>
+				<div className="App" >
+					<ThemeProvider theme={theme}>
+						<CssBaseline />
+						<Router>
+							<Switch>{routes.map((route, index) => <RoutesWithSubRoutes key={index} {...route} />)}</Switch>
+						</Router>
+					</ThemeProvider>
+				</div>
+			</ApolloProvider>
+		</Box>
 	);
 }
 

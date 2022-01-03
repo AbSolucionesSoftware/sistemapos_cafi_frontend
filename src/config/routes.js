@@ -34,16 +34,9 @@ const routes = [
 		]
 	},
 	{
-		path: '/ventas',
+		path: '/ventas/venta-general',
 		component: LayoutVentas,
-		exact: false,
-		routes: [
-			{
-				path: '/ventas/venta-general',
-				component: Venta_index,
-				exact: true,
-			}
-		]
+		exact: false
 	}
 	
 ];

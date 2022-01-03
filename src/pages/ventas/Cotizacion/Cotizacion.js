@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import useStyles from '../styles';
 import PropTypes from 'prop-types';
-import { AppBar, Box, Button, CircularProgress, Dialog,  DialogContent, Tab, Grid, Slide, Tabs, Typography } from '@material-ui/core'
+import { AppBar, Box, Button, CircularProgress, 
+		Dialog, Tab, Grid, Slide, Tabs, Typography 
+} from '@material-ui/core'
 import { FcCurrencyExchange } from 'react-icons/fc';
 import NuevaCotizacion from './NuevaCotizacion';
 import CloseIcon from '@material-ui/icons/Close';
@@ -53,8 +54,6 @@ export default function Cotizacion({type}) {
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
     const datosVentas = JSON.parse(localStorage.getItem('DatosVentas'));
-
-    const classes = useStyles();
 
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(0);
@@ -115,7 +114,7 @@ export default function Cotizacion({type}) {
         	<Dialog
 				fullWidth
 				open={open} 
-				maxWidth={type==="GENERAR"?'sm':'lg'}
+				maxWidth={type==="GENERAR"?'md':'lg'}
 				onClose={handleClickOpen} 
 				TransitionComponent={Transition}
 			>
@@ -179,20 +178,18 @@ export default function Cotizacion({type}) {
 						</Box>
 					</Tabs>
 				</AppBar>
-                	<VentanasCotizaciones 
-						handleClickOpen={handleClickOpen} 
-						value={value} 
-						type={type} 
-					/> 
-				</Dialog>
-			</>
-		)
-	};
+				<VentanasCotizaciones 
+					handleClickOpen={handleClickOpen} 
+					value={value} 
+					type={type} 
+				/> 
+			</Dialog>
+		</>
+	)
+};
 
 
 const VentanasCotizaciones = ({ handleClickOpen, value, type}) => {
-
-
 	const [ loading, setLoading ] = useState(false);
 
 	if (loading) 
@@ -209,17 +206,14 @@ const VentanasCotizaciones = ({ handleClickOpen, value, type}) => {
 	);
 
 	return(
-		<DialogContent style={{padding: 0}}>
-			{type === "GENERAR" ? (
-				<TabPanel style={{padding: 0}} value={value} index={0}>
-					<NuevaCotizacion handleClickOpen={handleClickOpen} />
-				</TabPanel>
-			) : (
-				<TabPanel style={{padding: 0}} value={value} index={0}>
-					<CotizacionesPendientes handleClickOpen={handleClickOpen} /> 
-				</TabPanel>
-			)}
-
-		</DialogContent>
+		type === "GENERAR" ? (
+			<TabPanel style={{padding: 0}} value={value} index={0}>
+				<NuevaCotizacion handleClickOpen={handleClickOpen} />
+			</TabPanel>
+		) : (
+			<TabPanel style={{padding: 0}} value={value} index={0}>
+				<CotizacionesPendientes handleClickOpen={handleClickOpen} /> 
+			</TabPanel>
+		)
 	)
 };
