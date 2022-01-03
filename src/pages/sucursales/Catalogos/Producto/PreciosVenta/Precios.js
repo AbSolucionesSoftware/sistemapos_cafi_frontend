@@ -59,104 +59,71 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
   } = useContext(RegProductoContext);
   let preciosVenta = { ...preciosP[index] };
 
-  const obtenerUtilidad = (value) => {
-    if (!value) {
+  const obtenerUtilidad = (valor_base) => {
+    if (!valor_base) {
       preciosVenta.utilidad = "";
       newPreciosP.splice(index, 1, preciosVenta);
       setPreciosP(newPreciosP);
       return;
     }
-    //se agrega la utilidad
-    preciosVenta.utilidad = parseFloat(value);
 
-    //apartir de aqui se hacen los calculos para meter datos a precios de venta y precios netos
-    let utilidad = 1;
-    let verificacion_entero = false;
-    let valor2 = value;
+    /* let utilidad = 1; */
+    let PUCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
+    let { unidad, cantidad, descuento, descuento_activo } = unidadVentaXDefecto;
+    let { iva, ieps } = precios;
+    let utilidad = valor_base / 100;
 
-    if (parseFloat(value) < 10) valor2 = "0" + value.replace(/[.]/g, "");
-    if (value > 99) {
-      valor2 = value / 100;
-      verificacion_entero = true;
-    }
+    const precio_venta = PUCSI * utilidad + PUCSI;
+    let iva_precio = precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
+    let ieps_precio = precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+    let impuestos = iva_precio + ieps_precio;
+    const precio_neto = precio_venta + impuestos;
 
-    if (!verificacion_entero) {
-      utilidad = "." + valor2.replace(/[.]/g, "");
-    } else {
-      utilidad = parseFloat(valor2);
-    }
+    preciosVenta.utilidad = parseFloat(valor_base);
+    preciosVenta.precio_venta = parseFloat(precio_venta.toFixed(2));
+    preciosVenta.precio_neto = parseFloat(precio_neto.toFixed(2));
 
-    const ganancia_utilidad_sin_impuestos =
-      precios.unidad_de_compra.precio_unitario_sin_impuesto +
-      precios.unidad_de_compra.precio_unitario_sin_impuesto * utilidad;
-    preciosVenta.precio_venta = parseFloat(
-      ganancia_utilidad_sin_impuestos.toFixed(6)
-    );
-    let precio = 0;
-    if (precios.iva_activo || precios.ieps_activo) {
-      const ganancia_utilidad_con_impuestos =
-        precios.unidad_de_compra.precio_unitario_con_impuesto +
-        precios.unidad_de_compra.precio_unitario_con_impuesto * utilidad;
-      preciosVenta.precio_neto = parseFloat(
-        ganancia_utilidad_con_impuestos.toFixed(6)
-      );
-      /* if (preciosVenta.numero_precio === 1) { */
-      precio = parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
-      if (
-        unidadVentaXDefecto.unidad === "Caja" ||
-        unidadVentaXDefecto.unidad === "Costal"
-      ) {
-        precio =
-          unidadVentaXDefecto.cantidad *
-          parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
+    //meter los precios a unidadXdefecto
+    let unidadXDefecto = {
+      ...unidadVentaXDefecto,
+      precio_unidad: {
+        numero_precio: preciosVenta.numero_precio,
+        precio_neto: precio_neto,
+        precio_venta: precio_venta,
+        unidad_mayoreo: preciosVenta.unidad_mayoreo,
+        iva_precio,
+        ieps_precio,
+        utilidad: preciosVenta.utilidad,
+        unidad_maxima: false,
+      },
+    };
+
+    if (preciosVenta.numero_precio === 1) {
+      if (unidad === "Caja" || unidad === "Costal") {
+        unidadXDefecto = {
+          ...unidadXDefecto,
+          precio: parseFloat((cantidad * precio_neto).toFixed(2)),
+        };
+      } else {
+        unidadXDefecto = {
+          ...unidadXDefecto,
+          precio: precio_neto,
+        };
       }
-      /* setUnidadVentaXDefecto({
-          ...unidadVentaXDefecto,
-          precio: parseFloat(precio.toFixed(6)),
-        }); */
-      /* } */
-    } else {
-      preciosVenta.precio_neto = parseFloat(
-        ganancia_utilidad_sin_impuestos.toFixed(6)
-      );
-      /* if (preciosVenta.numero_precio === 1) { */
-      precio = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
-      if (
-        unidadVentaXDefecto.unidad === "Caja" ||
-        unidadVentaXDefecto.unidad === "Costal"
-      ) {
-        precio =
-          unidadVentaXDefecto.cantidad *
-          parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
-      }
-      /* setUnidadVentaXDefecto({
-          ...unidadVentaXDefecto,
-          precio: parseFloat(precio.toFixed(6)),
-        }); */
-      /* } */
-    }
-
-    if (preciosVenta.numero_precio > 1) {
-      setUnidadVentaXDefecto(unidadVentaXDefecto);
-    } else {
-      setUnidadVentaXDefecto({
-        ...unidadVentaXDefecto,
-        precio: parseFloat(precio.toFixed(6)),
-      });
-      if (unidadVentaXDefecto.descuento_activo === true) {
+      if (descuento_activo === true) {
         //calcular nuevo precio entre %
         let precio_con_descuento = Math.round(
-          precio -
-            precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
+          precio_neto - precio_neto * parseFloat("." + descuento.porciento)
         );
 
-        setUnidadVentaXDefecto({
-          ...unidadVentaXDefecto,
-          precio: parseFloat(precio.toFixed(6)),
+        unidadXDefecto = {
+          ...unidadXDefecto,
+          precio: parseFloat(precio_neto.toFixed(2)),
           descuento: { ...unidadVentaXDefecto.descuento, precio_con_descuento },
-        });
+        };
       }
     }
+    setUnidadVentaXDefecto(unidadXDefecto);
 
     newPreciosP.splice(index, 1, preciosVenta);
     setPreciosP(newPreciosP);
@@ -169,71 +136,65 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
       setPreciosP(newPreciosP);
       return;
     }
-    //obtenermos el precio neto
-    preciosVenta.precio_neto = parseFloat(value);
 
-    //si es el primer precio ponerlo en la unidad de venta por defecto
-    /* if (preciosVenta.numero_precio === 1) { */
-      let precio = parseFloat(value);
-      if (
-        unidadVentaXDefecto.unidad === "Caja" ||
-        unidadVentaXDefecto.unidad === "Costal"
-      ) {
-        precio = unidadVentaXDefecto.cantidad * parseFloat(value);
+    let precio_neto = parseFloat(value);
+    let { unidad, cantidad, descuento, descuento_activo } = unidadVentaXDefecto;
+    let { iva, ieps } = precios;
+    let PUCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
+
+    let suma = parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) + parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+    let precio_venta = parseFloat((precio_neto / (suma+1)).toFixed(2));
+    let iva_precio = precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
+    let ieps_precio = precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+    let impuestos = iva_precio + ieps_precio;
+    let utilidad_base = ((precio_neto - impuestos - PUCSI) / PUCSI) * 100;
+
+    preciosVenta.precio_neto = precio_neto;
+    preciosVenta.precio_venta = precio_venta;
+    preciosVenta.utilidad = parseFloat(utilidad_base.toFixed(2));
+
+    //meter los precios a unidadXdefecto
+    let unidadXDefecto = {
+      ...unidadVentaXDefecto,
+      precio_unidad: {
+        numero_precio: preciosVenta.numero_precio,
+        precio_neto: precio_neto,
+        precio_venta: precio_venta,
+        unidad_mayoreo: preciosVenta.unidad_mayoreo,
+        iva_precio,
+        ieps_precio,
+        utilidad: preciosVenta.utilidad,
+        unidad_maxima: false,
+      },
+    };
+
+    if (preciosVenta.numero_precio === 1) {
+      if (unidad === "Caja" || unidad === "Costal") {
+        unidadXDefecto = {
+          ...unidadXDefecto,
+          precio: parseFloat((cantidad * precio_neto).toFixed(2)),
+        };
+      } else {
+        unidadXDefecto = {
+          ...unidadXDefecto,
+          precio: precio_neto,
+        };
       }
-      if (preciosVenta.numero_precio > 1) {
-        setUnidadVentaXDefecto(unidadVentaXDefecto);
-      }else{
-        setUnidadVentaXDefecto({
-        ...unidadVentaXDefecto,
-        precio: parseFloat(precio.toFixed(6)),
-      });
-      if (unidadVentaXDefecto.descuento_activo === true) {
+      if (descuento_activo === true) {
         //calcular nuevo precio entre %
         let precio_con_descuento = Math.round(
-          precio -
-            precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
+          precio_neto - precio_neto * parseFloat("." + descuento.porciento)
         );
 
-        setUnidadVentaXDefecto({
-          ...unidadVentaXDefecto,
-          precio: parseFloat(precio.toFixed(6)),
+        unidadXDefecto = {
+          ...unidadXDefecto,
+          precio: parseFloat(precio_neto.toFixed(2)),
           descuento: { ...unidadVentaXDefecto.descuento, precio_con_descuento },
-        });
+        };
       }
-      }
-      
-    /* } */
-
-    //calculamos el precio de venta y la utilidad
-    let new_utilidad;
-
-    if (precios.iva_activo || precios.ieps_activo) {
-      new_utilidad =
-        parseFloat(value) /
-        parseFloat(precios.unidad_de_compra.precio_unitario_con_impuesto);
-    } else {
-      new_utilidad =
-        parseFloat(value) /
-        parseFloat(precios.unidad_de_compra.precio_unitario_sin_impuesto);
     }
+    setUnidadVentaXDefecto(unidadXDefecto);
 
-    let porcent = parseFloat(((new_utilidad - 1) * 100).toFixed(6));
-    preciosVenta.utilidad = porcent;
-
-    let utilidad;
-    const valor = porcent.toString().replace(/[.]/g, "");
-
-    utilidad = "." + valor;
-    if (valor < 10) utilidad = ".0" + valor;
-    if (valor % 100 === 0) utilidad = valor / 100;
-    const precio_venta = (
-      precios.unidad_de_compra.precio_unitario_sin_impuesto +
-      precios.unidad_de_compra.precio_unitario_sin_impuesto * utilidad
-    ).toFixed(6);
-    preciosVenta.precio_venta = parseFloat(precio_venta);
-
-    //se agrega al array original
     newPreciosP.splice(index, 1, preciosVenta);
     setPreciosP(newPreciosP);
   };
@@ -251,214 +212,74 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
   };
 
   const calculos = () => {
-    const utilidad = preciosVenta.utilidad;
-    if (!utilidad) {
-      preciosVenta.precio_venta =
-        precios.unidad_de_compra.precio_unitario_sin_impuesto;
-    }
-    if (!precios.iva_activo && !precios.ieps_activo) {
-      preciosVenta.precio_neto =
-        precios.unidad_de_compra.precio_unitario_sin_impuesto;
+    let { iva, ieps } = precios;
+    let { unidad, cantidad, descuento, descuento_activo } = unidadVentaXDefecto;
+    let PUCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
+    let utilidad_base = preciosVenta.utilidad ? preciosVenta.utilidad : 0;
+    let utilidad = utilidad_base / 100;
 
-      /* if (preciosVenta.numero_precio === 1) { */
-      let precio = precios.unidad_de_compra.precio_unitario_sin_impuesto;
-      if (
-        unidadVentaXDefecto.unidad === "Caja" ||
-        unidadVentaXDefecto.unidad === "Costal"
-      ) {
-        precio =
-          unidadVentaXDefecto.cantidad *
-          precios.unidad_de_compra.precio_unitario_sin_impuesto;
+    //precio venta y neto con utilidad
+    const precio_venta = parseFloat((PUCSI * utilidad + PUCSI).toFixed(2));
+    let iva_precio = precio_venta *parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
+    let ieps_precio = precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+    let impuestos = iva_precio + ieps_precio;
+
+    const precio_neto = parseFloat(
+      precio_venta + impuestos
+    ).toFixed(2);
+
+    //meter los valores a preciosVenta
+    preciosVenta.precio_venta = precio_venta;
+    preciosVenta.precio_neto = precio_neto;
+    preciosVenta.iva_precio = iva;
+    preciosVenta.ieps_precio = ieps;
+
+    //meter los precios a unidadXdefecto
+    let unidadXDefecto = {
+      ...unidadVentaXDefecto,
+      precio_unidad: {
+        numero_precio: preciosVenta.numero_precio,
+        precio_neto: precio_neto,
+        precio_venta: precio_venta,
+        unidad_mayoreo: preciosVenta.unidad_mayoreo,
+        iva_precio,
+        ieps_precio,
+        utilidad: preciosVenta.utilidad,
+        unidad_maxima: false,
+      },
+    };
+
+    if (preciosVenta.numero_precio === 1) {
+      if (unidad === "Caja" || unidad === "Costal") {
+        unidadXDefecto = {
+          ...unidadXDefecto,
+          precio: parseFloat((cantidad * precio_neto).toFixed(2)),
+        };
+      } else {
+        unidadXDefecto = {
+          ...unidadXDefecto,
+          precio: precio_neto,
+        };
       }
-      if (preciosVenta.numero_precio > 1) {
-        setUnidadVentaXDefecto(unidadVentaXDefecto);
-      }else{
-        setUnidadVentaXDefecto({
-        ...unidadVentaXDefecto,
-        precio: parseFloat(precio.toFixed(6)),
-      });
-      }
-      
-      if (unidadVentaXDefecto.descuento_activo === true) {
+      if (descuento_activo === true) {
         //calcular nuevo precio entre %
         let precio_con_descuento = Math.round(
-          precio -
-            precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
-        );
-        if (preciosVenta.numero_precio > 1) {
-          setUnidadVentaXDefecto(unidadVentaXDefecto);
-        }else{
-          setUnidadVentaXDefecto({
-          ...unidadVentaXDefecto,
-          precio: parseFloat(precio.toFixed(6)),
-          descuento: {
-            ...unidadVentaXDefecto.descuento,
-            precio_con_descuento,
-          },
-        });
-        }
-        
-      }
-      /* } */
-    } else {
-      preciosVenta.precio_neto =
-        precios.unidad_de_compra.precio_unitario_con_impuesto;
-      /* if (preciosVenta.numero_precio === 1) { */
-      let precio = precios.unidad_de_compra.precio_unitario_con_impuesto;
-      if (
-        unidadVentaXDefecto.unidad === "Caja" ||
-        unidadVentaXDefecto.unidad === "Costal"
-      ) {
-        precio =
-          unidadVentaXDefecto.cantidad *
-          precios.unidad_de_compra.precio_unitario_con_impuesto;
-      }
-      if (preciosVenta.numero_precio > 1) {
-        setUnidadVentaXDefecto(unidadVentaXDefecto);
-      }else{
-        setUnidadVentaXDefecto({
-        ...unidadVentaXDefecto,
-        precio: parseFloat(precio.toFixed(6)),
-      });
-      }
-      
-      if (unidadVentaXDefecto.descuento_activo === true) {
-        //calcular nuevo precio entre %
-        let precio_con_descuento = Math.round(
-          precio -
-            precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
-        );
-        if (preciosVenta.numero_precio > 1) {
-          setUnidadVentaXDefecto(unidadVentaXDefecto);
-        }else{
-          setUnidadVentaXDefecto({
-          ...unidadVentaXDefecto,
-          precio: parseFloat(precio.toFixed(6)),
-          descuento: {
-            ...unidadVentaXDefecto.descuento,
-            precio_con_descuento,
-          },
-        });
-        }
-        
-        /* } */
-      }
-    }
-
-    let verificacion_entero = false;
-    let new_utilidad = 0;
-    new_utilidad = utilidad;
-
-    if (parseFloat(utilidad) < 10)
-      new_utilidad = "0" + utilidad.toString().replace(/[.]/g, "");
-    if (utilidad > 99) {
-      new_utilidad = utilidad / 100;
-      verificacion_entero = true;
-    }
-
-    if (!verificacion_entero) {
-      new_utilidad = "." + new_utilidad.toString().replace(/[.]/g, "");
-    } else {
-      new_utilidad = parseFloat(new_utilidad);
-    }
-
-    const ganancia_utilidad_sin_impuestos =
-      precios.unidad_de_compra.precio_unitario_sin_impuesto +
-      precios.unidad_de_compra.precio_unitario_sin_impuesto * new_utilidad;
-
-    preciosVenta.precio_venta = parseFloat(
-      ganancia_utilidad_sin_impuestos.toFixed(6)
-    );
-
-    if (precios.iva_activo || precios.ieps_activo) {
-      const ganancia_utilidad_con_impuestos =
-        precios.unidad_de_compra.precio_unitario_con_impuesto +
-        precios.unidad_de_compra.precio_unitario_con_impuesto * new_utilidad;
-      preciosVenta.precio_neto = parseFloat(
-        ganancia_utilidad_con_impuestos.toFixed(6)
-      );
-
-      /*  if (preciosVenta.numero_precio === 1) { */
-      let precio = parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
-      if (
-        unidadVentaXDefecto.unidad === "Caja" ||
-        unidadVentaXDefecto.unidad === "Costal"
-      ) {
-        precio =
-          unidadVentaXDefecto.cantidad *
-          parseFloat(ganancia_utilidad_con_impuestos.toFixed(6));
-      }
-      if(preciosVenta.numero_precio > 1){
-        setUnidadVentaXDefecto(unidadVentaXDefecto);
-      }else{
-        setUnidadVentaXDefecto({
-        ...unidadVentaXDefecto,
-        precio: parseFloat(precio.toFixed(6)),
-      });
-      if (unidadVentaXDefecto.descuento_activo === true) {
-        //calcular nuevo precio entre %
-        let precio_con_descuento = Math.round(
-          precio -
-            precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
+          precio_neto - precio_neto * parseFloat("." + descuento.porciento)
         );
 
-        setUnidadVentaXDefecto({
-          ...unidadVentaXDefecto,
-          precio: parseFloat(precio.toFixed(6)),
-          descuento: {
-            ...unidadVentaXDefecto.descuento,
-            precio_con_descuento,
-          },
-        });
+        unidadXDefecto = {
+          ...unidadXDefecto,
+          precio: parseFloat(precio_neto.toFixed(2)),
+          descuento: { ...unidadVentaXDefecto.descuento, precio_con_descuento },
+        };
       }
-      }
-      
-      /* } */
-    } else {
-      preciosVenta.precio_neto = parseFloat(
-        ganancia_utilidad_sin_impuestos.toFixed(6)
-      );
-      /* if (preciosVenta.numero_precio === 1) { */
-      let precio = parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
-      if (
-        unidadVentaXDefecto.unidad === "Caja" ||
-        unidadVentaXDefecto.unidad === "Costal"
-      ) {
-        precio =
-          unidadVentaXDefecto.cantidad *
-          parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6));
-      }
-      if(preciosVenta.numero_precio > 1) {
-        setUnidadVentaXDefecto(unidadVentaXDefecto);
-      }else{
-        setUnidadVentaXDefecto({
-        ...unidadVentaXDefecto,
-        precio: parseFloat(precio.toFixed(6)),
-      });
-      if (unidadVentaXDefecto.descuento_activo === true) {
-        //calcular nuevo precio entre %
-        let precio_con_descuento = Math.round(
-          precio -
-            precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
-        );
-
-        setUnidadVentaXDefecto({
-          ...unidadVentaXDefecto,
-          precio: parseFloat(precio.toFixed(6)),
-          descuento: {
-            ...unidadVentaXDefecto.descuento,
-            precio_con_descuento,
-          },
-        });
-        /* } */
-      }
-      }
-      
     }
+    setUnidadVentaXDefecto(unidadXDefecto);
 
     newPreciosP.splice(index, 1, preciosVenta);
     setPreciosP(newPreciosP);
   };
+
   useEffect(() => {
     if (preciosVenta.numero_precio === 1) {
       calculos();
@@ -563,7 +384,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
         </Box>
         <Box pl={1}>
           <Typography>
-            <b>{parseFloat(preciosVenta.precio_venta).toFixed(3)}</b>
+            <b>{parseFloat(preciosVenta.precio_venta).toFixed(2)}</b>
           </Typography>
         </Box>
       </Box>

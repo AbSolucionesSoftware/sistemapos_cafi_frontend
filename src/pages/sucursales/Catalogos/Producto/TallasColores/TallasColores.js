@@ -56,7 +56,11 @@ export default function ColoresTallas({
     presentaciones,
     datos_generales,
   } = useContext(RegProductoContext);
-  const { /* almacenes, */ colores, tallas, calzados } = obtenerConsultasProducto;
+  const {
+    /* almacenes, */ colores,
+    tallas,
+    calzados,
+  } = obtenerConsultasProducto;
   const [medidasSeleccionadas, setMedidasSeleccionadas] = useState([]);
   const [coloresSeleccionados, setColoresSeleccionados] = useState([]);
   const medidas =
@@ -256,9 +260,10 @@ const RenderTallas = ({
     presentaciones,
     datos_generales,
     preciosP,
+    precios,
     presentaciones_eliminadas,
     setPresentacionesEliminadas,
-    almacen_existente
+    almacen_existente,
   } = useContext(RegProductoContext);
   const [selected, setSelected] = useState(false);
 
@@ -267,8 +272,6 @@ const RenderTallas = ({
       if (res._id === talla._id) setSelected(true);
     });
   }, [talla._id, medidasSeleccionadas]);
-
-/*   console.log(almacen_existente); */
 
   useEffect(() => {
     if (almacen_existente) {
@@ -303,11 +306,24 @@ const RenderTallas = ({
 
     let presentacion_temp = [];
     const array_medidad_finales = [...presentaciones];
+    const { iva, ieps } = precios;
 
     if (!coloresSeleccionados.length && !array_medidad_finales.length) {
       /* SI NO HAY COLORES NI VALORES EN EL ARRAY FINAL SE AGREGA EL PRIMER ELEMENTO */
       for (let i = 0; i < medidas_seleccionadas_temp.length; i++) {
         const producto_medida = medidas_seleccionadas_temp[i];
+        let iva_precio = parseFloat(
+          (
+            preciosP[0].precio_venta *
+            parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
+          ).toFixed(2)
+        );
+        let ieps_precio = parseFloat(
+          (
+            preciosP[0].precio_venta *
+            parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
+          ).toFixed(2)
+        );
         presentacion_temp.push({
           _id: "",
           existencia: false,
@@ -319,6 +335,16 @@ const RenderTallas = ({
           cantidad: 0,
           cantidad_nueva: 0,
           nuevo: true,
+          precio_unidad: {
+            numero_precio: 1,
+            precio_venta: preciosP[0].precio_venta,
+            precio_neto: preciosP[0].precio_neto,
+            unidad_mayoreo: 0,
+            iva_precio: iva_precio,
+            ieps_precio: ieps_precio,
+            utilidad: preciosP[0].utilidad,
+            unidad_maxima: false,
+          },
         });
       }
     } else if (
@@ -330,6 +356,18 @@ const RenderTallas = ({
         const producto_medida = medidas_seleccionadas_temp[i];
         const result = array_medidad_finales.filter(
           (res) => res.medida._id === producto_medida._id
+        );
+        let iva_precio = parseFloat(
+          (
+            preciosP[0].precio_venta *
+            parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
+          ).toFixed(2)
+        );
+        let ieps_precio = parseFloat(
+          (
+            preciosP[0].precio_venta *
+            parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
+          ).toFixed(2)
         );
         if (result.length) {
           presentacion_temp.push(result[0]);
@@ -345,6 +383,16 @@ const RenderTallas = ({
             cantidad: 0,
             cantidad_nueva: 0,
             nuevo: true,
+            precio_unidad: {
+              numero_precio: 1,
+              precio_venta: preciosP[0].precio_venta,
+              precio_neto: preciosP[0].precio_neto,
+              unidad_mayoreo: 0,
+              iva_precio: iva_precio,
+              ieps_precio: ieps_precio,
+              utilidad: preciosP[0].utilidad,
+              unidad_maxima: false,
+            },
           });
         }
       }
@@ -367,6 +415,7 @@ const RenderTallas = ({
             cantidad: array_medidad_finales[i].cantidad,
             cantidad_nueva: array_medidad_finales[i].cantidad_nueva,
             nuevo: true,
+            precio_unidad: array_medidad_finales[i].precio_unidad,
           });
         }
       }
@@ -384,6 +433,18 @@ const RenderTallas = ({
               producto_array_final.medida._id === producto_medida._id &&
               producto_color._id === producto_array_final.color._id
           );
+          let iva_precio = parseFloat(
+            (
+              preciosP[0].precio_venta *
+              parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
+            ).toFixed(2)
+          );
+          let ieps_precio = parseFloat(
+            (
+              preciosP[0].precio_venta *
+              parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
+            ).toFixed(2)
+          );
           if (!presentacion_existente.length) {
             presentacion_temp.push({
               _id: "",
@@ -396,6 +457,16 @@ const RenderTallas = ({
               cantidad: 0,
               cantidad_nueva: 0,
               nuevo: true,
+              precio_unidad: {
+                numero_precio: 1,
+                precio_venta: preciosP[0].precio_venta,
+                precio_neto: preciosP[0].precio_neto,
+                unidad_mayoreo: 0,
+                iva_precio: iva_precio,
+                ieps_precio: ieps_precio,
+                utilidad: preciosP[0].utilidad,
+                unidad_maxima: false,
+              },
             });
           } else {
             presentacion_temp.push(presentacion_existente[0]);
@@ -424,6 +495,7 @@ const RenderTallas = ({
             cantidad: objeto_presentaciones_final.cantidad,
             cantidad_nueva: objeto_presentaciones_final.cantidad_nueva,
             nuevo: true,
+            precio_unidad: objeto_presentaciones_final.precio_unidad,
           });
         }
       }
@@ -475,9 +547,10 @@ const Colores = ({
     setPresentaciones,
     datos_generales,
     preciosP,
+    precios,
     presentaciones_eliminadas,
     setPresentacionesEliminadas,
-    almacen_existente
+    almacen_existente,
   } = useContext(RegProductoContext);
 
   const [selected, setSelected] = useState(false);
@@ -518,11 +591,25 @@ const Colores = ({
     }
     let presentacion_temp = [];
     const array_medidad_finales = [...presentaciones];
+    const { iva, ieps } = precios;
 
     if (!medidasSeleccionadas.length && !array_medidad_finales.length) {
       /* SI NO HAY COLORES NI VALORES EN EL ARRAY FINAL SE AGREGA EL PRIMER ELEMENTO */
       for (let i = 0; i < coloresSeleccionados.length; i++) {
         const producto_color = coloresSeleccionados[i];
+        let iva_precio = parseFloat(
+          (
+            preciosP[0].precio_venta *
+            parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
+          ).toFixed(2)
+        );
+        let ieps_precio = parseFloat(
+          (
+            preciosP[0].precio_venta *
+            parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
+          ).toFixed(2)
+        );
+
         presentacion_temp.push({
           _id: "",
           existencia: false,
@@ -534,6 +621,16 @@ const Colores = ({
           cantidad: 0,
           cantidad_nueva: 0,
           nuevo: true,
+          precio_unidad: {
+            numero_precio: 1,
+            precio_venta: preciosP[0].precio_venta,
+            precio_neto: preciosP[0].precio_neto,
+            unidad_mayoreo: 0,
+            iva_precio: iva_precio,
+            ieps_precio: ieps_precio,
+            utilidad: preciosP[0].utilidad,
+            unidad_maxima: false,
+          },
         });
       }
     } else if (
@@ -545,6 +642,18 @@ const Colores = ({
         const producto_color = coloresSeleccionados[i];
         const result = array_medidad_finales.filter(
           (res) => res.color._id === producto_color._id
+        );
+        let iva_precio = parseFloat(
+          (
+            preciosP[0].precio_venta *
+            parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
+          ).toFixed(2)
+        );
+        let ieps_precio = parseFloat(
+          (
+            preciosP[0].precio_venta *
+            parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
+          ).toFixed(2)
         );
         if (result.length) {
           presentacion_temp.push(result[0]);
@@ -560,6 +669,16 @@ const Colores = ({
             cantidad: 0,
             cantidad_nueva: 0,
             nuevo: true,
+            precio_unidad: {
+              numero_precio: 1,
+              precio_venta: preciosP[0].precio_venta,
+              precio_neto: preciosP[0].precio_neto,
+              unidad_mayoreo: 0,
+              iva_precio: iva_precio,
+              ieps_precio: ieps_precio,
+              utilidad: preciosP[0].utilidad,
+              unidad_maxima: false,
+            },
           });
         }
       }
@@ -582,6 +701,7 @@ const Colores = ({
             cantidad: array_medidad_finales[i].cantidad,
             cantidad_nueva: array_medidad_finales[i].cantidad_nueva,
             nuevo: true,
+            precio_unidad: array_medidad_finales[i].precio_unidad,
           });
         }
       }
@@ -599,6 +719,18 @@ const Colores = ({
               producto_array_final.medida._id === producto_medida._id &&
               producto_color._id === producto_array_final.color._id
           );
+          let iva_precio = parseFloat(
+            (
+              preciosP[0].precio_venta *
+              parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
+            ).toFixed(2)
+          );
+          let ieps_precio = parseFloat(
+            (
+              preciosP[0].precio_venta *
+              parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
+            ).toFixed(2)
+          );
           if (!presentacion_existente.length) {
             presentacion_temp.push({
               _id: "",
@@ -611,6 +743,16 @@ const Colores = ({
               cantidad: 0,
               cantidad_nueva: 0,
               nuevo: true,
+              precio_unidad: {
+                numero_precio: 1,
+                precio_venta: preciosP[0].precio_venta,
+                precio_neto: preciosP[0].precio_neto,
+                unidad_mayoreo: 0,
+                iva_precio: iva_precio,
+                ieps_precio: ieps_precio,
+                utilidad: preciosP[0].utilidad,
+                unidad_maxima: false,
+              },
             });
           } else {
             presentacion_temp.push(presentacion_existente[0]);
@@ -639,6 +781,7 @@ const Colores = ({
             cantidad: objeto_presentaciones_final.cantidad,
             cantidad_nueva: objeto_presentaciones_final.cantidad_nueva,
             nuevo: true,
+            precio_unidad: objeto_presentaciones_final.precio_unidad,
           });
         }
       }
