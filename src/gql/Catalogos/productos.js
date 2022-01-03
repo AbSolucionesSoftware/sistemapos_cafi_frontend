@@ -45,7 +45,7 @@ export const OBTENER_CONSULTAS = gql`
           _id
           subcuenta
         }
-      },
+      }
       codigos {
         _id
         Name
@@ -101,6 +101,18 @@ export const OBTENER_PRODUCTOS = gql`
           precio_con_descuento
         }
         default
+        precio_unidad {
+          numero_precio
+          precio_neto
+          precio_venta
+          iva_precio
+          ieps_precio
+          unidad_mayoreo
+          utilidad
+          precio_general
+          cantidad_unidad
+          unidad_maxima
+        }
       }
       datos_generales {
         codigo_barras
@@ -167,8 +179,13 @@ export const OBTENER_PRODUCTOS = gql`
           numero_precio
           precio_neto
           precio_venta
+          iva_precio
+          ieps_precio
           unidad_mayoreo
           utilidad
+          precio_general
+          cantidad_unidad
+          unidad_maxima
         }
         unidad_de_compra {
           cantidad
@@ -209,6 +226,18 @@ export const OBTENER_PRODUCTOS = gql`
         }
         nombre_comercial
         precio
+        precio_unidad {
+          numero_precio
+          precio_neto
+          precio_venta
+          iva_precio
+          ieps_precio
+          unidad_mayoreo
+          utilidad
+          precio_general
+          cantidad_unidad
+          unidad_maxima
+        }
       }
       inventario_general {
         _id
