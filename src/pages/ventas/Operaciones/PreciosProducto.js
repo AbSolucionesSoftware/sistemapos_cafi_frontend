@@ -108,6 +108,7 @@ export default function PreciosProductos() {
         newProductoPrecioActual.precio_a_vender = precioSelectProductoVenta[0].precio_neto;
         newProductoPrecioActual.precio_seleccionado = true;
         newProductoPrecioActual.precio_actual_producto = precioSelectProductoVenta[0].precio_neto;
+        
         console.log(newProductoPrecioActual);
         productosVentasTemp.splice(
           producto_encontrado.producto_found.index,

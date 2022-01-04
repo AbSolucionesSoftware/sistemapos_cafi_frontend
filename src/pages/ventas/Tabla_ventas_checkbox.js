@@ -417,12 +417,12 @@ const RenderTableRows = ({
   useEffect(() => {
     CalculeDataPricing(value);
   }, [value]);
+  
 
   const calculateNewPricingAmount = (cantidad) => {
     try {
       setTempAmount(cantidad);
       setNewCantidadProduct(cantidad);
-      // console.log("cantidad",cantidad);
     } catch (error) {
       return false;
     }
