@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react';
 import {
-    Box, Button, Dialog, DialogActions, DialogContent, 
-    Divider, 
+    Box, Button, DialogActions, DialogContent, 
     FormControl, Grid, MenuItem, 
     Paper, 
     Select, Slider, TextField, Typography 
@@ -11,12 +10,14 @@ import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import MoneyOffIcon from '@material-ui/icons/MoneyOff';
 import moment from 'moment';
 import 'moment/locale/es';
+import { CREAR_COTIZACION } from "../../../gql/Ventas/cotizaciones";
 import { VentasContext } from '../../../context/Ventas/ventasContext';
+import { useMutation } from '@apollo/client';
 
 export default function NuevaCotizacion({ handleClickOpen }) {
     const { setAlert } = useContext(VentasContext);
 
-    
+    const [ CrearCotizacion ] = useMutation(CREAR_COTIZACION);
 
     const datosVentas = JSON.parse(localStorage.getItem('DatosVentas'));
     const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
@@ -38,53 +39,255 @@ export default function NuevaCotizacion({ handleClickOpen }) {
         setNewCotizacion({...newCotizacion, [e.target.name]: e.target.value});
     };
 
-    const arregloCotizacion = {
-        year_registro: moment().year(),
-        numero_semana_year: moment().week(),
-        numero_mes_year: moment().month(),
-        fecha_registro: moment().format(),
+    // const input = {
+    //     folio: "",
+    //     descuento: datosVentas.descuento,
+    //     ieps: datosVentas.ieps,
+    //     impuestos: datosVentas.impuestos,
+    //     iva: datosVentas.iva,
+    //     monedero: datosVentas.monedero,
+    //     subTotal: datosVentas.subTotal,
+    //     total: datosVentas.total,
+    //     venta_cliente: false,
+    //     montos_en_caja: {},
+    //     credito: false,
+    //     descuento_general_activo: preciosDescuentos?.descuento_general_activo ? preciosDescuentos?.descuento_general_activo : false,
+    //     decuento_general: preciosDescuentos?.descuento_general ? preciosDescuentos?.descuento_general :
+    //     {
+    //         "porciento": 0,
+    //         "precio_con_descuento": 0,
+    //         "cantidad_descontado": 0
+    //     },
+    //     dias_de_credito_venta: "",
+    //     fecha_de_vencimiento_credito: "",
+    //     fecha_vencimiento_cotizacion: newCotizacion.fecha_vencimiento,
+    //     cliente: datosVentas.cliente,
+    //     productos: datosVentas.productos,
+    //     tipo_venta: newCotizacion.tipo_venta,
+    // };
 
-        usuario: sesion.nombre,
-        id_usuario: sesion._id,
-
-        caja: turnoEnCurso.numero_caja,
-        id_caja: turnoEnCurso.id_caja,    
-
-        descuento_general_activo: preciosDescuentos?.descuento_general_activo ? preciosDescuentos?.descuento_general_activo : false,
-        decuento_general: preciosDescuentos?.descuento_general ? preciosDescuentos?.descuento_general :
+    const input = {
+        "folio": "12345",
+        "descuento": datosVentas.descuento,
+        "ieps": datosVentas.ieps,
+        "impuestos": datosVentas.impuestos,
+        "iva": datosVentas.iva,
+        "monedero": datosVentas.monedero,
+        "subTotal": datosVentas.subTotal,
+        "total": datosVentas.total,
+        "venta_cliente": false,
+        "montos_en_caja": {},
+        "credito": false,
+        "descuento_general_activo": preciosDescuentos?.descuento_general_activo ? preciosDescuentos?.descuento_general_activo : false,
+        "decuento_general": preciosDescuentos?.descuento_general ? preciosDescuentos?.descuento_general :
         {
             "porciento": 0,
             "precio_con_descuento": 0,
             "cantidad_descontado": 0
         },
-
-        cliente: datosVentas.cliente,
-        fecha_vencimiento: newCotizacion.fecha_vencimiento,
-        productos: datosVentas.productos,
-        tipo_venta: newCotizacion.tipo_venta,
-
-        total: datosVentas.total,
-        subTotal: datosVentas.subTotal,
-        impuestos: datosVentas.impuestos,
+        "dias_de_credito_venta": null,
+        "fecha_de_vencimiento_credito": null,
+        "fecha_vencimiento_cotizacion": newCotizacion.fecha_vencimiento,
+        "cliente":{
+            "banco": null,
+            "celular": null,
+            "clave_cliente": "23233",
+            "curp": null,
+            "dias_credito": null,
+            "direccion":{
+                "calle": "Antonio",
+                "no_ext": "1",
+                "no_int": "1",
+                "codigo_postal": "1",
+                "colonia": "Antonio",
+                "municipio": "1",
+                "localidad": "1",
+                "estado": "1",
+                "pais": "1"
+            },
+            "email": "antonio.poday@gmail.com",
+            "imagen": null,
+            "limite_credito": null,
+            "nombre_cliente": "Antonio",
+            "numero_cliente": "2323",
+            "razon_social": null,
+            "rfc": null,
+            "telefono": "1212",
+            "monedero_electronico": null
+        },
+        "productos": [
+        {
+            "cantidad": 1,
+            "cantidad_venta": 1,
+            "codigo_barras": "226216505720",
+            "concepto": "unidades",
+            "default": true,
+            "descuento": {
+                "porciento": 15,
+                "dinero_descontado": 5.4,
+                "precio_con_descuento": 30.6
+            },
+            "descuento_activo": true,
+                "granel_producto": {
+                "granel": false,
+                "valor": 0
+            },
+            "precio": 8.25,
+            "precio_a_vender": 8.25,
+            "precio_actual_producto": 8.25,
+            "precio_anterior":8.25,
+            "iva_total_producto": 1.03,
+            "ieps_total_producto": 0,
+            "impuestos_total_producto": 1.03,
+            "subtotal_total_producto": 7.22,
+            "total_total_producto": 8.25,
+            "unidad": "Caja",
+            "codigo_unidad": "XBX",
+            "unidad_principal": true,
+            "inventario_general": [
+                {
+                    "cantidad_existente": 120,
+                    "cantidad_existente_maxima": 10,
+                    "unidad_inventario": "Pz",
+                    "codigo_unidad": null,
+                    "unidad_maxima": "Caja"
+                }
+            ],
+            "id_producto":{
+                "_id": "61b7bf6e3454b727a0c2e357",
+                "datos_generales": {
+                    "clave_alterna": "COCA",
+                    "codigo_barras": "226216505720",
+                    "nombre_comercial": "COCACOLA",
+                    "tipo_producto": "OTROS",
+                    "nombre_generico": "COCACOLA",
+                    "descripcion": null,
+                    "id_categoria": null,
+                    "categoria": null,
+                    "subcategoria": null,
+                    "id_subcategoria": null,
+                    "id_departamento": null,
+                    "departamento": null,
+                    "id_marca": null,
+                    "marca": null,
+                    "receta_farmacia": false,
+                    "clave_producto_sat":{
+                        "Name": "Refrescos",
+                        "Value": "50202306"
+                    }
+                },
+                "imagenes":[{
+                    "url_imagen": ""
+                }],
+                "precios":{
+                    "ieps": 10,
+                    "ieps_activo": false,
+                    "inventario": {
+                        "inventario_maximo": 15,
+                        "inventario_minimo": 5,
+                        "unidad_de_inventario": "Caja",
+                        "codigo_unidad": "XBX"
+                    },
+                    "iva": 16,
+                    "iva_activo": true,
+                    "monedero": false,
+                    "monedero_electronico": 0,
+                    "precio_de_compra": {
+                        "precio_con_impuesto": 180,
+                        "precio_sin_impuesto": 155.1724,
+                        "iva": 24.8276,
+                        "ieps": 0
+                    },
+                    "precios_producto": [
+                        {
+                            "numero_precio": 1,
+                            "precio_neto": 8.25,
+                            "unidad_mayoreo": 0,
+                            "utilidad": 10
+                        },
+                        {
+                            "numero_precio": 2,
+                            "precio_neto": 0,
+                            "unidad_mayoreo": 0,
+                            "utilidad": 0
+                        },
+                        {
+                            "numero_precio": 3,
+                            "precio_neto": 0,
+                            "unidad_mayoreo": 0,
+                            "utilidad": 0
+                        },
+                        {
+                            "numero_precio": 4,
+                            "precio_neto": 0,
+                            "unidad_mayoreo": 0,
+                            "utilidad": 0
+                        },
+                        {
+                            "numero_precio": 5,
+                            "precio_neto": 0,
+                            "unidad_mayoreo": 0,
+                            "utilidad": 0
+                        },
+                        {
+                            "numero_precio": 6,
+                            "precio_neto": 0,
+                            "unidad_mayoreo": 0,
+                            "utilidad": 0
+                        }
+                        ],
+                    "unidad_de_compra": {
+                        "cantidad": 24,
+                        "precio_unitario_con_impuesto": 7.5,
+                        "precio_unitario_sin_impuesto": 6.4655,
+                        "unidad": "Caja",
+                        "codigo_unidad": "XBX"
+                    }
+                }
+            },
+            "medida": null,
+            "color": null
+        }]
     };
 
-    const crearCotizacion = () => {
-        if(!newCotizacion.fecha_vencimiento || !newCotizacion.tipo_venta){
-            setAlert({
-                message: `Por favor completa los datos necesarios`,
-                status: "error",
-                open: true,
-            });
-            return null;
-        }
-        
-        console.log(arregloCotizacion);
+    const crearCotizacion = async () => {
+        try {
+            if(!newCotizacion.fecha_vencimiento || !newCotizacion.tipo_venta){
+                setAlert({
+                    message: `Por favor completa los datos necesarios`,
+                    status: "error",
+                    open: true,
+                });
+                return null;
+            }else{
+                const registroCotizacion = await CrearCotizacion({
+                    variables: {
+                        input,
+                        empresa: "60c120b6a694891f58d32a1d",
+                        sucursal: "60c8e180340d5d223432a916",
+                        usuario: "60dde52c5cda9d5510c4b7d0",
+                        caja: "61a5037918594a4ecdc1c7bf"
+                    }
+                });
+                console.log(registroCotizacion);
+            }
 
+        } catch (error) {
+            console.log(error);
+            if(error.networkError.result){
+				console.log(error.networkError.result.errors);
+			  }else if(error.graphQLErrors){
+				console.log(error.graphQLErrors.message);
+			  }
+
+        }
     };
 
     function valuetext(e) {
         return `${e}`;
     };
+
+    console.log(datosVentas);
 
     const obtenerPorciento = (event, newValue) => {
         setValue(newValue);

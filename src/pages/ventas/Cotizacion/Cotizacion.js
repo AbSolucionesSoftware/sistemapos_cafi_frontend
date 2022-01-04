@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import useStyles from '../styles';
 import PropTypes from 'prop-types';
-import { AppBar, Box, Button, CircularProgress, Dialog,  DialogContent, Tab, Grid, Slide, Tabs, Typography } from '@material-ui/core'
+import { AppBar, Box, Button, CircularProgress, 
+		Dialog, Tab, Grid, Slide, Tabs, Typography 
+} from '@material-ui/core'
 import { FcCurrencyExchange } from 'react-icons/fc';
 import NuevaCotizacion from './NuevaCotizacion';
 import CloseIcon from '@material-ui/icons/Close';
