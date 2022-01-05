@@ -6,8 +6,7 @@ import ReportesCompras from './Compras/ReportesCompras';
 import ReportesVentas from './Ventas/ReportesVentas';
 import ReportesAlmacen from './Almacenes/ReportesAlmacen';
 import ReportesCortes from './Cortes/ReportesCortes';
-import ReportesTesoreria from './Tesoreria/ReportesTesoreria';
-
+import ReportesTesoreria from './Tesoreria/Reporte_Tesoreria';
 
 export default function Reportes() {
 

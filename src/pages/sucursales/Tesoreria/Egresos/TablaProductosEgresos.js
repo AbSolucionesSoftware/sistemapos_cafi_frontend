@@ -4,25 +4,19 @@ import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import DeleteIcon from '@material-ui/icons/Delete';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import { IconButton } from '@material-ui/core';
+import { formatoMexico } from '../../../../config/reuserFunctions';
 
 const columns = [
 	{ id: 'cantidad', label: 'Cantidad', minWidth: 100 },
-	{ id: 'costo', label: 'Costo', minWidth: 100 },
+	{ id: 'nombre', label: 'Nombre', minWidth: 100 },
+	{ id: 'precioU', label: 'Precio Unitario', minWidth: 100 },
     { id: 'total', label: 'Total', minWidth: 100 }
-];
-
-function createData(cantidad, costo, total, size) {
-	return { cantidad, costo, total, size };
-}
-
-const rows = [
-	createData('2', '33435', 3434 ),
-	createData('3', '3434', 3434),
-	createData('4', '3434', 3434),
 ];
 
 const useStyles  = makeStyles((theme) => ({
@@ -44,10 +38,10 @@ const useStyles  = makeStyles((theme) => ({
     },
 }));
 
-export default function TablaEgresos() {
+export default function TablaProductosEgresos({productos, borrarProducto}) {
 	const classes = useStyles();
 	const [ page, setPage ] = useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = useState(2);
+	const [ rowsPerPage, setRowsPerPage ] = useState(3);
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
@@ -69,28 +63,19 @@ export default function TablaEgresos() {
 									{column.label}
 								</TableCell>
 							))}
+							<TableCell align={'center'} style={{ minWidth: 100 }}>
+								Eliminar
+							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+						{productos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((producto, index) => {
 							return (
-								<TableRow hover role="checkbox" tabIndex={-1} key={index}>
-									{columns.map((column, index) => {
-										const value = row[column.id];
-										return (
-											<TableCell
-                                                key={index} 
-                                                align={column.align}
-                                            >
-												{column.format && typeof value === 'number' ? (
-													column.format(value)
-												) : (
-													value
-												)}
-											</TableCell>
-										);
-									})}
-								</TableRow>
+								<RowsProductos 
+									index={index}
+									producto={producto}
+									borrarProducto={borrarProducto}
+								/>
 							);
 						})}
 					</TableBody>
@@ -99,7 +84,7 @@ export default function TablaEgresos() {
 			<TablePagination
 				rowsPerPageOptions={[]}
 				component="div"
-				count={rows.length}
+				count={productos.length}
 				rowsPerPage={rowsPerPage}
 				page={page}
 				onChangePage={handleChangePage}
@@ -107,4 +92,33 @@ export default function TablaEgresos() {
 			/>
 		</Paper>
 	);
+};
+
+
+function RowsProductos ({index, producto, borrarProducto}) {
+	return(
+		<TableRow hover role="checkbox" tabIndex={-1}>
+			<TableCell>
+				{producto?.cantidad_productos}
+			</TableCell>
+			<TableCell>
+				{producto?.producto}
+			</TableCell>
+			<TableCell>
+				${formatoMexico(producto?.precio_unitario)}
+			</TableCell>
+			<TableCell>
+				${formatoMexico(producto?.total)}
+			</TableCell>
+			<TableCell align='center' >
+				<IconButton 
+					aria-label="delete" 
+					size='small'
+					onClick={() => borrarProducto(index)}
+				>
+					<DeleteIcon fontSize="medium" />
+				</IconButton>
+			</TableCell>
+		</TableRow>
+	)
 }

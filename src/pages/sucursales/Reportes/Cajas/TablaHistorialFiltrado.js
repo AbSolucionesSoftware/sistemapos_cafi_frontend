@@ -119,7 +119,7 @@ function RowsRender({datos}) {
 						<Grid lg={12} xs={12}>
 							<Box textAlign="center" p={2}>
 								<Typography variant="h6">
-									Información del movimiento
+									Información de movimiento
 								</Typography>
 							</Box>
 						</Grid>

@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Container, Grid } from '@material-ui/core';
 import CuentasEmpresaSucursales from './CuentasEmpresaSucursales/CuentasEmpresaSucursales';
 import Egresos from './Egresos/Egresos';
 import AbonosProveedores from './AbonoProveedores/AbonosProovedores';
 import AbonosClientes from './AbonoClientes/AbonosClientes';
+import SnackBarMessages from '../../../components/SnackBarMessages';
 // import Transferencias from './Transferencias/Transferencias';
-// import ReportesTesoreria from './Reporte_Tesoreria/Reporte_Tesoreria';
 
 export default function Tesoreria() {
 
+	const [alert, setAlert] = useState({ message: "", status: "", open: false });
+
 	return (
 		<Container>
+            <SnackBarMessages alert={alert} setAlert={setAlert} />
+
 			<Grid container spacing={2} justify="center">
 				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
@@ -19,7 +23,7 @@ export default function Tesoreria() {
 				</Grid>
 				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<Egresos />
+						<Egresos alert={alert} setAlert={setAlert} />
 					</Box>
 				</Grid>
                 <Grid item lg={2}>
@@ -35,11 +39,6 @@ export default function Tesoreria() {
                 {/* <Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Transferencias />
-					</Box>
-				</Grid> */}
-				{/* <Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<ReportesTesoreria />
 					</Box>
 				</Grid> */}
 			</Grid>

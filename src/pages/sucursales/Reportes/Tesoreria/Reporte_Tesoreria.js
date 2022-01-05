@@ -10,7 +10,6 @@ import Slide from '@material-ui/core/Slide';
 import { Box, ListItemIcon, Menu, MenuItem } from '@material-ui/core';
 import {FcSurvey } from 'react-icons/fc';
 
-import ListaDepositosRetiros from './ListaDepositosRetiros';
 import ListaEgresos from './ListaEgresos';
 import ListaTransferencias from './ListaTransferencias';
 
@@ -78,15 +77,6 @@ export default function ReportesTesoreria() {
 			>
 				<MenuItem onClick={ ()=>{
 						handleClickOpen()
-						setVentana('retiros y depositos')
-					}}>
-				<ListItemIcon>
-					<FcSurvey style={{fontSize: 35}} />
-				</ListItemIcon>
-					Historial Retiros y Depositos
-				</MenuItem>
-				<MenuItem onClick={ ()=>{
-						handleClickOpen()
 						setVentana('egresos')
 					}}>
 					<ListItemIcon>
@@ -126,7 +116,7 @@ export default function ReportesTesoreria() {
 						) : ventana === 'transferencias' ?(
 							<ListaTransferencias />			
 						) :(
-							<ListaDepositosRetiros />
+							null
 						)
 					}
 				</Box>
