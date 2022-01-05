@@ -1,30 +1,33 @@
 import React, { useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  DialogContent,
-} from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Slide from "@material-ui/core/Slide";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
-import Slide from "@material-ui/core/Slide";
 
 import DatosProducto from "./productos/DatosProducto";
-
 import { FcPlus } from "react-icons/fc";
 import { Box } from "@material-ui/core";
 import ListaCompras from "./TablaCompras";
-import { Grid } from "@material-ui/core";
 import {
   ComprasContext,
   ComprasProvider,
 } from "../../../../context/Compras/comprasContext";
-import { Done, Timer } from "@material-ui/icons";
-import { formatoMexico } from "../../../../config/reuserFunctions";
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from "@material-ui/pickers";
+import "date-fns";
+import local from "date-fns/locale/es";
+import DateFnsUtils from "@date-io/date-fns";
+import { CreditCard, Done, Timer } from "@material-ui/icons";
 import {
   initial_state_datosCompra,
   initial_state_datosProducto,
@@ -70,7 +73,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AbrirCompra({ compra, status, handleOpenDetalles, refetchEspera }) {
+export default function AbrirCompra({
+  compra,
+  status,
+  handleOpenDetalles,
+  refetchEspera,
+}) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -80,7 +88,7 @@ export default function AbrirCompra({ compra, status, handleOpenDetalles, refetc
 
   const handleClose = () => {
     setOpen(false);
-    if(status === "enEspera"){
+    if (status === "enEspera") {
       handleOpenDetalles();
       refetchEspera();
     }
@@ -131,7 +139,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     setDatosCompra,
     setProductoOriginal,
     setPreciosVenta,
-    issue
+    issue,
   } = useContext(ComprasContext);
   const [openDelete, setOpenDelete] = useState(false);
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -156,28 +164,29 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     }
   }, [open]);
 
-  const realizarCompraBD = async (compra_en_espera) => {
-    let productos = productosCompra
-    if(status === "enEspera"){
+  const realizarCompraBD = async (compra_en_espera, credito) => {
+    let datos = {...datosCompra}
+    let productos = productosCompra;
+    if (status === "enEspera") {
       productos = productosCompra.map((res) => {
-        delete res.conflicto
-        return res
-      })
-      delete datosCompra.empresa
-      delete datosCompra.sucursal
-      delete datosCompra.usuario
+        delete res.conflicto;
+        return res;
+      });
+      delete datos.empresa;
+      delete datos.sucursal;
+      delete datos.usuario;
     }
-    
+
     setLoading(true);
     try {
-      datosCompra.productos = productos;
-      /* console.log(datosCompra); */
+      datos.productos = productos;
+      /* console.log(datos); */
 
       if (compra_en_espera) {
-        datosCompra.en_espera = true;
+        datos.en_espera = true;
         const result = await crearCompraEnEspera({
           variables: {
-            input: datosCompra,
+            input: datos,
             empresa: sesion.empresa._id,
             sucursal: sesion.sucursal._id,
             usuario: sesion._id,
@@ -189,9 +198,13 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
           open: true,
         });
       } else {
+        if(credito){
+          datos.compra_credito = true;
+          datos.saldo_credito_pendiente = datos.total;
+        }
         const result = await crearCompra({
           variables: {
-            input: datosCompra,
+            input: datos,
             empresa: sesion.empresa._id,
             sucursal: sesion.sucursal._id,
             usuario: sesion._id,
@@ -269,35 +282,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
         <ListaCompras />
       </DialogContent>
 
-      <DialogActions>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          flexGrow={1}
-          mx={2}
-        >
-          <Box>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item>
-                <Typography style={{ fontSize: 18 }}>
-                  Subtotal: <b>${formatoMexico(datosCompra.subtotal)}</b>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography style={{ fontSize: 18 }}>
-                  Impuestos: <b>${formatoMexico(datosCompra.impuestos)}</b>
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Typography style={{ fontSize: 18 }}>
-                  <b>Total: ${formatoMexico(datosCompra.total)}</b>
-                </Typography>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-
+      <DialogActions style={{ justifyContent: "center" }}>
         <Button
           color="inherit"
           size="large"
@@ -319,7 +304,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
             Compra en espera
           </Button>
         )}
-
+        <CompraCredito realizarCompraBD={realizarCompraBD} />
         <Button
           autoFocus
           color="primary"
@@ -333,6 +318,78 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
         </Button>
       </DialogActions>
     </Dialog>
+  );
+};
+
+const CompraCredito = ({ realizarCompraBD }) => {
+  const [open, setOpen] = useState(false);
+  const { productosCompra, datosCompra, setDatosCompra, issue } = useContext(
+    ComprasContext
+  );
+
+  const handleClickOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  return (
+    <div>
+      <Button
+        autoFocus
+        color="primary"
+        size="large"
+        onClick={() => handleClickOpen()}
+        disabled={!productosCompra.length || issue}
+        startIcon={<CreditCard />}
+      >
+        Compra a Credito
+      </Button>
+      <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-labelledby="dialog-compra-credito"
+        aria-describedby="dialog-compra-credito-description"
+      >
+        <DialogTitle id="dialog-compra-credito">
+          {"Comprar a credito"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="dialog-compra-credito-description">
+            Selecciona una fecha de vencimiento del credito
+          </DialogContentText>
+          <MuiPickersUtilsProvider utils={DateFnsUtils} locale={local}>
+            <KeyboardDatePicker
+              fullWidth
+              inputVariant="outlined"
+              margin="dense"
+              placeholder="ex: DD/MM/AAAA"
+              format="dd/MM/yyyy"
+              value={datosCompra.fecha_vencimiento_credito}
+              onChange={(fecha_vencimiento_credito) => {
+                setDatosCompra({
+                  ...datosCompra,
+                  fecha_vencimiento_credito,
+                });
+              }}
+              KeyboardButtonProps={{
+                "aria-label": "change date",
+              }}
+            />
+          </MuiPickersUtilsProvider>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="inherit">
+            Cancelar
+          </Button>
+          <Button
+            onClick={() => realizarCompraBD(false, "credito")}
+            color="primary"
+          >
+            Realizar Compra
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 };
 
