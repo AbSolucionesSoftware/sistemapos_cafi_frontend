@@ -1,11 +1,11 @@
 import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types';
-
 import { AppBar, Box, Button, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core';
 import { FcDonate } from 'react-icons/fc';
-import CloseIcon from '@material-ui/icons/Close';
 
+import CloseIcon from '@material-ui/icons/Close';
 import FormRegistroEgresos from './FormRegistroEgresos';
+import moment from 'moment';
 
 
 function TabPanel(props) {
@@ -71,8 +71,8 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function VistaRegistroEgreso({handleClickOpen}) {
-    
+export default function VistaRegistroEgreso({handleClickOpen, alert, setAlert}) {
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const classes = useStyles();
     const [ value, setValue ] = useState(0);
 
@@ -94,19 +94,18 @@ export default function VistaRegistroEgreso({handleClickOpen}) {
 						aria-label="scrollable force tabs example"
 					>
 						<Tab
-							label="Egreso a Credito"
-							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/add.svg' alt="icono perfil" className={classes.iconSvg} />}
-							{...a11yProps(0)}
-						/>
-						<Tab
 							label="Egreso a Contado"
 							icon={<FcDonate className={classes.iconSize} />}
-							{...a11yProps(1)}
+							{...a11yProps(0)}
 						/>
 						<Grid container justify="flex-end">
-							<Box mt={4} display="flex" >
-								<Typography variant="h6">Usuario: Funalo</Typography> 
+							<Box mt={4}>
+								<Typography>Usuario: <b>{sesion.nombre}</b></Typography> 
+								<Box>
+									<b>{moment().format('D MMMM YYYY')}</b>
+								</Box>
 							</Box>
+							
 						</Grid>
 						<Grid>
 							<Box mt={3} ml={5} display="flex" justifyContent="flex-end">
@@ -116,13 +115,9 @@ export default function VistaRegistroEgreso({handleClickOpen}) {
 							</Box>
 						</Grid>
 					</Tabs>
-										
 				</AppBar>
 				<TabPanel value={value} index={0}>
-					<FormRegistroEgresos tipo='credito'/>
-				</TabPanel>
-				<TabPanel value={value} index={1}>
-					<FormRegistroEgresos tipo='contado' />
+					<FormRegistroEgresos handleClickOpen={handleClickOpen} setAlert={setAlert} tipo='CONTADO' />
 				</TabPanel>
 			</div>
         </Fragment>

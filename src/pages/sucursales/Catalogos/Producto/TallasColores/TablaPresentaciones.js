@@ -197,7 +197,7 @@ const RenderPresentacionesRows = ({
   withoutPrice,
   onlyPrice,
 }) => {
-  const { presentaciones, setPresentaciones, preciosP } = useContext(
+  const { presentaciones, setPresentaciones, preciosP, precios } = useContext(
     RegProductoContext
   );
   const [disabledInput, setDisabledInput] = useState(true);
@@ -265,12 +265,21 @@ const RenderPresentacionesRows = ({
         setPresentaciones(copy_presentaciones);
         return;
       }
+      let precio_neto = parseFloat(value);
+      let { iva, ieps } = precios;
+      let suma_impuestos = parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) + parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+      let precio_venta = parseFloat((precio_neto / (suma_impuestos+1)).toFixed(2));
+      let iva_precio = parseFloat((precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)).toFixed(2));
+      let ieps_precio = parseFloat((precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)).toFixed(2));
+      let PUCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
+      let utilidad = parseFloat((((precio_venta - PUCSI) / PUCSI) * 100).toFixed(2));
+      
       if (
         copy_element_presentacion.descuento_activo &&
         copy_element_presentacion.descuento_activo === true
       ) {
         let precio_con_descuento = Math.round(
-          (value * copy_element_presentacion.descuento.porciento) / 100
+          (precio_venta * copy_element_presentacion.descuento.porciento) / 100
         );
         copy_element_presentacion_descuento.precio_con_descuento = parseFloat(
           precio_con_descuento
@@ -280,6 +289,11 @@ const RenderPresentacionesRows = ({
       } else {
         copy_element_presentacion.precio = parseFloat(value);
       }
+      copy_element_presentacion.precio_unidad.precio_venta = precio_venta;
+      copy_element_presentacion.precio_unidad.precio_neto = precio_neto;
+      copy_element_presentacion.precio_unidad.utilidad = utilidad;
+      copy_element_presentacion.precio_unidad.iva_precio = iva_precio;
+      copy_element_presentacion.precio_unidad.ieps_precio = ieps_precio;
     } else {
       if (!value) {
         copy_element_presentacion.codigo_barras = "";

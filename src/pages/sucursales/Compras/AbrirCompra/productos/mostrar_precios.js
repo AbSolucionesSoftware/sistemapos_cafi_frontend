@@ -18,7 +18,7 @@ export default function MostrarPrecios() {
       cantida_suma += cantidad + nueva;
     });
     if (isNaN(cantida_suma)) cantidad_total = 0;
-    cantidad_total = cantida_suma;
+    cantidad_total = cantida_suma; 
 
     return (
       <Grid container spacing={2}>

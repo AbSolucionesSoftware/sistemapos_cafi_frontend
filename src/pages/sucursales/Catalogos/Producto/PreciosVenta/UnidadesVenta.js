@@ -20,17 +20,10 @@ import {
   Button,
 } from "@material-ui/core";
 import { Dialog, DialogActions, DialogTitle } from "@material-ui/core";
-import {
-  Add,
-  /* Close, */
-  DeleteOutline,
-  /* EditOutlined, */
-  LocalOffer,
-} from "@material-ui/icons";
+import { Add, DeleteOutline, LocalOffer } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core";
 import { FormControl } from "@material-ui/core";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
-/* import Done from "@material-ui/icons/Done"; */
 import { formatoMexico } from "../../../../../config/reuserFunctions";
 import { unitCodes, unitCodes_granel } from "../unidades";
 
@@ -52,30 +45,30 @@ export default function PreciosDeCompra() {
     setUnidadesVenta,
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
-    setDatosGenerales,
     update,
   } = useContext(RegProductoContext);
   const [unidades, setUnidades] = useState({
     unidad: precios.unidad_de_compra.unidad,
     codigo_unidad: precios.unidad_de_compra.codigo_unidad,
     unidad_principal: false,
+    cantidad: 1,
   });
-
-  /* const [actualizarUnidad, setActualizarUnidad] = useState(false); */
 
   const obtenerUnidadesVentas = (e, child) => {
     if (e.target.name === "cantidad") {
+      let cantidad = parseFloat(e.target.value);
       setUnidades({
         ...unidades,
-        [e.target.name]: parseFloat(e.target.value),
+        cantidad: cantidad,
+        precio: cantidad * unidadVentaXDefecto.precio,
       });
     } else if (e.target.name === "unidad") {
       const { codigo_unidad, unidad } = child.props.unidad;
-
       setUnidades({
         ...unidades,
         [e.target.name]: unidad,
         codigo_unidad,
+        precio: unidades.cantidad * unidadVentaXDefecto.precio,
       });
     } else {
       setUnidades({
@@ -107,18 +100,38 @@ export default function PreciosDeCompra() {
   const agregarNuevaUnidad = () => {
     if (!unidades.unidad || !unidades.precio || !unidades.cantidad) return;
     unidades.descuento_activo = null;
+    const { precio, cantidad } = unidades;
+    const { iva, ieps } = precios;
 
-    /* if (actualizarUnidad) {
-      setUnidadVentaXDefecto(unidades);
-      setDatosGenerales({
-        ...datos_generales,
-        codigo_barras: unidades.codigo_barras,
-      });
-      setActualizarUnidad(false);
-    } else { 
-      setUnidadesVenta([...unidadesVenta, unidades]);
-    }*/
-    setUnidadesVenta([...unidadesVenta, unidades]);
+    let suma_impuestos = parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) + parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+    let PVCI = parseFloat((precio / cantidad).toFixed(2));
+    let PVSI = parseFloat((PVCI / (suma_impuestos+1)).toFixed(2));
+
+    let PCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
+    let iva_precio = parseFloat((PVSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)));
+    let ieps_precio = parseFloat((PVSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)));
+    let utilidad = parseFloat((((PVSI - PCSI) / PCSI) * 100).toFixed(2));
+
+    let new_unidad = {
+      ...unidades,
+      precio_unidad: {
+        numero_precio: 1,
+        precio_venta: PVSI,
+        precio_neto: PVCI,
+        unidad_mayoreo: 0,
+        iva_precio,
+        ieps_precio,
+        utilidad,
+        unidad_maxima: false,
+      },
+    };
+
+    if (unidades.codigo_unidad === "XBX" || unidades.codigo_unidad === "KGM") {
+      new_unidad.precio_unidad.precio_general = precio;
+      new_unidad.precio_unidad.cantidad_unidad = cantidad;
+      new_unidad.precio_unidad.unidad_maxima = true;
+    }
+    setUnidadesVenta([...unidadesVenta, new_unidad]);
     setUnidades({
       unidad: "Pz",
       codigo_unidad: "H87",
@@ -146,35 +159,13 @@ export default function PreciosDeCompra() {
           default: element.default,
           descuento: element.descuento,
           descuento_activo: element.descuento_activo,
+          precio_unidad: element.precio_unidad,
         };
         nuevo_array.push(new_element);
       }
       setUnidadesVenta([...nuevo_array]);
     }
   };
-
-  /* const updateUnidadPrincipal = () => {
-    setActualizarUnidad(true);
-    setUnidades({
-      _id: unidadVentaXDefecto._id,
-      codigo_barras: unidadVentaXDefecto.codigo_barras,
-      unidad: unidadVentaXDefecto.unidad,
-      cantidad: unidadVentaXDefecto.cantidad,
-      precio: unidadVentaXDefecto.precio,
-      unidad_principal: unidadVentaXDefecto.unidad_principal,
-      default: true,
-      descuento: unidadVentaXDefecto.descuento,
-      descuento_activo: unidadVentaXDefecto.descuento_activo,
-    });
-  }; */
-
-  /* const cancelarUpdate = () => {
-    setActualizarUnidad(false);
-    setUnidades({
-      unidad: "Pz",
-      unidad_principal: false,
-    });
-  }; */
 
   const GenCodigoBarras = () => {
     const max = 999999999999;
@@ -228,6 +219,29 @@ export default function PreciosDeCompra() {
             </FormControl>
           </Box>
         </Box>
+        <Box width={180}>
+          <Typography>
+            Cantidad{" "}
+            <b>
+              {unidades.unidad === "Caja"
+                ? "(pz por caja)"
+                : unidades.unidad === "Costal"
+                ? "(kg por costal)"
+                : ""}
+            </b>
+          </Typography>
+          <TextField
+            disabled={unidades.codigo_unidad === "H87"}
+            type="number"
+            InputProps={{ inputProps: { min: 0 } }}
+            size="small"
+            name="cantidad"
+            variant="outlined"
+            onChange={obtenerUnidadesVentas}
+            value={unidades.cantidad ? unidades.cantidad : ""}
+            fullWidth
+          />
+        </Box>
         <Box width={130}>
           <Typography>
             Precio por <b>{unidades.unidad}</b>
@@ -257,28 +271,6 @@ export default function PreciosDeCompra() {
             />
           </Box>
         ) : null}
-        <Box width={180}>
-          <Typography>
-            Cantidad{" "}
-            <b>
-              {unidades.unidad === "Caja"
-                ? "(pz por caja)"
-                : unidades.unidad === "Costal"
-                ? "(kg por costal)"
-                : ""}
-            </b>
-          </Typography>
-          <TextField
-            type="number"
-            InputProps={{ inputProps: { min: 0 } }}
-            size="small"
-            name="cantidad"
-            variant="outlined"
-            onChange={obtenerUnidadesVentas}
-            value={unidades.cantidad ? unidades.cantidad : ""}
-            fullWidth
-          />
-        </Box>
         <Box width={240}>
           <FormControl
             variant="outlined"
@@ -470,6 +462,7 @@ const RenderUnidadesRows = ({ unidades, index }) => {
         default: element.default,
         descuento: element.descuento,
         descuento_activo: element.descuento_activo,
+        precio_unidad: element.precio_unidad,
       };
       nuevo_array.push(new_element);
     }
@@ -496,6 +489,7 @@ const RenderUnidadesRows = ({ unidades, index }) => {
         default: element.default,
         descuento: element.descuento,
         descuento_activo: i === index ? value : element.descuento_activo,
+        precio_unidad: element.precio_unidad,
       };
       nuevo_array.push(new_element);
     }
