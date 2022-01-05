@@ -74,8 +74,10 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     let utilidad = valor_base / 100;
 
     const precio_venta = PUCSI * utilidad + PUCSI;
-    let iva_precio = precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
-    let ieps_precio = precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+    let iva_precio =
+      precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
+    let ieps_precio =
+      precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
     let impuestos = iva_precio + ieps_precio;
     const precio_neto = precio_venta + impuestos;
 
@@ -142,10 +144,14 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     let { iva, ieps } = precios;
     let PUCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
 
-    let suma = parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) + parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
-    let precio_venta = parseFloat((precio_neto / (suma+1)).toFixed(2));
-    let iva_precio = precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
-    let ieps_precio = precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+    let suma =
+      parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
+      parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+    let precio_venta = parseFloat((precio_neto / (suma + 1)).toFixed(2));
+    let iva_precio =
+      precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
+    let ieps_precio =
+      precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
     let impuestos = iva_precio + ieps_precio;
     let utilidad_base = ((precio_neto - impuestos - PUCSI) / PUCSI) * 100;
 
@@ -220,13 +226,13 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
 
     //precio venta y neto con utilidad
     const precio_venta = parseFloat((PUCSI * utilidad + PUCSI).toFixed(2));
-    let iva_precio = precio_venta *parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
-    let ieps_precio = precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+    let iva_precio =
+      precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
+    let ieps_precio =
+      precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
     let impuestos = iva_precio + ieps_precio;
 
-    const precio_neto = parseFloat(
-      precio_venta + impuestos
-    ).toFixed(2);
+    const precio_neto = parseFloat((precio_venta + impuestos).toFixed(2));
 
     //meter los valores a preciosVenta
     preciosVenta.precio_venta = precio_venta;

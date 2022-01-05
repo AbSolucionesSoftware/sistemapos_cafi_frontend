@@ -68,56 +68,32 @@ const RenderPrecios = ({ data, tipo, index }) => {
 
   const calculosCompra = useCallback(() => {
     if (copy_preciosVenta.numero_precio === data.numero_precio) {
-      if (!precios.iva_activo && !precios.ieps_activo) {
-        copy_preciosVenta.precio_neto = precio_unitario_sin_impuesto;
-        setPrecioNeto(precio_unitario_sin_impuesto);
-      } else {
-        copy_preciosVenta.precio_neto = precio_unitario_con_impuesto;
-        setPrecioNeto(precio_unitario_con_impuesto);
-      }
+      copy_preciosVenta.precio_neto = precio_unitario_con_impuesto;
+      setPrecioNeto(precio_unitario_con_impuesto);
 
-      let verificacion_entero = false;
-      let new_utilidad = 0;
-      new_utilidad = data.utilidad;
+      let utilidad_base = data.utilidad ? data.utilidad : 0;
+      let utilidad = utilidad_base / 100;
 
-      if (parseFloat(data.utilidad) < 10)
-        new_utilidad = "0" + data.utilidad.toString().replace(/[.]/g, "");
-      if (data.utilidad > 99) {
-        new_utilidad = data.utilidad / 100;
-        verificacion_entero = true;
-      }
-
-      if (!verificacion_entero) {
-        new_utilidad = "." + new_utilidad.toString().replace(/[.]/g, "");
-      } else {
-        new_utilidad = parseFloat(new_utilidad);
-      }
-
-      const ganancia_utilidad_sin_impuestos =
-        precio_unitario_sin_impuesto +
-        precio_unitario_sin_impuesto * new_utilidad;
-
+      const precio_venta = parseFloat((precio_unitario_sin_impuesto * utilidad + precio_unitario_sin_impuesto).toFixed(2));
       copy_preciosVenta.precio_venta = parseFloat(
-        ganancia_utilidad_sin_impuestos.toFixed(6)
+        precio_venta.toFixed(2)
       );
-
       if (precios.iva_activo || precios.ieps_activo) {
-        const ganancia_utilidad_con_impuestos =
+        const precio_neto =
           precio_unitario_con_impuesto +
-          precio_unitario_con_impuesto * new_utilidad;
+          precio_unitario_con_impuesto * utilidad;
 
         copy_preciosVenta.precio_neto = parseFloat(
-          ganancia_utilidad_con_impuestos.toFixed(6)
+          precio_neto.toFixed(2)
         );
-
-        setPrecioNeto(parseFloat(ganancia_utilidad_con_impuestos.toFixed(6)));
+        setPrecioNeto(parseFloat(precio_neto.toFixed(2)));
       } else {
         copy_preciosVenta.precio_neto = parseFloat(
-          ganancia_utilidad_sin_impuestos.toFixed(6)
+          precio_venta.toFixed(2)
         );
-        setPrecioNeto(parseFloat(ganancia_utilidad_sin_impuestos.toFixed(6)));
+        setPrecioNeto(parseFloat(precio_venta.toFixed(2)));
       }
-      preciosVenta.slice(index, 1, copy_preciosVenta);
+      preciosVenta.splice(index, 1, copy_preciosVenta);
     }
   }, [datosProducto.costo, datosProducto.cantidad]);
 

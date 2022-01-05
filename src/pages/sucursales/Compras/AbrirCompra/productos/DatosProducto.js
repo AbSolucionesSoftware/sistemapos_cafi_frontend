@@ -124,8 +124,8 @@ export default function DatosProducto({ status }) {
     }
   );
 
-  /* console.log(error.networkError.result); */
-
+  /* console.log(error.networkError.result);
+ */
   const [COSTO] = useDebounce(costo, 500);
   const [CANTIDAD] = useDebounce(cantidad, 500);
 
@@ -156,7 +156,7 @@ export default function DatosProducto({ status }) {
     }
   }, [count]);
 
-  if (loading)
+  if (loading){
     return (
       <Box
         display="flex"
@@ -169,6 +169,7 @@ export default function DatosProducto({ status }) {
         <Typography variant="h5">Cargando</Typography>
       </Box>
     );
+  }
   if (error) {
     return <ErrorPage error={error} altura={200} />;
   }
@@ -344,8 +345,9 @@ export default function DatosProducto({ status }) {
       const unidadxdefecto = copy_unidadesVenta.filter(
         (unidades) => unidades.default === true
       );
-      if (unidadxdefecto.length > 0)
-        copy_unidadesVenta.splice(0, 1, unidadVentaXDefecto);
+      if (unidadxdefecto.length === 0) {
+        copy_unidadesVenta.splice(0, 0, unidadVentaXDefecto);
+      }
     }
 
     if (actualizar_Precios) {
@@ -618,8 +620,8 @@ export default function DatosProducto({ status }) {
                 <TextField {...params} variant="outlined" />
               )}
               onChange={(_, value) => obtenerSelectsProducto(value)}
-              getOptionSelected={(option) =>
-                option.datos_generales.codigo_barras
+              getOptionSelected={(option, value) =>
+                option._id === value._id
               }
               value={
                 datosProducto.producto.datos_generales
@@ -648,8 +650,8 @@ export default function DatosProducto({ status }) {
                 <TextField {...params} variant="outlined" />
               )}
               onChange={(_, value) => obtenerSelectsProducto(value)}
-              getOptionSelected={(option) =>
-                option.datos_generales.nombre_comercial
+              getOptionSelected={(option, value) =>
+                option._id === value._id
               }
               value={
                 datosProducto.producto.datos_generales
@@ -688,8 +690,8 @@ export default function DatosProducto({ status }) {
                 <TextField {...params} variant="outlined" />
               )}
               onChange={(_, value) => obtenerSelectsProducto(value)}
-              getOptionSelected={(option) =>
-                option.datos_generales.clave_alterna
+              getOptionSelected={(option, value) =>
+                option._id === value._id
               }
               value={
                 datosProducto.producto.datos_generales
