@@ -255,12 +255,13 @@ export default function VentasGenerales() {
       const { cantidad_venta, ...newP } =
         producto_encontrado.producto_found.producto;
       newP.cantidad_venta = parseInt(cantidad_venta) + 1;
-      // console.log(newP);
+      //console.log(newP);
       const verify_prising = await verifiPrising(newP);
       // console.log(verify_prising);
-      //Verificar si el precio fue encontrado
+      //Vrificar si el precio fue encontrado
       if (verify_prising.found) {
         console.log("Entro a aqui nuevo precio");
+
         calculoResta = await calculatePrices(
           newP,
           cantidad_venta,
@@ -339,7 +340,7 @@ export default function VentasGenerales() {
         });
         //Recargar la tabla de los productos
         setUpdateTablaVentas(!updateTablaVentas);
-      } else {
+      } else { 
         // console.log("Entro a aqui");
         // console.log(verify_prising);
         const productoPrecioFinal = newP.descuento_activo
@@ -402,7 +403,6 @@ export default function VentasGenerales() {
         setUpdateTablaVentas(!updateTablaVentas);
       }
     }
-
     productosBase = null;
   };
 
