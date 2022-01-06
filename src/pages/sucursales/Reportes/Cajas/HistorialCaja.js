@@ -190,9 +190,9 @@ export default function HistorialCaja(props) {
                                     <MenuItem value="">
                                         <em>Selecciona uno</em>
                                     </MenuItem>
-                                    {tipos.map((tipo) => {
+                                    {tipos.map((tipo, index) => {
                                         return(
-                                            <MenuItem value={tipo}>{tipo}</MenuItem>
+                                            <MenuItem key={index} value={tipo}>{tipo}</MenuItem>
                                         )
                                     })}
                                 </Select>

@@ -202,7 +202,7 @@ export default function CrearProducto({
     presentaciones_eliminadas,
     setPresentacionesEliminadas,
     setAlmacenExistente,
-    almacen_existente
+    almacen_existente,
   } = useContext(RegProductoContext);
 
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -246,21 +246,27 @@ export default function CrearProducto({
       return;
     }
     setValidacion(validate);
-    if(presentaciones.length > 0){
-      const pres = presentaciones.filter(res => res.color._id && res.medida._id)
+    if (presentaciones.length > 0) {
+      const pres = presentaciones.filter(
+        (res) => res.color._id && res.medida._id
+      );
 
-      if(pres.length !== presentaciones.length){
-        setValidacion({ error: true, message: 'Faltan medidas o colores a tus presentaciones', vista7: true });
+      if (pres.length !== presentaciones.length) {
+        setValidacion({
+          error: true,
+          message: "Faltan medidas o colores a tus presentaciones",
+          vista7: true,
+        });
         setAlert({
           message: `Faltan medidas o colores en tus presentaciones`,
           status: "error",
           open: true,
         });
-        return
+        return;
       }
     }
 
-    let copy_unidadesVenta = [ ...unidadesVenta];
+    let copy_unidadesVenta = [...unidadesVenta];
 
     if (copy_unidadesVenta.length === 0) {
       copy_unidadesVenta.push(unidadVentaXDefecto);
@@ -268,7 +274,9 @@ export default function CrearProducto({
       const unidadxdefecto = copy_unidadesVenta.filter(
         (unidades) => unidades.default === true
       );
-      if (unidadxdefecto.length > 0) copy_unidadesVenta.splice(0,1,unidadVentaXDefecto);
+      if (unidadxdefecto.length === 0) {
+        copy_unidadesVenta.splice(0, 0, unidadVentaXDefecto);
+      }
     }
 
     precios.precios_producto = preciosP;
@@ -344,8 +352,8 @@ export default function CrearProducto({
         console.log(error.networkError.result);
       } else if (error.graphQLErrors) {
         console.log(error.graphQLErrors);
-     
-    } }
+      }
+    }
   };
 
   /* ###### RESET STATES ###### */
@@ -392,9 +400,9 @@ export default function CrearProducto({
     setPresentaciones(
       producto.medidas_producto ? producto.medidas_producto : []
     );
-    if(producto.inventario_general.length > 0){
+    if (producto.inventario_general.length > 0) {
       setAlmacenExistente(true);
-    }else{
+    } else {
       setAlmacenExistente(false);
     }
   };
@@ -415,7 +423,7 @@ export default function CrearProducto({
       onClick={() => saveData()}
       size="large"
       startIcon={<DoneIcon />}
-      disabled={
+      /* disabled={
         !datos_generales.clave_alterna ||
         !datos_generales.tipo_producto ||
         !datos_generales.nombre_generico ||
@@ -425,7 +433,7 @@ export default function CrearProducto({
         !precios.unidad_de_compra.cantidad
           ? true
           : false
-      }
+      } */
     >
       Guardar
     </Button>
@@ -460,10 +468,7 @@ export default function CrearProducto({
 
       {!accion ? (
         fromCompra ? (
-          <IconButton
-            color="primary"
-            onClick={() => toggleModal()}
-          >
+          <IconButton color="primary" onClick={() => toggleModal()}>
             <Add />
           </IconButton>
         ) : (
@@ -479,10 +484,7 @@ export default function CrearProducto({
           </Button>
         )
       ) : (
-        <IconButton
-          color="default"
-          onClick={() => toggleModal(datos)}
-        >
+        <IconButton color="default" onClick={() => toggleModal(datos)}>
           <Edit />
         </IconButton>
       )}
@@ -493,10 +495,10 @@ export default function CrearProducto({
         scroll="paper"
         disableEscapeKeyDown
         onClose={(_, reason) => {
-          if (reason !== 'backdropClick') {
-            toggleModal()
+          if (reason !== "backdropClick") {
+            toggleModal();
           }
-      }}
+        }}
       >
         <AppBar position="static" color="default" elevation={0}>
           <Box display="flex" justifyContent="space-between">

@@ -41,6 +41,9 @@ export const OBTENER_DATOS_EMPRESA = gql`
         estado
         pais
       }
+      cuenta_empresa{
+        dinero_actual
+      }
       datosBancarios {
         cuenta
         sucursal

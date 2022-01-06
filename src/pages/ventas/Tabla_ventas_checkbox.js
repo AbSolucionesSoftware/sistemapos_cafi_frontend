@@ -225,7 +225,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   container: {
-    height: "55vh",
+    height: "100%",
     '& ::-webkit-scrollbar': {
       display: 'none'
     }
@@ -289,9 +289,11 @@ export default function EnhancedTable({
 
   const TwoClickInRowTableBuy = (e, producto) => {
     try {
+      console.log("llego");
       let timer;
       clearTimeout(timer);
       if (e.detail === 2) {
+
         handleClick(producto);
         // console.log(producto);
         setProductoCambioPrecio(producto);
@@ -310,7 +312,7 @@ export default function EnhancedTable({
     <div className={classes.root}>
       <Paper>
         <TableContainer className={classes.container}>
-          <div
+          {/* <div
             style={{
               display: 'flex', 
               width: '80%', 
@@ -337,7 +339,7 @@ export default function EnhancedTable({
                 }}
               />
             </div>
-          </div>
+          </div> */}
           <Table
             stickyHeader
             size="small"

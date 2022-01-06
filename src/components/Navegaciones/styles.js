@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 		height: '100%'
 	},
 	navigationTop:{
-		height: theme.spacing(9)
+		height: '100%'
 	},
 	iconSizeSuperior: {
 		fontSize: 30,

@@ -5,7 +5,7 @@ import AbrirTurno from '../ventas/AbrirCerrarTurno/AbrirTurno';
 import { Box, CircularProgress, Grid, Paper, Typography } from '@material-ui/core';
 import { VentasContext } from '../../context/Ventas/ventasContext';
 
-export default function Venta_index() {
+export default function VentaIndex() {
 
     const { turnoActivo, setTurnoActivo } = useContext(VentasContext);
     const [ varActive, setVarActive ] = useState(false);

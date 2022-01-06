@@ -5,10 +5,8 @@ import Dialog from '@material-ui/core/Dialog';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { Box, DialogActions, Paper } from '@material-ui/core';
-import DoneIcon from '@material-ui/icons/Done';
-
-import FormRetiroDeposito from  './FormRetiroDeposito'
+import { Box, DialogContent } from '@material-ui/core';
+import ListaCuentas from './ListaCuentas';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -42,7 +40,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function RetirosDepositos() {
+export default function CuentasEmpresaSucursales() {
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
 
@@ -55,37 +53,31 @@ export default function RetirosDepositos() {
 					<Box display="flex" justifyContent="center" alignItems="center">
                         <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/retiro-de-dinero.svg' alt="icono retiro" className={classes.icon} />
 					</Box>
-					Retiros y Depositos
+					Cuentas de Empresa
 				</Box>
 			</Button>
-			<Dialog open={open} TransitionComponent={Transition} maxWidth="xs">
+
+			<Dialog 
+				open={open} 
+				TransitionComponent={Transition} 
+				maxWidth="lg"
+				fullWidth
+			>
 				<Box m={1} display="flex" justifyContent="flex-end">
 					<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
 						<CloseIcon />
 					</Button>
 				</Box>
-				<Paper elevation={3} >
-					<Box p={2}>
-						<Typography variant="h6" className={classes.title}>
-                        	Nuevo Retiro o Deposito
+				<DialogContent>
+					<Box textAlign="center">
+						<Typography variant="h6">
+							Cuentas de empresa
 						</Typography>
 					</Box>
-					<FormRetiroDeposito />
-					<DialogActions>
-						<Box className={classes.buttons}>
-							<Button
-								variant="contained"	
-								color="primary"
-								onClick={handleClickOpen}
-								size="large"
-								startIcon={<DoneIcon />}
-								disableElevation
-							>
-								Guardar
-							</Button>
-						</Box>
-					</DialogActions>
-				</Paper>
+					<Box>
+						<ListaCuentas />
+					</Box>
+				</DialogContent>
 			</Dialog>
 		</div>
 	);
