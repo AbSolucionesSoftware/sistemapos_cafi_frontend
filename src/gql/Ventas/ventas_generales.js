@@ -54,6 +54,17 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
       unidad_principal
       codigo_barras
       codigo_unidad
+      precio_unidad{
+        numero_precio
+        precio_neto
+        precio_venta
+        iva_precio
+        ieps_precio
+        unidad_mayoreo
+        precio_general
+        cantidad_unidad
+        unidad_maxima
+      }
       descuento {
         porciento
         dinero_descontado
@@ -119,10 +130,13 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
           precios_producto {
             numero_precio
             precio_neto
+            iva_precio
+            ieps_precio
             unidad_mayoreo
-            precio_venta
             utilidad
-            
+            precio_general
+            cantidad_unidad
+            unidad_maxima
           }
           unidad_de_compra {
             cantidad
