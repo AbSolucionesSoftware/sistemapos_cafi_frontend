@@ -11,7 +11,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import DetallesClienteCuenta from './DetalleCuenta/DetallesClienteCuenta';
+import DetallesCuenta from './DetalleCuenta/DetallesCuenta';
 import LiquidarCuenta from './LiquidarCuenta';
 
 function createData(name, calories, fat, carbs, protein) {
@@ -105,7 +105,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaAbonosClientes() {
+export default function TablaAbonos() {
 	const classes = useStyles();
 	const [ selected, setSelected ] = useState([]);
 	const [ page, setPage ] = useState(0);
@@ -194,7 +194,7 @@ export default function TablaAbonosClientes() {
 										<TableCell align="right">{row.fat}</TableCell>
 										<TableCell align="right">{row.carbs}</TableCell>
 										<TableCell align="right">
-											<DetallesClienteCuenta />
+											<DetallesCuenta />
 										</TableCell>
 										<TableCell align="right">
 											<LiquidarCuenta />

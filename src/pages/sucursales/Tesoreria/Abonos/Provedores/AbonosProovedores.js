@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -7,10 +7,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { Box, Grid, TextField } from '@material-ui/core';
+import { Search } from '@material-ui/icons';
+import { Box, IconButton, InputBase, Paper } from '@material-ui/core';
 
-import TablaAbonosClientes from '../AbonoClientes/TablaAbonoClientes';
-import AbonoaRecibir from '../AbonoClientes/Abono_a_Recibir';
+import TablaAbonos from './Components/TablaAbonos';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -22,6 +22,10 @@ const useStyles = makeStyles((theme) => ({
 	},
     icon: {
 		width: 100
+	},
+	rootSearch: {
+		display: 'flex',
+		paddingLeft: theme.spacing(2)
 	}
 }));
 
@@ -31,9 +35,15 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function AbonosProveedores() {
 	const classes = useStyles();
-	const [ open, setOpen ] = React.useState(false);
+	const [ open, setOpen ] = useState(false);
+	const [values, setValues] = useState('')
 
 	const handleClickOpen = () => setOpen(!open);
+
+	const pressEnter = (e) => {
+		if (e.key === 'Enter') setValues(e.target.defaultValue);
+	};
+
 
 	return (
 		<div>
@@ -42,14 +52,14 @@ export default function AbonosProveedores() {
 					<Box display="flex" justifyContent="center" alignItems="center">
                         <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/salary.svg' alt="icono abono" className={classes.icon} />
 					</Box>
-					Abonos de proveedores
+					Abonos de provedores
 				</Box>
 			</Button>
 			<Dialog fullScreen open={open} onClose={handleClickOpen} TransitionComponent={Transition}>
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-                        	Abonos a Proveedores
+                        	Abonos a Provedores
 						</Typography>
                         <Box m={1}>
 							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
@@ -58,38 +68,24 @@ export default function AbonosProveedores() {
 						</Box>
 					</Toolbar>
 				</AppBar>
-				<Grid container>
-					<Box width="50%" p={2}>
-						<Typography>Busqueda por provedor o por cuenta</Typography>
-						<TextField
-							fullWidth
-							size="small"
-							/* error */
-							name="nombre_comercial"
-							id="form-producto-nombre-comercial"
-							variant="outlined"
-							/* value="" */
-							/* helperText="Incorrect entry." */
-							/* onChange={obtenerCampos} */
-						/>
+				<Box display='flex' p={2}>
+					<Box minWidth="70%">
+						<Paper elevation={2} className={classes.rootSearch}>
+							<InputBase
+								fullWidth
+								placeholder="Buscar compra o provedor..."
+								onChange={(e) => setValues(e.target.value)}
+								onKeyPress={pressEnter}
+								value={values}
+							/>
+							<IconButton onClick={() => setValues(values)}>
+								<Search />
+							</IconButton>
+						</Paper>
 					</Box>
-					<Box mt={5}>
-						<Button
-							size="large"
-							variant="contained" 
-							color="primary"
-						>
-							Buscar
-						</Button>
-					</Box>
-					<Grid item lg={5}>
-						<Box display="flex" justifyContent="center" mt={4}>
-							<AbonoaRecibir />
-						</Box>
-					</Grid>
-				</Grid>
+				</Box>
 				<Box p={2}>
-					<TablaAbonosClientes />
+					<TablaAbonos />
 				</Box>
 			</Dialog>
 		</div>
