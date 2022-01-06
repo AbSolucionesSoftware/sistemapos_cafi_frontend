@@ -43,6 +43,11 @@ export default function DescuentoProductos({datos, productosRefetch}) {
         setPreciosProductos,
     } = useContext(RegProductoContext);
 
+    let iva = datos.precios.iva;
+    let ieps = datos.precios.ieps;
+    // Precio compra sin impuestos y sin utilidad
+    let PCSI = datos.precios.unidad_de_compra.precio_unitario_sin_impuesto;
+
     const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
     const [ openDescuento, setOpenDescuento ] = useState(false);
     const [ cleanList, setCleanList ] = useState(false);
@@ -53,8 +58,6 @@ export default function DescuentoProductos({datos, productosRefetch}) {
     const [ value, setValue] =  useState(0);
 
     const classes = useStyles();
-
-    console.log(datos)
 
     const handleCloseDescuentos = () => {
         if (datos.medidas_producto.length > 0) {
@@ -95,39 +98,62 @@ export default function DescuentoProductos({datos, productosRefetch}) {
     const obtenerPorcientoSlide = (event, newValue) => {
         setValue(newValue);
         preciosDescuentos.splice(0, preciosDescuentos.length);
+        console.log(preciosProductos)
         for (let i = 0; i < preciosProductos.length; i++) {
-            var porcentaje  =  parseFloat((100 - newValue).toFixed(6));
-            var descuento = parseFloat((preciosProductos[i].precio * porcentaje / 100).toFixed(6));
-            var dineroDescontado = parseFloat((preciosProductos[i].precio - descuento).toFixed(6));
+            console.log(preciosProductos[i])
+            //Porcentaje para calculos de descuento
+            let porcentaje  =  parseFloat((100 - newValue).toFixed(2));
+            // Precio venta con descuento sin impuestos
+            let PVCDSI = parseFloat((preciosProductos[i].precio_unidad.precio_venta * porcentaje / 100).toFixed(2));
+            // Dinero descontado
+            let dineroDescontado = parseFloat((preciosProductos[i].precio_unidad.precio_venta - PVCDSI).toFixed(2));
+
+            let iva_precio = parseFloat((PVCDSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)));
+            let ieps_precio = parseFloat((PVCDSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)));
+            let utilidad = parseFloat((((PVCDSI - PCSI) / PCSI) * 100).toFixed(2));
+            let precio_neto = parseFloat((PVCDSI + iva_precio + ieps_precio).toFixed(2));
+
             arrayDescuento = {
-                "_id": preciosProductos[i]._id,
-                "descuento_activo": true,
-                "descuento":{
-                    "porciento": newValue,
-                    "dinero_descontado": dineroDescontado,
-                    "precio_con_descuento": descuento
+                _id: preciosProductos[i]._id,
+                descuento_activo: true,
+                descuento:{
+                    precio_neto: precio_neto,
+                    precio_venta: PVCDSI,
+                    iva_precio: iva_precio,
+                    ieps_precio: ieps_precio,
+                    utilidad: utilidad,
+                    porciento: newValue,
+                    dinero_descontado: dineroDescontado,
                 }
             };
-            setPrecioPrueba(descuento);
-            if (preciosProductos.length !== 1) {
-                preciosDescuentos.push(arrayDescuento);
-            }else{
-                setPreciosDescuentos([arrayDescuento]);
-            }
+
+            // setPrecioPrueba(precio_con_descuento);
+            // if (preciosProductos.length !== 1) {
+            //     preciosDescuentos.push(arrayDescuento);
+            // }else{
+            //     setPreciosDescuentos([arrayDescuento]);
+            // }
         }
     };
 
     const obtenerPrecioText = (e) => {
-        var valorText = parseFloat(e.target.value);
+        let valorText = parseFloat(e.target.value);
         if (preciosProductos.length === 1) {
             setPrecioPrueba(valorText);
-            var porcentaje  = parseFloat(((valorText / preciosProductos[0].precio) * 100).toFixed(6));
-            var descuento = parseFloat((100 - porcentaje).toFixed(6));
-            var dineroDescontado = parseFloat((preciosProductos[0].precio - valorText).toFixed(6));
+
+            let porcentaje  = parseFloat(((valorText / preciosProductos[0].precio) * 100).toFixed(6));
+            let descuento = parseFloat((100 - porcentaje).toFixed(6));
+            let dineroDescontado = parseFloat((preciosProductos[0].precio - valorText).toFixed(6));
+
             arrayDescuento = {
                 "_id": preciosProductos[0]._id,
                 "descuento_activo": true,
                 "descuento":{
+                    "precio_neto": 0,
+                    "precio_venta": 0,
+                    "iva_precio": 0,
+                    "ieps_precio": 0,
+                    "utilidad": 0,
                     "porciento": porcentaje,
                     "dinero_descontado": dineroDescontado,
                     "precio_con_descuento": valorText
