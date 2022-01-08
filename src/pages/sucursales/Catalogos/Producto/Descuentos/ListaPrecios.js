@@ -144,7 +144,7 @@ export default function TablaPreciosDescuentos(
 		}else{
 			setDatosPreciosProducto(datos.unidades_de_venta);
 		}
-	}
+	};
 
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {
@@ -320,12 +320,12 @@ function RowsRender({row, value, isItemSelected, setLoading, datos, labelId, set
 				/>
 			</TableCell>
 			<TableCell align="center">{row.cantidad}</TableCell>
-			<TableCell align="center">{row.cantidad > 1 ? "Cajas" : "Pieza"}</TableCell>
+			<TableCell align="center">{row?.unidad}</TableCell>
 			<TableCell align="center">{row.precio}</TableCell>
 			<TableCell align="center">
 				{
-					isItemSelected === true && selected.length > 1 ? <b style={{color: 'green'}}> ${parseFloat((row.precio * porcentaje / 100).toFixed(3))} </b>
-					: (row.descuento === null ? 0 : <b style={{color: 'green'}}> ${row.descuento.precio_con_descuento} </b> )
+					isItemSelected === true && selected.length > 1 ? <b style={{color: 'green'}}> ${parseFloat((row.precio * porcentaje / 100).toFixed(2))} </b>
+					: (row.descuento === null ? 0 : <b style={{color: 'green'}}> ${row.descuento.precio_neto} </b> )
 				}
 			</TableCell>
 			<TableCell align="center">

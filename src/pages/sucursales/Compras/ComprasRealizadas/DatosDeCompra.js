@@ -67,6 +67,15 @@ export default function DatosDeCompra({ compra }) {
         <Typography style={{ marginRight: 16 }}>
           <b>Total: ${compra.total}</b>
         </Typography>
+        {compra.compra_credito === true ? (
+          <Chip
+          label={
+            compra.credito_pagado === true ? 'Credito pagado' : `Saldo pendiente: $${formatoMexico(compra.saldo_credito_pendiente)}`
+          }
+          color={compra.credito_pagado === true ? "primary" : "secondary"}
+          variant="outlined"
+        />
+        ) : null}
       </Box>
       <Box mb={2} display="flex">
         <Grid container>

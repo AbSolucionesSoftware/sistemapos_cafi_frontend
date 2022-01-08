@@ -14,7 +14,7 @@ import CloseIcon from "@material-ui/icons/Close";
 
 import DatosProducto from "./productos/DatosProducto";
 import { FcPlus } from "react-icons/fc";
-import { Box } from "@material-ui/core";
+import { Box, CircularProgress } from "@material-ui/core";
 import ListaCompras from "./TablaCompras";
 import {
   ComprasContext,
@@ -164,7 +164,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     }
   }, [open]);
 
-  const realizarCompraBD = async (compra_en_espera, credito) => {
+  const realizarCompraBD = async (compra_en_espera, credito, handleClose, setLoadingCredito) => {
     let datos = {...datosCompra}
     let productos = productosCompra;
     if (status === "enEspera") {
@@ -178,9 +178,9 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     }
 
     setLoading(true);
+    if(credito) setLoadingCredito(true);
     try {
       datos.productos = productos;
-      /* console.log(datos); */
 
       if (compra_en_espera) {
         datos.en_espera = true;
@@ -218,6 +218,10 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
       }
       setLoading(false);
       limpiarCampos(); 
+      if(credito && handleClose){
+        handleClose();
+        setLoadingCredito(false);
+      }
     } catch (error) {
       setLoading(false);
       setAlert({
@@ -225,6 +229,10 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
         status: "error",
         open: true,
       });
+      if(credito && handleClose){
+        handleClose();
+        setLoadingCredito(false);
+      }
       console.log(error);
       if (error.networkError) {
         console.log(error.networkError.result);
@@ -323,6 +331,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
 
 const CompraCredito = ({ realizarCompraBD }) => {
   const [open, setOpen] = useState(false);
+  const [loading_credito, setLoadingCredito] = useState(false)
   const { productosCompra, datosCompra, setDatosCompra, issue } = useContext(
     ComprasContext
   );
@@ -378,12 +387,14 @@ const CompraCredito = ({ realizarCompraBD }) => {
           </MuiPickersUtilsProvider>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="inherit">
+          <Button onClick={handleClose} color="inherit" disabled={loading_credito}>
             Cancelar
           </Button>
           <Button
-            onClick={() => realizarCompraBD(false, "credito")}
+            onClick={() => realizarCompraBD(false, "credito", handleClose, setLoadingCredito)}
             color="primary"
+            startIcon={loading_credito ? <CircularProgress color="inherit" size={20} /> : <Done />}
+            disabled={loading_credito}
           >
             Realizar Compra
           </Button>
