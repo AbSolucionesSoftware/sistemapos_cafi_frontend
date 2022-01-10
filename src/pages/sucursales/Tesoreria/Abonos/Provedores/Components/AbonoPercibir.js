@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function AbonoaRecibir() {
+export default function AbonoaRecibir({cuenta}) {
     const classes = useStyles();
     
     const [open, setOpen] = useState(false);
@@ -41,13 +41,16 @@ export default function AbonoaRecibir() {
     return (
         <div>
             <Button
-                size="medium"
+                size="large"
                 variant="outlined" 
+                fullWidth
                 color="primary"
-                startIcon={<AddCircleOutlineIcon />}
+                startIcon={<AddCircleOutlineIcon style={{fontSize: 35}} />}
                 onClick={handleClick}
             >
-                Abonar
+                <Typography variant="h6">
+                    Abonar    
+                </Typography>
             </Button>
             <Dialog
                 open={open}
@@ -71,47 +74,38 @@ export default function AbonoaRecibir() {
                     
                 </DialogTitle>
                 <DialogContent>
-                   
-                    <Box width="100%" mt={1}>
-                        <Typography>
-                            <b>Nombre de Provedor:</b>
-                        </Typography>
-                        <Typography>
-                            SUTANO
-                        </Typography>
-                    </Box>
                     <Box width="100%" mt={2} display='flex'>
                         <Box flexGrow={1}>
-                            <Typography >
+                            <Typography variant='h6'>
                                 <b>Total cuenta</b>
                             </Typography>
                         </Box>
-                        <Typography >
-                            <b>${formatoMexico()}</b>
+                        <Typography style={{color: '#9B9B9B'}} variant='h6'>
+                            <b>${formatoMexico(cuenta.total)}</b>
                         </Typography>
                     </Box>
                     <Box width="100%" display='flex'>
                         <Box flexGrow={1}>
-                            <Typography >
+                            <Typography  variant='h6'>
                                 <b>Total abonado</b>
                             </Typography>
                         </Box>
-                        <Typography >
-                            <b>${formatoMexico()}</b>
+                        <Typography style={{color: 'green'}} variant='h6'>
+                            <b>${formatoMexico(cuenta.total - cuenta.saldo_credito_pendiente)}</b>
                         </Typography>
                     </Box>
                     <Box width="100%" display='flex'>
-                        <Box flexGrow={1}>
-                            <Typography >
+                        <Box flexGrow={1} >
+                            <Typography  variant='h6'>
                                 <b>Total restante</b>
                             </Typography>
                         </Box>
-                        <Typography >
-                            <b>${formatoMexico()}</b>
+                        <Typography  variant='h6'>
+                            <b>${formatoMexico(cuenta.saldo_credito_pendiente)}</b>
                         </Typography>
                     </Box>
                     <Box width="100%"  mt={2} >
-                        <Typography>Cantidad a abonar:</Typography>
+                        <Typography  variant='h6'>Cantidad a abonar:</Typography>
                         <TextField
                             fullWidth
                             className={classes.input}

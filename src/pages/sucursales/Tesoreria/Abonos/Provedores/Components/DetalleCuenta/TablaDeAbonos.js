@@ -6,7 +6,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 
 const columns = [
@@ -60,7 +59,8 @@ const rows = [
 
 const useStyles  = makeStyles((theme) => ({
 	root: {
-		width: '100%'
+		width: '100%',
+		height: '45vh'
 	},
 	container: {
 		maxHeight: '100%'
@@ -76,17 +76,6 @@ const useStyles  = makeStyles((theme) => ({
 
 export default function TablaAbonos() {
 	const classes = useStyles();
-	const [ page, setPage ] = useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = useState(5);
-
-	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
-
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(+event.target.value);
-		setPage(0);
-	};
 
 	return (
 		<Paper className={classes.root}>
@@ -102,7 +91,7 @@ export default function TablaAbonos() {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+						{rows.map((row) => {
 							return (
 								<TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
 									{columns.map((column) => {
@@ -126,16 +115,6 @@ export default function TablaAbonos() {
 					</TableBody>
 				</Table>
 			</TableContainer>
-			<TablePagination
-				rowsPerPageOptions={[ 10, 25, 100 ]}
-				component="div"
-				count={rows.length}
-				rowsPerPage={rowsPerPage}
-				page={page}
-				onChangePage={handleChangePage}
-				onChangeRowsPerPage={handleChangeRowsPerPage}
-			/>
-
 		</Paper>
 	);
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -6,14 +6,16 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-
+import {formatoMexico} from '../../../../../../config/reuserFunctions'
 import DetallesCuenta from './DetalleCuenta/DetallesCuenta';
 import LiquidarCuenta from './LiquidarCuenta';
+import moment from 'moment';
 
 import { Dialog, Slide, TableHead } from '@material-ui/core';
+import 'moment/locale/es';
 
 const columns = [
-	{ id: 'fecha', label: 'Fecha', minWidth: 100, align: 'center' },
+	{ id: 'fecha', label: 'Fecha Compra', minWidth: 100, align: 'center' },
 	{ id: 'provedor', label: 'Provedor', minWidth: 100, align: 'center' },
 	{ id: 'abonado', label: 'Abonado', minWidth: 100, align: 'center' },
     { id: 'restante', label: 'Restante', minWidth: 100, align: 'center' },
@@ -48,28 +50,31 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function TablaAbonos() {
+export default function TablaAbonos({comprasCredito}) {
 
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
-
-    const handleClick = () => {
+	const [cuentaElegida, setCuentaElegida] = useState([]);
+    
+	const handleClick = () => {
         setOpen(!open);
     }
 
-	const TwoClickInRowTableBuy = (e, producto) => {
+	const TwoClickInRowTableBuy = (e, cuenta) => {
 		try {
 			let timer;
 			clearTimeout(timer);
 			if (e.detail === 2) {
 				handleClick();
+				setCuentaElegida(cuenta);
 			}
 		} catch (error) {
 		  	console.log(error);
 		}
-	  };
+	};
 	
 	return (
+		<Fragment>
 		<div className={classes.root}>
 			<Paper className={classes.paper}>
 				<TableContainer>
@@ -93,17 +98,22 @@ export default function TablaAbonos() {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{/* {rows.map((row, index) => {
-								return ( */}
-									<RowsCuentas 
-										TwoClickInRowTableBuy={TwoClickInRowTableBuy}
-									/>
-								{/* );
-							})} */}
+							{comprasCredito?.map((row, index) => {
+								if(row.compra_credito === true){
+									return (
+										<RowsCuentas 
+											TwoClickInRowTableBuy={TwoClickInRowTableBuy}
+											cuenta={row}
+											key={index}
+										/>
+									);
+								};
+							})} 
 						</TableBody>
 					</Table>
 				</TableContainer>
 			</Paper>
+		</div>
 
 			<Dialog
 				fullScreen
@@ -112,32 +122,34 @@ export default function TablaAbonos() {
 				TransitionComponent={Transition}
 			>
 				<DetallesCuenta 
+					cuentaElegida={cuentaElegida}
 					handleClick={handleClick}
 				/>
 			</Dialog>
-		</div>
+		</Fragment>
 	);
 };
 
-function RowsCuentas ({
-	TwoClickInRowTableBuy
-}){
-	
+function RowsCuentas ({TwoClickInRowTableBuy, cuenta}){
+
+	console.log(cuenta);
+
 	return(
-		<TableRow
-			hover
-			// key={index}
-			tabIndex={-1}
-			onClick={(e) => TwoClickInRowTableBuy(e, 'producto')}
-		>
-			<TableCell align="center">a</TableCell>
-			<TableCell align="center">a</TableCell>
-			<TableCell align="center">a</TableCell>
-			<TableCell align="center">a</TableCell>
-			<TableCell align="center">a</TableCell>
-			<TableCell align="center">
-				<LiquidarCuenta />
-			</TableCell>
-		</TableRow>
+		<Fragment>
+			<TableRow
+				hover
+				tabIndex={-1}
+				onClick={(e) => TwoClickInRowTableBuy(e, cuenta)}
+			>
+				<TableCell align="center">{moment(cuenta.fecha_registro).format('D MMMM YYYY')}</TableCell>
+				<TableCell align="center">{cuenta.proveedor.id_proveedor.nombre_cliente}</TableCell>
+				<TableCell align="center">${formatoMexico(cuenta.total - cuenta.saldo_credito_pendiente)}</TableCell>
+				<TableCell align="center">${formatoMexico(cuenta.saldo_credito_pendiente)}</TableCell>
+				<TableCell align="center">${formatoMexico(cuenta.total)}</TableCell>
+				<TableCell align="center">
+					<LiquidarCuenta />
+				</TableCell>
+			</TableRow>
+		</Fragment>
 	);
 };

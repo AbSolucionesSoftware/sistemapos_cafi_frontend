@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -9,8 +9,11 @@ import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Search } from '@material-ui/icons';
 import { Box, IconButton, InputBase, Paper } from '@material-ui/core';
+import { OBTENER_COMPRAS_REALIZADAS } from "../../../../../gql/Compras/compras";
+
 
 import TablaAbonos from './Components/TablaAbonos';
+import { useQuery } from '@apollo/client';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -34,9 +37,29 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function AbonosProveedores() {
+	const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+
 	const classes = useStyles();
 	const [ open, setOpen ] = useState(false);
-	const [values, setValues] = useState('')
+	const [values, setValues] = useState('');
+
+	let comprasCredito = [];
+
+	const { loading, data, error, refetch } = useQuery(
+		OBTENER_COMPRAS_REALIZADAS,
+		{
+		  variables: {
+			empresa: sesion.empresa._id,
+			sucursal: sesion.sucursal._id,
+			fecha: ""
+		  },
+		  fetchPolicy: "network-only",
+		}
+	);
+
+	if(data){
+		comprasCredito = data.obtenerComprasRealizadas;
+	}; 
 
 	const handleClickOpen = () => setOpen(!open);
 
@@ -85,7 +108,7 @@ export default function AbonosProveedores() {
 					</Box>
 				</Box>
 				<Box p={2}>
-					<TablaAbonos />
+					<TablaAbonos comprasCredito={comprasCredito} />
 				</Box>
 			</Dialog>
 		</div>
