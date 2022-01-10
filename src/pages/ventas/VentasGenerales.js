@@ -74,12 +74,15 @@ export default function VentasGenerales() {
   let productosBase = null;
   console.log(data,loading, error);
   if (data) productosBase = data.obtenerUnProductoVentas;
+  console.log(productosBase);
 
   useEffect(() => {
     if(error){
       if(error.networkError){
+        console.log(error.networkError);
           setAlert({ message: `Error de servidor`, status: 'error', open: true });
         }else if(error.graphQLErrors){
+          console.log(error.graphQLErrors);
           setAlert({ message: `${error.graphQLErrors[0]?.message}`, status: 'error', open: true });
         }
     }else{
