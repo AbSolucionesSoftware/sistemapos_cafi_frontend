@@ -14,7 +14,7 @@ import CloseIcon from "@material-ui/icons/Close";
 
 import DatosProducto from "./productos/DatosProducto";
 import { FcPlus } from "react-icons/fc";
-import { Box, CircularProgress } from "@material-ui/core";
+import { Box, CircularProgress, } from "@material-ui/core";
 import ListaCompras from "./TablaCompras";
 import {
   ComprasContext,
@@ -43,6 +43,7 @@ import {
 import Close from "@material-ui/icons/Close";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 import BackdropComponent from "../../../../components/Layouts/BackDrop";
+import ConfirmarCompra from "./ConfirmarCompra";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -140,6 +141,8 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     setProductoOriginal,
     setPreciosVenta,
     issue,
+    descuentoCompra,
+    setDescuentoCompra,
   } = useContext(ComprasContext);
   const [openDelete, setOpenDelete] = useState(false);
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -155,6 +158,14 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     setDatosCompra(initial_state_datosCompra);
     setProductoOriginal(initial_state_productoOriginal);
     setPreciosVenta(initial_state_precios_venta);
+    setDescuentoCompra({
+      subtotal: 0,
+      total: 0,
+      descuento_aplicado: false,
+      porcentaje: 0,
+      cantidad_descontada: 0,
+      precio_con_descuento: 0,
+    })
   };
 
   useEffect(() => {
@@ -164,8 +175,13 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     }
   }, [open]);
 
-  const realizarCompraBD = async (compra_en_espera, credito, handleClose, setLoadingCredito) => {
-    let datos = {...datosCompra}
+  const realizarCompraBD = async (
+    compra_en_espera,
+    credito,
+    handleClose,
+    setLoadingModal
+  ) => {
+    let datos = { ...datosCompra };
     let productos = productosCompra;
     if (status === "enEspera") {
       productos = productosCompra.map((res) => {
@@ -178,7 +194,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     }
 
     setLoading(true);
-    if(credito) setLoadingCredito(true);
+    if (credito) setLoadingModal(true);
     try {
       datos.productos = productos;
 
@@ -198,10 +214,18 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
           open: true,
         });
       } else {
-        if(credito){
+        if (credito) {
           datos.compra_credito = true;
           datos.saldo_credito_pendiente = datos.total;
         }
+        if(descuentoCompra.descuento_aplicado){
+          const {descuento_aplicado, ...descuento} = descuentoCompra
+          datos.descuento_aplicado = descuentoCompra.descuento_aplicado;
+          datos.subtotal = descuentoCompra.subtotal;
+          datos.total = descuentoCompra.total;
+          datos.descuento = descuento;
+        }
+        console.log(datos);
         const result = await crearCompra({
           variables: {
             input: datos,
@@ -217,10 +241,10 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
         });
       }
       setLoading(false);
-      limpiarCampos(); 
-      if(credito && handleClose){
+      /* limpiarCampos(); */
+      if (handleClose) {
         handleClose();
-        setLoadingCredito(false);
+        setLoadingModal(false);
       }
     } catch (error) {
       setLoading(false);
@@ -229,9 +253,9 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
         status: "error",
         open: true,
       });
-      if(credito && handleClose){
+      if (handleClose) {
         handleClose();
-        setLoadingCredito(false);
+        setLoadingModal(false);
       }
       console.log(error);
       if (error.networkError) {
@@ -313,17 +337,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
           </Button>
         )}
         <CompraCredito realizarCompraBD={realizarCompraBD} />
-        <Button
-          autoFocus
-          color="primary"
-          variant="contained"
-          size="large"
-          onClick={() => realizarCompraBD(false)}
-          disabled={!productosCompra.length || issue}
-          startIcon={<Done />}
-        >
-          Realizar compra
-        </Button>
+        <ConfirmarCompra realizarCompraBD={realizarCompraBD} />
       </DialogActions>
     </Dialog>
   );
@@ -331,7 +345,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
 
 const CompraCredito = ({ realizarCompraBD }) => {
   const [open, setOpen] = useState(false);
-  const [loading_credito, setLoadingCredito] = useState(false)
+  const [loading_modal, setLoadingModal] = useState(false);
   const { productosCompra, datosCompra, setDatosCompra, issue } = useContext(
     ComprasContext
   );
@@ -387,14 +401,26 @@ const CompraCredito = ({ realizarCompraBD }) => {
           </MuiPickersUtilsProvider>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="inherit" disabled={loading_credito}>
+          <Button
+            onClick={handleClose}
+            color="inherit"
+            disabled={loading_modal}
+          >
             Cancelar
           </Button>
           <Button
-            onClick={() => realizarCompraBD(false, "credito", handleClose, setLoadingCredito)}
+            onClick={() =>
+              realizarCompraBD(false, "credito", handleClose, setLoadingModal)
+            }
             color="primary"
-            startIcon={loading_credito ? <CircularProgress color="inherit" size={20} /> : <Done />}
-            disabled={loading_credito}
+            startIcon={
+              loading_modal ? (
+                <CircularProgress color="inherit" size={20} />
+              ) : (
+                <Done />
+              )
+            }
+            disabled={loading_modal}
           >
             Realizar Compra
           </Button>
