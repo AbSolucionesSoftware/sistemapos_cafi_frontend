@@ -234,30 +234,31 @@ export default function ArticuloRapido() {
     
     try {
       const input = cleanTypenames(data);
-      const result = await crearProductoRapido({
-        variables: {
-          input
-        }
-      });
-      resetInitialStates();
-      refetch();
-      setAlert({
-        message: `¡Listo ${result.data.crearProductoRapido.message}!`,
-        status: "success",
-        open: true,
-      });
-      setCargando(false);
-      handleClickOpen();
+      console.log(input)
+      // const result = await crearProductoRapido({
+      //   variables: {
+      //     input
+      //   }
+      // });
+      // resetInitialStates();
+      // refetch();
+      // setAlert({
+      //   message: `¡Listo ${result.data.crearProductoRapido.message}!`,
+      //   status: "success",
+      //   open: true,
+      // });
+      // setCargando(false);
+      // handleClickOpen();
     } catch (error) {
-      resetInitialStates();
-      refetch();
-      setAlert({
-        message: `Error: ${error.message}`,
-        status: "error",
-        open: true,
-      });
-      setCargando(false);
-      handleClickOpen();
+      // resetInitialStates();
+      // refetch();
+      // setAlert({
+      //   message: `Error: ${error.message}`,
+      //   status: "error",
+      //   open: true,
+      // });
+      // setCargando(false);
+      // handleClickOpen();
     }
   };
 
@@ -301,7 +302,7 @@ export default function ArticuloRapido() {
     if (value === 1) {
       return saveButton;
     } else {
-      if (datos_generales.tipo_producto === 'OTROS') {
+      if (datos_generales.tipo_producto === 'OTROS' || !datos_generales.tipo_producto) {
         return saveButton;
       }else{
         return (
