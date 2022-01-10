@@ -63,6 +63,8 @@ export const initial_state_preciosP = [
     precio_neto: 0,
     unidad_mayoreo: 0,
     precio_venta: 0,
+    iva_precio: 0,
+    ieps_precio: 0,
   },
   {
     numero_precio: 2,
@@ -70,6 +72,8 @@ export const initial_state_preciosP = [
     precio_neto: 0,
     unidad_mayoreo: 0,
     precio_venta: 0,
+    iva_precio: 0,
+    ieps_precio: 0,
   },
   {
     numero_precio: 3,
@@ -77,6 +81,8 @@ export const initial_state_preciosP = [
     precio_neto: 0,
     unidad_mayoreo: 0,
     precio_venta: 0,
+    iva_precio: 0,
+    ieps_precio: 0,
   },
   {
     numero_precio: 4,
@@ -84,6 +90,8 @@ export const initial_state_preciosP = [
     precio_neto: 0,
     unidad_mayoreo: 0,
     precio_venta: 0,
+    iva_precio: 0,
+    ieps_precio: 0,
   },
   {
     numero_precio: 5,
@@ -91,6 +99,8 @@ export const initial_state_preciosP = [
     precio_neto: 0,
     unidad_mayoreo: 0,
     precio_venta: 0,
+    iva_precio: 0,
+    ieps_precio: 0,
   },
   {
     numero_precio: 6,
@@ -98,6 +108,8 @@ export const initial_state_preciosP = [
     precio_neto: 0,
     unidad_mayoreo: 0,
     precio_venta: 0,
+    iva_precio: 0,
+    ieps_precio: 0,
   },
 ];
 
@@ -229,7 +241,6 @@ export default function CrearProducto({
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
   /* ###### GUARDAR LA INFO EN LA BD ###### */
 
   const saveData = async () => {
@@ -382,6 +393,9 @@ export default function CrearProducto({
     /* const producto = cleanTypenames(product); */
     /* console.log(producto); */
     const { precios_producto, ...new_precios } = producto.precios;
+    let unidades_venta = producto.unidades_de_venta.filter(
+      (res) => !res.default
+    );
     let unidadxdefecto = producto.unidades_de_venta.filter(
       (res) => res.default
     );
@@ -394,7 +408,7 @@ export default function CrearProducto({
     );
     setImagenes(producto.imagenes);
     setPreciosPlazos(producto.precio_plazos);
-    setUnidadesVenta(producto.unidades_de_venta);
+    setUnidadesVenta(unidades_venta);
     setPreciosP(producto.precios.precios_producto);
     setUnidadVentaXDefecto(unidadxdefecto[0]);
     setPresentaciones(

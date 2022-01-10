@@ -18,6 +18,7 @@ import {
   DialogContent,
   DialogActions,
   Slide,
+  Chip,
 } from "@material-ui/core";
 import DatosDeCompra from "./DatosDeCompra";
 import {
@@ -47,6 +48,7 @@ export default function ListaProductos({ obtenerComprasRealizadas }) {
               <TableCell>Almacen</TableCell>
               <TableCell>Proveedor</TableCell>
               <TableCell>Fecha de compra</TableCell>
+              <TableCell>Compra a credito</TableCell>
               <TableCell>Subtotal</TableCell>
               <TableCell>Impuestos</TableCell>
               <TableCell>Total</TableCell>
@@ -69,6 +71,8 @@ const RenderRowsCompras = ({ compra }) => {
     almacen,
     proveedor,
     fecha_registro,
+    compra_credito,
+    credito_pagado,
     subtotal,
     impuestos,
     total,
@@ -79,6 +83,17 @@ const RenderRowsCompras = ({ compra }) => {
       <TableCell>{almacen.nombre_almacen}</TableCell>
       <TableCell>{proveedor.nombre_cliente}</TableCell>
       <TableCell>{formatoFecha(fecha_registro)}</TableCell>
+      <TableCell>
+        {compra_credito === true ? (
+          <Chip
+          label={
+            credito_pagado === true ? 'Credito: Pagado' : "Credito: Pendiente"
+          }
+          color={credito_pagado === true ? "primary" : "secondary"}
+          variant="outlined"
+        />
+        ) : null}
+      </TableCell>
       <TableCell>
         <b>${formatoMexico(subtotal)}</b>
       </TableCell>
