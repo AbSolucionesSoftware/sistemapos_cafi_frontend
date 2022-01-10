@@ -203,7 +203,6 @@ export default function ArticuloRapido() {
         !precios.precio_de_compra.precio_sin_impuesto ||
         !precios.unidad_de_compra.cantidad
       ){
-        console.log('entro aqui');
         return setValidacion(true);
       }
     }
@@ -234,31 +233,30 @@ export default function ArticuloRapido() {
     
     try {
       const input = cleanTypenames(data);
-      console.log(input)
-      // const result = await crearProductoRapido({
-      //   variables: {
-      //     input
-      //   }
-      // });
-      // resetInitialStates();
-      // refetch();
-      // setAlert({
-      //   message: `¡Listo ${result.data.crearProductoRapido.message}!`,
-      //   status: "success",
-      //   open: true,
-      // });
-      // setCargando(false);
-      // handleClickOpen();
+      const result = await crearProductoRapido({
+        variables: {
+          input
+        }
+      });
+      resetInitialStates();
+      refetch();
+      setAlert({
+        message: `¡Listo ${result.data.crearProductoRapido.message}!`,
+        status: "success",
+        open: true,
+      });
+      setCargando(false);
+      handleClickOpen();
     } catch (error) {
-      // resetInitialStates();
-      // refetch();
-      // setAlert({
-      //   message: `Error: ${error.message}`,
-      //   status: "error",
-      //   open: true,
-      // });
-      // setCargando(false);
-      // handleClickOpen();
+      resetInitialStates();
+      refetch();
+      setAlert({
+        message: `Error: ${error.message}`,
+        status: "error",
+        open: true,
+      });
+      setCargando(false);
+      handleClickOpen();
     }
   };
 
@@ -427,7 +425,13 @@ export default function ArticuloRapido() {
           </Backdrop>
           <div className={classes.root}>
             <TabPanel value={value} index={0}>
-              <RegistroInformacionRapido setAbrirTallaColor={setAbrirTallaColor} setCantidad={setCantidad} cantidad={cantidad} />
+              <RegistroInformacionRapido 
+                setAbrirTallaColor={setAbrirTallaColor} 
+                setCantidad={setCantidad} 
+                cantidad={cantidad} 
+                obtenerConsultasProducto={obtenerConsultasProducto}
+                refetch={refetch}
+              />
               <RegistroInfoAdidional />
             </TabPanel>
             <TabPanel value={value} index={1}>
