@@ -2,6 +2,7 @@ import React, { Fragment, useContext } from 'react';
 
 import { Box,  Button, Checkbox, Divider, FormControl, FormControlLabel, FormHelperText, InputAdornment, makeStyles, MenuItem, OutlinedInput, Select, TextField, Typography } from '@material-ui/core';
 import { RegProductoContext } from '../../../context/Catalogos/CtxRegProducto';
+import CatalogosProductosSAT from '../../sucursales/Catalogos/Producto/DatosGenerales/CatalogoProductosSAT';
 // import RegistroInfoAdidional from '../../sucursales/Catalogos/Producto/PreciosVenta/registrarInfoAdicional';
 
 const useStyles = makeStyles((theme) => ({
@@ -19,7 +20,13 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
-export default function RegistroInformacionRapido({ setAbrirTallaColor, setCantidad, cantidad }) {
+export default function RegistroInformacionRapido({ 
+	setAbrirTallaColor, 
+	setCantidad, 
+	cantidad,
+	obtenerConsultasProducto,
+	refetch,
+}) {
 	const { datos_generales, precios, setPrecios, setDatosGenerales, validacion } = useContext(RegProductoContext);
 	const { unidadVentaXDefecto, setUnidadVentaXDefecto, update } = useContext(RegProductoContext);
 
@@ -142,7 +149,45 @@ export default function RegistroInformacionRapido({ setAbrirTallaColor, setCanti
 							onChange={obtenerCampos}
 						/>
 					</Box>
+					
 					<Box width="100%">
+						<Typography>
+							<span className="obligatorio">* </span>Nombre comercial
+						</Typography>
+						<TextField
+							fullWidth
+							size="small"
+							error={validacion.error && !datos_generales.nombre_comercial}
+							name="nombre_comercial"
+							id="form-producto-nombre-comercial"
+							variant="outlined"
+							value={datos_generales.nombre_comercial ? datos_generales.nombre_comercial : ''}
+							helperText={validacion.message}
+							onChange={obtenerCampos}
+						/>
+					</Box>
+					<Box width="100%">
+						<CatalogosProductosSAT refetch={refetch} codigos={obtenerConsultasProducto.codigos} />
+					</Box>
+				</div>
+				<div className={classes.formInputFlex}>
+					<Box width="100%">
+						<Typography>
+							<span className="obligatorio">* </span>Nombre genérico
+						</Typography>
+						<TextField
+							fullWidth
+							size="small"
+							error={validacion.error && !datos_generales.nombre_generico}
+							name="nombre_generico"
+							id="form-producto-nombre-generico"
+							variant="outlined"
+							value={datos_generales.nombre_generico ? datos_generales.nombre_generico : ''}
+							helperText={validacion.message}
+							onChange={obtenerCampos}
+						/>
+					</Box>
+					<Box width="60%">
 						<Typography>
 							<span className="obligatorio">* </span>Tipo de producto
 						</Typography>
@@ -168,43 +213,9 @@ export default function RegistroInformacionRapido({ setAbrirTallaColor, setCanti
 							<FormHelperText>{validacion.message}</FormHelperText>
 						</FormControl>
 					</Box>
-					<Box width="100%">
-						<Typography>
-							<span className="obligatorio">* </span>Nombre comercial
-						</Typography>
-						<TextField
-							fullWidth
-							size="small"
-							error={validacion.error && !datos_generales.nombre_comercial}
-							name="nombre_comercial"
-							id="form-producto-nombre-comercial"
-							variant="outlined"
-							value={datos_generales.nombre_comercial ? datos_generales.nombre_comercial : ''}
-							helperText={validacion.message}
-							onChange={obtenerCampos}
-						/>
-					</Box>
-				</div>
-				<div className={classes.formInputFlex}>
-					<Box width="100%">
-						<Typography>
-							<span className="obligatorio">* </span>Nombre genérico
-						</Typography>
-						<TextField
-							fullWidth
-							size="small"
-							error={validacion.error && !datos_generales.nombre_generico}
-							name="nombre_generico"
-							id="form-producto-nombre-generico"
-							variant="outlined"
-							value={datos_generales.nombre_generico ? datos_generales.nombre_generico : ''}
-							helperText={validacion.message}
-							onChange={obtenerCampos}
-						/>
-					</Box>
 					{datos_generales.tipo_producto === "OTROS" ? (
 						<>
-							<Box width="100%">
+							<Box width="50%">
 								<Typography>
 									<span className="obligatorio">* </span>Cantidad
 								</Typography>
@@ -221,14 +232,14 @@ export default function RegistroInformacionRapido({ setAbrirTallaColor, setCanti
 									onChange={(e) => setCantidad(parseInt(e.target.value))}
 								/>
 							</Box>
-							<Box width="100%">
+							<Box width="80%">
 								<Typography>Granel</Typography>
 								<FormControlLabel
 									control={<Checkbox onChange={obtenerChecks} name="granel" />}
 									label="Vender a granel"
 								/>
 							</Box>
-							<Box width="100%">
+							<Box width="80%">
 								<Typography>Medicamento</Typography>
 								<FormControlLabel
 									control={
