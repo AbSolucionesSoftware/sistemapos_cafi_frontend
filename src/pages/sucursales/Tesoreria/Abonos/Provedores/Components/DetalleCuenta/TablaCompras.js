@@ -9,12 +9,11 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
 const columns = [
-	{ id: 'cantidad', label: '', minWidth: 80},
-	{ id: 'nombre', label: '', minWidth: 80},
-	{ id: 'precio', label: '', minWidth: 80},
-	{ id: 'total', label: '', minWidth: 80},
-	{ id: '', label: '', minWidth: 80},
-	{ id: '', label: '', minWidth: 80},
+	{ id: 'cantidad', label: 'Cantidad', minWidth: 80},
+	{ id: 'cantidadR', label: 'Cant. Regalo', minWidth: 80},
+	{ id: 'nombre', label: 'Producto', minWidth: 80},
+	{ id: 'precio', label: 'Precio', minWidth: 80},
+	{ id: 'total', label: 'Total', minWidth: 80},
 ];
 
 const useStyles  = makeStyles((theme) => ({
@@ -56,7 +55,11 @@ export default function TablaCompras({productos}) {
 						{productos?.map((producto) => {
 							return (
 								<TableRow hover role="checkbox" tabIndex={-1} >
-									<TableCell></TableCell>
+									<TableCell>{producto.cantidad}</TableCell>
+									<TableCell>{producto.cantidad_regalo}</TableCell>
+									<TableCell>{producto.producto.datos_generales.nombre_comercial}</TableCell>
+									<TableCell>{producto.costo}</TableCell>
+									<TableCell>{producto.total}</TableCell>
 								</TableRow>
 							);
 						})}

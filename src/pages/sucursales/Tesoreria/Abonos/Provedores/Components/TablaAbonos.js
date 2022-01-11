@@ -132,8 +132,6 @@ export default function TablaAbonos({comprasCredito}) {
 
 function RowsCuentas ({TwoClickInRowTableBuy, cuenta}){
 
-	console.log(cuenta);
-
 	return(
 		<Fragment>
 			<TableRow
@@ -147,7 +145,7 @@ function RowsCuentas ({TwoClickInRowTableBuy, cuenta}){
 				<TableCell align="center">${formatoMexico(cuenta.saldo_credito_pendiente)}</TableCell>
 				<TableCell align="center">${formatoMexico(cuenta.total)}</TableCell>
 				<TableCell align="center">
-					<LiquidarCuenta />
+					<LiquidarCuenta cuenta={cuenta} />
 				</TableCell>
 			</TableRow>
 		</Fragment>
