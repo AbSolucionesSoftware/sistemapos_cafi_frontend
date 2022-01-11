@@ -266,7 +266,7 @@ export default function ConfirmarCompra({ realizarCompraBD }) {
                 <Done />
               )
             }
-            disabled={loading_modal}
+            disabled={loading_modal || !datosCompra.forma_pago}
           >
             Realizar Compra
           </Button>

@@ -132,12 +132,6 @@ const RegistroComponent = () => {
 	fetchPolicy: "network-only",
   });
 
-  if (error.networkError) {
-    console.log(error.networkError.result);
-  } else if (error.graphQLErrors) {
-    console.log(error.graphQLErrors);
-  }
-
   if (loading)
     return (
       <Box

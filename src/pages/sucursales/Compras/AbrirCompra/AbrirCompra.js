@@ -219,13 +219,13 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
           datos.saldo_credito_pendiente = datos.total;
         }
         if(descuentoCompra.descuento_aplicado){
-          const {descuento_aplicado, ...descuento} = descuentoCompra
+          const {descuento_aplicado, subtotal, total, ...descuento} = descuentoCompra
           datos.descuento_aplicado = descuentoCompra.descuento_aplicado;
           datos.subtotal = descuentoCompra.subtotal;
           datos.total = descuentoCompra.total;
           datos.descuento = descuento;
         }
-        console.log(datos);
+        /* console.log(datos); */
         const result = await crearCompra({
           variables: {
             input: datos,
@@ -241,7 +241,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
         });
       }
       setLoading(false);
-      /* limpiarCampos(); */
+      limpiarCampos();
       if (handleClose) {
         handleClose();
         setLoadingModal(false);

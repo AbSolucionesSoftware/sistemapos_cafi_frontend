@@ -335,9 +335,17 @@ export const OBTENER_COMPRAS_ESPERA = gql`
             codigo_barras
             id_producto
             descuento {
+              cantidad_unidad
+              numero_precio
+              unidad_maxima
+              precio_general
+              precio_neto
+              precio_venta
+              iva_precio
+              ieps_precio
+              utilidad
               porciento
               dinero_descontado
-              precio_con_descuento
             }
             descuento_activo
             default
@@ -365,9 +373,17 @@ export const OBTENER_COMPRAS_ESPERA = gql`
               _id
             }
             descuento {
+              cantidad_unidad
+              numero_precio
+              unidad_maxima
+              precio_general
+              precio_neto
+              precio_venta
+              iva_precio
+              ieps_precio
+              utilidad
               porciento
               dinero_descontado
-              precio_con_descuento
             }
             descuento_activo
             existencia
@@ -516,9 +532,17 @@ export const OBTENER_CONSULTA_GENERAL_PRODUCTO = gql`
           empresa
           sucursal
           descuento {
+            cantidad_unidad
+            numero_precio
+            unidad_maxima
+            precio_general
+            precio_neto
+            precio_venta
+            iva_precio
+            ieps_precio
+            utilidad
             porciento
             dinero_descontado
-            precio_con_descuento
           }
           descuento_activo
           default
