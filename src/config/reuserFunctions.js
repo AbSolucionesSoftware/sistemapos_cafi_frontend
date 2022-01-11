@@ -224,7 +224,7 @@ export const verifiPrising = async (newP) => {
     if(amount < newP.id_producto.precios.precios_producto[1].unidad_mayoreo) 
       return finalPrising = {
         found: true,
-        pricing: newP.descuento_activo ? newP.descuento.precio_con_descuento : newP.id_producto.precios.precios_producto[0].precio_neto,
+        pricing: newP.descuento_activo ? newP.descuento.precio_neto : newP.id_producto.precios.precios_producto[0].precio_neto,
         number_pricing: newP.id_producto.precios.precios_producto[0].numero_precio
       }
 

@@ -79,15 +79,25 @@ export default function PreciosDeCompra() {
   };
 
   const obtenerPrecioUVentas = (value) => {
+    console.log("obtenreprecio");
     if (unidades.descuento_activo && unidades.descuento_activo === true) {
+      console.log("entra");
       //calcular nuevo precio entre %
-      let precio_con_descuento = Math.round(
-        value - value * parseFloat("." + unidades.descuento.porciento)
+      let precio_neto = Math.round(
+        value -
+          value *
+            parseFloat(
+              `0.${
+                unidades.descuento.porciento < 10
+                  ? `0${unidades.descuento.porciento}`
+                  : unidades.descuento.porciento
+              }`
+            )
       );
       setUnidades({
         ...unidades,
         precio: parseFloat(value),
-        descuento: { ...unidades.descuento, precio_con_descuento },
+        descuento: { ...unidades.descuento, precio_neto },
       });
     } else {
       setUnidades({
@@ -103,13 +113,19 @@ export default function PreciosDeCompra() {
     const { precio, cantidad } = unidades;
     const { iva, ieps } = precios;
 
-    let suma_impuestos = parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) + parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+    let suma_impuestos =
+      parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
+      parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
     let PVCI = parseFloat((precio / cantidad).toFixed(2));
-    let PVSI = parseFloat((PVCI / (suma_impuestos+1)).toFixed(2));
+    let PVSI = parseFloat((PVCI / (suma_impuestos + 1)).toFixed(2));
 
     let PCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
-    let iva_precio = parseFloat((PVSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)));
-    let ieps_precio = parseFloat((PVSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)));
+    let iva_precio = parseFloat(
+      PVSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)
+    );
+    let ieps_precio = parseFloat(
+      PVSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)
+    );
     let utilidad = parseFloat((((PVSI - PCSI) / PCSI) * 100).toFixed(2));
 
     let new_unidad = {
@@ -138,6 +154,13 @@ export default function PreciosDeCompra() {
       unidad_principal: false,
     });
   };
+
+  const descuentoUnidadXdefecto = (descuento_activo) => {
+    setUnidadVentaXDefecto({
+      ...unidadVentaXDefecto,
+      descuento_activo,
+    })
+  } 
 
   const checkUnidadDefault = (checked) => {
     setUnidadVentaXDefecto({
@@ -266,7 +289,7 @@ export default function PreciosDeCompra() {
               inputProps={{ readOnly: true }}
               size="small"
               variant="outlined"
-              value={unidades.descuento.precio_con_descuento}
+              value={unidades.descuento.precio_neto}
               fullWidth
             />
           </Box>
@@ -355,7 +378,7 @@ export default function PreciosDeCompra() {
                         $
                         {formatoMexico(
                           unidadVentaXDefecto.descuento_activo === true
-                            ? unidadVentaXDefecto.descuento.precio_con_descuento
+                            ? unidadVentaXDefecto.descuento.precio_neto
                             : unidadVentaXDefecto.precio
                         )}
                       </b>
@@ -374,10 +397,7 @@ export default function PreciosDeCompra() {
                             : false
                         }
                         onChange={(e) =>
-                          setUnidadVentaXDefecto({
-                            ...unidadVentaXDefecto,
-                            descuento_activo: e.target.checked,
-                          })
+                          descuentoUnidadXdefecto(e.target.checked)
                         }
                         inputProps={{ "aria-label": "check descuento" }}
                         color="primary"
@@ -513,7 +533,7 @@ const RenderUnidadesRows = ({ unidades, index }) => {
               $
               {formatoMexico(
                 unidades.descuento_activo === true
-                  ? unidades.descuento.precio_con_descuento
+                  ? unidades.descuento.precio_neto
                   : unidades.precio
               )}
             </b>
