@@ -25,7 +25,7 @@ export default function MostrarPrecios() {
         <Grid item>
           <Typography style={{ fontSize: 16 }}>Subtotal:</Typography>
           <Typography style={{ fontSize: 18 }}>
-            <b>${formatoMexico(datosProducto.subtotal * cantidad_total)}</b>
+            <b>${formatoMexico(datosProducto.subtotal_descuento * cantidad_total)}</b>
           </Typography>
         </Grid>
         <Grid item>
@@ -46,7 +46,7 @@ export default function MostrarPrecios() {
             <b>
               $
               {formatoMexico(
-                datosProducto.total_con_descuento * cantidad_total
+                datosProducto.total_descuento * cantidad_total
               )}
             </b>
           </Typography>
@@ -59,7 +59,7 @@ export default function MostrarPrecios() {
         <Grid item>
           <Typography style={{ fontSize: 16 }}>Subtotal:</Typography>
           <Typography style={{ fontSize: 18 }}>
-            <b>${formatoMexico(datosProducto.subtotal * datosProducto.cantidad)}</b>
+            <b>${formatoMexico(datosProducto.subtotal_descuento * datosProducto.cantidad)}</b>
           </Typography>
         </Grid>
         <Grid item>
@@ -80,7 +80,7 @@ export default function MostrarPrecios() {
             <b>
               $
               {formatoMexico(
-                datosProducto.total_con_descuento * datosProducto.cantidad
+                datosProducto.total_descuento * datosProducto.cantidad
               )}
             </b>
           </Typography>
