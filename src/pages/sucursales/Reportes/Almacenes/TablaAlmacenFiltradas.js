@@ -15,7 +15,7 @@ const columns = [
 	{ id: 'code', label: 'Total', minWidth: 100 },	
 	{ id: 'code', label: 'A. Origen', minWidth: 100 },	
 	{ id: 'code', label: 'A. Destino', minWidth: 100 },	
-	{ id: 'code', label: 'Fomas', minWidth: 100 },	
+	{ id: 'code', label: 'Formas', minWidth: 100 },	
 	{ id: 'code', label: 'M. de Pago', minWidth: 100 },	
 
 ];

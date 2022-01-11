@@ -192,6 +192,8 @@ export const OBTENER_PRODUCTOS_EMPRESA = gql`
           precio_venta
           unidad_mayoreo
           utilidad
+          ieps_precio
+          iva_precio
         }
         unidad_de_compra {
           cantidad
