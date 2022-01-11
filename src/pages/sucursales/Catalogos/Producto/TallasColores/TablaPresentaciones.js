@@ -31,7 +31,7 @@ import {
   LocalOffer,
   LocalOfferOutlined,
 } from "@material-ui/icons";
-import { fade } from "@material-ui/core/styles/colorManipulator";
+import { alpha } from "@material-ui/core/styles/colorManipulator";
 
 const compareFunction = (a, b) => {
   if (a.medida.talla && b.medida.talla) {
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tableRow: {
     "&.Mui-selected, &.Mui-selected:hover": {
-      backgroundColor: fade(theme.palette.primary.main, 0.1),
+      backgroundColor: alpha(theme.palette.primary.main, 0.1),
     },
   },
   visuallyHidden: {

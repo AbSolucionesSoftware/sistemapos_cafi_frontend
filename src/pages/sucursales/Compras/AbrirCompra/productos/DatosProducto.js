@@ -209,7 +209,8 @@ export default function DatosProducto({ status }) {
       subtotal: precio_sin_impuesto,
       impuestos: parseFloat(impuestos.toFixed(6)),
       total: precio_con_impuesto,
-      total_con_descuento: precio_con_impuesto,
+      subtotal_descuento: precio_sin_impuesto,
+      total_descuento: precio_con_impuesto,
     });
     setInitialStates(producto);
     setCosto(precio_con_impuesto);
@@ -265,48 +266,45 @@ export default function DatosProducto({ status }) {
     }
 
     const { iva, ieps, precio_de_compra } = datosProducto.producto.precios;
+    const iva_precio = precio_de_compra.iva;
+    const ieps_precio = precio_de_compra.ieps;
 
-    /* console.log(datosProducto.producto); */
+    let precio_neto = parseFloat(value);
+    let subtotal = 0;
+    let total = 0;
+    let cantidad_descontada = 0;
+    let impuesto_actual = iva_precio + ieps_precio;
 
-    let total = value;
-    let total_con_descuento;
-    let descuento_precio;
-
-    let precio_sin_impuesto =
-      total - (precio_de_compra.iva + precio_de_compra.ieps);
-    let nuevo_iva = iva;
-    let nuevo_ieps = ieps;
-    let impuestos = 0;
-
-    nuevo_iva =
+    let precio_sin_impuesto = precio_neto - impuesto_actual;
+    let nuevo_iva =
       parseFloat(precio_sin_impuesto) *
       parseFloat(iva < 10 ? ".0" + iva : "." + iva);
-    nuevo_ieps =
+    let nuevo_ieps =
       parseFloat(precio_sin_impuesto) *
       parseFloat(ieps < 10 ? ".0" + ieps : "." + ieps);
-
-    impuestos = nuevo_ieps + nuevo_iva;
+    let nuevo_impuesto = nuevo_ieps + nuevo_iva
 
     if (datosProducto.descuento_porcentaje > 0) {
-      descuento_precio = Math.round(
-        (total * datosProducto.descuento_porcentaje) / 100
+      cantidad_descontada = Math.round(
+        (precio_sin_impuesto * datosProducto.descuento_porcentaje) / 100
       );
-      total_con_descuento = total - descuento_precio;
+      subtotal = precio_sin_impuesto - cantidad_descontada;
+      total = subtotal + nuevo_impuesto;
 
       setDatosProducto({
         ...datosProducto,
-        costo: parseFloat(total),
-        descuento_precio: parseFloat(descuento_precio),
-        total_con_descuento: parseFloat(total_con_descuento),
-        subtotal: parseFloat(total) - impuestos,
+        costo: parseFloat(precio_neto),
+        descuento_precio: parseFloat(cantidad_descontada),
+        subtotal_descuento: parseFloat(subtotal),
+        total_descuento: parseFloat(total),
       });
       return;
     }
     setDatosProducto({
       ...datosProducto,
-      costo: parseFloat(total),
-      total_con_descuento: parseFloat(total),
-      subtotal: parseFloat(total) - impuestos,
+      costo: parseFloat(precio_neto),
+      subtotal_descuento: parseFloat(precio_sin_impuesto),
+      total_descuento: parseFloat(precio_sin_impuesto + nuevo_impuesto),
     });
   };
 
@@ -432,7 +430,8 @@ export default function DatosProducto({ status }) {
         copy_datosProducto.cantidad_total = cantidad_total_media;
       }
     }
-    copy_datosProducto.total = copy_datosProducto.total_con_descuento;
+    copy_datosProducto.subtotal = copy_datosProducto.subtotal_descuento;
+    copy_datosProducto.total = copy_datosProducto.total_descuento;
 
     if (isEditing.producto) {
       //se tiene que actualizar el producto en la fila y sumar el subtotal

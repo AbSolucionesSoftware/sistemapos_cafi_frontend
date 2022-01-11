@@ -6,6 +6,13 @@ export default function DescuentosInputs() {
   const { datosProducto, setDatosProducto, productoOriginal } = useContext(
     ComprasContext
   );
+  const {
+    precio_sin_impuesto,
+    precio_con_impuesto,
+    iva,
+    ieps,
+  } = productoOriginal.precios.precio_de_compra;
+  const impuestos = iva + ieps;
 
   const obtenerPorcentaje = (value) => {
     if (!value || parseFloat(value) === 0) {
@@ -13,19 +20,24 @@ export default function DescuentosInputs() {
         ...datosProducto,
         descuento_porcentaje: "",
         descuento_precio: "",
-        total_con_descuento:
-          productoOriginal.precios.precio_de_compra.precio_con_impuesto,
+        subtotal_descuento: precio_sin_impuesto,
+        total_descuento: precio_con_impuesto,
       });
       return;
     }
-    /* let porcentaje = 100 - value; */
-    let descuento_precio = Math.round((datosProducto.total * value) / 100);
-    let total = datosProducto.total - descuento_precio;
+    let porcentaje = parseFloat(value);
+    let cantidad_descontada = Math.round(
+      (datosProducto.subtotal * porcentaje) / 100
+    );
+    let subtotal = datosProducto.subtotal - cantidad_descontada;
+    let total = subtotal + impuestos;
+
     setDatosProducto({
       ...datosProducto,
-      descuento_porcentaje: parseFloat(value),
-      descuento_precio: parseFloat(descuento_precio),
-      total_con_descuento: parseFloat(total),
+      descuento_porcentaje: parseFloat(porcentaje),
+      descuento_precio: parseFloat(cantidad_descontada.toFixed(2)),
+      subtotal_descuento: parseFloat(subtotal.toFixed(2)),
+      total_descuento: parseFloat(total.toFixed(2)),
     });
   };
 
@@ -35,20 +47,27 @@ export default function DescuentosInputs() {
         ...datosProducto,
         descuento_porcentaje: "",
         descuento_precio: "",
-        total_con_descuento:
-          productoOriginal.precios.precio_de_compra.precio_con_impuesto,
+        subtotal_descuento: precio_sin_impuesto,
+        total_descuento: precio_con_impuesto,
       });
       return;
     }
-    let porcentaje = Math.round((value / datosProducto.total) * 100);
+    let cantidad_descontada = parseFloat(value);
+
+    let porcentaje = Math.round(
+      (cantidad_descontada / datosProducto.subtotal) * 100
+    );
     /* let descuento_porcentaje = 100 - porcentaje; */
-    let total = datosProducto.total - value;
+    /* let total = datosProducto.total - cantidad_descontada; */
+    let subtotal = datosProducto.subtotal - cantidad_descontada;
+    let total = subtotal + impuestos;
 
     setDatosProducto({
       ...datosProducto,
       descuento_porcentaje: parseFloat(porcentaje),
-      descuento_precio: parseFloat(value),
-      total_con_descuento: parseFloat(total),
+      descuento_precio: parseFloat(cantidad_descontada.toFixed(2)),
+      subtotal_descuento: parseFloat(subtotal.toFixed(2)),
+      total_descuento: parseFloat(total.toFixed(2)),
     });
   };
 
