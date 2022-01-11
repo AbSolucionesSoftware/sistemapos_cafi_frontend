@@ -72,6 +72,10 @@ export default function VentasGenerales() {
   const [consultaBase, setConsultaBase] = useState(false);
 
   let productosBase = null;
+  if(error){
+    console.log(data,loading, error.networkError);
+    console.log(data,loading, error.graphQLErrors);
+  }
   console.log(data,loading, error);
   if (data) productosBase = data.obtenerUnProductoVentas;
   console.log(productosBase);
@@ -79,10 +83,8 @@ export default function VentasGenerales() {
   useEffect(() => {
     if(error){
       if(error.networkError){
-        console.log(error.networkError);
           setAlert({ message: `Error de servidor`, status: 'error', open: true });
         }else if(error.graphQLErrors){
-          console.log(error.graphQLErrors);
           setAlert({ message: `${error.graphQLErrors[0]?.message}`, status: 'error', open: true });
         }
     }else{
@@ -96,7 +98,7 @@ export default function VentasGenerales() {
         }
       }
     }
-  }, [loading]);
+  }, [data]);
 
   useEffect(() => {
     setGranelBase({
