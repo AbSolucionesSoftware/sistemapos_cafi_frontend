@@ -70,6 +70,8 @@ export const OBTENER_COMPRAS_REALIZADAS = gql`
           numero_cliente
           clave_cliente
           nombre_cliente
+          telefono
+          email
         }
         numero_cliente
         clave_cliente

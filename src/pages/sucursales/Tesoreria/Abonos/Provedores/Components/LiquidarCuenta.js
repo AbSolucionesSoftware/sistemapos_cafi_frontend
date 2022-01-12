@@ -24,7 +24,9 @@ const useStyles = makeStyles((theme) => ({
 export default function LiquidarCuenta({cuenta}) {
 
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(0)
+    const [value, setValue] = useState(0);
+    const [cuentaTotalDescuento, setCuentaTotalDescuento] = useState(0);
+    const [dineroDescontado, setDineroDescontado] = useState(0);
 
     console.log(cuenta);
 
@@ -37,37 +39,22 @@ export default function LiquidarCuenta({cuenta}) {
     const obtenerPorcientoSlide = (event, newValue) => {
         setValue(newValue);
         let porcentaje  =  parseFloat((100 - newValue).toFixed(2));//Porcentaje para calculos de descuento
-        let cuenta_descuento = parseFloat((cuenta.saldo_credito_pendiente * porcentaje / 100).toFixed(2));
-        let dineroDescontado = parseFloat((cuenta.saldo_credito_pendiente - cuenta_descuento).toFixed(2));
-
+        let cuenta_con_descuento = parseFloat((cuenta.saldo_credito_pendiente * porcentaje / 100).toFixed(2));
+        let dineroDescontado = parseFloat((cuenta.saldo_credito_pendiente - cuenta_con_descuento).toFixed(2));
+        setCuentaTotalDescuento(cuenta_con_descuento);
+        setDineroDescontado(dineroDescontado);
     };
 
     const obtenerPrecioText = (e) => {
         let valorText = parseFloat(e.target.value);
-        // if (preciosProductos.length === 1) {
-        //     setPrecioPrueba(valorText);
-            
-        //     let suma_impuestos = parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) + parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
-        //     let PVSI = parseFloat((valorText / (suma_impuestos+1)).toFixed(2));
 
-        //     let cantidad_unidad = preciosProductos[0].precio_unidad.cantidad_unidad;
-        //     let dineroDescontado = 0;
-        //     let PVCDSI = 0; // Precio venta con descuento sin impuestos
-        //     let porcentaje  = parseFloat(((PVSI / preciosProductos[0].precio_unidad.precio_venta) * 100).toFixed(2));
-        //     let descuento = parseFloat((100 - porcentaje).toFixed(2));
+        let porcentaje  = parseFloat((((valorText * 100) / cuenta.saldo_credito_pendiente ).toFixed(2)));
+        let dineroDescontado = parseFloat((cuenta.saldo_credito_pendiente - valorText).toFixed(2));
 
-        //     PVCDSI = parseFloat((preciosProductos[0].precio_unidad.precio_venta * porcentaje / 100).toFixed(2));
-        //     dineroDescontado = parseFloat((preciosProductos[0].precio_unidad.precio_venta - PVCDSI).toFixed(2));
+        setCuentaTotalDescuento(valorText);
+        setDineroDescontado(dineroDescontado);
+        setValue(porcentaje);
 
-        //     let iva_precio = parseFloat((PVCDSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)));
-        //     let ieps_precio = parseFloat((PVCDSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)));
-        //     let utilidad = parseFloat((((PVCDSI - PCSI) / PCSI) * 100).toFixed(2));
-        //     let precio_neto = parseFloat((PVCDSI + iva_precio + ieps_precio).toFixed(2));
-        //     let precio_general = parseFloat((precio_neto * cantidad_unidad).toFixed(2));
-
-        //     setValue(descuento);
-        //     setPreciosDescuentos([arrayDescuento]);
-        // }
     };
     
     function valuetext(e) {
@@ -128,6 +115,8 @@ export default function LiquidarCuenta({cuenta}) {
                             size="small"
                             name="descuento"
                             variant="outlined"
+                            value={cuentaTotalDescuento ? cuentaTotalDescuento : ''}
+                            onChange={obtenerPrecioText}
                         />
                     </Box>
                     <Box display="flex" mt={2}>
@@ -135,7 +124,7 @@ export default function LiquidarCuenta({cuenta}) {
                             <Typography>Total cuenta: </Typography>
                         </Box>
                         <Box>
-                            <Typography>{formatoMexico()}</Typography>
+                            <Typography><b>${formatoMexico(cuenta.total)}</b></Typography>
                         </Box>
                     </Box>
                     <Box display="flex">
@@ -143,23 +132,31 @@ export default function LiquidarCuenta({cuenta}) {
                             <Typography>Saldo pendiente: </Typography>
                         </Box>
                         <Box >
-                            <Typography>{formatoMexico()}</Typography>
+                            <Typography><b>${formatoMexico(cuenta.saldo_credito_pendiente)}</b></Typography>
                         </Box>
                     </Box>
                     <Box display="flex">
                         <Box flexGrow={1}>
-                            <Typography>Descuento: </Typography>
+                            <Typography>Dinero Descontado: </Typography>
                         </Box>
                         <Box >
-                            <Typography>{formatoMexico()}</Typography>
+                            <Typography><b>${formatoMexico(dineroDescontado)}</b></Typography>
                         </Box>
                     </Box>
                     <Box display="flex">
                         <Box flexGrow={1}>
-                            <Typography>Total a pagar:</Typography>
+                            <Typography>Porciento Descontado: </Typography>
                         </Box>
                         <Box >
-                            <Typography>{formatoMexico()}</Typography>
+                            <Typography><b>{formatoMexico(value)}%</b></Typography>
+                        </Box>
+                    </Box>
+                    <Box display="flex">
+                        <Box flexGrow={1}>
+                            <Typography variant="h6" >Total a pagar:</Typography>
+                        </Box>
+                        <Box >
+                            <Typography variant="h6" ><b style={{color: 'green'}}>${formatoMexico(cuentaTotalDescuento)}</b></Typography>
                         </Box>
                     </Box>
                 </DialogContent>

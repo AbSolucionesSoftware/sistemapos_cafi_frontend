@@ -57,6 +57,9 @@ export default function AbonosProveedores() {
 		}
 	);
 
+	console.log(data);
+	console.log(error)
+
 	if(data){
 		comprasCredito = data.obtenerComprasRealizadas;
 	}; 
