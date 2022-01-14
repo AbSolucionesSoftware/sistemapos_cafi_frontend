@@ -4,7 +4,6 @@ import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
 import AppBar from "@material-ui/core/AppBar";
@@ -14,20 +13,14 @@ import CloseIcon from "@material-ui/icons/Close";
 
 import DatosProducto from "./productos/DatosProducto";
 import { FcPlus } from "react-icons/fc";
-import { Box, CircularProgress, } from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import ListaCompras from "./TablaCompras";
 import {
   ComprasContext,
   ComprasProvider,
 } from "../../../../context/Compras/comprasContext";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from "@material-ui/pickers";
 import "date-fns";
-import local from "date-fns/locale/es";
-import DateFnsUtils from "@date-io/date-fns";
-import { CreditCard, Done, Timer } from "@material-ui/icons";
+import { Done, Timer } from "@material-ui/icons";
 import {
   initial_state_datosCompra,
   initial_state_datosProducto,
@@ -44,6 +37,8 @@ import Close from "@material-ui/icons/Close";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 import BackdropComponent from "../../../../components/Layouts/BackDrop";
 import ConfirmarCompra from "./ConfirmarCompra";
+import CompraCredito from "./CompraCredito";
+import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -55,18 +50,6 @@ const useStyles = makeStyles((theme) => ({
   },
   icon: {
     fontSize: 100,
-  },
-  formInputFlex: {
-    display: "flex",
-    "& > *": {
-      margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
-    },
-    paddingTop: 3,
-    alignItems: "center",
-    justifyItems: "center",
-  },
-  formInput: {
-    margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
   },
 }));
 
@@ -165,7 +148,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
       porcentaje: 0,
       cantidad_descontada: 0,
       precio_con_descuento: 0,
-    })
+    });
   };
 
   useEffect(() => {
@@ -218,8 +201,13 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
           datos.compra_credito = true;
           datos.saldo_credito_pendiente = datos.total;
         }
-        if(descuentoCompra.descuento_aplicado){
-          const {descuento_aplicado, subtotal, total, ...descuento} = descuentoCompra
+        if (descuentoCompra.descuento_aplicado) {
+          const {
+            descuento_aplicado,
+            subtotal,
+            total,
+            ...descuento
+          } = descuentoCompra;
           datos.descuento_aplicado = descuentoCompra.descuento_aplicado;
           datos.subtotal = descuentoCompra.subtotal;
           datos.total = descuentoCompra.total;
@@ -241,7 +229,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
         });
       }
       setLoading(false);
-      limpiarCampos();
+      /* limpiarCampos(); */
       if (handleClose) {
         handleClose();
         setLoadingModal(false);
@@ -340,93 +328,6 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
         <ConfirmarCompra realizarCompraBD={realizarCompraBD} />
       </DialogActions>
     </Dialog>
-  );
-};
-
-const CompraCredito = ({ realizarCompraBD }) => {
-  const [open, setOpen] = useState(false);
-  const [loading_modal, setLoadingModal] = useState(false);
-  const { productosCompra, datosCompra, setDatosCompra, issue } = useContext(
-    ComprasContext
-  );
-
-  const handleClickOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  return (
-    <div>
-      <Button
-        autoFocus
-        color="primary"
-        size="large"
-        onClick={() => handleClickOpen()}
-        disabled={!productosCompra.length || issue}
-        startIcon={<CreditCard />}
-      >
-        Compra a Credito
-      </Button>
-      <Dialog
-        open={open}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={handleClose}
-        aria-labelledby="dialog-compra-credito"
-        aria-describedby="dialog-compra-credito-description"
-      >
-        <DialogTitle id="dialog-compra-credito">
-          {"Comprar a credito"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="dialog-compra-credito-description">
-            Selecciona una fecha de vencimiento del credito
-          </DialogContentText>
-          <MuiPickersUtilsProvider utils={DateFnsUtils} locale={local}>
-            <KeyboardDatePicker
-              fullWidth
-              inputVariant="outlined"
-              margin="dense"
-              placeholder="ex: DD/MM/AAAA"
-              format="dd/MM/yyyy"
-              value={datosCompra.fecha_vencimiento_credito}
-              onChange={(fecha_vencimiento_credito) => {
-                setDatosCompra({
-                  ...datosCompra,
-                  fecha_vencimiento_credito,
-                });
-              }}
-              KeyboardButtonProps={{
-                "aria-label": "change date",
-              }}
-            />
-          </MuiPickersUtilsProvider>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleClose}
-            color="inherit"
-            disabled={loading_modal}
-          >
-            Cancelar
-          </Button>
-          <Button
-            onClick={() =>
-              realizarCompraBD(false, "credito", handleClose, setLoadingModal)
-            }
-            color="primary"
-            startIcon={
-              loading_modal ? (
-                <CircularProgress color="inherit" size={20} />
-              ) : (
-                <Done />
-              )
-            }
-            disabled={loading_modal}
-          >
-            Realizar Compra
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
   );
 };
 

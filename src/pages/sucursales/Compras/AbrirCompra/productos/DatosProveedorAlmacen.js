@@ -12,26 +12,25 @@ import { AlmacenProvider } from "../../../../../context/Almacenes/crearAlmacen";
 import { ComprasContext } from "../../../../../context/Compras/comprasContext";
 import RegistroProvedor from "../../../Catalogos/Cliente/CrearCliente";
 import RegistroAlmacen from "../../../Almacenes/RegistroAlmacen/ContainerRegistroAlmacen";
-
-import "date-fns";
-import local from "date-fns/locale/es";
-import DateFnsUtils from "@date-io/date-fns";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from "@material-ui/pickers";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
 
 import { useQuery } from "@apollo/client";
 import { OBTENER_CONSULTA_GENERAL_PRODUCTO } from "../../../../../gql/Compras/compras";
 import { ErrorOutline } from "@material-ui/icons";
 import { initial_state_datosProducto } from "../initial_states";
-import { initial_state_almacen_inicial, initial_state_datos_generales, initial_state_precios, initial_state_preciosP, initial_state_preciosPlazos, initial_state_unidadVentaXDefecto } from "../../../../../context/Catalogos/initialStatesProducto";
+import {
+  initial_state_almacen_inicial,
+  initial_state_datos_generales,
+  initial_state_precios,
+  initial_state_preciosP,
+  initial_state_preciosPlazos,
+  initial_state_unidadVentaXDefecto,
+} from "../../../../../context/Catalogos/initialStatesProducto";
 
 export default function DatosProveedorAlmacen({
   refetchProductos,
   getProductos,
-  status
+  status,
 }) {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const {
@@ -102,7 +101,8 @@ export default function DatosProveedorAlmacen({
       getProductos({
         variables: {
           almacen: value._id,
-          empresa: sesion.empresa._id, sucursal: sesion.sucursal._id
+          empresa: sesion.empresa._id,
+          sucursal: sesion.sucursal._id,
         },
       });
     }
@@ -243,25 +243,20 @@ export default function DatosProveedorAlmacen({
         </Grid>
         <Grid item xs={12} md={4}>
           <Box display="flex" alignItems="center">
-            <MuiPickersUtilsProvider utils={DateFnsUtils} locale={local}>
-              <KeyboardDatePicker
-                inputVariant="outlined"
-                margin="dense"
-                id="date-picker-dialog"
-                placeholder="ex: DD/MM/AAAA"
-                format="dd/MM/yyyy"
-                value={datosCompra.fecha_registro}
-                onChange={(date) => {
-                  setDatosCompra({
-                    ...datosCompra,
-                    fecha_registro: date,
-                  });
-                }}
-                KeyboardButtonProps={{
-                  "aria-label": "change date",
-                }}
-              />
-            </MuiPickersUtilsProvider>
+            <TextField
+              fullWidth
+              size="small"
+              variant="outlined"
+              type="date"
+              onChange={(e) => {
+                console.log(e.target.value);
+                setDatosCompra({
+                  ...datosCompra,
+                  fecha_registro: e.target.value,
+                });
+              }}
+              value={datosCompra.fecha_registro}
+            />
           </Box>
         </Grid>
       </Grid>

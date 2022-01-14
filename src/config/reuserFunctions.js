@@ -35,6 +35,20 @@ export const formatoFecha = (fecha) => {
   }
 };
 
+export const formatoFechaCorta = (fecha) => {
+  if (!fecha) {
+    return null;
+  } else {
+    var newdate = new Date(fecha);
+    return newdate.toLocaleDateString("es-MX", {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+};
+
 export const formatoMexico = (number) => {
   if (!number) {
     return null;
