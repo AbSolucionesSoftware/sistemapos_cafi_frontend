@@ -88,47 +88,9 @@ export default function TablaComprasFiltradas({ data }) {
                           : 0
                       }`}
                     </TableCell>
-                    <TableCell>{formatoMexico(data.subtotal)}</TableCell>
-                    <TableCell>{formatoMexico(data.impuestos)}</TableCell>
-                    <TableCell>{formatoMexico(data.total)}</TableCell>
-                  </TableRow>
-                );
-              })}
-              {data.map((data, index) => {
-                const result = formaPago.filter(
-                  (res) => res.Value === data.forma_pago
-                );
-                let forma_pago = result[0];
-
-                return (
-                  <TableRow key={index} role="checkbox" tabIndex={-1}>
-                    <TableCell>
-                      {data.producto.datos_generales.nombre_comercial}
-                    </TableCell>
-                    <TableCell>
-                      {formatoFechaCorta(data.fecha_registro)}
-                    </TableCell>
-                    <TableCell>{data.almacen.nombre_almacen}</TableCell>
-                    <TableCell>{data.proveedor.nombre_cliente}</TableCell>
-                    <TableCell>
-                      {data.compra_credito ? "Crédito" : "Contado"}
-                    </TableCell>
-                    <TableCell>
-                      {`${forma_pago.Value}-${forma_pago.Name}`}
-                    </TableCell>
-                    <TableCell>
-                      {`${data.cantidad_total} - ${data.unidad}`}
-                    </TableCell>
-                    <TableCell>
-                      {`%${data.descuento_porcentaje} - $${
-                        data.descuento_precio
-                          ? formatoMexico(data.descuento_precio)
-                          : 0
-                      }`}
-                    </TableCell>
-                    <TableCell>{formatoMexico(data.subtotal)}</TableCell>
-                    <TableCell>{formatoMexico(data.impuestos)}</TableCell>
-                    <TableCell>{formatoMexico(data.total)}</TableCell>
+                    <TableCell>${formatoMexico(data.subtotal)}</TableCell>
+                    <TableCell>${formatoMexico(data.impuestos)}</TableCell>
+                    <TableCell>${formatoMexico(data.total)}</TableCell>
                   </TableRow>
                 );
               })}

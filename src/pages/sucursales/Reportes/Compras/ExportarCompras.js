@@ -14,7 +14,6 @@ const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
 const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 
 export default function ExportarCompras({ data }) {
-  console.log(data);
   const compras = data.map((compra) => {
     const {
       producto,
@@ -57,16 +56,15 @@ export default function ExportarCompras({ data }) {
       cantidad_total,
       compra_credito: compra_credito === true ? "Credito" : "Contado",
       forma_pago: `${forma_pago.Value} - ${forma_pago.Name}`,
-      costo: costo ? formatoMexico(costo) : 0,
+      costo: `$${costo ? formatoMexico(costo) : 0}`,
       descuento_porcentaje: `%${descuento_porcentaje}`,
       descuento_precio: `$${
         descuento_precio ? formatoMexico(descuento_precio) : 0
       }`,
-      iva_precio: iva_precio ? formatoMexico(iva_precio) : 0,
-      ieps_precio: ieps_precio ? formatoMexico(ieps_precio) : 0,
-      subtotal: subtotal ? formatoMexico(subtotal) : 0,
-      impuestos: impuestos ? formatoMexico(impuestos) : 0,
-      total: total ? formatoMexico(total) : 0,
+      iva_precio: `$${ieps_precio ? formatoMexico(ieps_precio) : 0}`,
+      subtotal: `$${subtotal ? formatoMexico(subtotal) : 0}`,
+      impuestos: `$${impuestos ? formatoMexico(impuestos) : 0}`,
+      total: `$${total ? formatoMexico(total) : 0}`,
     };
 
     return compra_realizada;
