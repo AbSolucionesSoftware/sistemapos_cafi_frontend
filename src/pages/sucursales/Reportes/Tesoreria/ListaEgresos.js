@@ -23,10 +23,10 @@ const columns = [
 ];
 
 const useStyles  = makeStyles((theme) => ({
-	root: {
-		width: '100%',
-		height: '70vh'
-	},
+		root: {
+			width: '100%',
+			height: '70vh'
+		},
 	container: {
 		maxHeight: '100%'
 	},

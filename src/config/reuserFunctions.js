@@ -35,6 +35,20 @@ export const formatoFecha = (fecha) => {
   }
 };
 
+export const formatoFechaCorta = (fecha) => {
+  if (!fecha) {
+    return null;
+  } else {
+    var newdate = new Date(fecha);
+    return newdate.toLocaleDateString("es-MX", {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+};
+
 export const formatoMexico = (number) => {
   if (!number) {
     return null;
@@ -224,7 +238,7 @@ export const verifiPrising = async (newP) => {
     if(amount < newP.id_producto.precios.precios_producto[1].unidad_mayoreo) 
       return finalPrising = {
         found: true,
-        pricing: newP.descuento_activo ? newP.descuento.precio_con_descuento : newP.id_producto.precios.precios_producto[0].precio_neto,
+        pricing: newP.descuento_activo ? newP.descuento.precio_neto : newP.id_producto.precios.precios_producto[0].precio_neto,
         number_pricing: newP.id_producto.precios.precios_producto[0].numero_precio
       }
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { Box, Grid, makeStyles, Typography, Button, Dialog, Slide, AppBar, Toolbar } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
-import TablaCompras from './TablaComprasCliente';
+import TablaCompras from './TablaCompras';
 import TablaAbonos from './TablaDeAbonos';
 
 const useStyles = makeStyles((theme) => ({
@@ -31,7 +31,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function DetallesClienteCuenta() {
+export default function DetallesCuenta() {
     
     const [open, setOpen] = useState(false);
     const classes = useStyles();
