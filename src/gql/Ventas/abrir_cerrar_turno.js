@@ -34,13 +34,30 @@ export const REGISTRAR_TURNOS = gql`
 				no_dia_year
 			}
 			montos_en_caja {
-				monto_efectivo
-				monto_tarjeta
-				monto_creditos
-				monto_monedero
-				monto_transferencia
-				monto_cheques
-				monto_vales_despensa
+				monto_efectivo{
+                    monto 
+                }
+                monto_tarjeta_credito{
+                    monto 
+                }
+                monto_tarjeta_debito{
+                    monto 
+                }
+                monto_creditos{
+                    monto 
+                }
+                monto_monedero{
+                    monto 
+                }
+                monto_transferencia{
+                    monto 
+                }
+                monto_cheques{
+                    monto 
+                }
+                monto_vales_despensa{
+                    monto 
+                }
 			}
 			usuario_en_turno {
 				numero_usuario
@@ -90,13 +107,30 @@ export const OBTENER_HISTORIAL_TURNOS = gql`
 			}
 			fecha_movimiento
 			montos_en_caja {
-				monto_efectivo
-				monto_tarjeta
-				monto_creditos
-				monto_monedero
-				monto_transferencia
-				monto_cheques
-				monto_vales_despensa
+				monto_efectivo{
+                    monto 
+                }
+                monto_tarjeta_credito{
+                    monto 
+                }
+                monto_tarjeta_debito{
+                    monto 
+                }
+                monto_creditos{
+                    monto 
+                }
+                monto_monedero{
+                    monto 
+                }
+                monto_transferencia{
+                    monto 
+                }
+                monto_cheques{
+                    monto 
+                }
+                monto_vales_despensa{
+                    monto 
+                }
 			}
 			usuario_en_turno {
 				numero_usuario

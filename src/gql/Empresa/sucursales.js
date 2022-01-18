@@ -46,7 +46,9 @@ export const OBTENER_HISTORIAL_CUENTAS = gql`
             concepto
             comentarios
             montos_en_caja { 
-                monto_efectivo
+                monto_efectivo{
+                    monto 
+                }
             }
             fecha_movimiento{
                 completa

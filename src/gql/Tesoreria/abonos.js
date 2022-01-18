@@ -11,21 +11,39 @@ export const OBTENER_HISTORIAL_ABONOS = gql`
             fecha_movimiento{
                 completa
             }
-            montos_en_caja { 
-                monto_efectivo
-            }
-            monto_total_abonado
             numero_usuario_creador
             nombre_usuario_creador
-            id_cliente
+            monto_total_abonado
             numero_cliente
-            nombre_cliente 
-            telefono_cliente 
+            nombre_cliente
+            telefono_cliente
             email_cliente
-            id_egreso
-            provedor_egreso
-            folio_egreso
-            id_compra       
+            montos_en_caja{
+                monto_efectivo{
+                    monto 
+                }
+                monto_tarjeta_credito{
+                    monto 
+                }
+                monto_tarjeta_debito{
+                    monto 
+                }
+                monto_creditos{
+                    monto 
+                }
+                monto_monedero{
+                    monto 
+                }
+                monto_transferencia{
+                    monto 
+                }
+                monto_cheques{
+                    monto 
+                }
+                monto_vales_despensa{
+                    monto 
+                }
+            }
         }
     }
 `

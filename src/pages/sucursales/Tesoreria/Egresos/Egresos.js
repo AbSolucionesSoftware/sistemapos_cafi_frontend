@@ -43,7 +43,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function Egresos({alert, setAlert}) {
+export default function Egresos() {
 	const classes = useStyles();
 	const [ open, setOpen ] = useState(false);
 
@@ -65,7 +65,7 @@ export default function Egresos({alert, setAlert}) {
 				fullWidth 
 				maxWidth="lg"
 			>
-				<VistaRegistroEgreso handleClickOpen={handleClickOpen} alert={alert} setAlert={setAlert} />
+				<VistaRegistroEgreso handleClickOpen={handleClickOpen} />
 			</Dialog>
 		</div>
 	);

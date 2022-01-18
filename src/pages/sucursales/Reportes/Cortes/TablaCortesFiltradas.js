@@ -86,11 +86,10 @@ export default function TablaCortesFiltradas({loading, cortes}) {
 }
 
 function RowsRender({corte}) {
-
 	const [open, setOpen] = useState(false);
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
-	const [obtenerCorte, { data, loading }] = useLazyQuery(
+	const [obtenerCorte, { data, error, loading }] = useLazyQuery(
 		OBTENER_CORTE_CAJA,
 		{
 			variables: { 
@@ -228,58 +227,66 @@ function InformacionCorteCaja({corte, montos_sistema, loading}) {
 							</TableHead>
 							<TableBody>
 								<TableCell align="center"><b>MONTO EFECTIVO</b></TableCell>
-								<TableCell align="center">${corte.montos_en_caja.monto_efectivo}</TableCell>
+								<TableCell align="center">${corte.montos_en_caja.monto_efectivo.monto}</TableCell>
 								<TableCell align="center">${montos_sistema.monto_efectivo}</TableCell>
 								<TableCell align="center">
-									${( corte.montos_en_caja.monto_efectivo - montos_sistema.monto_efectivo)}
+									${( corte.montos_en_caja.monto_efectivo.monto - montos_sistema.monto_efectivo)}
 								</TableCell>
 							</TableBody>
 							<TableBody>
-								<TableCell align="center"><b>TARJETA DE TARJETA</b></TableCell>
-								<TableCell align="center">${corte.montos_en_caja.monto_tarjeta}</TableCell>
-								<TableCell align="center">${montos_sistema.monto_tarjeta}</TableCell>
+								<TableCell align="center"><b>MONTO TARJETA DEBITO</b></TableCell>
+								<TableCell align="center">${corte.montos_en_caja.monto_tarjeta_debito.monto}</TableCell>
+								<TableCell align="center">${montos_sistema.monto_tarjeta_debito}</TableCell>
 								<TableCell align="center">
-									${( corte.montos_en_caja.monto_tarjeta - montos_sistema.monto_tarjeta)}
+									${( corte.montos_en_caja.monto_tarjeta_debito.monto - montos_sistema.monto_tarjeta_debito)}
+								</TableCell>
+							</TableBody>
+							<TableBody>
+								<TableCell align="center"><b>MONTO TARJETA DE CREDITO</b></TableCell>
+								<TableCell align="center">${corte.montos_en_caja.monto_tarjeta_credito.monto}</TableCell>
+								<TableCell align="center">${montos_sistema.monto_tarjeta_credito}</TableCell>
+								<TableCell align="center">
+									${( corte.montos_en_caja.monto_tarjeta_credito.monto - montos_sistema.monto_tarjeta_credito)}
 								</TableCell>
 							</TableBody>
 							<TableBody>
 								<TableCell align="center"><b>MONTO TRANSFERENCIAS</b></TableCell>
-								<TableCell align="center">${corte.montos_en_caja.monto_transferencia}</TableCell>
+								<TableCell align="center">${corte.montos_en_caja.monto_transferencia.monto}</TableCell>
 								<TableCell align="center">${montos_sistema.monto_transferencia}</TableCell>
 								<TableCell align="center">
-									${( corte.montos_en_caja.monto_transferencia - montos_sistema.monto_transferencia)}
+									${( corte.montos_en_caja.monto_transferencia.monto - montos_sistema.monto_transferencia)}
 								</TableCell>
 							</TableBody>
 							<TableBody>
 								<TableCell align="center"><b>MONTO EN MONEDERO</b></TableCell>
-								<TableCell align="center">${corte.montos_en_caja.monto_monedero}</TableCell>
+								<TableCell align="center">${corte.montos_en_caja.monto_monedero.monto}</TableCell>
 								<TableCell align="center">${montos_sistema.monto_monedero}</TableCell>
 								<TableCell align="center">
-									${( corte.montos_en_caja.monto_monedero - montos_sistema.monto_monedero)}
+									${( corte.montos_en_caja.monto_monedero.monto - montos_sistema.monto_monedero)}
 								</TableCell>
 							</TableBody>
 							<TableBody>
 								<TableCell align="center"><b>MONTO EN CREDITOS</b></TableCell>
-								<TableCell align="center">${corte.montos_en_caja.monto_creditos}</TableCell>
+								<TableCell align="center">${corte.montos_en_caja.monto_creditos.monto}</TableCell>
 								<TableCell align="center">${montos_sistema.monto_creditos}</TableCell>
 								<TableCell align="center">
-									${( corte.montos_en_caja.monto_creditos - montos_sistema.monto_creditos)}
+									${( corte.montos_en_caja.monto_creditos.monto - montos_sistema.monto_creditos)}
 								</TableCell>
 							</TableBody>
 							<TableBody>
 								<TableCell align="center"><b>MONTO EN CHEQUES</b></TableCell>
-								<TableCell align="center">${corte.montos_en_caja.monto_cheques}</TableCell>
+								<TableCell align="center">${corte.montos_en_caja.monto_cheques.monto}</TableCell>
 								<TableCell align="center">${montos_sistema.monto_cheques}</TableCell>
 								<TableCell align="center">
-									${( corte.montos_en_caja.monto_cheques - montos_sistema.monto_cheques)}
+									${( corte.montos_en_caja.monto_cheques.monto - montos_sistema.monto_cheques)}
 								</TableCell>
 							</TableBody>
 							<TableBody>
 								<TableCell align="center"><b>MONTO EN VALE DE DESPENSA</b></TableCell>
-								<TableCell align="center">${corte.montos_en_caja.monto_vales_despensa}</TableCell>
+								<TableCell align="center">${corte.montos_en_caja.monto_vales_despensa.monto}</TableCell>
 								<TableCell align="center">${montos_sistema.monto_vales_despensa}</TableCell>
 								<TableCell align="center">
-									${( corte.montos_en_caja.monto_vales_despensa - montos_sistema.monto_vales_despensa)}
+									${( corte.montos_en_caja.monto_vales_despensa.monto - montos_sistema.monto_vales_despensa)}
 								</TableCell>
 							</TableBody>
 						</Table>

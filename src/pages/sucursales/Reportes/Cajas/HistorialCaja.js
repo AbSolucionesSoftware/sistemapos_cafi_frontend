@@ -94,13 +94,14 @@ export default function HistorialCaja(props) {
                 tipo_movimiento: datosHistorial[i].tipo_movimiento,
                 concepto: datosHistorial[i].concepto,
                 caja: datosHistorial[i].numero_caja,
-                monto_efectivo: datosHistorial[i].montos_en_caja.monto_efectivo , 
-                monto_creditos: datosHistorial[i].montos_en_caja.monto_creditos , 
-                monto_tarjeta: datosHistorial[i].montos_en_caja.monto_tarjeta , 
-                monto_monedero: datosHistorial[i].montos_en_caja.monto_monedero , 
-                monto_cheques: datosHistorial[i].montos_en_caja.monto_cheques , 
-                monto_transferencia: datosHistorial[i].montos_en_caja.monto_transferencia ,
-                monto_vales_despensa: datosHistorial[i].montos_en_caja.monto_vales_despensa , 
+                monto_efectivo: datosHistorial[i].montos_en_caja.monto_efectivo.monto , 
+                monto_creditos: datosHistorial[i].montos_en_caja.monto_creditos.monto , 
+                monto_tarjeta_debito: datosHistorial[i].montos_en_caja.monto_tarjeta_debito.monto , 
+                monto_tarjeta_credito: datosHistorial[i].montos_en_caja.monto_tarjeta_credito.monto , 
+                monto_monedero: datosHistorial[i].montos_en_caja.monto_monedero.monto , 
+                monto_cheques: datosHistorial[i].montos_en_caja.monto_cheques.monto , 
+                monto_transferencia: datosHistorial[i].montos_en_caja.monto_transferencia.monto ,
+                monto_vales_despensa: datosHistorial[i].montos_en_caja.monto_vales_despensa.monto , 
             }
             datosExcel.push(arrayExcel);
         };
@@ -163,7 +164,8 @@ export default function HistorialCaja(props) {
                         <ExcelColumn label='No. de Caja' value='caja' />
                         <ExcelColumn label='M. en Efectivo' value='monto_efectivo' />
                         <ExcelColumn label='M. en Creditos' value='monto_creditos' />
-                        <ExcelColumn label='M. en Tarjetas' value='monto_tarjeta' />
+                        <ExcelColumn label='M. en Tarjeta Debito' value='monto_tarjeta_debito' />
+                        <ExcelColumn label='M. en Tarjeta Credito' value='monto_tarjeta_credito' />
                         <ExcelColumn label='M. en monedero' value='monto_monedero' />
                         <ExcelColumn label='M. en Cheques' value='monto_cheques' />
                         <ExcelColumn label='M. en Transferencia' value='monto_transferencia' />

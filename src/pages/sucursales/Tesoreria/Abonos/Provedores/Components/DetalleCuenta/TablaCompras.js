@@ -36,7 +36,6 @@ const useStyles  = makeStyles((theme) => ({
 export default function TablaCompras({productos}) {
 	const classes = useStyles();
 
-	console.log(productos)
 
 	return (
 		<Paper className={classes.root}>
@@ -52,9 +51,9 @@ export default function TablaCompras({productos}) {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{productos?.map((producto) => {
+						{productos?.map((producto, index) => {
 							return (
-								<TableRow hover role="checkbox" tabIndex={-1} >
+								<TableRow key={index} hover role="checkbox" tabIndex={-1} >
 									<TableCell>{producto.cantidad}</TableCell>
 									<TableCell>{producto.cantidad_regalo}</TableCell>
 									<TableCell>{producto.producto.datos_generales.nombre_comercial}</TableCell>
