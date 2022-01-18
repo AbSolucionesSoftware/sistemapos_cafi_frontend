@@ -2,8 +2,9 @@ import { useMutation, useQuery } from '@apollo/client';
 import { Box, makeStyles, Select,MenuItem , TextField, Typography, FormControl, OutlinedInput, InputAdornment, IconButton, Button, Divider } from '@material-ui/core';
 import { Autorenew } from '@material-ui/icons';
 import AddIcon from '@material-ui/icons/Add';
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment, useContext, useEffect, useState } from 'react';
 import { formatoMexico } from '../../../../config/reuserFunctions';
+import { TesoreriaCtx } from '../../../../context/Tesoreria/tesoreriaCtx';
 import { OBTENER_CUENTAS } from '../../../../gql/Catalogos/centroCostos';
 import { CREAR_EGRESO } from '../../../../gql/Tesoreria/egresos';
 import TablaProductosEgresos from './TablaProductosEgresos';
@@ -46,8 +47,9 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function FormRegistroEgresos({tipo, setAlert, handleClickOpen}) {
+export default function FormRegistroEgresos({tipo, handleClickOpen}) {
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+    const { setAlert } = useContext(TesoreriaCtx);
     const [ CrearEgreso ] = useMutation(CREAR_EGRESO);
 
     const classes = useStyles();

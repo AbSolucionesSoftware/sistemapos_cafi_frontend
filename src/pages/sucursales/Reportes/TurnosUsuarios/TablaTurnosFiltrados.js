@@ -193,31 +193,35 @@ function RowsRender({turno}) {
 										<TableBody>
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center"><b>Monto Total Efectivo:</b></TableCell>
-												<TableCell align="center"><b>${turno.montos_en_caja.monto_efectivo}</b></TableCell>
+												<TableCell align="center"><b>${turno.montos_en_caja.monto_efectivo.monto}</b></TableCell>
 											</TableRow>
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center">Creditos</TableCell>
-												<TableCell align="center">${turno.montos_en_caja.monto_creditos}</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_creditos.monto}</TableCell>
 											</TableRow>
 											<TableRow hover tabIndex={-1} >
-												<TableCell align="center">Tarjetas</TableCell>
-												<TableCell align="center">${turno.montos_en_caja.monto_tarjeta}</TableCell>
+												<TableCell align="center">Tarjeta Debito</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_tarjeta_debito.monto}</TableCell>
+											</TableRow>
+											<TableRow hover tabIndex={-1} >
+												<TableCell align="center">Tarjeta Credito</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_tarjeta_credito.monto}</TableCell>
 											</TableRow>
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center">Monedero</TableCell>
-												<TableCell align="center">${turno.montos_en_caja.monto_monedero}</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_monedero.monto}</TableCell>
 											</TableRow>
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center">Cheques</TableCell>
-												<TableCell align="center">${turno.montos_en_caja.monto_cheques}</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_cheques.monto}</TableCell>
 											</TableRow>
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center">Transferencias</TableCell>
-												<TableCell align="center">${turno.montos_en_caja.monto_transferencia}</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_transferencia.monto}</TableCell>
 											</TableRow>
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center">Vales de despensa</TableCell>
-												<TableCell align="center">${turno.montos_en_caja.monto_vales_despensa}</TableCell>
+												<TableCell align="center">${turno.montos_en_caja.monto_vales_despensa.monto}</TableCell>
 											</TableRow>
 										</TableBody>
 									</Table>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { Box, Button, Dialog, 
@@ -12,6 +12,8 @@ import { formatoMexico } from '../../../../../../config/reuserFunctions';
 import { useMutation } from '@apollo/client';
 import { CREAR_ABONO } from '../../../../../../gql/Tesoreria/abonos';
 import moment from 'moment';
+import BackdropComponent from '../../../../../../components/Layouts/BackDrop';
+import { TesoreriaCtx } from '../../../../../../context/Tesoreria/tesoreriaCtx';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -45,23 +47,21 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function AbonoaRecibir({cuenta}) {
+export default function AbonoaRecibir() {
     const [ CrearAbono ] = useMutation(CREAR_ABONO);
+	const {setReload, setAlert, cuenta} = useContext(TesoreriaCtx);
+
     const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
     const classes = useStyles();
     
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [abono, setAbono] = useState(''); 
     const [metodoPago, setMetodoPago] = useState('');
-    
-    console.log(abono)
-    console.log(metodoPago); 
 
+    
     const input = {
-        numero_caja: 0,
-        id_Caja: "",
-        horario_turno: "",
         tipo_movimiento: "ABONO",
         rol_movimiento: "PROVEEDOR",
         fecha_movimiento: {
@@ -72,42 +72,42 @@ export default function AbonoaRecibir({cuenta}) {
             no_dia_year: moment().dayOfYear().toString(),
             completa: moment().locale('es-mx').format()
         },
-        monto_total_abonado: 0,
+        monto_total_abonado: parseFloat(abono),
         montos_en_caja: {   
             monto_efectivo: {
-                // monto: metodoPago === 01 ? : 0,
+                monto: metodoPago === '01' ? parseFloat(abono) : 0,
                 metodo_pago: "01"
             },
             monto_tarjeta_debito: {
-                monto: 0,
+                monto: metodoPago === '28' ? parseFloat(abono) : 0,
                 metodo_pago: "28"
             },
             monto_tarjeta_credito: {
-                monto: 0,
+                monto: metodoPago === '04' ? parseFloat(abono) : 0,
                 metodo_pago: "04"
             },
             monto_creditos: {
-                monto: 0,
+                monto: metodoPago === '99' ? parseFloat(abono) : 0,
                 metodo_pago: "99"
             },
             monto_monedero: {
-                monto: 0,
+                monto: metodoPago === '05' ? parseFloat(abono) : 0,
                 metodo_pago: "05"
             },
             monto_transferencia: {
-                monto: 0,
+                monto: metodoPago === '03' ? parseFloat(abono) : 0,
                 metodo_pago: "03"
             },
             monto_cheques: {
-                monto: 0,
+                monto: metodoPago === '02' ? parseFloat(abono) : 0,
                 metodo_pago: "02"
             },
             monto_vales_despensa: {
-                monto: 0,
+                monto: metodoPago === '08' ? parseFloat(abono) : 0,
                 metodo_pago: "08"
             },
         },
-        metodo_pago : {
+        metodo_de_pago:{
             clave: "",
             metodo:  "",
         },
@@ -116,31 +116,55 @@ export default function AbonoaRecibir({cuenta}) {
         id_cliente: cuenta.proveedor.id_proveedor._id,
         numero_cliente: cuenta.proveedor.numero_cliente,
         nombre_cliente: cuenta.proveedor.nombre_cliente, 
-        telefono_cliente: cuenta.proveedor.telefono, 
-        email_cliente: "",
-        id_egreso: "",
-        provedor_egreso: "",
-        folio_egreso: "",
+        telefono_cliente: cuenta.proveedor.id_proveedor.telefono, 
+        email_cliente: cuenta.proveedor.id_proveedor.email,
         id_compra: cuenta._id
-    }
+    };
 
+    
     const enviarDatos = async () => { 
+        setLoading(true);
         try {
-            
+            if(abono === '' || metodoPago === '' ){
+                setAlert({ 
+                    message: 'Por favor complete los datos', 
+                    status: 'error', 
+                    open: true 
+                });
+                setLoading(false);
+                return 
+            }; 
             await CrearAbono({
                 variables: {
                     empresa: sesion.empresa._id,
                     sucursal: sesion.sucursal._id,
-                    input: input
+                    input
                 },
             });
-
+            setReload(true);
+            setAbono('');
+            setMetodoPago('');
+            setAlert({ 
+                message: 'Abono registrado con exito', 
+                status: 'success', 
+                open: true 
+            });
+            handleClick();
+            setLoading(false);
         } catch (error) {
-            console.log(error)
-        }
-    }
+            handleClick();
+            setLoading(false);
+            setAlert({ 
+                message: 'Ocurrio un problema en el servidor', 
+                status: 'error', 
+                open: true 
+            });
 
-    const handleClick = () => { 
+        }
+    };
+
+    const handleClick = () => {
+        setReload(true);
         setOpen(!open);
     };
 
@@ -166,6 +190,7 @@ export default function AbonoaRecibir({cuenta}) {
                 fullWidth
                 maxWidth='xs'
             >
+                <BackdropComponent loading={loading} setLoading={setLoading} />
                 <DialogTitle id="alert-dialog-slide-title">
                     <Box display="flex">
                         <Box p={1} flexGrow={1}>
@@ -177,7 +202,6 @@ export default function AbonoaRecibir({cuenta}) {
 							</Button>
                         </Box>
                     </Box>
-                    
                 </DialogTitle>
                 <DialogContent>
                     <Box width="100%"  mt={2} >
@@ -205,14 +229,15 @@ export default function AbonoaRecibir({cuenta}) {
                                     width="100%"
                                     name="metodo_pago"
                                     variant='outlined'
-                                    onChange={(e) => setMetodoPago(e.target.value )}
+                                    value={metodoPago ? metodoPago : ''}
+                                    onChange={(e) => setMetodoPago(e.target.value)}
                                 >
                                     <MenuItem value="">
                                         <em>Selecciona uno</em>
                                     </MenuItem>
-                                    {formaPago.map((metodo) => {
+                                    {formaPago.map((metodo, index) => {
                                         return(
-                                            <MenuItem value={metodo.Value}>{metodo.Name}</MenuItem>
+                                            <MenuItem key={index} value={metodo.Value}>{metodo.Name}</MenuItem>
                                         )
                                     })}
                                 </Select>

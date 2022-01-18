@@ -1,10 +1,15 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 
-import {  Box, Button, Dialog, DialogActions, DialogContent, makeStyles, Slider, TextField, Typography } from '@material-ui/core';
-import { ToggleButtonGroup } from '@material-ui/lab';
+import {  Box, Button, Dialog, DialogActions, DialogContent, FormControl, makeStyles, MenuItem, Select, Slider, TextField, Typography } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
 import CloseIcon from '@material-ui/icons/Close';
 import { formatoMexico } from '../../../../../../config/reuserFunctions';
+import BackdropComponent from '../../../../../../components/Layouts/BackDrop';
+import { formaPago } from '../../../../Facturacion/catalogos';
+import moment from 'moment';
+import { CREAR_ABONO } from '../../../../../../gql/Tesoreria/abonos';
+import { useMutation } from '@apollo/client';
+import { TesoreriaCtx } from '../../../../../../context/Tesoreria/tesoreriaCtx';
 
 const useStyles = makeStyles((theme) => ({
 	formInputFlex: {
@@ -21,17 +26,25 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function LiquidarCuenta({cuenta}) {
+export default function LiquidarCuenta({cuenta, refetch}) {
+    const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+    const { setAlert, setReload } = useContext(TesoreriaCtx);
+
+    const [ CrearAbono ] = useMutation(CREAR_ABONO);
 
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(0);
     const [cuentaTotalDescuento, setCuentaTotalDescuento] = useState(0);
     const [dineroDescontado, setDineroDescontado] = useState(0);
 
-    console.log(cuenta);
+    const [loading, setLoading] = useState(false);
+    const [metodoPago, setMetodoPago] = useState('');
 
     const handleClick = () => { 
         setOpen(!open);
+        setCuentaTotalDescuento(0);
+        setDineroDescontado(0);
+        setValue(0)
     };
 
     const classes = useStyles();
@@ -61,6 +74,111 @@ export default function LiquidarCuenta({cuenta}) {
         return `${e}`;
     };
 
+    const input = {
+        tipo_movimiento: "ABONO",
+        rol_movimiento: "PROVEEDOR",
+        fecha_movimiento: {
+            year: moment().format('YYYY'),
+            mes: moment().format('MM'),
+            dia: moment().format('DD'),
+            no_semana_year: moment().week().toString(),
+            no_dia_year: moment().dayOfYear().toString(),
+            completa: moment().locale('es-mx').format()
+        },
+        monto_total_abonado: parseFloat(cuenta.saldo_credito_pendiente),
+        descuento: {
+            porciento_descuento: value,
+            dinero_descontado: dineroDescontado,
+            total_con_descuento: cuentaTotalDescuento
+        },
+        montos_en_caja: {   
+            monto_efectivo: {
+                monto: metodoPago === '01' ? parseFloat(cuentaTotalDescuento === 0 ? cuenta.saldo_credito_pendiente : cuentaTotalDescuento) : 0,
+                metodo_pago: "01"
+            },
+            monto_tarjeta_debito: {
+                monto: metodoPago === '28' ? parseFloat(cuentaTotalDescuento === 0 ? cuenta.saldo_credito_pendiente : cuentaTotalDescuento) : 0,
+                metodo_pago: "28"
+            },
+            monto_tarjeta_credito: {
+                monto: metodoPago === '04' ? parseFloat(cuentaTotalDescuento === 0 ? cuenta.saldo_credito_pendiente : cuentaTotalDescuento) : 0,
+                metodo_pago: "04"
+            },
+            monto_creditos: {
+                monto: metodoPago === '99' ? parseFloat(cuentaTotalDescuento === 0 ? cuenta.saldo_credito_pendiente : cuentaTotalDescuento) : 0,
+                metodo_pago: "99"
+            },
+            monto_monedero: {
+                monto: metodoPago === '05' ? parseFloat(cuentaTotalDescuento === 0 ? cuenta.saldo_credito_pendiente : cuentaTotalDescuento) : 0,
+                metodo_pago: "05"
+            },
+            monto_transferencia: {
+                monto: metodoPago === '03' ? parseFloat(cuentaTotalDescuento === 0 ? cuenta.saldo_credito_pendiente : cuentaTotalDescuento) : 0,
+                metodo_pago: "03"
+            },
+            monto_cheques: {
+                monto: metodoPago === '02' ? parseFloat(cuentaTotalDescuento === 0 ? cuenta.saldo_credito_pendiente : cuentaTotalDescuento) : 0,
+                metodo_pago: "02"
+            },
+            monto_vales_despensa: {
+                monto: metodoPago === '08' ? parseFloat(cuentaTotalDescuento === 0 ? cuenta.saldo_credito_pendiente : cuentaTotalDescuento) : 0,
+                metodo_pago: "08"
+            },
+        },
+        metodo_de_pago:{
+            clave: "",
+            metodo:  "",
+        },
+        numero_usuario_creador: sesion.numero_usuario,
+        nombre_usuario_creador: sesion.nombre,
+        id_cliente: cuenta.proveedor.id_proveedor._id,
+        numero_cliente: cuenta.proveedor.numero_cliente,
+        nombre_cliente: cuenta.proveedor.nombre_cliente, 
+        telefono_cliente: cuenta.proveedor.id_proveedor.telefono, 
+        email_cliente: cuenta.proveedor.id_proveedor.email,
+        id_compra: cuenta._id
+    };
+
+    
+    const enviarDatos = async () => { 
+        setLoading(true);
+        try {
+            if( metodoPago === '' ){
+                setAlert({ 
+                    message: 'Por favor complete el metodo de pago', 
+                    status: 'error', 
+                    open: true 
+                });
+                setLoading(false);
+                return 
+            }; 
+            await CrearAbono({
+                variables: {
+                    empresa: sesion.empresa._id,
+                    sucursal: sesion.sucursal._id,
+                    input
+                },
+            });
+            setReload(true);
+            setMetodoPago('');
+            setAlert({ 
+                message: 'Cuenta liquidada con exito', 
+                status: 'success', 
+                open: true 
+            });
+            handleClick();
+            setLoading(false);
+
+        } catch (error) {
+            handleClick();
+            setLoading(false);
+            setAlert({ 
+                message: 'Ocurrio un problema en el servidor', 
+                status: 'error', 
+                open: true 
+            });
+        }
+    };
 
     return (
         <div>
@@ -81,6 +199,7 @@ export default function LiquidarCuenta({cuenta}) {
                 onClose={handleClick}
                 aria-labelledby="draggable-dialog-title"
             >
+                <BackdropComponent loading={loading} setLoading={setLoading} />
                 <Box display="flex">
                     <Box flexGrow={1} p={2}>
                         <Typography variant="h6" className={classes.title}>
@@ -110,14 +229,41 @@ export default function LiquidarCuenta({cuenta}) {
                         />
                     </Box>
                     <Box width="100%" textAlign="center">
+                        <Typography id="discrete-slider-always" gutterBottom>
+                            <b>Dinero a liquidar con descuento</b>
+                        </Typography>
                         <TextField
                             fullWidth
                             size="small"
                             name="descuento"
                             variant="outlined"
-                            value={cuentaTotalDescuento ? cuentaTotalDescuento : ''}
+                            value={cuentaTotalDescuento ? cuentaTotalDescuento : 0 }
                             onChange={obtenerPrecioText}
                         />
+                    </Box>
+                    <Box width="100%" mt={2} textAlign={'center'} >
+                        <Typography><b>Metodo de pago:</b></Typography>
+                        <FormControl
+                            variant="outlined"
+                            fullWidth
+                            size="small"
+                        >
+                            <Select
+                                width="100%"
+                                name="metodo_pago"
+                                variant='outlined'
+                                onChange={(e) => setMetodoPago(e.target.value )}
+                            >
+                                <MenuItem value="">
+                                    <em>Selecciona uno</em>
+                                </MenuItem>
+                                {formaPago.map((metodo, index) => {
+                                    return(
+                                        <MenuItem key={index} value={metodo.Value}>{metodo.Name}</MenuItem>
+                                    )
+                                })}
+                            </Select>
+                        </FormControl>
                     </Box>
                     <Box display="flex" mt={2}>
                         <Box flexGrow={1}>
@@ -156,13 +302,13 @@ export default function LiquidarCuenta({cuenta}) {
                             <Typography variant="h6" >Total a pagar:</Typography>
                         </Box>
                         <Box >
-                            <Typography variant="h6" ><b style={{color: 'green'}}>${formatoMexico(cuentaTotalDescuento)}</b></Typography>
+                            <Typography variant="h6" ><b style={{color: 'green'}}>${formatoMexico(cuentaTotalDescuento === 0 ? cuenta.saldo_credito_pendiente : cuentaTotalDescuento)}</b></Typography>
                         </Box>
                     </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button 
-                        onClick={handleClick} 
+                        onClick={enviarDatos} 
                         color="primary"
                         variant="contained"
                         size="large"

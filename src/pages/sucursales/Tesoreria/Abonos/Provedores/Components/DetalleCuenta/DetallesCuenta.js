@@ -1,12 +1,12 @@
-import React, { Fragment, useState } from 'react'
-
-import { Box, Grid, makeStyles, Typography, Button, AppBar, Toolbar } from '@material-ui/core'
+import React, { Fragment, useContext,useState, useEffect } from 'react'
+import { Box, Grid, makeStyles, Typography, Button, AppBar, Toolbar } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import TablaCompras from './TablaCompras';
 import TablaAbonos from './TablaDeAbonos';
 import AbonoaRecibir from '../AbonoPercibir';
 import moment from 'moment';
 import { formatoMexico } from '../../../../../../../config/reuserFunctions';
+import { TesoreriaCtx } from '../../../../../../../context/Tesoreria/tesoreriaCtx';
 
 const useStyles = makeStyles((theme) => ({
     appBar: {	
@@ -31,9 +31,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function DetallesCuenta({handleClick, cuentaElegida}) {
+export default function DetallesCuenta({handleClick}) {
+	const {cuenta} = useContext(TesoreriaCtx);
     
     const classes = useStyles();
+
+    console.log(cuenta);
 
     return (
         <Fragment>
@@ -53,35 +56,35 @@ export default function DetallesCuenta({handleClick, cuentaElegida}) {
                 <Box width="100%" p={1}>
                     <Box width="100%" display="flex" p={.5}>
                         <Typography><b>Nombre de proveedor: </b> </Typography>
-                        <Typography style={{paddingLeft: 5}}>{cuentaElegida.proveedor.id_proveedor.nombre_cliente}</Typography>
+                        <Typography style={{paddingLeft: 5}}>{cuenta.proveedor.id_proveedor.nombre_cliente}</Typography>
                     </Box>
                     <Box width="100%" display="flex"  p={.5}>
                         <Typography><b>Clave proveedor: </b> </Typography>
-                        <Typography style={{paddingLeft: 5}}>{cuentaElegida.proveedor.id_proveedor.clave_cliente}</Typography>
+                        <Typography style={{paddingLeft: 5}}>{cuenta.proveedor.id_proveedor.clave_cliente}</Typography>
                     </Box>
                 </Box>
                 <Box width="100%" p={1}>
                     <Box width="100%" display="flex" p={.5}>
                         <Typography><b>Nombre de usuario: </b> </Typography>
-                        <Typography style={{paddingLeft: 5}}>{cuentaElegida.usuario.nombre}</Typography>
+                        <Typography style={{paddingLeft: 5}}>{cuenta.usuario.nombre}</Typography>
                     </Box>
                     <Box width="100%" display="flex"  p={.5}>
                         <Typography><b>Numero usuario: </b> </Typography>
-                        <Typography style={{paddingLeft: 5}}>{cuentaElegida.usuario.numero_usuario}</Typography>
+                        <Typography style={{paddingLeft: 5}}>{cuenta.usuario.numero_usuario}</Typography>
                     </Box>
                 </Box>
                 <Box width="100%" p={1}>
                     <Box width="100%" display="flex" p={.5}>
                         <Typography><b>Fecha compra: </b> </Typography>
-                        <Typography style={{paddingLeft: 5}}>{moment(cuentaElegida.fecha_registro).format('D MMMM YYYY')}</Typography>
+                        <Typography style={{paddingLeft: 5}}>{moment(cuenta.fecha_registro).format('D MMMM YYYY')}</Typography>
                     </Box>
                     <Box width="100%" display="flex"  p={.5}>
                         <Typography><b>Fecha vencimiento: </b> </Typography>
-                        <Typography style={{paddingLeft: 5}}>{moment(cuentaElegida.fecha_vencimiento_credito).format('D MMMM YYYY')}</Typography>
+                        <Typography style={{paddingLeft: 5}}>{moment(cuenta.fecha_vencimiento_credito).format('D MMMM YYYY')}</Typography>
                     </Box>
                 </Box>
                 <Box width="60%" p={1} display='flex' alignItems={'center'} >
-                    <AbonoaRecibir cuenta={cuentaElegida} />
+                    <AbonoaRecibir />
                 </Box>
             </div>
             <Grid container>
@@ -95,10 +98,10 @@ export default function DetallesCuenta({handleClick, cuentaElegida}) {
                         <TablaAbonos />
                     </Box>
                     <Box p={1} mr={3} display="flex" justifyContent="flex-end">
-                        <Typography variant='h6'>Total abonado: <b style={{color: "#9B9B9B"}}>${formatoMexico(cuentaElegida.total - cuentaElegida.saldo_credito_pendiente)}</b></Typography>
+                        <Typography variant='h6'>Total abonado: <b style={{color: "#9B9B9B"}}>${cuenta.total - cuenta.saldo_credito_pendiente}</b></Typography>
                     </Box> 
                     <Box p={1} mr={3} display="flex" justifyContent="flex-end">
-                        <Typography variant='h6'>Restante: <b  style={{color: "green"}}>${formatoMexico(cuentaElegida.saldo_credito_pendiente)}</b></Typography>
+                        <Typography variant='h6'>Restante: <b  style={{color: "green"}}>${formatoMexico(cuenta.saldo_credito_pendiente)}</b></Typography>
                     </Box>
                 </Grid>
                 <Grid item lg={6} xs={12}>
@@ -108,10 +111,10 @@ export default function DetallesCuenta({handleClick, cuentaElegida}) {
                         </Typography>
                     </Box>
                     <Box p={2}>
-                        <TablaCompras productos={cuentaElegida.productos}/>
+                        <TablaCompras productos={cuenta.productos}/>
                     </Box>
                     <Box p={1} mr={3} display="flex" justifyContent="flex-end">
-                        <Typography variant='h6'>Total a liquidar: <b  style={{color: "red"}}>${formatoMexico(cuentaElegida.total)}</b></Typography>
+                        <Typography variant='h6'>Total a liquidar: <b  style={{color: "red"}}>${formatoMexico(cuenta.total)}</b></Typography>
                     </Box>
                 </Grid>
             </Grid>

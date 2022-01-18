@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useContext, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -11,8 +11,9 @@ import DetallesCuenta from './DetalleCuenta/DetallesCuenta';
 import LiquidarCuenta from './LiquidarCuenta';
 import moment from 'moment';
 
-import { Dialog, Slide, TableHead } from '@material-ui/core';
+import { Box, CircularProgress, Dialog, Slide, TableHead } from '@material-ui/core';
 import 'moment/locale/es';
+import { TesoreriaCtx } from '../../../../../../context/Tesoreria/tesoreriaCtx';
 
 const columns = [
 	{ id: 'fecha', label: 'Fecha Compra', minWidth: 100, align: 'center' },
@@ -50,29 +51,43 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function TablaAbonos({comprasCredito}) {
+export default function TablaAbonos({loading}) {
+	const {setReload, cuentas, setCuenta} = useContext(TesoreriaCtx);
 
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
-	const [cuentaElegida, setCuentaElegida] = useState([]);
     
 	const handleClick = () => {
         setOpen(!open);
     }
 
-	const TwoClickInRowTableBuy = (e, cuenta) => {
+	const TwoClickInRowTableBuy = (e, cuentaSelect) => {
 		try {
 			let timer;
 			clearTimeout(timer);
 			if (e.detail === 2) {
 				handleClick();
-				setCuentaElegida(cuenta);
+				setReload(true);
+				setCuenta(cuentaSelect);
 			}
 		} catch (error) {
-		  	console.log(error);
+			
 		}
 	};
-	
+
+	if (loading) 
+		return (
+			<Box
+			display="flex"
+			flexDirection="column"
+			justifyContent="center"
+			alignItems="center"
+			height="50vh"
+			>
+				<CircularProgress />
+			</Box>
+		);
+
 	return (
 		<Fragment>
 		<div className={classes.root}>
@@ -98,12 +113,12 @@ export default function TablaAbonos({comprasCredito}) {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{comprasCredito?.map((row, index) => {
-								if(row.compra_credito === true){
+							{cuentas?.map((row, index) => {
+								if(row.credito_pagado === false){
 									return (
 										<RowsCuentas 
 											TwoClickInRowTableBuy={TwoClickInRowTableBuy}
-											cuenta={row}
+											cuentaSelect={row}
 											key={index}
 										/>
 									);
@@ -121,8 +136,8 @@ export default function TablaAbonos({comprasCredito}) {
 				onClose={handleClick} 
 				TransitionComponent={Transition}
 			>
-				<DetallesCuenta 
-					cuentaElegida={cuentaElegida}
+				<DetallesCuenta
+					loading={loading}
 					handleClick={handleClick}
 				/>
 			</Dialog>
@@ -130,22 +145,22 @@ export default function TablaAbonos({comprasCredito}) {
 	);
 };
 
-function RowsCuentas ({TwoClickInRowTableBuy, cuenta}){
+function RowsCuentas ({TwoClickInRowTableBuy, cuentaSelect}){
 
 	return(
 		<Fragment>
 			<TableRow
 				hover
 				tabIndex={-1}
-				onClick={(e) => TwoClickInRowTableBuy(e, cuenta)}
+				onClick={(e) => TwoClickInRowTableBuy(e, cuentaSelect)}
 			>
-				<TableCell align="center">{moment(cuenta.fecha_registro).format('D MMMM YYYY')}</TableCell>
-				<TableCell align="center">{cuenta.proveedor.id_proveedor.nombre_cliente}</TableCell>
-				<TableCell align="center">${formatoMexico(cuenta.total - cuenta.saldo_credito_pendiente)}</TableCell>
-				<TableCell align="center">${formatoMexico(cuenta.saldo_credito_pendiente)}</TableCell>
-				<TableCell align="center">${formatoMexico(cuenta.total)}</TableCell>
+				<TableCell align="center">{moment(cuentaSelect.fecha_registro).format('D MMMM YYYY')}</TableCell>
+				<TableCell align="center">{cuentaSelect.proveedor.id_proveedor.nombre_cliente}</TableCell>
+				<TableCell align="center">${formatoMexico(cuentaSelect.total - cuentaSelect.saldo_credito_pendiente)}</TableCell>
+				<TableCell align="center">${formatoMexico(cuentaSelect.saldo_credito_pendiente)}</TableCell>
+				<TableCell align="center">${formatoMexico(cuentaSelect.total)}</TableCell>
 				<TableCell align="center">
-					<LiquidarCuenta cuenta={cuenta} />
+					<LiquidarCuenta cuenta={cuentaSelect}/>
 				</TableCell>
 			</TableRow>
 		</Fragment>

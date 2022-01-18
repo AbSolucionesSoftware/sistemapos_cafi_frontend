@@ -81,13 +81,38 @@ function  CerrarTurno(props) {
         },
         fecha_movimiento: moment().locale('es-mx').format(),
         montos_en_caja: {
-            monto_efectivo: parseFloat(montoTurno.monto_efectivo ? montoTurno.monto_efectivo : 0),
-            monto_tarjeta: parseFloat(montoTurno.monto_tarjeta_credito ? montoTurno.monto_tarjeta_credito : 0),
-            monto_creditos: parseFloat(montoTurno.monto_creditos ? montoTurno.monto_creditos : 0 ),
-            monto_monedero: parseFloat(montoTurno.monto_puntos ? montoTurno.monto_puntos : 0),
-            monto_transferencia: parseFloat(montoTurno.monto_transferencia ? montoTurno.monto_transferencia : 0),
-            monto_cheques: parseFloat(montoTurno.monto_cheques ? montoTurno.monto_cheques : 0),
-            monto_vales_despensa: parseFloat(montoTurno.monto_vales_despensa ? montoTurno.monto_vales_despensa : 0)
+            monto_efectivo: {
+                monto:  parseFloat(montoTurno.monto_efectivo ? montoTurno.monto_efectivo : 0),
+                metodo_pago: "01"
+            },
+            monto_tarjeta_debito: {
+                monto: parseFloat(montoTurno.monto_tarjeta_debito ? montoTurno.monto_tarjeta_debito : 0),
+                metodo_pago: "28"
+            },
+            monto_tarjeta_credito: {
+                monto: parseFloat(montoTurno.monto_tarjeta_credito ? montoTurno.monto_tarjeta_credito : 0),
+                metodo_pago: "04"
+            },
+            monto_creditos: {
+                monto: parseFloat(montoTurno.monto_creditos ? montoTurno.monto_creditos : 0 ),
+                metodo_pago: "99"
+            },
+            monto_monedero: {
+                monto: parseFloat(montoTurno.monto_puntos ? montoTurno.monto_puntos : 0),
+                metodo_pago: "05"
+            },
+            monto_transferencia: {
+                monto: parseFloat(montoTurno.monto_transferencia ? montoTurno.monto_transferencia : 0),
+                metodo_pago: "03"
+            },
+            monto_cheques: {
+                monto: parseFloat(montoTurno.monto_cheques ? montoTurno.monto_cheques : 0),
+                metodo_pago: "02"
+            },
+            monto_vales_despensa: {
+                monto: parseFloat(montoTurno.monto_vales_despensa ? montoTurno.monto_vales_despensa : 0),
+                metodo_pago: "08"
+            },
         }
     };
 
@@ -188,23 +213,6 @@ function  CerrarTurno(props) {
                         />
                     </Box>
                 </Box>
-            </div>
-            <div className={classes.formInputFlex}>
-                <Box width="100%" className={classes.input}>
-                    <Typography> Tarjeta:</Typography>
-                    <Box display="flex">
-                        <TextField
-                            name="monto_tarjeta_debito"
-                            variant="outlined"
-                            size="small"
-                            inputProps={{min: 0}}
-                            type="number"
-                            defaultValue={0}
-                            color="primary"
-                            onChange={obtenerCamposMontos}
-                        />
-                    </Box>
-                </Box>
                 <Box width="100%" className={classes.input}>
                     <Typography> Creditos:</Typography>
                     <Box display="flex">
@@ -220,6 +228,39 @@ function  CerrarTurno(props) {
                         />
                     </Box>
                 </Box>
+            </div>
+            <div className={classes.formInputFlex}>
+                <Box width="100%" className={classes.input}>
+                    <Typography> Tarjeta Debito:</Typography>
+                    <Box display="flex">
+                        <TextField
+                            name="monto_tarjeta_debito"
+                            variant="outlined"
+                            size="small"
+                            inputProps={{min: 0}}
+                            type="number"
+                            defaultValue={0}
+                            color="primary"
+                            onChange={obtenerCamposMontos}
+                        />
+                    </Box>
+                </Box>
+                <Box width="100%" className={classes.input}>
+                    <Typography> Tarjeta Credito:</Typography>
+                    <Box display="flex">
+                        <TextField
+                            name="monto_tarjeta_credito"
+                            variant="outlined"
+                            size="small"
+                            inputProps={{min: 0}}
+                            type="number"
+                            defaultValue={0}
+                            color="primary"
+                            onChange={obtenerCamposMontos}
+                        />
+                    </Box>
+                </Box>
+                
             </div>
             <div className={classes.formInputFlex}>
                 <Box width="100%" className={classes.input}>

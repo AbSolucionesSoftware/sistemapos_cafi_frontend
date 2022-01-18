@@ -260,7 +260,7 @@ function RowsHistorial ({ row, loading }) {
             <TableCell>{moment(row?.fecha_movimiento.completa).format('D MMMM YYYY')}</TableCell>
             <TableCell>{row?.nombre_usuario_creador}</TableCell>
             <TableCell >
-                <b style={{fontSize: 17}}>${formatoMexico(row.montos_en_caja.monto_efectivo)}</b>
+                <b style={{fontSize: 17}}>${formatoMexico(row.montos_en_caja.monto_efectivo.monto)}</b>
             </TableCell>
             <TableCell>{row?.concepto}</TableCell>
             <TableCell>{

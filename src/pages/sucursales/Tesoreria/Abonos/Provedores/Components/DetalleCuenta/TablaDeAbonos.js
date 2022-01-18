@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -7,54 +7,15 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import { useQuery } from '@apollo/client';
+import { OBTENER_HISTORIAL_ABONOS } from "../../../../../../../gql/Tesoreria/abonos";
+import moment from 'moment';
+import { TesoreriaCtx } from '../../../../../../../context/Tesoreria/tesoreriaCtx';
 
 const columns = [
-	{ id: 'name', label: 'Name', minWidth: 170 },
-	{ id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-	{
-		id: 'population',
-		label: 'Population',
-		minWidth: 170,
-		align: 'right',
-		format: (value) => value.toLocaleString('en-US')
-	},
-	{
-		id: 'size',
-		label: 'Size\u00a0(km\u00b2)',
-		minWidth: 170,
-		align: 'right',
-		format: (value) => value.toLocaleString('en-US')
-	},
-	{
-		id: 'density',
-		label: 'Density',
-		minWidth: 170,
-		align: 'right',
-		format: (value) => value.toFixed(2)
-	}
-];
-
-function createData(name, code, population, size) {
-	const density = population / size;
-	return { name, code, population, size, density };
-}
-
-const rows = [
-	createData('India', 'IN', 1324171354, 3287263),
-	createData('China', 'CN', 1403500365, 9596961),
-	createData('Italy', 'IT', 60483973, 301340),
-	createData('United States', 'US', 327167434, 9833520),
-	createData('Canada', 'CA', 37602103, 9984670),
-	createData('Australia', 'AU', 25475400, 7692024),
-	createData('Germany', 'DE', 83019200, 357578),
-	createData('Ireland', 'IE', 4857000, 70273),
-	createData('Mexico', 'MX', 126577691, 1972550),
-	createData('Japan', 'JP', 126317000, 377973),
-	createData('France', 'FR', 67022000, 640679),
-	createData('United Kingdom', 'GB', 67545757, 242495),
-	createData('Russia', 'RU', 146793744, 17098246),
-	createData('Nigeria', 'NG', 200962417, 923768),
-	createData('Brazil', 'BR', 210147125, 8515767)
+	{ id: 'fecha', label: 'Fecha de abono', minWidth: 170, align: 'center' },
+	{ id: 'cliente', label: 'Nombre', minWidth: 170, align: 'center' },
+	{ id: 'abono', label: 'Cantidad abonada', minWidth: 170, align: 'right' },
 ];
 
 const useStyles  = makeStyles((theme) => ({
@@ -75,7 +36,38 @@ const useStyles  = makeStyles((theme) => ({
 }));
 
 export default function TablaAbonos() {
+	const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+	const {cuenta, reload} = useContext(TesoreriaCtx);
+
 	const classes = useStyles();
+
+	const { loading, data, error, refetch } = useQuery(
+		OBTENER_HISTORIAL_ABONOS, {
+			variables: {
+				empresa: sesion.empresa._id,
+				sucursal: sesion.sucursal._id,
+				input: {
+					fecha_inicio: "",
+					fecha_fin: "",
+					usuario: "",
+					id_cliente: cuenta.proveedor.id_proveedor._id,
+					id_egreso: "",
+					rol_movimiento: "PROVEEDOR",
+					id_compra: cuenta._id
+				}
+			},
+		  	fetchPolicy: "network-only",
+		}
+	);
+	
+	let abonos = []
+	if(data){
+		abonos = data.obtenerHistorialAbonos;
+	}
+
+	useEffect(() => {
+		refetch();
+	}, [reload])
 
 	return (
 		<Paper className={classes.root}>
@@ -91,24 +83,12 @@ export default function TablaAbonos() {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{rows.map((row) => {
+						{abonos?.map((row, index) => {
 							return (
-								<TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-									{columns.map((column) => {
-										const value = row[column.id];
-										return (
-											<TableCell 
-                                                key={column.id} 
-                                                align={column.align}
-                                            >
-												{column.format && typeof value === 'number' ? (
-													column.format(value)
-												) : (
-													value
-												)}
-											</TableCell>
-										);
-									})}
+								<TableRow hover tabIndex={-1} key={index}>
+									<TableCell align='center'>{moment(row.fecha_movimiento.completa).format('D MMMM YYYY')}</TableCell>
+									<TableCell align='center'>{row.nombre_cliente}</TableCell>
+									<TableCell align='right'><b>${row.monto_total_abonado}</b></TableCell>
 								</TableRow>
 							);
 						})}

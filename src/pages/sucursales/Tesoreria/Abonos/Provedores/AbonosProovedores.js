@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -8,12 +8,14 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Search } from '@material-ui/icons';
-import { Box, IconButton, InputBase, Paper } from '@material-ui/core';
+import { Box, IconButton, InputAdornment, InputBase, Paper, TextField } from '@material-ui/core';
 import { OBTENER_COMPRAS_REALIZADAS } from "../../../../../gql/Compras/compras";
 
 
 import TablaAbonos from './Components/TablaAbonos';
 import { useQuery } from '@apollo/client';
+import { TesoreriaCtx } from '../../../../../context/Tesoreria/tesoreriaCtx';
+import SearchOutlined from '@material-ui/icons/SearchOutlined';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -38,12 +40,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function AbonosProveedores() {
 	const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-
+	const { reload, setReload, setCuentas } = useContext(TesoreriaCtx);
+	
 	const classes = useStyles();
 	const [ open, setOpen ] = useState(false);
 	const [values, setValues] = useState('');
-
-	let comprasCredito = [];
+	const [filtro, setFiltro] = useState("");
+	const searchfilter = useRef(null);
 
 	const { loading, data, error, refetch } = useQuery(
 		OBTENER_COMPRAS_REALIZADAS,
@@ -57,19 +60,25 @@ export default function AbonosProveedores() {
 		}
 	);
 
-	console.log(data);
-	console.log(error)
-
 	if(data){
-		comprasCredito = data.obtenerComprasRealizadas;
-	}; 
+		setCuentas(data.obtenerComprasRealizadas)
+	};
+	
+	useEffect(() => {
+		
+		refetch();
+		
+		setReload(false);
+
+	}, [reload, refetch]);
 
 	const handleClickOpen = () => setOpen(!open);
 
-	const pressEnter = (e) => {
-		if (e.key === 'Enter') setValues(e.target.defaultValue);
+	const obtenerBusqueda = (e, value) => {
+		e.preventDefault();
+		refetch({ filtro: value, fecha: '' });
+		setFiltro(value);
 	};
-
 
 	return (
 		<div>
@@ -96,22 +105,31 @@ export default function AbonosProveedores() {
 				</AppBar>
 				<Box display='flex' p={2}>
 					<Box minWidth="70%">
-						<Paper elevation={2} className={classes.rootSearch}>
-							<InputBase
-								fullWidth
-								placeholder="Buscar compra o provedor..."
-								onChange={(e) => setValues(e.target.value)}
-								onKeyPress={pressEnter}
-								value={values}
-							/>
-							<IconButton onClick={() => setValues(values)}>
-								<Search />
-							</IconButton>
-						</Paper>
+					<form onSubmit={(e) => obtenerBusqueda(e, e.target[0].value)}>
+						<TextField
+							inputRef={searchfilter}
+							fullWidth
+							size="small"
+							variant="outlined"
+							placeholder="Buscar una compra..."
+							InputProps={{
+							endAdornment: (
+								<InputAdornment position="end">
+								<IconButton type="submit" color="primary" size="medium">
+									<SearchOutlined />
+								</IconButton>
+								</InputAdornment>
+							),
+							}}
+						/>
+						</form>
 					</Box>
 				</Box>
 				<Box p={2}>
-					<TablaAbonos comprasCredito={comprasCredito} />
+					<TablaAbonos 	
+						loading={loading}
+						refetch={refetch}
+					/>
 				</Box>
 			</Dialog>
 		</div>
