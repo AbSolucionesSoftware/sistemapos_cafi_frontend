@@ -52,28 +52,10 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function TablaAbonos({loading}) {
-	const {setReload, cuentas, setCuenta} = useContext(TesoreriaCtx);
+
+	const { cuentas} = useContext(TesoreriaCtx);
 
 	const classes = useStyles();
-	const [open, setOpen] = useState(false);
-    
-	const handleClick = () => {
-        setOpen(!open);
-    }
-
-	const TwoClickInRowTableBuy = (e, cuentaSelect) => {
-		try {
-			let timer;
-			clearTimeout(timer);
-			if (e.detail === 2) {
-				handleClick();
-				setReload(true);
-				setCuenta(cuentaSelect);
-			}
-		} catch (error) {
-			
-		}
-	};
 
 	if (loading) 
 		return (
@@ -117,7 +99,7 @@ export default function TablaAbonos({loading}) {
 								if(row.credito_pagado === false){
 									return (
 										<RowsCuentas 
-											TwoClickInRowTableBuy={TwoClickInRowTableBuy}
+											loading={loading}
 											cuentaSelect={row}
 											key={index}
 										/>
@@ -129,30 +111,35 @@ export default function TablaAbonos({loading}) {
 				</TableContainer>
 			</Paper>
 		</div>
-
-			<Dialog
-				fullScreen
-				open={open} 
-				onClose={handleClick} 
-				TransitionComponent={Transition}
-			>
-				<DetallesCuenta
-					loading={loading}
-					handleClick={handleClick}
-				/>
-			</Dialog>
 		</Fragment>
 	);
 };
 
-function RowsCuentas ({TwoClickInRowTableBuy, cuentaSelect}){
+function RowsCuentas ({cuentaSelect, loading}){
+
+	const [open, setOpen] = useState(false);
+    
+	const handleClick = () => {
+        setOpen(!open);
+    };
+	
+	const TwoClickInRowTableBuy = (e) => {
+		try {
+			let timer;
+			clearTimeout(timer);
+			if (e.detail === 2) {
+				handleClick();
+			}
+		} catch (error) {
+		}
+	};
 
 	return(
 		<Fragment>
 			<TableRow
 				hover
 				tabIndex={-1}
-				onClick={(e) => TwoClickInRowTableBuy(e, cuentaSelect)}
+				onClick={(e) => TwoClickInRowTableBuy(e)}
 			>
 				<TableCell align="center">{moment(cuentaSelect.fecha_registro).format('D MMMM YYYY')}</TableCell>
 				<TableCell align="center">{cuentaSelect.proveedor.id_proveedor.nombre_cliente}</TableCell>
@@ -163,6 +150,19 @@ function RowsCuentas ({TwoClickInRowTableBuy, cuentaSelect}){
 					<LiquidarCuenta cuenta={cuentaSelect}/>
 				</TableCell>
 			</TableRow>
+
+			<Dialog
+				fullScreen
+				open={open} 
+				onClose={handleClick} 
+				TransitionComponent={Transition}
+			>
+				<DetallesCuenta
+					cuenta={cuentaSelect}
+					loading={loading}
+					handleClick={handleClick}
+				/>
+			</Dialog>
 		</Fragment>
 	);
 };

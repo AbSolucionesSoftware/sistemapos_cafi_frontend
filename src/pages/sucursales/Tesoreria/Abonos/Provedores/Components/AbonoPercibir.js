@@ -47,9 +47,10 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function AbonoaRecibir() {
+export default function AbonoaRecibir({cuenta}) {
     const [ CrearAbono ] = useMutation(CREAR_ABONO);
-	const {setReload, setAlert, cuenta} = useContext(TesoreriaCtx);
+    
+	const { setReload, setAlert } = useContext(TesoreriaCtx);
 
     const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 

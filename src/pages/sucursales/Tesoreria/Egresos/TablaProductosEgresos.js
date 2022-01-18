@@ -87,8 +87,8 @@ export default function TablaProductosEgresos({productos, borrarProducto}) {
 				count={productos.length}
 				rowsPerPage={rowsPerPage}
 				page={page}
-				onChangePage={handleChangePage}
-				onChangeRowsPerPage={handleChangeRowsPerPage}
+				onPageChange={handleChangePage}
+				onRowsPerPageChange={handleChangeRowsPerPage}
 			/>
 		</Paper>
 	);
