@@ -112,6 +112,7 @@ export default function AbonoaRecibir({cuenta}) {
             clave: "",
             metodo:  "",
         },
+        id_usuario: sesion._id,
         numero_usuario_creador: sesion.numero_usuario,
         nombre_usuario_creador: sesion.nombre,
         id_cliente: cuenta.proveedor.id_proveedor._id,
