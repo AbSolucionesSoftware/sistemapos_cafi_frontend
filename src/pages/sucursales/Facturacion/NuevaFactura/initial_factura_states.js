@@ -2,10 +2,10 @@ const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
 export const factura_initial_state = {
     serie: "",
-    currency: "",
+    currency: "MXN",
     expedition_place: "",
     folio: "",
-    cfdi_type: "",
+    cfdi_type: "I",
     payment_form: "",
     payment_method: "",
     logo_url: sesion ? sesion.imagen : '',
