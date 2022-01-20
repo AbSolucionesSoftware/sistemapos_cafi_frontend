@@ -4,13 +4,14 @@ export const numerosRandom = (min, max) => {
 
 export const generateCode = (length) => {
   var result = "";
-  var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   var charactersLength = characters.length;
   for (var i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
-}
+};
 
 export const formatoHora = (hora) => {
   if (!hora) {
@@ -77,7 +78,7 @@ export const findProductArray = async (productosVentas, producto) => {
 
     for (let i = 0; i < productosVentas.length; i++) {
       if (typeof productosVentas[i].codigo_barras !== "undefined") {
-        if(productosVentas[i].codigo_barras === producto.codigo_barras){
+        if (productosVentas[i].codigo_barras === producto.codigo_barras) {
           producto_found = {
             producto: productosVentas[i],
             index: i,
@@ -89,7 +90,10 @@ export const findProductArray = async (productosVentas, producto) => {
           };
         }
       } else {
-        if (productosVentas[i].id_producto.datos_generales.clave_alterna === producto.id_producto.datos_generales.clave_alterna) {
+        if (
+          productosVentas[i].id_producto.datos_generales.clave_alterna ===
+          producto.id_producto.datos_generales.clave_alterna
+        ) {
           producto_found = {
             producto: productosVentas[i],
             index: i,
@@ -98,7 +102,7 @@ export const findProductArray = async (productosVentas, producto) => {
           return {
             producto_found,
             found,
-          }
+          };
         }
       }
     }
@@ -113,8 +117,12 @@ export const findProductArray = async (productosVentas, producto) => {
   }
 };
 
-export const calculatePrices = async ( newP, cantidad, granel, newPrising = 0 ) => {
-
+export const calculatePrices = async (
+  newP,
+  cantidad,
+  granel,
+  newPrising = 0
+) => {
   let subtotalCalculo = 0,
     totalCalculo = 0,
     impuestoCalculo = 0,
@@ -122,63 +130,78 @@ export const calculatePrices = async ( newP, cantidad, granel, newPrising = 0 ) 
     iepsCalculo = 0,
     descuentoCalculo = 0,
     monederoCalculo = 0;
-// console.log("newPrising",newPrising);
+  // console.log("newPrising",newPrising);
   const cantidadNueva = cantidad > 0 ? cantidad : 1;
   console.log(newP.id_producto.precios.precios_producto[0].precio_venta);
   // console.log(newP);
   const iva_producto =
+    parseFloat(newP.id_producto.precios.precios_producto[0].precio_venta) *
     parseFloat(
-      newP.id_producto.precios.precios_producto[0].precio_venta
-    ) * parseFloat(`0.${newP.id_producto.precios.iva  < 9 ? `0${newP.id_producto.precios.iva}` : newP.id_producto.precios.iva}`);
-  
+      `0.${
+        newP.id_producto.precios.iva < 9
+          ? `0${newP.id_producto.precios.iva}`
+          : newP.id_producto.precios.iva
+      }`
+    );
+
   const ieps_producto =
+    parseFloat(newP.id_producto.precios.precios_producto[0].precio_venta) *
     parseFloat(
-      newP.id_producto.precios.precios_producto[0].precio_venta
-    ) * parseFloat(`0.${newP.id_producto.precios.ieps < 9 ? `0${newP.id_producto.precios.ieps}` : newP.id_producto.precios.ieps}`);
+      `0.${
+        newP.id_producto.precios.ieps < 9
+          ? `0${newP.id_producto.precios.ieps}`
+          : newP.id_producto.precios.ieps
+      }`
+    );
 
   const precioProducto = newPrising;
-    // const precioDescuentoProducto = newP.descuento_activo ? parseFloat(newP.descuento.precio_con_descuento) : 0;
+  // const precioDescuentoProducto = newP.descuento_activo ? parseFloat(newP.descuento.precio_con_descuento) : 0;
 
-  totalCalculo = granel.granel === true 
+  totalCalculo =
+    granel.granel === true
       ? precioProducto * cantidadNueva * parseFloat(granel.valor)
       : precioProducto * cantidadNueva;
 
-  subtotalCalculo = granel.granel === true 
-      ? (precioProducto - (iva_producto + ieps_producto)) * cantidadNueva * parseFloat(granel.valor) 
+  subtotalCalculo =
+    granel.granel === true
+      ? (precioProducto - (iva_producto + ieps_producto)) *
+        cantidadNueva *
+        parseFloat(granel.valor)
       : (precioProducto - (iva_producto + ieps_producto)) * cantidadNueva;
 
   impuestoCalculo =
-      granel.granel === true
-        ? (iva_producto + ieps_producto) *
-          cantidadNueva *
-          parseFloat(granel.valor)
-        : (iva_producto + ieps_producto) * cantidadNueva;
+    granel.granel === true
+      ? (iva_producto + ieps_producto) *
+        cantidadNueva *
+        parseFloat(granel.valor)
+      : (iva_producto + ieps_producto) * cantidadNueva;
 
-        console.log(cantidadNueva);
+  console.log(cantidadNueva);
 
   ivaCalculo =
-      granel.granel === true
-        ? iva_producto * cantidadNueva * parseFloat(granel.valor)
-        : iva_producto * cantidadNueva;
+    granel.granel === true
+      ? iva_producto * cantidadNueva * parseFloat(granel.valor)
+      : iva_producto * cantidadNueva;
 
   iepsCalculo =
-      granel.granel === true
-        ? ieps_producto * cantidadNueva * parseFloat(granel.valor)
-        : ieps_producto * cantidadNueva;
+    granel.granel === true
+      ? ieps_producto * cantidadNueva * parseFloat(granel.valor)
+      : ieps_producto * cantidadNueva;
 
   descuentoCalculo =
-      granel.granel === true
-        ? newP.descuento_activo === true
-          ? parseFloat(newP.descuento.dinero_descontado) *
-            cantidadNueva *
-            parseFloat(granel.valor)
-          : 0
-        : newP.descuento_activo === true
+    granel.granel === true
+      ? newP.descuento_activo === true
         ? parseFloat(newP.descuento.dinero_descontado) *
-          cantidadNueva
-        : 0;
+          cantidadNueva *
+          parseFloat(granel.valor)
+        : 0
+      : newP.descuento_activo === true
+      ? parseFloat(newP.descuento.dinero_descontado) * cantidadNueva
+      : 0;
 
-  monederoCalculo = newP.id_producto.precios.monedero ? newP.id_producto.precios.monedero_electronico * cantidadNueva : 0;
+  monederoCalculo = newP.id_producto.precios.monedero
+    ? newP.id_producto.precios.monedero_electronico * cantidadNueva
+    : 0;
 
   return {
     totalCalculo,
@@ -187,393 +210,141 @@ export const calculatePrices = async ( newP, cantidad, granel, newPrising = 0 ) 
     ivaCalculo,
     iepsCalculo,
     descuentoCalculo,
-    monederoCalculo
+    monederoCalculo,
   };
+};
+
+export const calculatePrices2 = async ({ newP, cantidad, granel, origen, precio_boolean = false, precio}) => {
+  try {
+    let subtotalCalculo = 0,
+      totalCalculo = 0,
+      impuestoCalculo = 0,
+      ivaCalculo = 0,
+      iepsCalculo = 0,
+      descuentoCalculo = 0,
+      monederoCalculo = 0;
+    // const descuento = newP.descuento_activo === null ? false : true;
+    const cantidadNueva = cantidad > 0 ? cantidad : 1;
+
+    const valor_granel = granel.granel ? granel.valor : 1;
+
+    const precio_actual = precio_boolean ? precio : newP.descuento_activo ? newP.descuento : newP.precio_unidad;
+
+    const cantidadCaja =
+    precio_actual.unidad_maxima === true
+      ? precio_actual.cantidad_unidads
+      : 1;
+
+    const precio_descuento = 0;
+
+    ivaCalculo = precio_actual.iva_precio * cantidadCaja;
+
+    iepsCalculo = precio_actual.ieps_precio * cantidadCaja;
+
+    impuestoCalculo = ivaCalculo + iepsCalculo;
+
+    subtotalCalculo = precio_actual.precio_venta * cantidadCaja;
+
+    totalCalculo = precio_actual.precio_neto * cantidadCaja;
+
+    monederoCalculo = newP.id_producto.precios.monedero
+      ? newP.id_producto.precios.monedero_electronico * cantidadCaja
+      : 0;
+    descuentoCalculo = totalCalculo - newP.precio_unidad.precio_neto;
+
+    if(origen === "Ventas1"){
+      newP.cantidad_venta = 1;
+      newP.granel_producto  = granel;
+      newP.precio_a_vender = totalCalculo;
+      newP.precio_actual_producto = precio_actual.precio_neto;
+      newP.precio_actual_object = precio_actual;
+    }else if(origen === "Ventas2") {
+      newP.granel_producto = granel;
+      newP.precio_a_vender = totalCalculo;
+      newP.precio_anterior = newP.precio_actual_producto;
+    }
+
+    return {
+      ivaCalculo: ivaCalculo * valor_granel * cantidadNueva,
+      iepsCalculo: iepsCalculo * valor_granel * cantidadNueva,
+      impuestoCalculo: impuestoCalculo * valor_granel * cantidadNueva,
+      subtotalCalculo: subtotalCalculo * valor_granel * cantidadNueva,
+      totalCalculo: totalCalculo * valor_granel * cantidadNueva,
+      monederoCalculo: monederoCalculo * valor_granel * cantidadNueva,
+      descuentoCalculo: descuentoCalculo * valor_granel * cantidadNueva,
+      newP
+    };
+  } catch (error) {
+    return false;
+  }
 };
 
 export const verifiPrising = async (newP) => {
   try {
-    if(!newP) return false;
+    if (!newP) return false;
     const amount = newP.cantidad_venta;
-    const pricings = newP.id_producto.precios.precios_producto.filter((p) => p.unidad_mayoreo > 0 && p.precio_neto > 0);
- 
+    const pricings = newP.id_producto.precios.precios_producto.filter(
+      (p) => p.unidad_mayoreo > 0 && p.precio_neto > 0
+    );
+
     let finalPrising = {
       found: false,
       pricing: 0,
-      number_pricing: 0
+      number_pricing: 0,
+      object_prising: {}
     };
     const datoFinal = pricings.length;
-    if(newP.precio_seleccionado) return finalPrising;
+    if (newP.precio_seleccionado) return finalPrising;
     //CONIDICONAR SI EL PRECIO ES MENOR Y MENOR PERO QUE NO SEA MAYOR AL SEGUNDO
-    if(amount < newP.id_producto.precios.precios_producto[1].unidad_mayoreo) 
-      return finalPrising = {
+    if (amount < newP.id_producto.precios.precios_producto[1].unidad_mayoreo)
+      return (finalPrising = {
         found: true,
-        pricing: newP.descuento_activo ? newP.descuento.precio_con_descuento : newP.id_producto.precios.precios_producto[0].precio_neto,
-        number_pricing: newP.id_producto.precios.precios_producto[0].numero_precio
-      };
+        pricing: newP.descuento_activo
+          ? newP.descuento.precio_con_descuento
+          : newP.id_producto.precios.precios_producto[0].precio_neto,
+        number_pricing:
+          newP.id_producto.precios.precios_producto[0].numero_precio,
+        object_prising: newP.id_producto.precios.precios_producto[0]
+      });
 
     for (let i = 0; i < pricings.length; i++) {
-      if(i + 1 === datoFinal && amount >= pricings[i].unidad_mayoreo) 
-        return finalPrising = {found: true,pricing: pricings[i].precio_neto,number_pricing: pricings[i].numero_precio };
-      
-      if(i + 1 < datoFinal && amount >= pricings[i].unidad_mayoreo && amount < pricings[i + 1].unidad_mayoreo){
+      if (i + 1 === datoFinal && amount >= pricings[i].unidad_mayoreo)
+        return (finalPrising = {
+          found: true,
+          pricing: pricings[i].precio_neto,
+          number_pricing: pricings[i].numero_precio,
+          object_prising: pricings[i]
+        });
+
+      if (
+        i + 1 < datoFinal &&
+        amount >= pricings[i].unidad_mayoreo &&
+        amount < pricings[i + 1].unidad_mayoreo
+      ) {
         finalPrising = {
           found: true,
           pricing: pricings[i].precio_neto,
-          number_pricing: pricings[i].numero_precio
-        }
+          number_pricing: pricings[i].numero_precio,
+          object_prising: pricings[i]
+        };
       }
-      // if(i + 1 === datoFinal){
-      //     if(amount >= pricings[i].unidad_mayoreo){
-      //       finalPrising = {
-      //         found: true,
-      //         pricing: pricings[i].precio_neto,
-      //         number_pricing: pricings[i].numero_precio
-      //       }
-      //     }else{
-      //     }
-      // }else{
-      //   if(i + 1 < datoFinal && amount >= pricings[i].unidad_mayoreo && amount < pricings[i + 1].unidad_mayoreo){
-      //     finalPrising = {
-      //       found: true,
-      //       pricing: pricings[i].precio_neto,
-      //       number_pricing: pricings[i].numero_precio
-      //     }
-      //     // console.log("llego al rango de precio");
-      //   }
-      // }
     }
     return finalPrising;
   } catch (error) {
     console.log(error);
     return false;
   }
-}
+};
 
-export function formatCurrency (number) {
+export function formatCurrency(number) {
   var formatted = new Intl.NumberFormat("en-US", {
-    style: 'currency',
+    style: "currency",
     currency: "USD",
-    minimumFractionDigits: 2
+    minimumFractionDigits: 2,
   }).format(number);
   console.log(formatted);
   return formatted;
 }
-
-//Recalcular los precios con los nuevos campos
-// export async function calculateNewPrising(props) {
-//   try {
-//     const { producto, cantidad, granel, origen } = props;
-
-//     /* precio_unidad: {
-//         numero_precio: Number,
-//         precio_neto: Float,
-//         precio_venta: Float,
-//         unidad_mayoreo: Number,
-//         iva_precio: Float,
-//         ieps_precio: Float,
-//         utilidad: Float,
-//         precio_general: Float,
-//         cantidad_unidad: Number,
-//         unidad_maxima:Boolean
-//       } */
-
-//     //Declarar variables que se utilizaran
-//     const valores = {
-//       subtotal: 0,
-//       total: 0,
-//       impuesto: 0,
-//       iva: 0,
-//       ieps: 0,
-//       descuento: 0,
-//       monedero: 0
-//     }
-//     const new_producto = {};
-
-//     //Buscar el producto en el array del local storage
-//     const { producto_found, found } = await findProductArrayRefactor(producto);
-
-//     switch(origen){
-//       case 'Ventas': 
-//       if (!producto_found.found && producto._id) {
-//         const newP = { ...producto };
-
-//         /* const productoPrecioFinal = newP.descuento_activo
-//           ? newP.descuento.precio_con_descuento
-//           : newP.precio; */
-
-//         const {
-//           subtotalCalculo,
-//           totalCalculo,
-//           impuestoCalculo,
-//           ivaCalculo,
-//           iepsCalculo,
-//           descuentoCalculo,
-//           monederoCalculo,
-//         } = await calculatePrices(newP, null, granelBase);
-
-//         subTotal = subtotalCalculo;
-//         total = totalCalculo;
-//         impuestos = impuestoCalculo;
-//         iva = ivaCalculo;
-//         ieps = iepsCalculo;
-//         descuento = descuentoCalculo;
-//         monedero = monederoCalculo;
-//         // console.log(monedero);
-//         newP.cantidad_venta = 1;
-//         newP.granel_producto = granelBase;
-//         newP.precio_a_vender = totalCalculo;
-//         newP.precio_actual_producto = productoPrecioFinal;
-//         newP.precio_anterior = productoPrecioFinal;
-//         newP.iva_total_producto = parseFloat(iva);
-//         productosVentasTemp.push(newP);
-
-//         const CalculosData = {
-//           subTotal: parseFloat(venta_existente.subTotal) + subTotal,
-//           total: parseFloat(venta_existente.total) + total,
-//           impuestos: parseFloat(venta_existente.impuestos) + impuestos,
-//           iva: parseFloat(venta_existente.iva) + iva,
-//           ieps: parseFloat(venta_existente.ieps) + ieps,
-//           descuento: parseFloat(venta_existente.descuento) + descuento,
-//           monedero: parseFloat(venta_existente.monedero) + monedero,
-//         };
-//         // console.log("Primer precio",CalculosData);
-//         localStorage.setItem(
-//           "DatosVentas",
-//           JSON.stringify({
-//             ...CalculosData,
-//             cliente:
-//               venta_actual.venta_cliente === true ? venta_actual.cliente : {},
-//             venta_cliente:
-//               venta_actual.venta_cliente === true
-//                 ? venta_actual.venta_cliente
-//                 : false,
-//             productos: productosVentasTemp,
-//           })
-//         );
-//         setDatosVentasActual({
-//           ...CalculosData,
-//         });
-//         //Recargar la tabla de los productos
-//         setUpdateTablaVentas(!updateTablaVentas);
-  
-//       } else if (producto_encontrado.found && producto._id) {
-//         const { cantidad_venta, ...newP } =
-//           producto_encontrado.producto_found.producto;
-//         newP.cantidad_venta = parseInt(cantidad_venta) + 1;
-//         //console.log(newP);
-//         const verify_prising = await verifiPrising(newP);
-//         // console.log(verify_prising);
-//         //Vrificar si el precio fue encontrado
-//         if (verify_prising.found) {
-//           console.log("Entro a aqui nuevo precio");
-  
-//           calculoResta = await calculatePrices(
-//             newP,
-//             cantidad_venta,
-//             newP.granel_producto,
-//             newP.precio_actual_producto,
-//             "TABLA"
-//           );
-  
-//           //Sacar los impuestos que se van a sumar
-//           calculoSuma = await calculatePrices(
-//             newP,
-//             newP.cantidad_venta,
-//             newP.granel_producto,
-//             verify_prising.pricing,
-//             "TABLA"
-//           );
-  
-//           // console.log(calculoSuma);
-//           // console.log(calculoSuma);
-  
-//           newP.precio_a_vender = calculoSuma.totalCalculo;
-//           newP.precio_anterior = newP.precio_actual_producto;
-//           newP.precio_actual_producto = verify_prising.pricing;
-//           productosVentasTemp.splice(
-//             producto_encontrado.producto_found.index,
-//             1,
-//             newP
-//           );
-  
-//           const CalculosData = {
-//             subTotal:
-//               parseFloat(venta_existente.subTotal) -
-//               parseFloat(calculoResta.subtotalCalculo) +
-//               calculoSuma.subtotalCalculo,
-//             total:
-//               parseFloat(venta_existente.total) -
-//               parseFloat(calculoResta.totalCalculo) +
-//               calculoSuma.totalCalculo,
-//             impuestos:
-//               parseFloat(venta_existente.impuestos) -
-//               parseFloat(calculoResta.impuestoCalculo) +
-//               calculoSuma.impuestoCalculo,
-//             iva:
-//               parseFloat(venta_existente.iva) -
-//               parseFloat(calculoResta.ivaCalculo) +
-//               calculoSuma.ivaCalculo,
-//             ieps:
-//               parseFloat(venta_existente.ieps) -
-//               parseFloat(calculoResta.iepsCalculo) +
-//               calculoSuma.iepsCalculo,
-//             descuento:
-//               parseFloat(venta_existente.descuento) -
-//               parseFloat(calculoResta.descuentoCalculo) +
-//               calculoSuma.descuentoCalculo,
-//             monedero:
-//               parseFloat(venta_existente.monedero) -
-//               parseFloat(calculoResta.monederoCalculo) +
-//               calculoSuma.monederoCalculo,
-//           }; 
-//           // console.log("Llego a nuevo precio",CalculosData);
-//           localStorage.setItem(
-//             "DatosVentas",
-//             JSON.stringify({
-//               ...CalculosData,
-//               cliente:
-//                 venta_actual.venta_cliente === true ? venta_actual.cliente : {},
-//               venta_cliente:
-//                 venta_actual.venta_cliente === true
-//                   ? venta_actual.venta_cliente
-//                   : false,
-//               productos: productosVentasTemp,
-//             })
-//           );
-//           setDatosVentasActual({
-//             ...CalculosData,
-//           });
-//           //Recargar la tabla de los productos
-//           setUpdateTablaVentas(!updateTablaVentas);
-//         } else { 
-//           // console.log("Entro a aqui");
-//           // console.log(verify_prising);
-//           const productoPrecioFinal = newP.descuento_activo
-//             ? newP.descuento.precio_con_descuento
-//             : newP.precio;
-//           const {
-//             subtotalCalculo,
-//             totalCalculo,
-//             impuestoCalculo,
-//             ivaCalculo,
-//             iepsCalculo,
-//             descuentoCalculo,
-//             monederoCalculo,
-//           } = await calculatePrices(newP, 0, granelBase, productoPrecioFinal);
-//           subTotal = subtotalCalculo;
-//           total = totalCalculo;
-//           impuestos = impuestoCalculo;
-//           iva = ivaCalculo;
-//           ieps = iepsCalculo;
-//           descuento = descuentoCalculo;
-//           monedero = monederoCalculo;
-  
-//           newP.granel_producto = granelBase;
-//           newP.precio_a_vender = totalCalculo;
-//           newP.precio_anterior = newP.precio_actual_producto;
-//           newP.precio_actual_producto = productoPrecioFinal;
-//           productosVentasTemp.splice(
-//             producto_encontrado.producto_found.index,
-//             1,
-//             newP
-//           );
-  
-//           const CalculosData = {
-//             subTotal: parseFloat(venta_existente.subTotal) + subTotal,
-//             total: parseFloat(venta_existente.total) + total,
-//             impuestos: parseFloat(venta_existente.impuestos) + impuestos,
-//             iva: parseFloat(venta_existente.iva) + iva,
-//             ieps: parseFloat(venta_existente.ieps) + ieps,
-//             descuento: parseFloat(venta_existente.descuento) + descuento,
-//             monedero: parseFloat(venta_existente.monedero) + monedero,
-//           };
-//           // console.log("Precio normal",CalculosData);
-//           localStorage.setItem(
-//             "DatosVentas",
-//             JSON.stringify({
-//               ...CalculosData,
-//               cliente:
-//                 venta_actual.venta_cliente === true ? venta_actual.cliente : {},
-//               venta_cliente:
-//                 venta_actual.venta_cliente === true
-//                   ? venta_actual.venta_cliente
-//                   : false,
-//               productos: productosVentasTemp,
-//             })
-//           );
-//           setDatosVentasActual({
-//             ...CalculosData,
-//           });
-//           //Recargar la tabla de los productos
-//           setUpdateTablaVentas(!updateTablaVentas);
-//         }
-//       }
-//       productosBase = null;
-//         break;
-//       case 'Tabla':
-
-//         break;
-//       case 'Precios':
-
-//         break;
-//       case 'Eliminar':
-
-//         break;
-//     }
-
-//     //Verificar si el producto tiene descuento
-
-    
-//     //Verificar si ese precio fue seleccionado (en la tabla de precios del producto)
-
-//     //Verificar si la cantidad esta en rango de otro precio
-
-//   } catch (error) {
-//     console.log(error);
-//     return false;
-//   }
-// }
-
-// export async function calculatePrices2(props) {
-//   try {
-//     let subtotalCalculo = 0,
-//     totalCalculo = 0,
-//     impuestoCalculo = 0,
-//     ivaCalculo = 0,
-//     iepsCalculo = 0,
-//     descuentoCalculo = 0,
-//     monederoCalculo = 0;
-
-//     const { producto, cantidad = 1, granel, origen } = props;
-
-//     //Sacar el precio, Sacar iva, iesps etc dependiendo si tiene descuento o no;
-//     const { 
-//       precio_neto, 
-//       precio_venta, 
-//       iva_precio, 
-//       ieps_precio, 
-//       unidad_maxima, 
-//       cantidad_unidad, 
-//       precio_general 
-//     } = producto.descuento_activo === true ? producto.descuento : producto.precio_unidad;
-
-//     switch(origen){
-//       case 'Ventas': 
-
-//         break;
-//       case 'Tabla': 
-
-//         break;
-//     }
-
-    
-
-//   } catch (error) {
-//     return false;
-//   }
-// }
-
 
 export const findProductArrayRefactor = async (producto) => {
   try {
@@ -589,7 +360,7 @@ export const findProductArrayRefactor = async (producto) => {
     for (let i = 0; i < productosVentas.length; i++) {
       //Se verifica si tiene codigo de barras ya que no es obligatorio
       if (typeof productosVentas[i].codigo_barras !== "undefined") {
-        if(productosVentas[i].codigo_barras === producto.codigo_barras){
+        if (productosVentas[i].codigo_barras === producto.codigo_barras) {
           return {
             producto_found: {
               producto: productosVentas[i],
@@ -599,14 +370,17 @@ export const findProductArrayRefactor = async (producto) => {
           };
         }
       } else {
-        if (productosVentas[i].id_producto.datos_generales.clave_alterna === producto.id_producto.datos_generales.clave_alterna) {
+        if (
+          productosVentas[i].id_producto.datos_generales.clave_alterna ===
+          producto.id_producto.datos_generales.clave_alterna
+        ) {
           return {
             producto_found: {
               producto: productosVentas[i],
               index: i,
             },
             found: true,
-          }
+          };
         }
       }
     }

@@ -66,9 +66,17 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
         unidad_maxima
       }
       descuento {
-        porciento
+        cantidad_unidad
+        numero_precio
+        unidad_maxima
+        precio_general
+        precio_neto
+        precio_venta
+        iva_precio
+        ieps_precio
+        utilidad
         dinero_descontado
-        precio_con_descuento
+        porciento
       }
       medida{
         talla
