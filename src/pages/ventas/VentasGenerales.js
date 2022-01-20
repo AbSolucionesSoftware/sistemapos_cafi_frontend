@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 import useStyles from "./styles";
 
-import { FcRating, FcBusinessman, FcCalendar, FcSalesPerformance } from 'react-icons/fc';
+import { /* FcRating, */ FcBusinessman, FcCalendar, FcSalesPerformance } from 'react-icons/fc';
 import { FaBarcode, FaMoneyCheckAlt } from "react-icons/fa";
 import { AiOutlineFieldNumber } from "react-icons/ai";
 import { Search } from "@material-ui/icons";
@@ -31,8 +31,9 @@ import Cotizacion from './Cotizacion/Cotizacion'
 
 import {
   findProductArray,
-  calculatePrices,
-  verifiPrising
+  // calculatePrices,
+  verifiPrising,
+  calculatePrices2
 } from "../../config/reuserFunctions";
 
 // import { ClienteProvider } from '../../context/Catalogos/crearClienteCtx';
@@ -72,8 +73,13 @@ export default function VentasGenerales() {
   const [consultaBase, setConsultaBase] = useState(false);
 
   let productosBase = null;
-  console.log(data,loading, error);
+  if(error){
+    console.log(data,loading, error.networkError);
+    console.log(data,loading, error.graphQLErrors);
+  }
+  // console.log(data,loading, error);
   if (data) productosBase = data.obtenerUnProductoVentas;
+  // console.log(productosBase);
 
   useEffect(() => {
     if(error){
@@ -152,8 +158,6 @@ export default function VentasGenerales() {
   };
 
   const agregarProductos = async (producto) => {
-    // console.log(producto);
-    // console.log(granelBase);
     let venta = JSON.parse(localStorage.getItem("DatosVentas"));
     let productosVentas = venta === null ? [] : venta.productos;
     let venta_actual = venta === null ? [] : venta;
@@ -169,22 +173,18 @@ export default function VentasGenerales() {
             monedero: 0,
           }
         : venta;
-    // console.log(productosVentas);
+    console.log(venta_existente);
     let productosVentasTemp = productosVentas;
-    let subTotal = 0,
-      total = 0,
-      impuestos = 0,
-      iva = 0,
-      ieps = 0,
-      descuento = 0,
-      monedero = 0;
 
-    //Calculos de impuestos que se van a restar de la venta;
-    let calculoResta = {};
-    //Calculos de impuestos que se van a sumar a la venta
-    let calculoSuma = {};
-
-    // let CalculosData = {};
+    let CalculosData = {
+      subTotal: 0,
+      total: 0,
+      impuestos: 0,
+      iva: 0,
+      ieps: 0,
+      descuento: 0,
+      monedero: 0
+    };
 
     const producto_encontrado = await findProductArray(
       productosVentas,
@@ -193,217 +193,139 @@ export default function VentasGenerales() {
 
     if (!producto_encontrado.found && producto._id) {
       const newP = { ...producto };
-      // newP.precio_actual_producto =
+      //Tomar el precio con descuento o normal
       const productoPrecioFinal = newP.descuento_activo
-        ? newP.descuento.precio_con_descuento
-        : newP.precio;
-      const {
-        subtotalCalculo,
-        totalCalculo,
-        impuestoCalculo,
-        ivaCalculo,
-        iepsCalculo,
-        descuentoCalculo,
-        monederoCalculo,
-      } = await calculatePrices(newP, 0, granelBase, productoPrecioFinal);
-      // console.log(monederoCalculo);
-      subTotal = subtotalCalculo;
-      total = totalCalculo;
-      impuestos = impuestoCalculo;
-      iva = ivaCalculo;
-      ieps = iepsCalculo;
-      descuento = descuentoCalculo;
-      monedero = monederoCalculo;
-      // console.log(monedero);
-      newP.cantidad_venta = 1;
-      newP.granel_producto = granelBase;
-      newP.precio_a_vender = totalCalculo;
-      newP.precio_actual_producto = productoPrecioFinal;
-      newP.precio_anterior = productoPrecioFinal;
-      newP.iva_total_producto = parseFloat(iva);
-      productosVentasTemp.push(newP);
-      const CalculosData = {
-        subTotal: parseFloat(venta_existente.subTotal) + subTotal,
-        total: parseFloat(venta_existente.total) + total,
-        impuestos: parseFloat(venta_existente.impuestos) + impuestos,
-        iva: parseFloat(venta_existente.iva) + iva,
-        ieps: parseFloat(venta_existente.ieps) + ieps,
-        descuento: parseFloat(venta_existente.descuento) + descuento,
-        monedero: parseFloat(venta_existente.monedero) + monedero,
+        ? newP.descuento.precio_neto
+        : newP.precio_unidad.precio_neto;
+
+      const new_prices = await calculatePrices2({newP,cantidad: 0, granel: granelBase, origen: "Ventas1", precio_boolean: false });
+
+      new_prices.newP.precio_anterior = productoPrecioFinal;
+      new_prices.newP.iva_total_producto = parseFloat(new_prices.iva);
+      productosVentasTemp.push(new_prices.newP);
+
+      console.log(venta_existente);
+
+      console.log(new_prices);
+
+      CalculosData = {
+        subTotal: parseFloat(venta_existente.subTotal) + parseFloat(new_prices.subtotalCalculo),
+        total: parseFloat(venta_existente.total) + parseFloat(new_prices.totalCalculo),
+        impuestos: parseFloat(venta_existente.impuestos) + parseFloat(new_prices.impuestoCalculo),
+        iva: parseFloat(venta_existente.iva) + parseFloat(new_prices.ivaCalculo),
+        ieps: parseFloat(venta_existente.ieps) + parseFloat(new_prices.iepsCalculo),
+        descuento: parseFloat(venta_existente.descuento) + parseFloat(new_prices.descuentoCalculo),
+        monedero: parseFloat(venta_existente.monedero) + parseFloat(new_prices.monederoCalculo)
       };
-      // console.log("Primer precio",CalculosData);
-      localStorage.setItem(
-        "DatosVentas",
-        JSON.stringify({
-          ...CalculosData,
-          cliente:
-            venta_actual.venta_cliente === true ? venta_actual.cliente : {},
-          venta_cliente:
-            venta_actual.venta_cliente === true
-              ? venta_actual.venta_cliente
-              : false,
-          productos: productosVentasTemp,
-        })
-      );
-      setDatosVentasActual({
-        ...CalculosData,
-      });
-      //Recargar la tabla de los productos
-      setUpdateTablaVentas(!updateTablaVentas);
+
+      console.log(CalculosData);
 
     } else if (producto_encontrado.found && producto._id) {
-      const { cantidad_venta, ...newP } =
-        producto_encontrado.producto_found.producto;
+      
+      const { cantidad_venta, ...newP } = producto_encontrado.producto_found.producto;
+      
       newP.cantidad_venta = parseInt(cantidad_venta) + 1;
-      // console.log(newP);
+
       const verify_prising = await verifiPrising(newP);
-      // console.log(verify_prising);
+
       //Verificar si el precio fue encontrado
       if (verify_prising.found) {
-        console.log("Entro a aqui nuevo precio");
-        calculoResta = await calculatePrices(
-          newP,
-          cantidad_venta,
-          newP.granel_producto,
-          newP.precio_actual_producto,
-          "TABLA"
-        );
+        const calculo_resta = await calculatePrices2({newP,cantidad_venta, granel: newP.granel_producto, origen: '', precio_boolean: true, precio: newP.precio_actual_object });
+        
+        const calculo_sumar = await calculatePrices2({newP,cantidad_venta: newP.cantidad_venta, granel: newP.granel_producto, origen: '', precio_boolean: true, precio: verify_prising.pricing });
 
-        //Sacar los impuestos que se van a sumar
-        calculoSuma = await calculatePrices(
-          newP,
-          newP.cantidad_venta,
-          newP.granel_producto,
-          verify_prising.pricing,
-          "TABLA"
-        );
-
-        // console.log(calculoSuma);
-        // console.log(calculoSuma);
-
-        newP.precio_a_vender = calculoSuma.totalCalculo;
+        newP.precio_a_vender = calculo_sumar.totalCalculo;
         newP.precio_anterior = newP.precio_actual_producto;
         newP.precio_actual_producto = verify_prising.pricing;
+        newP.precio_actual_object = verify_prising.object_prising;
+
         productosVentasTemp.splice(
           producto_encontrado.producto_found.index,
           1,
           newP
         );
 
-        const CalculosData = {
+        CalculosData = {
           subTotal:
             parseFloat(venta_existente.subTotal) -
-            parseFloat(calculoResta.subtotalCalculo) +
-            calculoSuma.subtotalCalculo,
+            parseFloat(calculo_resta.subtotalCalculo) +
+            calculo_sumar.subtotalCalculo,
           total:
             parseFloat(venta_existente.total) -
-            parseFloat(calculoResta.totalCalculo) +
-            calculoSuma.totalCalculo,
+            parseFloat(calculo_resta.totalCalculo) +
+            calculo_sumar.totalCalculo,
           impuestos:
             parseFloat(venta_existente.impuestos) -
-            parseFloat(calculoResta.impuestoCalculo) +
-            calculoSuma.impuestoCalculo,
+            parseFloat(calculo_resta.impuestoCalculo) +
+            calculo_sumar.impuestoCalculo,
           iva:
             parseFloat(venta_existente.iva) -
-            parseFloat(calculoResta.ivaCalculo) +
-            calculoSuma.ivaCalculo,
+            parseFloat(calculo_resta.ivaCalculo) +
+            calculo_sumar.ivaCalculo,
           ieps:
             parseFloat(venta_existente.ieps) -
-            parseFloat(calculoResta.iepsCalculo) +
-            calculoSuma.iepsCalculo,
+            parseFloat(calculo_resta.iepsCalculo) +
+            calculo_sumar.iepsCalculo,
           descuento:
             parseFloat(venta_existente.descuento) -
-            parseFloat(calculoResta.descuentoCalculo) +
-            calculoSuma.descuentoCalculo,
+            parseFloat(calculo_resta.descuentoCalculo) +
+            calculo_sumar.descuentoCalculo,
           monedero:
             parseFloat(venta_existente.monedero) -
-            parseFloat(calculoResta.monederoCalculo) +
-            calculoSuma.monederoCalculo,
+            parseFloat(calculo_resta.monederoCalculo) +
+            calculo_sumar.monederoCalculo,
         }; 
-        // console.log("Llego a nuevo precio",CalculosData);
-        localStorage.setItem(
-          "DatosVentas",
-          JSON.stringify({
-            ...CalculosData,
-            cliente:
-              venta_actual.venta_cliente === true ? venta_actual.cliente : {},
-            venta_cliente:
-              venta_actual.venta_cliente === true
-                ? venta_actual.venta_cliente
-                : false,
-            productos: productosVentasTemp,
-          })
-        );
-        setDatosVentasActual({
-          ...CalculosData,
-        });
-        //Recargar la tabla de los productos
-        setUpdateTablaVentas(!updateTablaVentas);
-      } else {
-        // console.log("Entro a aqui");
-        // console.log(verify_prising);
-        const productoPrecioFinal = newP.descuento_activo
-          ? newP.descuento.precio_con_descuento
-          : newP.precio;
-        const {
-          subtotalCalculo,
-          totalCalculo,
-          impuestoCalculo,
-          ivaCalculo,
-          iepsCalculo,
-          descuentoCalculo,
-          monederoCalculo,
-        } = await calculatePrices(newP, 0, granelBase, productoPrecioFinal);
-        subTotal = subtotalCalculo;
-        total = totalCalculo;
-        impuestos = impuestoCalculo;
-        iva = ivaCalculo;
-        ieps = iepsCalculo;
-        descuento = descuentoCalculo;
-        monedero = monederoCalculo;
+      } else { 
 
-        newP.granel_producto = granelBase;
-        newP.precio_a_vender = totalCalculo;
-        newP.precio_anterior = newP.precio_actual_producto;
-        newP.precio_actual_producto = productoPrecioFinal;
+        const productoPrecioFinal = newP.descuento_activo
+        ? newP.descuento.precio_neto
+        : newP.precio_unidad.precio_neto;
+
+        const new_prices = await calculatePrices2({newP, cantidad: 0, granel: granelBase, origen: "Ventas2"});
+        new_prices.newP.precio_actual_producto = productoPrecioFinal;
+        
         productosVentasTemp.splice(
           producto_encontrado.producto_found.index,
           1,
-          newP
+          new_prices.newP
         );
 
-        const CalculosData = {
-          subTotal: parseFloat(venta_existente.subTotal) + subTotal,
-          total: parseFloat(venta_existente.total) + total,
-          impuestos: parseFloat(venta_existente.impuestos) + impuestos,
-          iva: parseFloat(venta_existente.iva) + iva,
-          ieps: parseFloat(venta_existente.ieps) + ieps,
-          descuento: parseFloat(venta_existente.descuento) + descuento,
-          monedero: parseFloat(venta_existente.monedero) + monedero,
+        console.log(parseFloat(venta_existente.subTotal), parseFloat(new_prices.subtotalCalculo));
+
+        console.log(parseFloat(venta_existente.subTotal) + parseFloat(new_prices.subtotalCalculo));
+
+        CalculosData = {
+          subTotal: parseFloat(venta_existente.subTotal) + parseFloat(new_prices.subtotalCalculo),
+          total: parseFloat(venta_existente.total) + new_prices.totalCalculo,
+          impuestos: parseFloat(venta_existente.impuestos) + new_prices.impuestoCalculo,
+          iva: parseFloat(venta_existente.iva) + new_prices.ivaCalculo,
+          ieps: parseFloat(venta_existente.ieps) + new_prices.iepsCalculo,
+          descuento: parseFloat(venta_existente.descuento) + new_prices.descuentoCalculo,
+          monedero: parseFloat(venta_existente.monedero) + new_prices.monederoCalculo,
         };
-        // console.log("Precio normal",CalculosData);
-        localStorage.setItem(
-          "DatosVentas",
-          JSON.stringify({
-            ...CalculosData,
-            cliente:
-              venta_actual.venta_cliente === true ? venta_actual.cliente : {},
-            venta_cliente:
-              venta_actual.venta_cliente === true
-                ? venta_actual.venta_cliente
-                : false,
-            productos: productosVentasTemp,
-          })
-        );
-        setDatosVentasActual({
-          ...CalculosData,
-        });
-        //Recargar la tabla de los productos
-        setUpdateTablaVentas(!updateTablaVentas);
+        console.log(CalculosData);
+        console.log(new_prices.newP);
       }
     }
+    console.log(CalculosData);
+    localStorage.setItem(
+      "DatosVentas",
+      JSON.stringify({
+        ...CalculosData,
+        cliente:
+          venta_actual.venta_cliente === true ? venta_actual.cliente : {},
+        venta_cliente:
+          venta_actual.venta_cliente === true
+            ? venta_actual.venta_cliente
+            : false,
+        productos: productosVentasTemp,
+      })
+    );
+    setDatosVentasActual({
+      ...CalculosData,
+    });
+    setUpdateTablaVentas(!updateTablaVentas);
 
-    productosBase = null;
   };
 
   return (
@@ -565,7 +487,7 @@ export default function VentasGenerales() {
                           <FaMoneyCheckAlt style={{fontSize: 19}} />
                         </Box>
                       </Box>
-                      <Box
+                      {/* <Box
                         flexDirection="row-reverse"
                         display="flex"
                         alignItems="center"
@@ -578,7 +500,7 @@ export default function VentasGenerales() {
                         <Box mt={.5} mr={1}>
                           <AiOutlineFieldNumber style={{fontSize: 22}} />
                         </Box>
-                      </Box>
+                      </Box> */}P
                       <Box
                         flexDirection="row-reverse"
                         display="flex"
@@ -645,7 +567,7 @@ export default function VentasGenerales() {
                           Impuestos: <b style={{fontSize: 17}}>$ {DatosVentasActual?.impuestos ? DatosVentasActual?.impuestos?.toFixed(2) : 0}</b>
                         </Typography>
                       </Box>
-                      <Box
+                      {/* <Box
                         flexDirection="row-reverse"
                         display="flex"
                         mr={1}
@@ -653,7 +575,7 @@ export default function VentasGenerales() {
                         <Typography variant="subtitle1" >
                           Iva: <b style={{fontSize: 17}}>$ {DatosVentasActual?.iva ? DatosVentasActual.iva.toFixed(2) : 0}</b>
                         </Typography>
-                      </Box>
+                      </Box> */}
                   </Grid>
                 </Grid>
               </Grid>
