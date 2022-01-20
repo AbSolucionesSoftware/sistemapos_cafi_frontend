@@ -471,7 +471,7 @@ let compra = {
     decuento_general: {
       cantidad_descontado: 0,
       porciento: 0,
-      precio_con_descuento: 0,
+      precio_neto: 0,
     },
     dias_de_credito_venta: null,
     fecha_de_vencimiento_credito: null,
@@ -513,7 +513,7 @@ let compra = {
         descuento: {
           porciento: 15,
           dinero_descontado: 5.4,
-          precio_con_descuento: 30.6,
+          precio_neto: 30.6,
         },
         descuento_activo: true,
         granel_producto: {

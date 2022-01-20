@@ -145,7 +145,7 @@ export default function PreCorteCaja() {
                                         <b>Monto total en efectivo: </b> 
                                     </Typography>
                                     <Typography variant="h3" style={{color: "green"}}> 
-                                        <b>${data.obtenerPreCorteCaja.monto_efectivo_precorte}</b> 
+                                        <b>${data?.obtenerPreCorteCaja?.monto_efectivo_precorte}</b> 
                                     </Typography>
                                 </Box>
                             </>

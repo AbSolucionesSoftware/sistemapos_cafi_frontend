@@ -29,7 +29,7 @@ const calculos = () => {
 
       if (unidadVentaXDefecto.descuento_activo === true) {
         //calcular nuevo precio entre %
-        let precio_con_descuento = Math.round(
+        let precio_neto = Math.round(
           precio -
             precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
         );
@@ -41,7 +41,7 @@ const calculos = () => {
             precio: parseFloat(precio.toFixed(2)),
             descuento: {
               ...unidadVentaXDefecto.descuento,
-              precio_con_descuento,
+              precio_neto,
             },
           });
         }
@@ -71,7 +71,7 @@ const calculos = () => {
 
       if (unidadVentaXDefecto.descuento_activo === true) {
         //calcular nuevo precio entre %
-        let precio_con_descuento = Math.round(
+        let precio_neto = Math.round(
           precio -
             precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
         );
@@ -83,7 +83,7 @@ const calculos = () => {
             precio: parseFloat(precio.toFixed(2)),
             descuento: {
               ...unidadVentaXDefecto.descuento,
-              precio_con_descuento,
+              precio_neto,
             },
           });
         }
@@ -146,7 +146,7 @@ const calculos = () => {
         });
         if (unidadVentaXDefecto.descuento_activo === true) {
           //calcular nuevo precio entre %
-          let precio_con_descuento = Math.round(
+          let precio_neto = Math.round(
             precio -
               precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
           );
@@ -156,7 +156,7 @@ const calculos = () => {
             precio: parseFloat(precio.toFixed(2)),
             descuento: {
               ...unidadVentaXDefecto.descuento,
-              precio_con_descuento,
+              precio_neto,
             },
           });
         }
@@ -184,7 +184,7 @@ const calculos = () => {
         });
         if (unidadVentaXDefecto.descuento_activo === true) {
           //calcular nuevo precio entre %
-          let precio_con_descuento = Math.round(
+          let precio_neto = Math.round(
             precio -
               precio * parseFloat("." + unidadVentaXDefecto.descuento.porciento)
           );
@@ -194,7 +194,7 @@ const calculos = () => {
             precio: parseFloat(precio.toFixed(2)),
             descuento: {
               ...unidadVentaXDefecto.descuento,
-              precio_con_descuento,
+              precio_neto,
             },
           });
         }

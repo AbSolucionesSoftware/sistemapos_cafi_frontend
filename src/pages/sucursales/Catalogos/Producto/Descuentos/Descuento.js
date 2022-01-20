@@ -84,7 +84,7 @@ export default function DescuentoProductos({datos, productosRefetch}) {
                     if ( datos[i].descuento.porciento !== 0) {
                         setValue(datos[i].descuento.porciento);
                         if (datos.length === 1) {
-                            setPrecioPrueba(datos[i].descuento.precio_con_descuento);
+                            setPrecioPrueba(datos[i].descuento.precio_neto);
                         }
                     }
                 }

@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useContext, useState } from 'react'
 import PropTypes from 'prop-types';
 import { AppBar, Box, Button, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core';
 import { FcDonate } from 'react-icons/fc';
@@ -6,6 +6,7 @@ import { FcDonate } from 'react-icons/fc';
 import CloseIcon from '@material-ui/icons/Close';
 import FormRegistroEgresos from './FormRegistroEgresos';
 import moment from 'moment';
+import { TesoreriaCtx } from '../../../../context/Tesoreria/tesoreriaCtx';
 
 
 function TabPanel(props) {
@@ -71,9 +72,10 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function VistaRegistroEgreso({handleClickOpen, alert, setAlert}) {
+export default function VistaRegistroEgreso({handleClickOpen}) {
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const classes = useStyles();
+	const { setAlert } = useContext(TesoreriaCtx);
     const [ value, setValue ] = useState(0);
 
     const handleChange = (event, newValue) => {
@@ -89,8 +91,8 @@ export default function VistaRegistroEgreso({handleClickOpen, alert, setAlert}) 
 						onChange={handleChange}
 						variant="scrollable"
 						scrollButtons="on"
-						indicatorColor="primary"
-						textColor="primary"
+						textColor='primary'
+						indicatorColor='primary'
 						aria-label="scrollable force tabs example"
 					>
 						<Tab
@@ -117,7 +119,7 @@ export default function VistaRegistroEgreso({handleClickOpen, alert, setAlert}) 
 					</Tabs>
 				</AppBar>
 				<TabPanel value={value} index={0}>
-					<FormRegistroEgresos handleClickOpen={handleClickOpen} setAlert={setAlert} tipo='CONTADO' />
+					<FormRegistroEgresos handleClickOpen={handleClickOpen} tipo='CONTADO' />
 				</TabPanel>
 			</div>
         </Fragment>

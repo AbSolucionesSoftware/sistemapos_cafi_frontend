@@ -88,13 +88,38 @@ export default function RetiroDeposito({cuenta, refetch, tipo}) {
             completa: moment().locale('es-mx').format()
         },
         montos_en_caja: {
-            monto_efectivo: parseFloat(datosMovimiento.cantidad),
-            monto_tarjeta:0,
-            monto_creditos:0,
-            monto_monedero:0,
-            monto_transferencia:0,
-            monto_cheques:0,
-            monto_vales_despensa:0
+            monto_efectivo: {
+                monto: parseFloat(datosMovimiento.cantidad),
+                metodo_pago: "01"
+            },
+            monto_tarjeta_debito: {
+                monto: 0,
+                metodo_pago: "28"
+            },
+            monto_tarjeta_credito: {
+                monto: 0,
+                metodo_pago: "04"
+            },
+            monto_creditos: {
+                monto: 0,
+                metodo_pago: "99"
+            },
+            monto_monedero: {
+                monto: 0,
+                metodo_pago: "05"
+            },
+            monto_transferencia: {
+                monto: 0,
+                metodo_pago: "03"
+            },
+            monto_cheques: {
+                monto: 0,
+                metodo_pago: "02"
+            },
+            monto_vales_despensa: {
+                monto: 0,
+                metodo_pago: "08"
+            },
         },
         comentarios: datosMovimiento.comentarios,
     };

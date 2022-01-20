@@ -49,14 +49,14 @@ const calculos = () => {
     }
     if (descuento_activo === true) {
       //calcular nuevo precio entre %
-      let precio_con_descuento = Math.round(
+      let precio_neto = Math.round(
         precio_neto - precio_neto * parseFloat("." + descuento.porciento)
       );
 
       unidadXDefecto = {
         ...unidadXDefecto,
         precio: parseFloat(precio_neto.toFixed(2)),
-        descuento: { ...unidadVentaXDefecto.descuento, precio_con_descuento },
+        descuento: { ...unidadVentaXDefecto.descuento, precio_neto },
       };
     }
   }

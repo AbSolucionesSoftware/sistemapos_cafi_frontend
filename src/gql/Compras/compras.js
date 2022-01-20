@@ -70,6 +70,8 @@ export const OBTENER_COMPRAS_REALIZADAS = gql`
           numero_cliente
           clave_cliente
           nombre_cliente
+          telefono
+          email
         }
         numero_cliente
         clave_cliente
@@ -421,7 +423,8 @@ export const OBTENER_COMPRAS_ESPERA = gql`
         mantener_precio
         subtotal
         total
-        total_con_descuento
+        subtotal_descuento
+        total_descuento
       }
       impuestos
       subtotal

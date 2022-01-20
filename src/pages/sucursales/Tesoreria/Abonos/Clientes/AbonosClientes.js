@@ -9,8 +9,8 @@ import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, TextField, Grid } from '@material-ui/core';
 
-import TablaAbonosClientes from './TablaAbonoClientes';
-import AbonoaRecibir from './Abono_a_Recibir';
+import TablaAbonos from './Components/TablaAbonos';
+import AbonoaRecibir from './Components/AbonoPercibir';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {	
@@ -100,7 +100,7 @@ export default function AbonosClientes() {
 					</Grid>
 				</Grid>
 				<Box p={2}>
-					<TablaAbonosClientes />
+					<TablaAbonos />
 				</Box>
 			</Dialog>
 		</div>

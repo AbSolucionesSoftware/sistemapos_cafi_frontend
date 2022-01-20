@@ -7,7 +7,7 @@ import { Toolbar, Box, Tab, Tabs, AppBar } from "@material-ui/core";
 import Empresa from "./Empresa/Empresa";
 import Compras from "./Compras/Compras";
 import Catalogos from "./Catalogos/Catalogos";
-import Tesoreria from "./Tesoreria/Tesoreria";
+import IndexTesoreria from "./Tesoreria/IndexTesoreria";
 import Facturacion from "./Facturacion/Facturacion";
 import Almacenes from "./Almacenes/Almacenes";
 import { withRouter } from "react-router";
@@ -174,7 +174,7 @@ function AdminInicio(props) {
             <Catalogos />
           </TabPanel>
           <TabPanel value={value} index={4}>
-            <Tesoreria />
+            <IndexTesoreria />
           </TabPanel>
           <TabPanel value={value} index={5}>
             <Reportes />
