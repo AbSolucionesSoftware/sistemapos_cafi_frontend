@@ -80,7 +80,7 @@ export const cleanTypenames = (value) => {
   }
 };
 
-export const findProductArray = async (productosVentas, producto) => {
+export const findProductArray = async (producto) => {
   try {
     let venta = JSON.parse(localStorage.getItem("DatosVentas"));
     let productosVentas = venta === null ? [] : venta.productos;
@@ -239,55 +239,45 @@ export const calculatePrices2 = async ({ newP, cantidad, granel, origen, precio_
       monederoCalculo = 0;
     // const descuento = newP.descuento_activo === null ? false : true;
     const cantidadNueva = cantidad > 0 ? cantidad : 1;
-
     const valor_granel = granel.granel ? granel.valor : 1;
-
     const precio_actual = precio_boolean ? precio : newP.descuento_activo ? newP.descuento : newP.precio_unidad;
-
     const cantidadCaja =
     precio_actual.unidad_maxima === true
       ? precio_actual.cantidad_unidads
       : 1;
-
-    const precio_descuento = 0;
-
     ivaCalculo = precio_actual.iva_precio * cantidadCaja;
-
     iepsCalculo = precio_actual.ieps_precio * cantidadCaja;
-
     impuestoCalculo = ivaCalculo + iepsCalculo;
-
     subtotalCalculo = precio_actual.precio_venta * cantidadCaja;
-
     totalCalculo = precio_actual.precio_neto * cantidadCaja;
-
     monederoCalculo = newP.id_producto.precios.monedero
       ? newP.id_producto.precios.monedero_electronico * cantidadCaja
       : 0;
     descuentoCalculo = totalCalculo - newP.precio_unidad.precio_neto;
-
+    const ob = {
+      ivaCalculo: parseFloat((ivaCalculo * valor_granel * cantidadNueva).toFixed(2)),
+      iepsCalculo: parseFloat((iepsCalculo * valor_granel * cantidadNueva).toFixed(2)) ,
+      impuestoCalculo: parseFloat((impuestoCalculo * valor_granel * cantidadNueva).toFixed(2)) ,
+      subtotalCalculo: parseFloat((subtotalCalculo * valor_granel * cantidadNueva).toFixed(2)) ,
+      totalCalculo: parseFloat((totalCalculo * valor_granel * cantidadNueva).toFixed(2)) ,
+      monederoCalculo: parseFloat((monederoCalculo * valor_granel * cantidadNueva).toFixed(2)) ,
+      descuentoCalculo: parseFloat((descuentoCalculo * valor_granel * cantidadNueva).toFixed(2)) ,
+      newP
+    };
     if(origen === "Ventas1"){
       newP.cantidad_venta = 1;
       newP.granel_producto  = granel;
-      newP.precio_a_vender = totalCalculo;
-      newP.precio_actual_producto = precio_actual.precio_neto;
+      newP.precio_a_vender = ob.totalCalculo;
+      newP.precio_actual_producto = parseFloat((precio_actual.precio_neto).toFixed(2));
       newP.precio_actual_object = precio_actual;
     }else if(origen === "Ventas2") {
       newP.granel_producto = granel;
-      newP.precio_a_vender = totalCalculo;
+      newP.precio_a_vender = ob.totalCalculo;
       newP.precio_anterior = newP.precio_actual_producto;
     }
 
-    return {
-      ivaCalculo: ivaCalculo * valor_granel * cantidadNueva,
-      iepsCalculo: iepsCalculo * valor_granel * cantidadNueva,
-      impuestoCalculo: impuestoCalculo * valor_granel * cantidadNueva,
-      subtotalCalculo: subtotalCalculo * valor_granel * cantidadNueva,
-      totalCalculo: totalCalculo * valor_granel * cantidadNueva,
-      monederoCalculo: monederoCalculo * valor_granel * cantidadNueva,
-      descuentoCalculo: descuentoCalculo * valor_granel * cantidadNueva,
-      newP
-    };
+    return ob;
+
   } catch (error) {
     return false;
   }
@@ -314,11 +304,11 @@ export const verifiPrising = async (newP) => {
       return (finalPrising = {
         found: true,
         pricing: newP.descuento_activo
-          ? newP.descuento.precio_con_descuento
+          ? newP.descuento.precio_neto
           : newP.id_producto.precios.precios_producto[0].precio_neto,
         number_pricing:
           newP.id_producto.precios.precios_producto[0].numero_precio,
-        object_prising: newP.id_producto.precios.precios_producto[0]
+        object_prising: newP.descuento_activo ? newP.descuento : newP.id_producto.precios.precios_producto[0]
       });
 
     for (let i = 0; i < pricings.length; i++) {
