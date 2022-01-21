@@ -88,7 +88,7 @@ const useStyles = makeStyles((theme) => ({
         minWidth: "14%",
         maxWidth: "14%",
         minHeight: 20,
-        maxHeight: 20
+      
     },
 }));
 
@@ -320,9 +320,10 @@ export default function Traspasos() {
 
 
      useEffect(
+         
 		() => {
-		     if(productosQuery.data){
-               
+		     if(productosQuery.data && productosTo.length === 0){
+             
                 setProductos(productosQuery.data.obtenerProductos);
                 setProductosTo(productosQuery.data.obtenerProductos)
          
@@ -476,7 +477,9 @@ export default function Traspasos() {
        
     }
 
+  
     const obtenerSelectsProducto = (producto) => {
+        
         if(producto !== null){
             setProductosTo([producto])
         }else{

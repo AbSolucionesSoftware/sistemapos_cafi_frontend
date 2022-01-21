@@ -220,7 +220,7 @@ const InventarioPorAlmacen = (props) =>{
 				setSubCategoriaTo((value !== '') ? value : '')
 			}
 			if(label !== 'categoria' && label !== 'subcategoria' ){
-				setFiltro({...filtro, [label] : value, subcategoria : value, categoria:categoriaTo});
+				setFiltro({...filtro, [label] : value, subcategoria : subcategoriaTo, categoria:categoriaTo});
 			}
 			//setLoading(false)	
 		} catch (error) {
