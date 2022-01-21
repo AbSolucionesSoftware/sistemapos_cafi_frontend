@@ -46,6 +46,7 @@ const useStyles = makeStyles({
 export default function ListaEnEspera({ obtenerComprasEnEspera, refetch }) {
   const classes = useStyles();
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
 
   return (
     <Paper className={classes.root} variant="outlined">
@@ -61,8 +62,10 @@ export default function ListaEnEspera({ obtenerComprasEnEspera, refetch }) {
               <TableCell>Impuestos</TableCell>
               <TableCell>Total</TableCell>
               <TableCell>Detalles</TableCell>
-              <TableCell>Eliminar</TableCell>
-            </TableRow>
+              {permisosUsuario.accesos.compras.compras_espera.elimina === false ? (null) : (
+                <TableCell>Eliminar</TableCell>
+              )}
+              </TableRow>
           </TableHead>
           <TableBody>
             {obtenerComprasEnEspera.map((compra, index) => (
@@ -89,7 +92,7 @@ const RenderRowsComprasEspera = ({ compra, refetch, setAlert }) => {
     impuestos,
     total,
   } = compra;
-
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
   return (
     <TableRow hover tabIndex={-1}>
       <TableCell>{almacen.nombre_almacen}</TableCell>
@@ -111,13 +114,15 @@ const RenderRowsComprasEspera = ({ compra, refetch, setAlert }) => {
           setAlert={setAlert}
         />
       </TableCell>
-      <TableCell>
-        <ModalEliminarCompra
-          compra={compra}
-          refetch={refetch}
-          setAlert={setAlert}
-        />
-      </TableCell>
+      {permisosUsuario.accesos.compras.compras_espera.eliminar === false ? (null) : (
+        <TableCell>
+          <ModalEliminarCompra
+            compra={compra}
+            refetch={refetch}
+            setAlert={setAlert}
+          />
+        </TableCell>
+      )}
     </TableRow>
   );
 };

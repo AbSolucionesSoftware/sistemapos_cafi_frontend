@@ -229,7 +229,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
         });
       }
       setLoading(false);
-      /* limpiarCampos(); */
+      limpiarCampos();
       if (handleClose) {
         handleClose();
         setLoadingModal(false);

@@ -134,12 +134,12 @@ function  CerrarTurno(props) {
 
     const actualizarTurnoSesion  = (ubicacionTurno) => {
         if (ubicacionTurno === 'SESION') {
-			props.history.push('/');
             localStorage.removeItem('sesionCafi');
 			localStorage.removeItem('tokenCafi');
             localStorage.removeItem('turnoEnCurso');
             localStorage.removeItem('ListaEnEspera');
             localStorage.removeItem('DatosVentas');
+			props.history.push('/');
         }else{
             localStorage.setItem('sesionCafi', JSON.stringify(arraySesion));
             localStorage.removeItem('DatosVentas');

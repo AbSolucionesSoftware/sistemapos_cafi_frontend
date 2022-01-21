@@ -1,8 +1,15 @@
 import { Box, Checkbox, FormControlLabel } from '@material-ui/core'
 import React from 'react';
 
-export default function Parametros({ arregloAccesos, obtenerAccesos, departamento, subDepartamento}) {
+export default function Parametros({ 
+    arregloAccesos, 
+    obtenerAccesos, 
+    departamento, 
+    subDepartamento
+}) {
 
+    console.log(arregloAccesos);
+    
     return(
         <Box display='flex' justifyContent='center' alignItems='center'>
             <FormControlLabel
@@ -16,12 +23,21 @@ export default function Parametros({ arregloAccesos, obtenerAccesos, departament
                 }
                 label={
                     <Box mr={2} display='flex'>
-                        Ver
+                        {departamento === 'ventas' ? "Autorizar" : "Ver" } 
                     </Box>
                 }
             />
             {   subDepartamento === 'informacion_fiscal' ||
-                subDepartamento === 'datos_empresa' ? (null):(
+                subDepartamento === 'datos_empresa' || 
+                subDepartamento === 'abrir_compra' || 
+                subDepartamento === 'compras_realizadas' || 
+                subDepartamento === 'compras_espera' || 
+                subDepartamento === 'traspasos' || 
+                subDepartamento === 'inventario_almacen' || 
+                subDepartamento === 'cuentas_empresa' || 
+                departamento === 'reportes' || 
+                departamento === 'ventas'|| 
+                subDepartamento === 'egresos' ? (null):(
                     <FormControlLabel
                         control={
                             <Checkbox
@@ -39,7 +55,16 @@ export default function Parametros({ arregloAccesos, obtenerAccesos, departament
                         }
                     />
             )}
-            {   subDepartamento === 'cajas' ? (null):( 
+            {   subDepartamento === 'cajas' || 
+                subDepartamento === 'abrir_compra' || 
+                subDepartamento === 'compras_realizadas' || 
+                subDepartamento === 'traspasos' || 
+                subDepartamento === 'inventario_almacen' || 
+                subDepartamento === 'abonos_proveedores'|| 
+                subDepartamento === 'abonos_clientes'|| 
+                subDepartamento === 'egresos' || 
+                departamento === 'reportes' || 
+                departamento === 'ventas' ? (null) : ( 
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -58,7 +83,17 @@ export default function Parametros({ arregloAccesos, obtenerAccesos, departament
                 />
             )}
             {   subDepartamento === 'informacion_fiscal' ||
-                subDepartamento === 'datos_empresa' ? (null):( 
+                subDepartamento === 'datos_empresa' || 
+                subDepartamento === 'abrir_compra' || 
+                subDepartamento === 'compras_realizadas' || 
+                subDepartamento === 'traspasos' || 
+                subDepartamento === 'inventario_almacen' || 
+                subDepartamento === 'cuentas_empresa' || 
+                subDepartamento === 'abonos_proveedores' || 
+                subDepartamento === 'abonos_clientes'|| 
+                subDepartamento === 'egresos' || 
+                departamento === 'reportes' || 
+                departamento === 'ventas'? (null):( 
                 <FormControlLabel
                     control={
                         <Checkbox
