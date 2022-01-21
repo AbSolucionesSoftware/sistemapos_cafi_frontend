@@ -47,9 +47,10 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function AbonoaRecibir() {
+export default function AbonoaRecibir({cuenta}) {
     const [ CrearAbono ] = useMutation(CREAR_ABONO);
-	const {setReload, setAlert, cuenta} = useContext(TesoreriaCtx);
+    
+	const { setReload, setAlert } = useContext(TesoreriaCtx);
 
     const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
@@ -111,6 +112,7 @@ export default function AbonoaRecibir() {
             clave: "",
             metodo:  "",
         },
+        id_usuario: sesion._id,
         numero_usuario_creador: sesion.numero_usuario,
         nombre_usuario_creador: sesion.nombre,
         id_cliente: cuenta.proveedor.id_proveedor._id,

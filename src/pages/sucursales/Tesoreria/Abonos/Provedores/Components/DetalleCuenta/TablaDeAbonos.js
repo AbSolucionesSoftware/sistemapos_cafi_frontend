@@ -35,9 +35,11 @@ const useStyles  = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaAbonos() {
+export default function TablaAbonos({cuenta}) {
+	
 	const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-	const {cuenta, reload} = useContext(TesoreriaCtx);
+
+	const { reload } = useContext(TesoreriaCtx);
 
 	const classes = useStyles();
 

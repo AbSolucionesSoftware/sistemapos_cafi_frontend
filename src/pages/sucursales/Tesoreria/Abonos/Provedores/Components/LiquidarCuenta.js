@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react'
-
 import {  Box, Button, Dialog, DialogActions, DialogContent, FormControl, makeStyles, MenuItem, Select, Slider, TextField, Typography } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
 import CloseIcon from '@material-ui/icons/Close';
@@ -222,7 +221,7 @@ export default function LiquidarCuenta({cuenta, refetch}) {
                     <Box ml={1} mr={1} mb={2} >
                         <Slider
                             getAriaValueText={valuetext}
-                            value={value.toFixed(2)}
+                            valueLabelFormat={value.toFixed(2)}
                             aria-labelledby="discrete-slider-small-steps"
                             valueLabelDisplay="auto"
                             onChange={obtenerPorcientoSlide} 

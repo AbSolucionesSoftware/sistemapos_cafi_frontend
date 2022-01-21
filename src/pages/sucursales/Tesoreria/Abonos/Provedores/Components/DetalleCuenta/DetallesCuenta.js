@@ -1,4 +1,4 @@
-import React, { Fragment, useContext,useState, useEffect } from 'react'
+import React, { Fragment } from 'react'
 import { Box, Grid, makeStyles, Typography, Button, AppBar, Toolbar } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import TablaCompras from './TablaCompras';
@@ -6,7 +6,6 @@ import TablaAbonos from './TablaDeAbonos';
 import AbonoaRecibir from '../AbonoPercibir';
 import moment from 'moment';
 import { formatoMexico } from '../../../../../../../config/reuserFunctions';
-import { TesoreriaCtx } from '../../../../../../../context/Tesoreria/tesoreriaCtx';
 
 const useStyles = makeStyles((theme) => ({
     appBar: {	
@@ -31,12 +30,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function DetallesCuenta({handleClick}) {
-	const {cuenta} = useContext(TesoreriaCtx);
-    
-    const classes = useStyles();
+export default function DetallesCuenta({handleClick, cuenta}) {
 
-    console.log(cuenta);
+    const classes = useStyles();
 
     return (
         <Fragment>
@@ -84,7 +80,7 @@ export default function DetallesCuenta({handleClick}) {
                     </Box>
                 </Box>
                 <Box width="60%" p={1} display='flex' alignItems={'center'} >
-                    <AbonoaRecibir />
+                    <AbonoaRecibir cuenta={cuenta} />
                 </Box>
             </div>
             <Grid container>
@@ -95,7 +91,7 @@ export default function DetallesCuenta({handleClick}) {
                         </Typography>
                     </Box>
                     <Box p={2}>
-                        <TablaAbonos />
+                        <TablaAbonos cuenta={cuenta} />
                     </Box>
                     <Box p={1} mr={3} display="flex" justifyContent="flex-end">
                         <Typography variant='h6'>Total abonado: <b style={{color: "#9B9B9B"}}>${cuenta.total - cuenta.saldo_credito_pendiente}</b></Typography>

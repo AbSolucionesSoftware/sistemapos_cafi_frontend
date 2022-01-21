@@ -91,8 +91,8 @@ export default function VistaRegistroEgreso({handleClickOpen}) {
 						onChange={handleChange}
 						variant="scrollable"
 						scrollButtons="on"
-						indicatorColor="primary"
-						textColor="primary"
+						textColor='primary'
+						indicatorColor='primary'
 						aria-label="scrollable force tabs example"
 					>
 						<Tab

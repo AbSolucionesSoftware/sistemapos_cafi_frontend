@@ -7,8 +7,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { Search } from '@material-ui/icons';
-import { Box, IconButton, InputAdornment, InputBase, Paper, TextField } from '@material-ui/core';
+import { Box, IconButton, InputAdornment, TextField } from '@material-ui/core';
 import { OBTENER_COMPRAS_REALIZADAS } from "../../../../../gql/Compras/compras";
 
 
@@ -44,7 +43,6 @@ export default function AbonosProveedores() {
 	
 	const classes = useStyles();
 	const [ open, setOpen ] = useState(false);
-	const [values, setValues] = useState('');
 	const [filtro, setFiltro] = useState("");
 	const searchfilter = useRef(null);
 
