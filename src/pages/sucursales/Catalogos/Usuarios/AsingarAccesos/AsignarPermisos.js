@@ -10,6 +10,11 @@ import Catalogos from './Departamentos/Catalogos';
 import MiEmpresa from './Departamentos/MiEmpresa';
 
 import SnackBarMessages from '../../../../../components/SnackBarMessages';
+import Compras from './Departamentos/Compras';
+import Almacenes from './Departamentos/Almacenes';
+import Tesoreria from './Departamentos/Tesoreria';
+import Reportes from './Departamentos/Reportes';
+import Ventas from './Departamentos/Ventas';
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -138,12 +143,12 @@ export default function AsignarPermisos({obtenerAccesos, arregloAccesos}) {
 			</TabPanel>
 			<TabPanel value={value} index={1}>
 				<Box p={2}>
-					{/* <CamposAsignados type='almacenes' /> */}
+					<Almacenes obtenerAccesos={obtenerAccesos} arregloAccesos={arregloAccesos} />
 				</Box>
 			</TabPanel>
 			<TabPanel value={value} index={2}>
 				<Box p={2}>
-					{/* <CamposAsignados type='compras' /> */}
+					<Compras obtenerAccesos={obtenerAccesos} arregloAccesos={arregloAccesos} />
 				</Box>
 			</TabPanel>
 			<TabPanel value={value} index={3}>
@@ -153,12 +158,12 @@ export default function AsignarPermisos({obtenerAccesos, arregloAccesos}) {
 			</TabPanel>
 			<TabPanel value={value} index={4}>
 				<Box p={2}>
-					{/* <CamposAsignados type='tesoreria' /> */}
+					<Tesoreria obtenerAccesos={obtenerAccesos} arregloAccesos={arregloAccesos} />
 				</Box>
 			</TabPanel>
 			<TabPanel value={value} index={5}>
 				<Box p={2}>
-					{/* <CamposAsignados type='reportes' /> */}
+					<Reportes obtenerAccesos={obtenerAccesos} arregloAccesos={arregloAccesos} />
 				</Box>
 			</TabPanel>
 			<TabPanel value={value} index={6}>
@@ -168,7 +173,7 @@ export default function AsignarPermisos({obtenerAccesos, arregloAccesos}) {
 			</TabPanel>
 			<TabPanel value={value} index={7}>
 				<Box p={2}>
-					{/* <CamposAsignados type='ventas' /> */}
+					<Ventas obtenerAccesos={obtenerAccesos} arregloAccesos={arregloAccesos} />
 				</Box>
 			</TabPanel>
         </>

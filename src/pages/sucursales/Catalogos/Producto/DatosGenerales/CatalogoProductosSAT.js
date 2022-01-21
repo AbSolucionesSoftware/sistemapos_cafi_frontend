@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     backgroundColor: theme.palette.background.paper,
   },
-}));
+})); 
 
 export default function CatalogosProductosSAT({ codigos, refetch }) {
   const classes = useStyles();

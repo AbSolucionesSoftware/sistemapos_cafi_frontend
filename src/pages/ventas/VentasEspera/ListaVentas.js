@@ -52,6 +52,7 @@ export default function ListaVentas() {
 							<TableCell align='center' style={{ width: 35 }}>
 								Regresar
 							</TableCell>
+							
 							<TableCell align='center' style={{ width: 35 }}>
 								Eliminar
 							</TableCell>
@@ -75,18 +76,24 @@ const RowsVentas = ({ venta, index }) => {
 
     const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
 	const [open, setOpen] = useState(false);
+    const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
 	let listaEnEspera = JSON.parse(localStorage.getItem("ListaEnEspera"));
 	let VentaEnEspera = JSON.parse(localStorage.getItem("DatosVentas"));
 
 	function borrarVenta(key) {
-        listaEnEspera.forEach(function(elemento, indice, array) {
-            if(key === indice){
-                listaEnEspera.splice(key, 1);
-            }
-        });
-		setUpdateTablaVentas(!updateTablaVentas);
-		localStorage.setItem("ListaEnEspera", JSON.stringify(listaEnEspera));
+		if(sesion.accesos.ventas.eliminar_ventas.ver === true){
+			listaEnEspera.forEach(function(elemento, indice, array) {
+				if(key === indice){
+					listaEnEspera.splice(key, 1);
+				}
+			});
+			setUpdateTablaVentas(!updateTablaVentas);
+			localStorage.setItem("ListaEnEspera", JSON.stringify(listaEnEspera));
+		}else{
+			return null
+		}
+        
     };
 
 	const AgregarVentaDeNuevo = (key) => {

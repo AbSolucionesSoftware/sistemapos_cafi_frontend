@@ -101,7 +101,6 @@ EnhancedTableHead.propTypes = {
   classes: PropTypes.object.isRequired,
   // product_selected: PropTypes.object.isRequired,
   onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.oneOf(['asc', 'desc']).isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
@@ -146,11 +145,6 @@ const DialogTallas = (props) => {
   const [new_medidas, setNew_medidas] = useState([]);
   const {setProductosTras, productosTras} = useContext(TraspasosAlmacenContext);
  
-
-  
-
-    
-
   const setProd = () =>{
     let newMedidasCopy = new_medidas;
     let cantidad_total = 0;

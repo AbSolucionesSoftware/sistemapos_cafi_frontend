@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { Box, Container, Grid } from '@material-ui/core';
 import CuentasEmpresaSucursales from './CuentasEmpresaSucursales/CuentasEmpresaSucursales';
 import Egresos from './Egresos/Egresos';
@@ -12,31 +12,40 @@ import { TesoreriaCtx } from '../../../context/Tesoreria/tesoreriaCtx';
 export default function Tesoreria() {
 
 	const { alert, setAlert } = useContext(TesoreriaCtx);
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	return (
 		<Container>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
 			<Grid container spacing={2} justify="center">
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<CuentasEmpresaSucursales />
-					</Box>
-				</Grid>
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Egresos />
-					</Box>
-				</Grid>
-                <Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<AbonosProveedores />
-					</Box>
-				</Grid>
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<AbonosClientes />
-					</Box>
-				</Grid>
+				{permisosUsuario.accesos.tesoreria.cuentas_empresa.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<CuentasEmpresaSucursales />
+						</Box>
+					</Grid>
+				)}
+				{permisosUsuario.accesos.tesoreria.egresos.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<Egresos />
+						</Box>
+					</Grid>
+				)}
+				{permisosUsuario.accesos.tesoreria.abonos_proveedores.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<AbonosProveedores />
+						</Box>
+					</Grid>
+				)}
+				{permisosUsuario.accesos.tesoreria.abonos_clientes.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<AbonosClientes />
+						</Box>
+					</Grid>
+				)}
                 {/* <Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<Transferencias />

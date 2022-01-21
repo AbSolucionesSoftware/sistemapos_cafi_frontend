@@ -29,8 +29,11 @@ export default function PreCorteCaja() {
 
     const classes = useStyles();
     const [open, setOpen] = useState(false);
+
     const handleClickOpen = () => { 
-		setOpen(!open);
+        if(sesion.accesos.ventas.pre_corte.ver === true){
+			setOpen(!open);
+		};
 	};
     
     if(!data) return null;

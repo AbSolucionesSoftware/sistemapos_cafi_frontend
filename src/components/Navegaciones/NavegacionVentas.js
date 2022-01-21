@@ -31,12 +31,12 @@ function NavegacionVentas(props) {
 			setAbrirTurnosDialog(!abrirTurnosDialog);
 			setUbicacionTurno('SESION');
 		}else{
-			props.history.push('/');
 			localStorage.removeItem('sesionCafi');
 			localStorage.removeItem('tokenCafi');
             localStorage.removeItem('DatosVentas');
 			localStorage.removeItem('turnoEnCurso');
 			localStorage.removeItem('ListaEnEspera');
+			props.history.push('/');
 		}
 	};
 
@@ -48,6 +48,12 @@ function NavegacionVentas(props) {
 			props.history.push('/');
 		}
 	};
+
+	function Administrador() {
+		if(sesion.accesos.ventas.administrador.ver === true){
+			props.history.push('/admin')
+		};
+	}
 
 	window.addEventListener('keydown', Mi_función); 
 
@@ -75,7 +81,7 @@ function NavegacionVentas(props) {
 					<VentaEnEspera />
 						<Divider orientation="vertical" />
 					<Button
-						onClick={() => props.history.push('/admin')}
+						onClick={() => Administrador()}
 						style={{textTransform: 'none', height: '100%', width: '60%'}}
 					>
 						<Box display="flex" flexDirection="column">

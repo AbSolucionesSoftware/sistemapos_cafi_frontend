@@ -112,7 +112,11 @@ export default function ListaCuentas() {
                             <TableCell >
                                 <b style={{fontSize: 17}}>${formatoMexico(cuentaPrincipal?.cuenta_empresa?.dinero_actual)}</b>
                             </TableCell>
-                            <TableCell align='center'> <RetiroDeposito cuenta={cuentaPrincipal} refetch={cuentaEmpresa.refetch} tipo={true} /> </TableCell>
+                            {sesion.accesos.tesoreria.cuentas_empresa.editar === false ? (
+                                <TableCell align='center'>  </TableCell>
+                            ):(
+                                <TableCell align='center'> <RetiroDeposito cuenta={cuentaPrincipal} refetch={cuentaEmpresa.refetch} tipo={true} /> </TableCell>
+                            )}
                             <TableCell align='center'> <HistorialCuentas cuenta={cuentaPrincipal}  tipo={true} /> </TableCell>
                         </TableRow>
                             {cuentasSucursalesEmpresa?.map((cuenta, index) => {
@@ -135,7 +139,7 @@ export default function ListaCuentas() {
 };
 
 function RowsCuentas ({cuenta, refetch}) {
-
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
 
     return(
         <TableRow
@@ -148,7 +152,11 @@ function RowsCuentas ({cuenta, refetch}) {
             <TableCell >
                 <b style={{fontSize: 17}}>${formatoMexico(cuenta?.cuenta_sucursal?.dinero_actual)}</b>
             </TableCell>
-            <TableCell align='center'> <RetiroDeposito cuenta={cuenta} refetch={refetch} tipo={false} /> </TableCell>
+            {permisosUsuario.accesos.tesoreria.cuentas_empresa.editar === false ? (
+                <TableCell align='center'>  </TableCell>
+            ):(
+                <TableCell align='center'> <RetiroDeposito cuenta={cuenta} refetch={refetch} tipo={false} /> </TableCell>
+            )}
             <TableCell align='center'> <HistorialCuentas cuenta={cuenta} tipo={false}/> </TableCell>
         </TableRow>
     );

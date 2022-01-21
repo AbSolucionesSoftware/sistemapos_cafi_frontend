@@ -150,9 +150,11 @@ export default function ArticuloRapido() {
   const [cantidad, setCantidad] = useState(0);
 
   const handleClickOpen = () => {
-    resetInitialStates();
-		setOpen(!open);
-    setAbrirTallaColor(false);
+    if(sesion.accesos.ventas.producto_rapido.ver === true){
+      resetInitialStates();
+      setOpen(!open);
+      setAbrirTallaColor(false);
+    }
 	};
 
   useEffect(() => {
@@ -184,9 +186,9 @@ export default function ArticuloRapido() {
 
   window.addEventListener('keydown', Mi_función); 
   function Mi_función(e){
-      if(e.altKey && e.keyCode === 65){ 
-          handleClickOpen();
-      } 
+    if(e.altKey && e.keyCode === 65){ 
+        handleClickOpen();
+    } 
   };
 
   const saveData = async () => {

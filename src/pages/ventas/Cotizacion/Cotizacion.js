@@ -63,7 +63,9 @@ export default function Cotizacion({type}) {
 	};
 
     const handleClickOpen = () => {
-		setOpen(!open);
+		if(sesion?.accesos.ventas.cotizaciones.ver === true){
+            setOpen(!open);
+        }
 	};
 
 

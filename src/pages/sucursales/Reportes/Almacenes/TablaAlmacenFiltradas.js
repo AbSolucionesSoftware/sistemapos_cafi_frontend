@@ -8,15 +8,20 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { Box} from '@material-ui/core';
+import {
+  formatoFechaCorta,
+
+} from "../../../../config/reuserFunctions"; 
 
 const columns = [
-	{ id: 'code', label: 'Producto', minWidth: 100 },
-	{ id: 'code', label: 'Cantidad', minWidth: 100 },
-	{ id: 'code', label: 'Total', minWidth: 100 },	
-	{ id: 'code', label: 'A. Origen', minWidth: 100 },	
-	{ id: 'code', label: 'A. Destino', minWidth: 100 },	
-	{ id: 'code', label: 'Fomas', minWidth: 100 },	
-	{ id: 'code', label: 'M. de Pago', minWidth: 100 },	
+	{ id: 'producto', label: 'Producto', minWidth: 200 },
+	
+	{ id: 'cantidad', label: 'Cantidad', minWidth: 50 },
+	{ id: 'fecha', label: 'Fecha ', minWidth: 50 },	
+	{ id: 'concepto', label: 'Concepto ', minWidth: 100 },
+	{ id: 'almacen_origen', label: 'Almacén Origen', minWidth: 100 },	
+	{ id: 'almacen_destino', label: 'Almacén Destino', minWidth: 100 },	
+
 
 ];
 
@@ -40,7 +45,7 @@ const useStyles  = makeStyles((theme) => ({
 	},
 }));
 
-export default function TablaAlmacenFiltradas() {
+export default function TablaAlmacenFiltradas({data}) {
 	const classes = useStyles();
 
 	return (
@@ -57,9 +62,27 @@ export default function TablaAlmacenFiltradas() {
                                 ))}
                             </TableRow>
                         </TableHead>
-                        <TableBody>
-                            
-                        </TableBody>
+                         <TableBody>
+							{data.map((data, index) => {
+								return (
+								<TableRow key={index} role="checkbox" tabIndex={-1}>
+									<TableCell>
+									{data.producto.datos_generales.nombre_comercial}
+									</TableCell>
+									
+									<TableCell>{data.cantidad}</TableCell>
+									<TableCell>
+									{formatoFechaCorta(data.id_traspaso.fecha_registro)}
+									</TableCell>
+									<TableCell>
+									{data.id_traspaso.concepto_traspaso.nombre_concepto}
+									</TableCell>
+									<TableCell>{(data.almacen_origen !== null) ? data.almacen_origen.nombre_almacen : ''}</TableCell>
+									<TableCell>{(data.almacen_destino !== null) ? data.almacen_destino.nombre_almacen : ''}</TableCell>
+								</TableRow>
+								);
+							})}
+							</TableBody>
                     </Table>
                 </TableContainer>
             </Paper>

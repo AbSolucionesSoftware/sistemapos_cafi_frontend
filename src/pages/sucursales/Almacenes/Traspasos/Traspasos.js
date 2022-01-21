@@ -88,7 +88,7 @@ const useStyles = makeStyles((theme) => ({
         minWidth: "14%",
         maxWidth: "14%",
         minHeight: 20,
-        maxHeight: 20
+      
     },
 }));
 
@@ -311,7 +311,7 @@ export default function Traspasos() {
     useEffect(
 		() => {
 			 if(productosEmpresaQuery.data){
-                console.log(productosEmpresaQuery.data)
+             
                 //setProductos(productosEmpresaQuery.data.obtenerProductosPorEmpresa);
                 //console.log(productosEmpresaQuery.data)
                 setProductosEmpTo(productosEmpresaQuery.data.obtenerProductosPorEmpresa);
@@ -320,9 +320,10 @@ export default function Traspasos() {
 
 
      useEffect(
+         
 		() => {
-		     if(productosQuery.data){
-               
+		     if(productosQuery.data && productosTo.length === 0){
+             
                 setProductos(productosQuery.data.obtenerProductos);
                 setProductosTo(productosQuery.data.obtenerProductos)
          
@@ -476,7 +477,9 @@ export default function Traspasos() {
        
     }
 
+  
     const obtenerSelectsProducto = (producto) => {
+        
         if(producto !== null){
             setProductosTo([producto])
         }else{
@@ -496,8 +499,7 @@ export default function Traspasos() {
                setOpenEnd(false)
                setLoading(true)
                 //let productTrasTo = productosTras;
-                console.log("traspasar",productosTras)
-            const traspaso =    await CrearTraspaso({
+             const input =  {
                 variables: {
                     input: {
                         concepto_traspaso: {
@@ -522,7 +524,10 @@ export default function Traspasos() {
                     usuario: sesion._id,
                     empresa: sesion.empresa._id
                 }
-            }) 
+            }  
+             
+             const traspaso =    await CrearTraspaso(input) 
+           
                 //console.log(traspaso)
                 setAlert({message: traspaso.data.crearTraspaso.message, status: traspaso.data.crearTraspaso.resp, open: true })
                 if(traspaso.data.crearTraspaso.resp !== 'error'){
@@ -536,25 +541,24 @@ export default function Traspasos() {
             }else{
                 
                 setAlert({message:'No es posible realizar un traspaso sin agregar productos.', status: 'error', open: true })
-            }
            
+            }
             
+           
            
             setLoading(false);
         } catch (error) {
              setLoading(false);
-              setOpenEnd(false)
-
-           console.log('traspaso', error)
+             setOpenEnd(false)
            if(error.networkError !== undefined){
-				console.log(error.networkError.result.errors);
+			  console.log('traspaso networkError', error.networkError)
             }else if(error.graphQLErrors!== undefined){
-            console.log(error.graphQLErrors.message);
+                console.log('traspaso graphQLErrors', error.graphQLErrors)
             }else{
-                 console.log(error);
-                setAlert({message: 'Ocurrió un error al realizar el traspaso...', status: 'error', open: true })
+             
+              
             }
-           
+             setAlert({message: 'Ocurrió un error al realizar el traspaso...', status: 'error', open: true })
         }
     }
 
