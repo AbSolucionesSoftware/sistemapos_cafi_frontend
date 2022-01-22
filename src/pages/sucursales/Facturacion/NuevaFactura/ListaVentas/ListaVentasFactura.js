@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ListaVentasFactura() {
   const [open, setOpen] = useState(false);
-  const { datosFactura, setDatosFactura, setVentaFactura } = useContext(FacturacionCtx);
+  const { datosFactura, setDatosFactura, setVentaFactura, setProductos } = useContext(FacturacionCtx);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -76,8 +76,10 @@ export default function ListaVentasFactura() {
             color="primary"
             startIcon={<Done />}
             onClick={() => {
-              handleClose()
-              setVentaFactura(compra_test)
+              console.log(compra_test);
+              setVentaFactura(compra_test);
+              setProductos(compra_test.productos);
+              handleClose();
             }}
             /* disabled={!datosFactura.cliente} */
           >

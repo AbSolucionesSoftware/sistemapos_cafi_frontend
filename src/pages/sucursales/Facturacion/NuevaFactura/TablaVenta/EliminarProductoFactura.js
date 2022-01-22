@@ -12,7 +12,10 @@ import TableRow from "@material-ui/core/TableRow";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import Slide from "@material-ui/core/Slide";
-import { formatoMexico } from "../../../../../config/reuserFunctions";
+import {
+  calculatePrices2,
+  formatoMexico,
+} from "../../../../../config/reuserFunctions";
 import { useState } from "react";
 import { Close } from "@material-ui/icons";
 import { useContext } from "react";
@@ -24,7 +27,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function EliminarProductoFactura({ venta, producto, index }) {
   const [open, setOpen] = useState(false);
-  const { setVentaFactura } = useContext(FacturacionCtx);
+  const { setVentaFactura, setProductos, productos } = useContext(FacturacionCtx);
   const { datos_generales } = producto.id_producto;
 
   const handleClickOpen = () => {
@@ -35,13 +38,43 @@ export default function EliminarProductoFactura({ venta, producto, index }) {
     setOpen(false);
   };
 
-  const handleDelete = () => {
-    venta.productos.splice(index, 1);
-    /* RECALCULAR */
-    
-    setVentaFactura(venta);
+  const handleDelete = async () => {
+    const copy_venta = { ...venta };
+    const copy_productos = [ ...productos];
+    const { cantidad_venta, granel_producto, precio_actual_object } = producto;
+    const { iva, ieps, impuestos, subTotal, total, monedero } = copy_venta;
+    //devuelve cantidades a restar
+    const precio_resta = await calculatePrices2({
+      newP: producto,
+      cantidad: cantidad_venta,
+      granel: granel_producto,
+      precio_boolean: true,
+      precio: precio_actual_object,
+    });
+    //Restar precios a venta
+    console.log(precio_resta);
+    const {
+      ivaCalculo,
+      iepsCalculo,
+      impuestoCalculo,
+      subtotalCalculo,
+      totalCalculo,
+      monederoCalculo,
+    } = precio_resta;
+
+    copy_venta.iva = iva - ivaCalculo;
+    copy_venta.ieps = ieps - iepsCalculo;
+    copy_venta.impuestos = impuestos - impuestoCalculo;
+    copy_venta.subTotal = subTotal - subtotalCalculo;
+    copy_venta.total = total - totalCalculo;
+    copy_venta.monedero = monedero - monederoCalculo;
+
+    //remover de la lista
+    copy_productos.splice(index, 1);
+    setVentaFactura(copy_venta);
+    setProductos(copy_productos);
     handleClose();
-  }
+  };
 
   return (
     <div>
@@ -53,10 +86,10 @@ export default function EliminarProductoFactura({ venta, producto, index }) {
         TransitionComponent={Transition}
         keepMounted
         onClose={(_, reason) => {
-            if (reason !== "backdropClick") {
-                handleClose();
-            }
-          }}
+          if (reason !== "backdropClick") {
+            handleClose();
+          }
+        }}
       >
         <DialogTitle>¿Está seguro de eliminar este producto?</DialogTitle>
         <DialogContent>
@@ -93,10 +126,7 @@ export default function EliminarProductoFactura({ venta, producto, index }) {
           <Button onClick={() => handleClose()} color="inherit">
             Cancelar
           </Button>
-          <Button
-            onClick={() => handleDelete()}
-            color="secondary"
-          >
+          <Button onClick={() => handleDelete()} color="secondary">
             Eliminar
           </Button>
         </DialogActions>

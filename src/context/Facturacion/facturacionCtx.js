@@ -31,6 +31,7 @@ export const FacturacionProvider = ({ children }) => {
   });
 
   const [venta_factura, setVentaFactura] = useState(null);
+  const [productos, setProductos] = useState([]);
 
   const [cp_valido, setCPValido] = useState(false);
   const [codigo_postal, setCodigoPostal] = useState("");
@@ -49,6 +50,8 @@ export const FacturacionProvider = ({ children }) => {
         setError,
         venta_factura,
         setVentaFactura,
+        productos,
+        setProductos,
       }}
     >
       {children}

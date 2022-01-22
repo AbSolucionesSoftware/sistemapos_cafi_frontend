@@ -9,7 +9,6 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { Box, Typography } from "@material-ui/core";
 import { formatoMexico } from "../../../../../config/reuserFunctions";
-import { compra_test } from "./array_test";
 import ModificarProductoFactura from "./EditarProductoFactura";
 import EliminarProductoFactura from "./EliminarProductoFactura";
 import { useContext } from "react";
@@ -26,15 +25,13 @@ const useStyles = makeStyles({
 
 export default function DetallesFactura() {
   const classes = useStyles();
-  const { venta_factura } = useContext(FacturacionCtx);
+  const { venta_factura, productos } = useContext(FacturacionCtx);
 
   if(!venta_factura){
     return null
   }
 
-  let venta_copy = { ...venta_factura };
-
-  console.log(venta_copy);
+  console.log(venta_factura);
   
 
   return (
@@ -59,13 +56,13 @@ export default function DetallesFactura() {
           </TableHead>
           <TableBody>
             <TableRow hover role="checkbox" tabIndex={-1}>
-              <TableCell style={{ width: 200 }}>{venta_copy.folio}</TableCell>
-              <TableCell style={{ width: 200 }}>${formatoMexico(venta_copy.descuento)}</TableCell>
-              <TableCell style={{ width: 200 }}>${formatoMexico(venta_copy.iva)}</TableCell>
-              <TableCell style={{ width: 200 }}>${formatoMexico(venta_copy.ieps)}</TableCell>
-              <TableCell style={{ width: 200 }}>${formatoMexico(venta_copy.subTotal)}</TableCell>
-              <TableCell style={{ width: 200 }}>${formatoMexico(venta_copy.impuestos)}</TableCell>
-              <TableCell style={{ width: 200 }}>${formatoMexico(venta_copy.total)}</TableCell>
+              <TableCell style={{ width: 200 }}>{venta_factura.folio}</TableCell>
+              <TableCell style={{ width: 200 }}>${formatoMexico(venta_factura.descuento)}</TableCell>
+              <TableCell style={{ width: 200 }}>${formatoMexico(venta_factura.iva)}</TableCell>
+              <TableCell style={{ width: 200 }}>${formatoMexico(venta_factura.ieps)}</TableCell>
+              <TableCell style={{ width: 200 }}>${formatoMexico(venta_factura.subTotal)}</TableCell>
+              <TableCell style={{ width: 200 }}>${formatoMexico(venta_factura.impuestos)}</TableCell>
+              <TableCell style={{ width: 200 }}>${formatoMexico(venta_factura.total)}</TableCell>
               <TableCell style={{ width: 200 }}>aqui ira usuario</TableCell>
               <TableCell style={{ width: 200 }}>aqui ira caja</TableCell>
             </TableRow>
@@ -91,8 +88,8 @@ export default function DetallesFactura() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {venta_copy.productos.map((producto, index) => {
-              return <RowTableProductos venta={venta_copy} producto={producto} key={index} index={index} />;
+            {productos.map((producto, index) => {
+              return <RowTableProductos venta={venta_factura} producto={producto} key={index} index={index} />;
             })}
           </TableBody>
         </Table>
