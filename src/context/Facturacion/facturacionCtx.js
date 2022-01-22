@@ -7,10 +7,10 @@ export const FacturacionProvider = ({ children }) => {
 
   const [datosFactura, setDatosFactura] = useState({
     serie: "",
-    currency: "",
+    currency: "MXN",
     expedition_place: "",
     folio: "",
-    cfdi_type: "",
+    cfdi_type: "I",
     payment_form: "",
     payment_method: "",
     logo_url: sesion.imagen,
@@ -30,7 +30,8 @@ export const FacturacionProvider = ({ children }) => {
     sucursal: sesion.sucursal._id,
   });
 
-  const [productoFactura, setProductoFactura] = useState([]);
+  const [venta_factura, setVentaFactura] = useState(null);
+  const [productos, setProductos] = useState([]);
 
   const [cp_valido, setCPValido] = useState(false);
   const [codigo_postal, setCodigoPostal] = useState("");
@@ -47,6 +48,10 @@ export const FacturacionProvider = ({ children }) => {
         setCodigoPostal,
         error_validation,
         setError,
+        venta_factura,
+        setVentaFactura,
+        productos,
+        setProductos,
       }}
     >
       {children}
