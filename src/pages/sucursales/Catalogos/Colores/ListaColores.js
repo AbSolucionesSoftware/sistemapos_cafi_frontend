@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function TablaColores({ datos, toUpdate, setToUpdate, setValues, refetch }) {
 	const classes = useStyles();
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(8);
 	const [ busqueda, setBusqueda ] = useState('');
@@ -84,8 +85,12 @@ export default function TablaColores({ datos, toUpdate, setToUpdate, setValues, 
 							<TableRow>
 								<TableCell width={150}>Color</TableCell>
 								<TableCell>Nombre</TableCell>
-								<TableCell padding="default">Editar</TableCell>
-								<TableCell padding="default">Eliminar</TableCell>
+								{sesion.accesos.catalogos.colores.editar === false ? (null) : (
+									<TableCell padding="default">Editar</TableCell>
+								)}
+								{sesion.accesos.catalogos.colores.eliminar === false ? (null) : (
+									<TableCell padding="default">Eliminar</TableCell>
+								)}
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -123,6 +128,7 @@ export default function TablaColores({ datos, toUpdate, setToUpdate, setValues, 
 
 const RowsRender = ({ row, setAlert, toUpdate, setToUpdate, setValues, refetch }) => {
 	const classes = useStyles();
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	const [ openModal, setOpenModal ] = useState(false);
 
 	const handleModal = () => setOpenModal(!openModal);
@@ -146,20 +152,19 @@ const RowsRender = ({ row, setAlert, toUpdate, setToUpdate, setValues, refetch }
 					}
 				});
 			} catch (error) {
-				console.log(error);
 			}
 		}
 	});
 
 	const handleDelete = async () => {
 		try {
-			await eliminarColor({
+			const resp = await eliminarColor({
 				variables: {
 					id: row._id
 				}
 			});
 			refetch(refetch);
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			setAlert({ message: resp.data.eliminarColor.message, status: 'success', open: true });
 			handleModal();
 		} catch (error) {
 			setAlert({ message: error.message, status: 'error', open: true });
@@ -189,20 +194,24 @@ const RowsRender = ({ row, setAlert, toUpdate, setToUpdate, setValues, refetch }
 					<b>{row.nombre}</b>
 				</Typography>
 			</TableCell>
-			<TableCell padding="checkbox">
-				{toUpdate === row._id ? (
-					<IconButton onClick={() => onUpdate()}>
-						<Close />
-					</IconButton>
-				) : (
-					<IconButton onClick={() => onUpdate(row)}>
-						<Edit />
-					</IconButton>
-				)}
-			</TableCell>
-			<TableCell padding="checkbox">
-				<Modal handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
-			</TableCell>
+			{sesion.accesos.catalogos.colores.editar === false ? (null) : (
+				<TableCell padding="checkbox">
+					{toUpdate === row._id ? (
+						<IconButton onClick={() => onUpdate()}>
+							<Close />
+						</IconButton>
+					) : (
+						<IconButton onClick={() => onUpdate(row)}>
+							<Edit />
+						</IconButton>
+					)}
+				</TableCell>
+			)}
+			{sesion.accesos.catalogos.colores.eliminar === false ? (null) : (
+				<TableCell padding="checkbox">
+					<Modal handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
+				</TableCell>
+			)}
 		</TableRow>
 	);
 };

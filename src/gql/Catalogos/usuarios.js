@@ -9,6 +9,7 @@ export const CREAR_USUARIO = gql`
 			telefono
 			celular
 			email
+			turno_en_caja_activo
 			direccion {
 				calle
 				no_ext
@@ -34,6 +35,256 @@ export const CREAR_USUARIO = gql`
 				nombre_sucursal
 				descripcion
 			}
+			accesos {
+				mi_empresa {
+					datos_empresa {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					informacion_fiscal {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				compras {
+					abrir_compra {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					compras_realizadas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					compras_espera {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				tesoreria {
+					cuentas_empresa {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					egresos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					abonos_proveedores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					abonos_clientes {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				reportes {
+					reporte_historial_cajas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_turnos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_compras {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_ventas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					rerporte_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_corte_caja {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_tesoreria {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				ventas {
+					cancelar_venta {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					precios_productos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					pre_corte {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					cotizaciones {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					administrador {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					eliminar_ventas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					producto_rapido {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				almacenes {
+					almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					traspasos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					inventario_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				catalogos {
+					clientes {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					usuarios {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					marcas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					contabilidad {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					provedores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					cajas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					departamentos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					centro_costos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					conceptos_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					categorias {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					colores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					colores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					tallas_numeros {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+			}
 		}
 	}
 `;
@@ -46,6 +297,7 @@ export const OBTENER_USUARIOS = gql`
 			nombre
 			telefono
 			celular
+			turno_en_caja_activo
 			email
 			direccion {
 				calle
@@ -72,6 +324,250 @@ export const OBTENER_USUARIOS = gql`
 				nombre_sucursal
 				descripcion
 			}
+			accesos {
+				mi_empresa {
+					datos_empresa {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					informacion_fiscal {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				compras {
+					abrir_compra {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					compras_realizadas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					compras_espera {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				tesoreria {
+					cuentas_empresa {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					egresos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					abonos_proveedores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					abonos_clientes {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				reportes {
+					reporte_historial_cajas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_turnos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_compras {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_ventas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					rerporte_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_corte_caja {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_tesoreria {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				ventas {
+					cancelar_venta {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					precios_productos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					pre_corte {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					cotizaciones {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					administrador {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					eliminar_ventas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					producto_rapido {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				almacenes {
+					almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					traspasos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					inventario_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				catalogos {
+					clientes {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					usuarios {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					marcas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					contabilidad {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					provedores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					cajas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					departamentos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					centro_costos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					conceptos_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					categorias {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					colores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					tallas_numeros {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+			}
 		}
 	}
 `;
@@ -91,7 +587,11 @@ export const LOGEAR_USUARIO = gql`
 		}
 	}
 `;
-/* export const ELIMINAR_USUARIO = gql`
-	
+
+export const AGIGNAR_PERMISOS_USUARIO = gql`
+	mutation asignarAccesosUsuario($input: CrearArregloDeAccesosInput, $id: ID!) {
+		asignarAccesosUsuario(id: $id, input: $input) {
+			message
+		}
+}
 `;
- */

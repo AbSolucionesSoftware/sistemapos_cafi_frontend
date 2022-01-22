@@ -1,21 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Delete } from '@material-ui/icons';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from "@material-ui/core";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-import { Button, Dialog, DialogActions, DialogTitle, IconButton, Switch } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogTitle, IconButton, Switch, Tooltip } from '@material-ui/core';
+import Zoom from "@material-ui/core/Zoom";
 
 import {  DESACTIVAR_DESCUENTOS, ELIMINAR_DESCUENTOS } from '../../../../../gql/Catalogos/descuentos';
 import { useMutation } from '@apollo/client';
 import SnackBarMessages from '../../../../../components/SnackBarMessages';
+import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
+import BackdropComponent from '../../../../../components/Layouts/BackDrop';
 
 const headCells = [
 	{ id: 'cantidad',  label: 'Cantidad' },
@@ -28,8 +30,13 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-	const { onSelectAllClick, numSelected, rowCount } = props;
-
+	const { onSelectAllClick, numSelected, rowCount, datosPrecios } = props;
+	let variable = false;
+	datosPrecios?.forEach(element => {
+		if (element.medida) {
+			return variable = true;
+		}
+	});
 	return (
 		<TableHead>
 			<TableRow>
@@ -50,6 +57,13 @@ function EnhancedTableHead(props) {
 						{headCell.label}
 					</TableCell>
 				))}
+				{ variable === true ? (
+					<>
+						<TableCell>Talla</TableCell>
+						<TableCell>Color</TableCell>
+					</>
+				): null}
+				
 			</TableRow>
 		</TableHead>
 	);
@@ -83,34 +97,58 @@ const useStyles = makeStyles((theme) => ({
 		position: 'absolute',
 		top: 20,
 		width: 1
-	}
+	},
+	colorContainer: {
+		border: "1px solid rgba(0,0,0, .3)",
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
+		height: 30,
+		width: 30,
+		margin: 1,
+		borderRadius: "15%",
+		cursor: "pointer",
+	  },
 }));
 
 export default function TablaPreciosDescuentos(
 	{ 
 		value,
+		datos,
 		setCleanList, 
 		cleanList, 
 		verificarDatos, 
 		setPrecioPrueba,
 		productosRefetch,
-		setPreciosProductos, 
-		precios,
-		setLoading
+		setLoading,
+		loading
 	}
 	) {
-
 	const classes = useStyles();
-	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-	var porcentaje  =  parseFloat((100 - value).toFixed(2));
+	const { 
+		//es este 
+		datosPreciosProducto, 
+        setPreciosProductos,
+		setDatosPreciosProducto
+    } = useContext(RegProductoContext);
 
+	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+	var porcentaje  =  parseFloat((100 - value).toFixed(6));
 	const [ selected, setSelected ] = useState([]);
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(5);
 
+	if(datos){
+		if (datos.medidas_producto.length > 0) {
+			setDatosPreciosProducto(datos.medidas_producto);
+		}else{
+			setDatosPreciosProducto(datos.unidades_de_venta);
+		}
+	};
+
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {
-			const newSelecteds = precios.map((n) => n);
+			const newSelecteds = datosPreciosProducto.map((n) => n);
 			setSelected(newSelecteds); 
 			verificarDatos(newSelecteds);
 			setPreciosProductos(newSelecteds);
@@ -138,15 +176,6 @@ export default function TablaPreciosDescuentos(
 		setSelected(newSelected);
 	};
 	
-	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
-
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(parseInt(event.target.value, 10));
-		setPage(0);
-	};
-
 	useEffect(() => {
 		setSelected([]);
 		setCleanList(false);
@@ -154,12 +183,13 @@ export default function TablaPreciosDescuentos(
 
 	const isSelected = (_id) => selected.indexOf(_id) !== -1;
 
-	const emptyRows = rowsPerPage - Math.min(rowsPerPage, precios.length - page * rowsPerPage);
+	const emptyRows = rowsPerPage - Math.min(rowsPerPage, datosPreciosProducto.length - page * rowsPerPage);
 
 	return (
 		<div className={classes.root}>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<Paper className={classes.paper}>
+				<BackdropComponent loading={loading} setLoading={setLoading} />
 				<TableContainer className={classes.table}>
 					<Table
 						className={classes.table}
@@ -171,16 +201,17 @@ export default function TablaPreciosDescuentos(
 							classes={classes}
 							numSelected={selected.length}
 							onSelectAllClick={handleSelectAllClick}
-							rowCount={precios.length}
+							rowCount={datosPreciosProducto.length}
+							datosPrecios={datosPreciosProducto}
 						/>
 						<TableBody>
-							{precios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+							{datosPreciosProducto.map((row, index) => {
 								const isItemSelected = isSelected(row);
 								const labelId = `enhanced-table-checkbox-${index}`;
 								return (
 									<RowsRender
+										key={row._id}
 									    setLoading={setLoading}
-										key={index}
 										productosRefetch={productosRefetch}
 										handleClick={handleClick} 
 										selected={selected} 
@@ -188,6 +219,7 @@ export default function TablaPreciosDescuentos(
 										setAlert={setAlert}
 										porcentaje={porcentaje}
 										value={value}
+										datos={datos}
 										isItemSelected={isItemSelected} 
 										labelId={labelId} 
 									/>
@@ -201,24 +233,20 @@ export default function TablaPreciosDescuentos(
 						</TableBody>
 					</Table>
 				</TableContainer>
-				<TablePagination
-                    rowsPerPageOptions={[]}
-					component="div"
-					count={precios.length}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onChangePage={handleChangePage}
-					onChangeRowsPerPage={handleChangeRowsPerPage}
-				/>
+				
 			</Paper>
 		</div>
 	);
 }
 
-function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, porcentaje, productosRefetch, handleClick, selected}) {
+function RowsRender({row, value, isItemSelected, setLoading, datos, labelId, setAlert, porcentaje, productosRefetch, handleClick, selected}) {
 
+	const classes = useStyles();
+	const theme = useTheme();
 	const [openModal, setOpenModal] = useState(false);
-
+	const { 
+        setDatosPreciosProducto,
+    } = useContext(RegProductoContext);
 	const [ DesactivarDescuentoUnidad ] = useMutation(DESACTIVAR_DESCUENTOS);
 	const [ ELiminarDescuentoUnidad ] = useMutation(ELIMINAR_DESCUENTOS);
 
@@ -237,39 +265,45 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, p
 			productosRefetch();
 			setAlert({ message: 'Estado de descuento actualizado', status: 'success', open: true });
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: 'Ocurrio un problema en el servidor' , status: 'error', open: true });
 		}
 	};
 
-	const handleModal =()=>{
+	const handleModal = () => {
 		setOpenModal(!openModal);
-	}
+		editarDatos();
+	};
+	
+	const editarDatos = () => {
+		if (datos.medidas_producto.length > 0) {
+            setDatosPreciosProducto(datos.medidas_producto);
+			setLoading(false);
+        }else{
+			setDatosPreciosProducto(datos.unidades_de_venta);
+			setLoading(false);
+        }
+	};
 
 	const handleDelete = async () => {
 		setLoading(true);
 		try {
+			productosRefetch();
 			const resultado = await ELiminarDescuentoUnidad({
 				variables: {
 					id: row._id,
 				}
 			});
-			setLoading(false);
-			productosRefetch();
 			handleModal();
+			editarDatos();
 			setAlert({ message: resultado.data.eliminarDescuentoUnidad.message, status: 'success', open: true });
 		} catch (error) {
-			console.log(error);
 			setAlert({ message: error.message, status: 'error', open: true });
 		}
-	}
-
-	
+	};
 
 	return(
 		<TableRow
 			hover
-			// onClick={(event) => handleClick(event, row)}
 			role="checkbox"
 			aria-checked={isItemSelected}
 			tabIndex={-1}
@@ -278,32 +312,24 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, p
 		>
 			<TableCell padding="checkbox">
 				<Checkbox
-					onClick={(event) => handleClick(event, row)}
+					onClick={(event) => {
+						handleClick(event, row)
+					}}
 					checked={isItemSelected}
 					inputProps={{ 'aria-labelledby': labelId }}
 				/>
 			</TableCell>
 			<TableCell align="center">{row.cantidad}</TableCell>
-			<TableCell align="center">{row.cantidad > 1 ? "Cajas" : "Pieza"}</TableCell>
+			<TableCell align="center">{row?.unidad}</TableCell>
 			<TableCell align="center">{row.precio}</TableCell>
-
 			<TableCell align="center">
-				{selected.length  <= 1 ? (
-					!row.descuento ? 0 : <b style={{color: 'green'}}>{row.descuento.precio_con_descuento}</b>
-				):
-					<b style={{color: 'green'}}>{parseFloat((row.precio * porcentaje / 100).toFixed(2))}</b>
+				{
+					isItemSelected === true && selected.length > 1 ? <b style={{color: 'green'}}> ${parseFloat((row.precio * porcentaje / 100).toFixed(2))} </b>
+					: (row.descuento === null ? 0 : <b style={{color: 'green'}}> ${row.descuento.precio_neto} </b> )
 				}
 			</TableCell>
 			<TableCell align="center">
-				{selected.length  <= 1 ? (
-					!row.descuento ? 0 : <b style={{color: 'red'}}>{row.descuento.porciento}%</b>
-				):
-					<b style={{color: 'red'}}>{value}%</b>
-				}
-				{/* {!row.descuento ? 
-					<b style={{color: 'black'}}>0%</b>
-					: <b style={{color: 'red'}}>{row.descuento.porciento}%</b>
-				} */}
+				{isItemSelected === true && selected.length > 1 ? <b style={{color: 'red'}}> {value}% </b> : (!row.descuento || row.descuento === null ? 0 : <b style={{color: 'red'}}> {row.descuento.porciento}% </b>)}
 			</TableCell>
 			<TableCell align="center">
 				<Modal row={row} handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
@@ -320,11 +346,44 @@ function RowsRender({row, value, isItemSelected, setLoading, labelId,setAlert, p
 					inputProps={{ 'aria-label': 'secondary checkbox' }}
 				/>
 			</TableCell>
+			{
+				row.medida ? (
+					<TableCell align="center">{row?.medida?.talla}</TableCell>
+				) :(
+					null
+				)
+			}
+
+			{
+				row.color ? (
+					<TableCell align="center">
+						<Tooltip
+							title={row?.color?.nombre}
+							placement="top"
+							arrow
+							TransitionComponent={Zoom}
+						>
+							<div
+								className={classes.colorContainer}
+								style={{
+									backgroundColor:row?.color?.hex,
+									color: theme.palette.getContrastText(row?.color?.hex),
+								}}
+							>
+							</div>
+						</Tooltip>
+					</TableCell>
+				) :(
+					null
+				)
+			}
 		</TableRow>
 	)
 };
 
+// MODAL PARA ELIMINAR EL DESCUENTO DE LOS PRODUCTOS
 const Modal = ({row, handleModal, openModal, handleDelete }) => {
+
 	return (
 		<div>
 			<IconButton 

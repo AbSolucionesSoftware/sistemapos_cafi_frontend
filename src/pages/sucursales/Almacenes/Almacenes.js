@@ -3,7 +3,7 @@ import { Container, Grid, Box } from '@material-ui/core';
 import RegistroAlmacen from './RegistroAlmacen/RegistroAlmacen';
 import Traspasos from './Traspasos/Traspasos';
 import InventariosPorAlmacen from './InventarioPorAlmacen/InventariosPorAlmacen';
-
+import { TraspasosProvider } from "../../../context/Almacenes/traspasosAlmacen";
 export default function Moviminetos() {
 
 	return (
@@ -14,9 +14,11 @@ export default function Moviminetos() {
 						<RegistroAlmacen />
 					</Box>
 				</Grid>
-				<Grid item lg={2} >
+				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<Traspasos />
+						<TraspasosProvider>
+							<Traspasos />
+						</TraspasosProvider>
 					</Box>
 				</Grid>
 				<Grid item lg={2} >

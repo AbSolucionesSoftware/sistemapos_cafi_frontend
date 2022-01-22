@@ -1,4 +1,5 @@
 import React, { createContext, useState } from 'react';
+import arregloVacio from '../../pages/sucursales/Catalogos/Usuarios/AsingarAccesos/arregloVacioAcceso'
 
 export const UsuarioContext = createContext();
 
@@ -15,7 +16,8 @@ export const UsuarioProvider = ({ children }) => {
 			estado: '',
 			pais: ''
 		},
-		estado_usuario: true
+		estado_usuario: true,
+		accesos: arregloVacio
 	});
 	const [ toUpdate, setToUpdate ] = useState(false);
 	const [ error, setError ] = useState({error: false, message: ''});

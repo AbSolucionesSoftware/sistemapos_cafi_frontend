@@ -7,6 +7,7 @@ import ListaServicios from './ListaServicios';
 import { REGISTRAR_CONTABILIDAD, ACTUALIZAR_CONTABILIDAD } from '../../../../gql/Catalogos/contabilidad';
 import { useMutation } from '@apollo/client';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
+import { cleanTypenames } from '../../../../config/reuserFunctions';
 
 const useStyles = makeStyles({
 	root: {
@@ -47,24 +48,31 @@ export default function RegistroServicios() {
 			}else{
 				const input = data;
 				if(accion){
-					await CrearContabilidad({
-						variables: {
-							input,
-							empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id,
-							usuario: sesion._id
-						}
-					});
+					if (sesion.accesos.catalogos.contabilidad.agregar === false) {
+						return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+					}else{
+						await CrearContabilidad({
+							variables: {
+								input,
+								empresa: sesion.empresa._id,
+								sucursal: sesion.sucursal._id,
+								usuario: sesion._id
+							}
+						});
+					}
 				}else{
-					// console.log(accion);
-					// console.log(idService);
-					await ActualizarContabilidad({
-						variables: {
-							input,
-							id: idService
-						}
-					})
-					setAccion(true);
+					if (sesion.accesos.catalogos.contabilidad.editar === false) {
+						return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+					}else{
+						const inputActualizado = cleanTypenames(input);
+						await ActualizarContabilidad({
+							variables: {
+								input: inputActualizado,
+								id: idService
+							}
+						})
+						setAccion(true);
+					}
 				}
 				setAlert({ message: '¡Listo!', status: 'success', open: true });
 				setData({nombre_servicio: ""});
@@ -100,7 +108,6 @@ export default function RegistroServicios() {
 					<Add />Guardar
 				</Button>
 			</Box>
-
 			<ListaServicios 
 				setData={setData} 
 				idService={idService} 

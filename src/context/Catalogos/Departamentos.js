@@ -3,27 +3,37 @@ import React, { createContext, useState } from 'react';
 export const CreateDepartamentosContext = createContext();
 
 export const DepartamentosProvider = ({ children }) => {
-	const [ datosDepartamentos, setDatosDepartamentos ] = useState({
-        nombre_departamentos: '',
-        empresa: {},
-        sucursal: {}
-    });
-
+    const [data, setData] = useState({
+		nombre_departamentos:''
+	});
     const [ update, setUpdate ] = useState(false);
     const [ error, setError ] = useState(false);
+    const [ accion, setAccion ] = useState(true);
     const [ openRegistro, setOpenRegistro ] = useState(false);
+    const [ idDepartamento, setIdDepartamento ] = useState("");
+    const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
+    const [  loading, setLoading ] = useState(false);
+
 
 	return (
 		<CreateDepartamentosContext.Provider value={
             { 
-                datosDepartamentos, 
-                setDatosDepartamentos,
+                data, 
+                setData,
                 update,
                 setUpdate,
                 error,
                 setError,
                 openRegistro,
-                setOpenRegistro
+                setOpenRegistro,
+                accion,
+                setAccion,
+                idDepartamento, 
+                setIdDepartamento,
+                alert,
+                setAlert,
+                loading,
+                setLoading
             }
         }>
 			{children}

@@ -33,11 +33,13 @@ const MenuProps = {
   },
 };
 const tipos = [
-    'Entrada',
-    'Salida'
+    'SUMA',
+    'RESTA',
+	'N/A'
 ];
 
 function getStyles(tipo, tipoName, theme) {
+	console.log(tipoName)
   return {
     fontWeight:
       tipoName.indexOf(tipo) === -1
@@ -51,7 +53,9 @@ export default function RegistroServicios() {
 	const [updateData, setUpdateData] = useState(false);
 	const [data, setData] = useState({
 		nombre_concepto: "",
-        tipo: ""
+        destino: "",
+		origen:""
+		
 	});
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 	const [error, setError] = useState(false);
@@ -61,7 +65,7 @@ export default function RegistroServicios() {
     
 	const [ crearConceptoAlmacen ] = useMutation(REGISTRAR_CONCEPTO_ALMACEN);
 	const [ actualizarConceptoAlmacen ] = useMutation(ACTUALIZAR_CONCEPTO_ALMACEN);
-    	const [ openModal, setOpenModal ] = useState(false);
+    const [ openModal, setOpenModal ] = useState(false);
 	const handleModal = () => setOpenModal(!openModal);
 	const handleChangeInput = (e) => {
 		setData({
@@ -69,47 +73,55 @@ export default function RegistroServicios() {
 			[e.target.name]: e.target.value
 		})
 	}
-     const handleChange = (event) => {
-        setData({...data, tipo:event.target.value});
+     const handleChangeDestino = (event) => {
+        setData({...data, destino:event.target.value});
+    };
+	const handleChangeOrigen = (event) => {
+        setData({...data, origen:event.target.value});
     };
 	const handleSubmit = async () => {
 		try {
            setOpenModal(false);
-			if(!data.nombre_concepto || !data.tipo ){
+			if(!data.nombre_concepto || !data.origen || !data.destino ){
 				setError(true);
 			    return;
 			}else{
 				const input = data;
 				if(accion){
-					await crearConceptoAlmacen({
-						variables: {
-							input,
-							empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id,
-							usuario: sesion._id
-						}
-					});
+					if (sesion.accesos.catalogos.conceptos_almacen.agregar === false) {
+						return setAlert({ message: 'Lo sentimos no tienes los permisos autorizados', status: 'error', open: true });
+					}else{
+						await crearConceptoAlmacen({
+							variables: {
+								input,
+								empresa: sesion.empresa._id,
+								sucursal: sesion.sucursal._id,
+								usuario: sesion._id
+							}
+						});
+					}
 				}else{
-					// console.log(accion);
-					// console.log(idService);
-                   
-					await actualizarConceptoAlmacen({
-						variables: {
-							input,
-							id: idConcepto
-						}
-					})
-					setAccion(true);
+					if (sesion.accesos.catalogos.conceptos_almacen.editar === false) {
+						return setAlert({ message: 'Lo sentimos no tienes los permisos autorizados', status: 'error', open: true });
+					}else{
+						await actualizarConceptoAlmacen({
+							variables: {
+								input,
+								id: idConcepto
+							}
+						})
+						setAccion(true);
+					}
 				}
 				setAlert({ message: '¡Listo!', status: 'success', open: true });
-				setData({nombre_concepto: "", tipo: ""});
+				setData({nombre_concepto: "", origen: "", destino:""});
                 setError(false);
 				setUpdateData(!updateData);
 				setIdConcepto("");
 				
 			}
 		} catch (error) {
-			console.log("Guardar",error)
+			
 		}
 	}
 
@@ -149,25 +161,44 @@ export default function RegistroServicios() {
                             variant="outlined"
                             size="small"
                             name="nombre_concepto"
+							style={{marginLeft:2}}
                             value={data.nombre_concepto}
                             onChange={handleChangeInput}
                             onKeyPress={pressEnter}
                         />
                         
                     </Box>
-                    <FormControl className={classes.formControl}>
-                        <InputLabel id="concepto-tipo-label">Tipo</InputLabel>
+					<FormControl className={classes.formControl}>
+                        <InputLabel id="origen-label">Origen</InputLabel>
                         <Select
                         error={error}
-                        labelId="concepto-tipo-label"
-                        id="concepto-tipo-name"
-                        value={data.tipo}
-                        onChange={handleChange}
+                        labelId="origen-label"
+                        id="origen-name"
+                        value={data.origen}
+                        onChange={handleChangeOrigen}
                         input={<Input />}
                         MenuProps={MenuProps}
                         >
                         {tipos.map((tipo) => (
-                            <MenuItem key={tipo} value={tipo} style={getStyles(tipo, data.tipo, theme)}>
+                            <MenuItem key={tipo} value={tipo} style={getStyles(tipo, data.origen, theme)}>
+                            {tipo}
+                            </MenuItem>
+                        ))}
+                        </Select>
+                    </FormControl>
+                    <FormControl className={classes.formControl}>
+                        <InputLabel id="destino-label">Destino</InputLabel>
+                        <Select
+                        error={error}
+                        labelId="destino-label"
+                        id="destino-name"
+                        value={data.destino}
+                        onChange={handleChangeDestino}
+                        input={<Input />}
+                        MenuProps={MenuProps}
+                        >
+                        {tipos.map((tipo) => (
+                            <MenuItem key={tipo} value={tipo} style={getStyles(tipo, data.destino, theme)}>
                             {tipo}
                             </MenuItem>
                         ))}

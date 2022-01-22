@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import PropTypes from 'prop-types';
-
-import { AppBar, Box, Button, DialogActions, DialogContent, Grid, makeStyles, Tab, Tabs, Typography } from '@material-ui/core'
-import shiftIcon from '../../../icons/ventas/shift.svg'
+import { AppBar, Box, Button, CircularProgress, Dialog, DialogContent, Grid, makeStyles, Slide, Tab, Tabs, Typography } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
 
 import AbrirTurno from './AbrirTurno';
 import CerrarTurno from './CerrarTurno';
+import moment from 'moment';
+import 'moment/locale/es';
+import { VentasContext } from '../../../context/Ventas/ventasContext';
+moment.locale('es');
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -64,7 +66,14 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function Turnos({handleClickOpen}) {
+const Transition = React.forwardRef(function Transition(props, ref) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export default function Turnos() {
+	const { abrirTurnosDialog, setAbrirTurnosDialog, setTurnoActivo } = useContext(VentasContext);
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
 
     const classes = useStyles();
     const [value, setValue] = useState(0);
@@ -73,8 +82,58 @@ export default function Turnos({handleClickOpen}) {
 		setValue(newValue);
 	};
 
+	const handleClickOpen = () => { 
+		setAbrirTurnosDialog(!abrirTurnosDialog);
+		setTurnoActivo(true);
+	};
+
+	window.addEventListener('keydown', Mi_función); 
+
+	if(!turnoEnCurso){
+		console.log(true);
+	}else{
+		console.log(false);
+	}
+
+	function Mi_función(e){
+		if(e.altKey && e.keyCode === 85){ 
+			handleClickOpen();
+		} 
+	};
+
     return (
-        <div style={{padding: 0}}>
+        <>
+			<Button
+                onClick={() => handleClickOpen()}
+                style={{textTransform: 'none', height: '100%', width: '60%'}}
+            >
+                <Box display="flex" flexDirection="column" style={{height: '100%', width: '100%'}}>
+                    <Box display="flex" justifyContent="center" alignItems="center">
+                        <img 
+                            src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg'
+                            alt="icono caja" 
+                            style={{width: 20}}
+                        />
+                    </Box>
+					<Box>
+                        <Typography variant="body2" >
+                            <b>Abrir/Cerrar turno</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>Alt + U</b>
+                        </Typography>
+                    </Box>
+                </Box>
+            </Button>	
+
+            <Dialog
+				maxWidth='lg'
+				open={abrirTurnosDialog} 
+				onClose={handleClickOpen} 
+				TransitionComponent={Transition}
+			>
             <AppBar position="static" color="default" elevation={0}>
 					<Tabs
 						value={value}
@@ -85,31 +144,35 @@ export default function Turnos({handleClickOpen}) {
 						textColor="primary"
 						aria-label="scrollable force tabs example"
 					>
-						<Tab
-							label="Cerrar Turno"
-							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
-							{...a11yProps(0)}
-						/>
-						<Tab
-							label="Abrir Turno"
-							icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
-							{...a11yProps(1)}
-						/>
+						
+						{sesion?.turno_en_caja_activo === true && turnoEnCurso ? (
+							<Tab
+								label="Cerrar Turno"
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
+								{...a11yProps(0)}
+							/>
+						) : (
+							<Tab
+								label="Abrir Turno"
+								icon={<img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shift.svg' alt="icono almacen" className={classes.iconSvg} />}
+								{...a11yProps(0)}
+							/>			
+						)}
 						<Grid container justify='flex-end'>
 							<Box mt={2} textAlign="right">
 								<Box textAlign="right">
 									<Typography variant="caption">
-										31/12/2021
+										{moment().format('L')}
 									</Typography>
 								</Box>
 								<Box textAlign="right">
 									<Typography variant="caption">
-										08:00 hrs.
+										{moment().format('LT')} hrs.
 									</Typography>
 								</Box>
 								<Box textAlign="right">
 									<Typography variant="caption">
-										Caja 3
+										Caja {!turnoEnCurso ? null : turnoEnCurso.numero_caja }
 									</Typography>
 								</Box>
 							</Box>
@@ -122,20 +185,44 @@ export default function Turnos({handleClickOpen}) {
 						</Box>
 					</Tabs>
 				</AppBar>
-
-                <DialogContent style={{padding: 0}} >
-                    <TabPanel value={value} index={0}>
-                        <CerrarTurno />
-                    </TabPanel>
-                    <TabPanel value={value} index={1}>
-                        <AbrirTurno />
-                    </TabPanel>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleClickOpen} variant="contained" color="primary" size="large">
-						Aceptar
-					</Button>
-				</DialogActions>
-        </div>
+                <ContenidoTurnos handleClickOpen={handleClickOpen} value={value} /> 
+			</Dialog>
+        </>
     )
 }
+
+
+const ContenidoTurnos = ({ handleClickOpen, value}) => {
+
+	const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
+	const [loading, setLoading] = useState(false);
+
+	if (loading) 
+	return (
+		<Box
+		display="flex"
+		flexDirection="column"
+		justifyContent="center"
+		alignItems="center"
+		height="80vh"
+		>
+			<CircularProgress />
+		</Box>
+	);
+
+	return(
+		<DialogContent style={{padding: 0}}>
+			{sesion?.turno_en_caja_activo === true && turnoEnCurso ? (
+				<TabPanel style={{padding: 0}} value={value} index={0}>
+					<CerrarTurno  setLoading={setLoading} handleClickOpen={handleClickOpen} />
+				</TabPanel>
+			): (
+				<TabPanel value={value} index={0}>
+					<AbrirTurno loading={loading} setLoading={setLoading} handleClickOpen={handleClickOpen} />
+				</TabPanel>
+			)}
+		</DialogContent>
+	)
+};

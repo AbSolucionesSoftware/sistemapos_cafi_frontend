@@ -1,8 +1,7 @@
-import React from 'react'
+import React, { Fragment, useState } from 'react'
 import useStyles from '../styles';
-import tagIcon from '../../../icons/ventas/tag.svg'
 
-import { Box, Button, DialogActions, Divider, Grid, IconButton,  Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@material-ui/core'
+import { Box, Button, Dialog, DialogActions, Divider, Grid, IconButton,  Paper, Slide, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@material-ui/core'
 import { Search } from '@material-ui/icons';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CloseIcon from '@material-ui/icons/Close';
@@ -29,7 +28,11 @@ const rows = [
     createData(123, "Refrigerador", 2501, 5000 ),
 ];
 
-export default function CrearApartado({handleClickOpen}) {
+const Transition = React.forwardRef(function Transition(props, ref) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export default function CrearApartado() {
     
     const classes = useStyles();
 
@@ -45,174 +48,219 @@ export default function CrearApartado({handleClickOpen}) {
 		setPage(0);
 	};
 
-    return (
-        <div>
-            <Grid container>
-                <Grid item lg={12}>
-                    <Box
-                        p={2}
-                        display="flex" 
-                        textAlign="center" 
-                    >
-                        <Box>
-                            <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tag.svg' alt="icono apartados" className={classes.iconSizeDialogs} />
-                        </Box>
-                        <Box m={2} >
-                            <Divider orientation="vertical" />
-                        </Box>
-                        <Box flexGrow={1} textAlign="left"mt={2}>
-                            <Box>
-                                <Typography variant="h6">
-                                    Generar nuevo apartado
-                                </Typography>
-                            </Box>
-                            <Box display="flex" >
-                                <Box >
-                                    <Typography variant="caption">
-                                        31/12/2021 - 08:00 hrs.
-                                    </Typography>
-                                </Box>
-                                <Box  ml={2}>
-                                    <Typography variant="caption">
-                                        Caja 3
-                                    </Typography>
-                                </Box>
-                                <Box  ml={2}>
-                                    <Typography variant="caption">
-                                        <b>Atiende:</b> Luis Flores
-                                    </Typography>
-                                </Box>
-                            </Box>
-                        </Box>
-                        <Box textAlign="right">
-                            <Box>
-                                <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
-                                    <CloseIcon />
-                                </Button>
-                            </Box>
-                        </Box>
-                    </Box>
-                </Grid>
-            </Grid>
+    const [open, setOpen] = useState(false);
+    const handleClickOpen = () => { 
+		setOpen(!open);
+	};
 
-            <Grid item lg={12}>
-                <div className={classes.formInputFlex}>
-                    <Box width="100%">
-                        <Typography>
-                            Cliente:
-                        </Typography>
-                        <Box display="flex" alignItems="center">
-                            <TextField
-                                fullWidth
-                                size="small"
-                                variant="outlined"
-                            />
-                            <IconButton>
-                                <Search />
-                            </IconButton>
-                        </Box>
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.keyCode === 116){ 
+            handleClickOpen();
+        } 
+    };
+
+
+    return (
+        <Fragment>
+            <Button 
+                className={classes.borderBoton}
+                onClick={handleClickOpen}
+            >
+                <Box>
+                    <Box>
+                        <img 
+                            src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tag.svg' 
+                            alt="icono apartados"
+                            style={{width: 100}}
+                        />
                     </Box>
-                    <Box width="100%">
-                        <Typography>
-                            Anticipo o enganche:
+                    <Box>
+                        <Typography variant="body2" >
+                            <b>Apartar Producto</b>
                         </Typography>
-                        <Box display="flex">
-                            <TextField
-                                fullWidth
-                                size="small"
-                                variant="outlined"
-                            />
-                        </Box>
                     </Box>
-                    <Box width="100%">
-                        <Typography>
-                            Fecha Vencimiento:
-                        </Typography>
-                        <Box display="flex">
-                            <TextField
-                                fullWidth
-                                type='number'
-                                size="small"
-                                variant="outlined"
-                            />
-                        </Box>
-                    </Box>
-                </div>
-                <Paper className={classes.root}>
-                    <TableContainer className={classes.container}>
-                        <Table stickyHeader size="small" aria-label="a dense table">
-                            <TableHead>
-                                <TableRow>
-                                    {columns.map((column) => (
-                                        <TableCell key={column.id} align={column.align} style={{ width: column.minWidth }}>
-                                            {column.label}
-                                        </TableCell>
-                                    ))}
-                                    <TableCell align='center' style={{ width: 35 }}>
-                                        Eliminar
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                                    return (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                                            {columns.map((column) => {
-                                                const value = row[column.id];
-                                                return (
-                                                    <TableCell key={column.id} align={column.align}>
-                                                        {column.format && typeof value === 'number' ? (
-                                                            column.format(value)
-                                                        ) : (
-                                                            value
-                                                        )}
-                                                    </TableCell>
-                                                );
-                                            })}
-                                            <TableCell align='center' >
-                                                <IconButton aria-label="delete" size='small'>
-                                                    <DeleteIcon fontSize="small" />
-                                                </IconButton>
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                                
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <TablePagination
-                        rowsPerPageOptions={[ 10, 25, 100 ]}
-                        component="div"
-                        count={rows.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onChangePage={handleChangePage}
-                        onChangeRowsPerPage={handleChangeRowsPerPage}
-                    />
-                </Paper>
-            </Grid>
-            <div className={classes.formInputFlex}>
-                <Box display="flex" justifyContent="flex-end" width="100%">
-                    <Box textAlign="right" mr={2}>
-                        <Typography>
-                            <b>SUBTOTAL:</b> $185.00
-                        </Typography>
-                        <Typography>
-                            <b>IMPUESTOS:</b> $185.00
-                        </Typography>
-                        <Typography>
-                            <b>TOTAL:</b> $185.00
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F5</b>
                         </Typography>
                     </Box>
                 </Box>
-            </div>
+            </Button>
+            <Dialog
+				maxWidth='lg'
+				open={open} 
+				onClose={handleClickOpen} 
+				TransitionComponent={Transition}
+			>
+                <Grid container>
+                    <Grid item lg={12}>
+                        <Box
+                            p={2}
+                            display="flex" 
+                            textAlign="center" 
+                        >
+                            <Box>
+                                <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tag.svg' alt="icono apartados" className={classes.iconSizeDialogs} />
+                            </Box>
+                            <Box m={2} >
+                                <Divider orientation="vertical" />
+                            </Box>
+                            <Box flexGrow={1} textAlign="left"mt={2}>
+                                <Box>
+                                    <Typography variant="h6">
+                                        Generar nuevo apartado
+                                    </Typography>
+                                </Box>
+                                <Box display="flex" >
+                                    <Box >
+                                        <Typography variant="caption">
+                                            31/12/2021 - 08:00 hrs.
+                                        </Typography>
+                                    </Box>
+                                    <Box  ml={2}>
+                                        <Typography variant="caption">
+                                            Caja 3
+                                        </Typography>
+                                    </Box>
+                                    <Box  ml={2}>
+                                        <Typography variant="caption">
+                                            <b>Atiende:</b> Luis Flores
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                            </Box>
+                            <Box textAlign="right">
+                                <Box>
+                                    <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                                        <CloseIcon />
+                                    </Button>
+                                </Box>
+                            </Box>
+                        </Box>
+                    </Grid>
+                </Grid>
 
-            <DialogActions>
-                <Button onClick={handleClickOpen} color="primary" variant="contained" size="large">
-                    Generar Apartado
-                </Button>
-            </DialogActions>
-        </div>
+                <Grid item lg={12}>
+                    <div className={classes.formInputFlex}>
+                        <Box width="100%">
+                            <Typography>
+                                Cliente:
+                            </Typography>
+                            <Box display="flex" alignItems="center">
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    variant="outlined"
+                                />
+                                <IconButton>
+                                    <Search />
+                                </IconButton>
+                            </Box>
+                        </Box>
+                        <Box width="100%">
+                            <Typography>
+                                Anticipo o enganche:
+                            </Typography>
+                            <Box display="flex">
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    variant="outlined"
+                                />
+                            </Box>
+                        </Box>
+                        <Box width="100%">
+                            <Typography>
+                                Fecha Vencimiento:
+                            </Typography>
+                            <Box display="flex">
+                                <TextField
+                                    fullWidth
+                                    type='number'
+                                    size="small"
+                                    variant="outlined"
+                                />
+                            </Box>
+                        </Box>
+                    </div>
+                    <Paper className={classes.root}>
+                        <TableContainer className={classes.container}>
+                            <Table stickyHeader size="small" aria-label="a dense table">
+                                <TableHead>
+                                    <TableRow>
+                                        {columns.map((column) => (
+                                            <TableCell key={column.id} align={column.align} style={{ width: column.minWidth }}>
+                                                {column.label}
+                                            </TableCell>
+                                        ))}
+                                        <TableCell align='center' style={{ width: 35 }}>
+                                            Eliminar
+                                        </TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                                        return (
+                                            <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                                                {columns.map((column) => {
+                                                    const value = row[column.id];
+                                                    return (
+                                                        <TableCell key={column.id} align={column.align}>
+                                                            {column.format && typeof value === 'number' ? (
+                                                                column.format(value)
+                                                            ) : (
+                                                                value
+                                                            )}
+                                                        </TableCell>
+                                                    );
+                                                })}
+                                                <TableCell align='center' >
+                                                    <IconButton aria-label="delete" size='small'>
+                                                        <DeleteIcon fontSize="small" />
+                                                    </IconButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                    
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        <TablePagination
+                            rowsPerPageOptions={[ 10, 25, 100 ]}
+                            component="div"
+                            count={rows.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onChangePage={handleChangePage}
+                            onChangeRowsPerPage={handleChangeRowsPerPage}
+                        />
+                    </Paper>
+                </Grid>
+                <div className={classes.formInputFlex}>
+                    <Box display="flex" justifyContent="flex-end" width="100%">
+                        <Box textAlign="right" mr={2}>
+                            <Typography>
+                                <b>SUBTOTAL:</b> $185.00
+                            </Typography>
+                            <Typography>
+                                <b>IMPUESTOS:</b> $185.00
+                            </Typography>
+                            <Typography>
+                                <b>TOTAL:</b> $185.00
+                            </Typography>
+                        </Box>
+                    </Box>
+                </div>
+
+                <DialogActions>
+                    <Button onClick={handleClickOpen} color="primary" variant="contained" size="large">
+                        Generar Apartado
+                    </Button>
+                </DialogActions>
+
+            </Dialog>
+        </Fragment>
     )
 }

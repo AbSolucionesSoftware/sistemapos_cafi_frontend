@@ -2,7 +2,6 @@ import React from 'react';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
@@ -70,51 +69,43 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CardCaja(props) {
     const styleProps={
-       color: (props.activa)  ? '#44b700' : 'red'
-      
+      color: (props.activa)  ? '#44b700' : 'red'
     }
     const classes = useStyles();
  
     return (
         <div>
             <Card className={classes.root}>
-                  
                     <CardHeader
                       color="secondary"
                         avatar={
-                          
                             <StyledBadge
-                          
-                              overlap="circular"
+                              overlap="circle"
                               props={styleProps}
                               anchorOrigin={{
                                 vertical: 'bottom',
                                 horizontal: 'right',
                               }}
                               variant="dot"
-                              badgeContent=" "
+                              badgeContent=""
                             >
                             <Avatar alt="Cajero X" src="/static/images/avatar/1.jpg" />
                             </StyledBadge>
-                          
-                           
                         }
-                      
-                        
                     />
                     <Box m={1} mb={2}>
                     <Typography variant="h4" color="textSecondary" component="p" >
                             Caja {props.name}
                     </Typography>
                     </Box>
-                    <CardActions disableSpacing  >
-                        <Typography style={{fontWeight: 'bold'}} variant="h7" color="textSecondary" component="p">
+                    {/* <CardActions disableSpacing  >
+                        <Typography style={{fontWeight: 'bold'}} color="textSecondary" component="p">
                            Total en caja: 
                         </Typography>
                         <Typography style={{margin: '0px 10px', color: 'green'}} variant="h6" color="textSecondary" component="p">
                            $ {parseFloat(props.cantidad_efectivo_actual)}
                         </Typography>
-                    </CardActions>
+                    </CardActions> */}
                 </Card>
         </div>
     )

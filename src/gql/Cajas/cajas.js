@@ -39,27 +39,54 @@ export const CREAR_HISTORIAL_CAJA = gql`
 `;
 
 export const OBTENER_HISTORIAL_CAJA = gql`
-    query ObtenerHistorialCaja($id_Caja: ID!,$empresa: ID!, $sucursal: ID!){
-        obtenerHistorialCaja(id_Caja: $id_Caja,empresa: $empresa, sucursal: $sucursal){
-            _id
+    query ObtenerHistorialCaja($input: HistorialCajasInput, $id_Caja: ID!,$empresa: ID!, $sucursal: ID!){
+        obtenerHistorialCaja(input: $input, id_Caja: $id_Caja,empresa: $empresa, sucursal: $sucursal){
             tipo_movimiento
-            cantidad_movimiento
-            
-            id_Caja {
-            _id    
+            concepto
+            horario_turno
             numero_caja
+            numero_usuario_creador
+            nombre_usuario_creador
+            hora_moviento{
+                hora
+                minutos
+                segundos
+                completa
             }
-            id_User {
-            _id
-            numero_usuario
-            nombre
-            email
+            fecha_movimiento{
+                year
+                mes
+                dia
+                no_dia_year
+                no_semana_year
+                completa
             }
-            origen_movimiento
-            id_caja_destino{
-            numero_caja
+            montos_en_caja{
+                monto_efectivo{
+                    monto 
+                }
+                monto_tarjeta_credito{
+                    monto 
+                }
+                monto_tarjeta_debito{
+                    monto 
+                }
+                monto_creditos{
+                    monto 
+                }
+                monto_monedero{
+                    monto 
+                }
+                monto_transferencia{
+                    monto 
+                }
+                monto_cheques{
+                    monto 
+                }
+                monto_vales_despensa{
+                    monto 
+                }
             }
-            createdAt
         }
     }
 `;
@@ -71,3 +98,92 @@ export const ELIMINAR_CAJA = gql`
 		}
 	}
 `; 
+
+export const ACTUALIZAR_CAJA = gql`
+	mutation ActualizarCaja($input: EditarCaja, $id: ID!) {
+		actualizarCaja(id: $id, input: $input) {
+            _id
+            numero_caja
+            activa
+        }
+    }
+`; 
+
+export const OBTENER_PRE_CORTE_CAJA = gql`
+    query ObtenerPreCorteCaja($empresa: ID!, $sucursal: ID!, $input: PreCortesDeCajaInput){
+        obtenerPreCorteCaja(empresa: $empresa, sucursal: $sucursal, input: $input){
+            monto_efectivo_precorte         
+        }
+    }
+`;
+
+export const OBTENER_CORTES_CAJA = gql`
+    query ObtenerCortesDeCaja($empresa: ID!, $sucursal: ID!, $input: FiltroCorteDeCajaInput){
+        obtenerCortesDeCaja(empresa: $empresa, sucursal: $sucursal, input: $input){
+            concepto
+            token_turno_user
+            numero_caja
+            horario_en_turno
+            id_caja
+            hora_salida{
+                completa
+            }
+            fecha_salida{
+                completa
+            }
+            fecha_movimiento
+            usuario_en_turno{
+                nombre
+                telefono
+                email
+                numero_usuario
+            }
+            montos_en_caja{
+                monto_efectivo{
+                    monto 
+                }
+                monto_tarjeta_credito{
+                    monto 
+                }
+                monto_tarjeta_debito{
+                    monto 
+                }
+                monto_creditos{
+                    monto 
+                }
+                monto_monedero{
+                    monto 
+                }
+                monto_transferencia{
+                    monto 
+                }
+                monto_cheques{
+                    monto 
+                }
+                monto_vales_despensa{
+                    monto 
+                }
+            }
+            sucursal{
+                nombre_sucursal
+            }
+        }
+    }
+`;
+
+export const OBTENER_CORTE_CAJA = gql`
+    query ObtenerCorteCaja($empresa: ID!, $sucursal: ID!, $input: CorteDeCajaInput){
+        obtenerCorteCaja(empresa: $empresa, sucursal: $sucursal, input: $input){
+            montos_en_sistema{
+                monto_efectivo
+                monto_tarjeta_debito
+                monto_tarjeta_credito
+                monto_creditos
+                monto_monedero
+                monto_transferencia
+                monto_cheques
+                monto_vales_despensa
+            }
+        }
+    }
+`;

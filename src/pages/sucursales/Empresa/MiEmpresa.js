@@ -13,17 +13,20 @@ export default function MiEmpresa() {
 		<div>
 			<Container>
 			<Grid container spacing={5} justify="center">
-				
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Datos idEmpresa={sesion.empresa._id} />
-					</Box>
-				</Grid>
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<InformacionFiscal />
-					</Box> 
-				</Grid>
+				{sesion.accesos.mi_empresa.datos_empresa.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<Datos idEmpresa={sesion.empresa._id} />
+						</Box>
+					</Grid>
+				)}
+				{sesion.accesos.mi_empresa.informacion_fiscal.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<InformacionFiscal />
+						</Box> 
+					</Grid>
+				)}
 			</Grid>
 		</Container>
 		</div>

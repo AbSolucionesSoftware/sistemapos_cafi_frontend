@@ -53,7 +53,7 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 			sucursal: sesion.sucursal._id
 		}
 	});
-	const [ EliminarContabilidad ] = useMutation(ELIMINAR_CONCEPTO_ALMACEN);
+	const [ EliminarConceptoAlmacen ] = useMutation(ELIMINAR_CONCEPTO_ALMACEN);
 
 	useEffect(
 		() => {
@@ -73,8 +73,7 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 
 	const handleDelete = async () => {
 		try {
-			console.log("Eliminado");
-			await EliminarContabilidad({
+			await EliminarConceptoAlmacen({
 				variables: {
 					id: idConcepto
 				}
@@ -99,7 +98,6 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 			</Box>
 		);
 	}
-		
 
 	return (
 		<div className={classes.root}>
@@ -114,9 +112,14 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 						<TableHead>
 							<TableRow>
 								<TableCell>Concepto almacén</TableCell>
-                                <TableCell padding="default">Tipo</TableCell>
-								<TableCell padding="default">Editar</TableCell>
-								<TableCell padding="default">Eliminar</TableCell>
+                                <TableCell padding="default">Origen</TableCell>
+								<TableCell padding="default">Destino</TableCell>
+								{sesion.accesos.catalogos.conceptos_almacen.editar === false ? (null):(
+									<TableCell padding="default">Editar</TableCell>
+								)}
+								{sesion.accesos.catalogos.conceptos_almacen.eliminar === false ? (null):(
+									<TableCell padding="default">Eliminar</TableCell>
+								)}
 							</TableRow>
 						</TableHead>
 						<TableBody>
@@ -124,29 +127,38 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 								return (
 									<TableRow hover role="checkbox" tabIndex={-1} key={row._id}>
 										<TableCell>{row.nombre_concepto}</TableCell>
-                                        <TableCell>{row.tipo}</TableCell>
-										<TableCell padding="checkbox">
-											<IconButton onClick={() => {
-												console.log("editar");
-												console.log(row);
-												setAccion(false)
-												setIdConcepto(row._id)
-												setData({
-													nombre_concepto: row.nombre_concepto,
-                                                    tipo: row.tipo
-												});
-											}}>
-												<Edit />
-											</IconButton>
-										</TableCell>
-										<TableCell padding="checkbox">
-											<IconButton onClick={() => {
-												setIdConcepto(row._id);
-												handleModal();
-											}}>
-												<Delete />
-											</IconButton>
-										</TableCell>
+                                        <TableCell>{row.origen}</TableCell>
+										<TableCell>{row.destino}</TableCell>
+										{sesion.accesos.catalogos.conceptos_almacen.editar === false ? (null):(
+											<TableCell padding="checkbox">
+												<IconButton onClick={() => {
+													setAccion(false)
+													setIdConcepto(row._id)
+													setData({
+														nombre_concepto: row.nombre_concepto,
+														origen: row.origen,
+														destino: row.destino
+													});
+													
+													}}
+													disabled={!row.editable}
+												>
+													<Edit />
+												</IconButton>
+											</TableCell>
+										)}
+										{sesion.accesos.catalogos.conceptos_almacen.eliminar === false ? (null):(
+											<TableCell padding="checkbox">
+												<IconButton onClick={() => {
+													setIdConcepto(row._id);
+													handleModal();
+												}}
+												disabled={!row.editable}
+												>
+													<Delete />
+												</IconButton>
+											</TableCell>
+										)}
 									</TableRow>
 								);
 							})}

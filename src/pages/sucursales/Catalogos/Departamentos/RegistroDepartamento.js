@@ -2,33 +2,27 @@ import React, { useState, useContext } from 'react';
 import { Box, Button, TextField } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 import TablaDepartamentos from './ListaDepartamentos';
-import { /* OBTENER_DEPARTAMENTOS, */ REGISTRAR_DEPARTAMENTO, /* ACTUALIZAR_DEPARTAMENTO */ } from '../../../../gql/Catalogos/departamentos';
-import { useMutation/* , useQuery */ } from '@apollo/client';
+import { REGISTRAR_DEPARTAMENTO,  ACTUALIZAR_DEPARTAMENTO  } from '../../../../gql/Catalogos/departamentos';
+import { useMutation } from '@apollo/client';
 import { CreateDepartamentosContext } from '../../../../context/Catalogos/Departamentos';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
+import BackdropComponent from '../../../../components/Layouts/BackDrop';
+import { cleanTypenames } from '../../../../config/reuserFunctions';
 
-
-export default function RegistroDepartamentos({accion}) {
-
-	const [data, setdata] = useState({
-		nombre_departamentos:''
-	});
-	const [updateData, setUpdateData] = useState(false);
-	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-	const { /* datosDepartamentos, setDatosDepartamentos, */ error, setError } = useContext(CreateDepartamentosContext);
-	const [ /* loading, */ setLoading ] = useState(false);
-
+export default function RegistroDepartamentos() {
+	const { data, setData, update, setUpdate, error, setError, accion, setAccion, idDepartamento, setIdDepartamento , setLoading, setAlert, loading, alert} = useContext(CreateDepartamentosContext);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	const obtenerDatos = (e) => {
-		setdata({
+		setData({
 			...data,
 			[e.target.name]: e.target.value
 		})
 	}
 
 	const [ CrearDepartamentos ] = useMutation(REGISTRAR_DEPARTAMENTO);
-	// const [ ActualzarDepartamentos ] = useMutation(ACTUALIZAR_DEPARTAMENTO);
+	const [ ActualzarDepartamentos ] = useMutation(ACTUALIZAR_DEPARTAMENTO);
+
 
 
 	const saveData = async () => {
@@ -37,36 +31,50 @@ export default function RegistroDepartamentos({accion}) {
 				setError(true);
 			    return;
 			}else{
-				if(accion === "registrar"){
-					const input = data
-					await CrearDepartamentos({
-						variables: {
-							input,
-							empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id
-						}
-					});
+				const input = data
+				if(accion){
+					if (sesion.accesos.catalogos.departamentos.agregar === false) {
+						return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+					}else{
+						await CrearDepartamentos({
+							variables: {
+								input,
+								empresa: sesion.empresa._id,
+								sucursal: sesion.sucursal._id
+							}
+						});
+					}
 				}else{
-					/* await ActualzarDepartamentos({
-						variables: {
-							
-						}
-					}) */
+					if (sesion.accesos.catalogos.departamentos.editar === false) {
+						return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción!', status: 'error', open: true });
+					}else{
+						const inputActualizado = cleanTypenames(input);
+						await ActualzarDepartamentos({
+							variables: {
+								input: inputActualizado,
+								id: idDepartamento
+							}
+						}) 
+					}
 				}
-				setUpdateData(!updateData);
-				// setUpdate(!update);
+				setUpdate(!update);
+				setAccion(true)
+				setIdDepartamento("");
+				setData({
+					nombre_departamentos: ""
+				});
                 setAlert({ message: '¡Listo!', status: 'success', open: true });
                 setError(false);
                 setLoading(false);
 			}
 		} catch (error) {
-			console.log(error);
 		}
 	}
 
 	return (
 		<Box>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
+			<BackdropComponent loading={loading} setLoading={setLoading} />
 			<Box display="flex" justifyContent="center" alignItems="center" my={2}>
 				<TextField
 					id="outlined-error-helper-text"
@@ -84,7 +92,7 @@ export default function RegistroDepartamentos({accion}) {
 					<Add />Guardar
 				</Button>
 			</Box>
-			<TablaDepartamentos updateData={updateData} />
+			<TablaDepartamentos  />
 		</Box>
-	);
+	); 
 }

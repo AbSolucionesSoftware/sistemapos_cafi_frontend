@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const drawerWidth = '30%';
+const drawerWidth = '22%';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
 		backgroundColor: 'white',
 	},
 	drawerColor:{
-		height: '50%',
+		height: '100%',
 		backgroundColor: 'white',
 	},
 	drawerPaper: {
@@ -27,9 +27,8 @@ const useStyles = makeStyles((theme) => ({
 		height: '100%'
 	},
 	navigationTop:{
-		height: theme.spacing(8)
+		height: '100%'
 	},
-
 	iconSizeSuperior: {
 		fontSize: 30,
         color: theme.palette.info.main
@@ -37,7 +36,6 @@ const useStyles = makeStyles((theme) => ({
     iconSizeSecondSuperior: {
 		width: 20,
 	},
-
 	iconSizeInferior: {
 		fontSize: 50,
         color: theme.palette.info.main
@@ -45,18 +43,16 @@ const useStyles = makeStyles((theme) => ({
     iconSizeSecondInferior: {
 		width: 40,
 	},
-
 	iconSizeSecondInferiorGrande: {
-		width: 110,
+		width: 100
 	},
 	iconSizeInferiorGrande:{
 		fontSize: 110,
         color: theme.palette.info.main
 	},
-
 	avatar: {
-		width: theme.spacing(4),
-		height: theme.spacing(4),
+		width: theme.spacing(3),
+		height: theme.spacing(3),
 		marginRight: theme.spacing(1)
 	},
 	borderBoton:{
@@ -66,7 +62,6 @@ const useStyles = makeStyles((theme) => ({
     },
 	borderBotonChico:{
 		minWidth: '100%',
-		height: '35%',
         border: '.6px solid #DBDBDB'
     }
 }));

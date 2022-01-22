@@ -1,13 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-import { Box, Button, DialogActions, DialogContent, Divider, Grid,   IconButton, 
-        Paper, Table, TableBody, TableCell, TableContainer, TableHead, 
+import { Box, Button, Dialog, DialogActions, DialogContent, Divider, Grid,   IconButton, 
+        Paper, Slide, Table, TableBody, TableCell, TableContainer, TableHead, 
         TablePagination, TableRow, Typography 
     } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete';
 import CloseIcon from '@material-ui/icons/Close';
-
-import tagIcon from '../../../icons/ventas/tag.svg'
 
 import useStyles from '../styles';
 
@@ -25,6 +23,9 @@ function createData(folio, nombre, producto, fechaInicio, fechaVencimiento, enga
 	return { folio, nombre, producto, fechaInicio, fechaVencimiento, enganche, total};
 }
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+	return <Slide direction="up" ref={ref} {...props} />;
+});
 const rows = [
 	createData(123, "Anuel", "Refrigerador", "10/12/2021", "18/12/2021", 2501, 5000 ),
     createData(123, "Anuel", "Refrigerador", "10/12/2021", "18/12/2021", 2501, 5000 ),
@@ -35,12 +36,12 @@ const rows = [
     createData(123, "Anuel", "Refrigerador", "10/12/2021", "18/12/2021", 2501, 5000 ),
 ];
 
-export default function ListaApartados({handleClickOpen}) {
+export default function ListaApartados() {
     
     const classes = useStyles();
-
-    const [ page, setPage ] = React.useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = React.useState(8);
+    const [open, setOpen] = useState(false);
+    const [ page, setPage ] = useState(0);
+	const [ rowsPerPage, setRowsPerPage ] = useState(8);
 
 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
@@ -50,103 +51,146 @@ export default function ListaApartados({handleClickOpen}) {
 		setRowsPerPage(+event.target.value);
 		setPage(0);
 	};
+    
+    const handleClickOpen = () => { 
+		setOpen(!open);
+	};
+
+    window.addEventListener('keydown', Mi_función); 
+    function Mi_función(e){
+        if(e.keyCode === 121){ 
+            handleClickOpen();
+        } 
+    };
 
     return (
-        <div>
-            <DialogContent>
-                <Grid container item lg={12}>
-                    <Box 
-                        display="flex" 
-                        flexGrow={1}
-                    >
-                        <Box>
-                            <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tag.svg' alt="icono apartados" className={classes.iconSizeDialogs} />
-                        </Box>
-                        <Box m={2} >
-                            <Divider orientation="vertical" />
-                        </Box>
-                        <Box mt={3}>
-                            <Typography variant="h6">
-                                Productos Apartados
-                            </Typography>
-                        </Box>
+        <>
+            <Button 
+                className={classes.borderBotonChico}
+                onClick={handleClickOpen}
+            >
+                <Box>
+                    <Box>
+                        <img 
+                            src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tag.svg' 
+                            alt="icono apartados" 
+                            style={{width: 38}} 
+                        />
                     </Box>
                     <Box>
-                        <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
-                            <CloseIcon />
-                        </Button>
+                        <Typography variant="body2" >
+                            <b>Lista Apartados</b>
+                        </Typography>
                     </Box>
-                </Grid>
-                    <Grid>
-                        
-                        <Paper className={classes.root}>
-                            <TableContainer className={classes.container}>
-                                <Table stickyHeader size="small" aria-label="a dense table">
-                                    <TableHead>
-                                        <TableRow>
-                                            {columns.map((column) => (
-                                                <TableCell key={column.id} align={column.align} style={{ width: column.minWidth }}>
-                                                    {column.label}
-                                                </TableCell>
-                                            ))}
-                                            <TableCell align='center' style={{ width: 35 }}>
-                                                Eliminar
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-							                return (
-                                                <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                                                    {columns.map((column) => {
-                                                        const value = row[column.id];
-                                                        return (
-                                                            <TableCell key={column.id} align={column.align}>
-                                                                {column.format && typeof value === 'number' ? (
-                                                                    column.format(value)
-                                                                ) : (
-                                                                    value
-                                                                )}
-                                                            </TableCell>
-                                                        );
-                                                    })}
-                                                    <TableCell align='center' >
-                                                        <IconButton aria-label="delete" size='small'>
-                                                            <DeleteIcon fontSize="small" />
-                                                        </IconButton>
-                                                    </TableCell>
-                                                </TableRow>
-                                            );
-                                        })}
-                                        
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                            <TablePagination
-                                rowsPerPageOptions={[ 10, 25, 100 ]}
-                                component="div"
-                                count={rows.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                onChangePage={handleChangePage}
-                                onChangeRowsPerPage={handleChangeRowsPerPage}
-                            />
-                        </Paper>
-                    </Grid>
-            </DialogContent>
-            <DialogActions>
-                <Box display="flex" justifyContent="flex-end">
                     <Box>
-                        <Button
-                            color="primary"
-                            variant="contained"
-                            size="large"
-                        >
-                            Continuar Compra
-                        </Button>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>F10</b>
+                        </Typography>
                     </Box>
                 </Box>
-            </DialogActions>
-        </div>
+            </Button>
+            <Dialog
+				maxWidth='lg'
+				open={open} 
+				onClose={handleClickOpen} 
+				TransitionComponent={Transition}
+			>
+
+                <DialogContent>
+                    <Grid container item lg={12}>
+                        <Box 
+                            display="flex" 
+                            flexGrow={1}
+                        >
+                            <Box>
+                                <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tag.svg' alt="icono apartados" className={classes.iconSizeDialogs} />
+                            </Box>
+                            <Box m={2} >
+                                <Divider orientation="vertical" />
+                            </Box>
+                            <Box mt={3}>
+                                <Typography variant="h6">
+                                    Productos Apartados
+                                </Typography>
+                            </Box>
+                        </Box>
+                        <Box>
+                            <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                                <CloseIcon />
+                            </Button>
+                        </Box>
+                    </Grid>
+                        <Grid>
+                            
+                            <Paper className={classes.root}>
+                                <TableContainer className={classes.container}>
+                                    <Table stickyHeader size="small" aria-label="a dense table">
+                                        <TableHead>
+                                            <TableRow>
+                                                {columns.map((column) => (
+                                                    <TableCell key={column.id} align={column.align} style={{ width: column.minWidth }}>
+                                                        {column.label}
+                                                    </TableCell>
+                                                ))}
+                                                <TableCell align='center' style={{ width: 35 }}>
+                                                    Eliminar
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                                                return (
+                                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                                                        {columns.map((column) => {
+                                                            const value = row[column.id];
+                                                            return (
+                                                                <TableCell key={column.id} align={column.align}>
+                                                                    {column.format && typeof value === 'number' ? (
+                                                                        column.format(value)
+                                                                    ) : (
+                                                                        value
+                                                                    )}
+                                                                </TableCell>
+                                                            );
+                                                        })}
+                                                        <TableCell align='center' >
+                                                            <IconButton aria-label="delete" size='small'>
+                                                                <DeleteIcon fontSize="small" />
+                                                            </IconButton>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                );
+                                            })}
+                                            
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                                <TablePagination
+                                    rowsPerPageOptions={[ 10, 25, 100 ]}
+                                    component="div"
+                                    count={rows.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    onChangePage={handleChangePage}
+                                    onChangeRowsPerPage={handleChangeRowsPerPage}
+                                />
+                            </Paper>
+                        </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Box display="flex" justifyContent="flex-end">
+                        <Box>
+                            <Button
+                                color="primary"
+                                variant="contained"
+                                size="large"
+                            >
+                                Continuar Compra
+                            </Button>
+                        </Box>
+                    </Box>
+                </DialogActions>
+            </Dialog>
+        </>
     )
 }

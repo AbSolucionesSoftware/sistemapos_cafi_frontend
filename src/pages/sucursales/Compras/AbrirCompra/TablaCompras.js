@@ -1,131 +1,326 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-
-const columns = [
-	{ id: 'name', label: 'Name', minWidth: 170 },
-	{ id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
-	{
-		id: 'population',
-		label: 'Population',
-		minWidth: 170,
-		align: 'right',
-		format: (value) => value.toLocaleString('en-US')
-	},
-	{
-		id: 'size',
-		label: 'Size\u00a0(km\u00b2)',
-		minWidth: 170,
-		align: 'right',
-		format: (value) => value.toLocaleString('en-US')
-	},
-	{
-		id: 'density',
-		label: 'Density',
-		minWidth: 170,
-		align: 'right',
-		format: (value) => value.toFixed(2)
-	}
-];
-
-function createData(name, code, population, size) {
-	const density = population / size;
-	return { name, code, population, size, density };
-}
-
-const rows = [
-	createData('India', 'IN', 1324171354, 3287263),
-	createData('China', 'CN', 1403500365, 9596961),
-	createData('Italy', 'IT', 60483973, 301340),
-	createData('United States', 'US', 327167434, 9833520),
-	createData('Canada', 'CA', 37602103, 9984670),
-	createData('Australia', 'AU', 25475400, 7692024),
-	createData('Germany', 'DE', 83019200, 357578),
-	createData('Ireland', 'IE', 4857000, 70273),
-	createData('Mexico', 'MX', 126577691, 1972550),
-	createData('Japan', 'JP', 126317000, 377973),
-	createData('France', 'FR', 67022000, 640679),
-	createData('United Kingdom', 'GB', 67545757, 242495),
-	createData('Russia', 'RU', 146793744, 17098246),
-	createData('Nigeria', 'NG', 200962417, 923768),
-	createData('Brazil', 'BR', 210147125, 8515767)
-];
+import React, {
+  useContext,
+  useState,
+  forwardRef,
+  useEffect,
+  Fragment,
+} from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Paper from "@material-ui/core/Paper";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import IconButton from "@material-ui/core/IconButton";
+import RemoveCircleOutlineIcon from "@material-ui/icons/RemoveCircleOutline";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Slide from "@material-ui/core/Slide";
+import { ComprasContext } from "../../../../context/Compras/comprasContext";
+import { Close, Edit, Error } from "@material-ui/icons";
+import { initial_state_datosProducto } from "./initial_states";
+import { SetOrResetData } from "./productos/setOrResetData";
+import { RegProductoContext } from "../../../../context/Catalogos/CtxRegProducto";
+import { formatoMexico } from "../../../../config/reuserFunctions";
+import { Grid, Typography } from "@material-ui/core";
 
 const useStyles = makeStyles({
-	root: {
-		width: '100%'
-	},
-	container: {
-		maxHeight: '30vh'
-	}
+  root: {
+    width: "100%",
+  },
+  container: {
+    height: "40vh",
+  },
 });
 
 export default function ListaCompras() {
-	const classes = useStyles();
-	const [ page, setPage ] = React.useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = React.useState(10);
+  const classes = useStyles();
+  const { productosCompra, loadingProductos, datosCompra } = useContext(
+    ComprasContext
+  );
 
-	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
+  const productos_ordernados = [...productosCompra];
 
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(+event.target.value);
-		setPage(0);
-	};
-
-	return (
-		<Paper className={classes.root}>
-			<TableContainer className={classes.container}>
-				<Table stickyHeader size="small" aria-label="a dense table">
-					<TableHead>
-						<TableRow>
-							{columns.map((column) => (
-								<TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
-									{column.label}
-								</TableCell>
-							))}
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-							return (
-								<TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-									{columns.map((column) => {
-										const value = row[column.id];
-										return (
-											<TableCell key={column.id} align={column.align}>
-												{column.format && typeof value === 'number' ? (
-													column.format(value)
-												) : (
-													value
-												)}
-											</TableCell>
-										);
-									})}
-								</TableRow>
-							);
-						})}
-					</TableBody>
-				</Table>
-			</TableContainer>
-			<TablePagination
-				rowsPerPageOptions={[ 10, 25, 100 ]}
-				component="div"
-				count={rows.length}
-				rowsPerPage={rowsPerPage}
-				page={page}
-				onChangePage={handleChangePage}
-				onChangeRowsPerPage={handleChangeRowsPerPage}
-			/>
-		</Paper>
-	);
+  return (
+    <Paper className={classes.root} variant="outlined">
+      <TableContainer
+        className={classes.container}
+        style={
+          loadingProductos
+            ? {
+                pointerEvents: "none",
+                opacity: 0.4,
+              }
+            : null
+        }
+      >
+        <Table stickyHeader size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Código de barras</TableCell>
+              <TableCell>Producto</TableCell>
+              <TableCell>Precio de compra</TableCell>
+              <TableCell padding="checkbox">Cantidad</TableCell>
+              <TableCell padding="checkbox">Cantidad regalo</TableCell>
+              <TableCell padding="checkbox">Cantidad total</TableCell>
+              <TableCell padding="checkbox">Presentaciones</TableCell>
+              <TableCell>IVA</TableCell>
+              <TableCell>IEPS</TableCell>
+              <TableCell>Total IVA</TableCell>
+              <TableCell>Total IEPS</TableCell>
+              <TableCell>Editar</TableCell>
+              <TableCell>Remover</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {productos_ordernados.map((producto, index) => {
+              return (
+                <RenderProductosCompra
+                  key={index}
+                  producto={producto}
+                  index={index}
+                />
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+        <Grid container spacing={2}>
+          <Grid item>
+            <Typography style={{ fontSize: 18 }}>
+              Subtotal: <b>${ datosCompra.subtotal ? formatoMexico(datosCompra.subtotal) : 0}</b>
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Typography style={{ fontSize: 18 }}>
+              Impuestos: <b>${datosCompra.impuestos ? formatoMexico(datosCompra.impuestos) : 0}</b>
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Typography style={{ fontSize: 18 }}>
+              <b>Total: ${datosCompra.total ? formatoMexico(datosCompra.total) : 0}</b>
+            </Typography>
+          </Grid>
+        </Grid>
+    </Paper>
+  );
 }
 
+const RenderProductosCompra = ({ producto, index }) => {
+  const {
+    datosCompra,
+    setDatosProducto,
+    setProductoOriginal,
+    setPreciosVenta,
+    isEditing,
+    setIsEditing,
+    editFinish,
+    setCosto,
+    setCantidad,
+    setIssue,
+  } = useContext(ComprasContext);
+  const [isSelected, setIsSelected] = useState(false);
+  const productoCTX = useContext(RegProductoContext);
+
+  const seStates = {
+    setDatosGenerales: productoCTX.setDatosGenerales,
+    setPrecios: productoCTX.setPrecios,
+    setValidacion: productoCTX.setValidacion,
+    setPreciosP: productoCTX.setPreciosP,
+    setImagenes: productoCTX.setImagenes,
+    setUnidadesVenta: productoCTX.setUnidadesVenta,
+    almacen_inicial: productoCTX.almacen_inicial,
+    setAlmacenInicial: productoCTX.setAlmacenInicial,
+    setUnidadVentaXDefecto: productoCTX.setUnidadVentaXDefecto,
+    setCentroDeCostos: productoCTX.setCentroDeCostos,
+    setPreciosPlazos: productoCTX.setPreciosPlazos,
+    setSubcategorias: productoCTX.setSubcategorias,
+    setOnPreview: productoCTX.setOnPreview,
+    setSubcostos: productoCTX.setSubcostos,
+    setImagenesEliminadas: productoCTX.setImagenesEliminadas,
+    setPresentaciones: productoCTX.setPresentaciones,
+    setPresentacionesEliminadas: productoCTX.setPresentacionesEliminadas,
+    datosCompra,
+  };
+
+  const handleEdit = () => {
+    setIsSelected(true);
+    setIsEditing({ producto, index, finish: false });
+    setDatosProducto(producto);
+    SetOrResetData("SET", seStates, producto.producto);
+    setProductoOriginal(producto.producto);
+    setPreciosVenta(producto.producto.precios.precios_producto);
+    setCosto(producto.costo);
+    setCantidad(producto.cantidad);
+  };
+
+  const handleCancelEdit = () => {
+    setIsSelected(false);
+    setIsEditing({});
+    setDatosProducto(initial_state_datosProducto);
+    SetOrResetData("RESET", seStates);
+    setCosto(0);
+    setCantidad(1);
+  };
+
+  useEffect(() => {
+    setIsSelected(false);
+  }, [editFinish]);
+
+  useEffect(() => {
+    if (!producto.cantidad) {
+    } else {
+      setIssue(false);
+    }
+  }, [producto.cantidad]);
+
+  const unidad_producto = producto.producto.precios.unidad_de_compra.unidad;
+  const { cantidad, cantidad_regalo, cantidad_total } = producto;
+
+  return (
+    <TableRow
+      hover
+      role="checkbox"
+      tabIndex={-1}
+      selected={isSelected || !cantidad}
+      style={
+        isEditing.producto && !isSelected
+          ? {
+              pointerEvents: "none",
+              opacity: 0.4,
+            }
+          : null
+      }
+    >
+      <TableCell>
+        {producto.producto.datos_generales
+          ? producto.producto.datos_generales.codigo_barras
+            ? producto.producto.datos_generales.codigo_barras
+            : "-"
+          : "-"}
+      </TableCell>
+      <TableCell>
+        {producto.producto.datos_generales.nombre_comercial}
+      </TableCell>
+      <TableCell width={180}>
+        {!cantidad ? (
+          <Error color="error" />
+        ) : (
+          <b>$ {formatoMexico(producto.total)}</b>
+        )}
+      </TableCell>
+      <TableCell>
+        {cantidad}
+        <b>({unidad_producto})</b>
+      </TableCell>
+      <TableCell>
+        {cantidad_regalo}
+        <b>({unidad_producto})</b>
+      </TableCell>
+      <TableCell>
+        {cantidad_total}
+        <b>({unidad_producto})</b>
+      </TableCell>
+      <TableCell>
+        {producto.producto.presentaciones.length > 0
+          ? producto.producto.presentaciones.length
+          : "N/A"}
+      </TableCell>
+      <TableCell>{producto.producto.precios.iva}%</TableCell>
+      <TableCell>{producto.producto.precios.ieps}%</TableCell>
+      <TableCell>${producto.iva_total}</TableCell>
+      <TableCell>${producto.ieps_total}</TableCell>
+      <TableCell>
+        {isSelected ? (
+          <IconButton
+            color="inherit"
+            size="small"
+            onClick={() => handleCancelEdit()}
+          >
+            <Close />
+          </IconButton>
+        ) : (
+          <IconButton color="primary" size="small" onClick={() => handleEdit()}>
+            <Edit />
+          </IconButton>
+        )}
+      </TableCell>
+      <TableCell>
+        <ModalDeleteProducto index={index} isSelected={isSelected} />
+      </TableCell>
+    </TableRow>
+  );
+};
+
+const Transition = forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+const ModalDeleteProducto = ({ index, isSelected }) => {
+  const {
+    productosCompra,
+    setProductosCompra,
+    datosCompra,
+    setDatosCompra,
+  } = useContext(ComprasContext);
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const eliminarCompra = () => {
+    let copy_compras = [...productosCompra];
+    let objeto_eliminado = copy_compras.splice(index, 1);
+
+    setDatosCompra({
+      ...datosCompra,
+      subtotal: datosCompra.subtotal - objeto_eliminado[0].subtotal,
+      impuestos: datosCompra.impuestos - objeto_eliminado[0].impuestos,
+      total: datosCompra.total - objeto_eliminado[0].total,
+    });
+    setProductosCompra([...copy_compras]);
+    handleClose();
+  };
+
+  return (
+    <Fragment>
+      <IconButton
+        color="secondary"
+        size="small"
+        onClick={handleClickOpen}
+        disabled={isSelected}
+      >
+        <RemoveCircleOutlineIcon />
+      </IconButton>
+      <Dialog
+        open={open}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-labelledby="modal-eliminar-compra"
+      >
+        <DialogTitle id="modal-eliminar-compra">
+          Seguro que quiere eliminar esto de la lista?
+        </DialogTitle>
+
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={eliminarCompra} color="secondary">
+            Aceptar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Fragment>
+  );
+};

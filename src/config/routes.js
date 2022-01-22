@@ -8,7 +8,7 @@ import LayoutHome from '../components/Layouts/LayoutHome';
 import AdminInicio from '../pages/sucursales/AdminInicio'
 
 //ventas pages
-import VentasGenerales from '../pages/ventas/VentasGenerales'
+import Venta_index from '../pages/ventas/venta_index'
 
 const routes = [
 	{
@@ -34,16 +34,9 @@ const routes = [
 		]
 	},
 	{
-		path: '/ventas',
+		path: '/ventas/venta-general',
 		component: LayoutVentas,
-		exact: false,
-		routes: [
-			{
-				path: '/ventas/venta-general',
-				component: VentasGenerales,
-				exact: true,
-			}
-		]
+		exact: false
 	}
 	
 ];

@@ -7,6 +7,7 @@ import ErrorPage from '../../../../components/ErrorPage';
 
 import { useQuery, useMutation } from '@apollo/client';
 import { OBTENER_TALLAS, CREAR_TALLAS, ACTUALIZAR_TALLA } from '../../../../gql/Catalogos/tallas';
+import { cleanTypenames } from '../../../../config/reuserFunctions';
 
 export default function RegistroTallas({ tipo }) {
 	const [ value, setValue ] = useState('');
@@ -35,36 +36,49 @@ export default function RegistroTallas({ tipo }) {
 	const { obtenerTallas } = data;
 
 	const GuardarDatosBD = async () => {
+		let resp;
 		if (!value) {
 			return;
 		}
 		try {
 			const nueva_talla = value;
 			if(toUpdate){
-				await actualizarTalla({
-					variables: {
-						input: {
-							talla: nueva_talla,
-						},
-						id: toUpdate
-					}
-				});
-			}else{
-				await crearTalla({
-					variables: {
-						input: {
-							talla: nueva_talla,
-							tipo,
-							empresa: sesion.empresa._id,
-							sucursal: sesion.sucursal._id
+				if (sesion.accesos.catalogos.tallas_numeros.editar === false ) {
+					return setAlert({ message: 'Lo sentimos no tienes autorización para esta acción', status: 'error', open: true });
+				}else{
+					const talla_actualizada = cleanTypenames(nueva_talla);
+					resp = await actualizarTalla({
+						variables: {
+							input: {
+								talla: talla_actualizada,
+								tipo
+							},
+							id: toUpdate
 						}
-					}
-				});
+					});
+				}
+			}else{
+				if (sesion.accesos.catalogos.tallas_numeros.agregar === false ) {
+					return setAlert({ message: 'Lo sentimos no tienes autorización para esta acción', status: 'error', open: true });
+				}else{
+					resp = await crearTalla({
+						variables: {
+							input: {
+								talla: nueva_talla,
+								tipo,
+								empresa: sesion.empresa._id,
+								sucursal: sesion.sucursal._id
+							}
+						}
+					});
+				}
 			}
 			refetch();
 			setValue('');
 			setToUpdate('');
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
+			let msgAlert = (toUpdate) ? { message: resp.data.actualizarTalla.message, status: 'success', open: true }:{ message: resp.data.crearTalla.message, status: 'success', open: true }
+			setAlert(msgAlert);
+			
 		} catch (error) {
 			setAlert({ message: 'Hubo un error', status: 'error', open: true });
 		}

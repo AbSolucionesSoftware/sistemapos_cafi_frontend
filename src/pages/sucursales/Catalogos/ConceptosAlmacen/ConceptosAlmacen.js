@@ -8,7 +8,6 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, Container } from '@material-ui/core';
-import conceptosAlmacen from '../../../../icons/conceptosAlmacen.svg';
 import RegistroConcepto from './RegistroConcepto';
 
 const useStyles = makeStyles((theme) => ({
@@ -63,8 +62,8 @@ export default function ConceptosAlmacen() {
 						</Box>
 					</Toolbar>
 				</AppBar>
-				<Box mt={4}>
-					<Container maxWidth="md">
+				<Box mt={4} alignSelf='center' >
+					<Container >
 						<RegistroConcepto />
 					</Container>
 				</Box>

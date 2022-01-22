@@ -2,8 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Avatar, Box, Button, Typography, Toolbar, AppBar } from '@material-ui/core';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
-import HomeIcon from '@material-ui/icons/Home';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { grey } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
@@ -22,7 +21,9 @@ const useStyles = makeStyles((theme) => ({
 
 function NavegacionAdmin(props) {
 	const classes = useStyles();
-	const token = localStorage.getItem('sesionCafi')
+	const token = localStorage.getItem('sesionCafi');
+	const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	let usuario;
 	
 	if (token !== null) usuario = JSON.parse(localStorage.getItem('sesionCafi'));
@@ -30,6 +31,7 @@ function NavegacionAdmin(props) {
     const signOut = () => {
 		localStorage.removeItem('sesionCafi');
 		localStorage.removeItem('tokenCafi');
+		localStorage.removeItem('ListaEnEspera');
 		props.history.push('/');
 	};
 
@@ -41,7 +43,7 @@ function NavegacionAdmin(props) {
 					<Box className={classes.title}>
 						<Typography variant="h6" color="inherit">Bienvenido {`${usuario.nombre}`}</Typography>
 					</Box>
-					<Button
+					{/* <Button
 						component={Link}
 						to="/home"
 						size="large"
@@ -49,17 +51,30 @@ function NavegacionAdmin(props) {
 						startIcon={<HomeIcon />}
 					>
 						Inicio
-					</Button>
-					<Button
-						color="secondary"
-						size="large"
-						className={classes.menuButton}
-						startIcon={<PowerSettingsNewIcon />}
-						variant="contained"
-                        onClick={signOut}
-					>
-						Salir
-					</Button>
+					</Button> */}
+					{sesion.turno_en_caja_activo === true && turnoEnCurso ? (
+							<Button
+								color="secondary"
+								size="large"
+								className={classes.menuButton}
+								variant="contained"
+								disabled={true}
+							>
+								TURNO ACTIVO
+							</Button>
+						):(
+							<Button
+								color="secondary"
+								size="large"
+								className={classes.menuButton}
+								startIcon={<PowerSettingsNewIcon />}
+								variant="contained"
+								onClick={signOut}
+							>
+								Cerrar sesión
+							</Button>
+						)
+					}
 				</Toolbar>
 			</AppBar>
 		</div>
