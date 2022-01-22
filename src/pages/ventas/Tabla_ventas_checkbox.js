@@ -23,7 +23,6 @@ import EliminarProductoVenta from "./EliminarProductoVenta";
 import { useDebounce } from "use-debounce";
 import {
   findProductArray,
-  calculatePrices,
   verifiPrising,
   calculatePrices2
 } from "../../config/reuserFunctions";
@@ -439,10 +438,9 @@ const RenderTableRows = ({
           : venta;
 
       let CalculosData = {};
-
+      
       //Buscar y obtener ese producto en el array de ventas
       const producto_encontrado = await findProductArray(
-        productosVentas,
         producto
       );
       if (producto_encontrado.found) {
@@ -454,6 +452,7 @@ const RenderTableRows = ({
         
         const new_resta = await calculatePrices2({newP, cantidad: cantidad_venta, precio_boolean: true, precio: newP.precio_actual_object, granel: newP.granel_producto, origen: "Tabla" });
         const new_suma = await calculatePrices2({newP, cantidad: new_cant, precio_boolean: true, precio: newPrising, granel: newP.granel_producto, origen: "Tabla" });
+
         if (verify_prising.found) {
           newP.precio_a_vender = new_suma.totalCalculo;
           newP.precio_anterior = newP.precio_actual_porducto;
@@ -501,13 +500,10 @@ const RenderTableRows = ({
             parseFloat(new_resta.monederoCalculo) +
             new_suma.monederoCalculo,
         };
-
-        
-
       } else {
         console.log("El producto no existe");
       }
-        console.log(CalculosData);
+
       localStorage.setItem(
         "DatosVentas",
         JSON.stringify({
