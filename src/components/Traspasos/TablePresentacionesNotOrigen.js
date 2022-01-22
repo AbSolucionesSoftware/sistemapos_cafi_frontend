@@ -110,6 +110,7 @@ export default function TablaPresentaciones({
                 <TableCell padding="checkbox">Medida</TableCell>
                 <TableCell padding="checkbox">Color</TableCell>
                 <TableCell padding="checkbox">Precio</TableCell>
+                {/* <TableCell padding="checkbox">Descuento</TableCell> */}
                 {/* {!onlyPrice ? (
                   <Fragment>
                     <TableCell padding="checkbox">Cantidad</TableCell>
@@ -229,7 +230,28 @@ const RenderPresentacionesRows = ({
       }else{
         copy_element_presentacion.medida.precio = parseFloat(value);
       }
-    } else {
+    } 
+      else if (name === "descuento") {
+      /* if (!value) {
+        copy_element_presentacion.medida.precio = 0;
+        copy_presentaciones.splice(index, 1, copy_element_presentacion);
+        setNew_medidas(copy_presentaciones);
+        return;
+      }
+      if(copy_element_presentacion.medida.descuento_activo && copy_element_presentacion.medida.descuento_activo === true){
+        let precio_con_descuento = Math.round(
+          (value * copy_element_presentacion.medida.descuento.porciento) / 100
+        );
+        copy_element_presentacion_descuento.medida.precio_con_descuento = parseFloat(precio_con_descuento);
+        copy_element_presentacion.medida.precio = parseFloat(value);
+        copy_element_presentacion.medida.descuento = copy_element_presentacion_descuento
+      }else{
+        copy_element_presentacion.medida.precio = parseFloat(value);
+      } */
+       copy_element_presentacion.medida.descuento = value;
+         
+    }
+    else {
       if (!value) {
         copy_element_presentacion.medida.codigo_barras = "";
         copy_presentaciones.splice(index, 1, copy_element_presentacion);
@@ -348,7 +370,18 @@ const RenderPresentacionesRows = ({
                 type="tel"
                 name="precio"
               />
+              
             </TableCell>
+           {/*  <TableCell>
+              <Input
+                inputRef={textfield}
+                onChange={(e) => obtenerDatos(e)}
+                disabled={disabledInput}
+                value={copy_producto.medida.descuento}
+                type="tel"
+                name="descuento"
+              />
+            </TableCell> */}
             <TableCell padding="checkbox">
               <Input
                 inputRef={textfield}

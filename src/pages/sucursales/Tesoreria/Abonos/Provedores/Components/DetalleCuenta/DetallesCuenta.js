@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function DetallesCuenta({handleClick, cuenta}) {
-
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
     const classes = useStyles();
 
     return (
@@ -79,9 +79,11 @@ export default function DetallesCuenta({handleClick, cuenta}) {
                         <Typography style={{paddingLeft: 5}}>{moment(cuenta.fecha_vencimiento_credito).format('D MMMM YYYY')}</Typography>
                     </Box>
                 </Box>
-                <Box width="60%" p={1} display='flex' alignItems={'center'} >
-                    <AbonoaRecibir cuenta={cuenta} />
-                </Box>
+                {permisosUsuario.accesos.tesoreria.abonos_proveedores.editar === false ? (null) : (
+                    <Box width="60%" p={1} display='flex' alignItems={'center'} >
+                        <AbonoaRecibir cuenta={cuenta} />
+                    </Box>
+                )}
             </div>
             <Grid container>
                 <Grid item lg={6} xs={12}>

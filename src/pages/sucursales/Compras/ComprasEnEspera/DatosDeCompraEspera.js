@@ -52,6 +52,8 @@ export default function DatosDeCompra({
   /* let compra_temp = {...compra} */
   const [compra_temp, setCompraTemp] = useState({ ...compra });
   const { productos } = compra_temp;
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
+
   const [busqueda, setBusqueda] = useState("");
   const [productosFiltrados, setProductosFiltrados] = useState([]);
 
@@ -117,28 +119,32 @@ export default function DatosDeCompra({
           </Grid>
           <Grid item sm={6} xs={12}>
             <Box display="flex" justifyContent="flex-end">
-              <ModalEliminarCompra
-                compra={compra_temp}
-                setAlert={setAlert}
-                refetch={refetch}
-                handleOpenDetalles={handleOpenDetalles}
-              />
+              {permisosUsuario.accesos.compras.compras_espera.eliminar === false ? (null) : (
+                <ModalEliminarCompra
+                  compra={compra_temp}
+                  setAlert={setAlert}
+                  refetch={refetch}
+                  handleOpenDetalles={handleOpenDetalles}
+                />
+              )}
               <Box mx={1} />
 
-              {verificado ? (
-                <AbrirCompra
-                  compra={compra_temp}
-                  status="enEspera"
-                  handleOpenDetalles={handleOpenDetalles}
-                  refetchEspera={refetch}
-                />
-              ) : (
-                <VerificarProductosCompras
-                  compra={compra_temp}
-                  nuevoArray={nuevoArray}
-                  setNuevoArray={setNuevoArray}
-                  setVerificado={setVerificado}
-                />
+              {permisosUsuario.accesos.compras.compras_espera.editar === false ? (null) : (
+                verificado ? (
+                  <AbrirCompra
+                    compra={compra_temp}
+                    status="enEspera"
+                    handleOpenDetalles={handleOpenDetalles}
+                    refetchEspera={refetch}
+                  />
+                ) : (
+                  <VerificarProductosCompras
+                    compra={compra_temp}
+                    nuevoArray={nuevoArray}
+                    setNuevoArray={setNuevoArray}
+                    setVerificado={setVerificado}
+                  />
+                )
               )}
             </Box>
           </Grid>

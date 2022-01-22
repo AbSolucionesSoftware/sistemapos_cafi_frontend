@@ -192,6 +192,8 @@ export const OBTENER_PRODUCTOS_EMPRESA = gql`
           precio_venta
           unidad_mayoreo
           utilidad
+          ieps_precio
+          iva_precio
         }
         unidad_de_compra {
           cantidad
@@ -209,6 +211,35 @@ export const OBTENER_PRODUCTOS_EMPRESA = gql`
       sucursal
       usuario
       empresa
+    }
+  }
+`;
+
+export const OBTENER_TRASPASOS = gql`
+  query obtenerTraspasos( $input: ConsultaTraspasosInput) {
+    obtenerTraspasos(input: $input) {
+      _id  
+      cantidad
+      
+      id_traspaso{
+        concepto_traspaso{
+          nombre_concepto
+        }
+        fecha_registro
+      }
+      producto{
+        datos_generales{
+          nombre_comercial
+        }
+      }
+      almacen_origen{
+        _id
+        nombre_almacen
+      }
+      almacen_destino{
+        _id
+        nombre_almacen
+      }
     }
   }
 `;

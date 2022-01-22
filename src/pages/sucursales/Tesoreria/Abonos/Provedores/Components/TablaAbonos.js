@@ -116,7 +116,7 @@ export default function TablaAbonos({loading}) {
 };
 
 function RowsCuentas ({cuentaSelect, loading}){
-
+	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
 	const [open, setOpen] = useState(false);
     
 	const handleClick = () => {
@@ -146,9 +146,14 @@ function RowsCuentas ({cuentaSelect, loading}){
 				<TableCell align="center">${formatoMexico(cuentaSelect.total - cuentaSelect.saldo_credito_pendiente)}</TableCell>
 				<TableCell align="center">${formatoMexico(cuentaSelect.saldo_credito_pendiente)}</TableCell>
 				<TableCell align="center">${formatoMexico(cuentaSelect.total)}</TableCell>
-				<TableCell align="center">
-					<LiquidarCuenta cuenta={cuentaSelect}/>
-				</TableCell>
+				{permisosUsuario.accesos.tesoreria.abonos_proveedores.editar === false ? (
+					<TableCell align="center">
+					</TableCell>
+				) : (
+					<TableCell align="center">
+						<LiquidarCuenta cuenta={cuentaSelect}/>
+					</TableCell>
+				)}
 			</TableRow>
 
 			<Dialog

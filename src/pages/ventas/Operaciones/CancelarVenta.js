@@ -10,11 +10,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function CancelarVenta() {
-
+    const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
     const classes = useStyles();
     const [open, setOpen] = useState(false);
-    const handleClickOpen = () => { 
-		setOpen(!open);
+    
+    const handleClickOpen = () => {
+        if(sesion.accesos.ventas.cancelar_venta.ver === true){
+            setOpen(!open);
+        }
 	};
     
     window.addEventListener('keydown', Mi_función); 
