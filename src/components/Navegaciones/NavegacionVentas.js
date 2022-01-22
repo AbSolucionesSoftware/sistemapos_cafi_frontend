@@ -16,6 +16,7 @@ import ProductoRapidoIndex from '../../pages/ventas/ArticuloRapido/indexArticulo
 
 import SnackBarMessages from '../SnackBarMessages';
 import { VentasContext } from '../../context/Ventas/ventasContext';
+import Acceso from '../AccesosPassword/Acceso';
 
 function NavegacionVentas(props) {
 	const { alert, setAlert, abrirTurnosDialog, setAbrirTurnosDialog, setUbicacionTurno } = useContext(VentasContext);
@@ -52,7 +53,8 @@ function NavegacionVentas(props) {
 	function Administrador() {
 		if(sesion.accesos.ventas.administrador.ver === true){
 			props.history.push('/admin')
-		};
+		}else{
+		}
 	}
 
 	window.addEventListener('keydown', Mi_función); 
