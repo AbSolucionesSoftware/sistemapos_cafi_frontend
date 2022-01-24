@@ -3,7 +3,13 @@ import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import DoneIcon from "@material-ui/icons/Done";
-import { Button, AppBar, IconButton } from "@material-ui/core";
+import {
+  Button,
+  AppBar,
+  IconButton,
+  DialogTitle,
+  DialogContent,
+} from "@material-ui/core";
 import { Dialog, DialogActions, Tabs, Tab, Box } from "@material-ui/core";
 import RegistrarInfoBasica from "./RegistrarInfoBasica";
 import RegistrarInfoCredito from "./RegistroInfoCredito";
@@ -16,7 +22,7 @@ import SnackBarMessages from "../../../../components/SnackBarMessages";
 import { useMutation } from "@apollo/client";
 import {
   CREAR_CLIENTE,
-  ACTUALIZAR_CLIENTE
+  ACTUALIZAR_CLIENTE,
 } from "../../../../gql/Catalogos/clientes";
 
 function TabPanel(props) {
@@ -62,20 +68,29 @@ const useStyles = makeStyles((theme) => ({
   formInput: {
     margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
   },
-  root: {
-    flexGrow: 1,
-    width: "100%",
-    backgroundColor: theme.palette.background.paper,
-  },
   iconSvg: {
     width: 50,
   },
 }));
 
-export default function CrearCliente({ tipo, accion, datos, refetch, ventas, handleClickOpen }) {
+export default function CrearCliente({
+  tipo,
+  accion,
+  datos,
+  refetch,
+  ventas,
+  handleClickOpen,
+}) {
   const classes = useStyles();
-  const { cliente, setCliente, setError, update, setUpdate, updateClientVenta, setUpdateClientVenta  } =
-    useContext(ClienteCtx);
+  const {
+    cliente,
+    setCliente,
+    setError,
+    update,
+    setUpdate,
+    updateClientVenta,
+    setUpdateClientVenta,
+  } = useContext(ClienteCtx);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -138,7 +153,8 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
       setError(true);
       return;
     }
-    setLoading(true);
+    console.log(cliente);
+    /* setLoading(true);
     try {
       if (accion === "registrar") {
         cliente.tipo_cliente = tipo;
@@ -217,7 +233,7 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
       setAlert({ message: error.message, status: "error", open: true });
       console.log(error);
       setLoading(false);
-    }
+    } */
   };
 
   return (
@@ -244,7 +260,7 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
         </IconButton>
       )}
       <Dialog open={open} onClose={onCloseModal} fullWidth maxWidth="md">
-        <div className={classes.root}>
+        <DialogTitle style={{ padding: 0 }}>
           <BackdropComponent loading={loading} setLoading={setLoading} />
           <AppBar position="static" color="default" elevation={0}>
             <Tabs
@@ -278,30 +294,27 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
                 }
                 {...a11yProps(1)}
               />
-              <Box ml={58} mt={3}>
-                <Box>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={onCloseModal}
-                    size="large"
-                  >
-                    <CloseIcon />
-                  </Button>
-                </Box>
-              </Box>
             </Tabs>
           </AppBar>
+        </DialogTitle>
+        <DialogContent>
           <TabPanel value={value} index={0}>
             <RegistrarInfoBasica tipo={tipo} accion={accion} />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <RegistrarInfoCredito tipo={tipo} accion={accion} />
           </TabPanel>
-        </div>
-        <DialogActions>
+        </DialogContent>
+        <DialogActions style={{justifyContent: "center"}}>
           <Button
-            variant="contained"
+            color="inherit"
+            onClick={onCloseModal}
+            size="large"
+            startIcon={<CloseIcon />}
+          >
+            Cerrar
+          </Button>
+          <Button
             color="primary"
             onClick={saveData}
             size="large"
