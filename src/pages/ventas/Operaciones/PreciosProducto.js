@@ -70,9 +70,6 @@ export default function PreciosProductos() {
         : venta;
     let productosVentasTemp = productosVentas;
 
-
-
-    // console.log(precioSelectProductoVenta);
     if (
       selectPrisingProduct.precio_neto > 0 ||
       precioSelectProductoVenta.length > 0
@@ -86,18 +83,16 @@ export default function PreciosProductos() {
       );
 
       if (producto_encontrado.found) {
-
         const new_resta = await calculatePrices2({
-            newProductoPrecioNuevo, 
+            newP: newProductoPrecioNuevo, 
             cantidad: newProductoPrecioNuevo.cantidad_venta, 
             precio_boolean: true, 
             precio: newProductoPrecioNuevo.precio_actual_object, 
             granel: newProductoPrecioNuevo.granel_producto, 
             origen: "" 
           });
-
         const new_suma = await calculatePrices2({
-          newProductoPrecioActual, 
+          newP: newProductoPrecioActual, 
           cantidad: newProductoPrecioActual.cantidad_venta, 
           precio_boolean: true, 
           precio: precioSelectProductoVenta[0], 
@@ -115,8 +110,7 @@ export default function PreciosProductos() {
           1,
           newProductoPrecioActual
         );
-          
-      //Crear objeto que guardara el cambio
+
       const CalculosData = {
         subTotal:
           parseFloat(venta_existente.subTotal) -
@@ -169,8 +163,6 @@ export default function PreciosProductos() {
       }else{
         console.log("Producto no encontrado")
       }
-
-    
     } else {
       setAlert({
         message: "Este precio no es valido.",
