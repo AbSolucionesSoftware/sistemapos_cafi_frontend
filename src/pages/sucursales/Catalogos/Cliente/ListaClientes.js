@@ -80,8 +80,6 @@ export default function ListaClientes({
     variables: { tipo, filtro: value },
   });
 
- console.log(error);
-
   useEffect(() => {
     refetch();
   }, [update, refetch]);
