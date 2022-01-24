@@ -108,7 +108,7 @@ export default function PreciosProductos() {
         newProductoPrecioActual.precio_a_vender = precioSelectProductoVenta[0].precio_neto;
         newProductoPrecioActual.precio_seleccionado = true;
         newProductoPrecioActual.precio_actual_producto = parseFloat((precioSelectProductoVenta[0].precio_neto).toFixed(2));
-        newP.precio_actual_object = precioSelectProductoVenta[0];
+        newProductoPrecioActual.precio_actual_object = precioSelectProductoVenta[0];
         
         productosVentasTemp.splice(
           producto_encontrado.producto_found.index,
