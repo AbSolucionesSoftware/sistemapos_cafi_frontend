@@ -80,8 +80,6 @@ export default function ListaClientes({
     variables: { tipo, filtro: value },
   });
 
- console.log(error);
-
   useEffect(() => {
     refetch();
   }, [update, refetch]);
@@ -101,7 +99,6 @@ export default function ListaClientes({
   };
 
   const handleClickOpenModal = (data, e) => {
-    console.log(ventas, selectDataClient);
     if (ventas && !selectDataClient) {
       setShowModal(true);
       setDataSelectRowClient(data);
@@ -112,7 +109,6 @@ export default function ListaClientes({
     try {
       const venta = JSON.parse(localStorage.getItem("DatosVentas"));
       let venta_actual = venta === null ? {} : venta;
-      console.log(venta_actual);
       localStorage.setItem(
         "DatosVentas",
         JSON.stringify({

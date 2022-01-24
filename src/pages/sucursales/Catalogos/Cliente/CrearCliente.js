@@ -3,7 +3,13 @@ import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import CloseIcon from "@material-ui/icons/Close";
 import DoneIcon from "@material-ui/icons/Done";
-import { Button, AppBar, IconButton } from "@material-ui/core";
+import {
+  Button,
+  AppBar,
+  IconButton,
+  DialogTitle,
+  DialogContent,
+} from "@material-ui/core";
 import { Dialog, DialogActions, Tabs, Tab, Box } from "@material-ui/core";
 import RegistrarInfoBasica from "./RegistrarInfoBasica";
 import RegistrarInfoCredito from "./RegistroInfoCredito";
@@ -16,7 +22,7 @@ import SnackBarMessages from "../../../../components/SnackBarMessages";
 import { useMutation } from "@apollo/client";
 import {
   CREAR_CLIENTE,
-  ACTUALIZAR_CLIENTE
+  ACTUALIZAR_CLIENTE,
 } from "../../../../gql/Catalogos/clientes";
 
 function TabPanel(props) {
@@ -62,20 +68,29 @@ const useStyles = makeStyles((theme) => ({
   formInput: {
     margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
   },
-  root: {
-    flexGrow: 1,
-    width: "100%",
-    backgroundColor: theme.palette.background.paper,
-  },
   iconSvg: {
     width: 50,
   },
 }));
 
-export default function CrearCliente({ tipo, accion, datos, refetch, ventas, handleClickOpen }) {
+export default function CrearCliente({
+  tipo,
+  accion,
+  datos,
+  refetch,
+  ventas,
+  handleClickOpen,
+}) {
   const classes = useStyles();
-  const { cliente, setCliente, setError, update, setUpdate, updateClientVenta, setUpdateClientVenta  } =
-    useContext(ClienteCtx);
+  const {
+    cliente,
+    setCliente,
+    setError,
+    update,
+    setUpdate,
+    updateClientVenta,
+    setUpdateClientVenta,
+  } = useContext(ClienteCtx);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -120,18 +135,19 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
   const [actualizarCliente] = useMutation(ACTUALIZAR_CLIENTE);
 
   const saveData = async () => {
+    let copy_cliente = { ...cliente };
     if (
-      !cliente.numero_cliente ||
-      !cliente.clave_cliente ||
-      !cliente.nombre_cliente ||
-      !cliente.telefono ||
-      !cliente.email ||
-      !cliente.direccion.calle ||
-      !cliente.direccion.municipio ||
-      !cliente.direccion.estado ||
-      !cliente.direccion.pais
+      !copy_cliente.numero_cliente ||
+      !copy_cliente.clave_cliente ||
+      !copy_cliente.nombre_cliente ||
+      !copy_cliente.telefono ||
+      !copy_cliente.email ||
+      !copy_cliente.direccion.calle ||
+      !copy_cliente.direccion.municipio ||
+      !copy_cliente.direccion.estado ||
+      !copy_cliente.direccion.pais
     ) {
-      if (tipo !== "CLIENTE" && !cliente.representante) {
+      if (tipo !== "CLIENTE" && !copy_cliente.representante) {
         setError(true);
         return;
       }
@@ -141,13 +157,13 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
     setLoading(true);
     try {
       if (accion === "registrar") {
-        cliente.tipo_cliente = tipo;
-        cliente.empresa = sesion.empresa._id;
-        cliente.sucursal = sesion.sucursal._id;
+        copy_cliente.tipo_cliente = tipo;
+        copy_cliente.empresa = sesion.empresa._id;
+        copy_cliente.sucursal = sesion.sucursal._id;
         if (tipo === "CLIENTE") {
-          cliente.representante = "";
+          copy_cliente.representante = "";
         }
-        const input = cliente;
+        const input = copy_cliente;
         const clienteBase = await crearCliente({
           variables: {
             input,
@@ -174,16 +190,18 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
                 venta_actual.descuento === undefined
                   ? 0
                   : venta_actual.descuento,
-              monedero: venta_actual.monedero === undefined ? 0 : venta_actual.monedero,
+              monedero:
+                venta_actual.monedero === undefined ? 0 : venta_actual.monedero,
               tipo_cambio: venta_actual.tipo_cambio
                 ? venta_actual.tipo_cambio
                 : {},
               cliente: clienteBase.data.crearCliente,
               venta_cliente: true,
               productos:
-                venta_actual.productos?.length > 0 ? venta_actual.productos : [],
+                venta_actual.productos?.length > 0
+                  ? venta_actual.productos
+                  : [],
             })
-            
           );
           setUpdateClientVenta(!updateClientVenta);
           onCloseModal();
@@ -197,11 +215,11 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
           sucursal,
           empresa,
           ...input
-        } = cliente;
+        } = copy_cliente;
         await actualizarCliente({
           variables: {
             input: input,
-            id: cliente._id,
+            id: copy_cliente._id,
           },
         });
       }
@@ -215,8 +233,13 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
       onCloseModal();
     } catch (error) {
       setAlert({ message: error.message, status: "error", open: true });
-      console.log(error);
       setLoading(false);
+      console.log(error);
+      if (error.networkError) {
+        console.log(error.networkError.result);
+      } else if (error.graphQLErrors) {
+        console.log(error.graphQLErrors);
+      }
     }
   };
 
@@ -244,7 +267,7 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
         </IconButton>
       )}
       <Dialog open={open} onClose={onCloseModal} fullWidth maxWidth="md">
-        <div className={classes.root}>
+        <DialogTitle style={{ padding: 0 }}>
           <BackdropComponent loading={loading} setLoading={setLoading} />
           <AppBar position="static" color="default" elevation={0}>
             <Tabs
@@ -278,30 +301,27 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
                 }
                 {...a11yProps(1)}
               />
-              <Box ml={58} mt={3}>
-                <Box>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={onCloseModal}
-                    size="large"
-                  >
-                    <CloseIcon />
-                  </Button>
-                </Box>
-              </Box>
             </Tabs>
           </AppBar>
+        </DialogTitle>
+        <DialogContent>
           <TabPanel value={value} index={0}>
             <RegistrarInfoBasica tipo={tipo} accion={accion} />
           </TabPanel>
           <TabPanel value={value} index={1}>
             <RegistrarInfoCredito tipo={tipo} accion={accion} />
           </TabPanel>
-        </div>
-        <DialogActions>
+        </DialogContent>
+        <DialogActions style={{ justifyContent: "center" }}>
           <Button
-            variant="contained"
+            color="inherit"
+            onClick={onCloseModal}
+            size="large"
+            startIcon={<CloseIcon />}
+          >
+            Cerrar
+          </Button>
+          <Button
             color="primary"
             onClick={saveData}
             size="large"
