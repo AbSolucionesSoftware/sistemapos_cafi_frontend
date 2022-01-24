@@ -31,7 +31,6 @@ import Cotizacion from './Cotizacion/Cotizacion'
 
 import {
   findProductArray,
-  // calculatePrices,
   verifiPrising,
   calculatePrices2
 } from "../../config/reuserFunctions";
@@ -91,7 +90,6 @@ export default function VentasGenerales() {
     }else{
       if(productosBase !== null){
         if (productosBase.cantidad !== null) {
-          console.log(productosBase);
           agregarProductos(productosBase);
         }else{
           setOpen(true);
@@ -173,7 +171,7 @@ export default function VentasGenerales() {
             monedero: 0,
           }
         : venta;
-    console.log(venta_existente);
+    
     let productosVentasTemp = productosVentas;
 
     let CalculosData = {
@@ -187,7 +185,6 @@ export default function VentasGenerales() {
     };
 
     const producto_encontrado = await findProductArray(
-      productosVentas,
       producto
     );
 
@@ -202,11 +199,10 @@ export default function VentasGenerales() {
 
       new_prices.newP.precio_anterior = productoPrecioFinal;
       new_prices.newP.iva_total_producto = parseFloat(new_prices.iva);
+
+      console.log(new_prices.newP);
+      
       productosVentasTemp.push(new_prices.newP);
-
-      console.log(venta_existente);
-
-      console.log(new_prices);
 
       CalculosData = {
         subTotal: parseFloat(venta_existente.subTotal) + parseFloat(new_prices.subtotalCalculo),
@@ -218,7 +214,6 @@ export default function VentasGenerales() {
         monedero: parseFloat(venta_existente.monedero) + parseFloat(new_prices.monederoCalculo)
       };
 
-      console.log(CalculosData);
 
     } else if (producto_encontrado.found && producto._id) {
       
@@ -290,10 +285,6 @@ export default function VentasGenerales() {
           new_prices.newP
         );
 
-        console.log(parseFloat(venta_existente.subTotal), parseFloat(new_prices.subtotalCalculo));
-
-        console.log(parseFloat(venta_existente.subTotal) + parseFloat(new_prices.subtotalCalculo));
-
         CalculosData = {
           subTotal: parseFloat(venta_existente.subTotal) + parseFloat(new_prices.subtotalCalculo),
           total: parseFloat(venta_existente.total) + new_prices.totalCalculo,
@@ -303,11 +294,9 @@ export default function VentasGenerales() {
           descuento: parseFloat(venta_existente.descuento) + new_prices.descuentoCalculo,
           monedero: parseFloat(venta_existente.monedero) + new_prices.monederoCalculo,
         };
-        console.log(CalculosData);
-        console.log(new_prices.newP);
       }
     }
-    console.log(CalculosData);
+
     localStorage.setItem(
       "DatosVentas",
       JSON.stringify({

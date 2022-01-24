@@ -28,6 +28,7 @@ import { OBTENER_CLIENTES } from "../../../../../gql/Catalogos/clientes";
 import { FacturacionCtx } from "../../../../../context/Facturacion/facturacionCtx";
 import Autocomplete from "@material-ui/lab/Autocomplete"
 import DetallesDeVenta from "./DetallesVenta";
+import { compra_test } from '../TablaVenta/array_test'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ListaVentasFactura() {
   const [open, setOpen] = useState(false);
-  const { datosFactura, setDatosFactura } = useContext(FacturacionCtx);
+  const { datosFactura, setDatosFactura, setVentaFactura, setProductos } = useContext(FacturacionCtx);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -64,18 +65,23 @@ export default function ListaVentasFactura() {
         </DialogContent>
         <DialogActions style={{ justifyContent: "center" }}>
           <Button
-            /* onClick={() => {
+            onClick={() => {
               handleClose();
-              setDatosFactura({ ...datosFactura, cliente: "" });
-            }} */
+              /* setDatosFactura({ ...datosFactura, cliente: "" }); */
+            }}
           >
             Cancelar
           </Button>
           <Button
             color="primary"
             startIcon={<Done />}
-            onClick={() => handleClose()}
-            disabled={!datosFactura.cliente}
+            onClick={() => {
+              console.log(compra_test);
+              setVentaFactura(compra_test);
+              setProductos(compra_test.productos);
+              handleClose();
+            }}
+            /* disabled={!datosFactura.cliente} */
           >
             Seleccionar
           </Button>
@@ -188,6 +194,7 @@ const RenderLista = () => {
                         cliente: row.nombre_cliente,
                       })
                     } */
+                    /* onClick={() => setVentaFactura(compra_test)} */
                     selected={row.nombre_cliente === datosFactura.cliente}
                   >
                     <TableCell>
