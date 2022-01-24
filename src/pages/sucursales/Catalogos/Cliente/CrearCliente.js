@@ -153,8 +153,8 @@ export default function CrearCliente({
       setError(true);
       return;
     }
-    console.log(cliente);
-    /* setLoading(true);
+    /* console.log(cliente); */
+    setLoading(true);
     try {
       if (accion === "registrar") {
         cliente.tipo_cliente = tipo;
@@ -233,7 +233,7 @@ export default function CrearCliente({
       setAlert({ message: error.message, status: "error", open: true });
       console.log(error);
       setLoading(false);
-    } */
+    }
   };
 
   return (
