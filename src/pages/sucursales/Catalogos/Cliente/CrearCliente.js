@@ -135,35 +135,35 @@ export default function CrearCliente({
   const [actualizarCliente] = useMutation(ACTUALIZAR_CLIENTE);
 
   const saveData = async () => {
+    let copy_cliente = { ...cliente };
     if (
-      !cliente.numero_cliente ||
-      !cliente.clave_cliente ||
-      !cliente.nombre_cliente ||
-      !cliente.telefono ||
-      !cliente.email ||
-      !cliente.direccion.calle ||
-      !cliente.direccion.municipio ||
-      !cliente.direccion.estado ||
-      !cliente.direccion.pais
+      !copy_cliente.numero_cliente ||
+      !copy_cliente.clave_cliente ||
+      !copy_cliente.nombre_cliente ||
+      !copy_cliente.telefono ||
+      !copy_cliente.email ||
+      !copy_cliente.direccion.calle ||
+      !copy_cliente.direccion.municipio ||
+      !copy_cliente.direccion.estado ||
+      !copy_cliente.direccion.pais
     ) {
-      if (tipo !== "CLIENTE" && !cliente.representante) {
+      if (tipo !== "CLIENTE" && !copy_cliente.representante) {
         setError(true);
         return;
       }
       setError(true);
       return;
     }
-    /* console.log(cliente); */
     setLoading(true);
     try {
       if (accion === "registrar") {
-        cliente.tipo_cliente = tipo;
-        cliente.empresa = sesion.empresa._id;
-        cliente.sucursal = sesion.sucursal._id;
+        copy_cliente.tipo_cliente = tipo;
+        copy_cliente.empresa = sesion.empresa._id;
+        copy_cliente.sucursal = sesion.sucursal._id;
         if (tipo === "CLIENTE") {
-          cliente.representante = "";
+          copy_cliente.representante = "";
         }
-        const input = cliente;
+        const input = copy_cliente;
         const clienteBase = await crearCliente({
           variables: {
             input,
@@ -190,16 +190,18 @@ export default function CrearCliente({
                 venta_actual.descuento === undefined
                   ? 0
                   : venta_actual.descuento,
-              monedero: venta_actual.monedero === undefined ? 0 : venta_actual.monedero,
+              monedero:
+                venta_actual.monedero === undefined ? 0 : venta_actual.monedero,
               tipo_cambio: venta_actual.tipo_cambio
                 ? venta_actual.tipo_cambio
                 : {},
               cliente: clienteBase.data.crearCliente,
               venta_cliente: true,
               productos:
-                venta_actual.productos?.length > 0 ? venta_actual.productos : [],
+                venta_actual.productos?.length > 0
+                  ? venta_actual.productos
+                  : [],
             })
-            
           );
           setUpdateClientVenta(!updateClientVenta);
           onCloseModal();
@@ -213,11 +215,11 @@ export default function CrearCliente({
           sucursal,
           empresa,
           ...input
-        } = cliente;
+        } = copy_cliente;
         await actualizarCliente({
           variables: {
             input: input,
-            id: cliente._id,
+            id: copy_cliente._id,
           },
         });
       }
@@ -231,8 +233,13 @@ export default function CrearCliente({
       onCloseModal();
     } catch (error) {
       setAlert({ message: error.message, status: "error", open: true });
-      console.log(error);
       setLoading(false);
+      console.log(error);
+      if (error.networkError) {
+        console.log(error.networkError.result);
+      } else if (error.graphQLErrors) {
+        console.log(error.graphQLErrors);
+      }
     }
   };
 
@@ -305,7 +312,7 @@ export default function CrearCliente({
             <RegistrarInfoCredito tipo={tipo} accion={accion} />
           </TabPanel>
         </DialogContent>
-        <DialogActions style={{justifyContent: "center"}}>
+        <DialogActions style={{ justifyContent: "center" }}>
           <Button
             color="inherit"
             onClick={onCloseModal}
