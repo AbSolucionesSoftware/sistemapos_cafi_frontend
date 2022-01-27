@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
 import { FcManager } from "react-icons/fc";
-import { Box, IconButton, InputBase, Paper } from "@material-ui/core";
+import { Box, Grid, IconButton, InputBase, Paper } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import ListaClientes from "./ListaClientes";
 import CrearCliente from "./CrearCliente";
@@ -89,25 +89,34 @@ export default function Cliente() {
               </Box>
             </Toolbar>
           </AppBar>
-          <Box m={3} display="flex" justifyContent="space-between">
-            <Box mr={5} minWidth="70%">
-              <Paper className={classes.root}>
-                <InputBase
-                  fullWidth
-                  placeholder="Buscar cliente..."
-                  onChange={(e) => setValues(e.target.value)}
-                  onKeyPress={pressEnter}
-                  value={values}
-                />
-                <IconButton onClick={() => setValues(values)}>
-                  <Search />
-                </IconButton>
-              </Paper>
-            </Box>
-            {permisosUsuario.accesos.catalogos.clientes.agregar ===
-            false ? null : (
-              <CrearCliente tipo="CLIENTE" accion="registrar" />
-            )}
+          <Box m={3}>
+            <Grid container spacing={2}>
+              <Grid item md={6} xs={8}>
+                <Paper className={classes.root}>
+                  <InputBase
+                    fullWidth
+                    placeholder="Buscar cliente..."
+                    onChange={(e) => setValues(e.target.value)}
+                    onKeyPress={pressEnter}
+                    value={values}
+                  />
+                  <IconButton onClick={() => setValues(values)}>
+                    <Search />
+                  </IconButton>
+                </Paper>
+              </Grid>
+              <Grid
+                item
+                md={6}
+                xs={4}
+                style={{ display: "flex", justifyContent: "flex-end" }}
+              >
+                {permisosUsuario.accesos.catalogos.clientes.agregar ===
+                false ? null : (
+                  <CrearCliente tipo="CLIENTE" accion="registrar" />
+                )}
+              </Grid>
+            </Grid>
           </Box>
           <Box mx={4}>
             <ListaClientes tipo="CLIENTE" filtro={values} />

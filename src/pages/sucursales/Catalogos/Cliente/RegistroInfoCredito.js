@@ -46,7 +46,7 @@ export default function RegistrarInfoCredito({ tipo }) {
             size="small"
             name="rfc"
             variant="outlined"
-            value={cliente.rfc ? cliente.rfc.toUpperCase() : ""}
+            value={cliente.rfc ? cliente.rfc : ""}
             onChange={obtenerCampos}
           />
         </Grid>
@@ -58,7 +58,7 @@ export default function RegistrarInfoCredito({ tipo }) {
             name="razon_social"
             variant="outlined"
             value={
-              cliente.razon_social ? cliente.razon_social.toUpperCase() : ""
+              cliente.razon_social ? cliente.razon_social : ""
             }
             onChange={obtenerCampos}
           />
@@ -93,7 +93,7 @@ export default function RegistrarInfoCredito({ tipo }) {
             name="dias_credito"
             variant="outlined"
             value={
-              cliente.dias_credito ? cliente.dias_credito.toUpperCase() : ""
+              cliente.dias_credito ? cliente.dias_credito : ""
             }
             onChange={obtenerCampos}
           />
@@ -103,7 +103,7 @@ export default function RegistrarInfoCredito({ tipo }) {
         <Fragment>
           <Box my={3}>
             <Typography className={classes.title}>
-              Datos bancarios <b>(Para proovedores)</b>
+              Datos bancarios
             </Typography>
             <Divider />
           </Box>
@@ -115,7 +115,7 @@ export default function RegistrarInfoCredito({ tipo }) {
                 size="small"
                 name="banco"
                 variant="outlined"
-                value={cliente.banco ? cliente.banco.toUpperCase() : ""}
+                value={cliente.banco ? cliente.banco : ""}
                 onChange={obtenerCampos}
               />
             </Grid>

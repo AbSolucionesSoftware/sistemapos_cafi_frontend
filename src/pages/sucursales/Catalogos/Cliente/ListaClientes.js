@@ -55,7 +55,7 @@ export default function ListaClientes({
   handleClickOpen,
 }) {
   const classes = useStyles();
-  const { update, setUpdateClientVenta, updateClientVenta } = useContext(
+  const { setUpdateClientVenta, updateClientVenta } = useContext(
     ClienteCtx
   );
   const [value] = useDebounce(filtro, 1000);

@@ -163,14 +163,14 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 variant="outlined"
                 value={
                   cliente.nombre_cliente
-                    ? cliente.nombre_cliente.toUpperCase()
+                    ? cliente.nombre_cliente
                     : ""
                 }
                 helperText={error ? "Campo Requerido" : ""}
                 onChange={obtenerCampos}
               />
             </Grid>
-            {tipo !== "CLIENTE" ? null : (
+            {tipo === "CLIENTE" ? null : (
               <Grid item md={4} xs={12}>
                 <Typography className={classes.title}>
                   <span>* </span>Representante
@@ -183,7 +183,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                   variant="outlined"
                   value={
                     cliente.representante
-                      ? cliente.representante.toUpperCase()
+                      ? cliente.representante
                       : ""
                   }
                   helperText={error ? "Campo Requerido" : ""}
@@ -191,7 +191,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 />
               </Grid>
             )}
-            <Grid item md={tipo !== "CLIENTE" ? 6 : 4} xs={12}>
+            <Grid item md={tipo === "CLIENTE" ? 6 : 4} xs={12}>
               <Typography className={classes.title}>
                 <span>* </span>Clave(Tarjeta de puntos)
               </Typography>
@@ -221,7 +221,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 type="number"
               />
             </Grid>
-            <Grid item md={4} xs={12}>
+            <Grid item md={tipo === "CLIENTE" ? 6 : 4} xs={12}>
               <Typography className={classes.title}>
                 Fecha nacimiento
               </Typography>
@@ -246,7 +246,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 size="small"
                 name="curp"
                 variant="outlined"
-                value={cliente.curp ? cliente.curp.toUpperCase() : ""}
+                value={cliente.curp ? cliente.curp : ""}
                 onChange={obtenerCampos}
               />
             </Grid>
@@ -316,7 +316,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 variant="outlined"
                 value={
                   cliente.direccion.calle
-                    ? cliente.direccion.calle.toUpperCase()
+                    ? cliente.direccion.calle
                     : ""
                 }
                 helperText={error ? "Campo Requerido" : ""}
@@ -380,7 +380,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 variant="outlined"
                 value={
                   cliente.direccion.colonia
-                    ? cliente.direccion.colonia.toUpperCase()
+                    ? cliente.direccion.colonia
                     : ""
                 }
                 helperText={error ? "Campo Requerido" : ""}
@@ -399,7 +399,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 variant="outlined"
                 value={
                   cliente.direccion.municipio
-                    ? cliente.direccion.municipio.toUpperCase()
+                    ? cliente.direccion.municipio
                     : ""
                 }
                 helperText={error ? "Campo Requerido" : ""}
@@ -414,7 +414,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 variant="outlined"
                 value={
                   cliente.direccion.localidad
-                    ? cliente.direccion.localidad.toUpperCase()
+                    ? cliente.direccion.localidad
                     : ""
                 }
                 onChange={obtenerCamposDireccion}
@@ -432,7 +432,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 variant="outlined"
                 value={
                   cliente.direccion.estado
-                    ? cliente.direccion.estado.toUpperCase()
+                    ? cliente.direccion.estado
                     : ""
                 }
                 helperText={error ? "Campo Requerido" : ""}
@@ -451,7 +451,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 variant="outlined"
                 value={
                   cliente.direccion.pais
-                    ? cliente.direccion.pais.toUpperCase()
+                    ? cliente.direccion.pais
                     : ""
                 }
                 helperText={error ? "Campo Requerido" : ""}
