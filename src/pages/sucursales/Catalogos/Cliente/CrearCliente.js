@@ -1,19 +1,18 @@
 import React, { useState, Fragment, useContext, useCallback } from "react";
-import PropTypes from "prop-types";
-import { makeStyles } from "@material-ui/core/styles";
-import CloseIcon from "@material-ui/icons/Close";
-import DoneIcon from "@material-ui/icons/Done";
-import {
-  Button,
-  AppBar,
-  IconButton,
-  DialogTitle,
-  DialogContent,
-} from "@material-ui/core";
-import { Dialog, DialogActions, Tabs, Tab, Box } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import AppBar from "@material-ui/core/AppBar";
+import IconButton from "@material-ui/core/IconButton";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
+import Divider from "@material-ui/core/Divider";
+import Container from "@material-ui/core/Container";
 import RegistrarInfoBasica from "./RegistrarInfoBasica";
 import RegistrarInfoCredito from "./RegistroInfoCredito";
-import { Add, Edit } from "@material-ui/icons";
+import { Add, Close, Done, Edit } from "@material-ui/icons";
 import { ClienteCtx } from "../../../../context/Catalogos/crearClienteCtx";
 // import { VentasContext } from "../../../../context/Ventas/ventasContext";
 import BackdropComponent from "../../../../components/Layouts/BackDrop";
@@ -24,54 +23,7 @@ import {
   CREAR_CLIENTE,
   ACTUALIZAR_CLIENTE,
 } from "../../../../gql/Catalogos/clientes";
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`tabpanel-reg-product-${index}`}
-      aria-labelledby={`reg-product-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3} minHeight="70vh">
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `reg-product-tab-${index}`,
-    "aria-controls": `tabpanel-reg-product-${index}`,
-  };
-}
-
-const useStyles = makeStyles((theme) => ({
-  formInputFlex: {
-    display: "flex",
-    "& > *": {
-      margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-    },
-  },
-  formInput: {
-    margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-  },
-  iconSvg: {
-    width: 50,
-  },
-}));
+import { Toolbar } from "@material-ui/core";
 
 export default function CrearCliente({
   tipo,
@@ -81,7 +33,6 @@ export default function CrearCliente({
   ventas,
   handleClickOpen,
 }) {
-  const classes = useStyles();
   const {
     cliente,
     setCliente,
@@ -92,7 +43,6 @@ export default function CrearCliente({
     setUpdateClientVenta,
   } = useContext(ClienteCtx);
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(0);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -114,10 +64,6 @@ export default function CrearCliente({
     });
   }, [setCliente]);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
   const toggleModal = () => {
     setOpen(true);
     if (datos) {
@@ -137,7 +83,6 @@ export default function CrearCliente({
   const saveData = async () => {
     let copy_cliente = { ...cliente };
     if (
-      !copy_cliente.numero_cliente ||
       !copy_cliente.clave_cliente ||
       !copy_cliente.nombre_cliente ||
       !copy_cliente.telefono ||
@@ -257,8 +202,9 @@ export default function CrearCliente({
             variant="contained"
             size="large"
             onClick={toggleModal}
+            startIcon={<Add />}
           >
-            <Add /> Nuevo {tipo}
+            Agregar
           </Button>
         )
       ) : (
@@ -270,62 +216,42 @@ export default function CrearCliente({
         <DialogTitle style={{ padding: 0 }}>
           <BackdropComponent loading={loading} setLoading={setLoading} />
           <AppBar position="static" color="default" elevation={0}>
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              variant="scrollable"
-              scrollButtons="on"
-              indicatorColor="primary"
-              textColor="primary"
-              aria-label="scrollable force tabs example"
-            >
-              <Tab
-                label="Información básica"
-                icon={
-                  <img
-                    src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/perfil.svg"
-                    alt="icono perfil"
-                    className={classes.iconSvg}
-                  />
-                }
-                {...a11yProps(0)}
-              />
-              <Tab
-                label="Datos fiscales"
-                icon={
-                  <img
-                    src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/fiscal.svg"
-                    alt="icono factura"
-                    className={classes.iconSvg}
-                  />
-                }
-                {...a11yProps(1)}
-              />
-            </Tabs>
+            <Toolbar>
+              <Typography variant="h6">{accion === "registrar" ? "Registrar" : "Actualizar"}</Typography>
+              <Box flexGrow={1} />
+              <Button
+                variant="contained"
+                color="secondary"
+                size="large"
+                onClick={() => onCloseModal()}
+              >
+                <Close />
+              </Button>
+            </Toolbar>
           </AppBar>
         </DialogTitle>
         <DialogContent>
-          <TabPanel value={value} index={0}>
+          <Container>
+            <Typography>
+              <b>Información básica</b>
+            </Typography>
+            <Divider />
             <RegistrarInfoBasica tipo={tipo} accion={accion} />
-          </TabPanel>
-          <TabPanel value={value} index={1}>
+            <Box my={2} />
+            <Typography>
+              <b>Información de credito</b>
+            </Typography>
+            <Divider />
             <RegistrarInfoCredito tipo={tipo} accion={accion} />
-          </TabPanel>
+          </Container>
         </DialogContent>
-        <DialogActions style={{ justifyContent: "center" }}>
+        <DialogActions>
           <Button
-            color="inherit"
-            onClick={onCloseModal}
-            size="large"
-            startIcon={<CloseIcon />}
-          >
-            Cerrar
-          </Button>
-          <Button
+            variant="contained"
             color="primary"
             onClick={saveData}
             size="large"
-            startIcon={<DoneIcon />}
+            startIcon={<Done />}
           >
             Guardar
           </Button>
