@@ -1,25 +1,18 @@
 import React, {
-  useContext,
   useState,
-  Fragment,
   useEffect,
   useCallback,
 } from "react";
 import {
   Typography,
-  MenuItem,
-  Divider,
   Tooltip,
-  FormLabel,
-  Dialog,
   Slide
 } from "@material-ui/core";
 
-import { useQuery } from '@apollo/client';
-import { Box, FormControl, Grid, Select } from "@material-ui/core";
+
+import { Box, Grid } from "@material-ui/core";
 import { makeStyles, useTheme } from "@material-ui/core";
 import Zoom from "@material-ui/core/Zoom";
-import { TraspasosAlmacenContext } from "../../context/Almacenes/traspasosAlmacen";
 import { Done } from "@material-ui/icons";
 import TablaPresentacionesNotOrigen from "./TablePresentacionesNotOrigen";
 
@@ -48,9 +41,6 @@ const GenCodigoBarras = () => {
   ).toString();
 };
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-	return <Slide direction="up" ref={ref} {...props} />;
-});
 
 export default function ColoresTallas({
   producto,
@@ -60,13 +50,11 @@ export default function ColoresTallas({
   refetch
 }) {
 
-     const [localNewMedidas, setLocalNewMedidas] = useState([]);
     const [medidasSeleccionadas, setMedidasSeleccionadas] = useState([]);
     const [coloresSeleccionados, setColoresSeleccionados] = useState([]);
     /* const medidas =
     producto.datos_generales.tipo_producto === "ROPA" ? [...obtenerConsultasProducto.tallas] : [...obtenerConsultasProducto.calzados]; */ 
     const [onUpdate, setOnUpdate] = useState([]);
-    const {productosTras} = useContext(TraspasosAlmacenContext);
  //console.log(data.obtenerConsultasProducto)
   const obtenerColoresSeleccinados = useCallback(() => {
     let colors = [];

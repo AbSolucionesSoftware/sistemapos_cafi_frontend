@@ -1,7 +1,5 @@
 import React, {
   Fragment,
-  useContext,
-  useEffect,
   useRef,
   useState,
 } from "react";
@@ -21,15 +19,12 @@ import {
   Chip,
   IconButton,
   Tooltip,
-  Typography,
   Zoom,
 } from "@material-ui/core";
 import {
   Cached,
   Close,
-  Edit,
-  LocalOffer,
-  LocalOfferOutlined,
+  Edit
 } from "@material-ui/icons";
 import { fade } from "@material-ui/core/styles/colorManipulator";
 
@@ -51,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 750,
   },
   container: {
-    maxHeight: "65vh",
+    
   },
   tableRow: {
     "&.Mui-selected, &.Mui-selected:hover": {
@@ -288,11 +283,11 @@ const RenderPresentacionesRows = ({
     }
   };
 
-  const aplicarDescuento = (value) => {
+ /*  const aplicarDescuento = (value) => {
     copy_element_presentacion.medida.descuento_activo = value;
 /*     copy_presentaciones.splice(index, 1, copy_element_presentacion);
-    setPresentaciones(copy_presentaciones); */
-  };
+    setPresentaciones(copy_presentaciones); 
+  }; */
 
   return (
     <TableRow hover selected={!disabledInput} className={classes.tableRow}>
