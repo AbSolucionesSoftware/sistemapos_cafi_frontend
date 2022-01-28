@@ -458,6 +458,21 @@ const RenderTableRows = ({
           newP.precio_anterior = newP.precio_actual_porducto;
           newP.precio_actual_producto = verify_prising.pricing;
           newP.precio_actual_object = verify_prising.object_prising;
+
+          newP.precio_actual_object = {
+            cantidad_unidad: verify_prising.object_prising.cantidad_unidad ? verify_prising.object_prising.cantidad_unidad : null,
+            numero_precio: verify_prising.object_prising.numero_precio ? verify_prising.object_prising.numero_precio : null,
+            unidad_maxima: verify_prising.object_prising.unidad_maxima ? verify_prising.object_prising.unidad_maxima : null,
+            precio_general: verify_prising.object_prising.precio_general ? verify_prising.object_prising.precio_general : null,
+            precio_neto: verify_prising.object_prising.precio_neto ? verify_prising.object_prising.precio_neto : null,
+            precio_venta: verify_prising.object_prising.precio_venta ? verify_prising.object_prising.precio_venta : null,
+            iva_precio: verify_prising.object_prising.iva_precio ? verify_prising.object_prising.iva_precio : null,
+            ieps_precio: verify_prising.object_prising.ieps_precio ? verify_prising.object_prising.ieps_precio : null,
+            utilidad: verify_prising.object_prising.utilidad ? verify_prising.object_prising.utilidad : null,
+            porciento: verify_prising.object_prising.porciento ? verify_prising.object_prising.porciento : null,
+            dinero_descontado: verify_prising.object_prising.dinero_descontado ? verify_prising.object_prising.dinero_descontado : null,
+          };
+
         }else{
           newP.cantidad_venta = parseInt(new_cant);
           newP.precio_anterior = newP.precio_actual_producto;
