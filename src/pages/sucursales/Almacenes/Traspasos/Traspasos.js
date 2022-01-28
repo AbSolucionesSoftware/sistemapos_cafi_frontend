@@ -19,7 +19,7 @@ import TableSelectProducts from '../../../../components/Traspasos/TableSelectPro
 
 import { useQuery, useMutation } from '@apollo/client';
 import { OBTENER_CONCEPTOS_ALMACEN} from '../../../../gql/Catalogos/conceptosAlmacen';
-import { OBTENER_ALMACENES, REALIZAR_TRASPASO, OBTENER_CATEGORIAS, OBTENER_PRODUCTOS_EMPRESA, OBTENER_PRODUCTOS_ALMACEN} from '../../../../gql/Almacenes/Almacen';
+import { OBTENER_ALMACENES, REALIZAR_TRASPASO, OBTENER_CATEGORIAS, OBTENER_PRODUCTOS_EMPRESA} from '../../../../gql/Almacenes/Almacen';
 
 import { OBTENER_PRODUCTOS } from "../../../../gql/Catalogos/productos";
 
@@ -247,7 +247,7 @@ export default function Traspasos() {
             obtenerAlmacenes();
             obtenerProductosAlmacen();
         }
-    }, [almacenOrigen ])
+    }, [almacenOrigen, obtenerAlmacenes ])
 
 
     const obtenerProductosEmpresa = useCallback(async () =>{
