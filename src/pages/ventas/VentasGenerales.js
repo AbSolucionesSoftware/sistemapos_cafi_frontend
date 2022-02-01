@@ -26,7 +26,7 @@ import { VentasContext } from "../../context/Ventas/ventasContext";
 import SnackBarMessages from '../../components/SnackBarMessages';
 
 import { Fragment } from "react";
-import MonedaCambio from "./Operaciones/MonedaCambio";
+// import MonedaCambio from "./Operaciones/MonedaCambio";
 import Cotizacion from './Cotizacion/Cotizacion'
 
 import {
@@ -232,7 +232,19 @@ export default function VentasGenerales() {
         newP.precio_a_vender = calculo_sumar.totalCalculo;
         newP.precio_anterior = newP.precio_actual_producto;
         newP.precio_actual_producto = verify_prising.pricing;
-        newP.precio_actual_object = verify_prising.object_prising;
+        newP.precio_actual_object = {
+          cantidad_unidad: verify_prising.object_prising.cantidad_unidad ? verify_prising.object_prising.cantidad_unidad : null,
+          numero_precio: verify_prising.object_prising.numero_precio ? verify_prising.object_prising.numero_precio : null,
+          unidad_maxima: verify_prising.object_prising.unidad_maxima ? verify_prising.object_prising.unidad_maxima : null,
+          precio_general: verify_prising.object_prising.precio_general ? verify_prising.object_prising.precio_general : null,
+          precio_neto: verify_prising.object_prising.precio_neto ? verify_prising.object_prising.precio_neto : null,
+          precio_venta: verify_prising.object_prising.precio_venta ? verify_prising.object_prising.precio_venta : null,
+          iva_precio: verify_prising.object_prising.iva_precio ? verify_prising.object_prising.iva_precio : null,
+          ieps_precio: verify_prising.object_prising.ieps_precio ? verify_prising.object_prising.ieps_precio : null,
+          utilidad: verify_prising.object_prising.utilidad ? verify_prising.object_prising.utilidad : null,
+          porciento: verify_prising.object_prising.porciento ? verify_prising.object_prising.porciento : null,
+          dinero_descontado: verify_prising.object_prising.dinero_descontado ? verify_prising.object_prising.dinero_descontado : null,
+        };
 
         productosVentasTemp.splice(
           producto_encontrado.producto_found.index,
@@ -376,9 +388,9 @@ export default function VentasGenerales() {
                 </Paper> */}
               </Box>
             </Box>
-            <Box width="100%">
+            {/* <Box width="100%">
               <MonedaCambio />
-            </Box>
+            </Box> */}
             <Box width="100%" display="flex">
               <Box mr={1}>
                 <img
@@ -389,7 +401,7 @@ export default function VentasGenerales() {
               </Box>
               <Box width="100%" >
                 <FormControl variant="outlined" fullWidth size="small">
-                  <Select id="tipo_documento" name="tipo_documento">
+                  <Select id="tipo_documento" value="TICKET" name="tipo_documento">
                     <MenuItem value="">
                       <em>Selecciona uno</em>
                     </MenuItem>
