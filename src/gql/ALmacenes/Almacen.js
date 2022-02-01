@@ -132,8 +132,8 @@ export const REALIZAR_TRASPASO = gql`
 `;
 
 export const OBTENER_PRODUCTOS_EMPRESA = gql`
-  query obtenerProductosPorEmpresa($empresa: ID!) {
-    obtenerProductosPorEmpresa(empresa: $empresa) {
+  query obtenerProductosPorEmpresa($empresa: ID!, $filtro: String) {
+    obtenerProductosPorEmpresa(empresa: $empresa, filtro : $filtro) {
       _id
       datos_generales {
         codigo_barras

@@ -36,7 +36,7 @@ export const CONSULTA_PRODUCTOS = gql`
 `;
 
 export const CONSULTA_PRODUCTO_UNITARIO = gql`
-   query ObtenerUnProductoVentas(
+  query ObtenerUnProductoVentas(
     $empresa: ID!
     $sucursal: ID!
     $datosProductos: ID!
@@ -54,7 +54,7 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
       unidad_principal
       codigo_barras
       codigo_unidad
-      precio_unidad{
+      precio_unidad {
         numero_precio
         precio_neto
         precio_venta
@@ -78,12 +78,12 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
         dinero_descontado
         porciento
       }
-      medida{
+      medida {
         talla
         tipo
         _id
       }
-      color{
+      color {
         hex
         nombre
         _id
@@ -91,7 +91,7 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
       descuento_activo
       default
       id_producto {
-        imagenes{
+        imagenes {
           url_imagen
         }
         _id
@@ -110,7 +110,7 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
           departamento
           id_marca
           marca
-          clave_producto_sat{
+          clave_producto_sat {
             Name
             Value
           }
@@ -162,14 +162,21 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
         unidad_maxima
         codigo_unidad
       }
-      
     }
   }
 `;
 
 export const CONSULTA_PRODUCTOS_VENTAS = gql`
-  query ObtenerProductosVentas($empresa: ID!$sucursal: ID! $input: ObtenerProductosVentasInput) {
-    obtenerProductosVentas(empresa: $empresa sucursal: $sucursal input: $input) {
+  query ObtenerProductosVentas(
+    $empresa: ID!
+    $sucursal: ID!
+    $input: ObtenerProductosVentasInput
+  ) {
+    obtenerProductosVentas(
+      empresa: $empresa
+      sucursal: $sucursal
+      input: $input
+    ) {
       _id
       precio
       cantidad
@@ -185,7 +192,7 @@ export const CONSULTA_PRODUCTOS_VENTAS = gql`
       descuento_activo
       default
       id_producto {
-        imagenes{
+        imagenes {
           url_imagen
         }
         _id
@@ -268,6 +275,26 @@ export const OBTENER_CLIENTES_VENTAS = gql`
       numero_cuenta
       monedero_electronico
       credito_disponible
+    }
+  }
+`;
+
+export const CREAR_VENTA = gql`
+  mutation createVenta(
+    $input: CrearVentasInput!
+    $empresa: ID!
+    $sucursal: ID!
+    $usuario: ID!
+    $caja: ID!
+  ) {
+    createVenta(
+      input: $input
+      empresa: $empresa
+      sucursal: $sucursal
+      usuario: $usuario
+      caja: $caja
+    ) {
+      message
     }
   }
 `;

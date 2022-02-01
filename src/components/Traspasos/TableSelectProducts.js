@@ -251,7 +251,7 @@ const DialogTallas = (props) => {
      
 
   return(
-    <Dialog open={props.openTallas} TransitionComponent={Transition} fullWidth maxWidth={"md"}minHeight={"md"} maxHeight={"md"}>
+    <Dialog open={props.openTallas} TransitionComponent={Transition} fullWidth maxWidth={"md"} >
         <Box m={1} display="flex" justifyContent="flex-end">
                 <Button variant="contained" color="secondary" onClick={() => close()} size="large">
                   <CloseIcon />
@@ -790,7 +790,7 @@ export default function EnhancedTable(props) {
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
-            size={'large'}
+            size={'medium'}
             aria-label="enhanced table"
           >
             <EnhancedTableHead
@@ -824,15 +824,15 @@ export default function EnhancedTable(props) {
                         selected={isItemSelected}
                         
                       >
-                        <TableCell component="right" id={labelId} scope="row">
+                        <TableCell  id={labelId} scope="row">
                           {(row.datos_generales.codigo_barras == null)? 'SIN CÓDIGO' : row.datos_generales.codigo_barras}
                         </TableCell>
                         <TableCell component="th" id={labelId} scope="row">
                           {row.datos_generales.nombre_comercial}
                         </TableCell>
                         
-                        <TableCell align="right"> {row.datos_generales.tipo_producto}</TableCell>
-                        <TableCell align="right"> {row.inventario_general[0].cantidad_existente }  {row.inventario_general[0].unidad_inventario} </TableCell>
+                        <TableCell> {row.datos_generales.tipo_producto}</TableCell>
+                        <TableCell > {row.inventario_general[0].cantidad_existente }  {row.inventario_general[0].unidad_inventario} </TableCell>
                         
                         
                       
@@ -850,7 +850,7 @@ export default function EnhancedTable(props) {
                         selected={isItemSelected}
                         
                       >
-                        <TableCell component="right" id={labelId} scope="row">
+                        <TableCell  id={labelId} scope="row">
                           {(row.datos_generales.codigo_barras == null)? 'SIN CÓDIGO' : row.datos_generales.codigo_barras}
                         </TableCell>
                         <TableCell component="th" id={labelId} scope="row">
@@ -874,7 +874,7 @@ export default function EnhancedTable(props) {
                       selected={isItemSelected}
                       
                     >
-                      <TableCell component="right" id={labelId} scope="row">
+                      <TableCell  id={labelId} scope="row">
                         {(row.product_selected.datos_generales.codigo_barras == null)? 'SIN CÓDIGO' : row.product_selected.datos_generales.codigo_barras}
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row">
@@ -901,7 +901,7 @@ export default function EnhancedTable(props) {
           count={data.length}
           rowsPerPage={rowsPerPage}
           page={page}
-          onChangePage={handleChangePage}
+          onPageChange={handleChangePage}
           labelRowsPerPage={""}
           // onRowsPerPageChange={handleChangeRowsPerPage}
         />

@@ -104,6 +104,20 @@ export default function PreciosProductos() {
         newProductoPrecioActual.precio_seleccionado = true;
         newProductoPrecioActual.precio_actual_producto = parseFloat((precioSelectProductoVenta[0].precio_neto).toFixed(2));
         newProductoPrecioActual.precio_actual_object = precioSelectProductoVenta[0];
+
+        newProductoPrecioActual.precio_actual_object = {
+          cantidad_unidad: precioSelectProductoVenta[0].cantidad_unidad ? precioSelectProductoVenta[0].cantidad_unidad : null,
+          numero_precio: precioSelectProductoVenta[0].numero_precio ? precioSelectProductoVenta[0].numero_precio : null,
+          unidad_maxima: precioSelectProductoVenta[0].unidad_maxima ? precioSelectProductoVenta[0].unidad_maxima : null,
+          precio_general: precioSelectProductoVenta[0].precio_general ? precioSelectProductoVenta[0].precio_general : null,
+          precio_neto: precioSelectProductoVenta[0].precio_neto ? precioSelectProductoVenta[0].precio_neto : null,
+          precio_venta: precioSelectProductoVenta[0].precio_venta ? precioSelectProductoVenta[0].precio_venta : null,
+          iva_precio: precioSelectProductoVenta[0].iva_precio ? precioSelectProductoVenta[0].iva_precio : null,
+          ieps_precio: precioSelectProductoVenta[0].ieps_precio ? precioSelectProductoVenta[0].ieps_precio : null,
+          utilidad: precioSelectProductoVenta[0].utilidad ? precioSelectProductoVenta[0].utilidad : null,
+          porciento: precioSelectProductoVenta[0].porciento ? precioSelectProductoVenta[0].porciento : null,
+          dinero_descontado: precioSelectProductoVenta[0].dinero_descontado ? precioSelectProductoVenta[0].dinero_descontado : null,
+        };
         
         productosVentasTemp.splice(
           producto_encontrado.producto_found.index,
