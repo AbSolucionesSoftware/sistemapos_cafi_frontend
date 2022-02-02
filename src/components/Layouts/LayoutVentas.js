@@ -1,30 +1,11 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-// import { BrowserRouter as Switch, Route } from 'react-router-dom';
 import NavegacionVentas from '../Navegaciones/NavegacionVentas';
 import NavegacionVentasLateral from '../Navegaciones/NavegacionVentasLateral';
-import { Grid, Toolbar, Box } from '@material-ui/core';
+import { Grid, Box } from '@material-ui/core';
 import { VentasProvider } from '../../context/Ventas/ventasContext';
 import VentaIndex from '../../pages/ventas/venta_index';
-import Acceso from '../AccesosPassword/Acceso';
-
-
-const drawerWidth = '22%';
-
-const useStyles = makeStyles((theme) => ({
-	root: {
-		display: 'flex'
-	},
-	content: {
-		flexGrow: 1,
-	},
-    toolbar: {
-		height: theme.spacing(9)
-	}
-}));
 
 export default function LayoutVentas(props) {
-	const classes = useStyles();
     const sesion = localStorage.getItem("sesionCafi");
 
     if(!sesion) props.history.push('/');
@@ -32,7 +13,6 @@ export default function LayoutVentas(props) {
 	return (
 		<Box height='100vh'>
 			<VentasProvider>
-				<Acceso />
 				<Grid lg={12} style={{height: '10vh'}}>
 					<NavegacionVentas />
 				</Grid>

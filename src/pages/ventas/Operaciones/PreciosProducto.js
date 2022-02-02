@@ -23,14 +23,17 @@ import useStyles from "../styles";
 import { VentasContext } from "../../../context/Ventas/ventasContext";
 import SnackBarMessages from "../../../components/SnackBarMessages";
 import { calculatePrices, findProductArray, calculatePrices2 } from "../../../config/reuserFunctions";
+import { AccesosContext } from "../../../context/Accesos/accesosCtx";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
+  
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function PreciosProductos() {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   // const [selected, setSelected] = useState([]);
 
   const [preciosProductos, setPreciosProductos] = useState({})
@@ -42,22 +45,40 @@ export default function PreciosProductos() {
     setUpdateTablaVentas,
     updateTablaVentas
   } = useContext(VentasContext);
-  // console.log(productoCambioPrecio.id_producto.precios.precios_producto[0]);
+
+  const { 
+		reloadVerPrecios, 
+    setReloadVerPrecios,
+		setAbrirPanelAcceso,
+    abrirPanelAcceso,
+		setDepartamentos
+	} = useContext(AccesosContext);
+
   const [selectPrisingProduct, setSelectPrisingProduct] = useState(
     precioSelectProductoVenta.length > 0 ? precioSelectProductoVenta[0] : {}
   );
 
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
 
-  // console.log(productoCambioPrecio);
-
   const handleClickOpen = () => {
-    setOpen(!open);
+    if(sesion.accesos.ventas.precios_productos.ver === true){
+      setOpen(!open);
+    }else{
+      setAbrirPanelAcceso(!abrirPanelAcceso);
+      setDepartamentos({departamento: 'ventas', subDepartamento: 'precios_productos', tipo_acceso: 'ver'})
+    }
   };
 
   useEffect(() => {
     setPreciosProductos(productoCambioPrecio);
-  }, [productoCambioPrecio ])
+  }, [productoCambioPrecio ]);
+
+  useEffect(() => {
+		if (reloadVerPrecios === true) {	
+      setOpen(!open);
+      setReloadVerPrecios(false);
+		}
+	}, [reloadVerPrecios]);
 
   const handleAceptChangePrising = async () => {
 
@@ -201,7 +222,7 @@ export default function PreciosProductos() {
     if (e.keyCode === 114) {
       handleClickOpen();
     }
-  }
+  }; 
 
   return (
     <>
@@ -252,7 +273,7 @@ export default function PreciosProductos() {
                   <Button
                     variant="contained"
                     color="secondary"
-                    onClick={handleClickOpen}
+                    onClick={() => setOpen(!open)}
                     size="medium"
                   >
                     <CloseIcon />

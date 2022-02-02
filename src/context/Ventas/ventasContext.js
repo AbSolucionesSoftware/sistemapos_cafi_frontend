@@ -38,13 +38,9 @@ export const VentasProvider = ({ children }) => {
     const [ turnoActivo, setTurnoActivo ] = useState();
     const [ ubicacionTurno, setUbicacionTurno ] = useState('');
 
-    const [permisoAutorizado, setPermisoAutorizado] = useState(false);
-    const [abrirPanelAcceso, setAbrirPanelAcceso] = useState(false);
-    const [datosPermiso, setDatosPermiso] = useState([]);
-
     const [ update, setUpdate ] = useState(false);
     const [ error, setError ] = useState(false);
-    const [  alert, setAlert ] = useState({ message: "", status: "", open: false });
+    const [ alert, setAlert ] = useState({ message: "", status: "", open: false });
     const [ abrirTurnosDialog, setAbrirTurnosDialog ] = useState(false);
     const [ updateClientVenta, setUpdateClientVenta ] = useState(false);
 
@@ -86,7 +82,7 @@ export const VentasProvider = ({ children }) => {
                 turnoActivo, 
                 setTurnoActivo,
                 ubicacionTurno, 
-                setUbicacionTurno
+                setUbicacionTurno,
                 // precioSeleccionadoTabla,
                 // setPrecioSeleccionadoTabla
             }
