@@ -6,19 +6,22 @@ import theme from './config/colors';
 
 import client from './config/apollo';
 import { ApolloProvider } from '@apollo/client';
+import { AccesosProvider } from './context/Accesos/accesosCtx';
 
 function App() {
 	return (
 		<Box height='100vh' >
 			<ApolloProvider client={client}>
-				<div className="App" >
-					<ThemeProvider theme={theme}>
-						<CssBaseline />
-						<Router>
-							<Switch>{routes.map((route, index) => <RoutesWithSubRoutes key={index} {...route} />)}</Switch>
-						</Router>
-					</ThemeProvider>
-				</div>
+				<AccesosProvider>
+					<div className="App" >
+						<ThemeProvider theme={theme}>
+							<CssBaseline />
+							<Router>
+								<Switch>{routes.map((route, index) => <RoutesWithSubRoutes key={index} {...route} />)}</Switch>
+							</Router>
+						</ThemeProvider>
+					</div>
+				</AccesosProvider>
 			</ApolloProvider>
 		</Box>
 	);

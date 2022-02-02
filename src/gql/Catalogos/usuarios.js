@@ -588,6 +588,16 @@ export const LOGEAR_USUARIO = gql`
 	}
 `;
 
+export const LOGEAR_USUARIO_ACCESOS = gql`
+	query ObtenerAccesoPermiso($input: ObtenerAccesoPermisosInput) {
+		obtenerAccesoPermiso(input: $input) {
+			permiso_concedido
+			departamento
+        	subDepartamento
+		}
+	}		
+`;
+
 export const AGIGNAR_PERMISOS_USUARIO = gql`
 	mutation asignarAccesosUsuario($input: CrearArregloDeAccesosInput, $id: ID!) {
 		asignarAccesosUsuario(id: $id, input: $input) {
