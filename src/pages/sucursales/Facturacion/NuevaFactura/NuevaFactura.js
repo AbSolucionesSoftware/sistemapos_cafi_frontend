@@ -87,9 +87,10 @@ export default function NuevaFactura() {
               </Typography>
               <Box m={1}>
                 <Button
-                  /* variant="contained" */
+                  variant="contained"
                   color="inherit"
                   onClick={() => handleClose()}
+                  color="secondary"
                   size="large"
                 >
                   <CloseIcon style={{ fontSize: 30 }} />
@@ -173,10 +174,7 @@ const FacturaModalContent = ({ handleClose }) => {
         <DetallesFactura />
       </DialogContent>
 
-      <DialogActions style={{ justifyContent: "center" }}>
-        <Button onClick={() => cancelarCFDI()} size="large">
-          Cancelar
-        </Button>
+      <DialogActions>
         <RealizarFactura setAlert={setAlert} />
       </DialogActions>
     </Fragment>

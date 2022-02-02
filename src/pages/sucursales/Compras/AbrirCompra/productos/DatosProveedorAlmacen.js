@@ -28,7 +28,6 @@ import {
 } from "../../../../../context/Catalogos/initialStatesProducto";
 
 export default function DatosProveedorAlmacen({
-  refetchProductos,
   getProductos,
   status,
 }) {
@@ -98,13 +97,7 @@ export default function DatosProveedorAlmacen({
         id_almacen: value._id,
         almacen: value.nombre_almacen,
       });
-      getProductos({
-        variables: {
-          almacen: value._id,
-          empresa: sesion.empresa._id,
-          sucursal: sesion.sucursal._id,
-        },
-      });
+      getProductos(value._id);
     }
   };
 

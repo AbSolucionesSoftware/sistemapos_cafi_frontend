@@ -18,7 +18,7 @@ import { FacturacionCtx } from "../../../../context/Facturacion/facturacionCtx";
 import { CREAR_FACTURA } from "../../../../gql/Facturacion/Facturacion";
 import { useMutation } from "@apollo/client";
 import { formaPago, metodoPago, tiposCfdi, usosCfdi } from "../catalogos";
-import { Done } from "@material-ui/icons";
+import { Close, Done } from "@material-ui/icons";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -143,29 +143,46 @@ export default function RealizarFactura({ setAlert }) {
     <div>
       <Button
         color="primary"
+        variant="contained"
         startIcon={<DoneIcon />}
         size="large"
         onClick={() => handleClickOpen()}
       >
-        Generar CFDI
+        Guardar
       </Button>
       <Dialog
         open={open}
         TransitionComponent={Transition}
         keepMounted
-        onClose={() => handleClose()}
+        onClose={(_, reason) => {
+          if (reason !== "backdropClick") {
+            handleClose();
+          }
+        }}
         fullWidth
         maxWidth="xs"
       >
+        <Box display="flex" justifyContent="flex-end" m={1}>
+          <Button
+            onClick={() => handleClose()}
+            size="large"
+            color="secondary"
+            variant="contained"
+          >
+            <Close />
+          </Button>
+        </Box>
         <DialogContent>
           <InputsFacturaModal />
         </DialogContent>
-        <DialogActions style={{ justifyContent: "center" }}>
-          <Button onClick={() => handleClose()} color="primary">
-            Cancelar
-          </Button>
-          <Button startIcon={<Done />} onClick={() => crearFactura()} color="primary">
-            Realizar Factura
+        <DialogActions style={{justifyContent: "center"}}>
+          <Button
+            startIcon={<Done />}
+            onClick={() => crearFactura()}
+            variant="contained"
+            color="primary"
+          >
+            Guardar
           </Button>
         </DialogActions>
       </Dialog>

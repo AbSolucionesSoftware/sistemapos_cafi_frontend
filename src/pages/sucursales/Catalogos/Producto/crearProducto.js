@@ -178,6 +178,7 @@ export default function CrearProducto({
   datos,
   productosRefetch,
   fromCompra,
+  getProductos
 }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -350,7 +351,11 @@ export default function CrearProducto({
       }
       setLoading(false);
       toggleModal();
-      productosRefetch();
+      if(fromCompra){
+        getProductos();
+      }else{
+        productosRefetch();
+      }
     } catch (error) {
       setLoading(false);
       setAlert({
@@ -703,6 +708,7 @@ const ContenidoModal = ({ value }) => {
   /* Queries */
   const { loading, data, error, refetch } = useQuery(OBTENER_CONSULTAS, {
     variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
+    fetchPolicy: "network-only",
   });
 
   useEffect(() => {

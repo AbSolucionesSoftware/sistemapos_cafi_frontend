@@ -39,10 +39,9 @@ import {
 import CrearProducto, {
   initial_state_preciosP,
 } from "../../../Catalogos/Producto/crearProducto";
-import ErrorPage from "../../../../../components/ErrorPage";
 import { ComprasContext } from "../../../../../context/Compras/comprasContext";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
-import { useLazyQuery } from "@apollo/client";
+import { useApolloClient } from "@apollo/client";
 import { OBTENER_PRODUCTOS } from "../../../../../gql/Catalogos/productos";
 import PreciosDeVentaCompras from "./PreciosVenta";
 import { validateJsonEdit } from "../../../Catalogos/Producto/validateDatos";
@@ -53,6 +52,7 @@ import DatosProveedorAlmacen from "./DatosProveedorAlmacen";
 import { initial_state_datosProducto } from "../initial_states";
 import MostrarPrecios from "./mostrar_precios";
 import { useDebounce } from "use-debounce/lib";
+import SnackBarMessages from "../../../../../components/SnackBarMessages";
 
 export default function DatosProducto({ status }) {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -114,28 +114,46 @@ export default function DatosProducto({ status }) {
   if (status === "enEspera" && datosCompra) count = 1;
 
   const [cargando, setCargando] = useState(false);
+  const client = useApolloClient();
+  const [data, setData] = useState();
+  const [alert, setAlert] = useState({ message: "", status: "", open: false });
 
   /* Queries */
-  const [getProductos, { loading, data, error, refetch }] = useLazyQuery(
-    OBTENER_PRODUCTOS,
-    {
-      variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
-      fetchPolicy: "network-only",
+  const getProductos = async (id_almacen) => {
+    try {
+      let almacen = id_almacen ? id_almacen : datosCompra.almacen._id;
+      setLoadingProductos(true);
+      const response = await client.query({
+        query: OBTENER_PRODUCTOS,
+        variables: {
+          almacen,
+          empresa: sesion.empresa._id,
+          sucursal: sesion.sucursal._id,
+        },
+        fetchPolicy: "network-only",
+      });
+      setLoadingProductos(false);
+      setData(response.data);
+    } catch (error) {
+      setLoadingProductos(false);
+      setAlert({
+        message: "Hubo un error al cargar los productos",
+        status: "error",
+        open: true,
+      });
     }
-  );
+  };
 
-  /* console.log(error.networkError.result);
-   */
   const [COSTO] = useDebounce(costo, 500);
   const [CANTIDAD] = useDebounce(cantidad, 500);
 
-  useEffect(() => {
-    if (loading) {
+  /* useEffect(() => {
+    if (loadingProductos) {
       setLoadingProductos(true);
     } else {
       setLoadingProductos(false);
     }
-  }, [loading]);
+  }, [loadingProductos]); */
 
   useEffect(() => {
     if (data) obtenerCosto(COSTO);
@@ -147,17 +165,11 @@ export default function DatosProducto({ status }) {
 
   useEffect(() => {
     if (count === 1) {
-      getProductos({
-        variables: {
-          almacen: datosCompra.almacen._id,
-          empresa: sesion.empresa._id,
-          sucursal: sesion.sucursal._id,
-        },
-      });
+      getProductos(datosCompra.almacen._id);
     }
   }, [count]);
 
-  if (loading) {
+  if (loadingProductos) {
     return (
       <Box
         display="flex"
@@ -170,9 +182,6 @@ export default function DatosProducto({ status }) {
         <Typography variant="h5">Cargando</Typography>
       </Box>
     );
-  }
-  if (error) {
-    return <ErrorPage error={error} altura={200} />;
   }
 
   let obtenerProductos = [];
@@ -219,7 +228,7 @@ export default function DatosProducto({ status }) {
     setPreciosVenta(producto.precios.precios_producto);
   };
 
-  const obtenerCantidad = (value) => {
+  function obtenerCantidad(value) {
     if (!value) {
       setDatosProducto({
         ...datosProducto,
@@ -231,7 +240,7 @@ export default function DatosProducto({ status }) {
       ...datosProducto,
       cantidad: parseFloat(value),
     });
-  };
+  }
 
   const obtenerCantidadRegalo = (value) => {
     if (!value) {
@@ -255,7 +264,7 @@ export default function DatosProducto({ status }) {
     });
   };
 
-  const obtenerCosto = (value) => {
+  function obtenerCosto(value) {
     /* const { name, value } = e.target; */
     if (!value) {
       setDatosProducto({
@@ -282,7 +291,7 @@ export default function DatosProducto({ status }) {
     let nuevo_ieps =
       parseFloat(precio_sin_impuesto) *
       parseFloat(ieps < 10 ? ".0" + ieps : "." + ieps);
-    let nuevo_impuesto = nuevo_ieps + nuevo_iva
+    let nuevo_impuesto = nuevo_ieps + nuevo_iva;
 
     if (datosProducto.descuento_porcentaje > 0) {
       cantidad_descontada = Math.round(
@@ -306,7 +315,7 @@ export default function DatosProducto({ status }) {
       subtotal_descuento: parseFloat(precio_sin_impuesto),
       total_descuento: parseFloat(precio_sin_impuesto + nuevo_impuesto),
     });
-  };
+  }
 
   const agregarCompra = async (actualizar_Precios) => {
     let copy_datosProducto = { ...datosProducto };
@@ -624,11 +633,8 @@ export default function DatosProducto({ status }) {
 
   return (
     <Fragment>
-      <DatosProveedorAlmacen
-        status={status}
-        refetchProductos={refetch}
-        getProductos={getProductos}
-      />
+      <SnackBarMessages alert={alert} setAlert={setAlert} />
+      <DatosProveedorAlmacen status={status} getProductos={getProductos} />
       <Box my={1} />
       <Grid container spacing={1} alignItems="center">
         <Grid item>
@@ -695,7 +701,8 @@ export default function DatosProducto({ status }) {
             ) : (
               <CrearProducto
                 accion={false}
-                productosRefetch={refetch}
+                /* productosRefetch={refetch} */
+                getProductos={getProductos}
                 fromCompra={true}
               />
             )}

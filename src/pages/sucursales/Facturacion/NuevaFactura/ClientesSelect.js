@@ -19,16 +19,14 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { makeStyles } from "@material-ui/core";
-
-import { Search } from "@material-ui/icons";
+import { Close, Search } from "@material-ui/icons";
 import ErrorPage from "../../../../components/ErrorPage";
-import Done from "@material-ui/icons/Done";
 import { useQuery } from "@apollo/client";
 import { OBTENER_CLIENTES } from "../../../../gql/Catalogos/clientes";
 import { FacturacionCtx } from "../../../../context/Facturacion/facturacionCtx";
-import Autocomplete from "@material-ui/lab/Autocomplete";
 import CrearCliente from "../../Catalogos/Cliente/CrearCliente";
 import { ClienteProvider } from "../../../../context/Catalogos/crearClienteCtx";
+import { Alert } from "@material-ui/lab";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -56,36 +54,36 @@ export default function ListaClientesFacturas() {
         maxWidth="md"
         fullWidth
         open={open}
-        onClose={() => handleClose()}
+        onClose={(_, reason) => {
+          if (reason !== "backdropClick") {
+            handleClose();
+          }
+        }}
         TransitionComponent={Transition}
       >
-        <DialogTitle>Seleccionar cliente</DialogTitle>
+        <DialogTitle>
+          <Box style={{ display: "flex" }}>
+            <Typography variant="h6">Selecionar cliente</Typography>
+            <Box flexGrow={1} />
+            <Button
+              variant="contained"
+              color="secondary"
+              size="large"
+              onClick={() => handleClose()}
+            >
+              <Close />
+            </Button>
+          </Box>
+        </DialogTitle>
         <DialogContent>
-          <RenderLista />
+          <RenderLista handleClose={handleClose} />
         </DialogContent>
-        <DialogActions style={{ justifyContent: "center" }}>
+        <DialogActions>
           <Button
-            onClick={() => {
-              handleClose();
-              setDatosFactura({
-                ...datosFactura,
-                receiver: {
-                  Rfc: "",
-                  Name: "",
-                  CfdiUse: "",
-                },
-              });
-            }}
+            size="large"
+            onClick={() => handleClose()}
           >
             Cancelar
-          </Button>
-          <Button
-            color="primary"
-            startIcon={<Done />}
-            onClick={() => handleClose()}
-            disabled={!datosFactura.receiver.Name}
-          >
-            Seleccionar
           </Button>
         </DialogActions>
       </Dialog>
@@ -93,10 +91,11 @@ export default function ListaClientesFacturas() {
   );
 }
 
-const RenderLista = () => {
+const RenderLista = ({ handleClose }) => {
   const classes = useStyles();
   const [filtro, setFiltro] = useState("");
   const [values, setValues] = useState("");
+  const [selected, setSelected] = useState("");
   const { datosFactura, setDatosFactura } = useContext(FacturacionCtx);
 
   /* Queries */
@@ -125,6 +124,21 @@ const RenderLista = () => {
 
   const { obtenerClientes } = data;
 
+  const obtenerClienteTabla = (click, row) => {
+    setSelected(row.nombre_cliente);
+    if (click === 2) {
+      setDatosFactura({
+        ...datosFactura,
+        receiver: {
+          ...datosFactura.receiver,
+          Name: row.nombre_cliente,
+          Rfc: row.rfc,
+        },
+      });
+      handleClose();
+    }
+  };
+
   return (
     <Fragment>
       <Box mb={2} display="flex" alignItems="center">
@@ -150,6 +164,11 @@ const RenderLista = () => {
           <CrearCliente tipo="CLIENTE" accion="registrar" refetch={refetch} />
         </ClienteProvider>
       </Box>
+      <Box my={1}>
+        <Alert severity="info">
+          Para seleccionar un cliente haz un doble click!
+        </Alert>
+      </Box>
       <Paper variant="outlined">
         <TableContainer className={classes.container}>
           <Table stickyHeader size="small" aria-label="a dense table">
@@ -169,17 +188,8 @@ const RenderLista = () => {
                     hover
                     role="checkbox"
                     tabIndex={-1}
-                    onClick={() =>
-                      setDatosFactura({
-                        ...datosFactura,
-                        receiver: {
-                          ...datosFactura.receiver,
-                          Name: row.nombre_cliente,
-                          Rfc: row.rfc,
-                        },
-                      })
-                    }
-                    selected={row.nombre_cliente === datosFactura.receiver.Name}
+                    onClick={(e) => obtenerClienteTabla(e.detail, row)}
+                    selected={row.nombre_cliente === selected}
                   >
                     <TableCell>
                       <Typography>{row.numero_cliente}</Typography>

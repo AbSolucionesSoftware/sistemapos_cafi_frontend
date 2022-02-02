@@ -48,20 +48,24 @@ export default function PreciosDeVentaCompras() {
 }
 
 const RenderPrecios = ({ data, tipo, index }) => {
-  const { preciosVenta, datosProducto, productoOriginal } = useContext(ComprasContext);
+  const { preciosVenta, setPreciosVenta, datosProducto, productoOriginal } = useContext(
+    ComprasContext
+  );
   const { precios } = productoOriginal;
 
   const [precio_neto, setPrecioNeto] = useState(data.precio_neto);
 
   //creamos variables para trabajar con ellas, no causar errores y afectar las originales
   let copy_preciosVenta = { ...preciosVenta[index] };
+  let preciosVenta_base = [...preciosVenta];
 
   let precio_unitario_con_impuesto =
     /* datosProducto.costo / datosProducto.cantidad; */
     datosProducto.costo / precios.unidad_de_compra.cantidad;
   let precio_unitario_sin_impuesto =
     /* precios.precio_de_compra.precio_sin_impuesto / datosProducto.cantidad; */
-    precios.precio_de_compra.precio_sin_impuesto / precios.unidad_de_compra.cantidad;
+    precios.precio_de_compra.precio_sin_impuesto /
+    precios.unidad_de_compra.cantidad;
 
   if (isNaN(precio_unitario_sin_impuesto)) precio_unitario_sin_impuesto = 0;
   if (isNaN(precio_unitario_con_impuesto)) precio_unitario_con_impuesto = 0;
@@ -74,33 +78,33 @@ const RenderPrecios = ({ data, tipo, index }) => {
       let utilidad_base = data.utilidad ? data.utilidad : 0;
       let utilidad = utilidad_base / 100;
 
-      const precio_venta = parseFloat((precio_unitario_sin_impuesto * utilidad + precio_unitario_sin_impuesto).toFixed(2));
-      copy_preciosVenta.precio_venta = parseFloat(
-        precio_venta.toFixed(2)
+      const precio_venta = parseFloat(
+        (
+          precio_unitario_sin_impuesto * utilidad +
+          precio_unitario_sin_impuesto
+        ).toFixed(2)
       );
+      copy_preciosVenta.precio_venta = parseFloat(precio_venta.toFixed(2));
       if (precios.iva_activo || precios.ieps_activo) {
         const precio_neto =
           precio_unitario_con_impuesto +
           precio_unitario_con_impuesto * utilidad;
 
-        copy_preciosVenta.precio_neto = parseFloat(
-          precio_neto.toFixed(2)
-        );
+        copy_preciosVenta.precio_neto = parseFloat(precio_neto.toFixed(2));
         setPrecioNeto(parseFloat(precio_neto.toFixed(2)));
       } else {
-        copy_preciosVenta.precio_neto = parseFloat(
-          precio_venta.toFixed(2)
-        );
+        copy_preciosVenta.precio_neto = parseFloat(precio_venta.toFixed(2));
         setPrecioNeto(parseFloat(precio_venta.toFixed(2)));
       }
-      preciosVenta.splice(index, 1, copy_preciosVenta);
+      preciosVenta_base.splice(index, 1, copy_preciosVenta);
+      setPreciosVenta(preciosVenta_base)
     }
   }, [datosProducto.costo, datosProducto.cantidad]);
 
   useEffect(() => {
-    if(data.numero_precio === 1){
+    if (data.numero_precio === 1) {
       calculosCompra();
-    }else if(data.numero_precio > 1 && precio_neto){
+    } else if (data.numero_precio > 1 && precio_neto) {
       calculosCompra();
     }
   }, [calculosCompra]);
@@ -109,7 +113,11 @@ const RenderPrecios = ({ data, tipo, index }) => {
     case "Utilidad":
       return <TableCell style={{ border: 0 }}>{data.utilidad}%</TableCell>;
     case "Precio de venta":
-      return <TableCell style={{ border: 0 }}>${parseFloat(precio_neto).toFixed(2)}</TableCell>;
+      return (
+        <TableCell style={{ border: 0 }}>
+          ${parseFloat(precio_neto).toFixed(2)}
+        </TableCell>
+      );
     default:
       return null;
   }

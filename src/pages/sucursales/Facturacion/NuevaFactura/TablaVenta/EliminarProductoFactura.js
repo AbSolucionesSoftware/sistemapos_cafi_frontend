@@ -28,7 +28,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function EliminarProductoFactura({ venta, producto, index }) {
   const [open, setOpen] = useState(false);
   const { setVentaFactura, setProductos, productos } = useContext(FacturacionCtx);
-  const { datos_generales } = producto.id_producto;
+  const { datos_generales } = producto.producto;
 
   const handleClickOpen = () => {
     setOpen(true);
