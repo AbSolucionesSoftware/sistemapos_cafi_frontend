@@ -446,12 +446,18 @@ const RenderTableRows = ({
       if (producto_encontrado.found) {
         const { cantidad_venta, ...newP } =
           producto_encontrado.producto_found.producto;
-        newP.cantidad_venta = new_cant
+        newP.cantidad_venta = parseInt(new_cant);
         const verify_prising = await verifiPrising(newP);
         const newPrising = verify_prising.found ? verify_prising.object_prising : newP.precio_actual_object;
         
         const new_resta = await calculatePrices2({newP, cantidad: cantidad_venta, precio_boolean: true, precio: newP.precio_actual_object, granel: newP.granel_producto, origen: "Tabla" });
         const new_suma = await calculatePrices2({newP, cantidad: new_cant, precio_boolean: true, precio: newPrising, granel: newP.granel_producto, origen: "Tabla" });
+
+        newP.iva_total_producto = parseFloat(new_suma.ivaCalculo);
+        newP.ieps_total_producto = parseFloat(new_suma.iepsCalculo);
+        newP.impuestos_total_producto = parseFloat(new_suma.impuestoCalculo);
+        newP.subtotal_total_producto = parseFloat(new_suma.subtotalCalculo);
+        newP.total_total_producto = parseFloat(new_suma.totalCalculo);
 
         if (verify_prising.found) {
           newP.precio_a_vender = new_suma.totalCalculo;

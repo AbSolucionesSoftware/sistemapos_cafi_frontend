@@ -19,10 +19,10 @@ import {
 import { FcDonate, FcShop } from "react-icons/fc";
 // import { Search } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
-// import CreditCardIcon from '@material-ui/icons/CreditCard';
+import CreditCardIcon from '@material-ui/icons/CreditCard';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 
-// import ClearIcon from '@material-ui/icons/Clear';
+import ClearIcon from '@material-ui/icons/Clear';
 
 import { Edit, ImportExport } from "@material-ui/icons";
 
@@ -33,6 +33,7 @@ import { formaPago } from '../../../pages/sucursales/Facturacion/catalogos';
 
 import { CREAR_VENTA } from '../../../gql/Ventas/ventas_generales'; 
 import { useMutation } from "@apollo/client";
+import moment from 'moment';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -59,7 +60,11 @@ export default function CerrarVenta() {
   const [monederoTotal, setMonederoTotal] = useState(0);
   const [ventaActual, setVentaActual] = useState(0);
 
+  const [editableClient, setEditableClient] = useState(true);
+
   const [visible, setVisible] = useState(false);
+
+  const [fechaVencimiento, setFechaVencimiento] = useState('');
 
   //States de los montos a pagar
 
@@ -100,10 +105,8 @@ export default function CerrarVenta() {
       const sesion = JSON.parse(localStorage.getItem("turnoEnCurso"));
       const usuario = JSON.parse(localStorage.getItem('sesionCafi'));
 
-      console.log(sesion);
-      console.log(usuario);
-
       const ventaFinal = {...ventaActual};
+
       //Generar folio
       const folio = numerosRandom(100000000000,999999999999);
       console.log(folio);
@@ -142,6 +145,7 @@ export default function CerrarVenta() {
           metodo_pago: formaPago[6].Value
         }
       };
+      ventaFinal.folio = `${folio}`;
       //Credito a credito false
       ventaFinal.credito = false;
       //Agregar descuentos de ventas
@@ -206,7 +210,6 @@ export default function CerrarVenta() {
       case "TRANSFERENCIA":
         setTransferencia(e.target.value);
         break;
-
       case "CHEQUE":
         setCheque(e.target.value);
         break;
@@ -230,6 +233,8 @@ export default function CerrarVenta() {
   useEffect(() => {
     setCambioVenta(montoPagado - totalVenta);
   }, [montoPagado]);
+
+  console.log(datosCliente);
 
   return (
     <>
@@ -518,6 +523,7 @@ export default function CerrarVenta() {
                       id="form-producto-codigo-barras"
                       variant="outlined"
                       value={datosCliente.dias_credito === null ? 0 : datosCliente.dias_credito}
+                      disabled={editableClient}
                     />
                   </Box>
                 </Box>
@@ -533,6 +539,7 @@ export default function CerrarVenta() {
                       id="form-producto-codigo-barras"
                       variant="outlined"
                       value={datosCliente.limite_credito === null ? 0 : datosCliente.limite_credito }
+                      disabled={editableClient}
                     />
                   </Box>
                 </Box>
@@ -548,6 +555,7 @@ export default function CerrarVenta() {
                       id="form-producto-codigo-barras"
                       variant="outlined"
                       value={datosCliente.credito_disponible === null ? 0 : datosCliente.credito_disponible}
+                      disabled={editableClient}
                     />
                   </Box>
                 </Box>
@@ -559,6 +567,7 @@ export default function CerrarVenta() {
                       variant="outlined"
                       size="large"
                       startIcon={<Edit />}
+                      onClick={() => setEditableClient(!editableClient)}
                     >
                       Editar
                     </Button>
@@ -577,24 +586,11 @@ export default function CerrarVenta() {
                       name="codigo_barras"
                       id="form-producto-codigo-barras"
                       variant="outlined"
+                      disabled={editableClient}
                     />
                   </Box>
                 </Box>
 
-                <Box width="20%">
-                  <Typography variant="caption">
-                    <b>Dias de Crédito:</b>
-                  </Typography>
-                  <Box display="flex" alignItems="center">
-                    <TextField
-                      fullWidth
-                      size="small"
-                      name="codigo_barras"
-                      id="form-producto-codigo-barras"
-                      variant="outlined"
-                    />
-                  </Box>
-                </Box>
                 <Box width="20%">
                   <Typography variant="caption">
                     <b>Fecha de Vencimiento:</b>
@@ -607,6 +603,12 @@ export default function CerrarVenta() {
                       id="form-producto-codigo-barras"
                       variant="outlined"
                       type="date"
+                      onChange={(e) => {
+                        console.log(e.target.value);
+                        const modelDate = moment(e.target.value);
+                        console.log(modelDate);
+                      }}
+                      disabled={editableClient}
                     />
                   </Box>
                 </Box>
@@ -618,14 +620,17 @@ export default function CerrarVenta() {
 
         <DialogActions style={{justifyContent: "space-between"}} >
           <Box display={"flex"} justifyContent="flex-start" >
-              {/* <Box pr={1}>
+              <Box pr={1}>
                 {
                   visible ? (
                     <Button
                     size="large"
                     variant="contained"
                     color="secondary"
-                    onClick={() => setVisible(!visible)}
+                    onClick={() => {
+                      setVisible(!visible);
+                      setEditableClient(!editableClient);
+                    }}
                     startIcon={
                       <ClearIcon style={{fontSize: "28px"}} />
                     }
@@ -647,7 +652,7 @@ export default function CerrarVenta() {
                   )
                 }
 
-              </Box> */}
+              </Box>
 
               <Box>
                 <Button
