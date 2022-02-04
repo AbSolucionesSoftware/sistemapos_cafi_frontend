@@ -32,7 +32,7 @@ export default function RealizarFactura({ setAlert }) {
     setDatosFactura,
     codigo_postal,
     setCodigoPostal,
-    productosFactura,
+    productos,
     setProductosFactura,
     setError,
   } = useContext(FacturacionCtx);
@@ -55,14 +55,15 @@ export default function RealizarFactura({ setAlert }) {
 
   const crearFactura = async () => {
     try {
-      setLoading(true);
+      /* setLoading(true); */
       let nuevo_obj = { ...datosFactura };
-      const productos = [
-        {
+
+      /* 
+      {
           ProductCode: "50202306",
           IdentificationNumber: "61b7bf6e3454b727a0c2e357",
           Description: "COCACOLA",
-          /* Unit: "Unidad de Servicio", */
+          //Unit: "Unidad de Servicio",
           UnitCode: "XBX",
           UnitPrice: "36",
           Quantity: "1",
@@ -78,8 +79,51 @@ export default function RealizarFactura({ setAlert }) {
             },
           ],
           Total: "35.49",
-        },
-      ];
+        }, */
+
+      const items = [];
+
+      productos.forEach(producto => {
+        console.log(producto);
+        let {iva, ieps} = producto.id_producto.precios;
+        let Taxes = [];
+
+        if(producto.iva_total){
+          Taxes.push({
+            Total: producto.iva_total,
+            Name: "IVA",
+            Base: producto.precio_a_vender,
+            Rate: `0.${iva < 10 ? `0${iva}` : iva}`,
+            IsRetention: "true",
+          })
+        }
+        if(producto.ieps_total){
+          Taxes.push({
+            Total: producto.ieps_total,
+            Name: "IEPS",
+            Base: producto.precio_a_vender,
+            Rate: `0.${ieps < 10 ? `0${ieps}` : ieps}`,
+            IsRetention: "true",
+          })
+        }
+        items.push(
+          {
+            ProductCode: producto.id_producto.datos_generales.clave_producto_sat.Clave,
+            IdentificationNumber: producto.id_producto._id,
+            Description: producto.id_producto.datos_generales.nombre_comercial,
+            UnitCode: "XBX",
+            UnitPrice: producto.precio_actual_object.precio_venta,
+            Quantity: producto.cantidad_venta,
+            Subtotal: producto.subtotal,
+            Discount: producto.precio_actual_object.dinero_descontado ? producto.precio_actual_object.dinero_descontado : 0,
+            Taxes,
+            Total: producto.total
+          },
+        )
+      });
+      
+console.log(items);
+      return
 
       //poner la fecha de facturacion
       if (datosFactura.date === "1") {

@@ -3,7 +3,6 @@ import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import IconButton from "@material-ui/core/IconButton";
-import InputAdornment from "@material-ui/core/InputAdornment";
 import Paper from "@material-ui/core/Paper";
 import Slide from "@material-ui/core/Slide";
 import TextField from "@material-ui/core/TextField";
@@ -17,7 +16,9 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { makeStyles, Typography } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
 
 import { Close, Search } from "@material-ui/icons";
 import ErrorPage from "../../../../../components/ErrorPage";
@@ -27,6 +28,7 @@ import ProductosSinClaveSat from "./ProductosSinClave";
 import { OBTENER_VENTAS_SUCURSAL } from "../../../../../gql/Ventas/ventas_generales";
 import { formatoMexico } from "../../../../../config/reuserFunctions";
 import { Alert } from "@material-ui/lab";
+import { useDebounce } from "use-debounce/lib";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -75,50 +77,93 @@ export default function ListaVentasFactura() {
           </Box>
         </DialogTitle>
         <DialogContent>
-          <RenderLista handleClose={handleClose} />
+          <ComponentBusquedaVenta handleClose={handleClose} />
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() => {
-              handleClose();
-              /* setDatosFactura({ ...datosFactura, cliente: "" }); */
-            }}
-          >
-            Cancelar
-          </Button>
+          <Button onClick={() => handleClose()}>Cancelar</Button>
         </DialogActions>
       </Dialog>
     </div>
   );
 }
 
-const RenderLista = ({ handleClose }) => {
-  const classes = useStyles();
+const ComponentBusquedaVenta = ({ handleClose }) => {
   const [filtro, setFiltro] = useState("");
-  const [values, setValues] = useState("");
-  const [selected, setSelected] = useState("");
-  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-  const {
-    datosFactura,
-    setDatosFactura,
-    setVentaFactura,
-    setProductos,
-  } = useContext(FacturacionCtx);
 
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const [open_productos, setOpenProductos] = useState(false);
   const [productos_sin_clave, setProductosSinClave] = useState([]);
 
   const openProductosClaves = () => setOpenProductos(true);
   const closeProductosClaves = () => setOpenProductos(false);
 
+  const [value] = useDebounce(filtro, 500);
+
   /* Queries */
-  const { loading, data, error } = useQuery(OBTENER_VENTAS_SUCURSAL, {
-    variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
+  const resultado_ventas = useQuery(OBTENER_VENTAS_SUCURSAL, {
+    variables: {
+      empresa: sesion.empresa._id,
+      sucursal: sesion.sucursal._id,
+      filtro: value,
+    },
+    fetchPolicy: "network-only",
   });
 
-  const pressEnter = (e) => {
-    if (e.key === "Enter") setFiltro(e.target.value);
-  };
+  return (
+    <Fragment>
+      <ProductosSinClaveSat
+        productos={productos_sin_clave}
+        open={open_productos}
+        handleClose={closeProductosClaves}
+      />
+      <Box mb={2}>
+        <Grid container spacing={2}>
+          <Grid item sm={8} xs={12}>
+            <TextField
+              fullWidth
+              size="small"
+              placeholder="Buscar por: Folio, cliente, clave o nombre"
+              variant="outlined"
+              onChange={(e) => setFiltro(e.target.value)}
+              value={filtro}
+            />
+          </Grid>
+          <Grid item sm={4} xs={12}>
+            <TextField
+              fullWidth
+              size="small"
+              variant="outlined"
+              type="date"
+              onChange={(e) => setFiltro(e.target.value)}
+            />
+          </Grid>
+        </Grid>
+      </Box>
+      <Box my={1}>
+        <Alert severity="info">
+          Para seleccionar una venta haz un doble click!
+        </Alert>
+      </Box>
+      <RenderLista
+        resultado_ventas={resultado_ventas}
+        handleClose={handleClose}
+        setProductosSinClave={setProductosSinClave}
+        openProductosClaves={openProductosClaves}
+      />
+    </Fragment>
+  );
+};
+
+const RenderLista = ({
+  resultado_ventas,
+  handleClose,
+  setProductosSinClave,
+  openProductosClaves,
+}) => {
+  const classes = useStyles();
+  const [selected, setSelected] = useState("");
+  const { setVentaFactura, setProductos } = useContext(FacturacionCtx);
+  const { loading, data, error } = resultado_ventas;
 
   if (loading)
     return (
@@ -126,7 +171,7 @@ const RenderLista = ({ handleClose }) => {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        height="55vh"
+        height="50vh"
       >
         <CircularProgress />
       </Box>
@@ -151,89 +196,66 @@ const RenderLista = ({ handleClose }) => {
         return;
       }
 
-      setVentaFactura(data);
-      setProductos(data.productos);
+      const { productos, ...venta } = {...data}
+      const productos_base = [];
+
+      data.productos.forEach(element => {
+        const { producto, ...productos} = element;
+        productos.id_producto = element.producto
+        productos_base.push(productos);
+      });
+    
+      setVentaFactura(venta);
+      setProductos(productos_base);
       handleClose();
     }
   };
 
   return (
-    <Fragment>
-      <ProductosSinClaveSat
-        productos={productos_sin_clave}
-        open={open_productos}
-        handleClose={closeProductosClaves}
-      />
-      <Box mb={2}>
-        <TextField
-          fullWidth
-          size="small"
-          placeholder="Buscar por: Folio, cliente, clave o nombre"
-          variant="outlined"
-          onChange={(e) => setValues(e.target.value)}
-          onKeyPress={pressEnter}
-          value={values}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={() => setFiltro(values)}>
-                  <Search />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Box>
-      <Box my={1}>
-        <Alert severity="info">
-          Para seleccionar una venta haz un doble click!
-        </Alert>
-      </Box>
-      <Paper variant="outlined">
-        <TableContainer className={classes.container}>
-          <Table stickyHeader size="small" aria-label="a dense table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Folio</TableCell>
-                <TableCell>Cliente</TableCell>
-                <TableCell>Total de articulos</TableCell>
-                <TableCell>Descuento</TableCell>
-                <TableCell>Subtotal</TableCell>
-                <TableCell>Impuestos</TableCell>
-                <TableCell>Total</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {obtenerVentasSucursal.map((data, index) => {
-                return (
-                  <TableRow
-                    key={index}
-                    hover
-                    role="checkbox"
-                    tabIndex={-1}
-                    selected={data.folio === selected}
-                    onClick={(e) => obtenerVenta(e.detail, data)}
-                  >
-                    <TableCell>{data.folio}</TableCell>
-                    <TableCell>
-                      {data.cliente !== null
-                        ? data.cliente.nombre_cliente
-                        : "-"}
-                    </TableCell>
-                    <TableCell>{data.productos.length}</TableCell>
-                    <TableCell>
-                      ${data.descuento ? formatoMexico(data.descuento) : 0}
-                    </TableCell>
-                    <TableCell>${formatoMexico(data.subTotal)}</TableCell>
-                    <TableCell>${formatoMexico(data.impuestos)}</TableCell>
-                    <TableCell>${formatoMexico(data.total)}</TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
-    </Fragment>
+    <Paper variant="outlined">
+      <TableContainer className={classes.container}>
+        <Table stickyHeader size="small" aria-label="a dense table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Folio</TableCell>
+              <TableCell>Cliente</TableCell>
+              <TableCell>Usuario</TableCell>
+              <TableCell>Caja</TableCell>
+              <TableCell>Descuento</TableCell>
+              <TableCell>Subtotal</TableCell>
+              <TableCell>Impuestos</TableCell>
+              <TableCell>Total</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {obtenerVentasSucursal.map((data, index) => {
+              return (
+                <TableRow
+                  key={index}
+                  hover
+                  role="checkbox"
+                  tabIndex={-1}
+                  selected={data.folio === selected}
+                  onClick={(e) => obtenerVenta(e.detail, data)}
+                >
+                  <TableCell>{data.folio}</TableCell>
+                  <TableCell>
+                    {data.cliente !== null ? data.cliente.nombre_cliente : "-"}
+                  </TableCell>
+                  <TableCell>{data.usuario.nombre}</TableCell>
+                  <TableCell>{data.id_caja.numero_caja}</TableCell>
+                  <TableCell>
+                    ${data.descuento ? formatoMexico(data.descuento) : 0}
+                  </TableCell>
+                  <TableCell>${formatoMexico(data.subTotal)}</TableCell>
+                  <TableCell>${formatoMexico(data.impuestos)}</TableCell>
+                  <TableCell>${formatoMexico(data.total)}</TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
   );
 };

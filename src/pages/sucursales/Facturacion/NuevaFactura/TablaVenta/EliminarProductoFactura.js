@@ -28,7 +28,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function EliminarProductoFactura({ venta, producto, index }) {
   const [open, setOpen] = useState(false);
   const { setVentaFactura, setProductos, productos } = useContext(FacturacionCtx);
-  const { datos_generales } = producto.producto;
+  const { datos_generales } = producto.id_producto;
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -109,13 +109,13 @@ export default function EliminarProductoFactura({ venta, producto, index }) {
                   <TableCell>{datos_generales.nombre_comercial}</TableCell>
                   <TableCell>{producto.cantidad_venta}</TableCell>
                   <TableCell>
-                    ${formatoMexico(producto.subtotal_total_producto)}
+                    ${formatoMexico(producto.subtotal)}
                   </TableCell>
                   <TableCell>
-                    ${formatoMexico(producto.impuestos_total_producto)}
+                    ${formatoMexico(producto.impuestos)}
                   </TableCell>
                   <TableCell>
-                    ${formatoMexico(producto.total_total_producto)}
+                    ${formatoMexico(producto.total)}
                   </TableCell>
                 </TableRow>
               </TableBody>

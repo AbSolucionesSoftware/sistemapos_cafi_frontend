@@ -300,8 +300,8 @@ export const CREAR_VENTA = gql`
 `;
 
 export const OBTENER_VENTAS_SUCURSAL = gql`
-query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!) {
-		obtenerVentasSucursal(empresa: $empresa, sucursal: $sucursal) {
+query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String ) {
+		obtenerVentasSucursal(empresa: $empresa, sucursal: $sucursal, filtro: $filtro) {
 			_id
       folio
       cliente {
@@ -538,6 +538,10 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!) {
         concepto
         cantidad
         iva_total
+        ieps_total
+        subtotal
+        impuestos
+        total
         medida{
           id_medida
           medida

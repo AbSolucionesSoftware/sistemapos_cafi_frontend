@@ -133,16 +133,16 @@ export default function DetallesFactura() {
 }
 
 const RowTableProductos = ({ venta, producto, index }) => {
-  const { datos_generales } = producto.producto;
+  const { datos_generales } = producto.id_producto;
   return (
     <TableRow tabIndex={-1}>
       <TableCell>{datos_generales.nombre_comercial}</TableCell>
       <TableCell>{producto.cantidad_venta}</TableCell>
-      <TableCell>${formatoMexico(producto.iva_total_producto)}</TableCell>
-      <TableCell>${formatoMexico(producto.ieps_total_producto)}</TableCell>
-      <TableCell>${formatoMexico(producto.subtotal_total_producto)}</TableCell>
-      <TableCell>${formatoMexico(producto.impuestos_total_producto)}</TableCell>
-      <TableCell>${formatoMexico(producto.total_total_producto)}</TableCell>
+      <TableCell>${formatoMexico(producto.iva_total)}</TableCell>
+      <TableCell>${formatoMexico(producto.ieps_total)}</TableCell>
+      <TableCell>${formatoMexico(producto.subtotal)}</TableCell>
+      <TableCell>${formatoMexico(producto.impuestos)}</TableCell>
+      <TableCell>${formatoMexico(producto.total)}</TableCell>
       <TableCell>
         <ModificarProductoFactura
           venta={venta}

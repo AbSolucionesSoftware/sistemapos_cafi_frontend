@@ -161,7 +161,7 @@ export default function RegistroFactura({ serie_default }) {
               readOnly: true,
               disabled: true,
             }}
-            value={venta_factura.folio}
+            value={venta_factura ? venta_factura.folio : ''}
           />
         </Grid>
         <Grid item xs={12} sm={4} md={1}>
