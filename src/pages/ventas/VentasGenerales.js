@@ -198,7 +198,12 @@ export default function VentasGenerales() {
       const new_prices = await calculatePrices2({newP,cantidad: 0, granel: granelBase, origen: "Ventas1", precio_boolean: false });
 
       new_prices.newP.precio_anterior = productoPrecioFinal;
-      new_prices.newP.iva_total_producto = parseFloat(new_prices.iva);
+
+      new_prices.newP.iva_total_producto = parseFloat(new_prices.ivaCalculo);
+      new_prices.newP.ieps_total_producto = parseFloat(new_prices.iepsCalculo);
+      new_prices.newP.impuestos_total_producto = parseFloat(new_prices.impuestoCalculo);
+      new_prices.newP.subtotal_total_producto = parseFloat(new_prices.subtotalCalculo);
+      new_prices.newP.total_total_producto = parseFloat(new_prices.totalCalculo);
 
       console.log(new_prices.newP);
       
@@ -223,15 +228,29 @@ export default function VentasGenerales() {
 
       const verify_prising = await verifiPrising(newP);
 
+      console.log(verify_prising);
+
       //Verificar si el precio fue encontrado
       if (verify_prising.found) {
         const calculo_resta = await calculatePrices2({newP,cantidad_venta, granel: newP.granel_producto, origen: '', precio_boolean: true, precio: newP.precio_actual_object });
         
-        const calculo_sumar = await calculatePrices2({newP,cantidad_venta: newP.cantidad_venta, granel: newP.granel_producto, origen: '', precio_boolean: true, precio: verify_prising.pricing });
+        const calculo_sumar = await calculatePrices2({newP,cantidad_venta: newP.cantidad_venta, granel: newP.granel_producto, origen: '', precio_boolean: true, precio: verify_prising.object_prising });
 
         newP.precio_a_vender = calculo_sumar.totalCalculo;
         newP.precio_anterior = newP.precio_actual_producto;
         newP.precio_actual_producto = verify_prising.pricing;
+
+        console.log(calculo_sumar);
+        
+        newP.iva_total_producto = parseFloat(calculo_sumar.ivaCalculo);
+        newP.ieps_total_producto = parseFloat(calculo_sumar.iepsCalculo);
+        newP.impuestos_total_producto = parseFloat(calculo_sumar.impuestoCalculo);
+        newP.subtotal_total_producto = parseFloat(calculo_sumar.subtotalCalculo);
+        newP.total_total_producto = parseFloat(calculo_sumar.totalCalculo);
+
+        console.log(newP);
+
+
         newP.precio_actual_object = {
           cantidad_unidad: verify_prising.object_prising.cantidad_unidad ? verify_prising.object_prising.cantidad_unidad : null,
           numero_precio: verify_prising.object_prising.numero_precio ? verify_prising.object_prising.numero_precio : null,
@@ -283,13 +302,22 @@ export default function VentasGenerales() {
             calculo_sumar.monederoCalculo,
         }; 
       } else { 
-
+        console.log("Entro");
         const productoPrecioFinal = newP.descuento_activo
         ? newP.descuento.precio_neto
         : newP.precio_unidad.precio_neto;
 
         const new_prices = await calculatePrices2({newP, cantidad: 0, granel: granelBase, origen: "Ventas2"});
+
         new_prices.newP.precio_actual_producto = productoPrecioFinal;
+
+        console.log(new_prices);
+
+        new_prices.newP.iva_total_producto = parseFloat(new_prices.ivaCalculo) * parseFloat(newP.cantidad_venta);
+        new_prices.newP.ieps_total_producto = parseFloat(new_prices.iepsCalculo) * parseFloat(newP.cantidad_venta);
+        new_prices.newP.impuestos_total_producto = parseFloat(new_prices.impuestoCalculo) * parseFloat(newP.cantidad_venta);
+        new_prices.newP.subtotal_total_producto = parseFloat(new_prices.subtotalCalculo) * parseFloat(newP.cantidad_venta);
+        new_prices.newP.total_total_producto = parseFloat(new_prices.totalCalculo) * parseFloat(newP.cantidad_venta);
         
         productosVentasTemp.splice(
           producto_encontrado.producto_found.index,
@@ -307,6 +335,7 @@ export default function VentasGenerales() {
           monedero: parseFloat(venta_existente.monedero) + new_prices.monederoCalculo,
         };
       }
+
     }
 
     localStorage.setItem(
@@ -587,9 +616,6 @@ export default function VentasGenerales() {
               </Typography>
               <Box mt={.5} mr={1}>
                 <MonetizationOnIcon style={{fontSize: 37, color: "green"}} />
-              </Box>
-              <Box p={1}>
-                <Cotizacion type="GENERAR" />
               </Box>
             </Box>
           </Paper>

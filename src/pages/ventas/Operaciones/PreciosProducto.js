@@ -126,6 +126,12 @@ export default function PreciosProductos() {
         newProductoPrecioActual.precio_actual_producto = parseFloat((precioSelectProductoVenta[0].precio_neto).toFixed(2));
         newProductoPrecioActual.precio_actual_object = precioSelectProductoVenta[0];
 
+        newProductoPrecioActual.iva_total_producto = parseFloat(new_suma.ivaCalculo);
+        newProductoPrecioActual.ieps_total_producto = parseFloat(new_suma.iepsCalculo);
+        newProductoPrecioActual.impuestos_total_producto = parseFloat(new_suma.impuestoCalculo);
+        newProductoPrecioActual.subtotal_total_producto = parseFloat(new_suma.subtotalCalculo);
+        newProductoPrecioActual.total_total_producto = parseFloat(new_suma.totalCalculo);
+
         newProductoPrecioActual.precio_actual_object = {
           cantidad_unidad: precioSelectProductoVenta[0].cantidad_unidad ? precioSelectProductoVenta[0].cantidad_unidad : null,
           numero_precio: precioSelectProductoVenta[0].numero_precio ? precioSelectProductoVenta[0].numero_precio : null,

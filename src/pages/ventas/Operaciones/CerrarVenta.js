@@ -19,10 +19,10 @@ import {
 import { FcDonate, FcShop } from "react-icons/fc";
 // import { Search } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
-// import CreditCardIcon from '@material-ui/icons/CreditCard';
+import CreditCardIcon from '@material-ui/icons/CreditCard';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 
-// import ClearIcon from '@material-ui/icons/Clear';
+import ClearIcon from '@material-ui/icons/Clear';
 
 import { Edit, ImportExport } from "@material-ui/icons";
 
@@ -33,6 +33,7 @@ import { formaPago } from '../../../pages/sucursales/Facturacion/catalogos';
 
 import { CREAR_VENTA } from '../../../gql/Ventas/ventas_generales'; 
 import { useMutation } from "@apollo/client";
+import moment from 'moment';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -55,11 +56,20 @@ export default function CerrarVenta() {
   const [datosCliente, setDatosCliente] = useState({});
   const [monedero, setMonedero] = useState(0);
   const [descuentoVenta, setDescuentoVenta] = useState(0);
+
+
+  const [fechaVencimientoDate, setfechaVencimientoDate] = useState('');
+
+  const [valorPuntoProducto, setValorPuntoProducto] = useState(0.5);
+
   
   const [monederoTotal, setMonederoTotal] = useState(0);
   const [ventaActual, setVentaActual] = useState(0);
 
+  const [editableClient, setEditableClient] = useState(true);
+
   const [visible, setVisible] = useState(false);
+
 
   //States de los montos a pagar
 
@@ -100,10 +110,8 @@ export default function CerrarVenta() {
       const sesion = JSON.parse(localStorage.getItem("turnoEnCurso"));
       const usuario = JSON.parse(localStorage.getItem('sesionCafi'));
 
-      console.log(sesion);
-      console.log(usuario);
-
       const ventaFinal = {...ventaActual};
+
       //Generar folio
       const folio = numerosRandom(100000000000,999999999999);
       console.log(folio);
@@ -142,6 +150,7 @@ export default function CerrarVenta() {
           metodo_pago: formaPago[6].Value
         }
       };
+      ventaFinal.folio = `${folio}`;
       //Credito a credito false
       ventaFinal.credito = false;
       //Agregar descuentos de ventas
@@ -197,16 +206,17 @@ export default function CerrarVenta() {
 
       case "PUNTOS":
         const valor = e.target.value != "" ? parseInt(e.target.value) : 0;
-        // console.log(e.target.value, puntos);
+        console.log(e.target.value, valor);
         if(valor <= monederoTotal){
-          // console.log("entro >>", e.target.value, puntos)
-          setPuntos(e.target.value);
+          const valor2 = valorPuntoProducto * parseFloat(valor);
+          setPuntos(valor);
+          setValorPuntoProducto(valor2);
+          console.log("valor2 >>" , valor2)
         }
         break;
       case "TRANSFERENCIA":
         setTransferencia(e.target.value);
         break;
-
       case "CHEQUE":
         setCheque(e.target.value);
         break;
@@ -216,6 +226,15 @@ export default function CerrarVenta() {
   };
 
   window.onkeydown = funcion_tecla;
+
+  console.log(fechaVencimientoDate);
+
+  useEffect(() => {
+    setfechaVencimientoDate(moment().add(datosCliente.dias_credito ? parseInt(datosCliente.dias_credito) : 0,'days').format('YYYY-MM-DD'));
+  }, [datosCliente, datosCliente.dias_credito]);
+
+
+  
 
   useEffect(() => {
     setMontoPagado(
@@ -433,7 +452,7 @@ export default function CerrarVenta() {
                       <b>Puntos Disponibles:</b>
                     </Typography>
                   </Box>
-                  <Typography variant="subtitle1">{datosCliente.monedero_electronico === null ? 0 : datosCliente.monedero_electronico}</Typography>
+                  <Typography variant="subtitle1">{!datosCliente.monedero_electronico ? 0 : datosCliente.monedero_electronico}</Typography>
                 </Box>
 
                 <Box display="flex">
@@ -518,6 +537,8 @@ export default function CerrarVenta() {
                       id="form-producto-codigo-barras"
                       variant="outlined"
                       value={datosCliente.dias_credito === null ? 0 : datosCliente.dias_credito}
+                      onChange={e => setDatosCliente({...datosCliente, dias_credito: e.target.value})}
+                      disabled={editableClient}
                     />
                   </Box>
                 </Box>
@@ -533,6 +554,7 @@ export default function CerrarVenta() {
                       id="form-producto-codigo-barras"
                       variant="outlined"
                       value={datosCliente.limite_credito === null ? 0 : datosCliente.limite_credito }
+                      disabled={editableClient}
                     />
                   </Box>
                 </Box>
@@ -548,6 +570,7 @@ export default function CerrarVenta() {
                       id="form-producto-codigo-barras"
                       variant="outlined"
                       value={datosCliente.credito_disponible === null ? 0 : datosCliente.credito_disponible}
+                      disabled={editableClient}
                     />
                   </Box>
                 </Box>
@@ -559,6 +582,7 @@ export default function CerrarVenta() {
                       variant="outlined"
                       size="large"
                       startIcon={<Edit />}
+                      onClick={() => setEditableClient(!editableClient)}
                     >
                       Editar
                     </Button>
@@ -577,24 +601,12 @@ export default function CerrarVenta() {
                       name="codigo_barras"
                       id="form-producto-codigo-barras"
                       variant="outlined"
+                      disabled={editableClient}
+                      value={totalVenta}
                     />
                   </Box>
                 </Box>
 
-                <Box width="20%">
-                  <Typography variant="caption">
-                    <b>Dias de Crédito:</b>
-                  </Typography>
-                  <Box display="flex" alignItems="center">
-                    <TextField
-                      fullWidth
-                      size="small"
-                      name="codigo_barras"
-                      id="form-producto-codigo-barras"
-                      variant="outlined"
-                    />
-                  </Box>
-                </Box>
                 <Box width="20%">
                   <Typography variant="caption">
                     <b>Fecha de Vencimiento:</b>
@@ -607,6 +619,15 @@ export default function CerrarVenta() {
                       id="form-producto-codigo-barras"
                       variant="outlined"
                       type="date"
+                      value={fechaVencimientoDate}
+                      onChange={(e) => {
+                        const modelDate = moment(e.target.value).add(1,"days");
+                        const hoy = moment();
+                        const diasDiff = modelDate.diff(hoy, 'days');
+                        setfechaVencimientoDate(e.target.value);
+                        setDatosCliente({...datosCliente, dias_credito: diasDiff});
+                      }}
+                      disabled={editableClient}
                     />
                   </Box>
                 </Box>
@@ -618,14 +639,17 @@ export default function CerrarVenta() {
 
         <DialogActions style={{justifyContent: "space-between"}} >
           <Box display={"flex"} justifyContent="flex-start" >
-              {/* <Box pr={1}>
+              <Box pr={1}>
                 {
                   visible ? (
                     <Button
                     size="large"
                     variant="contained"
                     color="secondary"
-                    onClick={() => setVisible(!visible)}
+                    onClick={() => {
+                      setVisible(!visible);
+                      setEditableClient(!editableClient);
+                    }}
                     startIcon={
                       <ClearIcon style={{fontSize: "28px"}} />
                     }
@@ -647,7 +671,7 @@ export default function CerrarVenta() {
                   )
                 }
 
-              </Box> */}
+              </Box>
 
               <Box>
                 <Button
