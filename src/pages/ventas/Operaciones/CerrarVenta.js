@@ -56,6 +56,12 @@ export default function CerrarVenta() {
   const [datosCliente, setDatosCliente] = useState({});
   const [monedero, setMonedero] = useState(0);
   const [descuentoVenta, setDescuentoVenta] = useState(0);
+
+
+  const [fechaVencimientoDate, setfechaVencimientoDate] = useState('');
+
+  const [valorPuntoProducto, setValorPuntoProducto] = useState(0.5);
+
   
   const [monederoTotal, setMonederoTotal] = useState(0);
   const [ventaActual, setVentaActual] = useState(0);
@@ -64,7 +70,6 @@ export default function CerrarVenta() {
 
   const [visible, setVisible] = useState(false);
 
-  const [fechaVencimiento, setFechaVencimiento] = useState('');
 
   //States de los montos a pagar
 
@@ -201,10 +206,12 @@ export default function CerrarVenta() {
 
       case "PUNTOS":
         const valor = e.target.value != "" ? parseInt(e.target.value) : 0;
-        // console.log(e.target.value, puntos);
+        console.log(e.target.value, valor);
         if(valor <= monederoTotal){
-          // console.log("entro >>", e.target.value, puntos)
-          setPuntos(e.target.value);
+          const valor2 = valorPuntoProducto * parseFloat(valor);
+          setPuntos(valor);
+          setValorPuntoProducto(valor2);
+          console.log("valor2 >>" , valor2)
         }
         break;
       case "TRANSFERENCIA":
@@ -220,6 +227,15 @@ export default function CerrarVenta() {
 
   window.onkeydown = funcion_tecla;
 
+  console.log(fechaVencimientoDate);
+
+  useEffect(() => {
+    setfechaVencimientoDate(moment().add(datosCliente.dias_credito ? parseInt(datosCliente.dias_credito) : 0,'days').format('YYYY-MM-DD'));
+  }, [datosCliente, datosCliente.dias_credito]);
+
+
+  
+
   useEffect(() => {
     setMontoPagado(
       parseFloat(efectivo) +
@@ -233,8 +249,6 @@ export default function CerrarVenta() {
   useEffect(() => {
     setCambioVenta(montoPagado - totalVenta);
   }, [montoPagado]);
-
-  console.log(datosCliente);
 
   return (
     <>
@@ -438,7 +452,7 @@ export default function CerrarVenta() {
                       <b>Puntos Disponibles:</b>
                     </Typography>
                   </Box>
-                  <Typography variant="subtitle1">{datosCliente.monedero_electronico === null ? 0 : datosCliente.monedero_electronico}</Typography>
+                  <Typography variant="subtitle1">{!datosCliente.monedero_electronico ? 0 : datosCliente.monedero_electronico}</Typography>
                 </Box>
 
                 <Box display="flex">
@@ -523,6 +537,7 @@ export default function CerrarVenta() {
                       id="form-producto-codigo-barras"
                       variant="outlined"
                       value={datosCliente.dias_credito === null ? 0 : datosCliente.dias_credito}
+                      onChange={e => setDatosCliente({...datosCliente, dias_credito: e.target.value})}
                       disabled={editableClient}
                     />
                   </Box>
@@ -587,6 +602,7 @@ export default function CerrarVenta() {
                       id="form-producto-codigo-barras"
                       variant="outlined"
                       disabled={editableClient}
+                      value={totalVenta}
                     />
                   </Box>
                 </Box>
@@ -603,10 +619,13 @@ export default function CerrarVenta() {
                       id="form-producto-codigo-barras"
                       variant="outlined"
                       type="date"
+                      value={fechaVencimientoDate}
                       onChange={(e) => {
-                        console.log(e.target.value);
-                        const modelDate = moment(e.target.value);
-                        console.log(modelDate);
+                        const modelDate = moment(e.target.value).add(1,"days");
+                        const hoy = moment();
+                        const diasDiff = modelDate.diff(hoy, 'days');
+                        setfechaVencimientoDate(e.target.value);
+                        setDatosCliente({...datosCliente, dias_credito: diasDiff});
                       }}
                       disabled={editableClient}
                     />
