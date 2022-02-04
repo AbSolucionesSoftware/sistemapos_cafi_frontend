@@ -173,13 +173,7 @@ export default function ListaAlmacenes(props) {
 			/> */}
 			
 		</Paper>
-		{(props.productos.length > 0) ?
-			<Box m={2} alignContent="flex-end">
-				<ExportarExcel fileName="Inventarios almacen" data={dataExcel} columnName={columns} />
-			</Box>
-			:
-			<div/>
-		}
+	
 		</div>
 	);
 }

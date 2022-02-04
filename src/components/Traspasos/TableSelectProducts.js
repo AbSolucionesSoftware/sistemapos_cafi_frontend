@@ -799,7 +799,7 @@ export default function EnhancedTable(props) {
       let haveCant= 0;
       productosTras.forEach(producto => {
         if(producto.product_selected._id === elemento._id){
-      	  console.log("SELECTMEDIDAS",producto)
+      	  
           haveCant = producto.cantidad_total;		
         }
       });

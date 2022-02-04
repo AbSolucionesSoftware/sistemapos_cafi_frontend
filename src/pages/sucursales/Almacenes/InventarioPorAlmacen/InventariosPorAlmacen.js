@@ -169,6 +169,16 @@ const InventarioPorAlmacen = (props) =>{
 	);
 	React.useEffect(
 		() => {
+			if(props.open){
+				productosAlmacenQuery.refetch();
+				setLoading(false);
+			}
+			
+		},
+		[props.open ]
+	);
+	React.useEffect(
+		() => {
 		console.log(productosAlmacenQuery.error)
 		},
 		[ productosAlmacenQuery.error]
@@ -181,10 +191,10 @@ const InventarioPorAlmacen = (props) =>{
 		},
 		[ categoriasQuery.refetch ]
 	); 
+	
 
 
 	if(productosAlmacenQuery.data){
-		console.log('PRODUCTOS ALMACEN',productosAlmacenQuery.data )
 		productos = productosAlmacenQuery.data.obtenerProductosAlmacenes;
 	}
 	if(categoriasQuery.data){
@@ -238,7 +248,7 @@ const InventarioPorAlmacen = (props) =>{
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-                                Almacenes
+                                Inventario por almacén
 						</Typography>
 						<Box mx={3}>
 							<Box m={1}>

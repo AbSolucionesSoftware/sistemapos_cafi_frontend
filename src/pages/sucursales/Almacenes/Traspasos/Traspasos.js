@@ -293,7 +293,7 @@ export default function Traspasos() {
 	},[ dataConceptos ]);  */
 
      useEffect(() => {
-         console.log('useffect conceptoTraspaso')
+        
         if(conceptoTraspaso !== null){
             if(conceptoTraspaso.destino === 'N/A'){
                 if(almacenOrigen !== null){
@@ -523,7 +523,7 @@ export default function Traspasos() {
                     empresa: sesion.empresa._id
                 }
             }  
-            console.log(input)
+           
              const traspaso =    await CrearTraspaso(input) 
            
                 //console.log(traspaso)
