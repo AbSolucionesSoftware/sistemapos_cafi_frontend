@@ -89,6 +89,15 @@ export const OBTENER_PRODUCTOS_ALMACEN = gql`
         }
         receta_farmacia
       }
+      precios{
+        inventario{
+          inventario_maximo
+          inventario_minimo
+          unidad_de_inventario
+          codigo_unidad
+        }
+      }
+  
       existencia_almacenes {
         _id {
           producto
@@ -97,6 +106,7 @@ export const OBTENER_PRODUCTOS_ALMACEN = gql`
             nombre_almacen
           }
         }
+        unidad_inventario
         cantidad_existente
       }
       empresa

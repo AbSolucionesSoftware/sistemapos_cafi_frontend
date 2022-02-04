@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
-import useStyles from '../styles';
+import React, { useContext, useEffect, useState } from 'react'
 import { Box, Button, Dialog, DialogActions, DialogContent, Grid, Slide, Typography } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close';
 import moment from 'moment';
+import useStyles from '../styles';
 import 'moment/locale/es';
 import { useQuery } from '@apollo/client';
 import { OBTENER_PRE_CORTE_CAJA } from '../../../gql/Cajas/cajas';
+import { AccesosContext } from '../../../context/Accesos/accesosCtx';
 moment.locale('es');
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -15,6 +16,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function PreCorteCaja() {
     const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
+    const { 
+		reloadVerPreCorte, 
+        setReloadVerPreCorte,
+		setAbrirPanelAcceso,
+        abrirPanelAcceso,
+		setDepartamentos
+	} = useContext(AccesosContext);
 
     const input = { 
         horario_en_turno: "ABRIR TURNO",
@@ -33,8 +42,18 @@ export default function PreCorteCaja() {
     const handleClickOpen = () => { 
         if(sesion.accesos.ventas.pre_corte.ver === true){
 			setOpen(!open);
-		};
+        }else{
+            setAbrirPanelAcceso(!abrirPanelAcceso);
+            setDepartamentos({departamento: 'ventas', subDepartamento: 'pre_corte', tipo_acceso: 'ver'})
+        }
 	};
+
+    useEffect(() => {
+		if (reloadVerPreCorte === true) {	
+            setOpen(!open);
+			setReloadVerPreCorte(false);
+		}
+	}, [reloadVerPreCorte]);
     
     if(!data) return null;
 
@@ -115,7 +134,7 @@ export default function PreCorteCaja() {
                         </Grid>
                         <Grid item lg={2}>
                             <Box ml={4} display="flex" alignItems="center" justifyContent="flex-end">
-                                <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                                <Button variant="contained" color="secondary" onClick={() => setOpen(!open)} size="large">
                                     <CloseIcon />
                                 </Button>
                             </Box>
@@ -166,7 +185,7 @@ export default function PreCorteCaja() {
                 <DialogActions>
                     {sesion.turno_en_caja_activo === true && turnoEnCurso ? (
                         <Button 
-                            onClick={handleClickOpen} 
+                            onClick={() => setOpen(!open)} 
                             color="primary"
                             variant="outlined"
                             size="large"

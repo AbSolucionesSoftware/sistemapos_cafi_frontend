@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { Grid,Box, TextField } from '@material-ui/core';
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import {Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel} from '@material-ui/core';
-import {Toolbar, Typography, Paper, IconButton, Tooltip, Dialog, Checkbox ,Slide, Button} from '@material-ui/core';
+import {Toolbar, Typography, Paper, IconButton, Tooltip, Dialog, Checkbox ,Slide, Button, DialogTitle, DialogActions} from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -45,13 +45,30 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-const headCells = [
-  { id: 'codeBarras', numeric: false, disablePadding: false, label: 'Código de barras' },
-  { id: 'name', numeric: false, disablePadding: true, label: 'Nombre' },
-  { id: 'tipo', numeric: true, disablePadding: false, label: 'Tipo' },
-  { id: 'cantidad', numeric: true, disablePadding: false, label: 'Cantidad' },
+const headCells = (add) => {
 
-];
+let hC = (add) ? 
+
+  [
+    { id: 'codeBarras', numeric: false, disablePadding: false, label: 'Código de barras' },
+    { id: 'name', numeric: false, disablePadding: true, label: 'Nombre' },
+    { id: 'tipo', numeric: true, disablePadding: false, label: 'Tipo' },
+    { id: 'cantidad', numeric: true, disablePadding: false, label: 'Cantidad' },
+
+  ]
+  :
+
+  [
+    { id: 'codeBarras', numeric: false, disablePadding: false, label: 'Código de barras' },
+    { id: 'name', numeric: false, disablePadding: true, label: 'Nombre' },
+    { id: 'tipo', numeric: true, disablePadding: false, label: 'Tipo' },
+    { id: 'cantidad', numeric: true, disablePadding: false, label: 'Cantidad' },
+    { id: 'solo', numeric: true, disablePadding: false, label: ' ' },
+  ]
+
+  return hC;
+}
+;
 const getUnidadMax  = (cantidad_existente_maxima,unidadMaxima) => {
   //console.log('getCantidad',cantidad_nueva, cantidad_medida, accion)
   const UNIDAD_MAXIMA = {
@@ -66,15 +83,15 @@ function EnhancedTableHead(props) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
-
+  const headCellsNames =  headCells(props.add);
   return (
     <TableHead>
       <TableRow>
      
-        {headCells.map((headCell) => (
+        {headCellsNames.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
+            align='left'
             // padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -119,6 +136,10 @@ const useToolbarStyles = makeStyles((theme) => ({
   ,
   inputCantidad:{
     width:120,
+    height:10
+  },
+  inputCantidadTable:{
+    width:'20%',
     height:10
   },
   highlight:
@@ -270,10 +291,7 @@ const DialogTallas = (props) => {
           </div>
         :
         <div>
-        
-
-          <TableSelectMedidas producto = {props.product_selected} new_medidas={new_medidas} setNew_medidas={setNew_medidas} />
-          
+          <TableSelectMedidas producto = {props.product_selected} new_medidas={new_medidas} setNew_medidas={setNew_medidas} add={props.add} />
         </div> 
       }    
       <Box display="flex" justifyContent="flex-end" m={1} mr={5}>
@@ -292,52 +310,73 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
   const [cantidadTo, setCantidadTo] = useState('');
-  const [error, setError] = useState({error:false, mensaje:''});
+  const [openEnd, setOpenEnd] = useState(false);
  
-  const [ openTallas, setOpenTallas] = useState(false);
+  
   const { product_selected, setproduct_selected, tipoPieza, update } = props;
    const {
         setProductosTras,
-        productosTras, 
-     
+        productosTras,
+        setProductosEmpTo,
+        setProductosTo, 
+        productosTo,
+        productosEmpTo
     } = useContext(TraspasosAlmacenContext);
 
 
 
 const setValueToTrans =(cantidad_total) =>{
   try {
-    setError({error:false, mensaje:''})
+    props.setError({error:false, mensaje:''})
    
     if(cantidad_total === 0 || cantidad_total === '') return;
    let element = productosTras.find(element => element.product_selected._id === product_selected._id);
-   
+  /*   let elementTablaTo = (props.almacenOrigen !== null) ? 
+        productosEmpTo.find(element => element.product_selected._id === product_selected._id)
+        :
+        productosTo.find(element => element.product_selected._id === product_selected._id) */
     if(element) {
  //console.log(cantidad_total, element)
-      let totalCantExistMasNuevaCantidad = cantidad_total + element.cantidad_total
+      let totalCantExistMasNuevaCantidad = parseFloat(cantidad_total);
       //SUMA CANTIDAD TOTAL
       
       if(props.add){
         if(product_selected.inventario_general !== undefined){
           if( !tipoPieza.piezas ){
             if(totalCantExistMasNuevaCantidad <=  product_selected.inventario_general[0].cantidad_existente_maxima){
-              element.cantidad_total += cantidad_total;
+              element.cantidad_total = totalCantExistMasNuevaCantidad;
             }else{
-              setError({error:true, mensaje:'La cantidad ingresada sobrepasa la cantidad existente del producto seleccionado.'})
+              props.setError({error:true, mensaje:'La cantidad ingresada sobrepasa la cantidad existente del producto seleccionado.'})
             }  
           }else{
             if(totalCantExistMasNuevaCantidad <=  product_selected.inventario_general[0].cantidad_existente){
-              element.cantidad_total += cantidad_total;
+              element.cantidad_total = totalCantExistMasNuevaCantidad;
             
             }else{
-              setError({error:true, mensaje:'La cantidad ingresada sobrepasa la cantidad existente del producto seleccionado.'})
+              props.setError({error:true, mensaje:'La cantidad ingresada sobrepasa la cantidad existente del producto seleccionado.'})
             }
           }
         }else{
-          element.cantidad_total += cantidad_total;
+          element.cantidad_total = totalCantExistMasNuevaCantidad;
+        /*   if(props.add){
+            elementTablaTo.inventario_general[0].cantidad_existente -= cantidad_total;
+          }else{
+            elementTablaTo.cantidad_total -= cantidad_total
+          } */
+
+          
         }
       }else{
-        element.cantidad_total = cantidad_total;
+
+        element.cantidad_total = parseFloat(cantidad_total);
       }  
+      setProductosTras([...productosTras]);
+      /*  if(props.almacenOrigen !== null){
+           setProductosEmpTo([...productosTras]);
+        }else{
+           setProductosTo([...productosTras]);
+        } */
+
       return;
 
 
@@ -366,7 +405,7 @@ const setValueToTrans =(cantidad_total) =>{
         setProductosTras([...productosTras, obj]);
       }
       else{
-        setError({error:true, mensaje:'La cantidad ingresada sobrepasa la cantidad existente.'})
+        props.setError({error:true, mensaje:'La cantidad ingresada sobrepasa la cantidad existente.'})
       }
     }else{
        let obj= {product_selected:prodSelect, new_medidas:[], cantidad_total, unidad_maxima: tipoPieza.cajas};
@@ -379,40 +418,23 @@ const setValueToTrans =(cantidad_total) =>{
   }
 }
 
-const deleteItem =() =>{
+const deletesItems =() =>{
   try {
-    
-    let prodSet =  [] ;
-    
-   
-    if(productosTras.length){
-      prodSet = productosTras;
-    }
-    
+  
     setproduct_selected(undefined)
     //console.log(prodSet.filter(item => item.product_selected._id !== product_selected._id))
-    setProductosTras(prodSet.filter(item => item.product_selected._id !== product_selected._id));
+    setProductosTras([]);
 
   } catch (error) {
 
   }
 }
 
-const editItem =() =>{
-  try {
-    if(product_selected.datos_generales.tipo_producto !== 'OTROS') {
-      setOpenTallas(true);
-      //console.log(props)
-    }
-   
-  } catch (error) {
 
-  }
-}
 useEffect(() => {
   try {
     if(props.add){
-      setOpenTallas(true)
+      props.setOpenTallas(true)
     }
     setCantidadTo(props.cant)
     
@@ -422,10 +444,20 @@ useEffect(() => {
   
 }, [product_selected])   
   
-          
+  const pressEnter = (e) => {
+    try {
+      if (e.key === "Enter") {
+        setValueToTrans(parseFloat(e.target.value))
+      }
+    } catch (error) {
+      
+    }
+    
+  };        
   function onlyNumbers(value){
-      const onlyNums = value.toString().replace(/[^0-9]/g, '');
-      const intValue = parseInt(onlyNums);
+   
+      //const onlyNums = value.toString().replace(/[^0-9]/g, '');
+      const intValue = parseFloat(value);
       try {
         if(props.almacenOrigen !== null){
           if( !tipoPieza.piezas  ){
@@ -442,6 +474,7 @@ useEffect(() => {
               }
             }
           }else{
+          
             setCantidadTo(intValue);
             return;
           }
@@ -453,8 +486,9 @@ useEffect(() => {
 
 
 
-  const TipoPiezaComponent = () =>{
+  const TipoPiezaComponent = () => {
      try {
+     
       const TIPO_PIEZA = {
         'Pz' :  {unidad_maxima: null, unidad_minima: 'Pz' },
         'Caja' : {unidad_maxima: 'Caja', unidad_minima: 'Pz' },
@@ -496,28 +530,42 @@ useEffect(() => {
   return (
     <Toolbar
       className={clsx(classes.root, {
-        [classes.highlight]: product_selected !== undefined,
+        [classes.highlight]: product_selected !== undefined && props.add,
       })}
     
     >
     <Grid container>
-      {product_selected !== undefined  ? (
+      {product_selected !== undefined  && props.add ? (
         <Box style={{width:'100%'}}>
+         
           <Typography className={classes.title} color="inherit" variant="subtitle2"  >
             {product_selected.datos_generales.nombre_comercial} 
           </Typography>
         </Box>
       ) : (
-        <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          {props.title}
-        </Typography>
+        <Box style={{width:'100%'}} flexDirection={'row'} display="flex">
+          <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+            {props.title}
+          </Typography>
+          {
+            (productosTras.length > 0 && !props.add) ? 
+            <Tooltip title="Eliminar todos">
+              <IconButton aria-label="delete" onClick={() => setOpenEnd(true)} >
+                  <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+            :
+            <div/>
+          }
+          
+         </Box>  
       )}
 
       {(product_selected !== undefined )? (
       <Box > 
         {
-          (error.error) ?
-          <Typography color="inherit">{error.mensaje}</Typography>
+          (props.error.error) ?
+          <Typography color="inherit">{props.error.mensaje}</Typography>
           :
           <div/>
         } 
@@ -537,7 +585,7 @@ useEffect(() => {
                             <Typography color="primary" style={{marginLeft:10}}>{props.product_selected.inventario_general[0].unidad_inventario}</Typography> 
                           </Box>
                           {
-                            (props.product_selected.inventario_general[0].cantidad_existente_maxima !== null ) ?
+                            (props.product_selected.inventario_general[0].unidad_maxima !== null ) ?
                               <Box flexDirection={'row'} >
                                 <Checkbox checked={tipoPieza.cajas} color="primary" onChange={() => {update(); setCantidadTo(0)}}/>
                                 <Typography color="primary" style={{marginLeft:10}}>{"" + props.product_selected.inventario_general[0].unidad_maxima} </Typography> 
@@ -560,6 +608,8 @@ useEffect(() => {
                             type="number"
                             InputProps={{ inputProps: { min: 0 } }}
                             value={cantidadTo}
+    
+                            onKeyPress={pressEnter}
                             onChange={(value) => onlyNumbers(value.target.value)}
                             
                         />
@@ -589,10 +639,13 @@ useEffect(() => {
                    
                   :    
                   <div>
-                    <DialogTallas openTallas={openTallas} setOpenTallas={setOpenTallas} setproduct_selected={setproduct_selected}  product_selected={product_selected} almacenOrigen={props.almacenOrigen} obtenerConsultasProducto={props.obtenerConsultasProducto}refetch={props.refetch}/> 
+                    <DialogTallas openTallas={props.openTallas} setOpenTallas={props.setOpenTallas} setproduct_selected={setproduct_selected}  product_selected={product_selected} almacenOrigen={props.almacenOrigen} obtenerConsultasProducto={props.obtenerConsultasProducto}refetch={props.refetch}/> 
                   </div> 
                 :
-                <Grid width={'100%'} container>
+                <div>
+                   <DialogTallas openTallas={props.openTallas} setOpenTallas={props.setOpenTallas} setproduct_selected={setproduct_selected}  product_selected={product_selected} almacenOrigen={props.almacenOrigen} obtenerConsultasProducto={props.obtenerConsultasProducto}refetch={props.refetch}/> 
+                </div>
+                /* <Grid width={'100%'} container>
                   { (product_selected.datos_generales.tipo_producto === 'OTROS') ? 
                     <div>
                      
@@ -636,16 +689,27 @@ useEffect(() => {
                             <DeleteIcon />
                         </IconButton>
                     </Tooltip>
-                  </Box>  
-                </Grid>
+                  </Box> 
+                </Grid> */
             }
                 
-          
+         
         </Box>
       ) : (
         <div/>
       )}
       </Grid>
+      <Dialog open={openEnd} onClose={() => setOpenEnd(false)}>
+            <DialogTitle>{'¿Está seguro de realizar esta acción?'}</DialogTitle>
+            <DialogActions>
+                <Button onClick={() => setOpenEnd(false)} color="primary">
+                    Cancelar
+                </Button>
+                <Button color="secondary" autoFocus variant="contained" onClick={() => deletesItems()}>
+                    Eliminar
+                </Button>
+            </DialogActions>
+        </Dialog>
     </Toolbar>
   );
 };
@@ -689,7 +753,9 @@ export default function EnhancedTable(props) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('calories');
   const [selected, setSelected] = useState(undefined);
+  const [ openTallas, setOpenTallas] = useState(false);
   const [cant, setCant] = useState(0);
+   const [error, setError] = useState({error:false, mensaje:''});
   //const [data, setData] = useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -703,14 +769,14 @@ export default function EnhancedTable(props) {
  }
  
   const {
-        productosTras, productosTo,   productosEmpTo
+        productosTras, productosTo,   productosEmpTo, setProductosTras
     } = useContext(TraspasosAlmacenContext);
 
   const obtenerConsultasProducto = useQuery(OBTENER_CONSULTAS, {
     variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
   });
 
-
+  
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -728,11 +794,18 @@ export default function EnhancedTable(props) {
   const data = (!props.add) ?  productosTras  : (!props.almacenOrigen) ? productosEmpTo : productosTo  ; 
 
   const handleClick = (event, elemento, cant) => {
-   
-     if((elemento.datos_generales.tipo_producto === 'OTROS')){
-          
-        setCant(props.add ? 0 : cant)
-      }
+ 
+    if(elemento.datos_generales.tipo_producto === 'OTROS'){
+      let haveCant= 0;
+      productosTras.forEach(producto => {
+        if(producto.product_selected._id === elemento._id){
+      	  
+          haveCant = producto.cantidad_total;		
+        }
+      });
+      
+        setCant(props.add ? haveCant : cant)
+    }
 
     
     if(selected!== undefined){
@@ -760,7 +833,117 @@ export default function EnhancedTable(props) {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  const deleteItem =(row) =>{
+    try {
+      
+      let prodSet =  [] ;
+      
+    
+      if(productosTras.length){
+        prodSet = productosTras;
+      }
+      
+    
+      //console.log(prodSet.filter(item => item.product_selected._id !== product_selected._id))
+      setProductosTras(prodSet.filter(item => item.product_selected._id !== row._id));
 
+    } catch (error) {
+
+    }
+  }
+  const setValueToTrans =(cantidad_total) =>{
+  try {
+    //setError({error:false, mensaje:''})
+   
+    if(cantidad_total === 0 || cantidad_total === '') return;
+   let element = productosTras.find(element => element.product_selected._id === selected._id);
+  /*   let elementTablaTo = (props.almacenOrigen !== null) ? 
+        productosEmpTo.find(element => element.product_selected._id === product_selected._id)
+        :
+        productosTo.find(element => element.product_selected._id === product_selected._id) */
+  if(element) {
+ //console.log(cantidad_total, element)
+      let totalCantExistMasNuevaCantidad = parseFloat(cantidad_total + element.cantidad_total);
+      //SUMA CANTIDAD TOTAL
+      
+      if(props.add){
+        if(selected.inventario_general !== undefined){
+          if( !tipoPieza.piezas ){
+            if(totalCantExistMasNuevaCantidad <=  selected.inventario_general[0].cantidad_existente_maxima){
+              element.cantidad_total = totalCantExistMasNuevaCantidad;
+            }else{
+              setError({error:true, mensaje:'La cantidad ingresada sobrepasa la cantidad existente del producto seleccionado.'})
+            }  
+          }else{
+            if(totalCantExistMasNuevaCantidad <=  selected.inventario_general[0].cantidad_existente){
+              element.cantidad_total = totalCantExistMasNuevaCantidad;
+            
+            }else{
+              setError({error:true, mensaje:'La cantidad ingresada sobrepasa la cantidad existente del producto seleccionado.'})
+            }
+          }
+        }else{
+          element.cantidad_total = totalCantExistMasNuevaCantidad;
+        /*   if(props.add){
+            elementTablaTo.inventario_general[0].cantidad_existente -= cantidad_total;
+          }else{
+            elementTablaTo.cantidad_total -= cantidad_total
+          } */
+
+          
+        }
+      }else{
+
+        element.cantidad_total = parseFloat(cantidad_total);
+      }  
+      setProductosTras([...productosTras]);
+      /*  if(props.almacenOrigen !== null){
+           setProductosEmpTo([...productosTras]);
+        }else{
+           setProductosTo([...productosTras]);
+        } */
+
+      return;
+
+
+    }
+     return;
+  } catch (error) {
+     //console.log(error)
+  }
+}
+
+  
+  function onlyNumbers(value){
+   
+      //const onlyNums = value.toString().replace(/[^0-9]/g, '');
+      const intValue = parseFloat(value);
+      try {
+        if(props.almacenOrigen !== null){
+          if( !tipoPieza.piezas  ){
+            if(intValue <= selected.inventario_general[0].cantidad_existente_maxima){
+               setValueToTrans(intValue)
+              //console.log(intValue)
+              return;
+            } 
+          }else{
+            
+              if(intValue <= selected.inventario_general[0].cantidad_existente){
+                setValueToTrans(intValue)
+                return;
+              }
+            }
+          }else{
+           
+           
+            
+            return;
+          }
+      } catch (error) {
+        
+      }
+    
+  }
   const isSelected = (id) => {
     //return selected.indexOf(name) !== -1;
     
@@ -779,23 +962,45 @@ export default function EnhancedTable(props) {
     
   } 
 
+  const editItem =(prod_sel) =>{
+  try {
+  
+  
+    if(prod_sel.datos_generales.tipo_producto !== 'OTROS') {
+      setOpenTallas(true);
+      //console.log(props)
+    }
+   
+  } catch (error) {
+
+  }
+}
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
   
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
        
-        <EnhancedTableToolbar product_selected={selected} setproduct_selected={setSelected} title={props.title} add={props.add} almacenOrigen={props.almacenOrigen} productosTras ={productosTras} tipoPieza={tipoPieza} update={update} cant={cant} obtenerConsultasProducto={(obtenerConsultasProducto.data) ? obtenerConsultasProducto.data.obtenerConsultasProducto :[]}refetch={( obtenerConsultasProducto.refetch ) ? obtenerConsultasProducto.refetch : null}  />
-        <TableContainer>
+        <EnhancedTableToolbar 
+          product_selected={selected} 
+          setproduct_selected={setSelected} 
+          openTallas={openTallas}
+          setOpenTallas={setOpenTallas}
+          error={error}
+          setError={setError}
+          title={props.title} add={props.add} almacenOrigen={props.almacenOrigen} productosTras ={productosTras} tipoPieza={tipoPieza} update={update} cant={cant} obtenerConsultasProducto={(obtenerConsultasProducto.data) ? obtenerConsultasProducto.data.obtenerConsultasProducto :[]}refetch={( obtenerConsultasProducto.refetch ) ? obtenerConsultasProducto.refetch : null}  />
+        <TableContainer style={{height:'50vh'}}>
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
-            size={'medium'}
-            aria-label="enhanced table"
+            size={'small'}
+           
+            aria-label="a dense table"
           >
             <EnhancedTableHead
               classes={classes}
               product_selected={selected}
+              add = {props.add}
               order={order}
               orderBy={orderBy}
               handleSelectAllClick={handleSelectAllClick}
@@ -803,12 +1008,12 @@ export default function EnhancedTable(props) {
               rowCount={data.length}
             />
             <TableBody>
-              {stableSort(data, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              {data
                 .map((row, index) => {
-                  const isItemSelected = isSelected((props.add) ? row._id: row.product_selected._id);
+                
+                  const isItemSelected = isSelected((props.add === true) ? row._id: row.product_selected._id);
                   const labelId = `enhanced-table-checkbox-${index}`;
-                 
+                
                   if(props.add){
                     
                     if(props.almacenOrigen) {
@@ -820,7 +1025,7 @@ export default function EnhancedTable(props) {
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row._id}
+                        key={(props.add === true) ? row._id : row.product_selected._id}
                         selected={isItemSelected}
                         
                       >
@@ -831,8 +1036,8 @@ export default function EnhancedTable(props) {
                           {row.datos_generales.nombre_comercial}
                         </TableCell>
                         
-                        <TableCell> {row.datos_generales.tipo_producto}</TableCell>
-                        <TableCell > {row.inventario_general[0].cantidad_existente }  {row.inventario_general[0].unidad_inventario} </TableCell>
+                        <TableCell align="left"> {row.datos_generales.tipo_producto}</TableCell>
+                        <TableCell align="left"> {row.inventario_general[0].cantidad_existente }  {row.inventario_general[0].unidad_inventario} </TableCell>
                         
                         
                       
@@ -856,8 +1061,8 @@ export default function EnhancedTable(props) {
                         <TableCell component="th" id={labelId} scope="row">
                           {row.datos_generales.nombre_comercial}
                         </TableCell>
-                        <TableCell align="right"> {row.datos_generales.tipo_producto}</TableCell>
-                        <TableCell align="right"> N/A</TableCell>
+                        <TableCell align="left"> {row.datos_generales.tipo_producto}</TableCell>
+                        <TableCell align="left"> N/A</TableCell>
                       </TableRow>
                       );
                     }
@@ -870,19 +1075,54 @@ export default function EnhancedTable(props) {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row._id}
+                       key={(props.add === true) ? row._id : row.product_selected._id}
                       selected={isItemSelected}
                       
                     >
-                      <TableCell  id={labelId} scope="row">
+                      <TableCell  id={labelId} component="th" width={100}>
                         {(row.product_selected.datos_generales.codigo_barras == null)? 'SIN CÓDIGO' : row.product_selected.datos_generales.codigo_barras}
                       </TableCell>
-                      <TableCell component="th" id={labelId} scope="row">
+                      <TableCell id={labelId}  width={200}>
                         {row.product_selected.datos_generales.nombre_comercial}
                       </TableCell>
-                      <TableCell align="right"> {row.product_selected.datos_generales.tipo_producto}</TableCell>
-                      <TableCell align="right"> {row.cantidad_total}</TableCell> 
-                     
+                      <TableCell align="left" > {row.product_selected.datos_generales.tipo_producto}</TableCell>
+                      {
+                        (row.product_selected.datos_generales.tipo_producto  === "OTROS") ? 
+                          <TableCell align="left"  width={20} > 
+                            <TextField
+                              size="small"
+                              name="cantidad"
+                              variant="outlined"
+                              type="number"
+                              InputProps={{ inputProps: { min: 0 } }}
+                              value={row.cantidad_total}
+                              onChange={(value) => onlyNumbers(value.target.value)}
+                            
+                            />
+                          </TableCell> 
+                          :
+                          <TableCell align="left"> {row.cantidad_total}</TableCell> 
+
+                      }
+
+                      <TableCell align="left" width={10}>
+                        <Box flexDirection={'row'} display="flex" style={{width:75}}>
+                          { (row.product_selected.datos_generales.tipo_producto !== 'OTROS') ? 
+                          <Tooltip title="Editar">
+                              <IconButton aria-label="edit" onClick={() => editItem(row.product_selected)} >
+                                  <EditIcon />
+                              </IconButton>
+                          </Tooltip> 
+                          :
+                          <div/>
+                          } 
+                          <Tooltip title="Eliminar">
+                            <IconButton aria-label="delete" onClick={() => deleteItem(row.product_selected)} >
+                                <DeleteIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                      </TableCell> 
                     </TableRow>
                     )
                   }
@@ -895,7 +1135,7 @@ export default function EnhancedTable(props) {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
+      {/*   <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={data.length}
@@ -904,7 +1144,7 @@ export default function EnhancedTable(props) {
           onPageChange={handleChangePage}
           labelRowsPerPage={""}
           // onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        /> */}
        
       </Paper>
       

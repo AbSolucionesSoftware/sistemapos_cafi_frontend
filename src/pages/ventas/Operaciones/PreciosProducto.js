@@ -23,14 +23,17 @@ import useStyles from "../styles";
 import { VentasContext } from "../../../context/Ventas/ventasContext";
 import SnackBarMessages from "../../../components/SnackBarMessages";
 import { calculatePrices, findProductArray, calculatePrices2 } from "../../../config/reuserFunctions";
+import { AccesosContext } from "../../../context/Accesos/accesosCtx";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
+  
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function PreciosProductos() {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   // const [selected, setSelected] = useState([]);
 
   const [preciosProductos, setPreciosProductos] = useState({})
@@ -42,22 +45,40 @@ export default function PreciosProductos() {
     setUpdateTablaVentas,
     updateTablaVentas
   } = useContext(VentasContext);
-  // console.log(productoCambioPrecio.id_producto.precios.precios_producto[0]);
+
+  const { 
+		reloadVerPrecios, 
+    setReloadVerPrecios,
+		setAbrirPanelAcceso,
+    abrirPanelAcceso,
+		setDepartamentos
+	} = useContext(AccesosContext);
+
   const [selectPrisingProduct, setSelectPrisingProduct] = useState(
     precioSelectProductoVenta.length > 0 ? precioSelectProductoVenta[0] : {}
   );
 
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
 
-  // console.log(productoCambioPrecio);
-
   const handleClickOpen = () => {
-    setOpen(!open);
+    if(sesion.accesos.ventas.precios_productos.ver === true){
+      setOpen(!open);
+    }else{
+      setAbrirPanelAcceso(!abrirPanelAcceso);
+      setDepartamentos({departamento: 'ventas', subDepartamento: 'precios_productos', tipo_acceso: 'ver'})
+    }
   };
 
   useEffect(() => {
     setPreciosProductos(productoCambioPrecio);
-  }, [productoCambioPrecio ])
+  }, [productoCambioPrecio ]);
+
+  useEffect(() => {
+		if (reloadVerPrecios === true) {	
+      setOpen(!open);
+      setReloadVerPrecios(false);
+		}
+	}, [reloadVerPrecios]);
 
   const handleAceptChangePrising = async () => {
 
@@ -104,6 +125,26 @@ export default function PreciosProductos() {
         newProductoPrecioActual.precio_seleccionado = true;
         newProductoPrecioActual.precio_actual_producto = parseFloat((precioSelectProductoVenta[0].precio_neto).toFixed(2));
         newProductoPrecioActual.precio_actual_object = precioSelectProductoVenta[0];
+
+        newProductoPrecioActual.iva_total_producto = parseFloat(new_suma.ivaCalculo);
+        newProductoPrecioActual.ieps_total_producto = parseFloat(new_suma.iepsCalculo);
+        newProductoPrecioActual.impuestos_total_producto = parseFloat(new_suma.impuestoCalculo);
+        newProductoPrecioActual.subtotal_total_producto = parseFloat(new_suma.subtotalCalculo);
+        newProductoPrecioActual.total_total_producto = parseFloat(new_suma.totalCalculo);
+
+        newProductoPrecioActual.precio_actual_object = {
+          cantidad_unidad: precioSelectProductoVenta[0].cantidad_unidad ? precioSelectProductoVenta[0].cantidad_unidad : null,
+          numero_precio: precioSelectProductoVenta[0].numero_precio ? precioSelectProductoVenta[0].numero_precio : null,
+          unidad_maxima: precioSelectProductoVenta[0].unidad_maxima ? precioSelectProductoVenta[0].unidad_maxima : null,
+          precio_general: precioSelectProductoVenta[0].precio_general ? precioSelectProductoVenta[0].precio_general : null,
+          precio_neto: precioSelectProductoVenta[0].precio_neto ? precioSelectProductoVenta[0].precio_neto : null,
+          precio_venta: precioSelectProductoVenta[0].precio_venta ? precioSelectProductoVenta[0].precio_venta : null,
+          iva_precio: precioSelectProductoVenta[0].iva_precio ? precioSelectProductoVenta[0].iva_precio : null,
+          ieps_precio: precioSelectProductoVenta[0].ieps_precio ? precioSelectProductoVenta[0].ieps_precio : null,
+          utilidad: precioSelectProductoVenta[0].utilidad ? precioSelectProductoVenta[0].utilidad : null,
+          porciento: precioSelectProductoVenta[0].porciento ? precioSelectProductoVenta[0].porciento : null,
+          dinero_descontado: precioSelectProductoVenta[0].dinero_descontado ? precioSelectProductoVenta[0].dinero_descontado : null,
+        };
         
         productosVentasTemp.splice(
           producto_encontrado.producto_found.index,
@@ -187,7 +228,7 @@ export default function PreciosProductos() {
     if (e.keyCode === 114) {
       handleClickOpen();
     }
-  }
+  }; 
 
   return (
     <>
@@ -238,7 +279,7 @@ export default function PreciosProductos() {
                   <Button
                     variant="contained"
                     color="secondary"
-                    onClick={handleClickOpen}
+                    onClick={() => setOpen(!open)}
                     size="medium"
                   >
                     <CloseIcon />

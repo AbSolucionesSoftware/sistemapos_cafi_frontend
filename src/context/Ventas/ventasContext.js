@@ -40,7 +40,7 @@ export const VentasProvider = ({ children }) => {
 
     const [ update, setUpdate ] = useState(false);
     const [ error, setError ] = useState(false);
-    const [  alert, setAlert ] = useState({ message: "", status: "", open: false });
+    const [ alert, setAlert ] = useState({ message: "", status: "", open: false });
     const [ abrirTurnosDialog, setAbrirTurnosDialog ] = useState(false);
     const [ updateClientVenta, setUpdateClientVenta ] = useState(false);
 
@@ -82,7 +82,7 @@ export const VentasProvider = ({ children }) => {
                 turnoActivo, 
                 setTurnoActivo,
                 ubicacionTurno, 
-                setUbicacionTurno
+                setUbicacionTurno,
                 // precioSeleccionadoTabla,
                 // setPrecioSeleccionadoTabla
             }

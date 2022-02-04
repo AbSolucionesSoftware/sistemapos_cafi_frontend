@@ -446,18 +446,39 @@ const RenderTableRows = ({
       if (producto_encontrado.found) {
         const { cantidad_venta, ...newP } =
           producto_encontrado.producto_found.producto;
-        newP.cantidad_venta = new_cant
+        newP.cantidad_venta = parseInt(new_cant);
         const verify_prising = await verifiPrising(newP);
         const newPrising = verify_prising.found ? verify_prising.object_prising : newP.precio_actual_object;
         
         const new_resta = await calculatePrices2({newP, cantidad: cantidad_venta, precio_boolean: true, precio: newP.precio_actual_object, granel: newP.granel_producto, origen: "Tabla" });
         const new_suma = await calculatePrices2({newP, cantidad: new_cant, precio_boolean: true, precio: newPrising, granel: newP.granel_producto, origen: "Tabla" });
 
+        newP.iva_total_producto = parseFloat(new_suma.ivaCalculo);
+        newP.ieps_total_producto = parseFloat(new_suma.iepsCalculo);
+        newP.impuestos_total_producto = parseFloat(new_suma.impuestoCalculo);
+        newP.subtotal_total_producto = parseFloat(new_suma.subtotalCalculo);
+        newP.total_total_producto = parseFloat(new_suma.totalCalculo);
+
         if (verify_prising.found) {
           newP.precio_a_vender = new_suma.totalCalculo;
           newP.precio_anterior = newP.precio_actual_porducto;
           newP.precio_actual_producto = verify_prising.pricing;
           newP.precio_actual_object = verify_prising.object_prising;
+
+          newP.precio_actual_object = {
+            cantidad_unidad: verify_prising.object_prising.cantidad_unidad ? verify_prising.object_prising.cantidad_unidad : null,
+            numero_precio: verify_prising.object_prising.numero_precio ? verify_prising.object_prising.numero_precio : null,
+            unidad_maxima: verify_prising.object_prising.unidad_maxima ? verify_prising.object_prising.unidad_maxima : null,
+            precio_general: verify_prising.object_prising.precio_general ? verify_prising.object_prising.precio_general : null,
+            precio_neto: verify_prising.object_prising.precio_neto ? verify_prising.object_prising.precio_neto : null,
+            precio_venta: verify_prising.object_prising.precio_venta ? verify_prising.object_prising.precio_venta : null,
+            iva_precio: verify_prising.object_prising.iva_precio ? verify_prising.object_prising.iva_precio : null,
+            ieps_precio: verify_prising.object_prising.ieps_precio ? verify_prising.object_prising.ieps_precio : null,
+            utilidad: verify_prising.object_prising.utilidad ? verify_prising.object_prising.utilidad : null,
+            porciento: verify_prising.object_prising.porciento ? verify_prising.object_prising.porciento : null,
+            dinero_descontado: verify_prising.object_prising.dinero_descontado ? verify_prising.object_prising.dinero_descontado : null,
+          };
+
         }else{
           newP.cantidad_venta = parseInt(new_cant);
           newP.precio_anterior = newP.precio_actual_producto;

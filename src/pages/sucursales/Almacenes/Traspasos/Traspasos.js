@@ -127,6 +127,7 @@ const MenuProps = {
   },
 };
 
+
 const transportes = [
     'Barco',
     'Moto',
@@ -178,7 +179,7 @@ export default function Traspasos() {
 
     let conceptos= [];
     let almacenes = [];
- 
+    
     const queryObtenerAlmacenes = useQuery(OBTENER_ALMACENES,{
         variables: {
             id: sesion.sucursal._id
@@ -234,20 +235,32 @@ export default function Traspasos() {
      }
   );
     
-    const obtenerAlmacenes= () =>{
+    /* const obtenerAlmacenes= useCallback( () =>{
         try {
-            setAlmacenesDestino(queryObtenerAlmacenes.data.obtenerAlmacenes.filter(element => element._id !== almacenOrigen._id));
+            console.log('obtenerAlmacenes')
+            
         } catch (error) {
            console.log(error)
         }   
-    };
+    },[]); */
 
+    const obtenerProductosAlmacen = useCallback(async() =>{
+        try {
+           productosQuery.refetch();
+        } catch (error) {
+            
+        }   
+    },[productosQuery]);
+    
+   
+    
     useEffect(() => {
         if(almacenOrigen){
-            obtenerAlmacenes();
+          
+            setAlmacenesDestino(queryObtenerAlmacenes.data.obtenerAlmacenes.filter(element => element._id !== almacenOrigen._id));
             obtenerProductosAlmacen();
         }
-    }, [almacenOrigen, obtenerAlmacenes ])
+    }, [almacenOrigen ])
 
 
     const obtenerProductosEmpresa = useCallback(async () =>{
@@ -258,13 +271,7 @@ export default function Traspasos() {
         }   
       },[productosEmpresaQuery]);
 
-    const obtenerProductosAlmacen = useCallback(async() =>{
-        try {
-           productosQuery.refetch();
-        } catch (error) {
-            
-        }   
-    },[productosQuery]);
+   
 
     useEffect(() => {
         try {
@@ -286,6 +293,7 @@ export default function Traspasos() {
 	},[ dataConceptos ]);  */
 
      useEffect(() => {
+         console.log('useffect conceptoTraspaso')
         if(conceptoTraspaso !== null){
             if(conceptoTraspaso.destino === 'N/A'){
                 if(almacenOrigen !== null){
@@ -312,14 +320,13 @@ export default function Traspasos() {
             }    
         }
        
-	},[ conceptoTraspaso, almacenOrigen, almacenDestino, setHaveConcepto ]); 
+	},[conceptoTraspaso, almacenOrigen, almacenDestino ]); 
 
     
 
      
     useEffect(
 		() => {
-             
 			 if(productosEmpresaQuery.data){
              
                 //setProductos(productosEmpresaQuery.data.obtenerProductosPorEmpresa);
@@ -329,18 +336,13 @@ export default function Traspasos() {
     },[ productosEmpresaQuery.data, setProductosEmpTo ]);  
 
 
-     useEffect(
-        
+    useEffect(
 		() => {
-            
             if(productosQuery.data ){
-               
                 setProductos(productosQuery.data.obtenerProductos);
                 setProductosTo(productosQuery.data.obtenerProductos)
-            
                 return;
-            }
-           
+            }    
 		},
 		[ productosQuery, setProductos, setProductosTo ]
 	); 
@@ -380,6 +382,7 @@ export default function Traspasos() {
         //console.log(event)
         setAlmacenDestino(event.target.value);
         setProductosTras([]);
+        return;
     };
 
      const handleChangeConcepto = (event) => {
@@ -391,11 +394,9 @@ export default function Traspasos() {
             setAlmacenOrigen(null); 
             setAlmacenDestino(null);
             if(concepto.origen === 'N/A'){
-               
-                
                 setAlmacenesDestino( queryObtenerAlmacenes.data.obtenerAlmacenes)
             }else{
-                  setAlmacenesDestino([])
+                setAlmacenesDestino([])
             }
           
             setIsAlmacenOrigen((concepto.origen === 'N/A') ? false:true);
@@ -522,7 +523,7 @@ export default function Traspasos() {
                     empresa: sesion.empresa._id
                 }
             }  
-            
+          
              const traspaso =    await CrearTraspaso(input) 
            
                 //console.log(traspaso)

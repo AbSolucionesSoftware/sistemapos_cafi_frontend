@@ -9,6 +9,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import moment from 'moment';
 import 'moment/locale/es';
 import CotizacionesPendientes from './CotizacionesPendientes';
+import useStyles from '../styles';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -50,6 +51,7 @@ function a11yProps(index) {
 export default function Cotizacion({type}) {
 
     moment.locale('es');
+	const classes = useStyles();
 
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
@@ -63,6 +65,7 @@ export default function Cotizacion({type}) {
 	};
 
     const handleClickOpen = () => {
+		IIRFilterNode()
 		if(sesion?.accesos.ventas.cotizaciones.ver === true){
             setOpen(!open);
         }
@@ -79,17 +82,27 @@ export default function Cotizacion({type}) {
     return (
         <>
 			{
-				type === "GENERAR" ? (
-					datosVentas ? (
-						<Button
-							variant="outlined"
-							color="primary"
-							startIcon={<FcCurrencyExchange style={{fontSize: 30}} />}
-							onClick={() =>{handleClickOpen()}}
-						>
-							Generar Cotización
-						</Button>	
-					) : ""
+			type === "GENERAR" ? (
+				<Button 
+					className={classes.borderBotonChico}
+					onClick={() => handleClickOpen()}
+				>
+					<Box>
+						<Box>
+							<FcCurrencyExchange style={{fontSize: 50}} />
+						</Box>
+						<Box>
+							<Typography variant="body2" >
+								<b>Generar cotizacion</b>
+							</Typography>
+						</Box>
+						{/* <Box>
+							<Typography variant="caption" style={{color: '#808080'}} >
+								<b>F7</b>
+							</Typography>
+						</Box> */}
+					</Box>
+				</Button>
 			) : (
 				<Button
 					onClick={() =>{handleClickOpen();}}
@@ -101,7 +114,7 @@ export default function Cotizacion({type}) {
 						</Box>
 						<Box>
 							<Typography variant="body2" >
-								<b>Cotizaciones</b>
+								<b>Lista cotizaciones</b>
 							</Typography>
 						</Box>
 						<Box>
@@ -111,7 +124,7 @@ export default function Cotizacion({type}) {
 						</Box>
 					</Box>
 				</Button>
-				)
+			)
 			}
         	<Dialog
 				fullWidth

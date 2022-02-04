@@ -1,6 +1,6 @@
-import React, { useState, useContext, Fragment} from 'react';
+import React, { useState, useContext, Fragment, useEffect} from 'react';
 import { Divider, BottomNavigation, Button } from '@material-ui/core';
-import { CssBaseline, Avatar, Box, Typography } from '@material-ui/core';
+import {  Avatar, Box, Typography } from '@material-ui/core';
 import { withRouter } from 'react-router';
 import { FaPowerOff } from 'react-icons/fa';
 import useStyles from './styles';
@@ -16,9 +16,27 @@ import ProductoRapidoIndex from '../../pages/ventas/ArticuloRapido/indexArticulo
 
 import SnackBarMessages from '../SnackBarMessages';
 import { VentasContext } from '../../context/Ventas/ventasContext';
+import Acceso from '../AccesosPassword/Acceso';
+import { AccesosContext } from '../../context/Accesos/accesosCtx';
 
 function NavegacionVentas(props) {
-	const { alert, setAlert, abrirTurnosDialog, setAbrirTurnosDialog, setUbicacionTurno } = useContext(VentasContext);
+
+	const { 
+		alert, 
+		setAlert, 
+		abrirTurnosDialog, 
+		setAbrirTurnosDialog, 
+		setUbicacionTurno,
+	} = useContext(VentasContext);
+
+	const { 
+		reloadAdministrador, 
+        setReloadAdministrador,
+		setAbrirPanelAcceso,
+		abrirPanelAcceso,
+		setDepartamentos
+	} = useContext(AccesosContext);
+
 	const classes = useStyles();
 	const [ value, setValue ] = useState('venta-general');
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
@@ -51,14 +69,25 @@ function NavegacionVentas(props) {
 
 	function Administrador() {
 		if(sesion.accesos.ventas.administrador.ver === true){
-			props.history.push('/admin')
-		};
-	}
+			props.history.push('/admin');
+		}else{
+			setAbrirPanelAcceso(!abrirPanelAcceso);
+			setDepartamentos({departamento: 'ventas', subDepartamento: 'administrador', tipo_acceso: 'ver'})
+		}
+	};
+
+	useEffect(() => {
+		if (reloadAdministrador === true) {			
+			props.history.push('/admin');	
+			setReloadAdministrador(false);
+		}
+	}, [reloadAdministrador]);
 
 	window.addEventListener('keydown', Mi_función); 
 
 	return (
 		<Fragment>
+			<Acceso setReloadAdministrador={setReloadAdministrador} />
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 				<BottomNavigation
 					value={value}

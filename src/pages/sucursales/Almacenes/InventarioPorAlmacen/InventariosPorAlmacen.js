@@ -150,7 +150,7 @@ const InventarioPorAlmacen = (props) =>{
 		
 			productosAlmacenQuery.refetch();
 		},
-		[ filtroTo, productosAlmacenQuery ]
+		[ filtroTo ]
 	);
 	React.useEffect(
 		() => {
@@ -165,9 +165,14 @@ const InventarioPorAlmacen = (props) =>{
 			productosAlmacenQuery.refetch();
 			setLoading(false);
 		},
-		[ productosAlmacenQuery ]
+		[ ]
 	);
-
+	React.useEffect(
+		() => {
+		
+		},
+		[ productosAlmacenQuery.error]
+	);
 	React.useEffect(
 		() => {
 		
@@ -179,6 +184,7 @@ const InventarioPorAlmacen = (props) =>{
 
 
 	if(productosAlmacenQuery.data){
+		
 		productos = productosAlmacenQuery.data.obtenerProductosAlmacenes;
 	}
 	if(categoriasQuery.data){

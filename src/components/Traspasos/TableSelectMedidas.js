@@ -172,26 +172,21 @@ const RenderPresentacionesRows = ({ medida, index, setOnUpdate, onUpdate,new_med
 	useEffect(() => {
 		productosTras.forEach(producto => {
 			//console.log("SELECTMEDIDAS",producto)
+
 		if(producto.product_selected._id === idProducto){
 			let new_medidasCopia = [];
 			let element = null;
 		
 			for (const med in producto.new_medidas) {
-			
 				if (Object.hasOwnProperty.call(producto.new_medidas, med)) {
 					element = producto.new_medidas[med];
-					
 					new_medidasCopia.push(element)
 					
 					if(medida._id === element.medida._id){
-						//console.log(element.cantidad)	
-						setCantidad( element.cantidad);		
+						setCantidad( element.nuevaCantidad);		
 					}
-					
 				}
-			
 			}
-			
 			setNew_medidas(producto.new_medidas);
 			return;
 		}
