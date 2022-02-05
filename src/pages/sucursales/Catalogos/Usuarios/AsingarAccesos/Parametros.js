@@ -8,8 +8,6 @@ export default function Parametros({
     subDepartamento
 }) {
 
-    console.log(arregloAccesos);
-    
     return(
         <Box display='flex' justifyContent='center' alignItems='center'>
             <FormControlLabel

@@ -98,7 +98,7 @@ export default function PreCorteCaja() {
             <Dialog
 				maxWidth='lg'
 				open={open} 
-				onClose={handleClickOpen} 
+				onClose={() => setOpen(!open)} 
 				TransitionComponent={Transition}
 			>
                 <DialogContent>
@@ -187,11 +187,11 @@ export default function PreCorteCaja() {
                         <Button 
                             onClick={() => setOpen(!open)} 
                             color="primary"
-                            variant="outlined"
+                            variant="contained"
                             size="large"
                             autoFocus
                         >
-                            Imprimir Ticket
+                            Imprimir
                         </Button>
                     ) : null }
                 </DialogActions>

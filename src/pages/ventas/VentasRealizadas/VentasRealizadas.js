@@ -98,13 +98,7 @@ export default function VentasRealizadas() {
                             <ListaVentasRealizadas />
                         </Grid>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClickOpen} variant="contained" color="primary" size="large">
-                        Aceptar
-                    </Button>
-                </DialogActions>
             </Dialog>
-
         </>
     )
 }

@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Box, Button, Dialog, DialogActions, DialogContent, Divider, Grid, Slide, Typography } from '@material-ui/core'
 import useStyles from '../styles';
 import { AccesosContext } from '../../../context/Accesos/accesosCtx';
+import CloseIcon from '@material-ui/icons/Close';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -82,6 +83,7 @@ export default function CancelarVenta() {
                             display="flex"
                             alignItems="center"
                             justifyContent="center"
+                            flexGrow={1}
                         >
                             <Box>
                                 <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/shopping-cart.svg' alt="icono caja" className={classes.iconSizeDialogs} />
@@ -94,6 +96,11 @@ export default function CancelarVenta() {
                                     Cancelar Venta
                                 </Typography>
                             </Box>
+                        </Box>
+                        <Box ml={10} mb={7} display="flex" alignItems="center">
+                            <Button variant="contained" color="secondary" onClick={()=> setOpen(!open)} size="large">
+                                <CloseIcon />
+                            </Button>
                         </Box>
                     </Grid>
                     <Box p={2}>
@@ -115,7 +122,7 @@ export default function CancelarVenta() {
                     >
                         Aceptar
                     </Button>
-                    <Button 
+                    {/* <Button 
                         onClick={() => setOpen(!open)} 
                         variant="contained" 
                         color="secondary"
@@ -123,7 +130,7 @@ export default function CancelarVenta() {
                         autoFocus
                     >
                         Cancelar
-                    </Button>
+                    </Button> */}
                 </DialogActions>
             </Dialog>
         </>

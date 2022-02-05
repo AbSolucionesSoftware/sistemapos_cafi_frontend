@@ -10,7 +10,6 @@ import 'moment/locale/es';
 import DepositoRetiroCaja from '../../pages/ventas/Operaciones/DepositoRetiroCaja';
 import Turnos from '../../pages/ventas/AbrirCerrarTurno/Turnos';
 import PreCorteCaja from '../../pages/ventas/Operaciones/PreCorteCaja';
-import Cotizacion from '../../pages/ventas/Cotizacion/Cotizacion';
 import VentaEnEspera from '../../pages/ventas/Operaciones/VentaEnEspera';
 import ProductoRapidoIndex from '../../pages/ventas/ArticuloRapido/indexArticuloRapido';
 
@@ -18,6 +17,7 @@ import SnackBarMessages from '../SnackBarMessages';
 import { VentasContext } from '../../context/Ventas/ventasContext';
 import Acceso from '../AccesosPassword/Acceso';
 import { AccesosContext } from '../../context/Accesos/accesosCtx';
+import ListaCotizaciones from '../../pages/ventas/Cotizacion/ListaCotizaciones';
 
 function NavegacionVentas(props) {
 
@@ -60,10 +60,7 @@ function NavegacionVentas(props) {
 
 	function Mi_función(e){
 		if( e.keyCode === 112){ 
-			props.history.push('/admin');
-		}
-		if( e.keyCode === 115){ 
-			props.history.push('/');
+			Administrador();
 		}
 	};
 
@@ -99,7 +96,7 @@ function NavegacionVentas(props) {
 				>
 					<ProductoRapidoIndex />
 						<Divider orientation="vertical" />
-					<Cotizacion /> 
+					<ListaCotizaciones /> 
 						<Divider orientation="vertical" />
 					<DepositoRetiroCaja />
 						<Divider orientation="vertical" />

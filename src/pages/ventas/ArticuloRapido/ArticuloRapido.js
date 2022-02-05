@@ -18,20 +18,24 @@ import {
 import PropTypes from "prop-types";
 import RegistroInfoAdidional from "../../sucursales/Catalogos/Producto/PreciosVenta/registrarInfoAdicional";
 import RegistroInformacionRapido from "./RegistroInformacionRapido";
-import { Close, NavigateBefore, NavigateNext } from "@material-ui/icons";
+import { NavigateBefore, NavigateNext } from "@material-ui/icons";
+import CloseIcon from "@material-ui/icons/Close";
 import DoneIcon from "@material-ui/icons/Done";
 import {
   initial_state_datos_generales,
   initial_state_precios,
   initial_state_preciosP,
   initial_state_unidadVentaXDefecto,
-  initial_state_presentaciones
+  initial_state_presentaciones,
 } from "../../../context/Catalogos/initialStatesProducto";
-import { cleanTypenames } from '../../../config/reuserFunctions';
+import { cleanTypenames } from "../../../config/reuserFunctions";
 import TallasColoresRapidos from "./TallasColoresRapidos/TallasColoresRapidos";
 import { RegProductoContext } from "../../../context/Catalogos/CtxRegProducto";
 import { useMutation, useQuery } from "@apollo/client";
-import { CREAR_PRODUCTO_RAPIDO, OBTENER_CONSULTAS } from "../../../gql/Catalogos/productos";
+import {
+  CREAR_PRODUCTO_RAPIDO,
+  OBTENER_CONSULTAS,
+} from "../../../gql/Catalogos/productos";
 import { VentasContext } from "../../../context/Ventas/ventasContext";
 import Acceso from "../../../components/AccesosPassword/Acceso";
 import { AccesosContext } from "../../../context/Accesos/accesosCtx";
@@ -98,19 +102,18 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff",
   },
   iconSizeSecondSuperior: {
-		width: 20,
-	},
+    width: 20,
+  },
 }));
 
-
 const Transition = React.forwardRef(function Transition(props, ref) {
-	return <Slide direction="up" ref={ref} {...props} />;
+  return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function ArticuloRapido() {
   const classes = useStyles();
   const [value, setValue] = useState(0);
-  const [ cargando, setCargando ] = useState(false);
+  const [cargando, setCargando] = useState(false);
 
   const {
     datos_generales,
@@ -130,21 +133,17 @@ export default function ArticuloRapido() {
     setPresentaciones,
   } = useContext(RegProductoContext);
 
-  const { 
-    setAlert, 
-    open, 
-    setOpen
-  } = useContext(VentasContext);
+  const { setAlert, open, setOpen } = useContext(VentasContext);
 
-  const { 
-    reloadProductoRapido, 
+  const {
+    reloadProductoRapido,
     setReloadProductoRapido,
     setAbrirPanelAcceso,
-    setDepartamentos
+    setDepartamentos,
   } = useContext(AccesosContext);
 
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-  const [ crearProductoRapido ] = useMutation(CREAR_PRODUCTO_RAPIDO);
+  const [crearProductoRapido] = useMutation(CREAR_PRODUCTO_RAPIDO);
 
   const { data, refetch, loading } = useQuery(OBTENER_CONSULTAS, {
     variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
@@ -161,32 +160,32 @@ export default function ArticuloRapido() {
     setPresentaciones([]);
     setValue(0);
   };
-  
-  const [ abrirTallaColor, setAbrirTallaColor ] = useState(false);
 
-  const [ cantidad, setCantidad ] = useState(0);
+  const [abrirTallaColor, setAbrirTallaColor] = useState(false);
+
+  const [cantidad, setCantidad] = useState(0);
 
   const handleClickOpen = () => {
     setOpen(!open);
     resetInitialStates();
     setAbrirTallaColor(false);
-	};
+  };
 
   const AceesoProductoRapido = () => {
-		if(sesion.accesos.ventas.producto_rapido.ver === true){
+    if (sesion.accesos.ventas.producto_rapido.ver === true) {
       handleClickOpen();
-    }else{
+    } else {
       setAbrirPanelAcceso(true);
       setDepartamentos({
-        departamento: 'ventas', 
-        subDepartamento: 'producto_rapido', 
-        tipo_acceso: 'ver'
+        departamento: "ventas",
+        subDepartamento: "producto_rapido",
+        tipo_acceso: "ver",
       });
-		}
-	};
+    }
+  };
 
   useEffect(() => {
-    if(reloadProductoRapido === true){
+    if (reloadProductoRapido === true) {
       handleClickOpen();
       setReloadProductoRapido(false);
     }
@@ -197,21 +196,30 @@ export default function ArticuloRapido() {
       refetch();
     };
   }, []);
+  window.addEventListener("keydown", Mi_función);
 
-  if(loading || !data) { return null }
+  function Mi_función(e) {
+    if (e.altKey && e.keyCode === 82) {
+      AceesoProductoRapido();
+    }
+  }
+
+  if (loading || !data) {
+    return null;
+  }
   if (loading)
-  return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      height="80vh"
-    >
-      <CircularProgress />
-      <Typography variant="h6">Cargando...</Typography>
-    </Box>
-  );
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        height="80vh"
+      >
+        <CircularProgress />
+        <Typography variant="h6">Cargando...</Typography>
+      </Box>
+    );
 
   const { obtenerConsultasProducto } = data;
 
@@ -219,18 +227,11 @@ export default function ArticuloRapido() {
     setValue(newValue);
   };
 
-  window.addEventListener('keydown', Mi_función); 
-  function Mi_función(e){
-    if(e.altKey && e.keyCode === 65){ 
-        handleClickOpen();
-    } 
-  };
-
   const saveData = async () => {
     setCargando(true);
-    if (datos_generales.tipo_producto === 'OTROS' && cantidad < 1) {
-        return setValidacion(true);
-    }else{
+    if (datos_generales.tipo_producto === "OTROS" && cantidad < 1) {
+      return setValidacion(true);
+    } else {
       if (
         !datos_generales.clave_alterna ||
         !datos_generales.tipo_producto ||
@@ -239,7 +240,7 @@ export default function ArticuloRapido() {
         !precios.precio_de_compra.precio_con_impuesto ||
         !precios.precio_de_compra.precio_sin_impuesto ||
         !precios.unidad_de_compra.cantidad
-      ){
+      ) {
         return setValidacion(true);
       }
     }
@@ -253,10 +254,10 @@ export default function ArticuloRapido() {
     }
     precios.precios_producto = preciosP;
 
-    if (datos_generales.tipo_producto === 'OTROS' && cantidad < 1) {
-        setPresentaciones(initial_state_presentaciones)
-        setCantidad(0)
-    };
+    if (datos_generales.tipo_producto === "OTROS" && cantidad < 1) {
+      setPresentaciones(initial_state_presentaciones);
+      setCantidad(0);
+    }
 
     const data = {
       datos_generales,
@@ -268,13 +269,13 @@ export default function ArticuloRapido() {
       sucursal: sesion.sucursal._id,
       usuario: sesion._id,
     };
-    
+
     try {
       const input = cleanTypenames(data);
       const result = await crearProductoRapido({
         variables: {
-          input
-        }
+          input,
+        },
       });
       resetInitialStates();
       refetch();
@@ -306,8 +307,8 @@ export default function ArticuloRapido() {
       size="large"
       startIcon={<DoneIcon />}
       disabled={
-       datos_generales.tipo_producto === 'OTROS' ? (
-            !datos_generales.clave_alterna ||
+        datos_generales.tipo_producto === "OTROS"
+          ? !datos_generales.clave_alterna ||
             !datos_generales.tipo_producto ||
             !datos_generales.nombre_generico ||
             !datos_generales.nombre_comercial ||
@@ -315,10 +316,9 @@ export default function ArticuloRapido() {
             !precios.precio_de_compra.precio_con_impuesto ||
             !precios.precio_de_compra.precio_sin_impuesto ||
             !precios.unidad_de_compra.cantidad
-          ? true
-          : false
-        ):(
-            !datos_generales.clave_alterna ||
+            ? true
+            : false
+          : !datos_generales.clave_alterna ||
             !datos_generales.tipo_producto ||
             !datos_generales.nombre_generico ||
             !datos_generales.nombre_comercial ||
@@ -327,7 +327,6 @@ export default function ArticuloRapido() {
             !precios.unidad_de_compra.cantidad
           ? true
           : false
-        )
       }
     >
       Guardar
@@ -338,9 +337,12 @@ export default function ArticuloRapido() {
     if (value === 1) {
       return saveButton;
     } else {
-      if (datos_generales.tipo_producto === 'OTROS' || !datos_generales.tipo_producto) {
+      if (
+        datos_generales.tipo_producto === "OTROS" ||
+        !datos_generales.tipo_producto
+      ) {
         return saveButton;
-      }else{
+      } else {
         return (
           <Button
             variant="contained"
@@ -354,82 +356,82 @@ export default function ArticuloRapido() {
           </Button>
         );
       }
-
     }
   };
 
   return (
     <>
-			<Acceso/>
+      <Acceso />
       <Button
-        onClick={() =>{AceesoProductoRapido()}}
+        onClick={() => {
+          AceesoProductoRapido();
+        }}
         value="articulo-rapido"
-        style={{textTransform: 'none', height: '100%', width: '60%'}}
+        style={{ textTransform: "none", height: "100%", width: "60%" }}
       >
         <Box display="flex" flexDirection="column">
-					<Box display="flex" justifyContent="center" alignItems="center">
-          <img 
-            src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tiempo-rapido.svg" 
-            alt="icono caja2" 
-            className={classes.iconSizeSecondSuperior} 
-          />
-					</Box>
-					<Box>
-              <Typography variant="body2" >
-                  <b>Producto Rapido</b>
-              </Typography>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <img
+              src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tiempo-rapido.svg"
+              alt="icono caja2"
+              className={classes.iconSizeSecondSuperior}
+            />
           </Box>
           <Box>
-              <Typography variant="caption" style={{color: '#808080'}} >
-                  <b>Alt + A</b>
-              </Typography>
+            <Typography variant="body2">
+              <b>Producto Rapido</b>
+            </Typography>
           </Box>
-				</Box>
+          <Box>
+            <Typography variant="caption" style={{ color: "#808080" }}>
+              <b>Alt + R</b>
+            </Typography>
+          </Box>
+        </Box>
       </Button>
       <Dialog
-				maxWidth='lg'
-				open={open} 
-				onClose={handleClickOpen} 
-				TransitionComponent={Transition}
-			>
+        maxWidth="lg"
+        open={open}
+        onClose={handleClickOpen}
+        TransitionComponent={Transition}
+      >
         <AppBar position="static" color="default" elevation={0}>
-          <Box display="flex" justifyContent="space-between">
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              variant="scrollable"
-              scrollButtons="on"
-              indicatorColor="primary"
-              textColor="primary"
-              aria-label="scrollable force tabs example"
-            >
-              <Tab
-                label="Datos generales"
-                icon={
-                  <Badge
-                    color="secondary"
-                    badgeContent={<Typography variant="h6">!</Typography>}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    invisible={
-                      validacion.error && validacion.vista1 ? false : true
-                    }
-                  >
-                    <img
-                      src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/portapapeles.svg"
-                      alt="icono registro"
-                      className={classes.iconSvg}
-                    />
-                  </Badge>
-                }
-                {...a11yProps(0)}
-              />
-              {
-                 abrirTallaColor === false  || datos_generales.tipo_producto === 'OTROS' ? (
-                  null
-                ) :(
+          <Box display="flex">
+            <Box display="flex" flexGrow={1} justifyContent="space-between">
+              <Tabs
+                value={value}
+                onChange={handleChange}
+                variant="scrollable"
+                scrollButtons="on"
+                indicatorColor="primary"
+                textColor="primary"
+                aria-label="scrollable force tabs example"
+              >
+                <Tab
+                  label="Datos generales"
+                  icon={
+                    <Badge
+                      color="secondary"
+                      badgeContent={<Typography variant="h6">!</Typography>}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                      }}
+                      invisible={
+                        validacion.error && validacion.vista1 ? false : true
+                      }
+                    >
+                      <img
+                        src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/portapapeles.svg"
+                        alt="icono registro"
+                        className={classes.iconSvg}
+                      />
+                    </Badge>
+                  }
+                  {...a11yProps(0)}
+                />
+                {abrirTallaColor === false ||
+                datos_generales.tipo_producto === "OTROS" ? null : (
                   <Tab
                     label="Tallas y colores"
                     icon={
@@ -441,7 +443,7 @@ export default function ArticuloRapido() {
                           horizontal: "right",
                         }}
                         invisible={
-                            validacion.error && validacion.vista7 ? false : true
+                          validacion.error && validacion.vista7 ? false : true
                         }
                       >
                         <img
@@ -453,9 +455,22 @@ export default function ArticuloRapido() {
                     }
                     {...a11yProps(6)}
                   />
-                )
-              }
-            </Tabs>
+                )}
+              </Tabs>
+            </Box>
+            <Box p={2}>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => {
+                  handleClickOpen() 
+                  resetInitialStates()
+                }}
+                size="large"
+              >
+                <CloseIcon />
+              </Button>
+            </Box>
           </Box>
         </AppBar>
         <DialogContent className={classes.dialogContent}>
@@ -464,10 +479,10 @@ export default function ArticuloRapido() {
           </Backdrop>
           <div className={classes.root}>
             <TabPanel value={value} index={0}>
-              <RegistroInformacionRapido 
-                setAbrirTallaColor={setAbrirTallaColor} 
-                setCantidad={setCantidad} 
-                cantidad={cantidad} 
+              <RegistroInformacionRapido
+                setAbrirTallaColor={setAbrirTallaColor}
+                setCantidad={setCantidad}
+                cantidad={cantidad}
                 obtenerConsultasProducto={obtenerConsultasProducto}
                 refetch={refetch}
               />
@@ -481,33 +496,24 @@ export default function ArticuloRapido() {
             </TabPanel>
           </div>
         </DialogContent>
-        <DialogActions style={{ display: "flex", justifyContent: "center" }}>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => setValue(value - 1)}
-            size="large"
-            startIcon={<NavigateBefore />}
-            disabled={value === 0}
-          >
-            Anterior
+        <DialogActions style={{ display: "flex", justifyContent: "space-between" }}>
+          <Box p={1}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => setValue(value - 1)}
+              size="large"
+              startIcon={<NavigateBefore />}
+              disabled={value === 0}
+            >
+              Anterior
           </Button>
-          <Button
-            variant="outlined"
-            color="inherit"
-            onClick={() => {
-              handleClickOpen() 
-              resetInitialStates()
-            }}
-            size="large"
-            startIcon={<Close />}
-            disableElevation
-          >
-            Cancelar
-          </Button>
-          <ButtonActions />
+          </Box>
+          <Box p={1}>
+            <ButtonActions />
+          </Box>
         </DialogActions>
-			</Dialog>
+      </Dialog>
     </>
   );
 }

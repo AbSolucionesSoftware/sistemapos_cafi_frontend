@@ -14,6 +14,7 @@ import { useApolloClient } from  "@apollo/client";
 import { LOGEAR_USUARIO_ACCESOS } from "../../gql/Catalogos/usuarios";
 import BackdropComponent from "../Layouts/BackDrop";
 import { AccesosContext } from "../../context/Accesos/accesosCtx";
+import CloseIcon from '@material-ui/icons/Close';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -115,10 +116,10 @@ export default function Acceso() {
         setReloadVerPreCorte(true);
         break;
       case "cotizaciones":
-        setReloadEliminarVentaEspera(true);
+        setReloadCrearCotizacion(true);
         break;
       case "eliminar_ventas":
-        setReloadCrearCotizacion(true);
+        setReloadEliminarVentaEspera(true);
         break;
       default:
         setAlert({
@@ -140,10 +141,17 @@ export default function Acceso() {
       >
         <BackdropComponent loading={loading} />
         <Box p={3}>
-          <Box p={1}>
-            <Typography variant="h6">
-              <b>Por favor autoriza con tu usuario y contraseña</b>
-            </Typography>
+          <Box display='flex' p={1}>
+            <Box flexGrow={1}>
+              <Typography>
+                <b>Por favor autoriza con tu usuario y contraseña</b>
+              </Typography>
+            </Box>
+            <Box >
+                <Button variant="contained" color="secondary" onClick={() => handleClickClose()} size="medium">
+                    <CloseIcon />
+                </Button>
+            </Box>
           </Box>
           <div className={classes.formInputFlex}>
             <Box width="100%">
@@ -183,18 +191,10 @@ export default function Acceso() {
           <Button
             color="primary"
             size="medium"
-            variant="outlined"
+            variant="contained"
             onClick={() => obtenerQuery()}
           >
-            Aceptar
-          </Button>
-          <Button
-            color="secondary"
-            size="medium"
-            variant="outlined"
-            onClick={handleClickClose}
-          >
-            Cancelar
+            Guardar
           </Button>
         </DialogActions>
       </Dialog>

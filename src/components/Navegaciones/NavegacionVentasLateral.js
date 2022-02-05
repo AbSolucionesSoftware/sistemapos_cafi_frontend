@@ -33,7 +33,7 @@ export default function NavegacionVentasLateral() {
                     <CancelarVenta />
                 </Grid>
                 <Grid item lg={6} md={6} xs={6}>
-                    <Cotizacion type={'GENERAR'} />
+                    <Cotizacion type='GENERAR' />
                 </Grid>
                 <Grid item lg={6} md={6} xs={6}>
                     <PreciosProductos />
