@@ -187,7 +187,7 @@ const RenderLista = ({
     if (click === 2) {
       console.log(data);
       const without_sat_code = data.productos.filter(
-        (res) => !res.producto.datos_generales.clave_producto_sat.Value
+        (res) => !res.id_producto.datos_generales.clave_producto_sat.Value
       );
 
       if (without_sat_code.length > 0) {
@@ -197,13 +197,14 @@ const RenderLista = ({
       }
 
       const { productos, ...venta } = {...data}
-      const productos_base = [];
+      const productos_base = [...data.productos]
+      /* const productos_base = []; */
 
-      data.productos.forEach(element => {
+      /* data.productos.forEach(element => {
         const { producto, ...productos} = element;
         productos.id_producto = element.producto
         productos_base.push(productos);
-      });
+      }); */
     
       setVentaFactura(venta);
       setProductos(productos_base);

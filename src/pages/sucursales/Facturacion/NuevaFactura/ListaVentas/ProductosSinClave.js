@@ -67,7 +67,7 @@ export default function ProductosSinClaveSat({ productos, open, handleClose }) {
                 </TableHead>
                 <TableBody>
                   {productos.map((row, index) => {
-                    const { datos_generales } = row.producto;
+                    const { datos_generales } = row.id_producto;
                     return (
                       <TableRow key={index} role="checkbox" tabIndex={-1}>
                         <TableCell>
