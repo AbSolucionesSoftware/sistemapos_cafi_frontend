@@ -475,7 +475,7 @@ useEffect(() => {
             
               if(intValue <= product_selected.inventario_general[0].cantidad_existente){
                 setCantidadTo((intValue !== 0) ? intValue : '');
-                
+             
                 return;
               }
               else{
