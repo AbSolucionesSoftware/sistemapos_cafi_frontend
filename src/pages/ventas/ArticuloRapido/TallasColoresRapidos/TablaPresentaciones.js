@@ -20,7 +20,6 @@ const compareFunction = (a, b) => {
 	}
 };
 
-
 const useStyles = makeStyles((theme) => ({
 	root: {
 		width: '100%'
@@ -110,15 +109,13 @@ export default function TablaPresentaciones({ from, setOnUpdate, onUpdate }) {
 			</Paper>
 		</div>
 	);
-}
-
+};
 
 const RenderPresentacionesRows = ({ producto, index,  from, setOnUpdate, onUpdate }) => {
-	const { presentaciones, setPresentaciones, preciosP } = useContext(RegProductoContext);
+	const { presentaciones, setPresentaciones, preciosP, precios } = useContext(RegProductoContext);
 	const [ disabledInput, setDisabledInput ] = useState(true);
 	const classes = useStyles();
 	const textfield = useRef(null);
-
 
 	const copy_presentaciones = [...presentaciones].sort((a, b) => compareFunction(a, b))
 	const copy_element_presentacion = { ...copy_presentaciones[index] };
@@ -141,32 +138,51 @@ const RenderPresentacionesRows = ({ producto, index,  from, setOnUpdate, onUpdat
 	};
 
 	const obtenerDatos = (event) => {
-		if (event.target.name === 'cantidad') {
-			if (!event.target.value) {
+		const {value, name }= event.target;
+		console.log(name)
+		if (name === 'cantidad') {
+			if (!value) {
 				copy_element_presentacion.cantidad = '';
 				copy_element_presentacion.existencia = false;
 				copy_presentaciones.splice(index, 1, copy_element_presentacion);
 				setPresentaciones(copy_presentaciones);
 				return;
 			}
-			copy_element_presentacion.cantidad = parseFloat(event.target.value);
+			copy_element_presentacion.cantidad = parseFloat(value);
 			copy_element_presentacion.existencia = true;
-		} else if (event.target.name === 'precio') {
-			if (!event.target.value) {
+		} else if (name === 'precio') {
+			let { iva, ieps } = precios;
+			if (!value) {
 				copy_element_presentacion.precio = '';
 				copy_presentaciones.splice(index, 1, copy_element_presentacion);
 				setPresentaciones(copy_presentaciones);
 				return;
-			}
-			copy_element_presentacion.precio = parseFloat(event.target.value);
+			};
+			let precio_neto = parseFloat(value);
+			let varIVA = (iva < 10 ? `0${iva}` : iva);
+			let varIEPS = (ieps < 10 ? `0${ieps}` : ieps);
+
+			let suma_impuestos = parseFloat(`0.${varIVA}`) + parseFloat(`0.${varIEPS}`);
+			let precio_venta = parseFloat((precio_neto / (suma_impuestos+1)).toFixed(2));
+			let iva_precio = parseFloat((precio_venta * parseFloat(`0.${varIVA}`)).toFixed(2));
+			let ieps_precio = parseFloat((precio_venta * parseFloat(`0.${varIEPS}`)).toFixed(2));
+			let PUCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
+			let utilidad = parseFloat((((precio_venta - PUCSI) / PUCSI) * 100).toFixed(2));
+			copy_element_presentacion.precio_unidad.precio_venta = precio_venta;
+			copy_element_presentacion.precio_unidad.precio_neto = precio_neto;
+			copy_element_presentacion.precio_unidad.utilidad = utilidad;
+			copy_element_presentacion.precio_unidad.iva_precio = iva_precio;
+			copy_element_presentacion.precio_unidad.ieps_precio = ieps_precio;
+			
+			copy_element_presentacion.precio = parseFloat(value);
 		} else {
-			if (!event.target.value) {
+			if (!value) {
 				copy_element_presentacion.codigo_barras = '';
 				copy_presentaciones.splice(index, 1, copy_element_presentacion);
 				setPresentaciones(copy_presentaciones);
 				return;
 			}
-			copy_element_presentacion.codigo_barras = event.target.value;
+			copy_element_presentacion.codigo_barras = value;
 		}
 		copy_presentaciones.splice(index, 1, copy_element_presentacion);
 		setPresentaciones(copy_presentaciones);

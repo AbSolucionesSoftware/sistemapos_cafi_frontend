@@ -1,219 +1,147 @@
-import React, { useState } from 'react'
-import PropTypes from 'prop-types';
-import { AppBar, Box, Button, CircularProgress, 
-		Dialog, Tab, Grid, Slide, Tabs, Typography 
+import React, { useContext, useEffect, useState } from 'react'
+import { AppBar, Box, Button, 
+		Dialog, Slide, Typography 
 } from '@material-ui/core'
 import { FcCurrencyExchange } from 'react-icons/fc';
 import NuevaCotizacion from './NuevaCotizacion';
 import CloseIcon from '@material-ui/icons/Close';
 import moment from 'moment';
 import 'moment/locale/es';
-import CotizacionesPendientes from './CotizacionesPendientes';
+import useStyles from '../styles';
+import { AccesosContext } from '../../../context/Accesos/accesosCtx';
+import { VentasContext } from '../../../context/Ventas/ventasContext';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
-
-function TabPanel(props) {
-	const { children, value, index, ...other } = props;
-
-	return (
-		<div
-			role="tabpanel"
-			hidden={value !== index}
-			id={`tabpanel-reg-product-${index}`}
-			aria-labelledby={`reg-product-tab-${index}`}
-			{...other}
-		>
-			{value === index && (
-				<Box p={3} height="70vh">
-					{children}
-				</Box>
-			)}
-		</div>
-	);
-}
-
-TabPanel.propTypes = {
-	children: PropTypes.node,
-	index: PropTypes.any.isRequired,
-	value: PropTypes.any.isRequired
-};
-
-function a11yProps(index) {
-	return {
-		id: `reg-product-tab-${index}`,
-		'aria-controls': `tabpanel-reg-product-${index}`
-	};
-}
-
 export default function Cotizacion({type}) {
 
+
     moment.locale('es');
+	const classes = useStyles();
 
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
     const datosVentas = JSON.parse(localStorage.getItem('DatosVentas'));
+	const [tipoVentana, setTipoVentana] = useState(type);
+
+	const { 
+		reloadCrearCotizacion, 
+        setReloadCrearCotizacion,
+		setAbrirPanelAcceso,
+        abrirPanelAcceso,
+		setDepartamentos
+	} = useContext(AccesosContext);
+
+	const { 
+		setAlert, 
+	} = useContext(VentasContext);
 
     const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(0);
 
-    const handleChange = (event, newValue) => {
-		setValue(newValue);
+	const handleClickOpen = (tipo) => {
+		if(!datosVentas){
+			setAlert({
+				message: `Lo sentimos no hay productos que cotizar`,
+				status: "error",
+				open: true,
+			});
+			return null;
+		}else{
+			if(sesion?.accesos.ventas.cotizaciones.ver === true){
+				setOpen(!open);
+			}else{
+				console.log('pedir permiso');
+				setAbrirPanelAcceso(!abrirPanelAcceso);
+				setDepartamentos({departamento: 'ventas', subDepartamento: 'cotizaciones', tipo_acceso: 'ver'})
+			}
+		}
 	};
 
-    const handleClickOpen = () => {
-		setOpen(!open);
-	};
-
+	useEffect(() => {
+		if(reloadCrearCotizacion === true){
+			setReloadCrearCotizacion(false);
+			setTipoVentana('GENERAR');
+			setOpen(!open);
+		}
+	}, [reloadCrearCotizacion]);
 
     window.addEventListener('keydown', Mi_función); 
     function Mi_función(e){
         if(e.altKey && e.keyCode === 84){ 
-            handleClickOpen();
+            handleClickOpen('', false);
         } 
     };
 
     return (
         <>
-			{
-				type === "GENERAR" ? (
-					datosVentas ? (
-						<Button
-							variant="outlined"
-							color="primary"
-							startIcon={<FcCurrencyExchange style={{fontSize: 30}} />}
-							onClick={() =>{handleClickOpen()}}
-						>
-							Generar Cotización
-						</Button>	
-					) : ""
-			) : (
-				<Button
-					onClick={() =>{handleClickOpen();}}
-					style={{textTransform: 'none', height: '100%', width: '60%'}}
-				>
-					<Box display="flex" flexDirection="column">
-						<Box display="flex" justifyContent="center" alignItems="center">
-							<FcCurrencyExchange style={{fontSize: 25}} />
-						</Box>
-						<Box>
-							<Typography variant="body2" >
-								<b>Cotizaciones</b>
-							</Typography>
-						</Box>
-						<Box>
-							<Typography variant="caption" style={{color: '#808080'}} >
-								<b>Alt + T</b>
-							</Typography>
-						</Box>
+			<Button 
+				className={classes.borderBotonChico}
+				onClick={() => handleClickOpen(tipoVentana)}
+			>
+				<Box>
+					<Box>
+						<FcCurrencyExchange style={{fontSize: 50}} />
 					</Box>
-				</Button>
-				)
-			}
+					<Box>
+						<Typography variant="body2" >
+							<b>Generar cotizacion</b>
+						</Typography>
+					</Box>
+				</Box>
+			</Button>
         	<Dialog
 				fullWidth
 				open={open} 
-				maxWidth={type==="GENERAR"?'md':'lg'}
-				onClose={handleClickOpen} 
+				maxWidth={ tipoVentana === "GENERAR" ? 'md':'lg' }
+				onClose={() => setOpen(false)} 
 				TransitionComponent={Transition}
 			>
                 <AppBar position="static" color="default" elevation={0}>
-					<Tabs
-						value={value}
-						onChange={handleChange}
-						variant="scrollable"
-						scrollButtons="on"
-						indicatorColor="primary"
-						textColor="primary"
-						aria-label="scrollable force tabs example"
-					>
-						{type === "GENERAR" ? (
-							<Tab
-								label="Nueva Cotización"
-								icon={ <FcCurrencyExchange style={{fontSize: 60}} />}
-								{...a11yProps(0)}
-							/>
-						) : (
-							<Tab
-								label="Cotizaciones pendientes"
-								icon={
-									<img 
-										src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/lista-de-espera.svg' 
-										alt="icono caja2" 
-										style={{width: 58}} 
-									/>
-								}
-								{...a11yProps(1)}
-							/>		
-						)}	
-						<Grid container justify='flex-end'>
-							<Box mt={2} textAlign="right">
-								<Box textAlign="right">
-									<Typography variant="caption">
-										{moment().format('L')}
-									</Typography>
-								</Box>
-								<Box textAlign="right">
-									<Typography variant="caption">
-										{moment().format('LT')} hrs.
-									</Typography>
-								</Box>
-								<Box textAlign="right">
-									<Typography variant="caption">
-										{sesion?.nombre}
-									</Typography>
-								</Box>
-								<Box textAlign="right">
-									<Typography variant="caption">
-										Caja {!turnoEnCurso ? null : turnoEnCurso.numero_caja }
-									</Typography>
-								</Box>
-							</Box>
-						</Grid>
-						<Box mt={3} ml={3}>
-							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="medium">
-								<CloseIcon />
-							</Button>
-						</Box>
-					</Tabs>
+					<Box display={'flex'}>
+                        <Box display='flex' flexGrow={1} >
+                            <Box p={2} display={'flex'} alignItems={'center'}>
+								<FcCurrencyExchange style={{fontSize: 60}} />
+                            </Box>
+                            <Box p={1} display={'flex'} alignItems={'center'}>
+                                <Typography variant='h6'>
+									Nueva Cotización
+                                </Typography>
+                            </Box>
+                        </Box>
+                        <Box mt={2} textAlign="right">
+                            <Box textAlign="right">
+                                <Typography variant="caption">
+                                    {moment().format('L')}
+                                </Typography>
+                            </Box>
+                            <Box textAlign="right">
+                                <Typography variant="caption">
+                                    {moment().format('LT')} hrs.
+                                </Typography>
+                            </Box>
+                            <Box textAlign="right">
+                                <Typography variant="caption">
+                                    {sesion?.nombre}
+                                </Typography>
+                            </Box>
+                            <Box textAlign="right">
+                                <Typography variant="caption">
+                                    Caja {!turnoEnCurso ? null : turnoEnCurso.numero_caja }
+                                </Typography>
+                            </Box>
+                        </Box>
+                        <Box  p={3} >
+                            <Button variant="contained" color="secondary" onClick={() => setOpen(!open)} size="medium">
+                                <CloseIcon />
+                            </Button>
+                        </Box>
+                    </Box>
 				</AppBar>
-				<VentanasCotizaciones 
-					handleClickOpen={handleClickOpen} 
-					value={value} 
-					type={type} 
-				/> 
+				<Box p={2} >
+					<NuevaCotizacion setOpen={setOpen} />
+				</Box>
 			</Dialog>
 		</>
-	)
-};
-
-
-const VentanasCotizaciones = ({ handleClickOpen, value, type}) => {
-	const [ loading, setLoading ] = useState(false);
-
-	if (loading) 
-	return (
-		<Box
-		display="flex"
-		flexDirection="column"
-		justifyContent="center"
-		alignItems="center"
-		height="80vh"
-		>
-			<CircularProgress />
-		</Box>
-	);
-
-	return(
-		type === "GENERAR" ? (
-			<TabPanel style={{padding: 0}} value={value} index={0}>
-				<NuevaCotizacion handleClickOpen={handleClickOpen} />
-			</TabPanel>
-		) : (
-			<TabPanel style={{padding: 0}} value={value} index={0}>
-				<CotizacionesPendientes handleClickOpen={handleClickOpen} /> 
-			</TabPanel>
-		)
 	)
 };

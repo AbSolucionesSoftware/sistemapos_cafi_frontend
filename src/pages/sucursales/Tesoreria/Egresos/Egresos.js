@@ -59,22 +59,13 @@ export default function Egresos() {
 					Egresos
 				</Box>
 			</Button>
-			<Dialog open={open} TransitionComponent={Transition} fullWidth maxWidth="md">
-				<Paper elevation={3}>
-					<VistaRegistroEgreso handleClickOpen={handleClickOpen} />
-					<DialogActions>
-						<Button
-							variant="contained"
-							color="primary"
-							onClick={handleClickOpen}
-							size="large"
-							startIcon={<DoneIcon />}
-							disableElevation
-						>
-							Guardar
-						</Button>
-					</DialogActions>
-				</Paper>
+			<Dialog 
+				open={open} 
+				TransitionComponent={Transition} 
+				fullWidth 
+				maxWidth="lg"
+			>
+				<VistaRegistroEgreso handleClickOpen={handleClickOpen} />
 			</Dialog>
 		</div>
 	);

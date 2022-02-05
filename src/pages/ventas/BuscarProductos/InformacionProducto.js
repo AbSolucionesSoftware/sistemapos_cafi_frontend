@@ -68,7 +68,7 @@ export default function InformacionProducto({productoSeleccionado}) {
                         </Typography>
                         <Box display="flex">
                             <Typography>
-                                {productoSeleccionado?.descuento ? productoSeleccionado?.descuento.precio_con_descuento : 0}
+                                {productoSeleccionado?.descuento ? productoSeleccionado?.descuento.precio_neto : 0}
                             </Typography>
                         </Box>
                     </Box>
@@ -78,7 +78,7 @@ export default function InformacionProducto({productoSeleccionado}) {
                         </Typography>
                         <Box display="flex">
                             <Typography>
-                                {productoSeleccionado?.descuento ? productoSeleccionado?.descuento.precio_con_descuento : 0}
+                                {productoSeleccionado?.descuento ? productoSeleccionado?.descuento.precio_neto : 0}
                             </Typography>
                         </Box>
                     </Box>

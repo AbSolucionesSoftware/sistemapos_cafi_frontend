@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
 import useStyles from '../styles';
 
-import { Box, Button, CircularProgress, 
+import { Box, Button,
         DialogActions, DialogContent,  
         FormControl, Grid, MenuItem, 
         Select, TextField, Typography 
     } from '@material-ui/core'
+import BackdropComponent from '../../../components/Layouts/BackDrop'
 import { useMutation, useQuery } from '@apollo/client';
 import { OBTENER_CAJAS } from '../../../gql/Cajas/cajas';
 import { REGISTRAR_TURNOS } from '../../../gql/Ventas/abrir_cerrar_turno';
@@ -17,7 +18,7 @@ moment.locale('es');
 
 export default function AbrirTurno({handleClickOpen, loading, type, setLoading}) {
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
-    const turnoEnCurso = JSON.parse(localStorage.getItem('cajaEnCurso'));
+    const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
 
     const [ CrearRegistroDeTurno ] = useMutation(REGISTRAR_TURNOS);
     const { setTurnoActivo, setAlert } = useContext(VentasContext);
@@ -125,13 +126,38 @@ export default function AbrirTurno({handleClickOpen, loading, type, setLoading})
                     },
                     fecha_movimiento: moment().locale('es-mx').format(),
                     montos_en_caja: {
-                        monto_efectivo: parseFloat(abrirTurno.monto_abrir),
-                        monto_tarjeta: 0,
-                        monto_creditos: 0,
-                        monto_monedero: 0,
-                        monto_transferencia: 0,
-                        monto_cheques: 0,
-                        monto_vales_despensa: 0,
+                        monto_efectivo: {
+                            monto: parseFloat(abrirTurno.monto_abrir),
+                            metodo_pago: "01"
+                        },
+                        monto_tarjeta_debito: {
+                            monto: 0,
+                            metodo_pago: "28"
+                        },
+                        monto_tarjeta_credito: {
+                            monto: 0,
+                            metodo_pago: "04"
+                        },
+                        monto_creditos: {
+                            monto: 0,
+                            metodo_pago: "99"
+                        },
+                        monto_monedero: {
+                            monto: 0,
+                            metodo_pago: "05"
+                        },
+                        monto_transferencia: {
+                            monto: 0,
+                            metodo_pago: "03"
+                        },
+                        monto_cheques: {
+                            monto: 0,
+                            metodo_pago: "02"
+                        },
+                        monto_vales_despensa: {
+                            monto: 0,
+                            metodo_pago: "08"
+                        },
                     }
                 };
 
@@ -180,15 +206,16 @@ export default function AbrirTurno({handleClickOpen, loading, type, setLoading})
 
     if (cajas.loading) 
 	return (
-		<Box
-		display="flex"
-		flexDirection="column"
-		justifyContent="center"
-		alignItems="center"
-		height="80vh"
-		>
-			<CircularProgress />
-		</Box>
+        <BackdropComponent loading={loading} />
+		// <Box
+		// display="flex"
+		// flexDirection="column"
+		// justifyContent="center"
+		// alignItems="center"
+		// height="80vh"
+		// >
+		// 	<CircularProgress />
+		// </Box>
 	);
 
     return (
@@ -311,7 +338,7 @@ export default function AbrirTurno({handleClickOpen, loading, type, setLoading})
                         color="primary" 
                         size="large"
                     >
-                        ABRIR TURNO
+                        Guardar
                     </Button>
                 </Box>
             </DialogActions>

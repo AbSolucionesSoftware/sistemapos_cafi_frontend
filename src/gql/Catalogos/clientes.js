@@ -83,6 +83,9 @@ export const OBTENER_CLIENTES = gql`
 				descripcion
 			}
 			monedero_electronico
+			fecha_nacimiento
+    		fecha_registro
+			eliminado
 		}
 	}
 `;

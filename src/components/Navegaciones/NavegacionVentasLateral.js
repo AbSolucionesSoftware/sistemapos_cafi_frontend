@@ -1,8 +1,9 @@
-import { Box, Grid } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import React, { Fragment } from 'react'
 import Abonos from '../../pages/ventas/Abonos/Abonos'
 import BuscarProducto from '../../pages/ventas/BuscarProductos/BuscarProducto'
 import ClientesVentas from '../../pages/ventas/ClientesVentas/ClientesVentas'
+import Cotizacion from '../../pages/ventas/Cotizacion/Cotizacion'
 import AbrirCajon from '../../pages/ventas/Operaciones/AbrirCajon'
 import CancelarVenta from '../../pages/ventas/Operaciones/CancelarVenta'
 import CerrarVenta from '../../pages/ventas/Operaciones/CerrarVenta'
@@ -32,7 +33,7 @@ export default function NavegacionVentasLateral() {
                     <CancelarVenta />
                 </Grid>
                 <Grid item lg={6} md={6} xs={6}>
-                    <AbrirCajon />
+                    <Cotizacion type='GENERAR' />
                 </Grid>
                 <Grid item lg={6} md={6} xs={6}>
                     <PreciosProductos />

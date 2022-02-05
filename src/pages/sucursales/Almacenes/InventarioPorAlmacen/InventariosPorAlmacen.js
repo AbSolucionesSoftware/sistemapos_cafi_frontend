@@ -150,7 +150,7 @@ const InventarioPorAlmacen = (props) =>{
 		
 			productosAlmacenQuery.refetch();
 		},
-		[ filtroTo, productosAlmacenQuery ]
+		[ filtroTo ]
 	);
 	React.useEffect(
 		() => {
@@ -165,9 +165,24 @@ const InventarioPorAlmacen = (props) =>{
 			productosAlmacenQuery.refetch();
 			setLoading(false);
 		},
-		[ productosAlmacenQuery ]
+		[ ]
 	);
-
+	React.useEffect(
+		() => {
+			if(props.open){
+				productosAlmacenQuery.refetch();
+				setLoading(false);
+			}
+			
+		},
+		[props.open ]
+	);
+	React.useEffect(
+		() => {
+		console.log(productosAlmacenQuery.error)
+		},
+		[ productosAlmacenQuery.error]
+	);
 	React.useEffect(
 		() => {
 		
@@ -176,6 +191,7 @@ const InventarioPorAlmacen = (props) =>{
 		},
 		[ categoriasQuery.refetch ]
 	); 
+	
 
 
 	if(productosAlmacenQuery.data){
@@ -220,7 +236,7 @@ const InventarioPorAlmacen = (props) =>{
 				setSubCategoriaTo((value !== '') ? value : '')
 			}
 			if(label !== 'categoria' && label !== 'subcategoria' ){
-				setFiltro({...filtro, [label] : value, subcategoria : value, categoria:categoriaTo});
+				setFiltro({...filtro, [label] : value, subcategoria : subcategoriaTo, categoria:categoriaTo});
 			}
 			//setLoading(false)	
 		} catch (error) {
@@ -232,7 +248,7 @@ const InventarioPorAlmacen = (props) =>{
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-                                Almacenes
+                                Inventario por almacén
 						</Typography>
 						<Box mx={3}>
 							<Box m={1}>

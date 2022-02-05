@@ -50,6 +50,160 @@ export const CREAR_USUARIO = gql`
 						eliminar
 					}
 				}
+				compras {
+					abrir_compra {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					compras_realizadas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					compras_espera {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				tesoreria {
+					cuentas_empresa {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					egresos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					abonos_proveedores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					abonos_clientes {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				reportes {
+					reporte_historial_cajas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_turnos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_compras {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_ventas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					rerporte_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_corte_caja {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_tesoreria {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				ventas {
+					cancelar_venta {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					precios_productos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					pre_corte {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					cotizaciones {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					administrador {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					eliminar_ventas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					producto_rapido {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				almacenes {
+					almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					traspasos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					inventario_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
 				catalogos {
 					clientes {
 						ver
@@ -185,6 +339,160 @@ export const OBTENER_USUARIOS = gql`
 						eliminar
 					}
 				}
+				compras {
+					abrir_compra {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					compras_realizadas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					compras_espera {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				tesoreria {
+					cuentas_empresa {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					egresos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					abonos_proveedores {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					abonos_clientes {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				reportes {
+					reporte_historial_cajas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_turnos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_compras {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_ventas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					rerporte_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_corte_caja {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					reporte_tesoreria {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				ventas {
+					cancelar_venta {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					precios_productos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					pre_corte {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					cotizaciones {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					administrador {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					eliminar_ventas {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					producto_rapido {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
+				almacenes {
+					almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					traspasos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					inventario_almacen {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
 				catalogos {
 					clientes {
 						ver
@@ -278,6 +586,16 @@ export const LOGEAR_USUARIO = gql`
 			token
 		}
 	}
+`;
+
+export const LOGEAR_USUARIO_ACCESOS = gql`
+	query ObtenerAccesoPermiso($input: ObtenerAccesoPermisosInput) {
+		obtenerAccesoPermiso(input: $input) {
+			permiso_concedido
+			departamento
+        	subDepartamento
+		}
+	}		
 `;
 
 export const AGIGNAR_PERMISOS_USUARIO = gql`

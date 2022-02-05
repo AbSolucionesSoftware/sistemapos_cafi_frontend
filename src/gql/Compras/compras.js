@@ -70,6 +70,8 @@ export const OBTENER_COMPRAS_REALIZADAS = gql`
           numero_cliente
           clave_cliente
           nombre_cliente
+          telefono
+          email
         }
         numero_cliente
         clave_cliente
@@ -194,6 +196,10 @@ export const OBTENER_COMPRAS_REALIZADAS = gql`
         }
         nombre_almacen
       }
+      compra_credito
+      credito_pagado
+      saldo_credito_pendiente
+      fecha_vencimiento_credito
       subtotal
       impuestos
       total
@@ -270,8 +276,12 @@ export const OBTENER_COMPRAS_ESPERA = gql`
               numero_precio
               precio_neto
               precio_venta
-              unidad_mayoreo
+              iva_precio
+              ieps_precio
               utilidad
+              precio_general
+              cantidad_unidad
+              unidad_maxima
             }
             unidad_de_compra {
               cantidad
@@ -327,12 +337,31 @@ export const OBTENER_COMPRAS_ESPERA = gql`
             codigo_barras
             id_producto
             descuento {
+              cantidad_unidad
+              numero_precio
+              unidad_maxima
+              precio_general
+              precio_neto
+              precio_venta
+              iva_precio
+              ieps_precio
+              utilidad
               porciento
               dinero_descontado
-              precio_con_descuento
             }
             descuento_activo
             default
+            precio_unidad {
+              numero_precio
+              precio_neto
+              precio_venta
+              iva_precio
+              unidad_mayoreo
+              utilidad
+              precio_general
+              cantidad_unidad
+              unidad_maxima
+            }
           }
           presentaciones {
             _id
@@ -346,9 +375,17 @@ export const OBTENER_COMPRAS_ESPERA = gql`
               _id
             }
             descuento {
+              cantidad_unidad
+              numero_precio
+              unidad_maxima
+              precio_general
+              precio_neto
+              precio_venta
+              iva_precio
+              ieps_precio
+              utilidad
               porciento
               dinero_descontado
-              precio_con_descuento
             }
             descuento_activo
             existencia
@@ -359,6 +396,17 @@ export const OBTENER_COMPRAS_ESPERA = gql`
             }
             nombre_comercial
             precio
+            precio_unidad {
+              numero_precio
+              precio_neto
+              precio_venta
+              iva_precio
+              unidad_mayoreo
+              utilidad
+              precio_general
+              cantidad_unidad
+              unidad_maxima
+            }
           }
         }
         id_producto
@@ -375,7 +423,8 @@ export const OBTENER_COMPRAS_ESPERA = gql`
         mantener_precio
         subtotal
         total
-        total_con_descuento
+        subtotal_descuento
+        total_descuento
       }
       impuestos
       subtotal
@@ -486,9 +535,17 @@ export const OBTENER_CONSULTA_GENERAL_PRODUCTO = gql`
           empresa
           sucursal
           descuento {
+            cantidad_unidad
+            numero_precio
+            unidad_maxima
+            precio_general
+            precio_neto
+            precio_venta
+            iva_precio
+            ieps_precio
+            utilidad
             porciento
             dinero_descontado
-            precio_con_descuento
           }
           descuento_activo
           default

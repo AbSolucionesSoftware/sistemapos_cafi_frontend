@@ -1,36 +1,25 @@
 import React, { useContext, useEffect } from "react";
-
-import {
-  Box,
-  Divider,
-  FormControl,
-  FormHelperText,
-  Grid,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from "@material-ui/core";
-import ListaClientesFactura from "./ListaClientesFactura.js";
+import Box from "@material-ui/core/Box";
+import Divider from "@material-ui/core/Divider";
+import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import Grid from "@material-ui/core/Grid";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
+import ListaVentasFactura from "./ListaVentas/ListaVentasFactura.js";
 import { FacturacionCtx } from "../../../../context/Facturacion/facturacionCtx.js";
-import moment from "moment";
 import CodigosPostales from "./Catalogos/CodigoPostal.js";
-import {
-  usosCfdi,
-  tiposCfdi,
-  tipoCambio,
-  formaPago,
-  metodoPago,
-} from "../catalogos";
+import { tipoCambio, tiposCfdi } from "../catalogos";
 import ListaClientesFacturas from "./ClientesSelect.js";
 
 export default function RegistroFactura({ serie_default }) {
-  const { datosFactura, setDatosFactura, error_validation } = useContext(
+  const { datosFactura, setDatosFactura, error_validation, venta_factura } = useContext(
     FacturacionCtx
   );
-  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
   useEffect(() => {
     const { folio, serie } = serie_default[0];
@@ -46,56 +35,25 @@ export default function RegistroFactura({ serie_default }) {
     });
   };
 
-  const obtenerUsoCfdi = (e) => {
-    const { name, value } = e.target;
-    setDatosFactura({
-      ...datosFactura,
-      receiver: {
-        ...datosFactura.receiver,
-        [name]: value,
-      },
-    });
-  };
-
   return (
     <div>
       <Grid container spacing={5}>
-        <Grid item md={6}>
+        <Grid item md={6} xs={12}>
           <Box mb={1}>
             <Typography>
-              <b>Emisor</b>
+              <b>{`Emisor: ${datosFactura.issuer.Name}`}</b>
             </Typography>
             <Divider />
           </Box>
           <Grid container spacing={2}>
-            <Grid item md={4}>
-              <InputLabel>Emisor</InputLabel>
-              <TextField
-                size="small"
-                variant="outlined"
-                fullWidth
-                value={datosFactura.issuer.Name}
-                InputProps={{
-                  readOnly: true,
-                }}
-                error={error_validation.status && !datosFactura.issuer.Name}
-                helperText={
-                  error_validation.status && !datosFactura.issuer.Name
-                    ? error_validation.message
-                    : ""
-                }
-              />
-            </Grid>
-            <Grid item md={4}>
-              <InputLabel>RFC</InputLabel>
+            <Grid item md={4} xs={12}>
+              <Typography>RFC</Typography>
               <TextField
                 size="small"
                 variant="outlined"
                 fullWidth
                 value={datosFactura.issuer.Rfc}
-                InputProps={{
-                  readOnly: true,
-                }}
+                disabled
                 error={error_validation.status && !datosFactura.issuer.Rfc}
                 helperText={
                   error_validation.status && !datosFactura.issuer.Rfc
@@ -104,17 +62,15 @@ export default function RegistroFactura({ serie_default }) {
                 }
               />
             </Grid>
-            <Grid item md={4}>
-              <InputLabel>Regimen fiscal</InputLabel>
+            <Grid item md={4} xs={12}>
+              <Typography>Regimen fiscal</Typography>
               <FormControl fullWidth size="small" variant="outlined">
                 <TextField
                   size="small"
                   variant="outlined"
                   fullWidth
                   value={datosFactura.issuer.FiscalRegime}
-                  InputProps={{
-                    readOnly: true,
-                  }}
+                  disabled
                   error={
                     error_validation.status && !datosFactura.issuer.FiscalRegime
                   }
@@ -128,7 +84,7 @@ export default function RegistroFactura({ serie_default }) {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item md={6}>
+        <Grid item md={6} xs={12}>
           <Box mb={1}>
             <Typography>
               <b>Receptor</b>
@@ -136,8 +92,8 @@ export default function RegistroFactura({ serie_default }) {
             <Divider />
           </Box>
           <Grid container spacing={2}>
-            <Grid item md={4}>
-              <InputLabel>Cliente</InputLabel>
+            <Grid item md={4} xs={12}>
+              <Typography>Cliente</Typography>
               <TextField
                 value={datosFactura.receiver.Name}
                 placeholder="Selecciona un cliente"
@@ -151,6 +107,7 @@ export default function RegistroFactura({ serie_default }) {
                     </InputAdornment>
                   ),
                   readOnly: true,
+                  disabled: true,
                 }}
                 error={error_validation.status && !datosFactura.receiver.Name}
                 helperText={
@@ -160,16 +117,14 @@ export default function RegistroFactura({ serie_default }) {
                 }
               />
             </Grid>
-            <Grid item md={4}>
-              <InputLabel>RFC</InputLabel>
+            <Grid item md={4} xs={12}>
+              <Typography>RFC</Typography>
               <TextField
                 size="small"
                 variant="outlined"
                 fullWidth
                 value={datosFactura.receiver.Rfc}
-                InputProps={{
-                  readOnly: true,
-                }}
+                disabled
                 error={error_validation.status && !datosFactura.receiver.Rfc}
                 helperText={
                   error_validation.status && !datosFactura.receiver.Rfc
@@ -177,39 +132,6 @@ export default function RegistroFactura({ serie_default }) {
                     : ""
                 }
               />
-            </Grid>
-            <Grid item md={4}>
-              <InputLabel>Uso de CFDi</InputLabel>
-              <FormControl
-                fullWidth
-                size="small"
-                variant="outlined"
-                fullWidth
-                error={
-                  error_validation.status && !datosFactura.receiver.CfdiUse
-                }
-              >
-                <Select
-                  value={datosFactura.receiver.CfdiUse}
-                  name="CfdiUse"
-                  onChange={obtenerUsoCfdi}
-                >
-                  <MenuItem value="">
-                    <em>Selecciona uno</em>
-                  </MenuItem>
-                  {usosCfdi.map((res, index) => (
-                    <MenuItem
-                      key={index}
-                      value={res.Value}
-                    >{`${res.Value} - ${res.Name}`}</MenuItem>
-                  ))}
-                </Select>
-                <FormHelperText>
-                  {error_validation.status && !datosFactura.receiver.CfdiUse
-                    ? error_validation.message
-                    : ""}
-                </FormHelperText>
-              </FormControl>
             </Grid>
           </Grid>
         </Grid>
@@ -222,7 +144,27 @@ export default function RegistroFactura({ serie_default }) {
         <Divider />
       </Box>
       <Grid container spacing={2}>
-        <Grid item md={1}>
+        <Grid item xs={12} sm={4} md={3}>
+          <TextField
+            value={datosFactura.cliente}
+            placeholder="Selecciona venta a facturar"
+            fullWidth
+            size="small"
+            label="Folio Venta"
+            variant="outlined"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <ListaVentasFactura />
+                </InputAdornment>
+              ),
+              readOnly: true,
+              disabled: true,
+            }}
+            value={venta_factura ? venta_factura.folio : ''}
+          />
+        </Grid>
+        <Grid item xs={12} sm={4} md={1}>
           <TextField
             value={datosFactura.folio}
             label="Folio"
@@ -238,7 +180,7 @@ export default function RegistroFactura({ serie_default }) {
             }
           />
         </Grid>
-        <Grid item md={1}>
+        <Grid item xs={12} sm={4} md={1}>
           <TextField
             value={datosFactura.serie}
             label="Serie"
@@ -254,8 +196,7 @@ export default function RegistroFactura({ serie_default }) {
             }
           />
         </Grid>
-
-        <Grid item md={3}>
+        <Grid item xs={12} sm={4} md={2}>
           <FormControl
             variant="outlined"
             fullWidth
@@ -263,13 +204,13 @@ export default function RegistroFactura({ serie_default }) {
             name="cfdi_type"
             error={error_validation.status && !datosFactura.cfdi_type}
           >
-            <InputLabel id="tipo_factura">Tipo de factura</InputLabel>
+            <InputLabel id="cfdi_type">Tipo de CFDI</InputLabel>
             <Select
-              labelId="tipo_factura"
+              labelId="cfdi_type"
               value={datosFactura.cfdi_type}
               name="cfdi_type"
               onChange={obtenerDatos}
-              label="Tipo de factura"
+              label="tipo de CFDI"
             >
               <MenuItem value="">
                 <em>Selecciona uno</em>
@@ -288,44 +229,7 @@ export default function RegistroFactura({ serie_default }) {
             </FormHelperText>
           </FormControl>
         </Grid>
-        <Grid item md={3}>
-          <FormControl
-            variant="outlined"
-            fullWidth
-            size="small"
-            name="date"
-            error={error_validation.status && !datosFactura.date}
-          >
-            <InputLabel id="fecha_fact">Fecha de facturación</InputLabel>
-            <Select
-              labelId="fecha_fact"
-              value={datosFactura.date}
-              name="date"
-              onChange={obtenerDatos}
-              label="Fecha de facturacion"
-            >
-              <MenuItem value="">
-                <em>Selecciona una fecha</em>
-              </MenuItem>
-              <MenuItem value="0">{moment().format("LL")}</MenuItem>
-              <MenuItem value="1">
-                {moment().subtract(1, "d").format("LL")}
-              </MenuItem>
-              <MenuItem value="2">
-                {moment().subtract(2, "d").format("LL")}
-              </MenuItem>
-            </Select>
-            <FormHelperText>
-              {error_validation.status && !datosFactura.date
-                ? error_validation.message
-                : ""}
-            </FormHelperText>
-          </FormControl>
-        </Grid>
-        <Grid item md={2}>
-          <CodigosPostales />
-        </Grid>
-        <Grid item md={2}>
+        <Grid item xs={12} sm={4} md={2}>
           <FormControl
             variant="outlined"
             fullWidth
@@ -358,89 +262,8 @@ export default function RegistroFactura({ serie_default }) {
             </FormHelperText>
           </FormControl>
         </Grid>
-        <Grid item md={3}>
-          <FormControl
-            variant="outlined"
-            fullWidth
-            size="small"
-            name="payment_form"
-            error={error_validation.status && !datosFactura.payment_form}
-          >
-            <InputLabel id="forma_pago">Forma de pago</InputLabel>
-            <Select
-              labelId="forma_pago"
-              value={datosFactura.payment_form}
-              name="payment_form"
-              onChange={obtenerDatos}
-              label="forma de pago"
-            >
-              <MenuItem value="">
-                <em>Selecciona uno</em>
-              </MenuItem>
-              {formaPago.map((res, index) => (
-                <MenuItem
-                  key={index}
-                  value={res.Value}
-                >{`${res.Value} - ${res.Name}`}</MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>
-              {error_validation.status && !datosFactura.payment_form
-                ? error_validation.message
-                : ""}
-            </FormHelperText>
-          </FormControl>
-        </Grid>
-        <Grid item md={3}>
-          <FormControl
-            variant="outlined"
-            fullWidth
-            size="small"
-            name="payment_method"
-            error={error_validation.status && !datosFactura.payment_method}
-          >
-            <InputLabel id="metodo_pago">Método de pago</InputLabel>
-            <Select
-              labelId="metodo_pago"
-              value={datosFactura.payment_method}
-              name="payment_method"
-              onChange={obtenerDatos}
-              label="metodo de pago"
-            >
-              <MenuItem value="">
-                <em>Selecciona uno</em>
-              </MenuItem>
-              {metodoPago.map((res, index) => (
-                <MenuItem
-                  key={index}
-                  value={res.Value}
-                >{`${res.Value} - ${res.Name}`}</MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>
-              {error_validation.status && !datosFactura.payment_method
-                ? error_validation.message
-                : ""}
-            </FormHelperText>
-          </FormControl>
-        </Grid>
-        <Grid item md={3}>
-          <TextField
-            value={datosFactura.cliente}
-            placeholder="Selecciona venta a facturar"
-            fullWidth
-            size="small"
-            label="Venta"
-            variant="outlined"
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <ListaClientesFactura />
-                </InputAdornment>
-              ),
-              readOnly: true,
-            }}
-          />
+        <Grid item xs={12} sm={4} md={3}>
+          <CodigosPostales />
         </Grid>
       </Grid>
     </div>

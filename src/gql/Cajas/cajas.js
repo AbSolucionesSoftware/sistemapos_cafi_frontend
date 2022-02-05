@@ -63,12 +63,30 @@ export const OBTENER_HISTORIAL_CAJA = gql`
                 completa
             }
             montos_en_caja{
-                monto_tarjeta
-                monto_creditos
-                monto_monedero
-                monto_transferencia
-                monto_cheques
-                monto_vales_despensa
+                monto_efectivo{
+                    monto 
+                }
+                monto_tarjeta_credito{
+                    monto 
+                }
+                monto_tarjeta_debito{
+                    monto 
+                }
+                monto_creditos{
+                    monto 
+                }
+                monto_monedero{
+                    monto 
+                }
+                monto_transferencia{
+                    monto 
+                }
+                monto_cheques{
+                    monto 
+                }
+                monto_vales_despensa{
+                    monto 
+                }
             }
         }
     }
@@ -122,13 +140,30 @@ export const OBTENER_CORTES_CAJA = gql`
                 numero_usuario
             }
             montos_en_caja{
-                monto_efectivo
-                monto_tarjeta
-                monto_creditos
-                monto_monedero
-                monto_transferencia
-                monto_cheques
-                monto_vales_despensa
+                monto_efectivo{
+                    monto 
+                }
+                monto_tarjeta_credito{
+                    monto 
+                }
+                monto_tarjeta_debito{
+                    monto 
+                }
+                monto_creditos{
+                    monto 
+                }
+                monto_monedero{
+                    monto 
+                }
+                monto_transferencia{
+                    monto 
+                }
+                monto_cheques{
+                    monto 
+                }
+                monto_vales_despensa{
+                    monto 
+                }
             }
             sucursal{
                 nombre_sucursal
@@ -142,7 +177,8 @@ export const OBTENER_CORTE_CAJA = gql`
         obtenerCorteCaja(empresa: $empresa, sucursal: $sucursal, input: $input){
             montos_en_sistema{
                 monto_efectivo
-                monto_tarjeta
+                monto_tarjeta_debito
+                monto_tarjeta_credito
                 monto_creditos
                 monto_monedero
                 monto_transferencia

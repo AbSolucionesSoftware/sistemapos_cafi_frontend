@@ -1,0 +1,60 @@
+import { gql } from '@apollo/client';
+
+export const OBTENER_SUCURSALES = gql`
+    query ObtenerSucursalesEmpresa($id: ID!){
+        obtenerSucursalesEmpresa(id: $id){
+            _id
+            nombre_sucursal
+            descripcion
+            usuario_sucursal
+            direccion{
+                calle
+                no_ext
+                no_int
+                codigo_postal
+                colonia
+                municipio
+                localidad
+                estado
+                pais
+            }
+            cuenta_sucursal {
+                dinero_actual
+            }         
+        }
+    }
+`
+
+export const CREAR_MOVIMIENTO_CUENTA = gql`
+    mutation CrearMovimientoCuenta($input: CrearMovimientoCuentaInput, $empresa: ID!, $sucursal: ID!, $tipo: Boolean){
+        crearMovimientoCuenta(input: $input, empresa: $empresa, sucursal: $sucursal, tipo: $tipo){
+            message
+        }
+    }
+`;
+
+export const OBTENER_HISTORIAL_CUENTAS = gql`
+    query ObtenerHistorialCuenta($empresa: ID!, $sucursal: ID!, $input: ObtenerHistorialCuenta, $tipo: Boolean){
+        obtenerHistorialCuenta(empresa: $empresa, sucursal: $sucursal, input: $input, tipo: $tipo){
+            tipo_movimiento
+            id_usuario
+            numero_caja
+            id_Caja
+            numero_usuario_creador
+            nombre_usuario_creador
+            horario_turno
+            concepto
+            comentarios
+            montos_en_caja { 
+                monto_efectivo{
+                    monto 
+                }
+            }
+            fecha_movimiento{
+                completa
+            }
+            empresa
+            sucursal             
+        }
+    }
+`;

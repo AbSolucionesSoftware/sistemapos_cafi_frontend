@@ -31,7 +31,7 @@ import {
   LocalOffer,
   LocalOfferOutlined,
 } from "@material-ui/icons";
-import { fade } from "@material-ui/core/styles/colorManipulator";
+import { alpha } from "@material-ui/core/styles/colorManipulator";
 
 const compareFunction = (a, b) => {
   if (a.medida.talla && b.medida.talla) {
@@ -55,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tableRow: {
     "&.Mui-selected, &.Mui-selected:hover": {
-      backgroundColor: fade(theme.palette.primary.main, 0.1),
+      backgroundColor: alpha(theme.palette.primary.main, 0.1),
     },
   },
   visuallyHidden: {
@@ -120,7 +120,7 @@ export default function TablaPresentaciones({
 
       if (element.descuento_activo === true) {
         obj.aplicar_descuento = true;
-        obj.precio = parseFloat(element.descuento.precio_con_descuento);
+        obj.precio = parseFloat(element.descuento.precio_neto);
       } else {
         obj.aplicar_descuento = false;
         obj.precio = parseFloat(element.precio);
@@ -197,7 +197,7 @@ const RenderPresentacionesRows = ({
   withoutPrice,
   onlyPrice,
 }) => {
-  const { presentaciones, setPresentaciones, preciosP } = useContext(
+  const { presentaciones, setPresentaciones, preciosP, precios, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(
     RegProductoContext
   );
   const [disabledInput, setDisabledInput] = useState(true);
@@ -265,21 +265,39 @@ const RenderPresentacionesRows = ({
         setPresentaciones(copy_presentaciones);
         return;
       }
-      if (
-        copy_element_presentacion.descuento_activo &&
-        copy_element_presentacion.descuento_activo === true
-      ) {
-        let precio_con_descuento = Math.round(
-          (value * copy_element_presentacion.descuento.porciento) / 100
-        );
-        copy_element_presentacion_descuento.precio_con_descuento = parseFloat(
-          precio_con_descuento
+      let precio_neto = parseFloat(value);
+      let { iva, ieps } = precios;
+      let suma_impuestos = parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) + parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+      let precio_venta = parseFloat((precio_neto / (suma_impuestos+1)).toFixed(2));
+      let iva_precio = parseFloat((precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)).toFixed(2));
+      let ieps_precio = parseFloat((precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)).toFixed(2));
+      let PUCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
+      let utilidad = parseFloat((((precio_venta - PUCSI) / PUCSI) * 100).toFixed(2));
+      
+
+      let {descuento_activo, descuento} = copy_element_presentacion;
+      if (descuento_activo && descuento_activo === true) {
+        let new_precio_venta_desc = (precio_venta * descuento.porciento) / 100;
+        let new_iva_precio =
+          new_precio_venta_desc * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
+        let new_ieps_precio =
+          new_precio_venta_desc * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+        let new_impuestos = new_iva_precio + new_ieps_precio;
+        let precio_con_descuento = new_precio_venta_desc + new_impuestos;
+
+        copy_element_presentacion_descuento.precio_neto = parseFloat(
+          (precio_con_descuento).toFixed(2)
         );
         copy_element_presentacion.precio = parseFloat(value);
         copy_element_presentacion.descuento = copy_element_presentacion_descuento;
       } else {
         copy_element_presentacion.precio = parseFloat(value);
       }
+      copy_element_presentacion.precio_unidad.precio_venta = precio_venta;
+      copy_element_presentacion.precio_unidad.precio_neto = precio_neto;
+      copy_element_presentacion.precio_unidad.utilidad = utilidad;
+      copy_element_presentacion.precio_unidad.iva_precio = iva_precio;
+      copy_element_presentacion.precio_unidad.ieps_precio = ieps_precio;
     } else {
       if (!value) {
         copy_element_presentacion.codigo_barras = "";
@@ -319,6 +337,33 @@ const RenderPresentacionesRows = ({
 
   const aplicarDescuento = (value) => {
     copy_element_presentacion.descuento_activo = value;
+
+    let precio_con_descuento = 0;
+    let { iva, ieps } = precios;
+    let {descuento, precio} = copy_element_presentacion;
+    let suma =
+      parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
+      parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+    let precio_venta = parseFloat((precio / (suma + 1)).toFixed(2));
+
+    if(value){
+      let new_precio_venta_desc = (precio_venta * descuento.porciento) / 100;
+        let new_iva_precio =
+          new_precio_venta_desc * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
+        let new_ieps_precio =
+          new_precio_venta_desc * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+        let new_impuestos = new_iva_precio + new_ieps_precio;
+        precio_con_descuento = new_precio_venta_desc + new_impuestos;
+    }else{
+      precio_con_descuento = precio
+    }
+    
+    copy_element_presentacion_descuento.precio_neto = parseFloat(
+      (precio_con_descuento).toFixed(2)
+    );
+    /* copy_element_presentacion.precio = parseFloat(value); */
+    copy_element_presentacion.descuento = copy_element_presentacion_descuento;
+  
     copy_presentaciones.splice(index, 1, copy_element_presentacion);
     setPresentaciones(copy_presentaciones);
   };
@@ -433,7 +478,7 @@ const RenderPresentacionesRows = ({
                     $
                     {parseFloat(
                       copy_producto.descuento !== null
-                        ? copy_producto.descuento.precio_con_descuento
+                        ? copy_producto.descuento.precio_neto
                         : 0
                     )}
                   </Typography>

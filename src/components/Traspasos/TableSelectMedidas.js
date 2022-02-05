@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState, useEffect } from 'react';
+import React, { useContext,  useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -6,19 +6,16 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import TablePagination from '@material-ui/core/TablePagination';
 import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import { Box, Chip, IconButton, Tooltip, Zoom , TextField} from '@material-ui/core';
-import { Cached, Close, Edit } from '@material-ui/icons';
+import {  Chip,  Tooltip, Zoom , TextField} from '@material-ui/core';
 import { TraspasosAlmacenContext } from "../../context/Almacenes/traspasosAlmacen";
 import { fade } from '@material-ui/core/styles/colorManipulator';
 
-const compareFunction = (a, b) => {
+/* const compareFunction = (a, b) => {
 	if (a.medida.talla && b.medida.talla) {
 		return a.medida.talla.localeCompare(b.medida.talla);
 	}
-};
+}; */
 
 
 const useStyles = makeStyles((theme) => ({
@@ -39,9 +36,7 @@ const useStyles = makeStyles((theme) => ({
 		maxWidth: '100%',
 		
 	},
-	container: {
-		maxHeight: '65vh'
-	},
+	
 	tableRow: {
     
 		'&.Mui-selected, &.Mui-selected:hover': {
@@ -71,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-function stableSort(array, comparator) {
+/* function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -79,7 +74,7 @@ function stableSort(array, comparator) {
     return a[1] - b[1];
   });
   return stabilizedThis.map((el) => el[0]);
-}
+} */
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -99,17 +94,13 @@ function getComparator(order, orderBy) {
 
 export default function TablaPresentaciones({ producto, setOnUpdate, onUpdate, new_medidas, setNew_medidas }) {
   const classes = useStyles();
-  const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('calories');
-  const [selected, setSelected] = useState(undefined);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+ 
  
 
- 
+/*  
 const handleChangePage = (event, newPage) => {
     setPage(newPage);
-};
+}; */
 
 	return (
 		<div className={classes.root}>
@@ -174,33 +165,28 @@ const RenderPresentacionesRows = ({ medida, index, setOnUpdate, onUpdate,new_med
 	const copy_medida = { ...medida };
 	const {productosTras} = useContext(TraspasosAlmacenContext);
 	//const [productInTras, setProductInTras] =  useState(null);
-	let productInTras = null;
+	//let productInTras = null;
 	//let productInTras = productosTras.find(element => element.product_selecteded._id === idProducto);
-	const productosTrasContext = productosTras;
+	//const productosTrasContext = productosTras;
  
 	useEffect(() => {
 		productosTras.forEach(producto => {
 			//console.log("SELECTMEDIDAS",producto)
+
 		if(producto.product_selected._id === idProducto){
 			let new_medidasCopia = [];
 			let element = null;
 		
 			for (const med in producto.new_medidas) {
-			
 				if (Object.hasOwnProperty.call(producto.new_medidas, med)) {
 					element = producto.new_medidas[med];
-					
 					new_medidasCopia.push(element)
 					
 					if(medida._id === element.medida._id){
-						//console.log(element.cantidad)	
-						setCantidad( element.cantidad);		
+						setCantidad( element.nuevaCantidad);		
 					}
-					
 				}
-			
 			}
-			
 			setNew_medidas(producto.new_medidas);
 			return;
 		}

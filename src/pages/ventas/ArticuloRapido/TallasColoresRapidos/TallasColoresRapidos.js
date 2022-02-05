@@ -30,7 +30,12 @@ const GenCodigoBarras = () => {
 	return Math.floor(Math.random() * (999999999999 - 100000000000 + 1) + 100000000000).toString();
 };
 
-export default function TallasColoresRapidos({ obtenerConsultasProducto, refetch, datos, from}) {
+export default function TallasColoresRapidos({ 
+	obtenerConsultasProducto, 
+	refetch, 
+	datos, 
+	from
+}) {
 	const {
 		// almacen_inicial,
 		// setAlmacenInicial,
@@ -165,7 +170,15 @@ const RenderTallas = ({
 }) => {
 	const classes = useStyles();
 	const theme = useTheme();
-	const { setPresentaciones, presentaciones, datos_generales, preciosP, presentaciones_eliminadas, setPresentacionesEliminadas } = useContext(RegProductoContext);
+	const { 
+		setPresentaciones, 
+		presentaciones, 
+		datos_generales, 
+		preciosP, 
+		precios,
+		presentaciones_eliminadas, 
+		setPresentacionesEliminadas 
+	} = useContext(RegProductoContext);
 	const [ selected, setSelected ] = useState(false);
 
 	// const seleccionarMedidas = useCallback(
@@ -212,10 +225,26 @@ const RenderTallas = ({
 
 		let presentacion_temp = [];
 		const array_medidad_finales = [ ...presentaciones ];
+		const { iva, ieps } = precios;
+
 		if (!coloresSeleccionados.length && !array_medidad_finales.length) {
 			/* SI NO HAY COLORES NI VALORES EN EL ARRAY FINAL SE AGREGA EL PRIMER ELEMENTO */
 			for (let i = 0; i < medidas_seleccionadas_temp.length; i++) {
 				const producto_medida = medidas_seleccionadas_temp[i];
+				let varIVA = (iva < 10 ? `0${iva}` : iva);
+				let varIEPS = (ieps < 10 ? `0${ieps}` : ieps);
+				let iva_precio = parseFloat(
+					(
+					  preciosP[0].precio_venta *
+					  parseFloat(`0.${varIVA}`)
+					).toFixed(2)
+				  );
+				  let ieps_precio = parseFloat(
+					(
+					  preciosP[0].precio_venta *
+					  parseFloat(`0.${varIEPS}`)
+					).toFixed(2)
+				  );
 				presentacion_temp.push({
 					_id: '',
 					existencia: false,
@@ -225,7 +254,17 @@ const RenderTallas = ({
 					color: { nombre: '', hex: '' },
 					precio: preciosP[0].precio_neto,
 					cantidad: 0,
-					nuevo: true
+					nuevo: true,
+					precio_unidad: {
+						numero_precio: 1,
+						precio_venta: preciosP[0].precio_venta,
+						precio_neto: preciosP[0].precio_neto,
+						unidad_mayoreo: 0,
+						iva_precio: iva_precio,
+						ieps_precio: ieps_precio,
+						utilidad: preciosP[0].utilidad,
+						unidad_maxima: false,
+					},
 				});
 			}
 		} else if (!coloresSeleccionados.length && array_medidad_finales.length > 0) {
@@ -233,6 +272,21 @@ const RenderTallas = ({
 			for (let i = 0; i < medidas_seleccionadas_temp.length; i++) {
 				const producto_medida = medidas_seleccionadas_temp[i];
 				const result = array_medidad_finales.filter((res) => res.medida._id === producto_medida._id);
+				let varIVA = (iva < 10 ? `0${iva}` : iva);
+				let varIEPS = (ieps < 10 ? `0${ieps}` : ieps);
+
+				let iva_precio = parseFloat(
+					(
+					  preciosP[0].precio_venta *
+					  parseFloat(`0.${varIVA}`)
+					).toFixed(2)
+				  );
+				  let ieps_precio = parseFloat(
+					(
+					  preciosP[0].precio_venta *
+					  parseFloat(`0.${varIEPS}`)
+					).toFixed(2)
+				  );
 				if (result.length) {
 					presentacion_temp.push(result[0]);
 				} else {
@@ -245,7 +299,17 @@ const RenderTallas = ({
 						color: { nombre: '', hex: '' },
 						precio: preciosP[0].precio_neto,
 						cantidad: 0,
-						nuevo: true
+						nuevo: true,
+						precio_unidad: {
+							numero_precio: 1,
+							precio_venta: preciosP[0].precio_venta,
+							precio_neto: preciosP[0].precio_neto,
+							unidad_mayoreo: 0,
+							iva_precio: iva_precio,
+							ieps_precio: ieps_precio,
+							utilidad: preciosP[0].utilidad,
+							unidad_maxima: false,
+						},
 					});
 				}
 			}
@@ -262,7 +326,8 @@ const RenderTallas = ({
 						color: array_medidad_finales[i].color,
 						precio: array_medidad_finales[i].precio,
 						cantidad: array_medidad_finales[i].cantidad,
-						nuevo: true
+						nuevo: true,
+						precio_unidad: array_medidad_finales[i].precio_unidad,
 					});
 				}
 			}
@@ -277,6 +342,20 @@ const RenderTallas = ({
 							producto_array_final.medida._id === producto_medida._id &&
 							producto_color._id === producto_array_final.color._id
 					);
+					let varIVA = (iva < 10 ? `0${iva}` : iva);
+					let varIEPS = (ieps < 10 ? `0${ieps}` : ieps);
+					let iva_precio = parseFloat(
+						(
+						  preciosP[0].precio_venta *
+						  parseFloat(`0.${varIVA}`)
+						).toFixed(2)
+					  );
+					  let ieps_precio = parseFloat(
+						(
+						  preciosP[0].precio_venta *
+						  parseFloat(`0.${varIEPS}`)
+						).toFixed(2)
+					  );
 					if (!presentacion_existente.length) {
 						presentacion_temp.push({
 							_id: '',
@@ -287,7 +366,17 @@ const RenderTallas = ({
 							color: producto_color,
 							precio: preciosP[0].precio_neto,
 							cantidad: 0,
-							nuevo: true
+							nuevo: true,
+							precio_unidad: {
+								numero_precio: 1,
+								precio_venta: preciosP[0].precio_venta,
+								precio_neto: preciosP[0].precio_neto,
+								unidad_mayoreo: 0,
+								iva_precio: iva_precio,
+								ieps_precio: ieps_precio,
+								utilidad: preciosP[0].utilidad,
+								unidad_maxima: false,
+							}
 						});
 					} else {
 						presentacion_temp.push(presentacion_existente[0]);
@@ -309,7 +398,8 @@ const RenderTallas = ({
 						color: objeto_presentaciones_final.color,
 						precio: objeto_presentaciones_final.precio,
 						cantidad: objeto_presentaciones_final.cantidad,
-						nuevo: true
+						nuevo: true,
+						precio_unidad: objeto_presentaciones_final.precio_unidad,
 					});
 				}
 			}
@@ -345,10 +435,24 @@ const RenderTallas = ({
 	);
 };
 
-const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidasSeleccionadas, datos }) => {
+const Colores = ({ 
+	color, 
+	coloresSeleccionados, 
+	setColoresSeleccionados, 
+	medidasSeleccionadas, 
+	datos 
+}) => {
 	const classes = useStyles();
 	const theme = useTheme();
-	const { presentaciones, setPresentaciones, datos_generales, preciosP, presentaciones_eliminadas, setPresentacionesEliminadas } = useContext(RegProductoContext);
+	const { 
+		presentaciones, 
+		setPresentaciones, 
+		datos_generales, 
+		preciosP, 
+		precios,
+		presentaciones_eliminadas, 
+		setPresentacionesEliminadas 
+	} = useContext(RegProductoContext);
 
 	const [ selected, setSelected ] = useState(false);
 
@@ -391,11 +495,26 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 		}
 		let presentacion_temp = [];
 		const array_medidad_finales = [ ...presentaciones ];
+		const { iva, ieps } = precios;
 
 		if (!medidasSeleccionadas.length && !array_medidad_finales.length) {
 			/* SI NO HAY COLORES NI VALORES EN EL ARRAY FINAL SE AGREGA EL PRIMER ELEMENTO */
 			for (let i = 0; i < coloresSeleccionados.length; i++) {
 				const producto_color = coloresSeleccionados[i];
+				let varIVA = (iva < 10 ? `0${iva}` : iva);
+				let varIEPS = (ieps < 10 ? `0${ieps}` : ieps);
+				let iva_precio = parseFloat(
+					(
+					  preciosP[0].precio_venta *
+					  parseFloat(`0.${varIVA}`)
+					).toFixed(2)
+				);
+				let ieps_precio = parseFloat(
+					(
+						preciosP[0].precio_venta *
+						parseFloat(`0.${varIEPS}`)
+					).toFixed(2)
+				);
 				presentacion_temp.push({
 					_id: '',
 					existencia: false,
@@ -405,7 +524,17 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 					color: producto_color,
 					precio: preciosP[0].precio_neto,
 					cantidad: 0,
-					nuevo: true
+					nuevo: true,
+					precio_unidad: {
+						numero_precio: 1,
+						precio_venta: preciosP[0].precio_venta,
+						precio_neto: preciosP[0].precio_neto,
+						unidad_mayoreo: 0,
+						iva_precio: iva_precio,
+						ieps_precio: ieps_precio,
+						utilidad: preciosP[0].utilidad,
+						unidad_maxima: false,
+					},
 				});
 			}
 		} else if (!medidasSeleccionadas.length && array_medidad_finales.length > 0) {
@@ -413,6 +542,20 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 			for (let i = 0; i < coloresSeleccionados.length; i++) {
 				const producto_color = coloresSeleccionados[i];
 				const result = array_medidad_finales.filter((res) => res.color._id === producto_color._id);
+				let varIVA = (iva < 10 ? `0${iva}` : iva);
+				let varIEPS = (ieps < 10 ? `0${ieps}` : ieps);
+				let iva_precio = parseFloat(
+					(
+					  preciosP[0].precio_venta *
+					  parseFloat(`0.${varIVA}`)
+					).toFixed(2)
+				  );
+				let ieps_precio = parseFloat(
+					(
+					  preciosP[0].precio_venta *
+					  parseFloat(`0.${varIEPS}`)
+					).toFixed(2)
+				);
 				if (result.length) {
 					presentacion_temp.push(result[0]);
 				} else {
@@ -425,7 +568,17 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 						color: producto_color,
 						precio: preciosP[0].precio_neto,
 						cantidad: 0,
-						nuevo: true
+						nuevo: true,
+						precio_unidad: {
+							numero_precio: 1,
+							precio_venta: preciosP[0].precio_venta,
+							precio_neto: preciosP[0].precio_neto,
+							unidad_mayoreo: 0,
+							iva_precio: iva_precio,
+							ieps_precio: ieps_precio,
+							utilidad: preciosP[0].utilidad,
+							unidad_maxima: false,
+						}
 					});
 				}
 			}
@@ -442,7 +595,8 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 						color: coloresSeleccionados[k],
 						precio: array_medidad_finales[i].precio,
 						cantidad: array_medidad_finales[i].cantidad,
-						nuevo: true
+						nuevo: true,
+						precio_unidad: array_medidad_finales[i].precio_unidad
 					});
 				}
 			}
@@ -457,6 +611,20 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 							producto_array_final.medida._id === producto_medida._id &&
 							producto_color._id === producto_array_final.color._id
 					);
+					let varIVA = (iva < 10 ? `0${iva}` : iva);
+					let varIEPS = (ieps < 10 ? `0${ieps}` : ieps);
+					let iva_precio = parseFloat(
+						(
+						  preciosP[0].precio_venta *
+						  parseFloat(`0.${varIVA}`)
+						).toFixed(2)
+					  );
+					let ieps_precio = parseFloat(
+						(
+							preciosP[0].precio_venta *
+							parseFloat(`0.${varIEPS}`)
+						).toFixed(2)
+					);
 					if (!presentacion_existente.length) {
 						presentacion_temp.push({
 							_id: '',
@@ -467,7 +635,17 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 							color: producto_color,
 							precio: preciosP[0].precio_neto,
 							cantidad: 0,
-							nuevo: true
+							nuevo: true,
+							precio_unidad: {
+								numero_precio: 1,
+								precio_venta: preciosP[0].precio_venta,
+								precio_neto: preciosP[0].precio_neto,
+								unidad_mayoreo: 0,
+								iva_precio: iva_precio,
+								ieps_precio: ieps_precio,
+								utilidad: preciosP[0].utilidad,
+								unidad_maxima: false,
+							},
 						});
 					} else {
 						presentacion_temp.push(presentacion_existente[0]);
@@ -489,7 +667,8 @@ const Colores = ({ color, coloresSeleccionados, setColoresSeleccionados, medidas
 						color: { nombre: '', hex: '' },
 						precio: objeto_presentaciones_final.precio,
 						cantidad: objeto_presentaciones_final.cantidad,
-						nuevo: true
+						nuevo: true,
+						precio_unidad: objeto_presentaciones_final.precio_unidad,
 					});
 				}
 			}

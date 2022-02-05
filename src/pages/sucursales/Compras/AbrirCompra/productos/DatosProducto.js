@@ -39,10 +39,9 @@ import {
 import CrearProducto, {
   initial_state_preciosP,
 } from "../../../Catalogos/Producto/crearProducto";
-import ErrorPage from "../../../../../components/ErrorPage";
 import { ComprasContext } from "../../../../../context/Compras/comprasContext";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
-import { useLazyQuery } from "@apollo/client";
+import { useApolloClient } from "@apollo/client";
 import { OBTENER_PRODUCTOS } from "../../../../../gql/Catalogos/productos";
 import PreciosDeVentaCompras from "./PreciosVenta";
 import { validateJsonEdit } from "../../../Catalogos/Producto/validateDatos";
@@ -53,6 +52,7 @@ import DatosProveedorAlmacen from "./DatosProveedorAlmacen";
 import { initial_state_datosProducto } from "../initial_states";
 import MostrarPrecios from "./mostrar_precios";
 import { useDebounce } from "use-debounce/lib";
+import SnackBarMessages from "../../../../../components/SnackBarMessages";
 
 export default function DatosProducto({ status }) {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -106,7 +106,7 @@ export default function DatosProducto({ status }) {
     setPresentaciones,
     presentaciones_eliminadas,
     setPresentacionesEliminadas,
-    setAlmacenExistente
+    setAlmacenExistente,
   } = useContext(RegProductoContext);
   const [verificate, setVerificate] = useState(false);
 
@@ -114,28 +114,46 @@ export default function DatosProducto({ status }) {
   if (status === "enEspera" && datosCompra) count = 1;
 
   const [cargando, setCargando] = useState(false);
+  const client = useApolloClient();
+  const [data, setData] = useState();
+  const [alert, setAlert] = useState({ message: "", status: "", open: false });
 
   /* Queries */
-  const [getProductos, { loading, data, error, refetch }] = useLazyQuery(
-    OBTENER_PRODUCTOS,
-    {
-      variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
-      fetchPolicy: "network-only",
+  const getProductos = async (id_almacen) => {
+    try {
+      let almacen = id_almacen ? id_almacen : datosCompra.almacen._id;
+      setLoadingProductos(true);
+      const response = await client.query({
+        query: OBTENER_PRODUCTOS,
+        variables: {
+          almacen,
+          empresa: sesion.empresa._id,
+          sucursal: sesion.sucursal._id,
+        },
+        fetchPolicy: "network-only",
+      });
+      setLoadingProductos(false);
+      setData(response.data);
+    } catch (error) {
+      setLoadingProductos(false);
+      setAlert({
+        message: "Hubo un error al cargar los productos",
+        status: "error",
+        open: true,
+      });
     }
-  );
-
-  /* console.log(error.networkError.result); */
+  };
 
   const [COSTO] = useDebounce(costo, 500);
   const [CANTIDAD] = useDebounce(cantidad, 500);
 
-  useEffect(() => {
-    if (loading) {
+  /* useEffect(() => {
+    if (loadingProductos) {
       setLoadingProductos(true);
     } else {
       setLoadingProductos(false);
     }
-  }, [loading]);
+  }, [loadingProductos]); */
 
   useEffect(() => {
     if (data) obtenerCosto(COSTO);
@@ -147,16 +165,11 @@ export default function DatosProducto({ status }) {
 
   useEffect(() => {
     if (count === 1) {
-      getProductos({
-        variables: {
-          almacen: datosCompra.almacen._id,
-          empresa: sesion.empresa._id, sucursal: sesion.sucursal._id
-        },
-      });
+      getProductos(datosCompra.almacen._id);
     }
   }, [count]);
 
-  if (loading)
+  if (loadingProductos) {
     return (
       <Box
         display="flex"
@@ -169,8 +182,6 @@ export default function DatosProducto({ status }) {
         <Typography variant="h5">Cargando</Typography>
       </Box>
     );
-  if (error) {
-    return <ErrorPage error={error} altura={200} />;
   }
 
   let obtenerProductos = [];
@@ -207,7 +218,8 @@ export default function DatosProducto({ status }) {
       subtotal: precio_sin_impuesto,
       impuestos: parseFloat(impuestos.toFixed(6)),
       total: precio_con_impuesto,
-      total_con_descuento: precio_con_impuesto,
+      subtotal_descuento: precio_sin_impuesto,
+      total_descuento: precio_con_impuesto,
     });
     setInitialStates(producto);
     setCosto(precio_con_impuesto);
@@ -216,7 +228,7 @@ export default function DatosProducto({ status }) {
     setPreciosVenta(producto.precios.precios_producto);
   };
 
-  const obtenerCantidad = (value) => {
+  function obtenerCantidad(value) {
     if (!value) {
       setDatosProducto({
         ...datosProducto,
@@ -228,7 +240,7 @@ export default function DatosProducto({ status }) {
       ...datosProducto,
       cantidad: parseFloat(value),
     });
-  };
+  }
 
   const obtenerCantidadRegalo = (value) => {
     if (!value) {
@@ -252,7 +264,7 @@ export default function DatosProducto({ status }) {
     });
   };
 
-  const obtenerCosto = (value) => {
+  function obtenerCosto(value) {
     /* const { name, value } = e.target; */
     if (!value) {
       setDatosProducto({
@@ -263,55 +275,63 @@ export default function DatosProducto({ status }) {
     }
 
     const { iva, ieps, precio_de_compra } = datosProducto.producto.precios;
+    const iva_precio = precio_de_compra.iva;
+    const ieps_precio = precio_de_compra.ieps;
 
-    /* console.log(datosProducto.producto); */
+    let precio_neto = parseFloat(value);
+    let subtotal = 0;
+    let total = 0;
+    let cantidad_descontada = 0;
+    let impuesto_actual = iva_precio + ieps_precio;
 
-    let total = value;
-    let total_con_descuento;
-    let descuento_precio;
-
-    let precio_sin_impuesto = total - (precio_de_compra.iva + precio_de_compra.ieps)
-    let nuevo_iva = iva;
-    let nuevo_ieps = ieps;
-    let impuestos = 0;
-
-    nuevo_iva =
+    let precio_sin_impuesto = precio_neto - impuesto_actual;
+    let nuevo_iva =
       parseFloat(precio_sin_impuesto) *
       parseFloat(iva < 10 ? ".0" + iva : "." + iva);
-    nuevo_ieps =
+    let nuevo_ieps =
       parseFloat(precio_sin_impuesto) *
       parseFloat(ieps < 10 ? ".0" + ieps : "." + ieps);
-
-    impuestos = nuevo_ieps + nuevo_iva;
+    let nuevo_impuesto = nuevo_ieps + nuevo_iva;
 
     if (datosProducto.descuento_porcentaje > 0) {
-      descuento_precio = Math.round(
-        (total * datosProducto.descuento_porcentaje) / 100
+      cantidad_descontada = Math.round(
+        (precio_sin_impuesto * datosProducto.descuento_porcentaje) / 100
       );
-      total_con_descuento = total - descuento_precio;
+      subtotal = precio_sin_impuesto - cantidad_descontada;
+      total = subtotal + nuevo_impuesto;
 
       setDatosProducto({
         ...datosProducto,
-        costo: parseFloat(total),
-        descuento_precio: parseFloat(descuento_precio),
-        total_con_descuento: parseFloat(total_con_descuento),
-        subtotal: parseFloat(total) - impuestos,
+        costo: parseFloat(precio_neto),
+        descuento_precio: parseFloat(cantidad_descontada),
+        subtotal_descuento: parseFloat(subtotal),
+        total_descuento: parseFloat(total),
       });
       return;
     }
     setDatosProducto({
       ...datosProducto,
-      costo: parseFloat(total),
-      total_con_descuento: parseFloat(total),
-      subtotal: parseFloat(total) - impuestos,
+      costo: parseFloat(precio_neto),
+      subtotal_descuento: parseFloat(precio_sin_impuesto),
+      total_descuento: parseFloat(precio_sin_impuesto + nuevo_impuesto),
     });
-  };
+  }
 
   const agregarCompra = async (actualizar_Precios) => {
+    let copy_datosProducto = { ...datosProducto };
+    let copy_datosGenerales = { ...datos_generales };
+    let copy_presentaciones = [...presentaciones];
+    let copy_precios = { ...precios };
+    let copy_preciosP = [...preciosP];
+    let copy_almacenInicial = { ...almacen_inicial };
+    let copy_centroCostos = { ...centro_de_costos };
+    let copy_presentacionesEliminadas = [...presentaciones_eliminadas];
+    let copy_precioPlazos = { ...preciosPlazos };
+
     /* Validaciones */
     setCargando(true);
     if (
-      !datosProducto.producto.datos_generales ||
+      !copy_datosProducto.producto.datos_generales ||
       !datosCompra.proveedor.nombre_cliente ||
       !datosCompra.almacen.nombre_almacen
     ) {
@@ -319,12 +339,12 @@ export default function DatosProducto({ status }) {
       return;
     }
 
-    if (datos_generales.tipo_producto !== "OTROS") {
-      if (presentaciones.length > 0) {
-        const pres = presentaciones.filter(
+    if (copy_datosGenerales.tipo_producto !== "OTROS") {
+      if (copy_presentaciones.length > 0) {
+        const pres = copy_presentaciones.filter(
           (res) => res.color._id && res.medida._id && res.existencia
         );
-        if (pres.length !== presentaciones.length) {
+        if (pres.length !== copy_presentaciones.length) {
           setVerificate(true);
           setCargando(false);
           return;
@@ -344,62 +364,63 @@ export default function DatosProducto({ status }) {
       const unidadxdefecto = copy_unidadesVenta.filter(
         (unidades) => unidades.default === true
       );
-      if (unidadxdefecto.length > 0)
-        copy_unidadesVenta.splice(0, 1, unidadVentaXDefecto);
+      if (unidadxdefecto.length === 0) {
+        copy_unidadesVenta.splice(0, 0, unidadVentaXDefecto);
+      }
     }
 
     if (actualizar_Precios) {
-      datosProducto.mantener_precio = false;
+      copy_datosProducto.mantener_precio = false;
     } else {
-      datosProducto.mantener_precio = true;
+      copy_datosProducto.mantener_precio = true;
     }
-
-    precios.precios_producto = preciosP;
+    copy_precios.precios_producto = copy_preciosP;
 
     let producto = {
       datos_generales: await validateJsonEdit(
-        datos_generales,
+        copy_datosGenerales,
         "datos_generales"
       ),
-      precios,
+      precios: copy_precios,
       imagenes,
       imagenes_eliminadas,
-      almacen_inicial,
-      centro_de_costos,
+      almacen_inicial: copy_almacenInicial,
+      centro_de_costos: copy_centroCostos,
       unidades_de_venta: await validateJsonEdit(
         copy_unidadesVenta,
         "unidades_de_venta"
       ),
-      presentaciones,
-      presentaciones_eliminadas,
-      precio_plazos: preciosPlazos,
+      presentaciones: copy_presentaciones,
+      presentaciones_eliminadas: copy_presentacionesEliminadas,
+      precio_plazos: copy_precioPlazos,
       empresa: sesion.empresa._id,
       sucursal: sesion.sucursal._id,
       usuario: sesion._id,
     };
 
-    datosProducto.producto = producto;
+    copy_datosProducto.producto = producto;
 
-    if (datosProducto.producto.datos_generales.tipo_producto !== "OTROS") {
+    if (copy_datosProducto.producto.datos_generales.tipo_producto !== "OTROS") {
       //si son medidas sumas las cantidades de las presetnaciones
-      if (datosProducto.producto.presentaciones.length > 0) {
-        datosProducto.cantidad = 0;
-        datosProducto.producto.presentaciones.forEach((presentacion) => {
+      if (copy_datosProducto.producto.presentaciones.length > 0) {
+        copy_datosProducto.cantidad = 0;
+        copy_datosProducto.producto.presentaciones.forEach((presentacion) => {
           const { cantidad, cantidad_nueva } = presentacion;
           let nueva = cantidad_nueva ? cantidad_nueva : 0;
-          datosProducto.cantidad += cantidad + nueva;
+          copy_datosProducto.cantidad += cantidad + nueva;
         });
-        if (isNaN(datosProducto.cantidad)) datosProducto.cantidad = 0;
-        datosProducto.cantidad_total = datosProducto.cantidad;
+        if (isNaN(copy_datosProducto.cantidad)) copy_datosProducto.cantidad = 0;
+        copy_datosProducto.cantidad_total = copy_datosProducto.cantidad;
       } else {
-        datosProducto.cantidad = 0;
-        datosProducto.cantidad_total = datosProducto.cantidad;
+        copy_datosProducto.cantidad = 0;
+        copy_datosProducto.cantidad_total = copy_datosProducto.cantidad;
       }
     } else {
       //Si hay cantidad regalo y es diferente unidad hacer las converciones
-      const { cantidad_regalo, cantidad, unidad_regalo } = datosProducto;
+      const { cantidad_regalo, cantidad, unidad_regalo } = copy_datosProducto;
       //convertir todo a la unidad media y sumar (Pz, Kg, Lt)
-      const factor = datosProducto.producto.precios.unidad_de_compra.cantidad;
+      const factor =
+        copy_datosProducto.producto.precios.unidad_de_compra.cantidad;
       const cantiad_media = cantidad * factor;
       let cantidad_regalo_media =
         unidad_regalo === "Pz" ||
@@ -411,43 +432,48 @@ export default function DatosProducto({ status }) {
 
       //si factor es > 1 es caja o costal y dividir unidad media entre factor y si no mandar la cantidad total media;
       if (factor > 1) {
-        datosProducto.cantidad_regalo = cantidad_regalo_media / factor;
-        datosProducto.cantidad_total = cantidad_total_media / factor;
+        copy_datosProducto.cantidad_regalo = cantidad_regalo_media / factor;
+        copy_datosProducto.cantidad_total = cantidad_total_media / factor;
       } else {
-        datosProducto.cantidad_regalo = cantidad_regalo_media;
-        datosProducto.cantidad_total = cantidad_total_media;
+        copy_datosProducto.cantidad_regalo = cantidad_regalo_media;
+        copy_datosProducto.cantidad_total = cantidad_total_media;
       }
     }
-    datosProducto.total = datosProducto.total_con_descuento;
+    copy_datosProducto.subtotal = copy_datosProducto.subtotal_descuento;
+    copy_datosProducto.total = copy_datosProducto.total_descuento;
 
     if (isEditing.producto) {
       //se tiene que actualizar el producto en la fila y sumar el subtotal
       let productosCompra_ordenados = [...productosCompra];
       //calculos de totales, subtotales e impuestos de compra general
-      const { iva, ieps } = datosProducto.producto.precios.precio_de_compra;
+      const {
+        iva,
+        ieps,
+      } = copy_datosProducto.producto.precios.precio_de_compra;
 
-      datosProducto.iva_total = iva * datosProducto.cantidad_total;
-      datosProducto.ieps_total = ieps * datosProducto.cantidad_total;
-      datosProducto.subtotal =
-        datosProducto.subtotal * datosProducto.cantidad_total;
-      datosProducto.impuestos =
-        datosProducto.impuestos * datosProducto.cantidad_total;
-      datosProducto.total = datosProducto.total * datosProducto.cantidad_total;
+      copy_datosProducto.iva_total = iva * copy_datosProducto.cantidad_total;
+      copy_datosProducto.ieps_total = ieps * copy_datosProducto.cantidad_total;
+      copy_datosProducto.subtotal =
+        copy_datosProducto.subtotal * copy_datosProducto.cantidad_total;
+      copy_datosProducto.impuestos =
+        copy_datosProducto.impuestos * copy_datosProducto.cantidad_total;
+      copy_datosProducto.total =
+        copy_datosProducto.total * copy_datosProducto.cantidad_total;
 
       let subtotal =
         datosCompra.subtotal +
-        datosProducto.subtotal * datosProducto.cantidad_total -
+        copy_datosProducto.subtotal * copy_datosProducto.cantidad_total -
         isEditing.producto.subtotal;
       let impuestos =
         datosCompra.impuestos +
-        datosProducto.impuestos * datosProducto.cantidad_total -
+        copy_datosProducto.impuestos * copy_datosProducto.cantidad_total -
         isEditing.producto.impuestos;
       let total =
         datosCompra.total +
-        datosProducto.total * datosProducto.cantidad_total -
+        copy_datosProducto.total * copy_datosProducto.cantidad_total -
         isEditing.producto.total;
 
-      productosCompra_ordenados.splice(isEditing.index, 1, datosProducto);
+      productosCompra_ordenados.splice(isEditing.index, 1, copy_datosProducto);
 
       setProductosCompra(productosCompra_ordenados);
       setDatosCompra({
@@ -468,7 +494,7 @@ export default function DatosProducto({ status }) {
 
       const existente = productosCompra
         .map((prod_exist, index) => {
-          if (prod_exist.id_producto === datosProducto.id_producto) {
+          if (prod_exist.id_producto === copy_datosProducto.id_producto) {
             return { prod_exist, index };
           } else {
             return "";
@@ -479,49 +505,60 @@ export default function DatosProducto({ status }) {
       if (existente.length > 0) {
         let productosCompra_ordenados = [...productosCompra];
         const { index, prod_exist } = existente[0];
-        const { iva, ieps } = datosProducto.producto.precios.precio_de_compra;
+        const {
+          iva,
+          ieps,
+        } = copy_datosProducto.producto.precios.precio_de_compra;
 
-        datosProducto.iva_total = iva * datosProducto.cantidad_total;
-        datosProducto.ieps_total = ieps * datosProducto.cantidad_total;
-        datosProducto.subtotal =
-          datosProducto.subtotal * datosProducto.cantidad_total;
-        datosProducto.impuestos =
-          datosProducto.impuestos * datosProducto.cantidad_total;
-        datosProducto.total =
-          datosProducto.total * datosProducto.cantidad_total;
+        copy_datosProducto.iva_total = iva * copy_datosProducto.cantidad_total;
+        copy_datosProducto.ieps_total =
+          ieps * copy_datosProducto.cantidad_total;
+        copy_datosProducto.subtotal =
+          copy_datosProducto.subtotal * copy_datosProducto.cantidad_total;
+        copy_datosProducto.impuestos =
+          copy_datosProducto.impuestos * copy_datosProducto.cantidad_total;
+        copy_datosProducto.total =
+          copy_datosProducto.total * copy_datosProducto.cantidad_total;
 
-        productosCompra_ordenados.splice(index, 1, datosProducto);
+        productosCompra_ordenados.splice(index, 1, copy_datosProducto);
         setProductosCompra(productosCompra_ordenados);
         setDatosCompra({
           ...datosCompra,
           subtotal:
-            datosCompra.subtotal - prod_exist.subtotal + datosProducto.subtotal,
+            datosCompra.subtotal -
+            prod_exist.subtotal +
+            copy_datosProducto.subtotal,
           impuestos:
             datosCompra.impuestos -
             prod_exist.impuestos +
-            datosProducto.impuestos,
-          total: datosCompra.total - prod_exist.total + datosProducto.total,
+            copy_datosProducto.impuestos,
+          total:
+            datosCompra.total - prod_exist.total + copy_datosProducto.total,
         });
       } else {
         let array_ordenado = [...productosCompra];
-        const { iva, ieps } = datosProducto.producto.precios.precio_de_compra;
+        const {
+          iva,
+          ieps,
+        } = copy_datosProducto.producto.precios.precio_de_compra;
 
-        datosProducto.iva_total = iva * datosProducto.cantidad_total;
-        datosProducto.ieps_total = ieps * datosProducto.cantidad_total;
-        datosProducto.subtotal =
-          datosProducto.subtotal * datosProducto.cantidad_total;
-        datosProducto.impuestos =
-          datosProducto.impuestos * datosProducto.cantidad_total;
-        datosProducto.total =
-          datosProducto.total * datosProducto.cantidad_total;
+        copy_datosProducto.iva_total = iva * copy_datosProducto.cantidad_total;
+        copy_datosProducto.ieps_total =
+          ieps * copy_datosProducto.cantidad_total;
+        copy_datosProducto.subtotal =
+          copy_datosProducto.subtotal * copy_datosProducto.cantidad_total;
+        copy_datosProducto.impuestos =
+          copy_datosProducto.impuestos * copy_datosProducto.cantidad_total;
+        copy_datosProducto.total =
+          copy_datosProducto.total * copy_datosProducto.cantidad_total;
 
-        array_ordenado.splice(0, 0, datosProducto);
+        array_ordenado.splice(0, 0, copy_datosProducto);
         setProductosCompra(array_ordenado);
         setDatosCompra({
           ...datosCompra,
-          subtotal: datosCompra.subtotal + datosProducto.subtotal,
-          impuestos: datosCompra.impuestos + datosProducto.impuestos,
-          total: datosCompra.total + datosProducto.total,
+          subtotal: datosCompra.subtotal + copy_datosProducto.subtotal,
+          impuestos: datosCompra.impuestos + copy_datosProducto.impuestos,
+          total: datosCompra.total + copy_datosProducto.total,
         });
       }
       setProductoOriginal({ precios: initial_state_precios });
@@ -535,10 +572,12 @@ export default function DatosProducto({ status }) {
   /* SET STATES WHEN UPDATING */
   const setInitialStates = (producto) => {
     const { precios_producto, ...new_precios } = producto.precios;
+    let unidades_venta = producto.unidades_de_venta.filter(
+      (res) => !res.default
+    );
     const unidadxdefecto = producto.unidades_de_venta.filter(
       (res) => res.default === true
     );
-
     setDatosGenerales(producto.datos_generales);
     setPrecios(new_precios);
     setCentroDeCostos(
@@ -548,7 +587,7 @@ export default function DatosProducto({ status }) {
     );
     setImagenes(producto.imagenes);
     setPreciosPlazos(producto.precio_plazos);
-    setUnidadesVenta(producto.unidades_de_venta);
+    setUnidadesVenta(unidades_venta);
     setPreciosP(producto.precios.precios_producto);
     setUnidadVentaXDefecto(unidadxdefecto[0]);
     setPresentaciones(
@@ -565,9 +604,9 @@ export default function DatosProducto({ status }) {
       });
     }
 
-    if(producto.inventario_general.length > 0){
+    if (producto.inventario_general.length > 0) {
       setAlmacenExistente(true);
-    }else{
+    } else {
       setAlmacenExistente(false);
     }
   };
@@ -594,11 +633,8 @@ export default function DatosProducto({ status }) {
 
   return (
     <Fragment>
-      <DatosProveedorAlmacen
-        status={status}
-        refetchProductos={refetch}
-        getProductos={getProductos}
-      />
+      <SnackBarMessages alert={alert} setAlert={setAlert} />
+      <DatosProveedorAlmacen status={status} getProductos={getProductos} />
       <Box my={1} />
       <Grid container spacing={1} alignItems="center">
         <Grid item>
@@ -618,9 +654,7 @@ export default function DatosProducto({ status }) {
                 <TextField {...params} variant="outlined" />
               )}
               onChange={(_, value) => obtenerSelectsProducto(value)}
-              getOptionSelected={(option) =>
-                option.datos_generales.codigo_barras
-              }
+              getOptionSelected={(option, value) => option._id === value._id}
               value={
                 datosProducto.producto.datos_generales
                   ? datosProducto.producto
@@ -648,9 +682,7 @@ export default function DatosProducto({ status }) {
                 <TextField {...params} variant="outlined" />
               )}
               onChange={(_, value) => obtenerSelectsProducto(value)}
-              getOptionSelected={(option) =>
-                option.datos_generales.nombre_comercial
-              }
+              getOptionSelected={(option, value) => option._id === value._id}
               value={
                 datosProducto.producto.datos_generales
                   ? datosProducto.producto
@@ -669,7 +701,8 @@ export default function DatosProducto({ status }) {
             ) : (
               <CrearProducto
                 accion={false}
-                productosRefetch={refetch}
+                /* productosRefetch={refetch} */
+                getProductos={getProductos}
                 fromCompra={true}
               />
             )}
@@ -688,9 +721,7 @@ export default function DatosProducto({ status }) {
                 <TextField {...params} variant="outlined" />
               )}
               onChange={(_, value) => obtenerSelectsProducto(value)}
-              getOptionSelected={(option) =>
-                option.datos_generales.clave_alterna
-              }
+              getOptionSelected={(option, value) => option._id === value._id}
               value={
                 datosProducto.producto.datos_generales
                   ? datosProducto.producto

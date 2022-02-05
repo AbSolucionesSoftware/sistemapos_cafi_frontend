@@ -1,11 +1,21 @@
-import { AppBar, Box, Button, Dialog, FormControl, Grid, MenuItem, Select, Slide, TextField, Toolbar, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
-import React, { useState } from 'react';
-import CloseIcon from '@material-ui/icons/Close';
-import { FcPaid } from 'react-icons/fc';
-import SaveIcon from '@material-ui/icons/Save';
-import TablaAlmacenFiltradas from './TablaAlmacenFiltradas';
+import React, { useState,  Fragment } from 'react';
 
+import { AppBar, Box, Button, Dialog, FormControl, 
+Grid, MenuItem, Select, Slide, TextField, Toolbar, 
+Typography } from '@material-ui/core';
+import {CircularProgress} from "@material-ui/core";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import { makeStyles } from '@material-ui/styles';
+import { OBTENER_USUARIOS } from '../../../../gql/Catalogos/usuarios';
+import CloseIcon from '@material-ui/icons/Close';
+import { ClearOutlined } from "@material-ui/icons";
+import ExportarTraspasos from "./ExportarTraspasos";
+import TablaAlmacenFiltradas from './TablaAlmacenFiltradas';
+import { useQuery } from '@apollo/client';
+
+
+import { OBTENER_ALMACENES, OBTENER_TRASPASOS  } from '../../../../gql/Almacenes/Almacen';
+import { useDebounce } from 'use-debounce';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -37,6 +47,13 @@ const useStyles = makeStyles((theme) => ({
     margin: {
 		margin: theme.spacing(1)
 	},
+    CircularProgress:{
+         width: '100%',
+        height: 200,
+        marginTop:100,
+        display: 'flex',
+        justifyContent: 'center'
+    },
 	iconSave: {
 		zIndex: 10,
 		position: 'fixed',
@@ -48,10 +65,177 @@ const useStyles = makeStyles((theme) => ({
 export default function ReportesAlmacen() {
 
     const classes = useStyles();
-
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));	
     const [open, setOpen] = useState(false);
+    const [almacenOrigen, setAlmacenOrigen] = useState(null);
+    const [almacenDestino, setAlmacenDestino] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [inputFilter, setFilter] = useState({
+        empresa: sesion.empresa._id,
+        sucursal: sesion.sucursal._id,
+        producto: '',
+        fecha_inicio: '',
+        fecha_final: '',
+        usuario: ''
+    });
 
+    const [encargado, setEncargado] = useState('');
+    const [value] = useDebounce(inputFilter, 1000);
+
+    let almacenes = [];
+    let traspasos = [];
+    let usuarios = [];
+
+
+    const queryObtenerAlmacenes = useQuery(OBTENER_ALMACENES,{
+        variables: {
+            id: sesion.sucursal._id
+        },
+         fetchPolicy: "network-only"
+    });	
+    
+    const queryObtenerUsuarios =  useQuery(OBTENER_USUARIOS,{
+        variables: {
+            sucursal: `${sesion.sucursal._id}`
+        },
+        
+         fetchPolicy: "network-only"
+    })
+    const traspasosAlmacenes = useQuery(OBTENER_TRASPASOS,{
+        variables:{
+            input: value
+        },
+        fetchPolicy: "network-only"
+    });	
+	
+
+  /*   useEffect(() => {
+        try {
+            
+            traspasosAlmacenes.refetch({
+                  input: inputFilter
+            }) 
+        } catch (error) {
+            console.log('traspasosAlmacenes',error)
+        }
+        
+    }, []); */
+    
+    const limpiarFiltros = () => {
+        try {
+            let filt = {
+                empresa: sesion.empresa._id,
+                sucursal: sesion.sucursal._id,
+                producto: '',
+                fecha_inicio: '',
+                fecha_final: '',
+                usuario: ''
+            };
+          
+        
+            setFilter(filt);
+            setLoading(true);
+            traspasosAlmacenes.refetch(
+                {
+                    input: filt
+                }
+            )
+            setEncargado('');
+            setAlmacenOrigen(null);
+            setAlmacenDestino(null);
+            setLoading(false);
+        } catch (error) {
+            
+        }
+  
+
+  };
     const handleClickOpen =()=>{setOpen(!open)};
+    
+    if(queryObtenerAlmacenes.data){
+        almacenes = queryObtenerAlmacenes.data.obtenerAlmacenes;
+       
+    }
+     
+    const setDatosInput = (e) =>{
+      
+          let fil = {...inputFilter, [e.target.name]: e.target.value,almacen_destino:almacenDestino,almacen_origen : almacenOrigen}
+        setFilter(fil)
+    }
+    const setQueryAlmacenOrigen = (alm) =>{
+           
+        let almDes = (almacenDestino !== null ) ? almacenDestino._id : '';
+        
+        if(alm._id !== ''){
+             setLoading(true);
+            let fil = {...inputFilter, almacen_origen : alm._id, almacen_destino: almDes}
+        
+            traspasosAlmacenes.refetch(
+                {
+                    input: fil
+                }
+            )
+           
+        }
+         setAlmacenOrigen(alm)
+          setLoading(false);
+    }
+     const setQueryAlmacenDestino = (alm) =>{
+        let almOri = (almacenOrigen !== null ) ? almacenOrigen._id : '';  
+        if(alm._id !== ''){
+      
+            let fil = {...inputFilter, almacen_origen : almOri, almacen_destino : alm._id}
+            setLoading(true);
+            traspasosAlmacenes.refetch(
+                {
+                    input: fil
+                }
+            )
+            
+        }
+        
+        setAlmacenDestino(alm);
+         setLoading(false);
+    }
+    const setEncargadoInput = ( enc) =>{
+       try {
+            let almDes = (almacenDestino !== null ) ? almacenDestino._id : '';
+            let almOri = (almacenOrigen !== null ) ? almacenOrigen._id : '';
+            let encId = ( enc!== '' ) ? enc._id : ''; 
+            let fil ={...inputFilter, usuario: encId, almacen_destino:almDes,almacen_origen : almOri};
+        
+        traspasosAlmacenes.refetch(
+                {
+                    input: fil
+                }
+            )
+         setEncargado(enc)  
+          setLoading(false);  
+       } catch (error) {
+           
+       }
+        
+    }
+
+    if(traspasosAlmacenes.data){
+       try {
+           
+            traspasos = traspasosAlmacenes.data.obtenerTraspasos;   
+       } catch (error) {
+           
+       }
+      
+       
+    }
+
+    if(queryObtenerUsuarios.data){
+        try {
+             usuarios = queryObtenerUsuarios.data.obtenerUsuarios;
+        } catch (error) {
+            
+        }
+       
+    }
 
     return (
         <>
@@ -81,15 +265,7 @@ export default function ReportesAlmacen() {
 					</Toolbar>
 				</AppBar>
                 <Grid container>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        aria-label="Guardar"
-                        className={classes.iconSave}
-                    >
-                        <SaveIcon className={classes.margin} />
-                        Exportar
-                    </Button>
+                    
                     <Grid item lg={12}>
                         <div className={classes.formInputFlex}>
                             <Box width="100%">
@@ -99,9 +275,11 @@ export default function ReportesAlmacen() {
                                 <TextField 
                                     fullWidth
                                     size="small"
-                                    name="fechaInicio"
+                                    name="fecha_inicio"
                                     variant="outlined"
+                                    value={inputFilter.fecha_inicio}
                                     type="date"
+                                    onChange={(e) => setDatosInput(e)}
                                 />
                             </Box>
                             <Box width="100%">
@@ -111,25 +289,71 @@ export default function ReportesAlmacen() {
                                 <TextField 
                                     fullWidth
                                     size="small"
-                                    name="fechaFin"
+                                    name="fecha_final"
                                     variant="outlined"
                                     type="date"
+                                    onChange={(e) => setDatosInput(e)}
+                                    value={inputFilter.fecha_final}
                                 />
                             </Box>
                             <Box width="100%">
-                                <Typography>
-                                    Encargado:
-                                </Typography>
-                                <TextField 
+                                <Typography>Encargado</Typography>
+                                <Box display="flex">
+                                    <Autocomplete
+                                        id="encargado"
+                                        size="small"
+                                        options={usuarios}
+                                       
+                                        getOptionLabel={(option) =>
+                                            option.nombre ? `${option.nombre}` : ""
+                                        }
+                                        fullWidth
+                                        renderInput={(params) => (
+                                            <TextField
+                                            {...params}
+                                            variant="outlined"
+                                            InputProps={{
+                                                ...params.InputProps,
+                                                endAdornment: (
+                                                <Fragment>
+                                                  
+                                                    {params.InputProps.endAdornment}
+                                                </Fragment>
+                                                ),
+                                            }}
+                                            
+                                            />
+                                        )}
+                                        renderOption={(option) => (
+                                            <Fragment>
+                                            {`${option.nombre}`}
+                                            </Fragment>
+                                        )}
+                                        onChange={ (_, data) =>  setEncargadoInput(data)}
+                                        getOptionSelected={(option, value) =>
+                                            option.nombre === value.nombre
+                                        }
+             
+                                        value={(encargado.nombre) ? encargado: null }
+                                    />
+                                </Box>
+                            </Box>
+                             <Box width="100%">
+                                <Typography>Producto:</Typography>
+                                <TextField
                                     fullWidth
                                     size="small"
-                                    name="fechaFin"
+                                    name="producto"
                                     variant="outlined"
+                                    placeholder="Nombre, código, clave..."
+                                    onChange={(e) => setDatosInput(e)}
+                                    value={inputFilter.producto}
                                 />
                             </Box>
+                           
                             <Box width="100%">
                                 <Typography>
-                                    Almacen 1:
+                                    Almacen origen:
                                 </Typography>
                                 <FormControl
                                     variant="outlined"
@@ -137,64 +361,74 @@ export default function ReportesAlmacen() {
                                     size="small"
                                 >
                                     <Select
-                                        id="form-producto-tipo"
-                                        name="tipo_producto"
-                                    >
-                                        <MenuItem value="">
-                                            <em>Selecciona uno</em>
-                                        </MenuItem>
-                                        <MenuItem value="CREDITO">Credito</MenuItem>
-                                        <MenuItem value="CONTADO">Contado</MenuItem>
+                                        id="form-almacen-origen"
+                                        name="almacen_origen"
+                                        onChange={(e) => setQueryAlmacenOrigen(e.target.value)}
+                                        value={(almacenOrigen !== null) ? almacenOrigen : ''} 
+                                    >   
+                                       
+                                        {almacenes.map((almacen) => (
+                                            <MenuItem key={almacen._id} value={almacen} >
+                                                {almacen.nombre_almacen}
+                                            </MenuItem>
+                                        ))}
+                                      
                                     </Select>
                                 </FormControl>
                             </Box>
                             <Box width="100%">
                                 <Typography>
-                                    Almacen 2:
+                                    Almacen destino:
                                 </Typography>
                                 <FormControl
                                     variant="outlined"
                                     fullWidth
                                     size="small"
+                                    
                                 >
                                     <Select
-                                        id="form-producto-tipo"
-                                        name="tipo_producto"
+                                        id="form-almacen-destino"
+                                        name="almacen_destino"
+                                        onChange={(e) => setQueryAlmacenDestino(e.target.value)}
+                                        value={(almacenDestino !== null) ? almacenDestino: ''} 
                                     >
-                                        <MenuItem value="">
-                                            <em>Selecciona uno</em>
-                                        </MenuItem>
-                                        <MenuItem value="CREDITO">Credito</MenuItem>
-                                        <MenuItem value="CONTADO">Contado</MenuItem>
+                                     
+                                          {almacenes.map((almacen) => (
+                                            <MenuItem key={almacen._id} value={almacen} >
+                                            {almacen.nombre_almacen}
+                                            </MenuItem>
+                                        ))}
+                                       
                                     </Select>
                                 </FormControl>
                             </Box>
-                            <Box width="100%">
-                                <Typography>
-                                    Metodos de Pago:
-                                </Typography>
-                                <FormControl
-                                    variant="outlined"
-                                    fullWidth
-                                    size="small"
-                                >
-                                    <Select
-                                        id="form-producto-tipo"
-                                        name="tipo_producto"
-                                    >
-                                        <MenuItem value="">
-                                            <em>Selecciona uno</em>
-                                        </MenuItem>
-                                        <MenuItem value="TARJETA">Tarjeta</MenuItem>
-                                        <MenuItem value="EFECTIVO">Efectivo</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>
+                           
                         </div>
+                        <div className={classes.formInputFlex}>
+                            <Box mt={1} display="flex">
+                                <Button
+                                color="primary"
+                                startIcon={<ClearOutlined />}
+                                onClick={() => limpiarFiltros()}
+                                >
+                                Limpiar filtros
+                                </Button>
+                                <Box mx={1} />
+                                <ExportarTraspasos data= {traspasos} />
+                            </Box>
+                        </div>    
                     </Grid> 
-                    <Grid item lg={12}>
-                        <TablaAlmacenFiltradas />
-                    </Grid>
+                    {
+                        (traspasosAlmacenes.loading || loading) ?
+                        <div className={classes.CircularProgress}>
+                        <CircularProgress/>
+                        </div>
+                        :
+                        <Grid item lg={12}>
+                         <TablaAlmacenFiltradas data={traspasos} />
+                        </Grid>
+                    }
+                 
                     
                 </Grid>            
 			</Dialog> 

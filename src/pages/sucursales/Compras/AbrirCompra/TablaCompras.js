@@ -26,29 +26,38 @@ import { initial_state_datosProducto } from "./initial_states";
 import { SetOrResetData } from "./productos/setOrResetData";
 import { RegProductoContext } from "../../../../context/Catalogos/CtxRegProducto";
 import { formatoMexico } from "../../../../config/reuserFunctions";
+import { Grid, Typography } from "@material-ui/core";
 
 const useStyles = makeStyles({
   root: {
     width: "100%",
   },
+  container: {
+    height: "40vh",
+  },
 });
 
 export default function ListaCompras() {
   const classes = useStyles();
-  const { productosCompra, loadingProductos } = useContext(ComprasContext);
+  const { productosCompra, loadingProductos, datosCompra } = useContext(
+    ComprasContext
+  );
 
   const productos_ordernados = [...productosCompra];
 
   return (
-    <Paper className={classes.root}>
-      <TableContainer style={
-       loadingProductos
-          ? {
-              pointerEvents: "none",
-              opacity: 0.4,
-            }
-          : null
-      }>
+    <Paper className={classes.root} variant="outlined">
+      <TableContainer
+        className={classes.container}
+        style={
+          loadingProductos
+            ? {
+                pointerEvents: "none",
+                opacity: 0.4,
+              }
+            : null
+        }
+      >
         <Table stickyHeader size="small">
           <TableHead>
             <TableRow>
@@ -80,6 +89,23 @@ export default function ListaCompras() {
           </TableBody>
         </Table>
       </TableContainer>
+        <Grid container spacing={2}>
+          <Grid item>
+            <Typography style={{ fontSize: 18 }}>
+              Subtotal: <b>${ datosCompra.subtotal ? formatoMexico(datosCompra.subtotal) : 0}</b>
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Typography style={{ fontSize: 18 }}>
+              Impuestos: <b>${datosCompra.impuestos ? formatoMexico(datosCompra.impuestos) : 0}</b>
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Typography style={{ fontSize: 18 }}>
+              <b>Total: ${datosCompra.total ? formatoMexico(datosCompra.total) : 0}</b>
+            </Typography>
+          </Grid>
+        </Grid>
     </Paper>
   );
 }
@@ -95,7 +121,7 @@ const RenderProductosCompra = ({ producto, index }) => {
     editFinish,
     setCosto,
     setCantidad,
-    setIssue
+    setIssue,
   } = useContext(ComprasContext);
   const [isSelected, setIsSelected] = useState(false);
   const productoCTX = useContext(RegProductoContext);
@@ -146,9 +172,8 @@ const RenderProductosCompra = ({ producto, index }) => {
   }, [editFinish]);
 
   useEffect(() => {
-    if(!producto.cantidad){
-      
-    }else{
+    if (!producto.cantidad) {
+    } else {
       setIssue(false);
     }
   }, [producto.cantidad]);

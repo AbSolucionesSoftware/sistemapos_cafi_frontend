@@ -1,13 +1,18 @@
 import React, { useState, Fragment, useContext, useCallback } from "react";
-import PropTypes from "prop-types";
-import { makeStyles } from "@material-ui/core/styles";
-import CloseIcon from "@material-ui/icons/Close";
-import DoneIcon from "@material-ui/icons/Done";
-import { Button, AppBar, IconButton } from "@material-ui/core";
-import { Dialog, DialogActions, Tabs, Tab, Box } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import AppBar from "@material-ui/core/AppBar";
+import IconButton from "@material-ui/core/IconButton";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
+import Divider from "@material-ui/core/Divider";
+import Container from "@material-ui/core/Container";
 import RegistrarInfoBasica from "./RegistrarInfoBasica";
 import RegistrarInfoCredito from "./RegistroInfoCredito";
-import { Add, Edit } from "@material-ui/icons";
+import { Add, Close, Done, Edit } from "@material-ui/icons";
 import { ClienteCtx } from "../../../../context/Catalogos/crearClienteCtx";
 // import { VentasContext } from "../../../../context/Ventas/ventasContext";
 import BackdropComponent from "../../../../components/Layouts/BackDrop";
@@ -16,68 +21,28 @@ import SnackBarMessages from "../../../../components/SnackBarMessages";
 import { useMutation } from "@apollo/client";
 import {
   CREAR_CLIENTE,
-  ACTUALIZAR_CLIENTE
+  ACTUALIZAR_CLIENTE,
 } from "../../../../gql/Catalogos/clientes";
+import { Toolbar } from "@material-ui/core";
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`tabpanel-reg-product-${index}`}
-      aria-labelledby={`reg-product-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3} minHeight="70vh">
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `reg-product-tab-${index}`,
-    "aria-controls": `tabpanel-reg-product-${index}`,
-  };
-}
-
-const useStyles = makeStyles((theme) => ({
-  formInputFlex: {
-    display: "flex",
-    "& > *": {
-      margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-    },
-  },
-  formInput: {
-    margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-  },
-  root: {
-    flexGrow: 1,
-    width: "100%",
-    backgroundColor: theme.palette.background.paper,
-  },
-  iconSvg: {
-    width: 50,
-  },
-}));
-
-export default function CrearCliente({ tipo, accion, datos, refetch, ventas, handleClickOpen }) {
-  const classes = useStyles();
-  const { cliente, setCliente, setError, update, setUpdate, updateClientVenta, setUpdateClientVenta  } =
-    useContext(ClienteCtx);
+export default function CrearCliente({
+  tipo,
+  accion,
+  datos,
+  refetch,
+  ventas,
+  handleClickOpen,
+}) {
+  const {
+    cliente,
+    setCliente,
+    setError,
+    update,
+    setUpdate,
+    updateClientVenta,
+    setUpdateClientVenta,
+  } = useContext(ClienteCtx);
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(0);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -99,10 +64,6 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
     });
   }, [setCliente]);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
   const toggleModal = () => {
     setOpen(true);
     if (datos) {
@@ -120,18 +81,18 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
   const [actualizarCliente] = useMutation(ACTUALIZAR_CLIENTE);
 
   const saveData = async () => {
+    let copy_cliente = { ...cliente };
     if (
-      !cliente.numero_cliente ||
-      !cliente.clave_cliente ||
-      !cliente.nombre_cliente ||
-      !cliente.telefono ||
-      !cliente.email ||
-      !cliente.direccion.calle ||
-      !cliente.direccion.municipio ||
-      !cliente.direccion.estado ||
-      !cliente.direccion.pais
+      !copy_cliente.clave_cliente ||
+      !copy_cliente.nombre_cliente ||
+      !copy_cliente.telefono ||
+      !copy_cliente.email ||
+      !copy_cliente.direccion.calle ||
+      !copy_cliente.direccion.municipio ||
+      !copy_cliente.direccion.estado ||
+      !copy_cliente.direccion.pais
     ) {
-      if (tipo !== "CLIENTE" && !cliente.representante) {
+      if (tipo !== "CLIENTE" && !copy_cliente.representante) {
         setError(true);
         return;
       }
@@ -141,13 +102,13 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
     setLoading(true);
     try {
       if (accion === "registrar") {
-        cliente.tipo_cliente = tipo;
-        cliente.empresa = sesion.empresa._id;
-        cliente.sucursal = sesion.sucursal._id;
+        copy_cliente.tipo_cliente = tipo;
+        copy_cliente.empresa = sesion.empresa._id;
+        copy_cliente.sucursal = sesion.sucursal._id;
         if (tipo === "CLIENTE") {
-          cliente.representante = "";
+          copy_cliente.representante = "";
         }
-        const input = cliente;
+        const input = copy_cliente;
         const clienteBase = await crearCliente({
           variables: {
             input,
@@ -174,16 +135,18 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
                 venta_actual.descuento === undefined
                   ? 0
                   : venta_actual.descuento,
-              monedero: venta_actual.monedero === undefined ? 0 : venta_actual.monedero,
+              monedero:
+                venta_actual.monedero === undefined ? 0 : venta_actual.monedero,
               tipo_cambio: venta_actual.tipo_cambio
                 ? venta_actual.tipo_cambio
                 : {},
               cliente: clienteBase.data.crearCliente,
               venta_cliente: true,
               productos:
-                venta_actual.productos?.length > 0 ? venta_actual.productos : [],
+                venta_actual.productos?.length > 0
+                  ? venta_actual.productos
+                  : [],
             })
-            
           );
           setUpdateClientVenta(!updateClientVenta);
           onCloseModal();
@@ -197,11 +160,11 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
           sucursal,
           empresa,
           ...input
-        } = cliente;
+        } = copy_cliente;
         await actualizarCliente({
           variables: {
             input: input,
-            id: cliente._id,
+            id: copy_cliente._id,
           },
         });
       }
@@ -215,8 +178,13 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
       onCloseModal();
     } catch (error) {
       setAlert({ message: error.message, status: "error", open: true });
-      console.log(error);
       setLoading(false);
+      console.log(error);
+      if (error.networkError) {
+        console.log(error.networkError.result);
+      } else if (error.graphQLErrors) {
+        console.log(error.graphQLErrors);
+      }
     }
   };
 
@@ -234,8 +202,9 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
             variant="contained"
             size="large"
             onClick={toggleModal}
+            startIcon={<Add />}
           >
-            <Add /> Nuevo {tipo}
+            Agregar
           </Button>
         )
       ) : (
@@ -244,68 +213,45 @@ export default function CrearCliente({ tipo, accion, datos, refetch, ventas, han
         </IconButton>
       )}
       <Dialog open={open} onClose={onCloseModal} fullWidth maxWidth="md">
-        <div className={classes.root}>
+        <DialogTitle style={{ padding: 0 }}>
           <BackdropComponent loading={loading} setLoading={setLoading} />
           <AppBar position="static" color="default" elevation={0}>
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              variant="scrollable"
-              scrollButtons="on"
-              indicatorColor="primary"
-              textColor="primary"
-              aria-label="scrollable force tabs example"
-            >
-              <Tab
-                label="Información básica"
-                icon={
-                  <img
-                    src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/perfil.svg"
-                    alt="icono perfil"
-                    className={classes.iconSvg}
-                  />
-                }
-                {...a11yProps(0)}
-              />
-              <Tab
-                label="Datos fiscales"
-                icon={
-                  <img
-                    src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/fiscal.svg"
-                    alt="icono factura"
-                    className={classes.iconSvg}
-                  />
-                }
-                {...a11yProps(1)}
-              />
-              <Box ml={58} mt={3}>
-                <Box>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={onCloseModal}
-                    size="large"
-                  >
-                    <CloseIcon />
-                  </Button>
-                </Box>
-              </Box>
-            </Tabs>
+            <Toolbar>
+              <Typography variant="h6">{accion === "registrar" ? "Registrar" : "Actualizar"}</Typography>
+              <Box flexGrow={1} />
+              <Button
+                variant="contained"
+                color="secondary"
+                size="large"
+                onClick={() => onCloseModal()}
+              >
+                <Close />
+              </Button>
+            </Toolbar>
           </AppBar>
-          <TabPanel value={value} index={0}>
+        </DialogTitle>
+        <DialogContent>
+          <Container>
+            <Typography>
+              <b>Información básica</b>
+            </Typography>
+            <Divider />
             <RegistrarInfoBasica tipo={tipo} accion={accion} />
-          </TabPanel>
-          <TabPanel value={value} index={1}>
+            <Box my={2} />
+            <Typography>
+              <b>Información de credito</b>
+            </Typography>
+            <Divider />
             <RegistrarInfoCredito tipo={tipo} accion={accion} />
-          </TabPanel>
-        </div>
+          </Container>
+        </DialogContent>
         <DialogActions>
           <Button
             variant="contained"
             color="primary"
             onClick={saveData}
             size="large"
-            startIcon={<DoneIcon />}
+            startIcon={<Done />}
           >
             Guardar
           </Button>

@@ -45,7 +45,7 @@ export const OBTENER_CONSULTAS = gql`
           _id
           subcuenta
         }
-      },
+      }
       codigos {
         _id
         Name
@@ -96,11 +96,31 @@ export const OBTENER_PRODUCTOS = gql`
         id_producto
         descuento_activo
         descuento {
+          cantidad_unidad
+          numero_precio
+          unidad_maxima
+          precio_general
+          precio_neto
+          precio_venta
+          iva_precio
+          ieps_precio
+          utilidad
           porciento
           dinero_descontado
-          precio_con_descuento
         }
         default
+        precio_unidad {
+          numero_precio
+          precio_neto
+          precio_venta
+          iva_precio
+          ieps_precio
+          unidad_mayoreo
+          utilidad
+          precio_general
+          cantidad_unidad
+          unidad_maxima
+        }
       }
       datos_generales {
         codigo_barras
@@ -167,8 +187,13 @@ export const OBTENER_PRODUCTOS = gql`
           numero_precio
           precio_neto
           precio_venta
+          iva_precio
+          ieps_precio
           unidad_mayoreo
           utilidad
+          precio_general
+          cantidad_unidad
+          unidad_maxima
         }
         unidad_de_compra {
           cantidad
@@ -191,9 +216,17 @@ export const OBTENER_PRODUCTOS = gql`
         almacen
         descuento_activo
         descuento {
+          cantidad_unidad
+          numero_precio
+          unidad_maxima
+          precio_general
+          precio_neto
+          precio_venta
+          iva_precio
+          ieps_precio
+          utilidad
           porciento
           dinero_descontado
-          precio_con_descuento
         }
         codigo_barras
         color {
@@ -209,6 +242,18 @@ export const OBTENER_PRODUCTOS = gql`
         }
         nombre_comercial
         precio
+        precio_unidad {
+          numero_precio
+          precio_neto
+          precio_venta
+          iva_precio
+          ieps_precio
+          unidad_mayoreo
+          utilidad
+          precio_general
+          cantidad_unidad
+          unidad_maxima
+        }
       }
       inventario_general {
         _id

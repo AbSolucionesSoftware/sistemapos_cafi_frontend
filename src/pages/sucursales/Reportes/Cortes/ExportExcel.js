@@ -24,8 +24,9 @@ export default function ExportExcel({historialCortes}) {
     const classes = useStyles();
     let arrayExcel = [];
 
-    const agruparDatos = (historialCortes) => {
-        datosExcel.splice(0, datosExcel.length);
+    const agruparDatos = () => {
+       
+        
         for (let i = 0; i < historialCortes.length; i++) {
             arrayExcel = { 
                 fecha: historialCortes[i].fecha_salida.completa,
@@ -36,15 +37,16 @@ export default function ExportExcel({historialCortes}) {
                 numero_usuario: historialCortes[i].usuario_en_turno.numero_usuario,
                 concepto: "Corte Caja",
                 caja: historialCortes[i].numero_caja,
-                monto_efectivo: historialCortes[i].montos_en_caja.monto_efectivo , 
-                monto_creditos: historialCortes[i].montos_en_caja.monto_creditos , 
-                monto_tarjeta: historialCortes[i].montos_en_caja.monto_tarjeta, 
-                monto_monedero: historialCortes[i].montos_en_caja.monto_monedero , 
-                monto_cheques: historialCortes[i].montos_en_caja.monto_cheques , 
-                monto_transferencia: historialCortes[i].montos_en_caja.monto_transferencia ,
-                monto_vales_despensa: historialCortes[i].montos_en_caja.monto_vales_despensa , 
+                monto_efectivo: historialCortes[i].montos_en_caja.monto_efectivo.monto , 
+                monto_creditos: historialCortes[i].montos_en_caja.monto_creditos.monto , 
+                monto_tarjeta_debito: historialCortes[i].montos_en_caja.monto_tarjeta_debito.monto , 
+                monto_tarjeta_credito: historialCortes[i].montos_en_caja.monto_tarjeta_credito.monto , 
+                monto_monedero: historialCortes[i].montos_en_caja.monto_monedero.monto , 
+                monto_cheques: historialCortes[i].montos_en_caja.monto_cheques.monto , 
+                monto_transferencia: historialCortes[i].montos_en_caja.monto_transferencia.monto ,
+                monto_vales_despensa: historialCortes[i].montos_en_caja.monto_vales_despensa.monto ,
             };
-            datosExcel.push(arrayExcel);
+            setDatosExcel(arrayExcel);
         };
     };
 
@@ -58,7 +60,7 @@ export default function ExportExcel({historialCortes}) {
                         color="primary"
                         aria-label="Guardar"
                         className={classes.iconSave}
-                        onClick={() => agruparDatos(historialCortes)}
+                        onClick={() => agruparDatos()}
                     >
                         <SaveIcon className={classes.margin} />
                         Exportar
@@ -77,7 +79,8 @@ export default function ExportExcel({historialCortes}) {
                     <ExcelColumn label='No. de Caja' value='caja' />
                     <ExcelColumn label='M. en Efectivo' value='monto_efectivo' />
                     <ExcelColumn label='M. en Creditos' value='monto_creditos' />
-                    <ExcelColumn label='M. en Tarjetas' value='monto_tarjeta' />
+                    <ExcelColumn label='M. en Tarjeta Debito' value='monto_tarjeta_debito' />
+                    <ExcelColumn label='M. en Tarjeta Credito' value='monto_tarjeta_credito' />
                     <ExcelColumn label='M. en Monedero' value='monto_monedero' />
                     <ExcelColumn label='M. en Cheques' value='monto_cheques' />
                     <ExcelColumn label='M. en Transferencia' value='monto_transferencia' />

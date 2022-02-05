@@ -7,7 +7,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import { OBTENER_CONTABILIDAD } from '../../../gql/Catalogos/contabilidad';
 import { CREAR_HISTORIAL_CAJA, OBTENER_PRE_CORTE_CAJA } from '../../../gql/Cajas/cajas';
-
 import useStyles from '../styles';
 import moment from 'moment';
 import 'moment/locale/es';
@@ -126,6 +125,7 @@ export default function DepositoRetiroCaja() {
                         numero_caja: parseInt(turnoEnCurso.numero_caja),
                         id_Caja: turnoEnCurso.id_caja,
                         horario_turno: turnoEnCurso.horario_en_turno,
+                        rol_movimiento: 'CAJA',
                         hora_moviento: {
                             hora: moment().format('hh'),
                             minutos: moment().format('mm'),
@@ -144,13 +144,38 @@ export default function DepositoRetiroCaja() {
                         numero_usuario_creador: sesion.numero_usuario,
                         nombre_usuario_creador: sesion.nombre,
                         montos_en_caja: {
-                            monto_efectivo: parseFloat(datosMovimiento.monto_efectivo),
-                            monto_tarjeta: 0,
-                            monto_creditos: 0,
-                            monto_monedero: 0,  
-                            monto_transferencia: 0,
-                            monto_cheques: 0,
-                            monto_vales_despensa: 0
+                            monto_efectivo: {
+                                monto: parseFloat(datosMovimiento.monto_efectivo),
+                                metodo_pago: "01"
+                            },
+                            monto_tarjeta_debito: {
+                                monto: 0,
+                                metodo_pago: "28"
+                            },
+                            monto_tarjeta_credito: {
+                                monto: 0,
+                                metodo_pago: "04"
+                            },
+                            monto_creditos: {
+                                monto: 0,
+                                metodo_pago: "99"
+                            },
+                            monto_monedero: {
+                                monto: 0,
+                                metodo_pago: "05"
+                            },
+                            monto_transferencia: {
+                                monto: 0,
+                                metodo_pago: "03"
+                            },
+                            monto_cheques: {
+                                monto: 0,
+                                metodo_pago: "02"
+                            },
+                            monto_vales_despensa: {
+                                monto: 0,
+                                metodo_pago: "08"
+                            }
                         },
                         empresa: sesion.empresa._id,
                         sucursal: sesion.sucursal._id
@@ -263,7 +288,7 @@ export default function DepositoRetiroCaja() {
                                 </Box>
                             </Box>
                             <Box ml={10} mb={7} display="flex" alignItems="center">
-                                    <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                                <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
                                     <CloseIcon />
                                 </Button>
                             </Box>
@@ -382,7 +407,7 @@ export default function DepositoRetiroCaja() {
                         color="primary" 
                         size="large"
                     >
-                        Registrar
+                        Guardar
                     </Button>
                 </DialogActions>
             </Dialog>

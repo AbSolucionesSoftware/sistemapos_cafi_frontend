@@ -7,10 +7,13 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { Box, Button, Dialog, DialogActions, DialogContent, IconButton, Typography } from '@material-ui/core';
+import { Box, Button, Dialog, DialogContent, IconButton, Typography } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
+import CloseIcon from '@material-ui/icons/Close';
 import AutorenewIcon from '@material-ui/icons/Autorenew';
 import { VentasContext } from '../../../context/Ventas/ventasContext';
+import { AccesosContext } from '../../../context/Accesos/accesosCtx';
+import { useEffect } from 'react';
 
 const columns = [
 	{ id: 'folio', label: 'Folio', minWidth: 20, align: 'center' },
@@ -52,6 +55,7 @@ export default function ListaVentas() {
 							<TableCell align='center' style={{ width: 35 }}>
 								Regresar
 							</TableCell>
+							
 							<TableCell align='center' style={{ width: 35 }}>
 								Eliminar
 							</TableCell>
@@ -73,20 +77,34 @@ export default function ListaVentas() {
 
 const RowsVentas = ({ venta, index }) => {
 
+	const { 
+		reloadEliminarVentaEspera, 
+        setReloadEliminarVentaEspera,
+		setAbrirPanelAcceso,
+        abrirPanelAcceso,
+		setDepartamentos
+	} = useContext(AccesosContext);
+	
     const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
-	const [open, setOpen] = useState(false);
+	const [ open, setOpen] = useState(false);
+	const [ keyIndex, setKeyIndex ] = useState('');
+    const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
 	let listaEnEspera = JSON.parse(localStorage.getItem("ListaEnEspera"));
 	let VentaEnEspera = JSON.parse(localStorage.getItem("DatosVentas"));
 
 	function borrarVenta(key) {
-        listaEnEspera.forEach(function(elemento, indice, array) {
-            if(key === indice){
-                listaEnEspera.splice(key, 1);
-            }
-        });
-		setUpdateTablaVentas(!updateTablaVentas);
-		localStorage.setItem("ListaEnEspera", JSON.stringify(listaEnEspera));
+		if(sesion.accesos.ventas.eliminar_ventas.ver === true){
+			listaEnEspera.forEach(function(elemento, indice, array) {
+				if(key === indice){
+					listaEnEspera.splice(key, 1);
+				}
+			});
+			setUpdateTablaVentas(!updateTablaVentas);
+			localStorage.setItem("ListaEnEspera", JSON.stringify(listaEnEspera));
+		}else{
+			return null
+		}
     };
 
 	const AgregarVentaDeNuevo = (key) => {
@@ -107,6 +125,25 @@ const RowsVentas = ({ venta, index }) => {
 	const handleClickOpen = () => {
 		setOpen(!open);
 	};
+
+	const verificarPermisos = (key) => {
+		setKeyIndex(key)
+		if(sesion.accesos.ventas.eliminar_ventas.ver === true){
+			setKeyIndex(''); 
+            borrarVenta(key);
+        }else{
+			setAbrirPanelAcceso(!abrirPanelAcceso);
+			setDepartamentos({departamento: 'ventas', subDepartamento: 'eliminar_ventas', tipo_acceso: 'ver'})
+		}
+	};	
+
+	useEffect(() => {
+		if (reloadEliminarVentaEspera === true) {	
+			borrarVenta(keyIndex);
+			setReloadEliminarVentaEspera(false);
+		}
+	}, [reloadEliminarVentaEspera]);
+	
 
 	return(
 		<>
@@ -144,7 +181,7 @@ const RowsVentas = ({ venta, index }) => {
 					<IconButton 
 						aria-label="delete" 
 						size='small'
-						onClick={() => borrarVenta(index)}
+						onClick={() => verificarPermisos(index)}
 					>
 						<DeleteIcon fontSize="medium" />
 					</IconButton>
@@ -154,24 +191,22 @@ const RowsVentas = ({ venta, index }) => {
 			<Dialog
 				open={open} 
 				onClose={handleClickOpen} 
+				fullWidth
+				maxWidth='xs'
 			>
+				
 				<DialogContent>
-					<Box p={1}>
+					<Box p={1} display='flex'>
 						<Typography variant="h6">
 							No puedes agregar una venta, cuando ya esta una en curso.
 						</Typography>
+						<Box display='flex' justifyContent={'flex-end'} p={2}>
+							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+								<CloseIcon />
+							</Button>
+						</Box>
 					</Box>
 				</DialogContent>
-				<DialogActions>
-					<Button
-						color="primary"
-						size="large"
-						variant="contained"
-						onClick={handleClickOpen}
-					>
-						Aceptar
-					</Button>
-				</DialogActions>
 			</Dialog>
 		</>
 
