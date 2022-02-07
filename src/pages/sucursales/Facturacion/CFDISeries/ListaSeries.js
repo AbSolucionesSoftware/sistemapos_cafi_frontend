@@ -104,11 +104,13 @@ export default function ListaSeriesCDFI({ obtenerSeriesCdfi, refetch }) {
                     />
                   </TableCell>
                   <TableCell align="center" padding="checkbox">
-                    <ModalDeleteSerie
-                      row={row}
-                      refetch={refetch}
-                      setAlert={setAlert}
-                    />
+                    {sesion.accesos.facturacion.registro_series_cdfi.eliminar === false ? (null) : (
+                      <ModalDeleteSerie
+                        row={row}
+                        refetch={refetch}
+                        setAlert={setAlert}
+                      />
+                    )}
                   </TableCell>
                 </TableRow>
               );

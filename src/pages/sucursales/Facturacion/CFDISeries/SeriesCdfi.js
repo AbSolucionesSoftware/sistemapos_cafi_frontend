@@ -35,6 +35,8 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 
 export default function SeriesCDFI() {
+  const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
@@ -73,7 +75,7 @@ export default function SeriesCDFI() {
               Seleccion de Series para CFDI
             </Typography>
             <Box m={1}>
-              <Button color="inherit" onClick={handleClickOpen} size="large">
+              <Button color="secondary" variant="contained" onClick={handleClickOpen} size="large">
                 <CloseIcon />
               </Button>
             </Box>
@@ -117,7 +119,9 @@ const ContentSeriesCFDI = () => {
   return (
     <Container maxWidth="md">
       <Box my={2}>
-        <RegistroSeries refetch={refetch} />
+        {sesion.accesos.facturacion.registro_series_cdfi.agregar === false ? (null) : (
+          <RegistroSeries refetch={refetch} />
+        )}
       </Box>
       <ListaSeriesCDFI
         obtenerSeriesCdfi={obtenerSeriesCdfi}

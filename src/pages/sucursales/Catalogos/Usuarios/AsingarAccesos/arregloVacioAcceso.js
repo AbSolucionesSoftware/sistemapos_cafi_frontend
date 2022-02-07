@@ -247,6 +247,26 @@ let arregloVacio = {
             eliminar: false,
             editar:false
         },
+    },
+    facturacion:{
+        generar_cdfi:{
+            ver: false,
+            agregar: false,
+            editar: false,
+            eliminar: false
+        },
+        cdfi_realizados:{
+            ver: false,
+            agregar: false,
+            editar: false,
+            eliminar: false
+        },
+        registro_series_cdfi:{
+            ver: false,
+            agregar: false,
+            editar: false,
+            eliminar: false
+        }
     }
 } 
 
