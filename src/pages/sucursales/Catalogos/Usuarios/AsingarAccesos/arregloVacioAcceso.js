@@ -181,6 +181,12 @@ let arregloVacio = {
             eliminar: false,
             editar:false
         },
+        productos:{
+            ver: false,
+            agregar: false,
+            eliminar: false,
+            editar:false
+        },
         marcas:{
             ver: false,
             agregar: false,

@@ -217,6 +217,12 @@ export const CREAR_USUARIO = gql`
 						editar
 						eliminar
 					}
+					productos {
+						ver
+						agregar
+						editar
+						eliminar
+					}
 					marcas {
 						ver
 						agregar
@@ -501,6 +507,12 @@ export const OBTENER_USUARIOS = gql`
 						eliminar
 					}
 					usuarios {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					productos {
 						ver
 						agregar
 						editar
