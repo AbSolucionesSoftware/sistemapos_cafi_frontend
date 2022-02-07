@@ -152,18 +152,18 @@ console.log(items);
       }
       setError({ status: false, message: "" });
 
-      /* let result = await CrearFactura({
+      let result = await CrearFactura({
         variables: {
           input: nuevo_obj,
         },
       });
-      console.log("result", result); */
+      console.log("result", result);
       setLoading(false);
-      /* setAlert({
+      setAlert({
         message: `¡Listo! ${result.data.crearFactura.message}`,
         status: "success",
         open: true,
-      }); */
+      });
       /* limpiarCampos(); */
     } catch (error) {
       console.log(error);

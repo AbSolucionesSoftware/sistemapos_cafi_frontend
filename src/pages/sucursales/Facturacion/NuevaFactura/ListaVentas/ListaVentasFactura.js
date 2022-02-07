@@ -198,14 +198,6 @@ const RenderLista = ({
 
       const { productos, ...venta } = {...data}
       const productos_base = [...data.productos]
-      /* const productos_base = []; */
-
-      /* data.productos.forEach(element => {
-        const { producto, ...productos} = element;
-        productos.id_producto = element.producto
-        productos_base.push(productos);
-      }); */
-    
       setVentaFactura(venta);
       setProductos(productos_base);
       handleClose();
