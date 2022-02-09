@@ -26,6 +26,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 export default function RegistroAlmacen() {
     const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
 	const handleClickOpen = () => {
 		setOpen(true);
@@ -59,9 +60,11 @@ export default function RegistroAlmacen() {
 							</Box>
 						</Toolbar>
 					</AppBar>
-					<Box m={3} display="flex" justifyContent="flex-end">
-						<ContainerRegistroAlmacen accion="registrar" />
-					</Box>
+						<Box m={3} display="flex" justifyContent="flex-end">
+							{sesion.accesos.almacenes.almacen.agregar === false ? (null):(
+								<ContainerRegistroAlmacen accion="registrar" />
+							)}
+						</Box>
 					<Box mx={4}>
 						<ListaAlmacen />
 					</Box>

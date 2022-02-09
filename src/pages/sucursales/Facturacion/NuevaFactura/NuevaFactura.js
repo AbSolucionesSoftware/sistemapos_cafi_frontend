@@ -81,7 +81,7 @@ export default function NuevaFactura() {
           TransitionComponent={Transition}
         >
           <FacturacionProvider>
-            <FacturaModalContent handleClose={handleClose} />
+            <DialogFacturaPrincipal handleClose={handleClose} />
           </FacturacionProvider>
         </Dialog>
       </ClienteProvider>
@@ -89,45 +89,11 @@ export default function NuevaFactura() {
   );
 }
 
-const FacturaModalContent = ({ handleClose }) => {
+const DialogFacturaPrincipal = ({ handleClose }) => {
   const classes = useStyles();
   const { venta_factura } = useContext(FacturacionCtx);
-  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-  const [alert, setAlert] = useState({ message: "", status: "", open: false });
   const [openCancel, setOpenCancel] = React.useState(false);
-
-  const { loading, data, error } = useQuery(OBTENER_SERIES, {
-    variables: {
-      sucursal: sesion.sucursal._id,
-      empresa: sesion.empresa._id,
-    },
-    fetchPolicy: "network-only",
-  });
-
-  if (loading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="30vh"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-  if (error) {
-    return <ErrorPage error={error} />;
-  }
-
-  const { seriesCfdi } = data.obtenerSeriesCdfi;
-
-  let serie_default = [];
-  serie_default = seriesCfdi.filter((serie) => serie.default === true);
-  if (!serie_default.length) {
-    serie_default = [{ folio: "", serie: "" }];
-    console.log(serie_default);
-  }
+  const [alert, setAlert] = useState({ message: "", status: "", open: false });
 
   const handleClickOpen = () => {
     setOpenCancel(true);
@@ -163,15 +129,8 @@ const FacturaModalContent = ({ handleClose }) => {
       </AppBar>
       <DialogContent>
         <SnackBarMessages alert={alert} setAlert={setAlert} />
-        {!seriesCfdi.length ? (
-          <Alert severity="warning">No tienes Series CFDI registradas</Alert>
-        ) : null}
-        <Box my={2}>
-          <RegistroFactura serie_default={serie_default} />
-        </Box>
-        <DetallesFactura />
+        <FacturaModalContent />
       </DialogContent>
-
       <DialogActions>
         <RealizarFactura setAlert={setAlert} />
       </DialogActions>
@@ -180,6 +139,55 @@ const FacturaModalContent = ({ handleClose }) => {
         setOpen={setOpenCancel}
         handleCloseFactura={handleClose}
       />
+    </Fragment>
+  );
+};
+
+const FacturaModalContent = () => {
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+
+  const { loading, data, error } = useQuery(OBTENER_SERIES, {
+    variables: {
+      sucursal: sesion.sucursal._id,
+      empresa: sesion.empresa._id,
+    },
+    fetchPolicy: "network-only",
+  });
+
+  if (loading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="30vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+  if (error) {
+    return <ErrorPage error={error} />;
+  }
+
+  const { seriesCfdi } = data.obtenerSeriesCdfi;
+
+  let serie_default = [];
+  serie_default = seriesCfdi.filter((serie) => serie.default === true);
+  if (!serie_default.length) {
+    serie_default = [{ folio: "", serie: "" }];
+    console.log(serie_default);
+  }
+
+  return (
+    <Fragment>
+      {!seriesCfdi.length ? (
+        <Alert severity="warning">No tienes Series CFDI registradas</Alert>
+      ) : null}
+      <Box my={2}>
+        <RegistroFactura serie_default={serie_default} />
+      </Box>
+      <DetallesFactura />
     </Fragment>
   );
 };

@@ -108,10 +108,10 @@ export default function RealizarFactura({ setAlert }) {
         }
         items.push(
           {
-            ProductCode: producto.id_producto.datos_generales.clave_producto_sat.Clave,
+            ProductCode: producto.id_producto.datos_generales.clave_producto_sat.Value,
             IdentificationNumber: producto.id_producto._id,
             Description: producto.id_producto.datos_generales.nombre_comercial,
-            UnitCode: "XBX",
+            UnitCode: producto.codigo_unidad,
             UnitPrice: producto.precio_actual_object.precio_venta,
             Quantity: producto.cantidad_venta,
             Subtotal: producto.subtotal,
@@ -152,18 +152,18 @@ console.log(items);
       }
       setError({ status: false, message: "" });
 
-      /* let result = await CrearFactura({
+      let result = await CrearFactura({
         variables: {
           input: nuevo_obj,
         },
       });
-      console.log("result", result); */
+      console.log("result", result);
       setLoading(false);
-      /* setAlert({
+      setAlert({
         message: `¡Listo! ${result.data.crearFactura.message}`,
         status: "success",
         open: true,
-      }); */
+      });
       /* limpiarCampos(); */
     } catch (error) {
       console.log(error);

@@ -341,7 +341,7 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String ) {
       }
       productos{
         _id
-        producto{
+        id_producto{
           _id
           datos_generales{
             codigo_barras
@@ -562,6 +562,7 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String ) {
         precio_actual_producto
         default
         unidad
+        codigo_unidad
         id_unidad_venta
         year_registro
         fecha_registro

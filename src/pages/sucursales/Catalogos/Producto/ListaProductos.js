@@ -28,6 +28,7 @@ const useStyles = makeStyles({
 });
 
 export default function ListaProductos({ obtenerProductos, productosRefetch }) {
+
   const classes = useStyles();
 
   return (
@@ -65,6 +66,8 @@ export default function ListaProductos({ obtenerProductos, productosRefetch }) {
 }
 
 const RenderTableRows = ({ producto, productosRefetch }) => {
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+
   return (
     <Fragment>
       <TableRow hover>
@@ -82,11 +85,13 @@ const RenderTableRows = ({ producto, productosRefetch }) => {
           <InfoProductoDrawer producto={producto} />
         </TableCell>
         <TableCell align="center" padding="checkbox">
-          <CrearProducto
-            accion={true}
-            datos={producto}
-            productosRefetch={productosRefetch}
-          />
+          {sesion.accesos.catalogos.productos.editar === false ? (null):(
+            <CrearProducto
+              accion={true}
+              datos={producto}
+              productosRefetch={productosRefetch}
+            />
+          )}
         </TableCell>
         <TableCell align="center" padding="checkbox">
           <DescuentoProductos
@@ -95,10 +100,12 @@ const RenderTableRows = ({ producto, productosRefetch }) => {
           />
         </TableCell>
         <TableCell align="center" padding="checkbox">
-          <EliminarProducto
-            datos={producto}
-            productosRefetch={productosRefetch}
-          />
+          {sesion.accesos.catalogos.productos.agregar === false ? (null):(
+            <EliminarProducto
+              datos={producto}
+              productosRefetch={productosRefetch}
+            />
+          )}
         </TableCell>
       </TableRow>
     </Fragment>

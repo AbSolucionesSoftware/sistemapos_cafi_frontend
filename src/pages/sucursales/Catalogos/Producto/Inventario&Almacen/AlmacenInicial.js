@@ -308,7 +308,7 @@ export default function RegistroAlmacenInicial({
                 </AlmacenProvider>
               </Box>
             </Box>
-            <Box width="100%">
+           {/*  <Box width="100%">
               <Typography>Fecha de expiración</Typography>
               <MuiPickersUtilsProvider utils={DateFnsUtils} locale={local}>
                 <Grid container justify="space-around">
@@ -325,7 +325,7 @@ export default function RegistroAlmacenInicial({
                   />
                 </Grid>
               </MuiPickersUtilsProvider>
-            </Box>
+            </Box> */}
           </div>
         </Fragment>
       ) : null}

@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -29,6 +29,8 @@ import {
 } from "../../../../../gql/CatalogosSat/catalogoProductosSat";
 import { useMutation } from "@apollo/client";
 import SnackBarMessages from "../../../../../components/SnackBarMessages";
+import { useDebounce } from "use-debounce";
+import { Alert } from "@material-ui/lab";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -39,7 +41,18 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     backgroundColor: theme.palette.background.paper,
   },
-})); 
+  spin_container: {
+    position: "absolute",
+    height: "100%",
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  spin: {
+    zIndex: 9999,
+  },
+}));
 
 export default function CatalogosProductosSAT({ codigos, refetch }) {
   const classes = useStyles();
@@ -52,6 +65,7 @@ export default function CatalogosProductosSAT({ codigos, refetch }) {
   const [loading_save, setLoadingSave] = useState(false);
   const [loading_delete, setLoadingDelete] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState({});
+
   const [error, setError] = useState("");
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
 
@@ -68,7 +82,9 @@ export default function CatalogosProductosSAT({ codigos, refetch }) {
     handleClose();
   };
 
-  const handleOk = async () => {
+  const [value] = useDebounce(busqueda, 500);
+
+  const handleOk = async (selectedIndex) => {
     const { Name, Value } = selectedIndex;
     setDatosGenerales({
       ...datos_generales,
@@ -172,16 +188,15 @@ export default function CatalogosProductosSAT({ codigos, refetch }) {
     });
   };
 
-  const buscarCatalogo = async (e) => {
-    e.preventDefault();
-    if (!busqueda) {
+  const buscarCatalogo = async () => {
+    if (!value) {
       setProductos([]);
       return;
     }
     setLoading(true);
     try {
       await Facturama.Catalogs.ProductsOrServices(
-        busqueda,
+        value,
         function (result) {
           setProductos(result);
           setLoading(false);
@@ -200,6 +215,10 @@ export default function CatalogosProductosSAT({ codigos, refetch }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    buscarCatalogo();
+  }, [value]);
 
   return (
     <div>
@@ -240,9 +259,7 @@ export default function CatalogosProductosSAT({ codigos, refetch }) {
             </Fragment>
           )}
           onChange={(_, data) => obtenerCampos(data)}
-          getOptionSelected={(option, value) =>
-            option.Value === value.Value
-          }
+          getOptionSelected={(option, value) => option.Value === value.Value}
           value={datos_generales.clave_producto_sat}
         />
         <Button color="primary" onClick={handleClickOpen}>
@@ -259,71 +276,97 @@ export default function CatalogosProductosSAT({ codigos, refetch }) {
         maxWidth="sm"
       >
         <DialogTitle id="alert-dialog-clave-producto">
-          {"Catalogo de productos y servicios SAT"}
-        </DialogTitle>
-        <DialogContent style={{ height: "50vh" }}>
-          <Box>
-            <form onSubmit={buscarCatalogo}>
-              <TextField
-                variant="outlined"
-                label="producto, servicio o giro de la empresa"
-                fullWidth
-                size="small"
-                onChange={(e) => {
-                  setBusqueda(e.target.value);
-                  setError("");
-                }}
-                value={busqueda}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton size="small" onClick={buscarCatalogo}>
-                        <Search />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                error={error ? true : false}
-                helperText={error ? error : ""}
-              />
-            </form>
-          </Box>
-          <Box my={3} className={classes.root}>
-            {loading ? (
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                height="25vh"
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="h6">
+              Catalogo de productos y servicios SAT
+            </Typography>
+            <Box>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => handleCancel()}
+                size="large"
+                disabled={loading_save}
               >
-                <CircularProgress />
-              </Box>
-            ) : (
-              <List dense component="nav" aria-label="main mailbox folders">
-                {productos.map((res, index) => (
-                  <SelectedListItem
-                    key={index}
-                    producto={res}
-                    busqueda={busqueda}
-                    selectedIndex={selectedIndex}
-                    setSelectedIndex={setSelectedIndex}
-                  />
-                ))}
-              </List>
-            )}
+                <Close />
+              </Button>
+            </Box>
           </Box>
-        </DialogContent>
-        <DialogActions style={{ justifyContent: "center" }}>
-          <Button onClick={() => handleCancel()}>Cancelar</Button>
-          <Button
-            onClick={() => handleOk()}
-            color="primary"
-            disabled={loading_save}
-            startIcon={loading_save ? <CircularProgress size={18} /> : <Done />}
-          >
-            Seleccionar
-          </Button>
-        </DialogActions>
+        </DialogTitle>
+        {loading_save ? (
+          <div className={classes.spin_container}>
+            <CircularProgress className={classes.spin} size={35} />
+          </div>
+        ) : null}
+        <div
+          style={
+            loading_save
+              ? {
+                  pointerEvents: "none",
+                  opacity: 0.4,
+                }
+              : null
+          }
+        >
+          <Box p={2}>
+            <TextField
+              variant="outlined"
+              label="producto, servicio o giro de la empresa"
+              fullWidth
+              size="small"
+              onChange={(e) => {
+                setBusqueda(e.target.value);
+                setError("");
+              }}
+              value={busqueda}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search color="disabled" />
+                  </InputAdornment>
+                ),
+              }}
+              error={error ? true : false}
+              helperText={error ? error : ""}
+            />
+            <Box my={1}>
+              <Alert severity="info">
+                Para seleccionar un cliente haz un doble click!
+              </Alert>
+            </Box>
+          </Box>
+
+          <DialogContent style={{ height: "50vh" }}>
+            <Box my={3} className={classes.root}>
+              {loading ? (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="25vh"
+                >
+                  <CircularProgress />
+                </Box>
+              ) : (
+                <List dense component="nav" aria-label="main mailbox folders">
+                  {productos.map((res, index) => (
+                    <SelectedListItem
+                      key={index}
+                      producto={res}
+                      busqueda={busqueda}
+                      handleOk={handleOk}
+                      setSelectedIndex={setSelectedIndex}
+                      selectedIndex={selectedIndex}
+                    />
+                  ))}
+                </List>
+              )}
+            </Box>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => handleCancel()}>Cancelar</Button>
+          </DialogActions>
+        </div>
       </Dialog>
     </div>
   );
@@ -332,11 +375,15 @@ export default function CatalogosProductosSAT({ codigos, refetch }) {
 const SelectedListItem = ({
   producto,
   busqueda,
+  handleOk,
   selectedIndex,
   setSelectedIndex,
 }) => {
-  const handleListItemClick = (data) => {
+  const handleListItemClick = (click, data) => {
     setSelectedIndex(data);
+    if (click === 2) {
+      handleOk(data);
+    }
   };
 
   const contiene = busqueda.includes("potacio");
@@ -349,7 +396,7 @@ const SelectedListItem = ({
       <ListItem
         button
         selected={selectedIndex.Value === producto.Value}
-        onClick={() => handleListItemClick(producto)}
+        onClick={(e) => handleListItemClick(e.detail, producto)}
       >
         <ListItemText primary={`${producto.Value} - ${producto.Name}`} />
       </ListItem>

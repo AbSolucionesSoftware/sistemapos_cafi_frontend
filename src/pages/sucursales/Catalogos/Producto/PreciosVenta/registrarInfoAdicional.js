@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
   },
-  input: {
+  /* input: {
     "& input[type=number]": {
       "-moz-appearance": "textfield",
     },
@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
       "-webkit-appearance": "none",
       margin: 0,
     },
-  },
+  }, */
 }));
 
 export default function RegistroInfoAdidional() {
@@ -316,15 +316,6 @@ export default function RegistroInfoAdidional() {
     }
   };
 
-  const verificarCampoVacio = (name, value) => {
-    if (!value) {
-      setPrecios({
-        ...precios,
-        [name]: 0,
-      });
-    }
-  };
-
   useEffect(() => {
     obtenerPrecioConImpuesto(PCI);
   }, [PCI]);
@@ -335,7 +326,7 @@ export default function RegistroInfoAdidional() {
 
   return (
     <Box>
-      <div className={classes.input}>
+      <div /* className={classes.input} */>
         <Box>
           <Typography>
             <b>Impuestos</b>
@@ -370,7 +361,24 @@ export default function RegistroInfoAdidional() {
               variant="outlined"
               value={precios.iva}
               onChange={obtenerIva}
-              onBlur={() => verificarCampoVacio("iva", precios.iva)}
+              onFocus={(e) => {
+                const {name, value} = e.target;
+                if(parseFloat(value) === 0){
+                  setPrecios({
+                    ...precios,
+                    [name]: '',
+                  });
+                }
+              }}
+              onBlur={(e) => {
+                const {name, value} = e.target;
+                if(!value){
+                  setPrecios({
+                    ...precios,
+                    [name]: 16,
+                  });
+                }
+              }}
               error={precios.iva === ""}
             />
           </Box>
@@ -402,7 +410,24 @@ export default function RegistroInfoAdidional() {
               variant="outlined"
               value={precios.ieps}
               onChange={obtenerIeps}
-              onBlur={() => verificarCampoVacio("ieps", precios.ieps)}
+              onFocus={(e) => {
+                const {name, value} = e.target;
+                if(parseFloat(value) === 0){
+                  setPrecios({
+                    ...precios,
+                    [name]: '',
+                  });
+                }
+              }}
+              onBlur={(e) => {
+                const {name, value} = e.target;
+                if(!value){
+                  setPrecios({
+                    ...precios,
+                    [name]: 0,
+                  });
+                }
+              }}
               error={precios.ieps === ""}
             />
           </Box>
@@ -509,6 +534,18 @@ export default function RegistroInfoAdidional() {
               value={precioSinImpuesto}
               helperText={validacion.message}
               onChange={(e) => setPrecioSinImpuesto(e.target.value)}
+              onFocus={(e) => {
+                const {value} = e.target;
+                if(parseFloat(value) === 0){
+                  setPrecioSinImpuesto('');
+                }
+              }}
+              onBlur={(e) => {
+                const {value} = e.target;
+                if(!value){
+                  setPrecioSinImpuesto(0);
+                }
+              }}
             />
           </Box>
           <Box>
@@ -527,6 +564,18 @@ export default function RegistroInfoAdidional() {
               value={precioConImpuesto}
               helperText={validacion.message}
               onChange={(e) => setPrecioConImpuesto(e.target.value)}
+              onFocus={(e) => {
+                const {value} = e.target;
+                if(parseFloat(value) === 0){
+                  setPrecioConImpuesto('');
+                }
+              }}
+              onBlur={(e) => {
+                const {value} = e.target;
+                if(!value){
+                  setPrecioConImpuesto(0);
+                }
+              }}
             />
           </Box>
         </Box>

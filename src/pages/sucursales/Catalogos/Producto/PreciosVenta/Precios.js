@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   marginInput: {
     marginTop: 19,
   },
-  input: {
+  /* input: {
     "& input[type=number]": {
       "-moz-appearance": "textfield",
     },
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
       "-webkit-appearance": "none",
       margin: 0,
     },
-  },
+  }, */
 }));
 
 export default function PreciosDeVenta() {
@@ -122,7 +122,8 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
         let new_iva_precio =
           new_precio_venta_desc * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
         let new_ieps_precio =
-          new_precio_venta_desc * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+          new_precio_venta_desc *
+          parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
         let new_impuestos = new_iva_precio + new_ieps_precio;
         let precio_con_descuento = new_precio_venta_desc + new_impuestos;
 
@@ -207,7 +208,8 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
         let new_iva_precio =
           new_precio_venta_desc * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
         let new_ieps_precio =
-          new_precio_venta_desc * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+          new_precio_venta_desc *
+          parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
         let new_impuestos = new_iva_precio + new_ieps_precio;
         let precio_con_descuento = new_precio_venta_desc + new_impuestos;
 
@@ -299,7 +301,8 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
         let new_iva_precio =
           new_precio_venta_desc * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
         let new_ieps_precio =
-          new_precio_venta_desc * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+          new_precio_venta_desc *
+          parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
         let new_impuestos = new_iva_precio + new_ieps_precio;
         let precio_con_descuento = new_precio_venta_desc + new_impuestos;
 
@@ -327,7 +330,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     }
 
     /* preciosP.splice(index, 1, preciosVenta); */
-  }, [precios.unidad_de_compra.precio_unitario_con_impuesto]);
+  }, [precios.unidad_de_compra.precio_unitario_con_impuesto, preciosVenta.precio_neto]);
 
   const verificarCampoVacio = (name, value) => {
     switch (name) {
@@ -335,7 +338,9 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
         if (!value) {
           preciosVenta.utilidad = 0;
           preciosVenta.precio_neto =
-            precios.unidad_de_compra.precio_unitario_con_impuesto;
+            preciosVenta.numero_precio > 1
+              ? 0
+              : precios.unidad_de_compra.precio_unitario_con_impuesto;
           newPreciosP.splice(index, 1, preciosVenta);
           setPreciosP(newPreciosP);
         }
@@ -364,7 +369,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
   };
 
   return (
-    <Box className={classes.input}>
+    <Box>
       <Box display="flex" my={1} mr={1}>
         <Box
           alignItems="flex-end"
@@ -385,7 +390,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
             type="number"
             InputProps={{
               inputProps: { min: 0 },
-              endAdornment: <InputAdornment position="start">%</InputAdornment>,
+              startAdornment: <InputAdornment position="start">%</InputAdornment>,
             }}
             size="small"
             value={preciosVenta.utilidad}
@@ -423,7 +428,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
         </Box>
         <Box pl={1}>
           <Typography>
-            <b>{parseFloat(preciosVenta.precio_venta).toFixed(2)}</b>
+            <b>${parseFloat(preciosVenta.precio_venta).toFixed(2)}</b>
           </Typography>
         </Box>
       </Box>
@@ -451,7 +456,10 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
             }
             fullWidth
             type="number"
-            InputProps={{ inputProps: { min: 0 } }}
+            InputProps={{
+              inputProps: { min: 0 },
+              startAdornment: <InputAdornment position="start">$</InputAdornment>,
+            }}
             size="small"
             name="precio_neto"
             variant="outlined"

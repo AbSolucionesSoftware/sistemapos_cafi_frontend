@@ -50,9 +50,9 @@ export default function CancelarFactura({ open, setOpen, handleCloseFactura }) {
       >
         <DialogTitle>{"¿Estás seguro de cancelar esta factura?"}</DialogTitle>
         <DialogActions>
-          <Button onClick={() => handleClose()}>Cancelar</Button>
-          <Button onClick={() => cancelar()} color="secondary">
-            Eliminar
+          <Button onClick={() => handleClose()}>Cerrar</Button>
+          <Button onClick={() => cancelar()} color="primary">
+            Cancelar Factura
           </Button>
         </DialogActions>
       </Dialog>

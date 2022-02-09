@@ -55,7 +55,25 @@ export default function Catalogos({ obtenerAccesos, arregloAccesos }) {
                     </Paper>
                 </Box>
             </Box>
-
+            <Box p={1}  display='flex' justifyContent= 'center'>
+                <Box width='80%'>
+                    <Paper elevation={3}>
+                        <Box display='flex'>
+                            <Box ml={1} p={1} flexGrow={1} >
+                                <Typography variant="h6">
+                                    <b>Productos</b>
+                                </Typography>
+                            </Box>
+                            <Parametros 
+                                arregloAccesos={arregloAccesos} 
+                                obtenerAccesos={obtenerAccesos}
+                                departamento={'catalogos'}
+                                subDepartamento={'productos'}
+                            />
+                        </Box>
+                    </Paper>
+                </Box>
+            </Box>
             <Box p={1}  display='flex' justifyContent= 'center'>
                 <Box width='80%'>
                     <Paper elevation={3}>

@@ -412,6 +412,7 @@ const setValueToTrans =(cantidad_total) =>{
         setProductosTras([...productosTras, obj]);
     }
     }
+    setproduct_selected(undefined);
      return;
   } catch (error) {
      //console.log(error)
@@ -455,23 +456,32 @@ useEffect(() => {
     
   };        
   function onlyNumbers(value){
-   
+    props.setError({error:false, mensaje:''})
       //const onlyNums = value.toString().replace(/[^0-9]/g, '');
-      const intValue = parseFloat(value);
+      const intValue = (value !== '') ? parseFloat(value) : 0;
       try {
         if(props.almacenOrigen !== null){
+          console.log(intValue)
           if( !tipoPieza.piezas  ){
             if(intValue <= product_selected.inventario_general[0].cantidad_existente_maxima){
-              setCantidadTo(intValue);
+              setCantidadTo((intValue !== 0) ? intValue : '');
               //console.log(intValue)
+              return;
+            }else{
+              props.setError({error:true, mensaje:'La cantidad ingresada sobrepasa la cantidad existente.'})
               return;
             } 
           }else{
             
               if(intValue <= product_selected.inventario_general[0].cantidad_existente){
-                setCantidadTo(intValue);
+                setCantidadTo((intValue !== 0) ? intValue : '');
+             
                 return;
               }
+              else{
+              props.setError({error:true, mensaje:'La cantidad ingresada sobrepasa la cantidad existente.'})
+              return;
+            } 
             }
           }else{
           
@@ -794,7 +804,7 @@ export default function EnhancedTable(props) {
   const data = (!props.add) ?  productosTras  : (!props.almacenOrigen) ? productosEmpTo : productosTo  ; 
 
   const handleClick = (event, elemento, cant) => {
- 
+  setError({error:false, mensaje:''})
     if(elemento.datos_generales.tipo_producto === 'OTROS'){
       let haveCant= 0;
       productosTras.forEach(producto => {
@@ -915,7 +925,7 @@ export default function EnhancedTable(props) {
 
   
   function onlyNumbers(value){
-   
+   setError({error:false, mensaje:''})
       //const onlyNums = value.toString().replace(/[^0-9]/g, '');
       const intValue = parseFloat(value);
       try {
@@ -935,7 +945,7 @@ export default function EnhancedTable(props) {
             }
           }else{
            
-           
+          
             
             return;
           }
