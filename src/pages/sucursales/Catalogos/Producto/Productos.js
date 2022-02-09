@@ -8,7 +8,7 @@ import Button from "@material-ui/core/Button";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from "@material-ui/icons/Close";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import FormControl from "@material-ui/core/FormControl";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
@@ -88,9 +88,17 @@ export default function Productos() {
             <Typography variant="h6" className={classes.title}>
               Productos
             </Typography>
-            <Button variant="contained" color="secondary" onClick={handleClose} size="large">
-              <CloseIcon />
-            </Button>
+
+            <Box m={1}>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleClose}
+                size="large"
+              >
+                <CloseIcon style={{ fontSize: 30 }} />
+              </Button>
+            </Box>
           </Toolbar>
         </AppBar>
         <RegistroComponent />

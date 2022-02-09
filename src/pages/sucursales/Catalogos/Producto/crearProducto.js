@@ -156,10 +156,11 @@ const useStyles = makeStyles((theme) => ({
   formInput: {
     margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
   },
-  root: {
+  root_app: {
     flexGrow: 1,
-    width: "100%",
     backgroundColor: theme.palette.background.paper,
+    display: "flex",
+    maxHeight: "80vh",
   },
   iconSvg: {
     width: 50,
@@ -171,6 +172,9 @@ const useStyles = makeStyles((theme) => ({
     zIndex: theme.zIndex.drawer + 1,
     color: "#fff",
   },
+  tabs: {
+    borderRight: `1px solid ${theme.palette.divider}`,
+  },
 }));
 
 export default function CrearProducto({
@@ -178,7 +182,7 @@ export default function CrearProducto({
   datos,
   productosRefetch,
   fromCompra,
-  getProductos
+  getProductos,
 }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -351,9 +355,9 @@ export default function CrearProducto({
       }
       setLoading(false);
       toggleModal();
-      if(fromCompra){
+      if (fromCompra) {
         getProductos();
-      }else{
+      } else {
         productosRefetch();
       }
     } catch (error) {
@@ -499,7 +503,7 @@ export default function CrearProducto({
             onClick={() => toggleModal()}
             startIcon={<Add />}
           >
-            Nuevo
+            Agregar
           </Button>
         )
       ) : (
@@ -519,161 +523,177 @@ export default function CrearProducto({
           }
         }}
       >
-        <AppBar position="static" color="default" elevation={0}>
-          <Box display="flex" justifyContent="space-between">
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              variant="scrollable"
-              scrollButtons="on"
-              indicatorColor="primary"
-              textColor="primary"
-              aria-label="scrollable force tabs example"
-            >
-              <Tab
-                label="Datos generales"
-                icon={
-                  <Badge
-                    color="secondary"
-                    badgeContent={<Typography variant="h6">!</Typography>}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    invisible={
-                      validacion.error && validacion.vista1 ? false : true
-                    }
-                  >
-                    <img
-                      src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/portapapeles.svg"
-                      alt="icono registro"
-                      className={classes.iconSvg}
-                    />
-                  </Badge>
-                }
-                {...a11yProps(0)}
-              />
-              <Tab
-                label="Precios de venta"
-                icon={
-                  <Badge
-                    color="secondary"
-                    badgeContent={<Typography variant="h6">!</Typography>}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    invisible={
-                      validacion.error && validacion.vista2 ? false : true
-                    }
-                  >
-                    <img
-                      src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/etiqueta-de-precio.svg"
-                      alt="icono venta"
-                      className={classes.iconSvg}
-                    />
-                  </Badge>
-                }
-                {...a11yProps(1)}
-              />
-              <Tab
-                label="Inventario y almacen"
-                icon={
-                  <Badge
-                    color="secondary"
-                    badgeContent={<Typography variant="h6">!</Typography>}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    invisible={
-                      validacion.error && validacion.vista3 ? false : true
-                    }
-                  >
-                    <img
-                      src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tarea-completada.svg"
-                      alt="icono almacen"
-                      className={classes.iconSvg}
-                    />
-                  </Badge>
-                }
-                {...a11yProps(2)}
-              />
-              <Tab
-                label="Centro de costos"
-                icon={
+        <div className={classes.root_app}>
+          <Tabs
+            style={{ minWidth: "200px" }}
+            value={value}
+            onChange={handleChange}
+            variant="scrollable"
+            orientation="vertical"
+            scrollButtons="on"
+            indicatorColor="primary"
+            textColor="primary"
+            aria-label="scrollable force tabs example"
+            className={classes.tabs}
+          >
+            <Tab
+              style={{ minWidth: "200px" }}
+              label="Datos generales"
+              icon={
+                <Badge
+                  color="secondary"
+                  badgeContent={<Typography variant="h6">!</Typography>}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  invisible={
+                    validacion.error && validacion.vista1 ? false : true
+                  }
+                >
                   <img
-                    src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/costos.svg"
+                    src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/portapapeles.svg"
+                    alt="icono registro"
+                    className={classes.iconSvg}
+                  />
+                </Badge>
+              }
+              {...a11yProps(0)}
+            />
+            <Tab
+              style={{ minWidth: "200px" }}
+              label="Precios de venta"
+              icon={
+                <Badge
+                  color="secondary"
+                  badgeContent={<Typography variant="h6">!</Typography>}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  invisible={
+                    validacion.error && validacion.vista2 ? false : true
+                  }
+                >
+                  <img
+                    src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/etiqueta-de-precio.svg"
+                    alt="icono venta"
+                    className={classes.iconSvg}
+                  />
+                </Badge>
+              }
+              {...a11yProps(1)}
+            />
+            <Tab
+              style={{ minWidth: "200px" }}
+              label="Inventario y almacen"
+              icon={
+                <Badge
+                  color="secondary"
+                  badgeContent={<Typography variant="h6">!</Typography>}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  invisible={
+                    validacion.error && validacion.vista3 ? false : true
+                  }
+                >
+                  <img
+                    src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tarea-completada.svg"
                     alt="icono almacen"
                     className={classes.iconSvg}
                   />
-                }
-                {...a11yProps(3)}
-              />
-              <Tab
-                label="Precios a plazos"
-                icon={
-                  <img
-                    src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/calendar.svg"
-                    alt="icono almacen"
-                    className={classes.iconSvg}
-                  />
-                }
-                {...a11yProps(4)}
-              />
-              <Tab
-                label="Imagenes"
-                icon={
-                  <img
-                    src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/imagenes.svg"
-                    alt="icono imagenes"
-                    className={classes.iconSvg}
-                  />
-                }
-                {...a11yProps(5)}
-              />
-              {accion ? (
-                datos_generales.tipo_producto !== "OTROS" ? (
-                  <Tab
-                    label="Tallas y colores"
-                    icon={
-                      <Badge
-                        color="secondary"
-                        badgeContent={<Typography variant="h6">!</Typography>}
-                        anchorOrigin={{
-                          vertical: "bottom",
-                          horizontal: "right",
-                        }}
-                        invisible={
-                          validacion.error && validacion.vista7 ? false : true
-                        }
-                      >
-                        <img
-                          src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tallas-colores.svg"
-                          alt="icono colores"
-                          className={classes.iconSvg}
-                        />
-                      </Badge>
-                    }
-                    {...a11yProps(6)}
-                  />
-                ) : null
-              ) : null}
-            </Tabs>
-            {/* <Box m={1}>
-							<Button variant="contained" color="secondary" onClick={() => toggleModal()} size="large">
-								<CloseIcon />
-							</Button>
-						</Box> */}
-          </Box>
-        </AppBar>
-        <DialogContent className={classes.dialogContent}>
-          <Backdrop className={classes.backdrop} open={loading}>
-            <CircularProgress color="inherit" />
-          </Backdrop>
-          <ContenidoModal value={value} />
-        </DialogContent>
-        <DialogActions style={{ display: "flex", justifyContent: "center" }}>
+                </Badge>
+              }
+              {...a11yProps(2)}
+            />
+            <Tab
+              style={{ minWidth: "200px" }}
+              label="Centro de costos"
+              icon={
+                <img
+                  src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/costos.svg"
+                  alt="icono almacen"
+                  className={classes.iconSvg}
+                />
+              }
+              {...a11yProps(3)}
+            />
+            {/* <Tab
+              style={{ minWidth: "200px" }}
+              label="Precios a plazos"
+              icon={
+                <img
+                  src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/calendar.svg"
+                  alt="icono almacen"
+                  className={classes.iconSvg}
+                />
+              }
+              {...a11yProps(4)}
+            /> */}
+            <Tab
+              style={{ minWidth: "200px" }}
+              label="Imagenes"
+              icon={
+                <img
+                  src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/imagenes.svg"
+                  alt="icono imagenes"
+                  className={classes.iconSvg}
+                />
+              }
+              {...a11yProps(4)}
+            />
+            {accion ? (
+              datos_generales.tipo_producto !== "OTROS" ? (
+                <Tab
+                  style={{ minWidth: "200px" }}
+                  label="Tallas y colores"
+                  icon={
+                    <Badge
+                      color="secondary"
+                      badgeContent={<Typography variant="h6">!</Typography>}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "right",
+                      }}
+                      invisible={
+                        validacion.error && validacion.vista7 ? false : true
+                      }
+                    >
+                      <img
+                        src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tallas-colores.svg"
+                        alt="icono colores"
+                        className={classes.iconSvg}
+                      />
+                    </Badge>
+                  }
+                  {...a11yProps(5)}
+                />
+              ) : null
+            ) : null}
+          </Tabs>
+          <DialogContent className={classes.dialogContent}>
+            <Backdrop className={classes.backdrop} open={loading}>
+              <CircularProgress color="inherit" />
+            </Backdrop>
+            <Box m={1} display="flex" justifyContent="flex-end">
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => toggleModal()}
+                size="large"
+              >
+                <Close />
+              </Button>
+            </Box>
+            <ContenidoModal value={value} />
+          </DialogContent>
+        </div>
+
+        <DialogActions
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
           <Button
             variant="outlined"
             color="primary"
@@ -684,16 +704,6 @@ export default function CrearProducto({
           >
             Anterior
           </Button>
-          <Button
-            variant="outlined"
-            color="inherit"
-            onClick={() => toggleModal()}
-            size="large"
-            startIcon={<Close />}
-            disableElevation
-          >
-            Cancelar
-          </Button>
           <ButtonActions />
         </DialogActions>
       </Dialog>
@@ -702,7 +712,6 @@ export default function CrearProducto({
 }
 
 const ContenidoModal = ({ value }) => {
-  const classes = useStyles();
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
   /* Queries */
@@ -736,7 +745,7 @@ const ContenidoModal = ({ value }) => {
   const { obtenerConsultasProducto } = data;
 
   return (
-    <div className={classes.root}>
+    <Fragment>
       <TabPanel value={value} index={0}>
         <RegistroInfoGenerales
           obtenerConsultasProducto={obtenerConsultasProducto}
@@ -758,18 +767,18 @@ const ContenidoModal = ({ value }) => {
           refetch={refetch}
         />
       </TabPanel>
-      <TabPanel value={value} index={4}>
+      {/* <TabPanel value={value} index={4}>
         <PrecioPlazos />
-      </TabPanel>
-      <TabPanel value={value} index={5}>
+      </TabPanel> */}
+      <TabPanel value={value} index={4}>
         <CargarImagenesProducto />
       </TabPanel>
-      <TabPanel value={value} index={6}>
+      <TabPanel value={value} index={5}>
         <ColoresTallas
           obtenerConsultasProducto={obtenerConsultasProducto}
           refetch={refetch}
         />
       </TabPanel>
-    </div>
+    </Fragment>
   );
 };
