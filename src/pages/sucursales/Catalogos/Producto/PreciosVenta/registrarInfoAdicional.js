@@ -57,8 +57,6 @@ export default function RegistroInfoAdidional() {
     update,
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
-    unidadVentaSecundaria, 
-    setUnidadVentaSecundaria
   } = useContext(RegProductoContext);
 
   /* CHECKBOX IVA */
@@ -238,8 +236,8 @@ export default function RegistroInfoAdidional() {
       const { codigo_unidad, unidad } = child.props.unidad;
       if (unidad === "Caja" || unidad === "Costal") {
         let precio = unidadVentaXDefecto.cantidad * unidadVentaXDefecto.precio;
-        setUnidadVentaSecundaria({
-          ...unidadVentaSecundaria,
+        setUnidadVentaXDefecto({
+          ...unidadVentaXDefecto,
           precio: parseFloat(precio.toFixed(2)),
           codigo_unidad,
           unidad,
