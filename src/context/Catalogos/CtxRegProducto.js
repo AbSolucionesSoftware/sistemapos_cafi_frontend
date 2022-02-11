@@ -16,6 +16,7 @@ import {
   initial_state_subcostos,
   initial_state_selectedDate,
   initial_state_presentaciones,
+  initial_state_unidadVentaSecundaria,
 } from "./initialStatesProducto";
 
 export const RegProductoContext = createContext();
@@ -27,6 +28,9 @@ export const RegProductoProvider = ({ children }) => {
   const [precios, setPrecios] = useState(initial_state_precios);
   const [unidadVentaXDefecto, setUnidadVentaXDefecto] = useState(
     initial_state_unidadVentaXDefecto
+  );
+  const [unidadVentaSecundaria, setUnidadVentaSecundaria] = useState(
+    initial_state_unidadVentaSecundaria
   );
   const [preciosP, setPreciosP] = useState(initial_state_preciosP);
   const [unidadesVenta, setUnidadesVenta] = useState(
@@ -120,7 +124,9 @@ export const RegProductoProvider = ({ children }) => {
         datosEnDescuentos, 
         setDatosEnDescuentos,
         almacen_existente, 
-        setAlmacenExistente
+        setAlmacenExistente,
+        unidadVentaSecundaria, 
+        setUnidadVentaSecundaria
       }}
     >
       {children}

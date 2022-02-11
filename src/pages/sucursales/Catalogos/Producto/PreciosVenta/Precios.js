@@ -15,6 +15,9 @@ const useStyles = makeStyles((theme) => ({
   marginInput: {
     marginTop: 19,
   },
+  titulos : {
+    fontWeight: 500
+  },
   /* input: {
     "& input[type=number]": {
       "-moz-appearance": "textfield",
@@ -380,7 +383,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
           </Typography>
         </Box>
         <Box minWidth={100}>
-          <Typography>Precio {data.numero_precio}</Typography>
+          <Typography className={classes.titulos}>Precio {data.numero_precio}</Typography>
           <Box mb={2} />
           <TextField
             disabled={

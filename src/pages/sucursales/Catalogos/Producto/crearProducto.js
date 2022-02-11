@@ -44,6 +44,7 @@ import {
   initial_state_almacen_inicial,
   initial_state_centro_de_costos,
   initial_state_preciosPlazos,
+  initial_state_unidadVentaSecundaria,
 } from "../../../../context/Catalogos/initialStatesProducto";
 import {
   Add,
@@ -220,6 +221,8 @@ export default function CrearProducto({
     setPresentacionesEliminadas,
     setAlmacenExistente,
     almacen_existente,
+    unidadVentaSecundaria,
+    setUnidadVentaSecundaria,
   } = useContext(RegProductoContext);
 
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -294,6 +297,25 @@ export default function CrearProducto({
         copy_unidadesVenta.splice(0, 0, unidadVentaXDefecto);
       }
     }
+    //si la unidad es caja o costal, hacerla unidad principal
+    /* let unidades_venta_final = [];
+    if (
+      precios.unidad_de_compra.unidad === "Caja" ||
+      precios.unidad_de_compra.unidad === "Costal"
+    ) {
+      copy_unidadesVenta.push(unidadVentaSecundaria);
+      copy_unidadesVenta.forEach((unidad) => {
+        let obj = { ...unidad };
+        if (obj.unidad === "Caja" || obj.unidad === "Costal") {
+          obj.unidad_principal = true;
+        } else {
+          obj.unidad_principal = false;
+        }
+        copy
+      });
+    }
+
+    console.log(unidades_venta_final); */
 
     precios.precios_producto = preciosP;
 
@@ -328,7 +350,7 @@ export default function CrearProducto({
     /* console.log(input); */
 
     setLoading(true);
-    try {
+     try {
       if (accion) {
         const result = await actualizarProducto({
           variables: {
@@ -381,6 +403,7 @@ export default function CrearProducto({
     setDatosGenerales(initial_state_datos_generales);
     setPrecios(initial_state_precios);
     setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
+    setUnidadVentaSecundaria(initial_state_unidadVentaSecundaria);
     setPreciosP(initial_state_preciosP);
     setUnidadesVenta([]);
     setAlmacenInicial(initial_state_almacen_inicial);
@@ -673,10 +696,7 @@ export default function CrearProducto({
               ) : null
             ) : null}
           </Tabs>
-          <DialogContent className={classes.dialogContent}>
-            <Backdrop className={classes.backdrop} open={loading}>
-              <CircularProgress color="inherit" />
-            </Backdrop>
+          <Box width="100%">
             <Box m={1} display="flex" justifyContent="flex-end">
               <Button
                 variant="contained"
@@ -687,8 +707,13 @@ export default function CrearProducto({
                 <Close />
               </Button>
             </Box>
-            <ContenidoModal value={value} />
-          </DialogContent>
+            <DialogContent className={classes.dialogContent}>
+              <Backdrop className={classes.backdrop} open={loading}>
+                <CircularProgress color="inherit" />
+              </Backdrop>
+              <ContenidoModal value={value} />
+            </DialogContent>
+          </Box>
         </div>
 
         <DialogActions

@@ -1,26 +1,11 @@
-import React, {
-  useContext,
-  useState,
-  Fragment,
-  useEffect,
-  useCallback,
-} from "react";
-import {
-  Typography,
-  MenuItem,
-  Divider,
-  Tooltip,
-  FormLabel,
-} from "@material-ui/core";
-import { Box, FormControl, Grid, Select } from "@material-ui/core";
+import React, { useContext, useState, useEffect, useCallback } from "react";
+import { Typography, Tooltip, Box, Grid } from "@material-ui/core";
 import { makeStyles, useTheme } from "@material-ui/core";
 import Zoom from "@material-ui/core/Zoom";
 
 import { Done } from "@material-ui/icons";
 import TablaPresentaciones from "./TablaPresentaciones";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
-import { AlmacenProvider } from "../../../../../context/Almacenes/crearAlmacen";
-import ContainerRegistroAlmacen from "../../../Almacenes/RegistroAlmacen/ContainerRegistroAlmacen";
 import CrearColorProducto from "./crearColor";
 import CrearTallasProducto from "./crearTalla";
 
@@ -35,6 +20,9 @@ const useStyles = makeStyles((theme) => ({
     margin: 1,
     borderRadius: "15%",
     cursor: "pointer",
+  },
+  titulos: {
+    fontWeight: 500,
   },
 }));
 
@@ -66,6 +54,7 @@ export default function ColoresTallas({
   const medidas =
     datos_generales.tipo_producto === "ROPA" ? [...tallas] : [...calzados];
   const [onUpdate, setOnUpdate] = useState([]);
+  const classes = useStyles();
 
   const obtenerColoresSeleccinados = useCallback(() => {
     let colors = [];
@@ -180,7 +169,7 @@ export default function ColoresTallas({
               }
             >
               <Box display="flex" alignItems="center">
-                <Typography>
+                <Typography className={classes.titulos}>
                   {datos_generales.tipo_producto === "ROPA"
                     ? "Talla"
                     : "Número"}
@@ -217,7 +206,7 @@ export default function ColoresTallas({
               }
             >
               <Box display="flex" alignItems="center">
-                <Typography>Color</Typography>
+                <Typography className={classes.titulos}>Color</Typography>
                 <Box mx={1} />
                 <CrearColorProducto refetch={refetch} />
               </Box>

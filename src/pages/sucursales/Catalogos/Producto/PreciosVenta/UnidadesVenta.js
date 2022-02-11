@@ -1,5 +1,6 @@
 import React, { Fragment, useContext, useState } from "react";
 import {
+  Grid,
   IconButton,
   InputAdornment,
   OutlinedInput,
@@ -20,7 +21,7 @@ import {
   Button,
 } from "@material-ui/core";
 import { Dialog, DialogActions, DialogTitle } from "@material-ui/core";
-import { Add, DeleteOutline, LocalOffer } from "@material-ui/icons";
+import { Add, Cached, DeleteOutline, LocalOffer } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core";
 import { FormControl } from "@material-ui/core";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
@@ -28,11 +29,8 @@ import { formatoMexico } from "../../../../../config/reuserFunctions";
 import { unitCodes, unitCodes_granel } from "../unidades";
 
 const useStyles = makeStyles((theme) => ({
-  formInputFlex: {
-    display: "flex",
-    "& > *": {
-      margin: `5px 5px`,
-    },
+  titulos: {
+    fontWeight: 500,
   },
 }));
 
@@ -159,8 +157,8 @@ export default function PreciosDeCompra() {
     setUnidadVentaXDefecto({
       ...unidadVentaXDefecto,
       descuento_activo,
-    })
-  } 
+    });
+  };
 
   const checkUnidadDefault = (checked) => {
     setUnidadVentaXDefecto({
@@ -204,145 +202,163 @@ export default function PreciosDeCompra() {
 
   return (
     <Fragment>
-      <Box className={classes.formInputFlex} justifyContent="center">
-        <Box width={100}>
-          <Typography>Unidad</Typography>
-          <Box display="flex">
-            <FormControl
-              variant="outlined"
-              fullWidth
-              size="small"
-              name="unidad"
-            >
-              {precios.granel ? (
-                <Select
-                  name="unidad"
-                  value={unidades.unidad}
-                  onChange={obtenerUnidadesVentas}
-                >
-                  {unitCodes_granel.map((res, index) => (
-                    <MenuItem key={index} unidad={res} value={res.unidad}>
-                      {res.unidad}
-                    </MenuItem>
-                  ))}
-                </Select>
-              ) : (
-                <Select
-                  name="unidad"
-                  value={unidades.unidad}
-                  onChange={obtenerUnidadesVentas}
-                >
-                  {unitCodes.map((res, index) => (
-                    <MenuItem key={index} unidad={res} value={res.unidad}>
-                      {res.unidad}
-                    </MenuItem>
-                  ))}
-                </Select>
-              )}
-            </FormControl>
+      <Grid
+        container
+        spacing={2}
+        style={{ alignItems: "flex-end", height: "100%" }}
+      >
+        <Grid item md={2} xs={12}>
+          <Box>
+            <Typography className={classes.titulos}>Unidad</Typography>
+            <Box display="flex">
+              <FormControl
+                variant="outlined"
+                fullWidth
+                size="small"
+                name="unidad"
+              >
+                {precios.granel ? (
+                  <Select
+                    name="unidad"
+                    value={unidades.unidad}
+                    onChange={obtenerUnidadesVentas}
+                  >
+                    {unitCodes_granel.map((res, index) => (
+                      <MenuItem key={index} unidad={res} value={res.unidad}>
+                        {res.unidad}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                ) : (
+                  <Select
+                    name="unidad"
+                    value={unidades.unidad}
+                    onChange={obtenerUnidadesVentas}
+                  >
+                    {unitCodes.map((res, index) => (
+                      <MenuItem key={index} unidad={res} value={res.unidad}>
+                        {res.unidad}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+              </FormControl>
+            </Box>
           </Box>
-        </Box>
-        <Box width={180}>
-          <Typography>
-            Cantidad{" "}
-            <b>
-              {unidades.unidad === "Caja"
-                ? "(pz por caja)"
-                : unidades.unidad === "Costal"
-                ? "(kg por costal)"
-                : ""}
-            </b>
-          </Typography>
-          <TextField
-            disabled={unidades.codigo_unidad === "H87"}
-            type="number"
-            InputProps={{ inputProps: { min: 0 } }}
-            size="small"
-            name="cantidad"
-            variant="outlined"
-            onChange={obtenerUnidadesVentas}
-            value={unidades.cantidad ? unidades.cantidad : ""}
-            fullWidth
-          />
-        </Box>
-        <Box width={130}>
-          <Typography>
-            Precio por <b>{unidades.unidad}</b>
-          </Typography>
-          <TextField
-            type="number"
-            InputProps={{ inputProps: { min: 0 } }}
-            size="small"
-            name="precio"
-            variant="outlined"
-            onChange={(e) => obtenerPrecioUVentas(e.target.value)}
-            value={unidades.precio ? unidades.precio : ""}
-            fullWidth
-          />
-        </Box>
-        {unidades.descuento_activo === true ? (
-          <Box width={130}>
-            <Typography>
-              <b>$ </b>Descuento
+        </Grid>
+        <Grid item md={unidades.descuento_activo === true ? 1 : 2} xs={12}>
+          <Box>
+            <Typography className={classes.titulos}>
+              Cantidad{" "}
+              <b>
+                {unidades.unidad === "Caja"
+                  ? "(pz por caja)"
+                  : unidades.unidad === "Costal"
+                  ? "(kg por costal)"
+                  : ""}
+              </b>
             </Typography>
             <TextField
-              inputProps={{ readOnly: true }}
+              disabled={unidades.codigo_unidad === "H87"}
+              type="number"
+              InputProps={{ inputProps: { min: 0 } }}
               size="small"
+              name="cantidad"
               variant="outlined"
-              value={unidades.descuento.precio_neto}
+              onChange={obtenerUnidadesVentas}
+              value={unidades.cantidad ? unidades.cantidad : ""}
               fullWidth
             />
           </Box>
-        ) : null}
-        <Box width={240}>
-          <FormControl
-            variant="outlined"
-            size="small"
-            name="codigo_barras"
-            fullWidth
-          >
-            <Typography>Código de barras</Typography>
-            <OutlinedInput
+        </Grid>
+        <Grid item md={2} xs={12}>
+          <Box>
+            <Typography className={classes.titulos}>
+              Precio por <b>{unidades.unidad}</b>
+            </Typography>
+            <TextField
+              type="number"
+              InputProps={{ inputProps: { min: 0 } }}
+              size="small"
+              name="precio"
+              variant="outlined"
+              onChange={(e) => obtenerPrecioUVentas(e.target.value)}
+              value={unidades.precio ? unidades.precio : ""}
               fullWidth
-              disabled={update}
-              id="input-codigo-barras"
-              name="codigo_barras"
-              value={unidades.codigo_barras ? unidades.codigo_barras : ""}
-              onChange={obtenerUnidadesVentas}
-              endAdornment={
-                <InputAdornment position="end">
-                  <Button
-                    onClick={() => GenCodigoBarras()}
-                    edge="end"
-                    color="primary"
-                    disabled={update}
-                  >
-                    Generar
-                  </Button>
-                </InputAdornment>
-              }
             />
-          </FormControl>
-        </Box>
-        <Box display="flex" alignItems="flex-end">
-          <Button
-            color="primary"
-            onClick={() => agregarNuevaUnidad()}
-            startIcon={<Add fontSize="large" />}
-            /* startIcon={
-              actualizarUnidad ? (
-                <Done fontSize="large" />
-              ) : (
-                <Add fontSize="large" />
-              )
-            } */
-            variant="outlined"
-            size="large"
-          >
-            Guardar
-          </Button>
-        </Box>
-      </Box>
+          </Box>
+        </Grid>
+        {unidades.descuento_activo === true ? (
+          <Grid item md={2} xs={12}>
+            <Box>
+              <Typography className={classes.titulos}>
+                <b>$ </b>Descuento
+              </Typography>
+              <TextField
+                inputProps={{ readOnly: true }}
+                size="small"
+                variant="outlined"
+                value={unidades.descuento.precio_neto}
+                fullWidth
+              />
+            </Box>
+          </Grid>
+        ) : null}
+        <Grid item md={3} xs={12}>
+          <Box>
+            <FormControl
+              variant="outlined"
+              size="small"
+              name="codigo_barras"
+              fullWidth
+            >
+              <Typography className={classes.titulos}>
+                Código de barras
+              </Typography>
+              <OutlinedInput
+                fullWidth
+                disabled={update}
+                id="input-codigo-barras"
+                name="codigo_barras"
+                value={unidades.codigo_barras ? unidades.codigo_barras : ""}
+                onChange={obtenerUnidadesVentas}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      size="small"
+                      color="primary"
+                      onClick={() => GenCodigoBarras()}
+                      disabled={update}
+                    >
+                      <Cached />
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
+          </Box>
+        </Grid>
+        <Grid item md={2} xs={12}>
+          <Box display="flex" alignItems="flex-end">
+            <Button
+              color="primary"
+              onClick={() => agregarNuevaUnidad()}
+              startIcon={<Add fontSize="large" />}
+              /* startIcon={
+                actualizarUnidad ? (
+                  <Done fontSize="large" />
+                ) : (
+                  <Add fontSize="large" />
+                )
+              } */
+              variant="outlined"
+              size="large"
+            >
+              Guardar
+            </Button>
+          </Box>
+        </Grid>
+      </Grid>
       <Box>
         <TableContainer>
           <Table size="small" aria-label="a dense table">
