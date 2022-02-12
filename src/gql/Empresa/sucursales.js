@@ -24,6 +24,54 @@ export const OBTENER_SUCURSALES = gql`
         }
     }
 `
+export const OBTENER_DATOS_SUCURSAL = gql`
+    query obtenerDatosSucursal($id: ID!){
+        obtenerDatosSucursal(id: $id){
+            _id
+            nombre_sucursal
+            descripcion
+            usuario_sucursal
+            direccion{
+                calle
+                no_ext
+                no_int
+                codigo_postal
+                colonia
+                municipio
+                localidad
+                estado
+                pais
+            }
+            cuenta_sucursal {
+                dinero_actual
+            }         
+        }
+    }
+`
+export const ACTUALIZAR_SUCURSAL = gql`
+  mutation editarSucursal($id: ID!, $input: EditarSucursal) {
+    editarSucursal(id: $id, input: $input) {
+         _id
+            nombre_sucursal
+            descripcion
+            usuario_sucursal
+            direccion{
+                calle
+                no_ext
+                no_int
+                codigo_postal
+                colonia
+                municipio
+                localidad
+                estado
+                pais
+            }
+            cuenta_sucursal {
+                dinero_actual
+            }         
+        }
+    }
+`
 
 export const CREAR_MOVIMIENTO_CUENTA = gql`
     mutation CrearMovimientoCuenta($input: CrearMovimientoCuentaInput, $empresa: ID!, $sucursal: ID!, $tipo: Boolean){

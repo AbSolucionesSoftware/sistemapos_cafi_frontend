@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-
+import React, {useEffect, useState, useContext} from 'react';
+import { TraspasosAlmacenContext } from "../../../../context/Almacenes/traspasosAlmacen";
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, CircularProgress } from '@material-ui/core/';
 import Paper from '@material-ui/core/Paper';
@@ -8,10 +8,9 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import ErrorPage from '../../../../components/ErrorPage'
-import ExportarExcel from '../../../../components/ExportExcel'
+
 import { useQuery } from '@apollo/client';
 import { OBTENER_ALMACENES } from '../../../../gql/Almacenes/Almacen';
 
@@ -21,89 +20,73 @@ const useStyles = makeStyles({
 	},
 	container: {
 		
-		maxHeight: '60vh'
+		maxHeight: '76vh'
 	}
 });
 
-export default function ListaAlmacenes(props) {
-	const classes = useStyles();
-	
-	const [ page, setPage ] = React.useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = React.useState(10);
-	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));	
-	// const almacenesColumnas = [];
-	// const productosRows = [];
-		/* Queries */
-	const { loading, error, refetch } = useQuery(OBTENER_ALMACENES,{
-		variables: {
-			id: sesion.sucursal._id
-		}
-	});	
-    const dataExcel = [];
-	const columns = [
-		{ id: 'codigo_barras', label: 'Código de barras', minWidth: 60 , widthPx: 160, },
-		//{ id: 'claveAlt', label: 'Clave alterna', minWidth: 100 },
-		//{ id: 'tipoProd', label: 'Tipo producto', minWidth: 100 },
-		{ id: 'nombre_comercial', label: 'Nombre comercial', minWidth: 170, widthPx: 160, },
-		//{ id: 'nombregen', label: 'Nombre génerico', minWidth: 170 },
-		//{ id: 'categoria', label: 'Categoría', minWidth: 100 },
-		//{ id: 'subCategoria', label: 'Sub Categoría', minWidth: 100 },
-		//{ id: 'marca', label: 'Marca', minWidth: 100 },
-		//{ id: 'recetaFarm', label: 'Receta farmacia ', minWidth: 100 }
-	];
-
-	useEffect(
-		() => {
-			refetch();
-		},
-		[ refetch ]
-	);
-	
-	if(props.obtenerAlmacenes){
-		// let existencias= []; 
-		props.obtenerAlmacenes.forEach(element => {
-			columns.push({ id: element._id, label: element.nombre_almacen, minWidth: 60, widthPx: 160,})
-			
-		}); 
-		columns.push({ id: 'total', label: 'Total existencias', minWidth: 60, widthPx: 160,})
-	}
-	
-	const Rowrow = ({producto}) => {
+const Rowrow = (rowProps) => {
+	const {dataExcel, setDataExcel} = useContext(TraspasosAlmacenContext);	
+	const [dataExcelHere, setDataExcelHere] = useState([]);	
+	const [arrayCantidades , setArrayCantidades] = useState([]);
+	const [row, setRow] = useState({'codigo_barras' : rowProps.producto.datos_generales.codigo_barras, "nombre_comercial":rowProps.producto.datos_generales.nombre_comercial, style: {
+					font: { sz: '12' },
+					alignment: { wrapText: true, horizontal: 'center', vertical: 'top' },
+					border: { bottom: { style: 'thin', color: { rgb: '000000' } } 
+				}}});
+	const [total , setTotal] = useState(0)
+	const [unidad_minima , setUnidad_Minima] = useState('')
 		
-		let arrayCantidades=[];
-		let row={'codigo_barras' : producto.datos_generales.codigo_barras, "nombre_comercial":producto.datos_generales.nombre_comercial, style: {
-                     font: { sz: '12' },
-                     alignment: { wrapText: true, horizontal: 'center', vertical: 'top' },
-                     border: { bottom: { style: 'thin', color: { rgb: '000000' } } 
-                    }}};
-		let total=0;
-	    let unidad_minima = '';
-		let cantidad = 0;
-		props.obtenerAlmacenes.forEach((almacenColumna) => {
-			const existencias =	producto.existencia_almacenes.filter((existencia) => existencia._id.almacen._id === almacenColumna._id)
-
-			if(existencias.length > 0){
-				arrayCantidades.push(existencias[0].cantidad_existente )
-				unidad_minima = (existencias[0].unidad_inventario !== null) ? existencias[0].unidad_inventario: 'pz';
-				row = {...row, [almacenColumna._id]: existencias[0].cantidad_existente + " " + unidad_minima };
-				total += existencias[0].cantidad_existente;
-			}
-			
-			
-			else{
-				arrayCantidades.push(0);
-				row = {...row, [almacenColumna._id]:0   };	
-			}
-		});	 
-		row = {...row, total:total + " " + unidad_minima };	
 		
-		dataExcel.push(row)
+		useEffect(() => {
+			let tot= 0;
+			let r = row;
+			let datExc = dataExcel;
+			rowProps.obtenerAlmacenes.forEach((almacenColumna) => {
+				const existencias =	rowProps.producto.existencia_almacenes.filter((existencia) => existencia._id.almacen._id === almacenColumna._id)
+
+				if(existencias.length > 0){
+					arrayCantidades.push(existencias[0].cantidad_existente )
+					setUnidad_Minima((existencias[0].unidad_inventario !== null) ? existencias[0].unidad_inventario: 'pz');
+					r = {...r, [almacenColumna._id]: existencias[0].cantidad_existente + " " + unidad_minima };
+					tot +=  existencias[0].cantidad_existente;
+				}
+				
+				
+				else{
+					arrayCantidades.push(0);
+					r = {...r, [almacenColumna._id]:0   };	
+				}
+			});	 
+			r = {...r, total:tot + " " + unidad_minima };
+
+			setTotal(tot)
+			setRow(r);
+			datExc.push(r);
+			//console.log( 'DATA EXCEL LISTA PROductos' , datExc)
+			
+		
+		 	
+			if(rowProps.index === rowProps.productosLength -1){
+				
+				setDataExcelHere(datExc);
+			} 
+		
+		}, []);
+
+		useEffect(() => {
+			console.log(dataExcelHere)
+			if(dataExcelHere){
+				setDataExcel(dataExcelHere);
+			}
+		
+		}, [dataExcelHere])
+		
 		return(
-			<TableRow hover role="checkbox" tabIndex={-1} key={producto._id} >
-				<TableCell style={{minWidth:60}} >{producto.datos_generales.codigo_barras}</TableCell>
+			<TableRow hover role="checkbox" tabIndex={-1} key={rowProps.producto._id} >
+				<TableCell style={{minWidth:60}} >{rowProps.producto.datos_generales.codigo_barras}</TableCell>
 						
 			
-				<TableCell style={{minWidth:170}} >{producto.datos_generales.nombre_comercial}</TableCell>
+				<TableCell style={{minWidth:170}} >{rowProps.producto.datos_generales.nombre_comercial}</TableCell>
 			
 			
 				{/* <TableCell style={{textAlign: 'center',}} >{(producto.datos_generales.receta_farmacia) ? "SI" : "NO"}</TableCell> */}
@@ -117,16 +100,42 @@ export default function ListaAlmacenes(props) {
 			</TableRow>
 		)
 	}
-	const handleChangePage = (event, newPage) => {
+export default function ListaAlmacenes(props) {
+	const classes = useStyles();
+	
+	
+	//const sesion = JSON.parse(localStorage.getItem('sesionCafi'));	
+	// const almacenesColumnas = [];
+	// const productosRows = [];
+		/* Queries */
+	/* const { loading, error, refetch } = useQuery(OBTENER_ALMACENES,{
+		variables: {
+			id: sesion.sucursal._id
+		}
+	});	 */
+   
+	
+
+	/* useEffect(
+		() => {
+			refetch();
+		},
+		[ refetch ]
+	); */
+	
+
+	
+	
+/* 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
 	};
 
 	const handleChangeRowsPerPage = (event) => {
 		setRowsPerPage(+event.target.value);
 		setPage(0);
-	};
+	}; */
 
-	if (loading)
+	/* if (loading)
 	return (
 		<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
 			<CircularProgress />
@@ -135,17 +144,19 @@ export default function ListaAlmacenes(props) {
 	if (error) {
 		console.log(error)
 		return <ErrorPage error={error} />;
-	}
+	} */
 
 	
 	return (
 		<div>
+		
 		<Paper className={classes.root}>
+		
 			<TableContainer className={classes.container}>
 				<Table stickyHeader size={'small'} aria-label="a dense table">
 					<TableHead>
 						<TableRow>
-							{columns.map((column, index) => (
+							{props.columns.map((column, index) => (
 								<TableCell key={column.id} align={column.align} style={{textAlign:(index > 1)? 'center': 'left', minWidth: column.minWidth, width: column.minWidth}}>
 									{column.label}
 								</TableCell>
@@ -154,8 +165,10 @@ export default function ListaAlmacenes(props) {
 					</TableHead>
 					<TableBody>
 						{props.productos.map((row, index) => {
+						    let key =  index;
+							
 							return (
-								<Rowrow producto={row} key={index} />
+								<Rowrow producto={row} index={key} key={index} productosLength={props.productos.length} dataExcel ={props.dataExcel} setDataExcel={props.setDataExcel} obtenerAlmacenes={props.obtenerAlmacenes} />
 							);
 						})}
 					</TableBody>
@@ -173,13 +186,7 @@ export default function ListaAlmacenes(props) {
 			/> */}
 			
 		</Paper>
-		{(props.productos.length > 0) ?
-			<Box m={2} alignContent="flex-end">
-				<ExportarExcel fileName="Inventarios almacen" data={dataExcel} columnName={columns} />
-			</Box>
-			:
-			<div/>
-		}
+		
 		</div>
 	);
 }

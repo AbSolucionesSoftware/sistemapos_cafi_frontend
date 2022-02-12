@@ -104,7 +104,7 @@ export default function InformacionFiscal() {
       clave_banco: "",
     },
   });
-  /* Queries */
+  /* Queries */ 
   const { loading, data, refetch, error } = useQuery(OBTENER_DATOS_EMPRESA, {
     variables: { id: sesion.empresa._id },
   });
@@ -119,7 +119,9 @@ export default function InformacionFiscal() {
 
   useEffect(() => {
     try {
+     
       if (data !== undefined) {
+         console.log(sesion.empresa._id)
         setEmpresa(data.obtenerEmpresa);
         let new_sesion = sesion;
         new_sesion.empresa = data.obtenerEmpresa;
@@ -131,7 +133,7 @@ export default function InformacionFiscal() {
         }
       }
     } catch (errorCatch) {
-      // console.log("SESSIONREFECT",errorCatch)
+      //console.log("SESSIONREFECT",errorCatch)
     }
   }, [data, setEmpresa]);
 
@@ -146,6 +148,7 @@ export default function InformacionFiscal() {
   useEffect(() => {
     try {
       setLoadingPage(loading);
+      console.log(loading)
     } catch (errorCatch) {
       // console.log("SESSIONREFECTUPDATE",errorCatch)
     }

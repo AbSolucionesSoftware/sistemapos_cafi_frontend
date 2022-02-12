@@ -31,7 +31,9 @@ export default function Moviminetos() {
 			{sesion.accesos.almacenes.inventario_almacen.ver === false ? (null):(
 				<Grid item lg={2} >
 					<Box display="flex" justifyContent="center" alignItems="center">
-						<InventariosPorAlmacen />
+						<TraspasosProvider>
+							<InventariosPorAlmacen />
+						</TraspasosProvider>
 					</Box>
 				</Grid>
 			)}
