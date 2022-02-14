@@ -16,6 +16,7 @@ import Done from "@material-ui/icons/Done";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
 import { CircularProgress, DialogTitle } from "@material-ui/core";
 import TablaPresentaciones from "../../../Catalogos/Producto/TallasColores/TablaPresentaciones";
+import { initial_state_unidadVentaSecundaria, initial_state_unidadVentaXDefecto } from "../../../../../context/Catalogos/initialStatesProducto";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -63,6 +64,7 @@ export default function AlertDialogSlide({ agregarCompra, handleClose, cargando 
     setUnidadesVenta,
     setPreciosP,
     setUnidadVentaXDefecto,
+    setUnidadVentaSecundaria
   } = useContext(RegProductoContext);
 
   const toggleDrawer = () => setOpen(!open);
@@ -70,14 +72,16 @@ export default function AlertDialogSlide({ agregarCompra, handleClose, cargando 
   const resetProducto = () => {
     /* SET STATES WHEN UPDATING */
     const { precios_producto, ...new_precios } = productoOriginal.precios;
-    const unidadxdefecto = productoOriginal.unidades_de_venta.filter(
+    const { unidades_de_venta } = productoOriginal;
+    /* const unidadxdefecto = productoOriginal.unidades_de_venta.filter(
       (res) => res.default
-    );
+    ); */
     /* setDatosProducto({...datosProducto, mantener_precio: true}) */
     setPrecios(new_precios);
-    setUnidadesVenta(productoOriginal.unidades_de_venta);
+    setUnidadesVenta(unidades_de_venta);
     setPreciosP(productoOriginal.precios.precios_producto);
-    setUnidadVentaXDefecto(unidadxdefecto[0]);
+    setUnidadVentaXDefecto(unidades_de_venta.length > 0 ? unidades_de_venta[0] : initial_state_unidadVentaXDefecto);
+    setUnidadVentaSecundaria(unidades_de_venta.length > 0 ? unidades_de_venta[1] : initial_state_unidadVentaSecundaria);
     toggleDrawer();
   };
 

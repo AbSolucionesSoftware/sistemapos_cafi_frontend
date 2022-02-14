@@ -8,8 +8,6 @@ export default function Parametros({
     subDepartamento
 }) {
 
-    console.log(arregloAccesos);
-    
     return(
         <Box display='flex' justifyContent='center' alignItems='center'>
             <FormControlLabel
@@ -35,6 +33,8 @@ export default function Parametros({
                 subDepartamento === 'traspasos' || 
                 subDepartamento === 'inventario_almacen' || 
                 subDepartamento === 'cuentas_empresa' || 
+                subDepartamento === 'generar_cdfi' || 
+                subDepartamento === 'cdfi_realizados' || 
                 departamento === 'reportes' || 
                 departamento === 'ventas'|| 
                 subDepartamento === 'egresos' ? (null):(
@@ -63,6 +63,9 @@ export default function Parametros({
                 subDepartamento === 'abonos_proveedores'|| 
                 subDepartamento === 'abonos_clientes'|| 
                 subDepartamento === 'egresos' || 
+                subDepartamento === 'generar_cdfi' || 
+                subDepartamento === 'cdfi_realizados' || 
+                subDepartamento === 'registro_series_cdfi' || 
                 departamento === 'reportes' || 
                 departamento === 'ventas' ? (null) : ( 
                 <FormControlLabel
@@ -90,6 +93,8 @@ export default function Parametros({
                 subDepartamento === 'inventario_almacen' || 
                 subDepartamento === 'cuentas_empresa' || 
                 subDepartamento === 'abonos_proveedores' || 
+                subDepartamento === 'generar_cdfi' || 
+                subDepartamento === 'cdfi_realizados' || 
                 subDepartamento === 'abonos_clientes'|| 
                 subDepartamento === 'egresos' || 
                 departamento === 'reportes' || 

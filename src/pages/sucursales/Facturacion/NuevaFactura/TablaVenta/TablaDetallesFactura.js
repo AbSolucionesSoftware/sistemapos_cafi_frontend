@@ -27,12 +27,9 @@ export default function DetallesFactura() {
   const classes = useStyles();
   const { venta_factura, productos } = useContext(FacturacionCtx);
 
-  if(!venta_factura){
-    return null
+  if (!venta_factura) {
+    return null;
   }
-
-  console.log(venta_factura);
-  
 
   return (
     <Paper className={classes.root} variant="elevation">
@@ -42,8 +39,9 @@ export default function DetallesFactura() {
       <TableContainer>
         <Table stickyHeader size="small" aria-label="a dense table">
           <TableHead>
-          <TableRow>
+            <TableRow>
               <TableCell style={{ width: 250 }}>Folio</TableCell>
+              <TableCell style={{ width: 50 }}>Cliente</TableCell>
               <TableCell style={{ width: 50 }}>Descuento</TableCell>
               <TableCell style={{ width: 50 }}>IVA</TableCell>
               <TableCell style={{ width: 50 }}>IEPS</TableCell>
@@ -56,15 +54,44 @@ export default function DetallesFactura() {
           </TableHead>
           <TableBody>
             <TableRow hover role="checkbox" tabIndex={-1}>
-              <TableCell style={{ width: 200 }}>{venta_factura.folio}</TableCell>
-              <TableCell style={{ width: 200 }}>${formatoMexico(venta_factura.descuento)}</TableCell>
-              <TableCell style={{ width: 200 }}>${formatoMexico(venta_factura.iva)}</TableCell>
-              <TableCell style={{ width: 200 }}>${formatoMexico(venta_factura.ieps)}</TableCell>
-              <TableCell style={{ width: 200 }}>${formatoMexico(venta_factura.subTotal)}</TableCell>
-              <TableCell style={{ width: 200 }}>${formatoMexico(venta_factura.impuestos)}</TableCell>
-              <TableCell style={{ width: 200 }}>${formatoMexico(venta_factura.total)}</TableCell>
-              <TableCell style={{ width: 200 }}>aqui ira usuario</TableCell>
-              <TableCell style={{ width: 200 }}>aqui ira caja</TableCell>
+              <TableCell style={{ width: 200 }}>
+                {venta_factura.folio}
+              </TableCell>
+              <TableCell style={{ width: 50 }}>
+                {venta_factura.cliente !== null
+                  ? venta_factura.cliente.nombre_cliente
+                  : "-"}
+              </TableCell>
+              <TableCell style={{ width: 200 }}>
+                ${formatoMexico(venta_factura.descuento)}
+              </TableCell>
+              <TableCell style={{ width: 200 }}>
+                $
+                {venta_factura.iva
+                  ? formatoMexico(venta_factura.iva)
+                  : 0}
+              </TableCell>
+              <TableCell style={{ width: 200 }}>
+                $
+                {venta_factura.ieps
+                  ? formatoMexico(venta_factura.ieps)
+                  : 0}
+              </TableCell>
+              <TableCell style={{ width: 200 }}>
+                ${formatoMexico(venta_factura.subTotal)}
+              </TableCell>
+              <TableCell style={{ width: 200 }}>
+                ${formatoMexico(venta_factura.impuestos)}
+              </TableCell>
+              <TableCell style={{ width: 200 }}>
+                ${formatoMexico(venta_factura.total)}
+              </TableCell>
+              <TableCell style={{ width: 200 }}>
+                {venta_factura.usuario.nombre}
+              </TableCell>
+              <TableCell style={{ width: 200 }}>
+                {venta_factura.id_caja.numero_caja}
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -84,12 +111,19 @@ export default function DetallesFactura() {
               <TableCell style={{ width: 100 }}>Impuestos</TableCell>
               <TableCell style={{ width: 100 }}>Total</TableCell>
               <TableCell style={{ width: 50 }}>Modificar</TableCell>
-              <TableCell style={{ width: 50 }} >Eliminar</TableCell>
+              <TableCell style={{ width: 50 }}>Eliminar</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {productos.map((producto, index) => {
-              return <RowTableProductos venta={venta_factura} producto={producto} key={index} index={index} />;
+              return (
+                <RowTableProductos
+                  venta={venta_factura}
+                  producto={producto}
+                  key={index}
+                  index={index}
+                />
+              );
             })}
           </TableBody>
         </Table>
@@ -99,23 +133,30 @@ export default function DetallesFactura() {
 }
 
 const RowTableProductos = ({ venta, producto, index }) => {
-  const {datos_generales}= producto.id_producto
+  const { datos_generales } = producto.id_producto;
   return (
     <TableRow tabIndex={-1}>
       <TableCell>{datos_generales.nombre_comercial}</TableCell>
       <TableCell>{producto.cantidad_venta}</TableCell>
-      <TableCell>${formatoMexico(producto.iva_total_producto)}</TableCell>
-      <TableCell>${formatoMexico(producto.ieps_total_producto)}</TableCell>
-      <TableCell>${formatoMexico(producto.subtotal_total_producto)}</TableCell>
-      <TableCell>${formatoMexico(producto.impuestos_total_producto)}</TableCell>
-      <TableCell>${formatoMexico(producto.total_total_producto)}</TableCell>
+      <TableCell>${formatoMexico(producto.iva_total)}</TableCell>
+      <TableCell>${formatoMexico(producto.ieps_total)}</TableCell>
+      <TableCell>${formatoMexico(producto.subtotal)}</TableCell>
+      <TableCell>${formatoMexico(producto.impuestos)}</TableCell>
+      <TableCell>${formatoMexico(producto.total)}</TableCell>
       <TableCell>
-        <ModificarProductoFactura venta={venta} producto={producto} index={index} />
+        <ModificarProductoFactura
+          venta={venta}
+          producto={producto}
+          index={index}
+        />
       </TableCell>
       <TableCell>
-        <EliminarProductoFactura venta={venta} producto={producto} index={index} />
+        <EliminarProductoFactura
+          venta={venta}
+          producto={producto}
+          index={index}
+        />
       </TableCell>
     </TableRow>
   );
 };
-

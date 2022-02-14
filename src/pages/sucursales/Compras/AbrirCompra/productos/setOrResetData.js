@@ -5,6 +5,7 @@ import {
   initial_state_precios,
   initial_state_preciosPlazos,
   initial_state_unidadVentaXDefecto,
+  initial_state_unidadVentaSecundaria,
 } from "../../../../../context/Catalogos/initialStatesProducto";
 
 import { initial_state_preciosP } from "../../../Catalogos/Producto/crearProducto";
@@ -20,6 +21,7 @@ export const SetOrResetData = (accion,setStates, producto) => {
     almacen_inicial,
     setAlmacenInicial,
     setUnidadVentaXDefecto,
+    setUnidadVentaSecundaria,
     setCentroDeCostos,
     setPreciosPlazos,
     setSubcategorias,
@@ -33,9 +35,10 @@ export const SetOrResetData = (accion,setStates, producto) => {
 
   if (accion === "SET") {
     const { precios_producto, ...new_precios } = producto.precios;
-    const unidadxdefecto = producto.unidades_de_venta.filter(
+    const { unidades_de_venta } = producto;
+    /* const unidadxdefecto = producto.unidades_de_venta.filter(
       (res) => res.default
-    );
+    ); */
 
     setDatosGenerales(producto.datos_generales);
     setPrecios(new_precios);
@@ -46,9 +49,19 @@ export const SetOrResetData = (accion,setStates, producto) => {
     );
     setImagenes(producto.imagenes);
     setPreciosPlazos(producto.precio_plazos);
-    setUnidadesVenta(producto.unidades_de_venta);
+    setUnidadesVenta(unidades_de_venta);
     setPreciosP(producto.precios.precios_producto);
-    setUnidadVentaXDefecto(unidadxdefecto[0]);
+    /* setUnidadVentaXDefecto(unidadxdefecto[0]); */
+    setUnidadVentaXDefecto(
+      unidades_de_venta.length > 0
+        ? unidades_de_venta[0]
+        : initial_state_unidadVentaXDefecto
+    );
+    setUnidadVentaSecundaria(
+      unidades_de_venta.length > 0
+        ? unidades_de_venta[1]
+        : initial_state_unidadVentaSecundaria
+    );
     setPresentaciones(
       producto.presentaciones ? producto.presentaciones : []
     );
@@ -64,6 +77,7 @@ export const SetOrResetData = (accion,setStates, producto) => {
     setDatosGenerales(initial_state_datos_generales);
     setPrecios(initial_state_precios);
     setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
+    setUnidadVentaSecundaria(initial_state_unidadVentaSecundaria);
     setPreciosP(initial_state_preciosP);
     setUnidadesVenta([]);
     setAlmacenInicial(initial_state_almacen_inicial);

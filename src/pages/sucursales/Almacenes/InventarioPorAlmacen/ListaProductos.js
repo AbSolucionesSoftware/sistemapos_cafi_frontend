@@ -20,7 +20,8 @@ const useStyles = makeStyles({
 		width: '100%'
 	},
 	container: {
-		maxHeight: '70vh'
+		
+		maxHeight: '60vh'
 	}
 });
 
@@ -68,6 +69,7 @@ export default function ListaAlmacenes(props) {
 	}
 	
 	const Rowrow = ({producto}) => {
+		
 		let arrayCantidades=[];
 		let row={'codigo_barras' : producto.datos_generales.codigo_barras, "nombre_comercial":producto.datos_generales.nombre_comercial, style: {
                      font: { sz: '12' },
@@ -75,19 +77,25 @@ export default function ListaAlmacenes(props) {
                      border: { bottom: { style: 'thin', color: { rgb: '000000' } } 
                     }}};
 		let total=0;
-	
+	    let unidad_minima = '';
+		let cantidad = 0;
 		props.obtenerAlmacenes.forEach((almacenColumna) => {
 			const existencias =	producto.existencia_almacenes.filter((existencia) => existencia._id.almacen._id === almacenColumna._id)
+
 			if(existencias.length > 0){
-				arrayCantidades.push(existencias[0].cantidad_existente)
-				row = {...row, [almacenColumna._id]: existencias[0].cantidad_existente };
+				arrayCantidades.push(existencias[0].cantidad_existente )
+				unidad_minima = (existencias[0].unidad_inventario !== null) ? existencias[0].unidad_inventario: 'pz';
+				row = {...row, [almacenColumna._id]: existencias[0].cantidad_existente + " " + unidad_minima };
 				total += existencias[0].cantidad_existente;
-			}else{
+			}
+			
+			
+			else{
 				arrayCantidades.push(0);
-				row = {...row, [almacenColumna._id]:0 };	
+				row = {...row, [almacenColumna._id]:0   };	
 			}
 		});	 
-		row = {...row, total:total };	
+		row = {...row, total:total + " " + unidad_minima };	
 		
 		dataExcel.push(row)
 		return(
@@ -101,10 +109,10 @@ export default function ListaAlmacenes(props) {
 				{/* <TableCell style={{textAlign: 'center',}} >{(producto.datos_generales.receta_farmacia) ? "SI" : "NO"}</TableCell> */}
 				{ 
 					arrayCantidades.map((cantidad, index) => {
-						return(<TableCell key={index} style={{backgroundColor:'rgba(255, 253, 150, 0.1)', color:'black',fontSize:17, textAlign:'center',minWidth:60 }}>{cantidad}</TableCell>)	
+						return(<TableCell key={index} style={{backgroundColor:'rgba(255, 253, 150, 0.1)', color:'black',fontSize:17, textAlign:'center',minWidth:60 }}>{cantidad + " " + unidad_minima}</TableCell>)	
 					})	
 				}
-				<TableCell  style={{backgroundColor:'rgba(255, 253, 150, 0.1)', color:'black', fontSize:18,fontWeight:'bold', textAlign:'center' ,minWidth:60}}>{total}</TableCell>
+				<TableCell  style={{backgroundColor:'rgba(255, 253, 150, 0.1)', color:'black', fontSize:18,fontWeight:'bold', textAlign:'center' ,minWidth:60}}>{total + " " + unidad_minima }</TableCell>
 				
 			</TableRow>
 		)
@@ -125,6 +133,7 @@ export default function ListaAlmacenes(props) {
 		</Box>
 	);
 	if (error) {
+		console.log(error)
 		return <ErrorPage error={error} />;
 	}
 
@@ -133,7 +142,7 @@ export default function ListaAlmacenes(props) {
 		<div>
 		<Paper className={classes.root}>
 			<TableContainer className={classes.container}>
-				<Table stickyHeader aria-label="sticky table">
+				<Table stickyHeader size={'small'} aria-label="a dense table">
 					<TableHead>
 						<TableRow>
 							{columns.map((column, index) => (
@@ -144,7 +153,7 @@ export default function ListaAlmacenes(props) {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{props.productos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+						{props.productos.map((row, index) => {
 							return (
 								<Rowrow producto={row} key={index} />
 							);
@@ -152,7 +161,7 @@ export default function ListaAlmacenes(props) {
 					</TableBody>
 				</Table>
 			</TableContainer>
-			<TablePagination
+			{/* <TablePagination
 				rowsPerPageOptions={[ 10, 25, 100 ]}
 				component="div"
 				count={props.productos.length}
@@ -161,7 +170,7 @@ export default function ListaAlmacenes(props) {
 				onChangePage={handleChangePage}
 				onChangeRowsPerPage={handleChangeRowsPerPage}
 				labelRowsPerPage={"Renglones por página"}
-			/>
+			/> */}
 			
 		</Paper>
 		{(props.productos.length > 0) ?

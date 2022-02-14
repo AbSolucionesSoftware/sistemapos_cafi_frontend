@@ -53,6 +53,9 @@ const useStyles = makeStyles((theme) => ({
   obligatorio: {
     color: "red",
   },
+  titulos: {
+    fontWeight: 500,
+  },
 }));
 
 export default function RegistroInfoGenerales({
@@ -74,6 +77,8 @@ export default function RegistroInfoGenerales({
     setSubcategorias,
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
+    unidadVentaSecundaria,
+    setUnidadVentaSecundaria,
     update,
   } = useContext(RegProductoContext);
   const {
@@ -135,25 +140,51 @@ export default function RegistroInfoGenerales({
       setPrecios({
         ...precios,
         [e.target.name]: e.target.checked,
-        inventario: { ...precios.inventario, unidad_de_inventario: "Kg", codigo_unidad: "KGM" },
-        unidad_de_compra: { ...precios.unidad_de_compra, unidad: "Kg", codigo_unidad: "KGM" },
+        inventario: {
+          ...precios.inventario,
+          unidad_de_inventario: "Kg",
+          codigo_unidad: "KGM",
+        },
+        unidad_de_compra: {
+          ...precios.unidad_de_compra,
+          unidad: "Kg",
+          codigo_unidad: "KGM",
+        },
       });
       setUnidadVentaXDefecto({
         ...unidadVentaXDefecto,
         unidad: "Kg",
-        codigo_unidad: "KGM"
+        codigo_unidad: "KGM",
+      });
+      setUnidadVentaSecundaria({
+        ...unidadVentaSecundaria,
+        unidad: "Costal",
+        codigo_unidad: "KGM",
       });
     } else {
       setPrecios({
         ...precios,
         [e.target.name]: e.target.checked,
-        inventario: { ...precios.inventario, unidad_de_inventario: "Pz", codigo_unidad: "H87" },
-        unidad_de_compra: { ...precios.unidad_de_compra, unidad: "Pz", codigo_unidad: "H87" },
+        inventario: {
+          ...precios.inventario,
+          unidad_de_inventario: "Pz",
+          codigo_unidad: "H87",
+        },
+        unidad_de_compra: {
+          ...precios.unidad_de_compra,
+          unidad: "Pz",
+          codigo_unidad: "H87",
+        },
       });
       setUnidadVentaXDefecto({
         ...unidadVentaXDefecto,
         unidad: "Pz",
-        codigo_unidad: "H87"
+        codigo_unidad: "H87",
+      });
+      setUnidadVentaSecundaria({
+        ...unidadVentaSecundaria,
+        unidad: "Caja",
+        codigo_unidad: "XBX",
       });
     }
   };
@@ -223,7 +254,9 @@ export default function RegistroInfoGenerales({
               name="codigo_barras"
               fullWidth
             >
-              <Typography>Código de barras</Typography>
+              <Typography className={classes.titulos}>
+                Código de barras
+              </Typography>
               <OutlinedInput
                 disabled={update && datos_generales.codigo_barras}
                 style={{ padding: 0 }}
@@ -252,7 +285,7 @@ export default function RegistroInfoGenerales({
             </FormControl>
           </Grid>
           <Grid item md={2} xs={12}>
-            <Typography>
+            <Typography className={classes.titulos}>
               <span className={classes.obligatorio}>* </span>Clave alterna
             </Typography>
             <TextField
@@ -272,7 +305,7 @@ export default function RegistroInfoGenerales({
             />
           </Grid>
           <Grid item md={2} xs={12}>
-            <Typography>
+            <Typography className={classes.titulos}>
               <span className={classes.obligatorio}>* </span>Tipo de producto
             </Typography>
             <FormControl
@@ -306,7 +339,7 @@ export default function RegistroInfoGenerales({
           </Grid>
 
           <Grid item md={4} xs={12}>
-            <Typography>
+            <Typography className={classes.titulos}>
               <span className={classes.obligatorio}>* </span>Nombre comercial
             </Typography>
             <TextField
@@ -326,7 +359,7 @@ export default function RegistroInfoGenerales({
             />
           </Grid>
           <Grid item md={4} xs={12}>
-            <Typography>
+            <Typography className={classes.titulos}>
               <span className={classes.obligatorio}>* </span>Nombre genérico
             </Typography>
             <TextField
@@ -346,7 +379,7 @@ export default function RegistroInfoGenerales({
             />
           </Grid>
           <Grid item md={4} xs={12}>
-            <Typography>Descripción</Typography>
+            <Typography className={classes.titulos}>Descripción</Typography>
             <TextField
               fullWidth
               size="small"
@@ -361,7 +394,7 @@ export default function RegistroInfoGenerales({
           </Grid>
 
           <Grid item md={6} xs={12}>
-            <Typography>Categoria</Typography>
+            <Typography className={classes.titulos}>Categoria</Typography>
             <Box display="flex">
               <FormControl variant="outlined" fullWidth size="small">
                 <Select
@@ -402,7 +435,7 @@ export default function RegistroInfoGenerales({
             </Box>
           </Grid>
           <Grid item md={6} xs={12}>
-            <Typography>Subcategoria</Typography>
+            <Typography className={classes.titulos}>Subcategoria</Typography>
             <Box display="flex">
               <FormControl variant="outlined" fullWidth size="small">
                 <Select
@@ -446,7 +479,7 @@ export default function RegistroInfoGenerales({
             </Box>
           </Grid>
           <Grid item md={6} xs={12}>
-            <Typography>Departamento</Typography>
+            <Typography className={classes.titulos}>Departamento</Typography>
             <Box display="flex">
               <FormControl variant="outlined" fullWidth size="small">
                 <Select
@@ -488,7 +521,7 @@ export default function RegistroInfoGenerales({
             </Box>
           </Grid>
           <Grid item md={6} xs={12}>
-            <Typography>Marca</Typography>
+            <Typography className={classes.titulos}>Marca</Typography>
             <Box display="flex">
               <FormControl variant="outlined" fullWidth size="small">
                 <Select

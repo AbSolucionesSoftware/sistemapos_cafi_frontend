@@ -15,6 +15,7 @@ import Almacenes from './Departamentos/Almacenes';
 import Tesoreria from './Departamentos/Tesoreria';
 import Reportes from './Departamentos/Reportes';
 import Ventas from './Departamentos/Ventas';
+import Facturacion from './Departamentos/Facturacion';
 
 function TabPanel(props) {
 	const { children, value, index, ...other } = props;
@@ -168,7 +169,7 @@ export default function AsignarPermisos({obtenerAccesos, arregloAccesos}) {
 			</TabPanel>
 			<TabPanel value={value} index={6}>
 				<Box p={2}>
-					{/* <CamposAsignados type='facturacion' /> */}
+					<Facturacion obtenerAccesos={obtenerAccesos} arregloAccesos={arregloAccesos} />
 				</Box>
 			</TabPanel>
 			<TabPanel value={value} index={7}>

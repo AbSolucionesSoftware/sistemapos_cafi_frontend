@@ -10,27 +10,21 @@ import {
   Typography,
   Grid,
 } from "@material-ui/core";
-import "date-fns";
+/* import "date-fns";
 import local from "date-fns/locale/es";
 import DateFnsUtils from "@date-io/date-fns";
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
-} from "@material-ui/pickers";
+} from "@material-ui/pickers"; */
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
 import ContainerRegistroAlmacen from "../../../Almacenes/RegistroAlmacen/ContainerRegistroAlmacen";
 import { AlmacenProvider } from "../../../../../context/Almacenes/crearAlmacen";
 import { unitCodes, unitCodes_granel } from "../unidades";
 
 const useStyles = makeStyles((theme) => ({
-  formInputFlex: {
-    display: "flex",
-    "& > *": {
-      margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
-    },
-  },
-  formInput: {
-    margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+  titulos: {
+    fontWeight: 500,
   },
 }));
 
@@ -118,197 +112,229 @@ export default function RegistroAlmacenInicial({
     });
   };
 
-  const verificarCampoVacio = (tipo, name, value) => {
-    if (tipo === "inventario") {
-      if (!value) {
-        setPrecios({
-          ...precios,
-          inventario: { ...precios.inventario, [name]: 0 },
-        });
-      }
-    } else {
-      if (!value) {
-        setAlmacenInicial({
-          ...almacen_inicial,
-          [name]: 0,
-        });
-      }
-    }
-  };
-
   return (
     <Fragment>
-      <Box mt={3}>
+      <Box my={2}>
         <Typography>
           <b>Inventario</b>
         </Typography>
         <Divider />
       </Box>
-      <Box className={classes.formInputFlex}>
-        <Box width="150px">
-          <Typography>Inventario mínimo</Typography>
-          <TextField
-            type="number"
-            InputProps={{ inputProps: { min: 0 } }}
-            size="small"
-            name="inventario_minimo"
-            id="form-producto-inventario_minimo"
-            variant="outlined"
-            value={precios.inventario.inventario_minimo}
-            onChange={obtenerInventario}
-            onBlur={() =>
-              verificarCampoVacio(
-                "inventario",
-                "inventario_minimo",
-                precios.inventario.inventario_minimo
-              )
-            }
-            error={precios.inventario.inventario_minimo === ""}
-          />
-        </Box>
-        <Box width="150px">
-          <Typography>Inventario máximo</Typography>
-          <TextField
-            type="number"
-            InputProps={{ inputProps: { min: 0 } }}
-            size="small"
-            name="inventario_maximo"
-            id="form-producto-inventario_maximo"
-            variant="outlined"
-            value={precios.inventario.inventario_maximo}
-            onChange={obtenerInventario}
-            onBlur={() =>
-              verificarCampoVacio(
-                "inventario",
-                "inventario_maximo",
-                precios.inventario.inventario_maximo
-              )
-            }
-            error={precios.inventario.inventario_maximo === ""}
-          />
-        </Box>
-        <Box width="150px">
-          <Typography>Unidad de inventario</Typography>
-          <Box display="flex">
-            <FormControl
-              variant="outlined"
+      <Grid container spacing={2}>
+        <Grid item md={4} xs={12}>
+          <Box>
+            <Typography className={classes.titulos}>
+              Inventario mínimo
+            </Typography>
+            <TextField
               fullWidth
+              type="number"
+              InputProps={{ inputProps: { min: 0 } }}
               size="small"
-              name="unidad_de_inventario"
-            >
-              {precios.granel ? (
-                <Select
-                  name="unidad_de_inventario"
-                  value={precios.inventario.unidad_de_inventario}
-                  onChange={obtenerInventario}
-                >
-                  {unitCodes_granel.map((res, index) => (
-                    <MenuItem key={index} unidad={res} value={res.unidad}>
-                      {res.unidad}
-                    </MenuItem>
-                  ))}
-                </Select>
-              ) : (
-                <Select
-                  name="unidad_de_inventario"
-                  value={precios.inventario.unidad_de_inventario}
-                  onChange={obtenerInventario}
-                >
-                  {unitCodes.map((res, index) => (
-                    <MenuItem key={index} unidad={res} value={res.unidad}>
-                      {res.unidad}
-                    </MenuItem>
-                  ))}
-                </Select>
-              )}
-            </FormControl>
+              name="inventario_minimo"
+              id="form-producto-inventario_minimo"
+              variant="outlined"
+              value={precios.inventario.inventario_minimo}
+              onChange={obtenerInventario}
+              onFocus={(e) => {
+                const { name, value } = e.target;
+                if (parseFloat(value) === 0) {
+                  setPrecios({
+                    ...precios,
+                    inventario: { ...precios.inventario, [name]: "" },
+                  });
+                }
+              }}
+              onBlur={(e) => {
+                const { name, value } = e.target;
+                if (value === "") {
+                  setPrecios({
+                    ...precios,
+                    inventario: { ...precios.inventario, [name]: 0 },
+                  });
+                }
+              }}
+              error={precios.inventario.inventario_minimo === ""}
+            />
           </Box>
-        </Box>
-      </Box>
+        </Grid>
+        <Grid item md={4} xs={12}>
+          <Box>
+            <Typography className={classes.titulos}>
+              Inventario máximo
+            </Typography>
+            <TextField
+              fullWidth
+              type="number"
+              InputProps={{ inputProps: { min: 0 } }}
+              size="small"
+              name="inventario_maximo"
+              id="form-producto-inventario_maximo"
+              variant="outlined"
+              value={precios.inventario.inventario_maximo}
+              onChange={obtenerInventario}
+              onFocus={(e) => {
+                const { name, value } = e.target;
+                if (parseFloat(value) === 0) {
+                  setPrecios({
+                    ...precios,
+                    inventario: { ...precios.inventario, [name]: "" },
+                  });
+                }
+              }}
+              onBlur={(e) => {
+                const { name, value } = e.target;
+                if (value === "") {
+                  setPrecios({
+                    ...precios,
+                    inventario: { ...precios.inventario, [name]: 0 },
+                  });
+                }
+              }}
+              error={precios.inventario.inventario_maximo === ""}
+            />
+          </Box>
+        </Grid>
+        <Grid item md={4} xs={12}>
+          <Box>
+            <Typography className={classes.titulos}>
+              Unidad de inventario
+            </Typography>
+            <Box display="flex">
+              <FormControl
+                variant="outlined"
+                fullWidth
+                size="small"
+                name="unidad_de_inventario"
+              >
+                {precios.granel ? (
+                  <Select
+                    name="unidad_de_inventario"
+                    value={precios.inventario.unidad_de_inventario}
+                    onChange={obtenerInventario}
+                  >
+                    {unitCodes_granel.map((res, index) => (
+                      <MenuItem key={index} unidad={res} value={res.unidad}>
+                        {res.unidad}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                ) : (
+                  <Select
+                    name="unidad_de_inventario"
+                    value={precios.inventario.unidad_de_inventario}
+                    onChange={obtenerInventario}
+                  >
+                    {unitCodes.map((res, index) => (
+                      <MenuItem key={index} unidad={res} value={res.unidad}>
+                        {res.unidad}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+              </FormControl>
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
       {update ? null : datos_generales.tipo_producto === "OTROS" ? (
         <Fragment>
-          <Box mt={3}>
+          <Box my={3}>
             <Typography>
               <b>Almacen incial</b>
             </Typography>
             <Divider />
           </Box>
-          <div
-            className={classes.formInputFlex}
-            style={{ alignItems: "center" }}
-          >
-            <Box width="100%">
-              <Typography>
-                Cantidad inicial en <b>{precios.unidad_de_compra.unidad}</b>
-              </Typography>
-              <Box display="flex" alignItems="center">
-                <TextField
-                  fullWidth
-                  type="number"
-                  InputProps={{ inputProps: { min: 0 } }}
-                  size="small"
-                  name="cantidad"
-                  variant="outlined"
-                  value={almacen_inicial.cantidad}
-                  onChange={obtenerAlmacenInicial}
-                  onBlur={() =>
-                    verificarCampoVacio(
-                      "almacen",
-                      "cantidad",
-                      almacen_inicial.cantidad
-                    )
-                  }
-                  error={almacen_inicial.cantidad === ""}
-                />
-              </Box>
-            </Box>
-            <Box width="100%">
-              <Typography>Almacen</Typography>
-              <Box display="flex" alignItems="center">
-                <FormControl
-                  variant="outlined"
-                  fullWidth
-                  size="small"
-                  name="almacen"
-                  error={
-                    almacen_inicial.cantidad > 0 && !almacen_inicial.almacen
-                  }
-                >
-                  <Select
-                    name="almacen"
-                    value={almacen_inicial.almacen}
-                    onChange={obtenerAlmacenes}
-                  >
-                    <MenuItem value="">
-                      <em>Seleccione uno</em>
-                    </MenuItem>
-                    {almacenes ? (
-                      almacenes.map((res) => {
-                        return (
-                          <MenuItem
-                            name="id_almacen"
-                            key={res._id}
-                            value={res.nombre_almacen}
-                            id={res._id}
-                          >
-                            {res.nombre_almacen}
-                          </MenuItem>
-                        );
-                      })
-                    ) : (
-                      <MenuItem value="" />
-                    )}
-                  </Select>
-                </FormControl>
-                <AlmacenProvider>
-                  <ContainerRegistroAlmacen
-                    accion="registrar"
-                    refetch={refetch}
+          <Grid container spacing={2} style={{ alignItems: "center" }}>
+            <Grid item md={6} xs={12}>
+              <Box>
+                <Typography className={classes.titulos}>
+                  Cantidad inicial en <b>{precios.unidad_de_compra.unidad}</b>
+                </Typography>
+                <Box display="flex" alignItems="center">
+                  <TextField
+                    fullWidth
+                    type="number"
+                    InputProps={{ inputProps: { min: 0 } }}
+                    size="small"
+                    name="cantidad"
+                    variant="outlined"
+                    value={almacen_inicial.cantidad}
+                    onChange={obtenerAlmacenInicial}
+                    onFocus={(e) => {
+                      const { name, value } = e.target;
+                      if (parseFloat(value) === 0) {
+                        setAlmacenInicial({
+                          ...almacen_inicial,
+                          [name]: "",
+                        });
+                      }
+                    }}
+                    onBlur={(e) => {
+                      const { name, value } = e.target;
+                      if (value === "") {
+                        setAlmacenInicial({
+                          ...almacen_inicial,
+                          [name]: 0,
+                        });
+                      }
+                    }}
+                    error={almacen_inicial.cantidad === ""}
                   />
-                </AlmacenProvider>
+                </Box>
               </Box>
-            </Box>
-            <Box width="100%">
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <Box>
+                <Typography className={classes.titulos}>Almacen</Typography>
+                <Box display="flex" alignItems="center">
+                  <FormControl
+                    variant="outlined"
+                    fullWidth
+                    size="small"
+                    name="almacen"
+                    error={
+                      almacen_inicial.cantidad > 0 && !almacen_inicial.almacen
+                    }
+                  >
+                    <Select
+                      name="almacen"
+                      value={almacen_inicial.almacen}
+                      onChange={obtenerAlmacenes}
+                    >
+                      <MenuItem value="">
+                        <em>Seleccione uno</em>
+                      </MenuItem>
+                      {almacenes ? (
+                        almacenes.map((res) => {
+                          return (
+                            <MenuItem
+                              name="id_almacen"
+                              key={res._id}
+                              value={res.nombre_almacen}
+                              id={res._id}
+                            >
+                              {res.nombre_almacen}
+                            </MenuItem>
+                          );
+                        })
+                      ) : (
+                        <MenuItem value="" />
+                      )}
+                    </Select>
+                  </FormControl>
+                  <AlmacenProvider>
+                    <ContainerRegistroAlmacen
+                      accion="registrar"
+                      refetch={refetch}
+                    />
+                  </AlmacenProvider>
+                </Box>
+              </Box>
+            </Grid>
+          </Grid>
+
+          {/*  <Box width="100%">
               <Typography>Fecha de expiración</Typography>
               <MuiPickersUtilsProvider utils={DateFnsUtils} locale={local}>
                 <Grid container justify="space-around">
@@ -325,8 +351,7 @@ export default function RegistroAlmacenInicial({
                   />
                 </Grid>
               </MuiPickersUtilsProvider>
-            </Box>
-          </div>
+            </Box> */}
         </Fragment>
       ) : null}
     </Fragment>

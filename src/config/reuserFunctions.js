@@ -291,6 +291,7 @@ export const calculatePrices2 = async ({ newP, cantidad, granel, origen, precio_
     return ob;
 
   } catch (error) {
+    console.log(error);
     return false;
   }
 };

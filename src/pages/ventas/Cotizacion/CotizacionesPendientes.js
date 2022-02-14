@@ -55,7 +55,7 @@ const useStyles = makeStyles({
 	}
 });
 
-export default function CotizacionesPendientes({ handleClickOpen }) {
+export default function CotizacionesPendientes({ setOpen }) {
 	const classes = useStyles();
 	const [ page, setPage ] = React.useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = React.useState(10);

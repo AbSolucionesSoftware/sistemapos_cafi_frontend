@@ -1,111 +1,70 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { AppBar, Box, Button, 
-		Dialog, Slide, Typography 
-} from '@material-ui/core'
-import { FcCurrencyExchange } from 'react-icons/fc';
-import NuevaCotizacion from './NuevaCotizacion';
+import React, { useState } from 'react';
+import { AppBar, Box, Button, Dialog, Slide, Typography 
+} from '@material-ui/core';
+
 import CloseIcon from '@material-ui/icons/Close';
+import CotizacionesPendientes from './CotizacionesPendientes';
+
+import { FcCurrencyExchange } from 'react-icons/fc';
 import moment from 'moment';
-import 'moment/locale/es';
-import useStyles from '../styles';
-import { AccesosContext } from '../../../context/Accesos/accesosCtx';
-import { VentasContext } from '../../../context/Ventas/ventasContext';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
-export default function Cotizacion({type}) {
 
-
-    moment.locale('es');
-	const classes = useStyles();
-
-    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
-    const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
-    const datosVentas = JSON.parse(localStorage.getItem('DatosVentas'));
-	const [tipoVentana, setTipoVentana] = useState(type);
-
-	const { 
-		reloadCrearCotizacion, 
-        setReloadCrearCotizacion,
-		setAbrirPanelAcceso,
-        abrirPanelAcceso,
-		setDepartamentos
-	} = useContext(AccesosContext);
-
-	const { 
-		setAlert, 
-	} = useContext(VentasContext);
+export default function ListaCotizaciones() {
 
     const [open, setOpen] = useState(false);
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+    const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
 
-	const handleClickOpen = (tipo) => {
-		if(!datosVentas){
-			setAlert({
-				message: `Lo sentimos no hay productos que cotizar`,
-				status: "error",
-				open: true,
-			});
-			return null;
-		}else{
-			if(sesion?.accesos.ventas.cotizaciones.ver === true){
-				setOpen(!open);
-			}else{
-				console.log('pedir permiso');
-				setAbrirPanelAcceso(!abrirPanelAcceso);
-				setDepartamentos({departamento: 'ventas', subDepartamento: 'cotizaciones', tipo_acceso: 'ver'})
-			}
-		}
-	};
-
-	useEffect(() => {
-		if(reloadCrearCotizacion === true){
-			setReloadCrearCotizacion(false);
-			setTipoVentana('GENERAR');
-			setOpen(!open);
-		}
-	}, [reloadCrearCotizacion]);
-
-    window.addEventListener('keydown', Mi_función); 
-    function Mi_función(e){
-        if(e.altKey && e.keyCode === 84){ 
-            handleClickOpen('', false);
-        } 
-    };
+    const handleClickOpen =()=>{
+        setOpen(!open);
+    }
 
     return (
         <>
-			<Button 
-				className={classes.borderBotonChico}
-				onClick={() => handleClickOpen(tipoVentana)}
-			>
-				<Box>
-					<Box>
-						<FcCurrencyExchange style={{fontSize: 50}} />
-					</Box>
-					<Box>
-						<Typography variant="body2" >
-							<b>Generar cotizacion</b>
-						</Typography>
-					</Box>
-				</Box>
-			</Button>
-        	<Dialog
+            <Button
+                onClick={() => handleClickOpen()}
+                style={{textTransform: 'none', height: '100%', width: '60%'}}
+            >
+                <Box display="flex" flexDirection="column">
+                    <Box display="flex" justifyContent="center" alignItems="center">
+                        <FcCurrencyExchange style={{fontSize: 25}} />
+                    </Box>
+                    <Box>
+                        <Typography variant="body2" >
+                            <b>Lista cotizaciones</b>
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="caption" style={{color: '#808080'}} >
+                            <b>Alt + T</b>
+                        </Typography>
+                    </Box>
+                </Box>
+            </Button>
+
+            <Dialog
 				fullWidth
 				open={open} 
-				maxWidth={ tipoVentana === "GENERAR" ? 'md':'lg' }
+				maxWidth={'lg'}
 				onClose={() => setOpen(false)} 
 				TransitionComponent={Transition}
 			>
                 <AppBar position="static" color="default" elevation={0}>
-					<Box display={'flex'}>
+                    <Box display={'flex'}>
                         <Box display='flex' flexGrow={1} >
                             <Box p={2} display={'flex'} alignItems={'center'}>
-								<FcCurrencyExchange style={{fontSize: 60}} />
+                                <img 
+									src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/lista-de-espera.svg' 
+                                    alt="icono caja2" 
+                                    style={{width: 58}} 
+                                />
                             </Box>
                             <Box p={1} display={'flex'} alignItems={'center'}>
                                 <Typography variant='h6'>
-									Nueva Cotización
+                                    Cotizaciones pendientes
                                 </Typography>
                             </Box>
                         </Box>
@@ -138,10 +97,8 @@ export default function Cotizacion({type}) {
                         </Box>
                     </Box>
 				</AppBar>
-				<Box p={2} >
-					<NuevaCotizacion setOpen={setOpen} />
-				</Box>
-			</Dialog>
-		</>
-	)
-};
+                <CotizacionesPendientes setOpen={setOpen} /> 
+            </Dialog>
+        </>
+    );
+}

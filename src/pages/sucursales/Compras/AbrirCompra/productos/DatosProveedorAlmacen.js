@@ -25,10 +25,10 @@ import {
   initial_state_preciosP,
   initial_state_preciosPlazos,
   initial_state_unidadVentaXDefecto,
+  initial_state_unidadVentaSecundaria,
 } from "../../../../../context/Catalogos/initialStatesProducto";
 
 export default function DatosProveedorAlmacen({
-  refetchProductos,
   getProductos,
   status,
 }) {
@@ -50,6 +50,7 @@ export default function DatosProveedorAlmacen({
     almacen_inicial,
     setAlmacenInicial,
     setUnidadVentaXDefecto,
+    setUnidadVentaSecundaria,
     setCentroDeCostos,
     setPreciosPlazos,
     setSubcategorias,
@@ -98,13 +99,7 @@ export default function DatosProveedorAlmacen({
         id_almacen: value._id,
         almacen: value.nombre_almacen,
       });
-      getProductos({
-        variables: {
-          almacen: value._id,
-          empresa: sesion.empresa._id,
-          sucursal: sesion.sucursal._id,
-        },
-      });
+      getProductos(value._id);
     }
   };
 
@@ -112,6 +107,7 @@ export default function DatosProveedorAlmacen({
     setDatosGenerales(initial_state_datos_generales);
     setPrecios(initial_state_precios);
     setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
+    setUnidadVentaSecundaria(initial_state_unidadVentaSecundaria);
     setPreciosP(initial_state_preciosP);
     setUnidadesVenta([]);
     setAlmacenInicial(initial_state_almacen_inicial);

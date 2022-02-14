@@ -191,7 +191,7 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                 </IconButton>
             ) : (
                 <Button color="primary" variant="contained" size="large" onClick={toggleModal}>
-                    Nuevo almacen
+                    AGREGAR
                 </Button>
             ) : (
                 <IconButton onClick={toggleModal}>

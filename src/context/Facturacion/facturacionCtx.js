@@ -13,12 +13,12 @@ export const FacturacionProvider = ({ children }) => {
     cfdi_type: "I",
     payment_form: "",
     payment_method: "",
-    logo_url: sesion.imagen,
+    logo_url: sesion ? sesion.imagen : '',
     date: "0",
     issuer: {
-      FiscalRegime: sesion.empresa.regimen_fiscal,
-      Rfc: sesion.empresa.rfc,
-      Name: sesion.empresa.nombre_fiscal,
+      FiscalRegime: sesion ? sesion.empresa.regimen_fiscal : "",
+      Rfc: sesion ? sesion.empresa.rfc : "",
+      Name: sesion ? sesion.empresa.nombre_fiscal : "",
     },
     receiver: {
       Rfc: "",
@@ -26,8 +26,8 @@ export const FacturacionProvider = ({ children }) => {
       CfdiUse: "",
     },
     items: [],
-    empresa: sesion.empresa._id,
-    sucursal: sesion.sucursal._id,
+    empresa: sesion ? sesion.empresa._id : "",
+    sucursal: sesion ? sesion.sucursal._id : "",
   });
 
   const [venta_factura, setVentaFactura] = useState(null);
