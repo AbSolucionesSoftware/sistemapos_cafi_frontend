@@ -45,6 +45,7 @@ import {
   initial_state_centro_de_costos,
   initial_state_preciosPlazos,
   initial_state_unidadVentaSecundaria,
+  initial_state_unidadesVenta,
 } from "../../../../context/Catalogos/initialStatesProducto";
 import {
   Add,
@@ -285,9 +286,9 @@ export default function CrearProducto({
       }
     }
 
-    let copy_unidadesVenta = [...unidadesVenta];
+    let copy_unidadesVenta = [{...unidadVentaXDefecto}, {...unidadVentaSecundaria}];
 
-    if (copy_unidadesVenta.length === 0) {
+    /* if (copy_unidadesVenta.length === 0) {
       copy_unidadesVenta.push(unidadVentaXDefecto);
     } else {
       const unidadxdefecto = copy_unidadesVenta.filter(
@@ -296,26 +297,9 @@ export default function CrearProducto({
       if (unidadxdefecto.length === 0) {
         copy_unidadesVenta.splice(0, 0, unidadVentaXDefecto);
       }
-    }
-    //si la unidad es caja o costal, hacerla unidad principal
-    /* let unidades_venta_final = [];
-    if (
-      precios.unidad_de_compra.unidad === "Caja" ||
-      precios.unidad_de_compra.unidad === "Costal"
-    ) {
-      copy_unidadesVenta.push(unidadVentaSecundaria);
-      copy_unidadesVenta.forEach((unidad) => {
-        let obj = { ...unidad };
-        if (obj.unidad === "Caja" || obj.unidad === "Costal") {
-          obj.unidad_principal = true;
-        } else {
-          obj.unidad_principal = false;
-        }
-        copy
-      });
-    }
+    } */
 
-    console.log(unidades_venta_final); */
+    console.log(copy_unidadesVenta);
 
     precios.precios_producto = preciosP;
 
@@ -405,7 +389,7 @@ export default function CrearProducto({
     setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
     setUnidadVentaSecundaria(initial_state_unidadVentaSecundaria);
     setPreciosP(initial_state_preciosP);
-    setUnidadesVenta([]);
+    setUnidadesVenta(initial_state_unidadesVenta);
     setAlmacenInicial(initial_state_almacen_inicial);
     setCentroDeCostos({});
     setPreciosPlazos(initial_state_preciosPlazos);
@@ -425,7 +409,8 @@ export default function CrearProducto({
     /* const producto = cleanTypenames(product); */
     /* console.log(producto); */
     const { precios_producto, ...new_precios } = producto.precios;
-    let unidades_venta = producto.unidades_de_venta.filter(
+    const { unidades_de_venta } = producto;
+    let unidades_secundaria = producto.unidades_de_venta.filter(
       (res) => !res.default
     );
     let unidadxdefecto = producto.unidades_de_venta.filter(
@@ -440,9 +425,11 @@ export default function CrearProducto({
     );
     setImagenes(producto.imagenes);
     setPreciosPlazos(producto.precio_plazos);
-    setUnidadesVenta(unidades_venta);
+    setUnidadesVenta(unidades_de_venta);
     setPreciosP(producto.precios.precios_producto);
+    /* setUnidadVentaXDefecto(unidadxdefecto[0]); */
     setUnidadVentaXDefecto(unidadxdefecto[0]);
+    setUnidadVentaSecundaria(unidades_secundaria[0]);
     setPresentaciones(
       producto.medidas_producto ? producto.medidas_producto : []
     );
@@ -486,11 +473,11 @@ export default function CrearProducto({
   );
 
   const ButtonActions = () => {
-    if (!accion && value === 5) {
+    if (!accion && value === 4) {
       return saveButton;
-    } else if (accion && tipo === "OTROS" && value === 5) {
+    } else if (accion && tipo === "OTROS" && value === 4) {
       return saveButton;
-    } else if (accion && tipo !== "OTROS" && value === 6) {
+    } else if (accion && tipo !== "OTROS" && value === 5) {
       return saveButton;
     } else {
       return (

@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
     color: "red",
   },
   titulos: {
-    fontWeight: 500
+    fontWeight: 500,
   },
 }));
 
@@ -77,6 +77,8 @@ export default function RegistroInfoGenerales({
     setSubcategorias,
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
+    unidadVentaSecundaria,
+    setUnidadVentaSecundaria,
     update,
   } = useContext(RegProductoContext);
   const {
@@ -138,25 +140,51 @@ export default function RegistroInfoGenerales({
       setPrecios({
         ...precios,
         [e.target.name]: e.target.checked,
-        inventario: { ...precios.inventario, unidad_de_inventario: "Kg", codigo_unidad: "KGM" },
-        unidad_de_compra: { ...precios.unidad_de_compra, unidad: "Kg", codigo_unidad: "KGM" },
+        inventario: {
+          ...precios.inventario,
+          unidad_de_inventario: "Kg",
+          codigo_unidad: "KGM",
+        },
+        unidad_de_compra: {
+          ...precios.unidad_de_compra,
+          unidad: "Kg",
+          codigo_unidad: "KGM",
+        },
       });
       setUnidadVentaXDefecto({
         ...unidadVentaXDefecto,
         unidad: "Kg",
-        codigo_unidad: "KGM"
+        codigo_unidad: "KGM",
+      });
+      setUnidadVentaSecundaria({
+        ...unidadVentaSecundaria,
+        unidad: "Costal",
+        codigo_unidad: "KGM",
       });
     } else {
       setPrecios({
         ...precios,
         [e.target.name]: e.target.checked,
-        inventario: { ...precios.inventario, unidad_de_inventario: "Pz", codigo_unidad: "H87" },
-        unidad_de_compra: { ...precios.unidad_de_compra, unidad: "Pz", codigo_unidad: "H87" },
+        inventario: {
+          ...precios.inventario,
+          unidad_de_inventario: "Pz",
+          codigo_unidad: "H87",
+        },
+        unidad_de_compra: {
+          ...precios.unidad_de_compra,
+          unidad: "Pz",
+          codigo_unidad: "H87",
+        },
       });
       setUnidadVentaXDefecto({
         ...unidadVentaXDefecto,
         unidad: "Pz",
-        codigo_unidad: "H87"
+        codigo_unidad: "H87",
+      });
+      setUnidadVentaSecundaria({
+        ...unidadVentaSecundaria,
+        unidad: "Caja",
+        codigo_unidad: "XBX",
       });
     }
   };
@@ -226,7 +254,9 @@ export default function RegistroInfoGenerales({
               name="codigo_barras"
               fullWidth
             >
-              <Typography className={classes.titulos}>Código de barras</Typography>
+              <Typography className={classes.titulos}>
+                Código de barras
+              </Typography>
               <OutlinedInput
                 disabled={update && datos_generales.codigo_barras}
                 style={{ padding: 0 }}

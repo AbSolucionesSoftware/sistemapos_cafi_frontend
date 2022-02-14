@@ -20,7 +20,6 @@ import { unitCodes, unitCodes_granel } from "../unidades";
 import { calcular_ieps, calcular_iva } from "../calculos_precios";
 
 const useStyles = makeStyles((theme) => ({
-  
   required: {
     color: "red",
   },
@@ -57,6 +56,8 @@ export default function RegistroInfoAdidional() {
     update,
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
+    unidadVentaSecundaria,
+    setUnidadVentaSecundaria,
   } = useContext(RegProductoContext);
 
   /* CHECKBOX IVA */
@@ -70,14 +71,7 @@ export default function RegistroInfoAdidional() {
     }
     const name = e.target.name;
     const value = name === "iva_activo" ? e.target.checked : e.target.value;
-    const result = await calcular_iva(
-      "iva",
-      name,
-      value,
-      precios,
-      preciosP,
-      unidadVentaXDefecto
-    );
+    const result = await calcular_iva(name, value, precios);
     setPrecioConImpuesto(result.precio_de_compra.precio_con_impuesto);
     setPrecioSinImpuesto(result.precio_de_compra.precio_sin_impuesto);
     setPrecios(result);
@@ -94,14 +88,7 @@ export default function RegistroInfoAdidional() {
     }
     const name = e.target.name;
     const value = name === "ieps_activo" ? e.target.checked : e.target.value;
-    const result = await calcular_ieps(
-      "ieps",
-      name,
-      value,
-      precios,
-      preciosP,
-      unidadVentaXDefecto
-    );
+    const result = await calcular_ieps(name, value, precios);
     setPrecioConImpuesto(result.precio_de_compra.precio_con_impuesto);
     setPrecioSinImpuesto(result.precio_de_compra.precio_sin_impuesto);
     setPrecios(result);
@@ -234,15 +221,26 @@ export default function RegistroInfoAdidional() {
   const obtenerUnidadCompra = (e, child) => {
     if (e.target.name === "unidad") {
       const { codigo_unidad, unidad } = child.props.unidad;
+      let precio =
+        precios.unidad_de_compra.cantidad * unidadVentaXDefecto.precio;
       if (unidad === "Caja" || unidad === "Costal") {
-        let precio = unidadVentaXDefecto.cantidad * unidadVentaXDefecto.precio;
-        setUnidadVentaXDefecto({
-          ...unidadVentaXDefecto,
+        setUnidadVentaSecundaria({
+          ...unidadVentaSecundaria,
           precio: parseFloat(precio.toFixed(2)),
           codigo_unidad,
           unidad,
+          unidad_activa: true,
+          unidad_principal: true,
         });
-        setPrecios({
+        setUnidadVentaXDefecto({
+          ...unidadVentaXDefecto,
+          unidad: unidad === "Pz" || unidad === "Caja" ? "Pz" : "kg",
+          codigo_unidad: unidad === "Pz" || unidad === "Caja" ? "H87" : "KGM",
+          cantidad: 1,
+          precio: unidadVentaXDefecto.precio,
+          unidad_principal: false,
+        });
+        /* setPrecios({
           ...precios,
           unidad_de_compra: {
             ...precios.unidad_de_compra,
@@ -254,29 +252,52 @@ export default function RegistroInfoAdidional() {
             unidad_de_inventario: unidad,
             codigo_unidad,
           },
-        });
+        }); */
       } else {
         setUnidadVentaXDefecto({
           ...unidadVentaXDefecto,
-          unidad: e.target.value,
+          unidad: unidad === "Pz" || unidad === "Caja" ? "Pz" : "kg",
+          codigo_unidad: unidad === "Pz" || unidad === "Caja" ? "H87" : "KGM",
           cantidad: 1,
-          precio: preciosP[0].precio_neto
-            ? preciosP[0].precio_neto
-            : precios.unidad_de_compra.precio_unitario_con_impuesto,
+          precio: unidadVentaXDefecto.precio,
+          unidad_principal: true,
         });
-        setPrecios({
+        setUnidadVentaSecundaria({
+          ...unidadVentaSecundaria,
+          precio: parseFloat(precio.toFixed(2)),
+          codigo_unidad: unidad === "Pz" ? "XBX" : "KGM",
+          unidad: unidad === "Pz" ? "Caja" : "Costal",
+          unidad_activa: false,
+          unidad_principal: false,
+        });
+      }
+
+      /* setPrecios({
           ...precios,
           unidad_de_compra: {
             ...precios.unidad_de_compra,
-            [e.target.name]: e.target.value,
+            unidad: e.target.value,
             cantidad: 1,
           },
           inventario: {
             ...precios.inventario,
             unidad_de_inventario: e.target.value,
           },
-        });
-      }
+        }); */
+      setPrecios({
+        ...precios,
+        unidad_de_compra: {
+          ...precios.unidad_de_compra,
+          unidad,
+          codigo_unidad,
+          cantidad: 1,
+        },
+        inventario: {
+          ...precios.inventario,
+          unidad_de_inventario: unidad,
+          codigo_unidad,
+        },
+      });
     } else {
       if (!precios.iva_activo && !precios.ieps_activo) {
         setPrecios({
@@ -315,13 +336,18 @@ export default function RegistroInfoAdidional() {
           },
         });
       }
+      if (
+        precios.unidad_de_compra.unidad === "Caja" ||
+        precios.unidad_de_compra.unidad === "Costal"
+      ) {
+        setUnidadVentaSecundaria({
+          ...unidadVentaSecundaria,
+          cantidad: parseFloat(e.target.value),
+        });
+      }
       setUnidadVentaXDefecto({
         ...unidadVentaXDefecto,
-        cantidad:
-          precios.unidad_de_compra.unidad === "Caja" ||
-          precios.unidad_de_compra.unidad === "Costal"
-            ? parseFloat(e.target.value)
-            : 1,
+        cantidad: 1,
       });
     }
   };
