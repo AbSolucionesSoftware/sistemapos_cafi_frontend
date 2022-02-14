@@ -180,10 +180,10 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
 
         unidadSecundaria = {
           ...unidadSecundaria,
-          precio: parseFloat(precio_neto.toFixed(2)),
+          precio: parseFloat((cantidad_sec * precio_neto).toFixed(2)),
           descuento: {
             ...unidadVentaSecundaria.descuento,
-            precio_neto: precio_con_descuento_sec,
+            precio_neto: parseFloat((cantidad_sec * precio_con_descuento_sec).toFixed(2)),
           },
         };
       }
@@ -305,10 +305,10 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
 
         unidadSecundaria = {
           ...unidadSecundaria,
-          precio: parseFloat(precio_neto.toFixed(2)),
+          precio: parseFloat((cantidad_sec * precio_neto).toFixed(2)),
           descuento: {
             ...unidadVentaSecundaria.descuento,
-            precio_neto: precio_con_descuento_sec,
+            precio_neto: parseFloat((cantidad_sec * precio_con_descuento_sec).toFixed(2)),
           },
         };
       }
@@ -355,8 +355,8 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     //meter los valores a preciosVenta
     preciosVenta.precio_venta = precio_venta;
     preciosVenta.precio_neto = precio_neto;
-    preciosVenta.iva_precio = iva;
-    preciosVenta.ieps_precio = ieps;
+    preciosVenta.iva_precio = iva_precio;
+    preciosVenta.ieps_precio = ieps_precio;
 
     //meter los precios a unidadXdefecto
     let unidadXDefecto = {
@@ -438,10 +438,10 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
 
         unidadSecundaria = {
           ...unidadSecundaria,
-          precio: parseFloat(precio_neto.toFixed(2)),
+          precio: parseFloat((cantidad_sec * precio_neto).toFixed(2)),
           descuento: {
             ...unidadVentaSecundaria.descuento,
-            precio_neto: precio_con_descuento_sec,
+            precio_neto: parseFloat((cantidad_sec * precio_con_descuento_sec).toFixed(2)),
           },
         };
       }
