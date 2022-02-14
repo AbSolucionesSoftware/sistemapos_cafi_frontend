@@ -138,6 +138,7 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
           precios_producto {
             numero_precio
             precio_neto
+            precio_venta
             iva_precio
             ieps_precio
             unidad_mayoreo

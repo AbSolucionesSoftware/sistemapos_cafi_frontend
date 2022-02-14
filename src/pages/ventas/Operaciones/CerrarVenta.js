@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import useStyles from "../styles";
 
 import {
@@ -14,26 +14,30 @@ import {
   Slide,
   TextField,
   Typography,
+  InputAdornment,
 } from "@material-ui/core";
 // import tarjetaIcon from "../../../icons/ventas/tarjeta-de-credito.svg";
 import { FcDonate, FcShop } from "react-icons/fc";
 // import { Search } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
-import CreditCardIcon from '@material-ui/icons/CreditCard';
-import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import CreditCardIcon from "@material-ui/icons/CreditCard";
+import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 
-import ClearIcon from '@material-ui/icons/Clear';
+import ClearIcon from "@material-ui/icons/Clear";
 
-import { Edit, ImportExport } from "@material-ui/icons";
+import { Edit, ImportExport, PartyMode } from "@material-ui/icons";
 
 import { FcBusinessman, FcSalesPerformance } from "react-icons/fc";
 // import { parse } from "graphql";
-import { numerosRandom } from '../../../config/reuserFunctions';
-import { formaPago } from '../../../pages/sucursales/Facturacion/catalogos';
+import { numerosRandom } from "../../../config/reuserFunctions";
+import { formaPago } from "../../../pages/sucursales/Facturacion/catalogos";
 
-import { CREAR_VENTA } from '../../../gql/Ventas/ventas_generales'; 
+import { CREAR_VENTA } from "../../../gql/Ventas/ventas_generales";
 import { useMutation } from "@apollo/client";
-import moment from 'moment';
+import moment from "moment";
+import { parse } from "graphql";
+
+import { VentasContext } from "../../../context/Ventas/ventasContext";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -50,52 +54,48 @@ export default function CerrarVenta() {
 
   const [openModalDescuento, setOpenModalDescuento] = useState(false);
 
+  const [recalcular, setRecalcular] = useState(false);
+
+  //Datos del context
+  const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
+
+  //states de venta
   const [totalVenta, setTotalVenta] = useState(0);
   const [montoPagado, setMontoPagado] = useState(0);
   const [cambioVenta, setCambioVenta] = useState(0);
   const [datosCliente, setDatosCliente] = useState({});
   const [monedero, setMonedero] = useState(0);
   const [descuentoVenta, setDescuentoVenta] = useState(0);
-
-
-  const [fechaVencimientoDate, setfechaVencimientoDate] = useState('');
-
+  const [fechaVencimientoDate, setfechaVencimientoDate] = useState("");
   const [valorPuntoProducto, setValorPuntoProducto] = useState(0.5);
-
-  
+  const [valorFinalCambioPuntos, setValorFinalCambioPuntos] = useState(0);
   const [monederoTotal, setMonederoTotal] = useState(0);
   const [ventaActual, setVentaActual] = useState(0);
-
   const [editableClient, setEditableClient] = useState(true);
-
   const [visible, setVisible] = useState(false);
 
+  //States descuento venta
+  const [descuentoAplicarVenta, setDescuentoAplicarVenta] = useState(0);
+  const [descuentoPorsentajeVenta, setDescuentoPorsentajeVenta] = useState(0);
+
+  // const [descuentoAplicadoVenta, setDescuentoAplicadoVenta] = useState(0);
+  const [ventaOriginal, setVentaOriginal] = useState(0);
 
   //States de los montos a pagar
-
   const [efectivo, setEfectivo] = useState(0);
   const [tarjeta, setTarjeta] = useState(0);
   const [puntos, setPuntos] = useState(0);
   const [transferencia, setTransferencia] = useState(0);
   const [cheque, setCheque] = useState(0);
 
+  const [descuentoAplicado, setdescuentoAplicado] = useState(false);
+
   const [createVenta] = useMutation(CREAR_VENTA);
 
   const handleClickOpen = () => {
-    const venta = JSON.parse(localStorage.getItem("DatosVentas"));
-    setVentaActual(venta);
-    const total = venta === null ? 0 : venta.total;
-    const monederoVenta = venta === null ? 0 : venta.monedero;
-    const cliente = venta === null ? {} : venta.cliente;
-    console.log(monederoVenta);
-    // console.log(venta);
-    setTotalVenta(total.toFixed(2));
-    setEfectivo(total.toFixed(2));
     setOpen(!open);
-    setDatosCliente(cliente);
-    setMonedero(parseFloat(monederoVenta));
-    setMonederoTotal(cliente.monedero_electronico === null ? parseFloat(monederoVenta) : parseFloat(cliente.monedero_electronico) + parseFloat(monederoVenta))
-    
+    setRecalcular(!recalcular);
+    //TODO: Guardar la venta original en un context u localstorage por si se quiere resetear el descuento
   };
 
   function funcion_tecla(event) {
@@ -108,57 +108,59 @@ export default function CerrarVenta() {
   const handleClickFinishVenta = async () => {
     try {
       const sesion = JSON.parse(localStorage.getItem("turnoEnCurso"));
-      const usuario = JSON.parse(localStorage.getItem('sesionCafi'));
+      const usuario = JSON.parse(localStorage.getItem("sesionCafi"));
 
-      const ventaFinal = {...ventaActual};
+      const ventaFinal = { ...ventaActual };
 
       //Generar folio
-      const folio = numerosRandom(100000000000,999999999999);
+      const folio = numerosRandom(100000000000, 999999999999);
       console.log(folio);
       //Agregar los montos en caja
       const montosEnCaja = {
         monto_efectivo: {
           monto: efectivo,
-          metodo_pago: formaPago[0].Value
+          metodo_pago: formaPago[0].Value,
         },
         monto_tarjeta_debito: {
           monto: tarjeta,
-          metodo_pago: formaPago[3].Value
+          metodo_pago: formaPago[3].Value,
         },
         monto_tarjeta_credito: {
           monto: 0,
-          metodo_pago: formaPago[3].Value
+          metodo_pago: formaPago[3].Value,
         },
         monto_creditos: {
           monto: 0,
-          metodo_pago: ""
+          metodo_pago: "",
         },
         monto_monedero: {
           monto: puntos,
-          metodo_pago: formaPago[4].Value
+          metodo_pago: formaPago[4].Value,
         },
         monto_transferencia: {
           monto: transferencia,
-          metodo_pago: formaPago[2].Value
+          metodo_pago: formaPago[2].Value,
         },
         monto_cheques: {
           monto: cheque,
-          metodo_pago: formaPago[1].Value
+          metodo_pago: formaPago[1].Value,
         },
         monto_vales_despensa: {
           monto: 0,
-          metodo_pago: formaPago[6].Value
-        }
+          metodo_pago: formaPago[6].Value,
+        },
       };
       ventaFinal.folio = `${folio}`;
       //Credito a credito false
-      ventaFinal.credito = false;
+      ventaFinal.credito = visible;
       //Agregar descuentos de ventas
       ventaFinal.descuento_general_activo = false;
       ventaFinal.decuento_general = null;
       //Declarar dias de credito como false
-      ventaFinal.dias_de_credito_venta = null;
-      ventaFinal.fecha_de_vencimiento_credito = null;
+      ventaFinal.dias_de_credito_venta = datosCliente
+        ? datosCliente.dias_credito
+        : null;
+      ventaFinal.fecha_de_vencimiento_credito = fechaVencimientoDate;
       ventaFinal.fecha_vencimiento_cotizacion = null;
       //Enviar los datos
 
@@ -166,15 +168,15 @@ export default function CerrarVenta() {
 
       const venta_realizada = await createVenta({
         variables: {
-            input: ventaFinal,
-            empresa: sesion.empresa,
-            sucursal: sesion.sucursal,
-            usuario: usuario._id,
-            caja: sesion.id_caja
-        }
+          input: ventaFinal,
+          empresa: sesion.empresa,
+          sucursal: sesion.sucursal,
+          usuario: usuario._id,
+          caja: sesion.id_caja,
+        },
       });
 
-      console.log(venta_realizada);
+      // console.log(venta_realizada);
 
       //Mandar mensaje de cambio en dado caso de ser correcto
 
@@ -187,13 +189,13 @@ export default function CerrarVenta() {
       console.log(ventaActual);
     } catch (error) {
       console.log(error);
-      if(error.networkError.result){
-				console.log(error.networkError.result.errors);
-			}else if(error.graphQLErrors){
-				console.log(error.graphQLErrors.message);
-			}
+      if (error.networkError.result) {
+        console.log(error.networkError.result.errors);
+      } else if (error.graphQLErrors) {
+        console.log(error.graphQLErrors.message);
+      }
     }
-  }
+  };
 
   const handlerChangeValue = (e, location) => {
     switch (location) {
@@ -207,11 +209,11 @@ export default function CerrarVenta() {
       case "PUNTOS":
         const valor = e.target.value != "" ? parseInt(e.target.value) : 0;
         console.log(e.target.value, valor);
-        if(valor <= monederoTotal){
+        if (valor <= monederoTotal) {
           const valor2 = valorPuntoProducto * parseFloat(valor);
           setPuntos(valor);
-          setValorPuntoProducto(valor2);
-          console.log("valor2 >>" , valor2)
+          setValorFinalCambioPuntos(valor2);
+          console.log("valor2 >>", valor2);
         }
         break;
       case "TRANSFERENCIA":
@@ -227,20 +229,238 @@ export default function CerrarVenta() {
 
   window.onkeydown = funcion_tecla;
 
-  console.log(fechaVencimientoDate);
+  const handlerChangeDiscountVenta = (e) => {
+    const valor = e.target.value;
+    setDescuentoAplicarVenta(valor);
+    setDescuentoPorsentajeVenta(0);
+    if (valor !== "") {
+      const ventaSubtotal = ventaActual.subTotal;
+      const descuento =
+        ((ventaSubtotal - parseFloat(valor)) * 100) / ventaActual.subTotal -
+        100;
+      const positiveDiscount = Math.abs(descuento);
+      setDescuentoPorsentajeVenta(parseFloat(positiveDiscount.toFixed(2)));
+    }
+  };
+
+  const handleChangePorsentDiscount = (e) => {
+    const valor = e.target.value;
+    setDescuentoAplicarVenta(0);
+    setDescuentoPorsentajeVenta(valor);
+    if (valor !== "") {
+      const ventaSubtotal = ventaActual.subTotal;
+      const val =
+        valor < 10
+          ? parseFloat(`0.0${valor.replace(".", "")}`)
+          : parseFloat(`0.${valor.replace(".", "")}`);
+      const porsent = ventaSubtotal * val;
+      setDescuentoAplicarVenta(porsent.toFixed(2));
+    }
+  };
+
+  const handleCalculateNewDiscountVenta = () => {
+    let venta = JSON.parse(localStorage.getItem("DatosVentas"));
+    //Declarar la variables necesarias (total, subTotal, impuestos, iva ieps, productosFinal)
+    let total = 0,
+      subTotal = 0,
+      impuestos = 0,
+      iva = 0,
+      ieps = 0,
+      descuento = 0;
+    let productosFinal = [];
+    //Activar loading
+
+    //Obtener productos
+    const productStorage = ventaActual.productos;
+    //Mapearlos
+    for (let i = 0; i < productStorage.length; i++) {
+      //Obtener el producto valor i
+      const product = productStorage[i];
+      let precio_actual_object = {};
+      const porsentajeNewDescuento = parseFloat(descuentoPorsentajeVenta);
+      const dineroDescontadoDescuento = parseFloat(
+        product.precio_actual_object.precio_venta *
+          parseFloat(`0.${porsentajeNewDescuento}`).toFixed(2)
+      );
+      //Calcular los nuevos precios
+      const newPrecioVentaProduct = parseFloat(
+        (
+          product.precio_actual_object.precio_venta - dineroDescontadoDescuento
+        ).toFixed(2)
+      );
+      const newIvaProduct = parseFloat(
+        (
+          newPrecioVentaProduct *
+          parseFloat(`0.${product.id_producto.precios.iva}`)
+        ).toFixed(2)
+      );
+      const newIepsProduct = parseFloat(
+        (
+          newPrecioVentaProduct *
+          parseFloat(`0.${product.id_producto.precios.ieps}`)
+        ).toFixed(2)
+      );
+      const newPrecioNetoProduct = parseFloat(
+        (newPrecioVentaProduct + newIvaProduct + newIepsProduct).toFixed(2)
+      );
+
+      const newUtilidadProduct = parseFloat(
+        (
+          ((newPrecioVentaProduct -
+            product.id_producto.precios.precio_de_compra.precio_sin_impuesto) /
+            product.id_producto.precios.precio_de_compra.precio_sin_impuesto) *
+          100
+        ).toFixed(2)
+      );
+
+      precio_actual_object = {
+        cantidad_unidad: 1,
+        dinero_descontado: dineroDescontadoDescuento,
+        ieps_precio: newIepsProduct,
+        iva_precio: newIvaProduct,
+        numero_precio: product.precio_actual_object.numero_precio,
+        porciento: product.precio_actual_object.porciento
+          ? parseFloat(
+              (
+                parseFloat(product.precio_actual_object.porciento) +
+                parseFloat(descuentoPorsentajeVenta)
+              ).toFixed(2)
+            )
+          : parseFloat(descuentoPorsentajeVenta),
+        precio_general: 0,
+        precio_neto: newPrecioNetoProduct,
+        precio_venta: newPrecioVentaProduct,
+        unidad_maxima: false,
+        utilidad: newUtilidadProduct,
+      };
+
+      if (product.precio_actual_object.unidad_maxima) {
+        //Aqui se calcula la unidad por mayoreo (Cajas y costales)
+        precio_actual_object.cantidad_unidad =
+          product.precio_actual_object.cantidad_unidad;
+        precio_actual_object.precio_general =
+          newPrecioNetoProduct *
+          parseFloat(product.precio_actual_object.cantidad_unidad);
+        precio_actual_object.unidad_maxima = true;
+      }
+      const valorGranel =
+        product.granel_producto.granel === true
+          ? parseFloat(product.granel_producto.valor)
+          : 1;
+      //Guardar el nuevo producto en el arreglo
+      const ieps_total_producto = parseFloat(
+        (
+          precio_actual_object.ieps_precio *
+          valorGranel *
+          product.cantidad_venta
+        ).toFixed(2)
+      );
+      const impuestos_total_producto = parseFloat(
+        (
+          (precio_actual_object.ieps_precio + precio_actual_object.iva_precio) *
+          valorGranel *
+          product.cantidad_venta
+        ).toFixed(2)
+      );
+      const iva_total_producto = parseFloat(
+        (
+          precio_actual_object.iva_precio *
+          valorGranel *
+          product.cantidad_venta
+        ).toFixed(2)
+      );
+      const subtotal_total_producto = parseFloat(
+        (
+          precio_actual_object.precio_venta *
+          valorGranel *
+          product.cantidad_venta
+        ).toFixed(2)
+      );
+      const total_total_producto = parseFloat(
+        (
+          precio_actual_object.precio_neto *
+          valorGranel *
+          product.cantidad_venta
+        ).toFixed(2)
+      );
+      const descuentoProducto =
+        parseFloat(precio_actual_object.dinero_descontado.toFixed(2)) *
+        valorGranel *
+        product.cantidad_venta;
+
+      productosFinal.push({
+        ...product,
+        precio_actual_object,
+        ieps_total_producto,
+        impuestos_total_producto,
+        iva_total_producto,
+        subtotal_total_producto,
+        total_total_producto,
+        descuento: descuentoProducto,
+      });
+      //Sumar los valores
+      total += total_total_producto;
+      subTotal += subtotal_total_producto;
+      impuestos += impuestos_total_producto;
+      iva += iva_total_producto;
+      ieps += ieps_total_producto;
+      descuento += descuentoProducto;
+    }
+    localStorage.setItem(
+      "DatosVentas",
+      JSON.stringify({
+        ...venta,
+        productos: productosFinal,
+        total,
+        subTotal,
+        impuestos,
+        iva,
+        ieps,
+        descuento,
+      })
+    );
+    setRecalcular(!recalcular);
+    setOpenModalDescuento(!openModalDescuento);
+  };
 
   useEffect(() => {
-    setfechaVencimientoDate(moment().add(datosCliente.dias_credito ? parseInt(datosCliente.dias_credito) : 0,'days').format('YYYY-MM-DD'));
+    const venta = JSON.parse(localStorage.getItem("DatosVentas"));
+    setVentaActual(venta);
+
+    setVentaOriginal(venta);
+    const total = venta === null ? 0 : venta.total;
+    const monederoVenta = venta === null ? 0 : venta.monedero;
+    const cliente = venta === null ? {} : venta.cliente;
+
+    setTotalVenta(total.toFixed(2));
+    setEfectivo(total.toFixed(2));
+    setDatosCliente(cliente);
+    setMonedero(parseFloat(monederoVenta));
+    setMonederoTotal(
+      !cliente.monedero_electronico 
+        ? parseFloat(monederoVenta)
+        : parseFloat(cliente.monedero_electronico) + parseFloat(monederoVenta)
+    );
+    //Recargar tabla ventas
+    setUpdateTablaVentas(!updateTablaVentas);
+  }, [recalcular]);
+
+  useEffect(() => {
+    setfechaVencimientoDate(
+      moment()
+        .add(
+          datosCliente.dias_credito ? parseInt(datosCliente.dias_credito) : 0,
+          "days"
+        )
+        .format("YYYY-MM-DD")
+    );
   }, [datosCliente, datosCliente.dias_credito]);
-
-
-  
 
   useEffect(() => {
     setMontoPagado(
       parseFloat(efectivo) +
         parseFloat(tarjeta) +
-        parseFloat(puntos) +
+        parseFloat(valorFinalCambioPuntos) +
         parseFloat(transferencia) +
         parseFloat(cheque)
     );
@@ -280,7 +500,7 @@ export default function CerrarVenta() {
         TransitionComponent={Transition}
       >
         <DialogContent>
-          <Grid container item lg={12} >
+          <Grid container item lg={12}>
             <Box display="flex" justifyContent="center" flexGrow={1}>
               <Box>
                 <img
@@ -452,7 +672,11 @@ export default function CerrarVenta() {
                       <b>Puntos Disponibles:</b>
                     </Typography>
                   </Box>
-                  <Typography variant="subtitle1">{!datosCliente.monedero_electronico ? 0 : datosCliente.monedero_electronico}</Typography>
+                  <Typography variant="subtitle1">
+                    {!datosCliente.monedero_electronico
+                      ? 0
+                      : datosCliente.monedero_electronico}
+                  </Typography>
                 </Box>
 
                 <Box display="flex">
@@ -521,9 +745,7 @@ export default function CerrarVenta() {
               </Box>
             </div>
 
-
-
-            <div style={{ display: visible ? "block" : "none"}}>
+            <div style={{ display: visible ? "block" : "none" }}>
               <div className={classes.formInputFlex}>
                 <Box width="20%">
                   <Typography variant="caption">
@@ -536,8 +758,17 @@ export default function CerrarVenta() {
                       name="codigo_barras"
                       id="form-producto-codigo-barras"
                       variant="outlined"
-                      value={datosCliente.dias_credito === null ? 0 : datosCliente.dias_credito}
-                      onChange={e => setDatosCliente({...datosCliente, dias_credito: e.target.value})}
+                      value={
+                        datosCliente.dias_credito === null
+                          ? 0
+                          : datosCliente.dias_credito
+                      }
+                      onChange={(e) =>
+                        setDatosCliente({
+                          ...datosCliente,
+                          dias_credito: e.target.value,
+                        })
+                      }
                       disabled={editableClient}
                     />
                   </Box>
@@ -553,7 +784,11 @@ export default function CerrarVenta() {
                       name="codigo_barras"
                       id="form-producto-codigo-barras"
                       variant="outlined"
-                      value={datosCliente.limite_credito === null ? 0 : datosCliente.limite_credito }
+                      value={
+                        datosCliente.limite_credito === null
+                          ? 0
+                          : datosCliente.limite_credito
+                      }
                       disabled={editableClient}
                     />
                   </Box>
@@ -569,8 +804,12 @@ export default function CerrarVenta() {
                       name="codigo_barras"
                       id="form-producto-codigo-barras"
                       variant="outlined"
-                      value={datosCliente.credito_disponible === null ? 0 : datosCliente.credito_disponible}
-                      disabled={editableClient}
+                      value={
+                        datosCliente.credito_disponible === null
+                          ? 0
+                          : datosCliente.credito_disponible
+                      }
+                      disabled={true}
                     />
                   </Box>
                 </Box>
@@ -621,11 +860,14 @@ export default function CerrarVenta() {
                       type="date"
                       value={fechaVencimientoDate}
                       onChange={(e) => {
-                        const modelDate = moment(e.target.value).add(1,"days");
+                        const modelDate = moment(e.target.value).add(1, "days");
                         const hoy = moment();
-                        const diasDiff = modelDate.diff(hoy, 'days');
+                        const diasDiff = modelDate.diff(hoy, "days");
                         setfechaVencimientoDate(e.target.value);
-                        setDatosCliente({...datosCliente, dias_credito: diasDiff});
+                        setDatosCliente({
+                          ...datosCliente,
+                          dias_credito: diasDiff,
+                        });
                       }}
                       disabled={editableClient}
                     />
@@ -633,59 +875,50 @@ export default function CerrarVenta() {
                 </Box>
               </div>
             </div>
-
           </Grid>
         </DialogContent>
 
-        <DialogActions style={{justifyContent: "space-between"}} >
-          <Box display={"flex"} justifyContent="flex-start" >
-              <Box pr={1}>
-                {
-                  visible ? (
-                    <Button
-                    size="large"
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => {
-                      setVisible(!visible);
-                      setEditableClient(!editableClient);
-                    }}
-                    startIcon={
-                      <ClearIcon style={{fontSize: "28px"}} />
-                    }
-                  >
-                    Cancelar
-                  </Button>
-                  ) : (
-                    <Button
-                    size="large"
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setVisible(!visible)}
-                    startIcon={
-                      <CreditCardIcon style={{fontSize: "28px"}} />
-                    }
-                  >
-                    Credito
-                  </Button>
-                  )
-                }
-
-              </Box>
-
-              <Box>
+        <DialogActions style={{ justifyContent: "space-between" }}>
+          <Box display={"flex"} justifyContent="flex-start">
+            <Box pr={1}>
+              {visible ? (
+                <Button
+                  size="large"
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => {
+                    setVisible(!visible);
+                    setEditableClient(!editableClient);
+                  }}
+                  startIcon={<ClearIcon style={{ fontSize: "28px" }} />}
+                >
+                  Cancelar
+                </Button>
+              ) : (
                 <Button
                   size="large"
                   variant="contained"
                   color="primary"
-                  startIcon={
-                    <LocalOfferIcon style={{fontSize: "28px"}}  />
-                  }
+                  onClick={() => setVisible(!visible)}
+                  startIcon={<CreditCardIcon style={{ fontSize: "28px" }} />}
                 >
-                  Descuento
+                  Credito
                 </Button>
-              </Box>
+              )}
             </Box>
+
+            <Box>
+              <Button
+                size="large"
+                variant="contained"
+                color="primary"
+                startIcon={<LocalOfferIcon style={{ fontSize: "28px" }} />}
+                onClick={() => setOpenModalDescuento(!openModalDescuento)}
+              >
+                Descuento
+              </Button>
+            </Box>
+          </Box>
           <Button
             onClick={() => {
               handleClickFinishVenta();
@@ -697,9 +930,7 @@ export default function CerrarVenta() {
           >
             Terminar
           </Button>
-
         </DialogActions>
-
       </Dialog>
 
       <Dialog
@@ -709,30 +940,74 @@ export default function CerrarVenta() {
       >
         <DialogContent>
           <Box textAlign="center">
-            <Box>
-              <FcDonate style={{ fontSize: 80 }} />
-            </Box>
             <Box textAlign="center">
-              <Typography variant="h5">Su cambio</Typography>
+              <Typography variant="h5">Descuento</Typography>
             </Box>
           </Box>
           <Grid item lg={12}>
-            <Paper elevation={3}>
-              <Box p={3} width="100%" textAlign="center">
-                <Typography variant="h3" style={{ color: "red" }}>
-                  $150.000
-                </Typography>
+            <div className={classes.formInputFlex}>
+              <Box width="50%">
                 <Typography variant="caption">
-                  (CIENTO CICUENTA PESOS 00/100 MNX)
+                  <b>Dinero a descontar:</b>
                 </Typography>
+                <Box display="flex" alignItems="center">
+                  <TextField
+                    fullWidth
+                    size="small"
+                    name="dinero-descuento"
+                    id="form-venta-dinero-descuento"
+                    value={descuentoAplicarVenta}
+                    onChange={(e) => handlerChangeDiscountVenta(e)}
+                    variant="outlined"
+                    disabled={descuentoAplicado}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">$</InputAdornment>
+                      ),
+                    }}
+                  />
+                </Box>
               </Box>
-            </Paper>
+
+              <Box width="50%">
+                <Typography variant="caption">
+                  <b>Porsentaje:</b>
+                </Typography>
+                <Box display="flex" alignItems="center">
+                  <TextField
+                    fullWidth
+                    size="small"
+                    name="codigo_barras"
+                    id="form-venta-porsentaje-descuento"
+                    variant="outlined"
+                    value={descuentoPorsentajeVenta}
+                    onChange={(e) => handleChangePorsentDiscount(e)}
+                    type="number"
+                    disabled={descuentoAplicado}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">%</InputAdornment>
+                      ),
+                    }}
+                  />
+                </Box>
+              </Box>
+            </div>
           </Grid>
         </DialogContent>
 
         <DialogActions>
           <Button
-            onClick={handleClickOpen}
+            onClick={() => setOpenModalDescuento(!openModalDescuento)}
+            variant="contained"
+            size="large"
+            color="secondary"
+            autoFocus
+          >
+            Cancelar
+          </Button>
+          <Button
+            onClick={() => handleCalculateNewDiscountVenta()}
             variant="contained"
             size="large"
             color="primary"
@@ -743,7 +1018,7 @@ export default function CerrarVenta() {
         </DialogActions>
       </Dialog>
 
-      <Dialog
+      {/* <Dialog
         open={cambio}
         onClose={abrirCajon}
         TransitionComponent={Transition}
@@ -782,7 +1057,7 @@ export default function CerrarVenta() {
             Aceptar
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </>
   );
 }
