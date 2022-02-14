@@ -331,9 +331,9 @@ export default function CrearProducto({
     };
 
     /* const clean_data = cleanTypenames(input); */
-    /* console.log(input); */
+    console.log(input);
 
-    setLoading(true);
+    /* setLoading(true);
      try {
       if (accion) {
         const result = await actualizarProducto({
@@ -379,7 +379,7 @@ export default function CrearProducto({
       } else if (error.graphQLErrors) {
         console.log(error.graphQLErrors);
       }
-    }
+    } */
   };
 
   /* ###### RESET STATES ###### */
@@ -411,10 +411,10 @@ export default function CrearProducto({
     const { precios_producto, ...new_precios } = producto.precios;
     const { unidades_de_venta } = producto;
     let unidades_secundaria = producto.unidades_de_venta.filter(
-      (res) => !res.default
+      (res) => res.default === false
     );
     let unidadxdefecto = producto.unidades_de_venta.filter(
-      (res) => res.default
+      (res) => res.default === true
     );
     setDatosGenerales(producto.datos_generales);
     setPrecios(new_precios);
@@ -427,7 +427,6 @@ export default function CrearProducto({
     setPreciosPlazos(producto.precio_plazos);
     setUnidadesVenta(unidades_de_venta);
     setPreciosP(producto.precios.precios_producto);
-    /* setUnidadVentaXDefecto(unidadxdefecto[0]); */
     setUnidadVentaXDefecto(unidadxdefecto[0]);
     setUnidadVentaSecundaria(unidades_secundaria[0]);
     setPresentaciones(

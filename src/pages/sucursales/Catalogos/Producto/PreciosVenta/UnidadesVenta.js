@@ -1,6 +1,5 @@
-import React, { Fragment, useContext, useState } from "react";
+import React, { Fragment, useContext } from "react";
 import {
-  Grid,
   IconButton,
   InputAdornment,
   OutlinedInput,
@@ -11,104 +10,20 @@ import {
   TableRow,
   Tooltip,
 } from "@material-ui/core";
-import {
-  Box,
-  TextField,
-  Typography,
-  Table,
-  Checkbox,
-  Select,
-  MenuItem,
-  Button,
-} from "@material-ui/core";
-import { Add, Cached, LocalOffer } from "@material-ui/icons";
-import { makeStyles } from "@material-ui/core";
+import { Box, TextField, Typography, Table, Checkbox } from "@material-ui/core";
+import { Cached, LocalOffer } from "@material-ui/icons";
 import { FormControl } from "@material-ui/core";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
 import { formatoMexico } from "../../../../../config/reuserFunctions";
-import { unitCodes, unitCodes_granel } from "../unidades";
-import { useDebounce } from "use-debounce/lib";
-import { useEffect } from "react";
-
-const useStyles = makeStyles((theme) => ({
-  titulos: {
-    fontWeight: 500,
-  },
-}));
 
 export default function PreciosDeCompra() {
-  const classes = useStyles();
   const {
     datos_generales,
-    precios,
-    unidadesVenta,
-    setUnidadesVenta,
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
     unidadVentaSecundaria,
     setUnidadVentaSecundaria,
-    update,
   } = useContext(RegProductoContext);
-
-  /* const [unidades, setUnidades] = useState({
-    unidad: precios.unidad_de_compra.unidad,
-    codigo_unidad: precios.unidad_de_compra.codigo_unidad,
-    unidad_principal: false,
-    cantidad: 1,
-  }); */
-
-  /* const obtenerUnidadesVentas = (e, child) => {
-    if (e.target.name === "cantidad") {
-      let cantidad = parseFloat(e.target.value);
-      setUnidades({
-        ...unidades,
-        cantidad: cantidad,
-        precio: cantidad * unidadVentaXDefecto.precio,
-      });
-    } else if (e.target.name === "unidad") {
-      const { codigo_unidad, unidad } = child.props.unidad;
-      setUnidades({
-        ...unidades,
-        [e.target.name]: unidad,
-        codigo_unidad,
-        precio: unidades.cantidad * unidadVentaXDefecto.precio,
-      });
-    } else {
-      setUnidades({
-        ...unidades,
-        [e.target.name]: e.target.value,
-      });
-    }
-  }; */
-
-  /* const obtenerPrecioUVentas = (value) => {
-    console.log("obtenreprecio");
-    if (unidades.descuento_activo && unidades.descuento_activo === true) {
-      console.log("entra");
-      //calcular nuevo precio entre %
-      let precio_neto = Math.round(
-        value -
-          value *
-            parseFloat(
-              `0.${
-                unidades.descuento.porciento < 10
-                  ? `0${unidades.descuento.porciento}`
-                  : unidades.descuento.porciento
-              }`
-            )
-      );
-      setUnidades({
-        ...unidades,
-        precio: parseFloat(value),
-        descuento: { ...unidades.descuento, precio_neto },
-      });
-    } else {
-      setUnidades({
-        ...unidades,
-        precio: parseFloat(value),
-      });
-    }
-  }; */
 
   const descuentoUnidadXdefecto = (descuento_activo) => {
     setUnidadVentaXDefecto({
@@ -128,28 +43,6 @@ export default function PreciosDeCompra() {
         unidad_principal: false,
       });
     }
-
-    /* if (checked) {
-      let nuevo_array = [];
-      for (let i = 0; i < unidadesVenta.length; i++) {
-        const element = unidadesVenta[i];
-        let new_element = {
-          _id: element._id,
-          codigo_barras: element.codigo_barras,
-          unidad: element.unidad,
-          codigo_unidad: element.codigo_unidad,
-          precio: parseFloat(element.precio),
-          cantidad: parseFloat(element.cantidad),
-          unidad_principal: false,
-          default: element.default,
-          descuento: element.descuento,
-          descuento_activo: element.descuento_activo,
-          precio_unidad: element.precio_unidad,
-        };
-        nuevo_array.push(new_element);
-      }
-      setUnidadesVenta([...nuevo_array]);
-    } */
   };
 
   return (
@@ -230,23 +123,6 @@ export default function PreciosDeCompra() {
                     inputProps={{ "aria-label": "primary checkbox" }}
                   />
                 </TableCell>
-                <TableCell>
-                  {/* {actualizarUnidad ? (
-                    <IconButton
-                      color="primary"
-                      onClick={() => cancelarUpdate()}
-                    >
-                      <Close color="primary" />
-                    </IconButton>
-                  ) : (
-                    <IconButton
-                      color="primary"
-                      onClick={() => updateUnidadPrincipal()}
-                    >
-                      <EditOutlined color="primary" />
-                    </IconButton>
-                  )} */}
-                </TableCell>
               </TableRow>
               <UnidadesVentaSecundaria />
             </TableBody>
@@ -259,29 +135,12 @@ export default function PreciosDeCompra() {
 
 const UnidadesVentaSecundaria = () => {
   const {
-    datos_generales,
-    unidadesVenta,
     precios,
-    setUnidadesVenta,
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
     unidadVentaSecundaria,
     setUnidadVentaSecundaria,
   } = useContext(RegProductoContext);
-
-  /* const [precio, setPrecio] = useState(unidadVentaSecundaria.precio);
-  const [cantidad, setCantidad] = useState(unidadVentaSecundaria.cantidad);
-
-  const [PRICE] = useDebounce(precio, 500);
-  const [QUANTITY] = useDebounce(cantidad, 500); */
-
-  /* useEffect(() => {
-    calcularUnidad(PRICE);
-  }, [PRICE]);
-
-  useEffect(() => {
-    calcularUnidad(QUANTITY);
-  }, [QUANTITY]); */
 
   const GenCodigoBarras = () => {
     const max = 999999999999;
@@ -295,66 +154,288 @@ const UnidadesVentaSecundaria = () => {
     });
   };
 
-
-  const obtenerDatosUnidad = (e) => {
-    let { name, value } = e.target;
+  const obtenerCantidad = (e) => {
+    let { value } = e.target;
     if (value) {
       value = parseFloat(value);
     }
     setUnidadVentaSecundaria({
       ...unidadVentaSecundaria,
-      [name]: value,
+      cantidad: value,
     });
   };
 
-  const calcularUnidad = () => {
+  const obtenerPrecio = (e) => {
+    let { value } = e.target;
+    if (value) {
+      value = parseFloat(value);
+    }
+    if (
+      unidadVentaSecundaria.descuento_activo &&
+      unidadVentaSecundaria.descuento_activo === true
+    ) {
+      setUnidadVentaSecundaria({
+        ...unidadVentaSecundaria,
+        descuento: {
+          ...unidadVentaSecundaria.descuento,
+          precio_neto: value,
+        },
+      });
+    } else {
+      setUnidadVentaSecundaria({
+        ...unidadVentaSecundaria,
+        precio: value,
+      });
+    }
+  };
+
+  const calcularUnidad = (e) => {
+    if (e.target.value === "") {
+      let arr = {
+        ...unidadVentaSecundaria,
+        unidad_principal: false,
+        precio: 0,
+      };
+      if (
+        unidadVentaSecundaria.descuento_activo !== null &&
+        unidadVentaSecundaria.descuento_activo === true
+      ) {
+        arr.descuento = { ...arr.descuento, precio_neto: 0 };
+      }
+      setUnidadVentaSecundaria(arr);
+      setUnidadVentaXDefecto({
+        ...unidadVentaXDefecto,
+        unidad_principal: true,
+      });
+      return;
+    }
     if (!unidadVentaSecundaria.precio || !unidadVentaSecundaria.cantidad)
       return;
-    const { precio, cantidad } = unidadVentaSecundaria;
-
-    const { iva, ieps } = precios;
-
-    let suma_impuestos =
-      parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
-      parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
-    let PVCI = parseFloat((precio / cantidad).toFixed(2));
-    let PVSI = parseFloat((PVCI / (suma_impuestos + 1)).toFixed(2));
-
-    let PCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
-    let iva_precio = parseFloat(
-      PVSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)
-    );
-    let ieps_precio = parseFloat(
-      PVSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)
-    );
-    let utilidad = parseFloat((((PVSI - PCSI) / PCSI) * 100).toFixed(2));
-
-    let unidad_secundaria = {
-      ...unidadVentaSecundaria,
-      precio,
-      cantidad,
-      precio_unidad: {
-        numero_precio: 1,
-        precio_venta: PVSI,
-        precio_neto: PVCI,
-        unidad_mayoreo: 0,
-        iva_precio,
-        ieps_precio,
-        utilidad,
-        unidad_maxima: false,
-      },
-    };
 
     if (
-      unidadVentaSecundaria.codigo_unidad === "XBX" ||
-      unidadVentaSecundaria.unidad === "Costal"
+      unidadVentaSecundaria.descuento_activo &&
+      unidadVentaSecundaria.descuento_activo === true
     ) {
-      unidad_secundaria.precio_unidad.precio_general = precio;
-      unidad_secundaria.precio_unidad.cantidad_unidad = cantidad;
-      unidad_secundaria.precio_unidad.unidad_maxima = true;
-    }
+      const { precio, cantidad } = unidadVentaSecundaria;
+      let copy_unidad = { ...unidadVentaSecundaria };
+      const { iva, ieps } = precios;
+      let PCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
+      const {
+        cantidad_unidad,
+        precio_venta,
+        numero_precio,
+        unidad_maxima,
+      } = copy_unidad.descuento;
+      let suma_impuestos =
+        parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
+        parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+      let PVSI = parseFloat((precio / (suma_impuestos + 1)).toFixed(2));
+      let dineroDescontado = 0;
+      let PVCDSI = 0; // Precio venta con descuento sin impuestos
+      let porcentaje = parseFloat(((PVSI / precio_venta) * 100).toFixed(2));
+      let descuento = parseFloat((100 - porcentaje).toFixed(2));
 
-    setUnidadVentaSecundaria(unidad_secundaria);
+      PVCDSI = parseFloat(((precio_venta * porcentaje) / 100).toFixed(2));
+      dineroDescontado = parseFloat((precio_venta - PVCDSI).toFixed(2));
+
+      let iva_precio = parseFloat(
+        PVCDSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)
+      );
+      let ieps_precio = parseFloat(
+        PVCDSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)
+      );
+      let utilidad = parseFloat((((PVCDSI - PCSI) / PCSI) * 100).toFixed(2));
+      let precio_neto = parseFloat(
+        (PVCDSI + iva_precio + ieps_precio).toFixed(2)
+      );
+      let precio_general = parseFloat(
+        (precio_neto * cantidad_unidad).toFixed(2)
+      );
+
+      setUnidadVentaSecundaria({
+        ...unidadVentaSecundaria,
+        descuento: {
+          cantidad_unidad: cantidad_unidad,
+          numero_precio: numero_precio,
+          unidad_maxima: unidad_maxima,
+          precio_general: precio_general,
+          precio_neto: precio_neto,
+          precio_venta: PVCDSI,
+          iva_precio: iva_precio,
+          ieps_precio: ieps_precio,
+          utilidad: utilidad,
+          porciento: descuento,
+          dinero_descontado: dineroDescontado,
+        },
+      });
+    } else {
+      const { precio, cantidad } = unidadVentaSecundaria;
+
+      const { iva, ieps } = precios;
+
+      let suma_impuestos =
+        parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
+        parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+      let PVCI = parseFloat((precio / cantidad).toFixed(2));
+      let PVSI = parseFloat((PVCI / (suma_impuestos + 1)).toFixed(2));
+
+      let PCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
+      let iva_precio = parseFloat(
+        PVSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)
+      );
+      let ieps_precio = parseFloat(
+        PVSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)
+      );
+      let utilidad = parseFloat((((PVSI - PCSI) / PCSI) * 100).toFixed(2));
+
+      let unidad_secundaria = {
+        ...unidadVentaSecundaria,
+        precio,
+        cantidad,
+        precio_unidad: {
+          numero_precio: 1,
+          precio_venta: PVSI,
+          precio_neto: PVCI,
+          unidad_mayoreo: 0,
+          iva_precio,
+          ieps_precio,
+          utilidad,
+          unidad_maxima: false,
+        },
+      };
+
+      if (
+        unidadVentaSecundaria.codigo_unidad === "XBX" ||
+        unidadVentaSecundaria.unidad === "Costal"
+      ) {
+        unidad_secundaria.precio_unidad.precio_general = precio;
+        unidad_secundaria.precio_unidad.cantidad_unidad = cantidad;
+        unidad_secundaria.precio_unidad.unidad_maxima = true;
+      }
+
+      setUnidadVentaSecundaria(unidad_secundaria);
+    }
+  };
+
+  const calcularUnidad = (e) => {
+    if (e.target.value === "") {
+      setUnidadVentaSecundaria({
+        ...unidadVentaSecundaria,
+        unidad_principal: false,
+        precio: 0,
+      });
+      setUnidadVentaXDefecto({
+        ...unidadVentaXDefecto,
+        unidad_principal: true,
+      });
+      return;
+    }
+    if (!unidadVentaSecundaria.precio || !unidadVentaSecundaria.cantidad)
+      return;
+
+    if (
+      unidadVentaSecundaria.descuento_activo &&
+      unidadVentaSecundaria.descuento_activo === true
+    ) {
+      const { precio, cantidad } = unidadVentaSecundaria;
+      let copy_unidad = { ...unidadVentaSecundaria };
+      const { iva, ieps } = precios;
+      let PCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
+      const {
+        cantidad_unidad,
+        precio_venta,
+        numero_precio,
+        unidad_maxima,
+      } = copy_unidad.descuento;
+      let suma_impuestos =
+        parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
+        parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+      let PVSI = parseFloat((precio / (suma_impuestos + 1)).toFixed(2));
+      let dineroDescontado = 0;
+      let PVCDSI = 0; // Precio venta con descuento sin impuestos
+      let porcentaje = parseFloat(((PVSI / precio_venta) * 100).toFixed(2));
+      let descuento = parseFloat((100 - porcentaje).toFixed(2));
+
+      PVCDSI = parseFloat(((precio_venta * porcentaje) / 100).toFixed(2));
+      dineroDescontado = parseFloat((precio_venta - PVCDSI).toFixed(2));
+
+      let iva_precio = parseFloat(
+        PVCDSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)
+      );
+      let ieps_precio = parseFloat(
+        PVCDSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)
+      );
+      let utilidad = parseFloat((((PVCDSI - PCSI) / PCSI) * 100).toFixed(2));
+      let precio_neto = parseFloat(
+        (PVCDSI + iva_precio + ieps_precio).toFixed(2)
+      );
+      let precio_general = parseFloat(
+        (precio_neto * cantidad_unidad).toFixed(2)
+      );
+
+      setUnidadVentaSecundaria({
+        ...unidadVentaSecundaria,
+        descuento: {
+          cantidad_unidad: cantidad_unidad,
+          numero_precio: numero_precio,
+          unidad_maxima: unidad_maxima,
+          precio_general: precio_general,
+          precio_neto: precio_neto,
+          precio_venta: PVCDSI,
+          iva_precio: iva_precio,
+          ieps_precio: ieps_precio,
+          utilidad: utilidad,
+          porciento: descuento,
+          dinero_descontado: dineroDescontado,
+        },
+      });
+    } else {
+      const { precio, cantidad } = unidadVentaSecundaria;
+
+      const { iva, ieps } = precios;
+
+      let suma_impuestos =
+        parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
+        parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+      let PVCI = parseFloat((precio / cantidad).toFixed(2));
+      let PVSI = parseFloat((PVCI / (suma_impuestos + 1)).toFixed(2));
+
+      let PCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
+      let iva_precio = parseFloat(
+        PVSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)
+      );
+      let ieps_precio = parseFloat(
+        PVSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)
+      );
+      let utilidad = parseFloat((((PVSI - PCSI) / PCSI) * 100).toFixed(2));
+
+      let unidad_secundaria = {
+        ...unidadVentaSecundaria,
+        precio,
+        cantidad,
+        precio_unidad: {
+          numero_precio: 1,
+          precio_venta: PVSI,
+          precio_neto: PVCI,
+          unidad_mayoreo: 0,
+          iva_precio,
+          ieps_precio,
+          utilidad,
+          unidad_maxima: false,
+        },
+      };
+
+      if (
+        unidadVentaSecundaria.codigo_unidad === "XBX" ||
+        unidadVentaSecundaria.unidad === "Costal"
+      ) {
+        unidad_secundaria.precio_unidad.precio_general = precio;
+        unidad_secundaria.precio_unidad.cantidad_unidad = cantidad;
+        unidad_secundaria.precio_unidad.unidad_maxima = true;
+      }
+
+      setUnidadVentaSecundaria(unidad_secundaria);
+    }
   };
 
   const checkUnidadPrincipal = (checked) => {
@@ -368,52 +449,13 @@ const UnidadesVentaSecundaria = () => {
         unidad_principal: false,
       });
     }
-    /*let nuevo_array = [];
-    for (let i = 0; i < unidadesVenta.length; i++) {
-      const element = unidadesVenta[i];
-      let new_element = {
-        _id: element._id,
-        codigo_barras: element.codigo_barras,
-        unidad: element.unidad,
-        codigo_unidad: element.codigo_unidad,
-        precio: parseFloat(element.precio),
-        cantidad: parseFloat(element.cantidad),
-        unidad_principal: i === index ? true : false,
-        default: element.default,
-        descuento: element.descuento,
-        descuento_activo: element.descuento_activo,
-        precio_unidad: element.precio_unidad,
-      };
-      nuevo_array.push(new_element);
-    }
-    setUnidadesVenta([...nuevo_array]);
-    setUnidadVentaXDefecto({
-      ...unidadVentaXDefecto,
-      unidad_principal: false,
-    }); */
   };
 
-  const aplicarDescuento = (value) => {
-    let nuevo_array = [];
-    /* for (let i = 0; i < unidadesVenta.length; i++) {
-      const element = unidadesVenta[i];
-
-      let new_element = {
-        _id: element._id,
-        codigo_barras: element.codigo_barras,
-        unidad: element.unidad,
-        codigo_unidad: element.codigo_unidad,
-        precio: parseFloat(element.precio),
-        cantidad: parseFloat(element.cantidad),
-        unidad_principal: element.unidad_principal,
-        default: element.default,
-        descuento: element.descuento,
-        descuento_activo: i === index ? value : element.descuento_activo,
-        precio_unidad: element.precio_unidad,
-      };
-      nuevo_array.push(new_element);
-    }
-    setUnidadesVenta([...nuevo_array]); */
+  const aplicarDescuento = (boolean) => {
+    setUnidadVentaSecundaria({
+      ...unidadVentaSecundaria,
+      descuento_activo: boolean,
+    });
   };
 
   return (
@@ -424,7 +466,6 @@ const UnidadesVentaSecundaria = () => {
             id="input-codigo-barras"
             name="codigo_barras"
             value={unidadVentaSecundaria.codigo_barras}
-            /* onChange={obtenerUnidadesVentas} */
             endAdornment={
               <InputAdornment position="end">
                 <IconButton
@@ -440,30 +481,14 @@ const UnidadesVentaSecundaria = () => {
         </FormControl>
       </TableCell>
       <TableCell>{unidadVentaSecundaria.unidad}</TableCell>
-      <TableCell width={150}>
+      <TableCell width={200}>
         <TextField
           type="number"
           name="precio"
           variant="outlined"
           size="small"
           onBlur={calcularUnidad}
-          onChange={obtenerDatosUnidad}
-          onBlur={(e) => {
-            if(e.target.value === ''){
-              setUnidadVentaSecundaria({
-                ...unidadVentaSecundaria,
-                unidad_principal: false,
-                precio: unidadVentaSecundaria.descuento_activo !== null &&
-                unidadVentaSecundaria.descuento_activo === true
-                  ? unidadVentaSecundaria.descuento.precio_neto
-                  : 0
-              })
-              setUnidadVentaXDefecto({
-                ...unidadVentaXDefecto,
-                unidad_principal: true
-              })
-            }
-          }}
+          onChange={obtenerPrecio}
           value={
             unidadVentaSecundaria.descuento_activo !== null &&
             unidadVentaSecundaria.descuento_activo === true
@@ -502,14 +527,14 @@ const UnidadesVentaSecundaria = () => {
             size="small"
             name="cantidad"
             onBlur={calcularUnidad}
-            onChange={obtenerDatosUnidad}
+            onChange={obtenerCantidad}
             value={unidadVentaSecundaria.cantidad}
             onBlur={(e) => {
-              if(e.target.value === ''){
+              if (e.target.value === "") {
                 setUnidadVentaSecundaria({
                   ...unidadVentaSecundaria,
-                  cantidad: precios.unidad_de_compra.cantidad
-                })
+                  cantidad: precios.unidad_de_compra.cantidad,
+                });
               }
             }}
           />

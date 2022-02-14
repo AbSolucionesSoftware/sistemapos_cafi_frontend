@@ -73,15 +73,18 @@ export default function AlertDialogSlide({ agregarCompra, handleClose, cargando 
     /* SET STATES WHEN UPDATING */
     const { precios_producto, ...new_precios } = productoOriginal.precios;
     const { unidades_de_venta } = productoOriginal;
-    /* const unidadxdefecto = productoOriginal.unidades_de_venta.filter(
-      (res) => res.default
-    ); */
+    let unidades_secundaria = productoOriginal.unidades_de_venta.filter(
+      (res) => res.default === false
+    );
+    let unidadxdefecto = productoOriginal.unidades_de_venta.filter(
+      (res) => res.default === true
+    );
     /* setDatosProducto({...datosProducto, mantener_precio: true}) */
     setPrecios(new_precios);
     setUnidadesVenta(unidades_de_venta);
     setPreciosP(productoOriginal.precios.precios_producto);
-    setUnidadVentaXDefecto(unidades_de_venta.length > 0 ? unidades_de_venta[0] : initial_state_unidadVentaXDefecto);
-    setUnidadVentaSecundaria(unidades_de_venta.length > 0 ? unidades_de_venta[1] : initial_state_unidadVentaSecundaria);
+    setUnidadVentaXDefecto(unidadxdefecto[0]);
+    setUnidadVentaSecundaria(unidades_secundaria[0]);
     toggleDrawer();
   };
 
