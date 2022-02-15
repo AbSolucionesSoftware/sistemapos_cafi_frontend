@@ -234,8 +234,8 @@ export default function RegistroInfoAdidional() {
         });
         setUnidadVentaXDefecto({
           ...unidadVentaXDefecto,
-          unidad: unidad === "Pz" || unidad === "Caja" ? "Pz" : "kg",
-          codigo_unidad: unidad === "Pz" || unidad === "Caja" ? "H87" : "KGM",
+          unidad: unidad === "Caja" ? "Pz" : "kg",
+          codigo_unidad: unidad === "Caja" ? "H87" : "KGM",
           cantidad: 1,
           precio: unidadVentaXDefecto.precio,
           unidad_principal: false,
@@ -256,8 +256,8 @@ export default function RegistroInfoAdidional() {
       } else {
         setUnidadVentaXDefecto({
           ...unidadVentaXDefecto,
-          unidad: unidad === "Pz" || unidad === "Caja" ? "Pz" : "kg",
-          codigo_unidad: unidad === "Pz" || unidad === "Caja" ? "H87" : "KGM",
+          unidad: unidad === "Pz" ? "Pz" : unidad === "Lt" ? "Lt ": "kg",
+          codigo_unidad: unidad === "Pz" ? "H87" : unidad === "Lt" ? "LTR" : "KGM",
           cantidad: 1,
           precio: unidadVentaXDefecto.precio,
           unidad_principal: true,
@@ -265,8 +265,8 @@ export default function RegistroInfoAdidional() {
         setUnidadVentaSecundaria({
           ...unidadVentaSecundaria,
           precio: parseFloat(precio.toFixed(2)),
-          codigo_unidad: unidad === "Pz" ? "XBX" : "KGM",
-          unidad: unidad === "Pz" ? "Caja" : "Costal",
+          codigo_unidad: unidad === "Pz" ? "XBX" : unidad === "Lt" ? "LTR" : "KGM",
+          unidad: unidad === "Pz" ? "Caja" : unidad === "Caja" ? "LTR" : "Costal",
           unidad_activa: false,
           unidad_principal: false,
         });
