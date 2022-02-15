@@ -33,6 +33,7 @@ export const RegProductoProvider = ({ children }) => {
     initial_state_unidadVentaSecundaria
   );
   const [preciosP, setPreciosP] = useState(initial_state_preciosP);
+  
   const [unidadesVenta, setUnidadesVenta] = useState(
     initial_state_unidadesVenta
   );

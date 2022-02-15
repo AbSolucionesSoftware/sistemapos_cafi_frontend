@@ -136,6 +136,7 @@ const RenderProductosCompra = ({ producto, index }) => {
     almacen_inicial: productoCTX.almacen_inicial,
     setAlmacenInicial: productoCTX.setAlmacenInicial,
     setUnidadVentaXDefecto: productoCTX.setUnidadVentaXDefecto,
+    setUnidadVentaSecundaria: productoCTX.setUnidadVentaSecundaria,
     setCentroDeCostos: productoCTX.setCentroDeCostos,
     setPreciosPlazos: productoCTX.setPreciosPlazos,
     setSubcategorias: productoCTX.setSubcategorias,
