@@ -19,6 +19,7 @@ export const OBTENER_DATOS_EMPRESA = gql`
       regimen_fiscal
       curp
       info_adicio
+      valor_puntos
       direccion {
         calle
         no_ext
@@ -70,6 +71,7 @@ export const ACTUALIZAR_EMPRESA = gql`
       regimen_fiscal
       curp
       info_adicio
+      valor_puntos
       direccion {
         calle
         no_ext

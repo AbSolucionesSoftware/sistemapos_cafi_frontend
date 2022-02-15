@@ -72,7 +72,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function MisDatos() {
+export default function DatosSucursal() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const classes = useStyles();
   const [loadingPage, setLoadingPage] = React.useState(false);
@@ -130,7 +130,8 @@ export default function MisDatos() {
   useEffect(() => {
     try {
       if (data !== undefined) {
-        setSucursalDatos(data.obtenerDatosSucursal);
+        
+        setSucursalDatos(data.obtenerDatosSucursal[0]);
       }
     } catch (errorCatch) {
       // console.log("SESSIONREFECT",errorCatch)
@@ -259,7 +260,7 @@ export default function MisDatos() {
             <Container style={{ marginTop: 8 }}>
               <Grid container spacing={3} className={classes.require}>
               
-                <Grid item md={4}>
+                <Grid item md={4} flexdirection='row'>
                   <Box>
                     <Typography>
                       <span>* </span>Nombre de empresa
@@ -269,12 +270,12 @@ export default function MisDatos() {
                       disabled={bloqueo}
                       type="text"
                       size="small"
-                      error={errorForm.error && !sucursalDatos.nombre_empresa}
+                      error={errorForm.error && !sucursalDatos.nombre_sucursal}
                       name="nombre_empresa"
                       variant="outlined"
                       value={
-                        sucursalDatos.nombre_empresa
-                          ? sucursalDatos.nombre_empresa
+                        sucursalDatos.nombre_sucursal
+                          ? sucursalDatos.nombre_sucursal
                           : ""
                       }
                       helperText={
@@ -334,7 +335,7 @@ export default function MisDatos() {
 
               <Box mt={5}>
                 <Typography className={classes.subtitle}>
-                  <b>Domicilio sucursal</b>
+                  <b>Domicilio</b>
                 </Typography>
                 <Divider />
               </Box>

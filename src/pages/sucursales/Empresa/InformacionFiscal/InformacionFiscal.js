@@ -6,26 +6,19 @@ import {
   Grid,
   TextField,
   Button,
-  Dialog,
   Container,
   FormControl,
   Select,
-  MenuItem,
-  DialogContent,
+  MenuItem
 } from "@material-ui/core";
 import {
-  Slide,
   Typography,
-  Toolbar,
-  AppBar,
   Divider,
   DialogActions,
 } from "@material-ui/core";
-import CloseIcon from "@material-ui/icons/Close";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 import BackdropComponent from "../../../../components/Layouts/BackDrop";
 import ErrorPage from "../../../../components/ErrorPage";
-import { FcDocument } from "react-icons/fc";
 import { useMutation, useQuery } from "@apollo/client";
 
 import { EmpresaContext } from "../../../../context/Catalogos/empresaContext";
@@ -33,7 +26,6 @@ import {
   ACTUALIZAR_EMPRESA,
   OBTENER_DATOS_EMPRESA,
 } from "../../../../gql/Empresa/empresa";
-import { cleanTypenames } from "../../../../config/reuserFunctions";
 import { regimenFiscal } from "../../Facturacion/catalogos";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import RegistroSellos from "../../Facturacion/CFDISellos/RegistrarSellos";
@@ -61,14 +53,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
-export default function InformacionFiscal() {
+export default function InformacionFiscal(props) {
   const classes = useStyles();
   const [loadingPage, setLoadingPage] = React.useState(false);
-  const [open, setOpen] = React.useState(false);
+
   const [errorPage, setErrorPage] = React.useState(false);
   const [errorForm, setErrorForm] = React.useState(
     useState({ error: false, message: "" })
@@ -119,9 +108,7 @@ export default function InformacionFiscal() {
 
   useEffect(() => {
     try {
-     
       if (data !== undefined) {
-         console.log(sesion.empresa._id)
         setEmpresa(data.obtenerEmpresa);
         let new_sesion = sesion;
         new_sesion.empresa = data.obtenerEmpresa;
@@ -135,7 +122,7 @@ export default function InformacionFiscal() {
     } catch (errorCatch) {
       //console.log("SESSIONREFECT",errorCatch)
     }
-  }, [data, setEmpresa]);
+  }, [data, setEmpresa, sesion]);
 
   useEffect(() => {
     try {
@@ -148,7 +135,7 @@ export default function InformacionFiscal() {
   useEffect(() => {
     try {
       setLoadingPage(loading);
-      console.log(loading)
+      
     } catch (errorCatch) {
       // console.log("SESSIONREFECTUPDATE",errorCatch)
     }
@@ -220,12 +207,10 @@ export default function InformacionFiscal() {
     }
   };
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  
 
   const handleClose = () => {
-    setOpen(false);
+    props.setOpen(false);
   };
   const obtenerCampos = (e) => {
     setEmpresaFiscal({
@@ -254,45 +239,16 @@ export default function InformacionFiscal() {
 
   return (
     <div>
-      <Button fullWidth onClick={handleClickOpen}>
-        <Box display="flex" flexDirection="column">
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <FcDocument className={classes.icon} />
-          </Box>
-          Información fiscal
-        </Box>
-      </Button>
-      <Dialog
-        fullScreen
-        open={open}
-        onClose={handleClose}
-        TransitionComponent={Transition}
-      >
+     
         <SnackBarMessages alert={alert} setAlert={setAlert} />
         <BackdropComponent loading={loadingPage} setLoading={setLoadingPage} />
-        <AppBar className={classes.appBar}>
-          <Toolbar>
-            <Typography variant="h6" className={classes.title}>
-              Información fiscal
-            </Typography>
-            <Box m={1}>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleClose}
-                size="large"
-              >
-                <CloseIcon style={{ fontSize: 30 }} />
-              </Button>
-            </Box>
-          </Toolbar>
-        </AppBar>
-        <DialogContent>
+     
+        
           {errorPage ? (
             <ErrorPage error={errorPage} />
           ) : (
             <Container>
-              <Grid container spacing={3} style={{ marginTop: 8 }}>
+              <Grid container spacing={1} >
                 <Grid item md={6} xs={12} className={classes.require}>
                   <Box my={1}>
                     <Typography>
@@ -458,13 +414,13 @@ export default function InformacionFiscal() {
                   </Box>
                 </Grid>
               </Grid>
-              <Box mt={2}>
+              <Box >
                 <Typography className={classes.subtitle}>
                   <b>Domicilio</b>
                 </Typography>
                 <Divider />
               </Box>
-              <Grid container spacing={3}>
+              <Grid container spacing={2}>
                 <Grid item xs={12} sm={4}>
                   <Box>
                     <Typography>Calle</Typography>
@@ -616,13 +572,13 @@ export default function InformacionFiscal() {
                   </Box>
                 </Grid>
               </Grid>
-              <Box mt={2}>
+              <Box mt={1}>
                 <Typography className={classes.subtitle}>
                   <b>Datos bancarios</b>
                 </Typography>
                 <Divider />
               </Box>
-              <Grid container spacing={3}>
+              <Grid container spacing={2}>
                 <Grid item xs={12} md={4}>
                   <Box>
                     <Typography>Cuenta</Typography>
@@ -677,27 +633,28 @@ export default function InformacionFiscal() {
                     />
                   </Box>
                 </Grid>
+                
+     
               </Grid>
+              {sesion.accesos.mi_empresa.informacion_fiscal.editar === false ? null : (
+                  <DialogActions m={2} style={{ marginTop:10, width:'100%',justifyContent: "center" }}>
+                  <Button onClick={handleClose} color="primary">
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={() => actEmp()}
+                    color="primary"
+                    variant="contained"
+                    
+                  >
+                    Guardar
+                  </Button>
+                </DialogActions>
+              )}
             </Container>
           )}
-        </DialogContent>
-        {sesion.accesos.mi_empresa.informacion_fiscal.editar ===
-        false ? null : (
-          <DialogActions style={{ justifyContent: "center" }}>
-            <Button onClick={handleClose} color="primary">
-              Cancelar
-            </Button>
-            <Button
-              onClick={() => actEmp()}
-              color="primary"
-              variant="contained"
-              autoFocus
-            >
-              Guardar
-            </Button>
-          </DialogActions>
-        )}
-      </Dialog>
+       
+      
     </div>
   );
 }

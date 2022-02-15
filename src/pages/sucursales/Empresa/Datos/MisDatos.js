@@ -5,22 +5,16 @@ import {
   Grid,
   TextField,
   Button,
-  Dialog,
   Avatar,
-  DialogContent,
   Container,
 } from "@material-ui/core";
 import {
-  Slide,
   Typography,
-  Toolbar,
-  AppBar,
   Divider,
   DialogActions,
 } from "@material-ui/core";
 import { useDropzone } from "react-dropzone";
-import CloseIcon from "@material-ui/icons/Close";
-import { FcNook } from "react-icons/fc";
+
 import { useMutation, useQuery } from "@apollo/client";
 import { EmpresaContext } from "../../../../context/Catalogos/empresaContext";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
@@ -30,7 +24,7 @@ import {
   ACTUALIZAR_EMPRESA,
   OBTENER_DATOS_EMPRESA,
 } from "../../../../gql/Empresa/empresa";
-import { cleanTypenames } from "../../../../config/reuserFunctions";
+
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -70,11 +64,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
-export default function MisDatos() {
+export default function MisDatos(props) {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const classes = useStyles();
   const [loadingPage, setLoadingPage] = React.useState(false);
@@ -82,7 +73,8 @@ export default function MisDatos() {
     sesion.accesos.mi_empresa.datos_empresa.editar === false ? true : false
   );
   const [preview, setPreview] = useState("");
-  const [open, setOpen] = React.useState(false);
+
+   
   const [errorPage, setErrorPage] = React.useState(false);
   const [errorForm, setErrorForm] = React.useState(
     useState({ error: false, message: "" })
@@ -104,6 +96,7 @@ export default function MisDatos() {
     telefono_dueno: "",
     celular: "",
     correo_empresa: "",
+    valor_puntos: "",
     nombre_fiscal: "",
     rfc: "",
     regimen_fiscal: "",
@@ -175,6 +168,7 @@ export default function MisDatos() {
         nombre_dueno: empresa.nombre_dueno,
         telefono_dueno: empresa.telefono_dueno,
         celular: empresa.celular,
+        valor_puntos: empresa.valor_puntos,
         correo_empresa: empresa.correo_empresa,
         direccion: empresa.direccion,
         imagen: empresa.imagen,
@@ -213,18 +207,19 @@ export default function MisDatos() {
       setLoadingPage(false);
     }
   };
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+ 
   const obtenerCampos = (e) => {
-    setEmpresaDatos({
-      ...empresaDatos,
-      [e.target.name]: e.target.value,
-    });
+    try {
+      let valor = e.target.value;
+      if(e.target.name === 'valor_puntos'){ valor = parseFloat(valor)}
+      setEmpresaDatos({
+        ...empresaDatos,
+        [e.target.name]: valor,
+      });
+    } catch (error) {
+      
+    }
+  
   };
   const obtenerCamposDireccion = (e) => {
     setEmpresaDatos({
@@ -232,7 +227,9 @@ export default function MisDatos() {
       direccion: { ...empresaDatos.direccion, [e.target.name]: e.target.value },
     });
   };
-
+  const handleClose = () => {
+    props.setOpen(false)
+  }
   //dropzone
   const onDrop = useCallback(
     (acceptedFiles) => {
@@ -254,44 +251,11 @@ export default function MisDatos() {
     noKeyboard: true,
     onDrop,
   });
-
+  
   return (
     <div>
-      <Button fullWidth onClick={handleClickOpen}>
-        <Box display="flex" flexDirection="column">
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <FcNook className={classes.icon} />
-          </Box>
-          Datos de empresa
-        </Box>
-      </Button>
-      <Dialog
-        fullScreen
-        open={open}
-        onClose={handleClose}
-        TransitionComponent={Transition}
-      >
         <SnackBarMessages alert={alert} setAlert={setAlert} />
         <BackdropComponent loading={loadingPage} setLoading={setLoadingPage} />
-
-        <AppBar className={classes.appBar}>
-          <Toolbar>
-            <Typography variant="h6" className={classes.title}>
-              Datos
-            </Typography>
-            <Box m={1}>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleClose}
-                size="large"
-              >
-                <CloseIcon style={{ fontSize: 30 }} />
-              </Button>
-            </Box>
-          </Toolbar>
-        </AppBar>
-        <DialogContent>
           {errorPage ? (
             <ErrorPage error={errorPage} />
           ) : (
@@ -313,7 +277,7 @@ export default function MisDatos() {
                 <Grid item md={4}>
                   <Box>
                     <Typography>
-                      <span>* </span>Nombre de empresa
+                      <b><span>* </span>Nombre de empresa</b>
                     </Typography>
                     <TextField
                       fullWidth
@@ -339,7 +303,7 @@ export default function MisDatos() {
                   </Box>
                   <Box>
                     <Typography>
-                      <span>* </span>Nombre dueño
+                      <b><span>* </span>Nombre dueño</b>
                     </Typography>
                     <TextField
                       fullWidth
@@ -364,7 +328,7 @@ export default function MisDatos() {
                     />
                   </Box>
                   <Box>
-                    <Typography>Teléfono</Typography>
+                    <Typography><b>Teléfono</b></Typography>
                     <TextField
                       fullWidth
                       disabled={bloqueo}
@@ -382,7 +346,7 @@ export default function MisDatos() {
                 </Grid>
                 <Grid item md={4}>
                   <Box>
-                    <Typography>Celular</Typography>
+                    <Typography><b>Celular</b></Typography>
                     <TextField
                       fullWidth
                       disabled={bloqueo}
@@ -394,7 +358,7 @@ export default function MisDatos() {
                     />
                   </Box>
                   <Box>
-                    <Typography>E-mail</Typography>
+                    <Typography><b>E-mail</b></Typography>
                     <TextField
                       fullWidth
                       disabled={bloqueo}
@@ -404,6 +368,23 @@ export default function MisDatos() {
                       value={
                         empresaDatos.correo_empresa
                           ? empresaDatos.correo_empresa
+                          : ""
+                      }
+                      onChange={obtenerCampos}
+                    />
+                  </Box>
+                   <Box>
+                    <Typography><b>Valor de puntos</b></Typography>
+                    <TextField
+                      inputMode="numeric"
+					            type="number"
+                      disabled={bloqueo}
+                      size="small"
+                      name="valor_puntos"
+                      variant="outlined"
+                      value={
+                        empresaDatos.valor_puntos
+                          ? empresaDatos.valor_puntos
                           : ""
                       }
                       onChange={obtenerCampos}
@@ -421,7 +402,7 @@ export default function MisDatos() {
               <Grid container spacing={3} className={classes.require}>
                 <Grid item md={4}>
                   <Box>
-                    <Typography>Calle</Typography>
+                    <Typography><b>Calle</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -437,7 +418,7 @@ export default function MisDatos() {
                     />
                   </Box>
                   <Box>
-                    <Typography>Num. Ext</Typography>
+                    <Typography><b>Num. Ext</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -453,7 +434,7 @@ export default function MisDatos() {
                     />
                   </Box>
                   <Box>
-                    <Typography>Num. Int</Typography>
+                    <Typography><b>Num. Int</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -570,25 +551,24 @@ export default function MisDatos() {
                   </Box>
                 </Grid>
               </Grid>
+              {sesion.accesos.mi_empresa.datos_empresa.editar === false ? null : (
+                <DialogActions style={{ marginTop:15,width:'100%',justifyContent: "center" }}>
+                    <Button onClick={handleClose} color="primary">
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={() => actEmp()}
+                    color="primary"
+                    variant="contained"
+                  
+                  >
+                    Guardar
+                  </Button>
+                </DialogActions>
+                )}
             </Container>
           )}
-        </DialogContent>
-        {sesion.accesos.mi_empresa.datos_empresa.editar === false ? null : (
-          <DialogActions style={{ justifyContent: "center" }}>
-            <Button onClick={handleClose} color="primary">
-              Cancelar
-            </Button>
-            <Button
-              onClick={() => actEmp()}
-              color="primary"
-              variant="contained"
-              autoFocus
-            >
-              Guardar
-            </Button>
-          </DialogActions>
-        )}
-      </Dialog>
+       
     </div>
   );
 }
