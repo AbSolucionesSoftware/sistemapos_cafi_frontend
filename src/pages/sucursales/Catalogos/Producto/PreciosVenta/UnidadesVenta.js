@@ -15,6 +15,7 @@ import { Cached, LocalOffer } from "@material-ui/icons";
 import { FormControl } from "@material-ui/core";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
 import { formatoMexico } from "../../../../../config/reuserFunctions";
+import { useState } from "react";
 
 export default function PreciosDeCompra() {
   const {
@@ -141,6 +142,12 @@ const UnidadesVentaSecundaria = () => {
     unidadVentaSecundaria,
     setUnidadVentaSecundaria,
   } = useContext(RegProductoContext);
+  const [precio, setPrecio] = useState(
+    unidadVentaSecundaria.descuento_activo !== null &&
+      unidadVentaSecundaria.descuento_activo === true
+      ? unidadVentaSecundaria.descuento.precio_neto
+      : unidadVentaSecundaria.precio
+  );
 
   const GenCodigoBarras = () => {
     const max = 999999999999;
@@ -174,13 +181,15 @@ const UnidadesVentaSecundaria = () => {
       unidadVentaSecundaria.descuento_activo &&
       unidadVentaSecundaria.descuento_activo === true
     ) {
-      setUnidadVentaSecundaria({
+      setPrecio(value);
+      calcularUnidadDesucuento(value)
+      /* setUnidadVentaSecundaria({
         ...unidadVentaSecundaria,
         descuento: {
           ...unidadVentaSecundaria.descuento,
           precio_neto: value,
         },
-      });
+      }); */
     } else {
       setUnidadVentaSecundaria({
         ...unidadVentaSecundaria,
@@ -189,39 +198,21 @@ const UnidadesVentaSecundaria = () => {
     }
   };
 
-  const calcularUnidadDesucuento = (e) => {
-    console.log("hola");
-    if (e.target.value === "") {
-      setUnidadVentaSecundaria({
-        ...unidadVentaSecundaria,
-        unidad_principal: false,
-        descuento: {...unidadVentaSecundaria.descuento,
-        precio_neto: 0}
-      });
-      setUnidadVentaXDefecto({
-        ...unidadVentaXDefecto,
-        unidad_principal: true,
-      });
-      return;
-    }
-    if (!unidadVentaSecundaria.precio || !unidadVentaSecundaria.cantidad)
-      return;
+  const calcularUnidadDesucuento = (value) => {
+    const { cantidad, precio_unidad } = unidadVentaSecundaria;
+    if (!value || !cantidad) return;
+    
+    const precio_unit = value / cantidad;
+    const { iva, ieps, unidad_de_compra } = precios;
+    let PCSI = unidad_de_compra.precio_unitario_sin_impuesto;
+    const { precio_venta, numero_precio, unidad_maxima } = precio_unidad;
 
-    const { precio, cantidad } = unidadVentaSecundaria;
-    let copy_unidad = { ...unidadVentaSecundaria };
-    const { iva, ieps } = precios;
-    let PCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
-    const {cantidad_unidad, precio_venta, numero_precio, unidad_maxima } = copy_unidad.precio_unidad;
+    console.log(unidadVentaSecundaria);
 
-    console.log(copy_unidad);
     let suma_impuestos =
       parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
       parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
-
-      
-    let PVSI = parseFloat((precio / (suma_impuestos + 1)).toFixed(2));
-    let dineroDescontado = 0;
-    let PVCDSI = 0; // Precio venta con descuento sin impuestos
+    let PVSI = parseFloat((precio_unit / (suma_impuestos + 1)).toFixed(2));
     let porcentaje = parseFloat(((PVSI / precio_venta) * 100).toFixed(2));
     let descuento = parseFloat((100 - porcentaje).toFixed(2));
 
@@ -230,11 +221,11 @@ const UnidadesVentaSecundaria = () => {
       precio_venta,
       PVSI,
       porcentaje,
-      descuento
+      descuento,
     });
 
-    PVCDSI = parseFloat(((precio_venta * porcentaje) / 100).toFixed(2));
-    dineroDescontado = parseFloat((precio_venta - PVCDSI).toFixed(2));
+    let PVCDSI = parseFloat(((precio_venta * porcentaje) / 100).toFixed(2));
+    let dineroDescontado = parseFloat((precio_venta - PVCDSI).toFixed(2));
 
     let iva_precio = parseFloat(
       PVCDSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)
@@ -246,15 +237,15 @@ const UnidadesVentaSecundaria = () => {
     let precio_neto = parseFloat(
       (PVCDSI + iva_precio + ieps_precio).toFixed(2)
     );
-    let precio_general = parseFloat((precio_neto * cantidad_unidad).toFixed(2));
+    let precio_general = parseFloat((precio_neto * cantidad).toFixed(2));
 
     console.log({
       descuento: {
-        cantidad_unidad: cantidad_unidad,
+        cantidad_unidad: cantidad,
         numero_precio: numero_precio,
         unidad_maxima: unidad_maxima,
         precio_general: precio_general,
-        precio_neto: precio_neto,
+        precio_neto: precio_general,
         precio_venta: PVCDSI,
         iva_precio: iva_precio,
         ieps_precio: ieps_precio,
@@ -266,11 +257,11 @@ const UnidadesVentaSecundaria = () => {
     setUnidadVentaSecundaria({
       ...unidadVentaSecundaria,
       descuento: {
-        cantidad_unidad: cantidad_unidad,
+        cantidad_unidad: cantidad,
         numero_precio: numero_precio,
         unidad_maxima: unidad_maxima,
         precio_general: precio_general,
-        precio_neto: precio_neto,
+        precio_neto: precio_general,
         precio_venta: PVCDSI,
         iva_precio: iva_precio,
         ieps_precio: ieps_precio,
@@ -362,6 +353,11 @@ const UnidadesVentaSecundaria = () => {
       ...unidadVentaSecundaria,
       descuento_activo: boolean,
     });
+    setPrecio(
+      boolean
+        ? unidadVentaSecundaria.descuento.precio_neto
+        : unidadVentaSecundaria.precio
+    );
   };
 
   return (
@@ -392,18 +388,10 @@ const UnidadesVentaSecundaria = () => {
           type="number"
           name="precio"
           variant="outlined"
-          size="small" 
-          onBlur={(e) => unidadVentaSecundaria.descuento_activo !== null &&
-            unidadVentaSecundaria.descuento_activo === true
-              ? calcularUnidadDesucuento(e)
-              : calcularUnidad(e)}
+          size="small"
+          onBlur={(e) => calcularUnidad(e)}
           onChange={obtenerPrecio}
-          value={
-            unidadVentaSecundaria.descuento_activo !== null &&
-            unidadVentaSecundaria.descuento_activo === true
-              ? unidadVentaSecundaria.descuento.precio_neto
-              : unidadVentaSecundaria.precio
-          }
+          value={precio}
           InputProps={{
             inputProps: { min: 0 },
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
