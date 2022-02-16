@@ -60,7 +60,7 @@ export const OBTENER_PRODUCTOS_ALMACEN = gql`
   query obtenerProductosAlmacenes(
     $empresa: ID!
     $sucursal: ID!
-    $filtro: FilterProductoInput
+    $filtro: String
   ) {
     obtenerProductosAlmacenes(
       empresa: $empresa

@@ -5,26 +5,30 @@ import {
   Grid,
   TextField,
   Button,
+  Dialog,
   Avatar,
+  DialogContent,
   Container,
 } from "@material-ui/core";
 import {
+  Slide,
   Typography,
+  Toolbar,
+  AppBar,
   Divider,
   DialogActions,
 } from "@material-ui/core";
 import { useDropzone } from "react-dropzone";
-
+import CloseIcon from "@material-ui/icons/Close";
+import { FcNook } from "react-icons/fc";
 import { useMutation, useQuery } from "@apollo/client";
-import { EmpresaContext } from "../../../../context/Catalogos/empresaContext";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 import BackdropComponent from "../../../../components/Layouts/BackDrop";
 import ErrorPage from "../../../../components/ErrorPage";
 import {
-  ACTUALIZAR_EMPRESA,
-  OBTENER_DATOS_EMPRESA,
-} from "../../../../gql/Empresa/empresa";
-
+  OBTENER_DATOS_SUCURSAL, ACTUALIZAR_SUCURSAL
+} from "../../../../gql/Empresa/sucursales";
+import { cleanTypenames } from "../../../../config/reuserFunctions";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -64,8 +68,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
-export default function MisDatos(props) {
+export default function DatosSucursal() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const classes = useStyles();
   const [loadingPage, setLoadingPage] = React.useState(false);
@@ -73,35 +80,26 @@ export default function MisDatos(props) {
     sesion.accesos.mi_empresa.datos_empresa.editar === false ? true : false
   );
   const [preview, setPreview] = useState("");
-
-   
+  const [open, setOpen] = React.useState(false);
   const [errorPage, setErrorPage] = React.useState(false);
   const [errorForm, setErrorForm] = React.useState(
     useState({ error: false, message: "" })
   );
 
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
-  const { empresa, update, setEmpresa, setUpdate } = useContext(EmpresaContext);
+ 
 
-  const [actualizarEmpresa] = useMutation(ACTUALIZAR_EMPRESA);
+  const [actualizarSucursal] = useMutation(ACTUALIZAR_SUCURSAL);
 
   /* Queries */
-  const { loading, data, refetch, error } = useQuery(OBTENER_DATOS_EMPRESA, {
-    variables: { id: sesion.empresa._id },
+  const { loading, data, refetch, error } = useQuery(OBTENER_DATOS_SUCURSAL, {
+    variables: { id: sesion.sucursal._id },
   });
 
-  const [empresaDatos, setEmpresaDatos] = useState({
-    nombre_empresa: "",
-    nombre_dueno: "",
-    telefono_dueno: "",
-    celular: "",
-    correo_empresa: "",
-    valor_puntos: "",
-    nombre_fiscal: "",
-    rfc: "",
-    regimen_fiscal: "",
-    curp: "",
-    info_adicio: "",
+  const [sucursalDatos, setSucursalDatos] = useState({
+    nombre_sucursal: "",
+    descripcion: "",
+    telefono:"",
     direccion: {
       calle: "",
       no_ext: "",
@@ -112,32 +110,16 @@ export default function MisDatos(props) {
       localidad: "",
       estado: "",
       pais: "",
-    },
-    direccionFiscal: {
-      calle: "",
-      no_ext: "",
-      no_int: "",
-      codigo_postal: "",
-      colonia: "",
-      municipio: "",
-      localidad: "",
-      estado: "",
-      pais: "",
-    },
-    datosBancarios: {
-      cuenta: "",
-      sucursal: "",
-      clave_banco: "",
-    },
-    imagen: null,
+    }    
   });
+  
   useEffect(() => {
     try {
       refetch();
     } catch (errorCatch) {
       // console.log("SESSIONREFECTUPDATE",errorCatch)
     }
-  }, [update, refetch]);
+  },  [refetch]);
   useEffect(() => {
     try {
       setLoadingPage(loading);
@@ -148,12 +130,13 @@ export default function MisDatos(props) {
   useEffect(() => {
     try {
       if (data !== undefined) {
-        setEmpresa(data.obtenerEmpresa);
+        
+        setSucursalDatos(data.obtenerDatosSucursal[0]);
       }
     } catch (errorCatch) {
       // console.log("SESSIONREFECT",errorCatch)
     }
-  }, [data, setEmpresa]);
+  }, [data, setSucursalDatos]);
   useEffect(() => {
     try {
       setErrorPage(error);
@@ -161,34 +144,19 @@ export default function MisDatos(props) {
       // console.log("SESSIONREFECT",errorCatch)
     }
   }, [error]);
-  useEffect(() => {
-    try {
-      setEmpresaDatos({
-        nombre_empresa: empresa.nombre_empresa,
-        nombre_dueno: empresa.nombre_dueno,
-        telefono_dueno: empresa.telefono_dueno,
-        celular: empresa.celular,
-        valor_puntos: empresa.valor_puntos,
-        correo_empresa: empresa.correo_empresa,
-        direccion: empresa.direccion,
-        imagen: empresa.imagen,
-      });
-    } catch (errorCatch) {
-      // console.log(errorCatch)
-    }
-  }, [empresa]);
+  
 
   const actEmp = async () => {
     try {
       setLoadingPage(true);
       /* const input = cleanTypenames(empresaDatos); */
-      await actualizarEmpresa({
+      await actualizarSucursal({
         variables: {
           id: sesion.empresa._id,
-          input: empresaDatos,
+          input: sucursalDatos,
         },
       });
-      setUpdate(true);
+     
       setLoadingPage(false);
       setAlert({
         message: "Se han actualizado correctamente los datos.",
@@ -207,29 +175,26 @@ export default function MisDatos(props) {
       setLoadingPage(false);
     }
   };
- 
-  const obtenerCampos = (e) => {
-    try {
-      let valor = e.target.value;
-      if(e.target.name === 'valor_puntos'){ valor = parseFloat(valor)}
-      setEmpresaDatos({
-        ...empresaDatos,
-        [e.target.name]: valor,
-      });
-    } catch (error) {
-      
-    }
-  
+  const handleClickOpen = () => {
+    setOpen(true);
   };
-  const obtenerCamposDireccion = (e) => {
-    setEmpresaDatos({
-      ...empresaDatos,
-      direccion: { ...empresaDatos.direccion, [e.target.name]: e.target.value },
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const obtenerCampos = (e) => {
+    setSucursalDatos({
+      ...sucursalDatos,
+      [e.target.name]: e.target.value,
     });
   };
-  const handleClose = () => {
-    props.setOpen(false)
-  }
+  const obtenerCamposDireccion = (e) => {
+    setSucursalDatos({
+      ...sucursalDatos,
+      direccion: { ...sucursalDatos.direccion, [e.target.name]: e.target.value },
+    });
+  };
+
   //dropzone
   const onDrop = useCallback(
     (acceptedFiles) => {
@@ -239,42 +204,63 @@ export default function MisDatos(props) {
         let image = reader.result;
         setPreview(image);
       };
-      setEmpresaDatos({
-        ...empresaDatos,
+      setSucursalDatos({
+        ...sucursalDatos,
         imagen: acceptedFiles[0],
       });
     },
-    [empresaDatos, setEmpresaDatos]
+    [sucursalDatos, setSucursalDatos]
   );
   const { getRootProps, getInputProps } = useDropzone({
     accept: "image/jpeg, image/png",
     noKeyboard: true,
     onDrop,
   });
-  
+
   return (
     <div>
+      <Button fullWidth onClick={handleClickOpen}>
+        <Box display="flex" flexDirection="column">
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <FcNook className={classes.icon} />
+          </Box>
+          Datos de sucursal
+        </Box>
+      </Button>
+      <Dialog
+        fullScreen
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Transition}
+      >
         <SnackBarMessages alert={alert} setAlert={setAlert} />
         <BackdropComponent loading={loadingPage} setLoading={setLoadingPage} />
+
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <Typography variant="h6" className={classes.title}>
+              Datos
+            </Typography>
+            <Box m={1}>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleClose}
+                size="large"
+              >
+                <CloseIcon style={{ fontSize: 30 }} />
+              </Button>
+            </Box>
+          </Toolbar>
+        </AppBar>
+        <DialogContent>
           {errorPage ? (
             <ErrorPage error={errorPage} />
           ) : (
             <Container style={{ marginTop: 8 }}>
               <Grid container spacing={3} className={classes.require}>
-                <Grid item md={2}>
-                  <Box className={classes.avatarContainer} {...getRootProps()}>
-                    <input {...getInputProps()} />
-                    {preview ? (
-                      <Avatar className={classes.avatar} src={`${preview}`} />
-                    ) : (
-                      <Avatar
-                        className={classes.avatar}
-                        src={`${empresa.imagen}`}
-                      />
-                    )}
-                  </Box>
-                </Grid>
-                <Grid item md={4}>
+              
+                <Grid item md={4} flexdirection='row'>
                   <Box>
                     <Typography>
                       <b><span>* </span>Nombre de empresa</b>
@@ -284,12 +270,12 @@ export default function MisDatos(props) {
                       disabled={bloqueo}
                       type="text"
                       size="small"
-                      error={errorForm.error && !empresaDatos.nombre_empresa}
+                      error={errorForm.error && !sucursalDatos.nombre_sucursal}
                       name="nombre_empresa"
                       variant="outlined"
                       value={
-                        empresaDatos.nombre_empresa
-                          ? empresaDatos.nombre_empresa
+                        sucursalDatos.nombre_sucursal
+                          ? sucursalDatos.nombre_sucursal
                           : ""
                       }
                       helperText={
@@ -303,19 +289,19 @@ export default function MisDatos(props) {
                   </Box>
                   <Box>
                     <Typography>
-                      <b><span>* </span>Nombre dueño</b>
+                      <b>Descripción</b>
                     </Typography>
                     <TextField
                       fullWidth
                       disabled={bloqueo}
                       type="text"
                       size="small"
-                      error={errorForm.error && !empresaDatos.nombre_dueno}
+                      error={errorForm.error && !sucursalDatos.descripcion}
                       name="nombre_dueno"
                       variant="outlined"
                       value={
-                        empresaDatos.nombre_dueno
-                          ? empresaDatos.nombre_dueno
+                        sucursalDatos.descripcion
+                          ? sucursalDatos.descripcion
                           : ""
                       }
                       helperText={
@@ -327,8 +313,8 @@ export default function MisDatos(props) {
                       onChange={obtenerCampos}
                     />
                   </Box>
-                  <Box>
-                    <Typography><b>Teléfono</b></Typography>
+                 {/*  <Box>
+                    <Typography>Teléfono</Typography>
                     <TextField
                       fullWidth
                       disabled={bloqueo}
@@ -336,66 +322,20 @@ export default function MisDatos(props) {
                       name="telefono_dueno"
                       variant="outlined"
                       value={
-                        empresaDatos.telefono_dueno
-                          ? empresaDatos.telefono_dueno
+                        sucursalDatos.telefono_dueno
+                          ? sucursalDatos.telefono_dueno
                           : ""
                       }
                       onChange={obtenerCampos}
                     />
-                  </Box>
+                  </Box> */}
                 </Grid>
-                <Grid item md={4}>
-                  <Box>
-                    <Typography><b>Celular</b></Typography>
-                    <TextField
-                      fullWidth
-                      disabled={bloqueo}
-                      size="small"
-                      name="celular"
-                      variant="outlined"
-                      value={empresaDatos.celular ? empresaDatos.celular : ""}
-                      onChange={obtenerCampos}
-                    />
-                  </Box>
-                  <Box>
-                    <Typography><b>E-mail</b></Typography>
-                    <TextField
-                      fullWidth
-                      disabled={bloqueo}
-                      size="small"
-                      name="correo_empresa"
-                      variant="outlined"
-                      value={
-                        empresaDatos.correo_empresa
-                          ? empresaDatos.correo_empresa
-                          : ""
-                      }
-                      onChange={obtenerCampos}
-                    />
-                  </Box>
-                   <Box>
-                    <Typography><b>Valor de puntos</b></Typography>
-                    <TextField
-                      inputMode="numeric"
-					            type="number"
-                      disabled={bloqueo}
-                      size="small"
-                      name="valor_puntos"
-                      variant="outlined"
-                      value={
-                        empresaDatos.valor_puntos
-                          ? empresaDatos.valor_puntos
-                          : ""
-                      }
-                      onChange={obtenerCampos}
-                    />
-                  </Box>
-                </Grid>
+                
               </Grid>
 
               <Box mt={5}>
                 <Typography className={classes.subtitle}>
-                  <b>Domicilio empresa</b>
+                  <b>Domicilio</b>
                 </Typography>
                 <Divider />
               </Box>
@@ -410,8 +350,8 @@ export default function MisDatos(props) {
                       variant="outlined"
                       disabled={bloqueo}
                       value={
-                        empresaDatos.direccion.calle
-                          ? empresaDatos.direccion.calle
+                        sucursalDatos.direccion.calle
+                          ? sucursalDatos.direccion.calle
                           : ""
                       }
                       onChange={obtenerCamposDireccion}
@@ -426,8 +366,8 @@ export default function MisDatos(props) {
                       variant="outlined"
                       disabled={bloqueo}
                       value={
-                        empresaDatos.direccion.no_ext
-                          ? empresaDatos.direccion.no_ext
+                        sucursalDatos.direccion.no_ext
+                          ? sucursalDatos.direccion.no_ext
                           : ""
                       }
                       onChange={obtenerCamposDireccion}
@@ -442,8 +382,8 @@ export default function MisDatos(props) {
                       variant="outlined"
                       disabled={bloqueo}
                       value={
-                        empresaDatos.direccion.no_int
-                          ? empresaDatos.direccion.no_int
+                        sucursalDatos.direccion.no_int
+                          ? sucursalDatos.direccion.no_int
                           : ""
                       }
                       onChange={obtenerCamposDireccion}
@@ -452,7 +392,7 @@ export default function MisDatos(props) {
                 </Grid>
                 <Grid item md={4}>
                   <Box>
-                    <Typography><b>C.P.</b> </Typography>
+                    <Typography><b>C.P.</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -460,8 +400,8 @@ export default function MisDatos(props) {
                       variant="outlined"
                       disabled={bloqueo}
                       value={
-                        empresaDatos.direccion.codigo_postal
-                          ? empresaDatos.direccion.codigo_postal
+                        sucursalDatos.direccion.codigo_postal
+                          ? sucursalDatos.direccion.codigo_postal
                           : ""
                       }
                       onChange={obtenerCamposDireccion}
@@ -476,8 +416,8 @@ export default function MisDatos(props) {
                       variant="outlined"
                       disabled={bloqueo}
                       value={
-                        empresaDatos.direccion.colonia
-                          ? empresaDatos.direccion.colonia
+                        sucursalDatos.direccion.colonia
+                          ? sucursalDatos.direccion.colonia
                           : ""
                       }
                       onChange={obtenerCamposDireccion}
@@ -492,8 +432,8 @@ export default function MisDatos(props) {
                       variant="outlined"
                       disabled={bloqueo}
                       value={
-                        empresaDatos.direccion.municipio
-                          ? empresaDatos.direccion.municipio
+                        sucursalDatos.direccion.municipio
+                          ? sucursalDatos.direccion.municipio
                           : ""
                       }
                       onChange={obtenerCamposDireccion}
@@ -510,8 +450,8 @@ export default function MisDatos(props) {
                       variant="outlined"
                       disabled={bloqueo}
                       value={
-                        empresaDatos.direccion.localidad
-                          ? empresaDatos.direccion.localidad
+                        sucursalDatos.direccion.localidad
+                          ? sucursalDatos.direccion.localidad
                           : ""
                       }
                       onChange={obtenerCamposDireccion}
@@ -526,8 +466,8 @@ export default function MisDatos(props) {
                       variant="outlined"
                       disabled={bloqueo}
                       value={
-                        empresaDatos.direccion.estado
-                          ? empresaDatos.direccion.estado
+                        sucursalDatos.direccion.estado
+                          ? sucursalDatos.direccion.estado
                           : ""
                       }
                       onChange={obtenerCamposDireccion}
@@ -542,8 +482,8 @@ export default function MisDatos(props) {
                       variant="outlined"
                       disabled={bloqueo}
                       value={
-                        empresaDatos.direccion.pais
-                          ? empresaDatos.direccion.pais
+                        sucursalDatos.direccion.pais
+                          ? sucursalDatos.direccion.pais
                           : ""
                       }
                       onChange={obtenerCamposDireccion}
@@ -551,24 +491,25 @@ export default function MisDatos(props) {
                   </Box>
                 </Grid>
               </Grid>
-              {sesion.accesos.mi_empresa.datos_empresa.editar === false ? null : (
-                <DialogActions style={{ marginTop:15,width:'100%',justifyContent: "center" }}>
-                    <Button onClick={handleClose} color="primary">
-                    Cancelar
-                  </Button>
-                  <Button
-                    onClick={() => actEmp()}
-                    color="primary"
-                    variant="contained"
-                  
-                  >
-                    Guardar
-                  </Button>
-                </DialogActions>
-                )}
             </Container>
           )}
-       
+        </DialogContent>
+        {sesion.accesos.mi_empresa.datos_empresa.editar === false ? null : (
+          <DialogActions style={{ justifyContent: "center" }}>
+            <Button onClick={handleClose} color="primary">
+              Cancelar
+            </Button>
+            <Button
+              onClick={() => actEmp()}
+              color="primary"
+              variant="contained"
+              autoFocus
+            >
+              Guardar
+            </Button>
+          </DialogActions>
+        )}
+      </Dialog>
     </div>
   );
 }

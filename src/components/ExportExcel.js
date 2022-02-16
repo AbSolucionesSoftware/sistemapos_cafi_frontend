@@ -1,12 +1,13 @@
 import React, { Fragment } from 'react';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
 
-import ReactExport from 'react-export-excel'; //LIBRERIA EXCEL
+
 import { withRouter } from 'react-router-dom';
 import { Grid, Button } from '@material-ui/core';
-const ExcelFile = ReactExport.ExcelFile; //ARCHIVO DE EXCEL
-const ExcelSheet = ReactExport.ExcelSheet; //HOJA DE EXCEL
-const ExcelColumn = ReactExport.ExcelColumn; //COLUMNA DE EXCEL
+import ExcelFile from 'react-export-excel/dist/ExcelPlugin/components/ExcelFile'
+
+import ExcelSheet from 'react-export-excel/dist/ExcelPlugin/elements/ExcelSheet';
+import ExcelColumn from 'react-export-excel/dist/ExcelPlugin/elements/ExcelColumn';
 
 //Este componente requiere el ArrayData, ArrayColumn, fileName
 function ExportarExcel(props) {
@@ -15,9 +16,10 @@ function ExportarExcel(props) {
             <Grid>
                 <Grid item>
                 <ExcelFile
+					
 					element={
-						<Button size="large" color="primary" variant="contained" startIcon={<DescriptionOutlinedIcon />}>
-							Exportar Excel
+						<Button variant="contained" color="primary"startIcon={<DescriptionOutlinedIcon />}>
+							Exportar a Excel
 						</Button>
 					}
 					filename={props.fileName}
@@ -25,7 +27,7 @@ function ExportarExcel(props) {
 					<ExcelSheet data={props.data} name={props.fileName}>
                         {props.columnName.map((element) => {
                             return(
-                                <ExcelColumn label={element.label} value={element.id} />
+                                <ExcelColumn key={element.id} label={element.label} value={element.id} />
                             )
                         }
                         )}

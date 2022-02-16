@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, } from 'react';
 
 export const TraspasosAlmacenContext = createContext();
 
@@ -12,9 +12,8 @@ export const TraspasosProvider = ({ children }) => {
     const [ productosTo, setProductosTo ] = useState([]);
      const [ productosEmpTo, setProductosEmpTo ] = useState([]);
     const [ productosTras, setProductosTras ] = useState([]);
+    const [ dataExcel, setDataExcel ] = useState([]);
 
-   
-  
 	return (
 		<TraspasosAlmacenContext.Provider value={
             { 
@@ -32,7 +31,10 @@ export const TraspasosProvider = ({ children }) => {
                 productosTo,
                 setProductosTo,
                 productosEmpTo, 
-                setProductosEmpTo
+                setProductosEmpTo,
+                dataExcel,
+                setDataExcel
+                
             }
         }>
 			{children}

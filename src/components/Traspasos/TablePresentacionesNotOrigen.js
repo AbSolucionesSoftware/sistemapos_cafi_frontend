@@ -359,10 +359,12 @@ const RenderPresentacionesRows = ({
             <TableCell width={110}>
               <Input
                 inputRef={textfield}
+                inputMode="numeric"
+                type="number"
                 onChange={(e) => obtenerDatos(e)}
                 disabled={disabledInput}
                 value={copy_producto.medida.precio}
-                type="tel"
+               
                 name="precio"
               />
               
