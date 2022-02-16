@@ -333,7 +333,7 @@ export default function CrearProducto({
     /* const clean_data = cleanTypenames(input); */
     console.log(input);
 
-    /* setLoading(true);
+    setLoading(true);
      try {
       if (accion) {
         const result = await actualizarProducto({
@@ -379,7 +379,7 @@ export default function CrearProducto({
       } else if (error.graphQLErrors) {
         console.log(error.graphQLErrors);
       }
-    } */
+    }
   };
 
   /* ###### RESET STATES ###### */
@@ -407,7 +407,7 @@ export default function CrearProducto({
   /* SET STATES WHEN UPDATING */
   const setInitialStates = (producto) => {
     /* const producto = cleanTypenames(product); */
-    /* console.log(producto); */
+    console.log(producto);
     const { precios_producto, ...new_precios } = producto.precios;
     const { unidades_de_venta } = producto;
     let unidades_secundaria = producto.unidades_de_venta.filter(

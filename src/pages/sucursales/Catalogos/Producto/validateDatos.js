@@ -27,7 +27,7 @@ export const validateJsonEdit = async (data, tipo) => {
         object_date = { ...object_date, id_marca: data.id_marca };
       if (data.marca !== null && data.marca !== "")
         object_date = { ...object_date, marca: data.marca };
-      if (data.clave_producto_sat.Name !== null && data.clave_producto_sat.Name !== "")
+      if (data.clave_producto_sat.Name !== null)
         object_date = {
           ...object_date,
           clave_producto_sat: data.clave_producto_sat,

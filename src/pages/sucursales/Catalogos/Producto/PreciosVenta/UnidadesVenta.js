@@ -423,6 +423,8 @@ const UnidadesVentaSecundaria = () => {
           onBlur={(e) => calcularUnidad(e)}
           onChange={obtenerPrecio}
           value={precio}
+          disabled={unidadVentaSecundaria.descuento_activo !== null &&
+            unidadVentaSecundaria.descuento_activo === true}
           InputProps={{
             inputProps: { min: 0 },
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
