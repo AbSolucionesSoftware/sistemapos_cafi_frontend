@@ -252,7 +252,7 @@ export default function InformacionFiscal(props) {
                 <Grid item md={6} xs={12} className={classes.require}>
                   <Box my={1}>
                     <Typography>
-                      <span>* </span>Nombre fiscal
+                     <b> <span>* </span>Nombre fiscal</b>
                     </Typography>
                     <TextField
                       fullWidth
@@ -277,7 +277,7 @@ export default function InformacionFiscal(props) {
                     />
                   </Box>
                   <Box my={1}>
-                    <Typography>RFC</Typography>
+                    <Typography><b>RFC</b></Typography>
                     <TextField
                       fullWidth
                       disabled={bloqueo}
@@ -318,7 +318,7 @@ export default function InformacionFiscal(props) {
                     </FormControl>
                   </Box>
                   <Box my={1}>
-                    <Typography>CURP</Typography>
+                    <Typography><b>CURP</b></Typography>
                     <TextField
                       disabled={bloqueo}
                       fullWidth
@@ -330,7 +330,7 @@ export default function InformacionFiscal(props) {
                     />
                   </Box>
                   <Box my={1}>
-                    <Typography>Info. Adicional</Typography>
+                    <Typography><b>Info. Adicional</b></Typography>
                     <TextField
                       disabled={bloqueo}
                       fullWidth
@@ -386,7 +386,7 @@ export default function InformacionFiscal(props) {
                     )}
                   </Box>
                   <Box my={1}>
-                    <Typography>Archivo *.cer</Typography>
+                    <Typography><b>Archivo *.cer</b></Typography>
                     <TextField
                       disabled
                       fullWidth
@@ -395,7 +395,7 @@ export default function InformacionFiscal(props) {
                     />
                   </Box>
                   <Box my={1}>
-                    <Typography>Archivo *.key</Typography>
+                    <Typography><b>Archivo *.key</b></Typography>
                     <TextField
                       disabled
                       fullWidth
@@ -404,7 +404,7 @@ export default function InformacionFiscal(props) {
                     />
                   </Box>
                   <Box my={1}>
-                    <Typography>Fecha de registro</Typography>
+                    <Typography><b>Fecha de registro</b></Typography>
                     <TextField
                       disabled
                       fullWidth
@@ -423,7 +423,7 @@ export default function InformacionFiscal(props) {
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={4}>
                   <Box>
-                    <Typography>Calle</Typography>
+                    <Typography><b>Calle</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -439,7 +439,7 @@ export default function InformacionFiscal(props) {
                     />
                   </Box>
                   <Box>
-                    <Typography>Num. Ext</Typography>
+                    <Typography><b>Num. Ext</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -455,7 +455,7 @@ export default function InformacionFiscal(props) {
                     />
                   </Box>
                   <Box>
-                    <Typography>Num. Int</Typography>
+                    <Typography><b>Num. Int</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -473,7 +473,7 @@ export default function InformacionFiscal(props) {
                 </Grid>
                 <Grid item xs={12} sm={4}>
                   <Box>
-                    <Typography>C.P.</Typography>
+                    <Typography><b>C.P.</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -489,7 +489,7 @@ export default function InformacionFiscal(props) {
                     />
                   </Box>
                   <Box>
-                    <Typography>Colonia</Typography>
+                    <Typography><b>Colonia</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -505,7 +505,7 @@ export default function InformacionFiscal(props) {
                     />
                   </Box>
                   <Box>
-                    <Typography>Municipio</Typography>
+                    <Typography><b>Municipio</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -523,7 +523,7 @@ export default function InformacionFiscal(props) {
                 </Grid>
                 <Grid item xs={12} sm={4}>
                   <Box>
-                    <Typography>Localidad</Typography>
+                    <Typography><b>Localidad</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -539,7 +539,7 @@ export default function InformacionFiscal(props) {
                     />
                   </Box>
                   <Box>
-                    <Typography>Estado</Typography>
+                    <Typography><b>Estado</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -555,7 +555,7 @@ export default function InformacionFiscal(props) {
                     />
                   </Box>
                   <Box>
-                    <Typography>Pais</Typography>
+                    <Typography><b>Pais</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -581,7 +581,7 @@ export default function InformacionFiscal(props) {
               <Grid container spacing={2}>
                 <Grid item xs={12} md={4}>
                   <Box>
-                    <Typography>Cuenta</Typography>
+                    <Typography><b>Cuenta</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -599,7 +599,7 @@ export default function InformacionFiscal(props) {
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <Box>
-                    <Typography>Sucursal</Typography>
+                    <Typography><b>Sucursal</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -617,7 +617,7 @@ export default function InformacionFiscal(props) {
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <Box>
-                    <Typography>Clave de banco</Typography>
+                    <Typography><b>Clave de banco</b></Typography>
                     <TextField
                       fullWidth
                       size="small"

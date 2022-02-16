@@ -263,7 +263,7 @@ export default function DatosSucursal() {
                 <Grid item md={4} flexdirection='row'>
                   <Box>
                     <Typography>
-                      <span>* </span>Nombre de empresa
+                      <b><span>* </span>Nombre de empresa</b>
                     </Typography>
                     <TextField
                       fullWidth
@@ -289,7 +289,7 @@ export default function DatosSucursal() {
                   </Box>
                   <Box>
                     <Typography>
-                      Descripción
+                      <b>Descripción</b>
                     </Typography>
                     <TextField
                       fullWidth
@@ -342,7 +342,7 @@ export default function DatosSucursal() {
               <Grid container spacing={3} className={classes.require}>
                 <Grid item md={4}>
                   <Box>
-                    <Typography>Calle</Typography>
+                    <Typography><b>Calle</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -358,7 +358,7 @@ export default function DatosSucursal() {
                     />
                   </Box>
                   <Box>
-                    <Typography>Num. Ext</Typography>
+                    <Typography><b>Num. Ext</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -374,7 +374,7 @@ export default function DatosSucursal() {
                     />
                   </Box>
                   <Box>
-                    <Typography>Num. Int</Typography>
+                    <Typography><b>Num. Int</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -392,7 +392,7 @@ export default function DatosSucursal() {
                 </Grid>
                 <Grid item md={4}>
                   <Box>
-                    <Typography>C.P. </Typography>
+                    <Typography><b>C.P.</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -408,7 +408,7 @@ export default function DatosSucursal() {
                     />
                   </Box>
                   <Box>
-                    <Typography>Colonia</Typography>
+                    <Typography><b>Colonia</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -424,7 +424,7 @@ export default function DatosSucursal() {
                     />
                   </Box>
                   <Box>
-                    <Typography>Municipio</Typography>
+                    <Typography><b>Municipio</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -442,7 +442,7 @@ export default function DatosSucursal() {
                 </Grid>
                 <Grid item md={4}>
                   <Box>
-                    <Typography>Localidad</Typography>
+                    <Typography><b>Localidad</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -458,7 +458,7 @@ export default function DatosSucursal() {
                     />
                   </Box>
                   <Box>
-                    <Typography>Estado</Typography>
+                    <Typography><b>Estado</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -474,7 +474,7 @@ export default function DatosSucursal() {
                     />
                   </Box>
                   <Box>
-                    <Typography>Pais</Typography>
+                    <Typography><b>Pais</b></Typography>
                     <TextField
                       fullWidth
                       size="small"
