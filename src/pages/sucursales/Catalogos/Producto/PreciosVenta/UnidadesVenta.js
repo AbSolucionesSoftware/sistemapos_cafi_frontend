@@ -183,18 +183,8 @@ const UnidadesVentaSecundaria = () => {
     ) {
       setPrecio(value);
       calcularUnidadDesucuento(value)
-      /* setUnidadVentaSecundaria({
-        ...unidadVentaSecundaria,
-        descuento: {
-          ...unidadVentaSecundaria.descuento,
-          precio_neto: value,
-        },
-      }); */
     } else {
-      setUnidadVentaSecundaria({
-        ...unidadVentaSecundaria,
-        precio: value,
-      });
+      setPrecio(value);
     }
   };
 
@@ -204,28 +194,18 @@ const UnidadesVentaSecundaria = () => {
     
     const precio_unit = value / cantidad;
     const { iva, ieps, unidad_de_compra } = precios;
-    let PCSI = unidad_de_compra.precio_unitario_sin_impuesto;
     const { precio_venta, numero_precio, unidad_maxima } = precio_unidad;
-
-    console.log(unidadVentaSecundaria);
+    const precio_venta_unit = precio_venta / cantidad;
 
     let suma_impuestos =
       parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
       parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
     let PVSI = parseFloat((precio_unit / (suma_impuestos + 1)).toFixed(2));
-    let porcentaje = parseFloat(((PVSI / precio_venta) * 100).toFixed(2));
+    let porcentaje = parseFloat(((PVSI / precio_venta_unit) * 100).toFixed(2));
     let descuento = parseFloat((100 - porcentaje).toFixed(2));
 
-    console.log(PVSI / precio_venta);
-    console.log({
-      precio_venta,
-      PVSI,
-      porcentaje,
-      descuento,
-    });
-
-    let PVCDSI = parseFloat(((precio_venta * porcentaje) / 100).toFixed(2));
-    let dineroDescontado = parseFloat((precio_venta - PVCDSI).toFixed(2));
+    let PVCDSI = parseFloat(((precio_venta_unit * porcentaje) / 100).toFixed(2));
+    let dineroDescontado = parseFloat((precio_venta_unit - PVCDSI).toFixed(2));
 
     let iva_precio = parseFloat(
       PVCDSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)
@@ -233,13 +213,15 @@ const UnidadesVentaSecundaria = () => {
     let ieps_precio = parseFloat(
       PVCDSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)
     );
+    let PCSI = unidad_de_compra.precio_unitario_sin_impuesto;
     let utilidad = parseFloat((((PVCDSI - PCSI) / PCSI) * 100).toFixed(2));
     let precio_neto = parseFloat(
       (PVCDSI + iva_precio + ieps_precio).toFixed(2)
     );
     let precio_general = parseFloat((precio_neto * cantidad).toFixed(2));
 
-    console.log({
+    setUnidadVentaSecundaria({
+      ...unidadVentaSecundaria,
       descuento: {
         cantidad_unidad: cantidad,
         numero_precio: numero_precio,
@@ -254,8 +236,58 @@ const UnidadesVentaSecundaria = () => {
         dinero_descontado: dineroDescontado,
       },
     });
+  };
+
+  const calcularUnidadDesucuentoCheck = (boolean) => {
+    const { cantidad, precio_unidad, descuento } = unidadVentaSecundaria;
+    if (!precio || !cantidad) return;
+    
+    /* const precio_unit = value / cantidad; */
+    const { iva, ieps, unidad_de_compra } = precios;
+    const { precio_venta, numero_precio, unidad_maxima } = precio_unidad;
+
+    const precio_venta_unit = precio / cantidad;
+
+    let suma_impuestos =
+      parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
+      parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+    let PVSI = parseFloat((precio_venta_unit / (suma_impuestos + 1)).toFixed(2));
+    /* let porcentaje = parseFloat(((PVSI / precio_venta_unit) * 100).toFixed(2));
+    let descuento = parseFloat((100 - porcentaje).toFixed(2)); */
+
+    let PVCDSI = parseFloat(((PVSI * descuento.porciento) / 100).toFixed(2));
+    let dineroDescontado = parseFloat((PVSI - PVCDSI).toFixed(2));
+
+    let iva_precio = parseFloat(
+      PVCDSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)
+    );
+    let ieps_precio = parseFloat(
+      PVCDSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)
+    );
+    let PCSI = unidad_de_compra.precio_unitario_sin_impuesto;
+    let utilidad = parseFloat((((PVCDSI - PCSI) / PCSI) * 100).toFixed(2));
+    let precio_neto = parseFloat(
+      (PVCDSI + iva_precio + ieps_precio).toFixed(2)
+    );
+    let precio_general = parseFloat((precio_neto * cantidad).toFixed(2));
+
+    console.log({
+      precio_venta_unit,
+      PVCDSI,
+      dineroDescontado,
+      iva_precio,
+      ieps_precio,
+      PCSI,
+      utilidad,
+      precio_neto,
+      precio_general
+    });
+
+    setPrecio(precio_general);
     setUnidadVentaSecundaria({
       ...unidadVentaSecundaria,
+      descuento_activo: boolean,
+      precio,
       descuento: {
         cantidad_unidad: cantidad,
         numero_precio: numero_precio,
@@ -266,7 +298,7 @@ const UnidadesVentaSecundaria = () => {
         iva_precio: iva_precio,
         ieps_precio: ieps_precio,
         utilidad: utilidad,
-        porciento: descuento,
+        porciento: descuento.porciento,
         dinero_descontado: dineroDescontado,
       },
     });
@@ -306,6 +338,8 @@ const UnidadesVentaSecundaria = () => {
       PVSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)
     );
     let utilidad = parseFloat((((PVSI - PCSI) / PCSI) * 100).toFixed(2));
+    let precio_venta = PVSI * cantidad;
+    let precio_neto = PVCI * cantidad;
 
     let unidad_secundaria = {
       ...unidadVentaSecundaria,
@@ -313,24 +347,17 @@ const UnidadesVentaSecundaria = () => {
       cantidad,
       precio_unidad: {
         numero_precio: 1,
-        precio_venta: PVSI,
-        precio_neto: PVCI,
+        precio_venta: precio_venta,
+        precio_neto: precio_neto,
         unidad_mayoreo: 0,
         iva_precio,
         ieps_precio,
         utilidad,
-        unidad_maxima: false,
+        unidad_maxima: true,
+        precio_general: precio,
+        cantidad_unidad: cantidad,
       },
     };
-
-    if (
-      unidadVentaSecundaria.codigo_unidad === "XBX" ||
-      unidadVentaSecundaria.unidad === "Costal"
-    ) {
-      unidad_secundaria.precio_unidad.precio_general = precio;
-      unidad_secundaria.precio_unidad.cantidad_unidad = cantidad;
-      unidad_secundaria.precio_unidad.unidad_maxima = true;
-    }
 
     setUnidadVentaSecundaria(unidad_secundaria);
   };
@@ -349,15 +376,19 @@ const UnidadesVentaSecundaria = () => {
   };
 
   const aplicarDescuento = (boolean) => {
-    setUnidadVentaSecundaria({
+    let precio = boolean
+        ? unidadVentaSecundaria.descuento.precio_neto
+        : unidadVentaSecundaria.precio
+    if(boolean){
+      calcularUnidadDesucuentoCheck(boolean);
+    }else{
+      setUnidadVentaSecundaria({
       ...unidadVentaSecundaria,
       descuento_activo: boolean,
     });
-    setPrecio(
-      boolean
-        ? unidadVentaSecundaria.descuento.precio_neto
-        : unidadVentaSecundaria.precio
-    );
+    setPrecio(precio);
+    }
+    
   };
 
   return (
@@ -392,6 +423,8 @@ const UnidadesVentaSecundaria = () => {
           onBlur={(e) => calcularUnidad(e)}
           onChange={obtenerPrecio}
           value={precio}
+          disabled={unidadVentaSecundaria.descuento_activo !== null &&
+            unidadVentaSecundaria.descuento_activo === true}
           InputProps={{
             inputProps: { min: 0 },
             startAdornment: <InputAdornment position="start">$</InputAdornment>,
