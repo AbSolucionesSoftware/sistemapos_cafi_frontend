@@ -98,6 +98,28 @@ export default function CerrarVenta() {
     //TODO: Guardar la venta original en un context u localstorage por si se quiere resetear el descuento
   };
 
+  const hancleClickCerrarVentaCambio = () => {
+    setCambio(!cambio);
+    //Limpiar el storage de ventas
+    localStorage.setItem(
+      "DatosVentas",
+      JSON.stringify({
+        cliente: {},
+        venta_cliente: false,
+        monedero: 0,
+        productos: [],
+        total: 0,
+        subTotal: 0,
+        impuestos: 0,
+        iva: 0,
+        ieps: 0,
+        descuento: 0,
+      })
+    );
+    //Actualizar la tabla de ventas
+    setUpdateTablaVentas(!updateTablaVentas);
+  }
+
   function funcion_tecla(event) {
     const tecla_escape = event.keyCode;
     if (tecla_escape === 27) {
@@ -107,6 +129,8 @@ export default function CerrarVenta() {
 
   const handleClickFinishVenta = async () => {
     try {
+
+      //TODO: Colocar loading en el modal
       const sesion = JSON.parse(localStorage.getItem("turnoEnCurso"));
       const usuario = JSON.parse(localStorage.getItem("sesionCafi"));
 
@@ -118,11 +142,11 @@ export default function CerrarVenta() {
       //Agregar los montos en caja
       const montosEnCaja = {
         monto_efectivo: {
-          monto: efectivo,
+          monto: parseFloat(efectivo),
           metodo_pago: formaPago[0].Value,
         },
         monto_tarjeta_debito: {
-          monto: tarjeta,
+          monto: parseFloat(tarjeta),
           metodo_pago: formaPago[3].Value,
         },
         monto_tarjeta_credito: {
@@ -134,15 +158,15 @@ export default function CerrarVenta() {
           metodo_pago: "",
         },
         monto_monedero: {
-          monto: puntos,
+          monto: parseFloat(tarjeta),
           metodo_pago: formaPago[4].Value,
         },
         monto_transferencia: {
-          monto: transferencia,
+          monto: parseFloat(transferencia),
           metodo_pago: formaPago[2].Value,
         },
         monto_cheques: {
-          monto: cheque,
+          monto: parseFloat(cheque),
           metodo_pago: formaPago[1].Value,
         },
         monto_vales_despensa: {
@@ -150,6 +174,8 @@ export default function CerrarVenta() {
           metodo_pago: formaPago[6].Value,
         },
       };
+      ventaFinal.montos_en_caja = montosEnCaja;
+      //Agregar folio venta
       ventaFinal.folio = `${folio}`;
       //Credito a credito false
       ventaFinal.credito = visible;
@@ -162,6 +188,7 @@ export default function CerrarVenta() {
         : null;
       ventaFinal.fecha_de_vencimiento_credito = fechaVencimientoDate;
       ventaFinal.fecha_vencimiento_cotizacion = null;
+      ventaFinal.cambio = cambioVenta;
       //Enviar los datos
 
       console.log(ventaFinal);
@@ -176,16 +203,14 @@ export default function CerrarVenta() {
         },
       });
 
-      // console.log(venta_realizada);
+      //Mandar mensaje de error en dado caso de que la venta sea incorrecta
 
-      //Mandar mensaje de cambio en dado caso de ser correcto
-
-      //Mandar mensaje de error en dado caso de ser incorrecto
-
-      //Quitar informacion de localstorage de ventas (Resetear)
-
-      //cerrar modal de de finalizar venta
-
+      //TODO: Quitar loading
+      //Cerrar modal venta
+      setOpen(!open);
+      //Mandar mensaje de cambio en dado caso de ser correcta
+      setCambio(!cambio);
+      
       console.log(ventaActual);
     } catch (error) {
       console.log(error);
@@ -396,7 +421,6 @@ export default function CerrarVenta() {
         iva_total_producto,
         subtotal_total_producto,
         total_total_producto,
-        descuento: descuentoProducto,
       });
       //Sumar los valores
       total += total_total_producto;
@@ -1018,9 +1042,9 @@ export default function CerrarVenta() {
         </DialogActions>
       </Dialog>
 
-      {/* <Dialog
+      <Dialog
         open={cambio}
-        onClose={abrirCajon}
+        onClose={() => abrirCajon()}
         TransitionComponent={Transition}
       >
         <DialogContent>
@@ -1036,10 +1060,7 @@ export default function CerrarVenta() {
             <Paper elevation={3}>
               <Box p={3} width="100%" textAlign="center">
                 <Typography variant="h3" style={{ color: "red" }}>
-                  $150.000
-                </Typography>
-                <Typography variant="caption">
-                  (CIENTO CICUENTA PESOS 00/100 MNX)
+                  ${cambioVenta.toFixed(2)}
                 </Typography>
               </Box>
             </Paper>
@@ -1048,7 +1069,7 @@ export default function CerrarVenta() {
 
         <DialogActions>
           <Button
-            onClick={handleClickOpen}
+            onClick={() => hancleClickCerrarVentaCambio()}
             variant="contained"
             size="large"
             color="primary"
@@ -1057,7 +1078,7 @@ export default function CerrarVenta() {
             Aceptar
           </Button>
         </DialogActions>
-      </Dialog> */}
+      </Dialog>
     </>
   );
 }

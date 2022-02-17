@@ -239,7 +239,7 @@ export const calculatePrices2 = async ({ newP, cantidad, granel, origen, precio_
       monederoCalculo = 0;
     // const descuento = newP.descuento_activo === null ? false : true;
     const cantidadNueva = cantidad > 0 ? cantidad : 1;
-    const valor_granel = granel.granel ? granel.valor : 1;
+    const valor_granel = granel.granel ? parseFloat(granel.valor) : 1;
     const precio_actual = precio_boolean ? precio : newP.descuento_activo ? newP.descuento : newP.precio_unidad;
     const cantidadCaja =
     precio_actual.unidad_maxima === true
