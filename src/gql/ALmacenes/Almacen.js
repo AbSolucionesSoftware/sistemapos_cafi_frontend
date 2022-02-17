@@ -89,6 +89,15 @@ export const OBTENER_PRODUCTOS_ALMACEN = gql`
         }
         receta_farmacia
       }
+      precios{
+        inventario{
+          inventario_maximo
+          inventario_minimo
+          unidad_de_inventario
+          codigo_unidad
+        }
+      }
+  
       existencia_almacenes {
         _id {
           producto
@@ -97,6 +106,7 @@ export const OBTENER_PRODUCTOS_ALMACEN = gql`
             nombre_almacen
           }
         }
+        unidad_inventario
         cantidad_existente
       }
       empresa
@@ -132,8 +142,8 @@ export const REALIZAR_TRASPASO = gql`
 `;
 
 export const OBTENER_PRODUCTOS_EMPRESA = gql`
-  query obtenerProductosPorEmpresa($empresa: ID!) {
-    obtenerProductosPorEmpresa(empresa: $empresa) {
+  query obtenerProductosPorEmpresa($empresa: ID!, $filtro: String) {
+    obtenerProductosPorEmpresa(empresa: $empresa, filtro : $filtro) {
       _id
       datos_generales {
         codigo_barras

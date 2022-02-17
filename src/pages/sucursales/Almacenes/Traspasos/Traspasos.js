@@ -3,11 +3,14 @@ import { AppBar, Toolbar, Typography, IconButton, Slide,
          Button, Box, Dialog, Grid, DialogActions, TextField,Divider,
          InputLabel, Select, Input, MenuItem, FormControl, useTheme, OutlinedInput, InputAdornment,
          Stepper, Step, StepLabel, DialogTitle } from '@material-ui/core';
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Search } from "@material-ui/icons";
 import { makeStyles } from '@material-ui/core/styles';
-import moment from "moment";
+import moment from 'moment';
+import 'moment/locale/es';
+import { useDebounce } from 'use-debounce';
 import BackdropComponent from '../../../../components/Layouts/BackDrop';
-import ErrorPage from '../../../../components/ErrorPage';
+import {Close} from '@material-ui/icons';
+//import ErrorPage from '../../../../components/ErrorPage';
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 
 import { FcAdvance } from 'react-icons/fc';
@@ -48,14 +51,15 @@ const useStyles = makeStyles((theme) => ({
 	},
     subtitle: {
 		marginLeft: '10px',
-		width:'100%'
+		width:'50%',
+     
 	},
     boxUpData:{
         height: 80,
 
     },
     formControl: {
-        margin: theme.spacing(4),
+        margin: theme.spacing(1),
         minWidth: 300,
         maxWidth: 300,
     },
@@ -75,7 +79,8 @@ const useStyles = makeStyles((theme) => ({
     inputBox:{
 		margin:20,
         marginTop:5,
-        marginBottom:10
+        marginBottom:10,
+       
 	},
     button:{
 		margin: theme.spacing(3),
@@ -85,11 +90,16 @@ const useStyles = makeStyles((theme) => ({
     boxControl: {
         margin: theme.spacing(2.5),
 		marginTop: 0,
-        minWidth: "14%",
-        maxWidth: "14%",
+        minWidth: "20%",
+        maxWidth: "20%",
         minHeight: 20,
       
     },
+    centerControl:{
+        marginTop:10,
+      
+    },
+  
 }));
 
 
@@ -117,6 +127,7 @@ const MenuProps = {
   },
 };
 
+
 const transportes = [
     'Barco',
     'Moto',
@@ -124,9 +135,9 @@ const transportes = [
     'Camioneta'
 ];
 
-function createData(name, cantidad, precio, unidad) {
+/* function createData(name, cantidad, precio, unidad) {
     return { name, cantidad, precio, unidad };
-    } 
+}  */
 
 
 const steps = ['Datos traspaso', 'Seleccionar productos'];
@@ -137,27 +148,17 @@ export default function Traspasos() {
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const {
         setProductos,
-        productos,
         setProductosTras,
         setProductosTo,
         setProductosEmpTo,
-     
-        productosTo,
         productosTras
     } = useContext(TraspasosAlmacenContext);
     const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 	const [ open, setOpen ] = useState(false);
     const [ loading, setLoading ] = useState(false);
-    const [ busqueda, setBusqueda ] = useState('');
+    const [ filtro, setFiltro ] = useState('');
+	const [value] = useDebounce(filtro, 1000);
 
-    const [ filtro, setFiltro ] = useState({  codigo_barras: '',clave_alterna: '',tipo_producto: '',nombre_comercial: '',
-        nombre_generico: '',categoria: '',subcategoria: ''});
-	
-    const [ filtroTo, setFiltroTo ] = useState({});
-    const [ categoria ] = useState('');
-	const [ subcategoria ] = useState('');
-	const [ subcategorias, setSubcategorias ] = useState([]);
-    
     const [ haveConcepto, setHaveConcepto ] = useState(false);
     const [ conceptoTraspaso, setConceptoTraspaso ] = useState(null);
     const [ isAlmacenOrigen, setIsAlmacenOrigen ] = useState(false);
@@ -177,17 +178,21 @@ export default function Traspasos() {
     const [ CrearTraspaso ] = useMutation(REALIZAR_TRASPASO); 
 
     let conceptos= [];
-    let categorias = [];
-   
     let almacenes = [];
- 
+    
     const queryObtenerAlmacenes = useQuery(OBTENER_ALMACENES,{
         variables: {
             id: sesion.sucursal._id
         },
          fetchPolicy: "network-only"
     });	
-
+   /*  const productosAlmacenQuery = useQuery(OBTENER_PRODUCTOS_ALMACEN,{
+		variables: {
+            empresa: sesion.empresa._id,
+			sucursal: sesion.sucursal._id,
+			filtro: value
+		}
+	});	 */
 	const dataConceptos = useQuery(OBTENER_CONCEPTOS_ALMACEN,{
 		variables: {
 			empresa: sesion.empresa._id,
@@ -210,6 +215,7 @@ export default function Traspasos() {
       variables: { 
           empresa: sesion.empresa._id, 
           sucursal: sesion.sucursal._id,
+          filtro: value,
           almacen: (almacenOrigen ) ? almacenOrigen._id : "",
           existencias: true
       },
@@ -221,37 +227,22 @@ export default function Traspasos() {
     const productosEmpresaQuery = useQuery(
     OBTENER_PRODUCTOS_EMPRESA,
     {
-      variables: { 
-          empresa: sesion.empresa._id 
-      },
-      fetchPolicy: "network-only"
-
-    }
+        variables: { 
+          empresa: sesion.empresa._id, 
+          filtro: value,
+        },
+        fetchPolicy: "network-only"
+     }
   );
     
-    const obtenerAlmacenes= () =>{
+    /* const obtenerAlmacenes= useCallback( () =>{
         try {
-            setAlmacenesDestino(queryObtenerAlmacenes.data.obtenerAlmacenes.filter(element => element._id !== almacenOrigen._id));
+            console.log('obtenerAlmacenes')
+            
         } catch (error) {
            console.log(error)
         }   
-    };
-
-    useEffect(() => {
-        if(almacenOrigen){
-            obtenerAlmacenes();
-            obtenerProductosAlmacen();
-        }
-    }, [almacenOrigen ])
-
-
-    const obtenerProductosEmpresa = useCallback(async() =>{
-        try {
-            productosEmpresaQuery.refetch();
-        } catch (error) {
-            
-        }   
-    },[productosEmpresaQuery]);
+    },[]); */
 
     const obtenerProductosAlmacen = useCallback(async() =>{
         try {
@@ -260,15 +251,41 @@ export default function Traspasos() {
             
         }   
     },[productosQuery]);
+    
+   
+    
+    useEffect(() => {
+        if(almacenOrigen){
+          
+            setAlmacenesDestino(queryObtenerAlmacenes.data.obtenerAlmacenes.filter(element => element._id !== almacenOrigen._id));
+            obtenerProductosAlmacen();
+        }
+    }, [almacenOrigen ])
+
+
+    const obtenerProductosEmpresa = useCallback(async () =>{
+        try {
+             productosEmpresaQuery.refetch();
+        } catch (error) {
+            console.log('errorObtenerProductosEmpresa',error)
+        }   
+      },[productosEmpresaQuery]);
+
+   
 
     useEffect(() => {
-        if(conceptoTraspaso!== null){
-            if(conceptoTraspaso.origen === 'N/A'){
-                obtenerProductosEmpresa();
-            } else{
-                obtenerProductosAlmacen();
-            }      
+        try {
+            if(conceptoTraspaso!== null){
+                if(conceptoTraspaso.origen === 'N/A'){
+                    obtenerProductosEmpresa();
+                } else{
+                    obtenerProductosAlmacen();
+                }      
+            }
+        } catch (error) {
+            console.log('conceptoTraspaso', error)
         }
+       
     }, [conceptoTraspaso])    
 
  /*    useEffect(() => {
@@ -276,6 +293,7 @@ export default function Traspasos() {
 	},[ dataConceptos ]);  */
 
      useEffect(() => {
+         console.log('useffect conceptoTraspaso')
         if(conceptoTraspaso !== null){
             if(conceptoTraspaso.destino === 'N/A'){
                 if(almacenOrigen !== null){
@@ -302,7 +320,7 @@ export default function Traspasos() {
             }    
         }
        
-	},[ conceptoTraspaso, almacenOrigen, almacenDestino, setHaveConcepto ]); 
+	},[conceptoTraspaso, almacenOrigen, almacenDestino ]); 
 
     
 
@@ -318,17 +336,13 @@ export default function Traspasos() {
     },[ productosEmpresaQuery.data, setProductosEmpTo ]);  
 
 
-     useEffect(
-         
+    useEffect(
 		() => {
-		     if(productosQuery.data && productosTo.length === 0){
-             
+            if(productosQuery.data ){
                 setProductos(productosQuery.data.obtenerProductos);
                 setProductosTo(productosQuery.data.obtenerProductos)
-         
                 return;
-            }
-            
+            }    
 		},
 		[ productosQuery, setProductos, setProductosTo ]
 	); 
@@ -352,17 +366,14 @@ export default function Traspasos() {
 	};
 
      const handleChange = (event) => {
-        
         setAlmacenOrigen(event.target.value);
-       /*  productosQuery.refetch({
+       /*   productosQuery.refetch({
             variables: { 
             
                 almacen: event.target.value._id,
                 existencias: true
             },
-        }); */
-
-
+        });  */
         setProductosTras([]);
         return;
     };
@@ -371,6 +382,7 @@ export default function Traspasos() {
         //console.log(event)
         setAlmacenDestino(event.target.value);
         setProductosTras([]);
+        return;
     };
 
      const handleChangeConcepto = (event) => {
@@ -382,11 +394,9 @@ export default function Traspasos() {
             setAlmacenOrigen(null); 
             setAlmacenDestino(null);
             if(concepto.origen === 'N/A'){
-               
-                
                 setAlmacenesDestino( queryObtenerAlmacenes.data.obtenerAlmacenes)
             }else{
-                  setAlmacenesDestino([])
+                setAlmacenesDestino([])
             }
           
             setIsAlmacenOrigen((concepto.origen === 'N/A') ? false:true);
@@ -432,7 +442,7 @@ export default function Traspasos() {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
-    const handleSkip = () => {
+    /* const handleSkip = () => {
         if (!isStepOptional(activeStep)) {
         // You probably want to guard against something like this,
         // it should never occur unless someone's actively trying to break something.
@@ -449,23 +459,12 @@ export default function Traspasos() {
 
     const handleReset = () => {
         setActiveStep(0);
-    };
+    }; */
 
-    const setValToFilter = (label,value) => {
-		try {
-			if(label === 'categoria' && value !== ''){
-				const cat = categorias.find(element => element.categoria === value);
-				setSubcategorias(cat.subcategorias)
-			}
-			setFiltro({...filtro, [label] : value});
-		} catch (error) {
-			
-		}
-    };
 
-    if(categoriasQuery.data){
+   /*  if(categoriasQuery.data){
 		categorias = categoriasQuery.data.obtenerCategorias;
-	}
+	}  */
    
     if(dataConceptos.data){
 		conceptos = dataConceptos.data.obtenerConceptosAlmacen;
@@ -476,16 +475,16 @@ export default function Traspasos() {
        
     }
 
-  
-    const obtenerSelectsProducto = (producto) => {
-        
-        if(producto !== null){
-            setProductosTo([producto])
+   
+   
+   /*  const filtrarProductos = (event) => {
+        event.preventDefault();
+        if(almacenOrigen !== ''){
+            productosQuery.refetch();
         }else{
-            setProductosTo(productos) 
+            productosEmpresaQuery.refetch();
         }
-    };
-
+    }; */
 
     const handleModal = () => {
         setOpenEnd(!openEnd)
@@ -524,7 +523,7 @@ export default function Traspasos() {
                     empresa: sesion.empresa._id
                 }
             }  
-             
+          
              const traspaso =    await CrearTraspaso(input) 
            
                 //console.log(traspaso)
@@ -564,8 +563,8 @@ export default function Traspasos() {
    
 
     return (
+        <>
         <Box sx={{ width: '100%' }}>
-        
             <Button fullWidth onClick={handleClickOpen}>
                 <Box display="flex" flexDirection="column">
                     <Box display="flex" justifyContent="center" alignItems="center">
@@ -602,9 +601,11 @@ export default function Traspasos() {
                                 Traspasos
 						</Typography>
 						<Box mx={3}>
-                            <Button autoFocus color="inherit" size="large" onClick={handleClose}>
-                                Cerrar
-                            </Button>
+                            <Box m={1}>
+                                <Button  variant="contained" color="secondary"onClick={handleClose}>
+                                    <Close style={{ fontSize: 30}}/>
+                                </Button>
+                            </Box>
                         </Box>
                         <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
 							
@@ -629,379 +630,241 @@ export default function Traspasos() {
                         })}
                     </Stepper>
                 </Box>
-                
-                <Box style={{ width: '98%',alignSelf:'center', alignContent:'center' }}>
-                    
-                    {
-                        (activeStep === 0) ? 
-                            <Grid container>
-                                <Box style={{width:'100%'}} >
+                <Box >
+                {
+                (activeStep === 0) ? 
+                    <Grid container  justify="center" >
+                        <Grid item lg={6}>
+                            <Box>
+                                <Box >
                                     <Typography className={classes.subtitle}  >
                                         <b>Datos traspaso</b>
                                     </Typography>
                                     <Divider />
-                                    <Grid container  justifyContent="space-evenly" >
-                                        {/* <FormControl className={classes.formControl}>
-                                            <InputLabel id="almacen-origen-label">Unidad de traspaso</InputLabel>
-                                            <Select
-                                            labelId="almacen-origen-label"
-                                            id="almacen-origen-name"
-                                            value={almacenOrigen}
-                                            onChange={handleChange}
-                                            input={<Input />}
-                                            MenuProps={MenuProps}
-                                            >
-                                            {almacenes.map((almacen) => (
-                                                <MenuItem key={almacen} value={almacen} style={getStyles(almacen, almacenOrigen, theme)}>
-                                                {almacen}
-                                                </MenuItem>
-                                            ))}
-                                            </Select>
-                                        </FormControl> */}
-                                        <FormControl className={classes.formControl}>
-                                            <InputLabel id="concepto-label">Concepto traspaso</InputLabel>
-                                            <Select
-                                            labelId="concepto-label"
-                                            id="concepto-name"
-                                            value={(conceptoTraspaso) ? conceptoTraspaso : ""}
-                                            onChange={handleChangeConcepto}
-                                            input={<Input />}
-                                            MenuProps={MenuProps}
-                                            >
-                                            {conceptos.map((concepto) => {
-                                             
-                                                return(
-                                                <MenuItem key={concepto._id} value={concepto} >
-                                                    {concepto.nombre_concepto}
-                                                </MenuItem>
-                                                )})
-                                            }
-                                            </Select>
-                                        </FormControl>
-                                        {
+                                
+                                    <Box mt={2} style={{display: 'flex', width:'100%', justifyContent: 'center'}}>
+                                        <Box m={3}>
+                                            <Typography><b>Usuario</b></Typography>
+                                            <Typography> {sesion.nombre} </Typography>
+                                        </Box>
+                                        <Box m={3}>
+                                            <Typography><b>Sucursal</b></Typography>
+                                            <Typography> {sesion.sucursal.nombre_sucursal} </Typography>
+                                        </Box>
+                                        <Box m={3}>
+                                            <Typography><b>Fecha</b></Typography>
+                                            <Typography> 	{moment().format('MM/DD/YYYY')} </Typography>
+                                        </Box>
+                                    
+                                    </Box>
+                                    <Box m={2}   style={{width:'100%', justifyContent: 'center'}}>
+                                        <Box style={{width:'100%'}}>
+                                            <FormControl className={classes.formControl}>
+                                                <InputLabel id="concepto-label">Concepto traspaso</InputLabel>
+                                                <Select
+                                                labelId="concepto-label"
+                                                id="concepto-name"
+                                                value={(conceptoTraspaso) ? conceptoTraspaso : ""}
+                                                onChange={handleChangeConcepto}
+                                                input={<Input />}
+                                                MenuProps={MenuProps}
+                                                >
+                                                {conceptos.map((concepto) => {
+                                                
+                                                    return(
+                                                    <MenuItem key={concepto._id} value={concepto} >
+                                                        {concepto.nombre_concepto}
+                                                    </MenuItem>
+                                                    )})
+                                                }
+                                                </Select>
+                                            </FormControl>
+                                        </Box>
+                                    {
                                         (conceptoTraspaso !== null) ? 
-                                        <div>
-                                        {   
-                                         
-                                            (isAlmacenOrigen) ? 
+                                        <Box style={{display: 'flex'}}>
+                                            {   
+                                                
+                                                (isAlmacenOrigen) ?
+                                                <Box> 
+                                                    <FormControl className={classes.formControl}>
+                                                        <InputLabel id="almacen-origen-label">Almacén origen</InputLabel>
+                                                        <Select
+                                                        labelId="almacen-origen-label"
+                                                        id="almacen-origen-name"
+                                                        value={(almacenOrigen) ? almacenOrigen : ""}
+                                                        onChange={handleChange}
+                                                        input={<Input />}
+                                                        MenuProps={MenuProps}
+                                                        >
+                                                        {almacenes.map((almacen) => (
+                                                            <MenuItem key={almacen._id} value={almacen}>
+                                                                {almacen.nombre_almacen}
+                                                            </MenuItem>
+                                                        ))}
+                                                        </Select>
+                                                    </FormControl>
+                                                </Box>
+                                                :
+                                                <></>
+                                            }
+                                            
+                                            {
+                                                (isAlmacenDestino) ? 
                                                 <FormControl className={classes.formControl}>
-                                                    <InputLabel id="almacen-origen-label">Almacén origen</InputLabel>
+                                                    <InputLabel id="almacen-destino-label">Almacén destino</InputLabel>
                                                     <Select
-                                                    labelId="almacen-origen-label"
-                                                    id="almacen-origen-name"
-                                                    value={(almacenOrigen) ? almacenOrigen : ""}
-                                                    onChange={handleChange}
+                                                    labelId="almacen-destino-label"
+                                                    id="almacen-destino-name"
+                                                    value={(almacenDestino) ? almacenDestino : ""}
+
+                                                    onChange={handleChangeDestino}
                                                     input={<Input />}
                                                     MenuProps={MenuProps}
                                                     >
-                                                    {almacenes.map((almacen) => (
-                                                        <MenuItem key={almacen._id} value={almacen}>
-                                                            {almacen.nombre_almacen}
+                                                    {almacenesDestino.map((almacen) => (
+                                                        <MenuItem key={almacen._id} value={almacen} >
+                                                        {almacen.nombre_almacen}
                                                         </MenuItem>
                                                     ))}
                                                     </Select>
                                                 </FormControl>
-                                            :
-                                            <div/>
-                                        }
-                                        
-                                          {
-                                            (isAlmacenDestino) ? 
-                                            <FormControl className={classes.formControl}>
-                                                <InputLabel id="almacen-destino-label">Almacén destino</InputLabel>
-                                                <Select
-                                                labelId="almacen-destino-label"
-                                                id="almacen-destino-name"
-                                                value={(almacenDestino) ? almacenDestino : ""}
 
-                                                onChange={handleChangeDestino}
-                                                input={<Input />}
-                                                MenuProps={MenuProps}
-                                                >
-                                                {almacenesDestino.map((almacen) => (
-                                                    <MenuItem key={almacen._id} value={almacen} >
-                                                    {almacen.nombre_almacen}
-                                                    </MenuItem>
-                                                ))}
-                                                </Select>
-                                            </FormControl>
-                                            :
-                                            <div/>
-                                        }
-                                    </div>    
-                                    :
-                                    <div/>
-                                    }    
-                                    </Grid>
-                                </Box>
-                                <Box style={{width:'100%'}} mt={5} mb={5} >
+                                                :
+                                                <></>
+                                            }
+                                           
+                                        </Box> 
+                                        :
+                                        <></>
+                                        
+                                    } 
+                                    
+                                    </Box>   
+                                </Box>      
+                                <Box className={classes.centerControl}   style={{width:'100%'}} >
                                     <Typography className={classes.subtitle}>
                                         <b>Datos transporte traspaso</b>
                                     </Typography>
                                     <Divider />
-                                    <Grid container >
-                                        <FormControl className={classes.formControl}>
+                                
+                                    <Grid  justify="center" >
+                                        
+                                        <FormControl className={classes.formControl} style={{marginTop:15}}>
                                             
-                                                <InputLabel id="transporte-label">Transporte</InputLabel>
-                                                <Select
-                                                labelId="transporte-label"
-                                                id="transporte-name"
-                                                value={transporte}
-                                                onChange={handleChangeTransporte}
-                                                input={<Input />}
-                                                MenuProps={MenuProps}
-                                                >
-                                                {transportes.map((trans) => (
-                                                    <MenuItem key={trans} value={trans} style={getStyles(trans, transporte, theme)}>
-                                                    {trans}
-                                                    </MenuItem>
-                                                ))}
-                                                </Select>
+                                            <InputLabel id="transporte-label">Transporte</InputLabel>
+                                            <Select
+                                            labelId="transporte-label"
+                                            id="transporte-name"
+                                            value={transporte}
+                                            onChange={handleChangeTransporte}
+                                            input={<Input />}
+                                            
+                                            MenuProps={MenuProps}
+                                            >
+                                            {transportes.map((trans) => (
+                                                <MenuItem key={trans} value={trans} style={getStyles(trans, transporte, theme)}>
+                                                {trans}
+                                                </MenuItem>
+                                            ))}
+                                            </Select>
                                             
                                         </FormControl>
-                                        <FormControl>
-                                            <Box width="300px" ml={4} mt={2}>
-                                                <Typography>
-                                                    Placas
-                                                </Typography>
-                                                <TextField
-                                                    fullWidth
-                                                    className={classes.input}
-                                                    type="text"
-                                                    size="small"
-                                                    name="placas"
-                                                    variant="outlined"
-                                                    value={placas}
-                                                    
-                                                    onChange={(e) => setPlacas(e.target.value)}
-                                                />
-                                            </Box>
-                                            </FormControl>
-                                            <Box width="300px"  ml={7} mt={2}>
-                                                <Typography>
-                                                    Nombre de encargado de transporte
-                                                </Typography>
-                                                <TextField
-                                                    fullWidth
-                                                    className={classes.input}
-                                                    type="text"
-                                                    size="small"
-                                                    name="nombreQuien"
-                                                    variant="outlined"
-                                                    value={nombreQuien}
-                                                    
-                                                    onChange={(e) => setNombreQuien(e.target.value)}
-                                                />
-                                            </Box>
+                                        <Box  justify="center" >
+                                        <FormControl className={classes.formControl}>
+                                        
+                                            <Typography>
+                                                Placas
+                                            </Typography>
+                                            <TextField
+                                                fullWidth
+                                                className={classes.input}
+                                                type="text"
+                                                size="small"
+                                                name="placas"
+                                                variant="outlined"
+                                                value={placas.toUpperCase()}
+                                                
+                                                onChange={(e) => setPlacas(e.target.value)}
+                                            />
+                                        
+                                        </FormControl>
+                                        <FormControl className={classes.formControl}>
+                                        
+                                            <Typography>
+                                                Nombre de encargado de transporte
+                                            </Typography>
+                                            <TextField
+                                                fullWidth
+                                                className={classes.input}
+                                                type="text"
+                                                size="small"
+                                                name="nombreQuien"
+                                                variant="outlined"
+                                                value={nombreQuien}
+                                                
+                                                onChange={(e) => setNombreQuien(e.target.value)}
+                                            />
+                                        </FormControl>
+                                        </Box>
                                     </Grid>
                                 </Box>
-                               
-                            </Grid>
-                        :
-                         
-                        <Box>
-                       
-                            
-                            <Box style={{width:'100%'}} ml={1} >
-                                 
-                               
-                                <Typography className={classes.subtitle}>
-                                    <b>Buscar producto</b>
-                                </Typography>
-                                <Grid  container direction="row" >
-                                    <Grid item className={classes.inputBox}>
-                                        <Typography>Código de barras</Typography>
-                                        <Box width={200}>
-                                            <Autocomplete
-                                            id="combo-box-producto-codigo"
-                                            size="small"
-                                            fullWidth
-                                            options={productos}
-                                            getOptionLabel={(option) =>
-                                                option.datos_generales.codigo_barras
-                                                ? option.datos_generales.codigo_barras
-                                                : "N/A"
-                                            }
-                                            renderInput={(params) => (
-                                                <TextField {...params} variant="outlined" />
-                                            )}
-                                            onChange={(_, value) => obtenerSelectsProducto(value)}
-                                            getOptionSelected={(option) =>
-                                                option.datos_generales.codigo_barras
-                                            }
-
-                                         
-                                            />
-                                        </Box>    
-                                    </Grid>
-                               
-                                    <Grid item className={classes.inputBox}>
-                                        <Typography>Clave alterna</Typography>
-                                        <Box width={200}>
-                                            <Autocomplete
-                                            id="combo-box-producto-clave"
-                                            size="small"
-                                            fullWidth
-                                            options={productos}
-                                            getOptionLabel={(option) =>
-                                                option.datos_generales.clave_alterna
-                                                ? option.datos_generales.clave_alterna
-                                                : "N/A"
-                                            }
-                                            renderInput={(params) => (
-                                                <TextField {...params} variant="outlined" />
-                                            )}
-                                            onChange={(_, value) => obtenerSelectsProducto(value)}
-                                            getOptionSelected={(option) =>
-                                                option.datos_generales.clave_alterna
-                                            }
-                                            />
-                                        </Box>    
-                                    </Grid>
-
-                                    <Grid item className={classes.inputBox}>
-                                        <Typography>Nombre comercial</Typography>
-                                        <Box width={200}>
-                                            <Autocomplete
-                                            id="combo-box-producto-nombre-comercial"
-                                            size="small"
-                                            fullWidth
-                                            options={productos}
-                                            getOptionLabel={(option) =>
-                                                option.datos_generales.nombre_comercial
-                                                ? option.datos_generales.nombre_comercial
-                                                : "N/A"
-                                            }
-                                            renderInput={(params) => (
-                                                <TextField {...params} variant="outlined" />
-                                            )}
-                                            onChange={(_, value) => obtenerSelectsProducto(value)}
-                                            getOptionSelected={(option) =>
-                                                option.datos_generales.nombre_comercial
-                                            }
-                                            />
-                                        </Box>    
-                                    </Grid>
-                                    <Grid item className={classes.inputBox}>
-                                        <Typography>Nombre génerico</Typography>
-                                        <Box width={200}>
-                                            <Autocomplete
-                                            id="combo-box-producto-nombre-generico"
-                                            size="small"
-                                            fullWidth
-                                            options={productos}
-                                            getOptionLabel={(option) =>
-                                                option.datos_generales.nombre_generico
-                                                ? option.datos_generales.nombre_generico
-                                                : "N/A"
-                                            }
-                                            renderInput={(params) => (
-                                                <TextField {...params} variant="outlined" />
-                                            )}
-                                            onChange={(_, value) => obtenerSelectsProducto(value)}
-                                            getOptionSelected={(option) =>
-                                                option.datos_generales.nombre_generico
-                                            }
-                                            />
-                                        </Box>    
-                                    </Grid>
-{/*                                     <FormControl className={classes.boxControl} >
-                                    
-                                        <InputLabel id="tipo-label"  >Tipo</InputLabel>
-                                        <Select
-                                        labelId="tipo-label"
-                                        id="tipo_producto"
-                                        value={filtro.tipo_producto}
-                                        onChange={(e) => setValToFilter('tipo_producto', e.target.value )}
-                                        input={<Input />}
-                                        MenuProps={MenuProps}
-                                        >
-                                            <MenuItem value="">
-                                                <em>Selecciona uno</em>
-                                            </MenuItem>
-                                            <MenuItem value="ROPA">Ropa</MenuItem>
-                                            <MenuItem value="CALZADO">Calzado</MenuItem>
-                                            <MenuItem value="OTROS">Otros</MenuItem>
-                                        </Select>
-                                        
-                                    </FormControl>
-                                    <FormControl className={classes.boxControl} >
-                                    
-                                        <InputLabel id="categoria-label"  >Categoría</InputLabel>
-                                        <Select
-                                        labelId="categoria-label"
-                                        id="categoria"
-                                        value={filtro.categoria}
-                                        onChange={(e) => setValToFilter('categoria', e.target.value )}
-                                        input={<Input />}
-                                        MenuProps={MenuProps}
-                                        >
-                                        <MenuItem value="">
-                                            <em>Selecciona una</em>
-                                        </MenuItem>
-                                        {categorias.map((cat) => (
-                                            <MenuItem key={cat._id} value={cat.categoria}  style={getStyles(cat._id, categoria, theme)}>
-                                            {cat.categoria}
-                                            </MenuItem>
-                                        ))}
-                                        </Select>
-                                        
-                                    </FormControl>
-                                    <FormControl className={classes.boxControl} >
-                                    
-                                        <InputLabel id="subcategoria-label"  >Subcategoría</InputLabel>
-                                        <Select
-                                        labelId="subcategoria-label"
-                                        id="subcategoria"
-                                        value={filtro.subcategoria}
-                                        onChange={(e) => setValToFilter('subcategoria', e.target.value )}
-                                        input={<Input />}
-                                        MenuProps={MenuProps}
-                                        >
-                                        <MenuItem value="">
-                                                <em>Selecciona una</em>
-                                            </MenuItem>
-                                        {subcategorias.map((subcat) => (
-                                            <MenuItem key={subcat._id} value={subcat.subcategoria} style={getStyles(subcat._id, subcategoria, theme)}>
-                                            {subcat.subcategoria}
-                                            </MenuItem>
-                                        ))}
-                                        </Select>
-                                        
-                                    </FormControl>
-                                
-                                    <Button  variant="contained" color="primary" className={classes.button} style={{width:"20%"}} >
-                                        Buscar 
-                                    </Button> */}
-                                </Grid> 
-                          
-                                <Box  mt={2}>
-                                    <Grid container spacing={2} style={{width:'100%'}}>
-                                         <Grid item md={6}>
-                                        {
-                                            (isAlmacenOrigen) ? 
-                                           
-                                            <TableSelectProducts title='Productos' add={true} almacenOrigen={almacenOrigen} />
-                                            :
-                                             <TableSelectProducts title='Productos' add={true} almacenOrigen={null} />   
-                                        }
-                                        </Grid>
-                                        <Grid item md={6}>
-                                            <TableSelectProducts title='Productos a traspasar' add={false} almacenOrigen={almacenOrigen}  />
-                                        </Grid>
-                                    </Grid>
-                                </Box>
-                                     
-                            
                             </Box>
-                          
+                        </Grid>
+                    </Grid>
+                :
+                    <Box>
+                        <Box style={{width:'100%'}} ml={1} >
+                            <Typography className={classes.subtitle}>
+                                <b>Buscar producto</b>
+                            </Typography>
+                            <Box style={{ width: "500px" }}>
+                                
+                                    <FormControl variant="outlined" fullWidth size="small">
+                                    <OutlinedInput
+                                        id="search-producto"
+                                        type="text"
+                                        value={filtro}
+                                        onChange={(e) => setFiltro(e.target.value)}
+                                        endAdornment={
+                                        <InputAdornment position="start">
+                                            <IconButton
+                                            type="submit"
+                                            aria-label="search producto"
+                                            edge="end"
+                                            >
+                                            <Search />
+                                            </IconButton>
+                                        </InputAdornment>
+                                        }
+                                    />
+                                    </FormControl>
+                                    
+                                
+                            </Box>
+                    
+                            <Box  mt={2}>
+                                <Grid container spacing={2} style={{width:'100%'}}>
+                                    <Grid item md={6}>
+                                    {
+                                        (isAlmacenOrigen) ? 
+                                    
+                                        <TableSelectProducts title='Productos' add={true} almacenOrigen={almacenOrigen} />
+                                        :
+                                        <TableSelectProducts title='Productos' add={true} almacenOrigen={null} />   
+                                    }
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <TableSelectProducts title='Productos a traspasar' add={false} almacenOrigen={almacenOrigen}  />
+                                    </Grid>
+                                </Grid>
+                            </Box>
+                        </Box>
                     </Box>
-                    }
-
-
-
-
-                        <Box style={{ display: 'flex', flexDirection: 'row', pt: 2 }} >
+                }
+                
+                
+                <Box style={{ display: 'flex', flexDirection: 'row', pt: 2 }} >
                             <Button
                             color="inherit"
                             disabled={activeStep === 0}
@@ -1022,9 +885,7 @@ export default function Traspasos() {
                                 </Button>
                         
                         </Box>
-                  
                 </Box>
-                
                 <Dialog open={openEnd} onClose={handleModal}>
                     <DialogTitle>{'¿Está seguro de realizar este traspaso?'}</DialogTitle>
                     <DialogActions>
@@ -1043,5 +904,6 @@ export default function Traspasos() {
             
                
         </Box>
+        </>
     )
 }

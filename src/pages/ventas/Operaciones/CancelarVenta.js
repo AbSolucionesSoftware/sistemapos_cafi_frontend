@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
-
+import React, { useContext, useEffect, useState } from 'react';
 import { Box, Button, Dialog, DialogActions, DialogContent, Divider, Grid, Slide, Typography } from '@material-ui/core'
-
 import useStyles from '../styles';
-import CloseIcon from '@material-ui/icons/Close';
+import { AccesosContext } from '../../../context/Accesos/accesosCtx';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
@@ -13,11 +11,22 @@ export default function CancelarVenta() {
     const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
     const classes = useStyles();
     const [open, setOpen] = useState(false);
+
+    const { 
+		reloadCancelarVenta, 
+        setReloadCancelarVenta,
+		setAbrirPanelAcceso,
+        abrirPanelAcceso,
+		setDepartamentos
+	} = useContext(AccesosContext);
     
     const handleClickOpen = () => {
         if(sesion.accesos.ventas.cancelar_venta.ver === true){
             setOpen(!open);
-        }
+        }else{
+			setAbrirPanelAcceso(!abrirPanelAcceso);
+			setDepartamentos({departamento: 'ventas', subDepartamento: 'cancelar_venta', tipo_acceso: 'ver'})
+		}
 	};
     
     window.addEventListener('keydown', Mi_función); 
@@ -26,6 +35,14 @@ export default function CancelarVenta() {
             handleClickOpen();
         } 
     };
+
+    useEffect(() => {
+		if (reloadCancelarVenta === true) {	
+            setOpen(!open);
+			setReloadCancelarVenta(false);
+		}
+	}, [reloadCancelarVenta]);
+    
 
     return (
         <>
@@ -89,7 +106,7 @@ export default function CancelarVenta() {
                     <Button 
                         onClick={()=>{
                             localStorage.removeItem('DatosVentas');
-                            handleClickOpen();
+                            setOpen(!open);
                         }} 
                         variant="contained" 
                         color="primary"
@@ -99,7 +116,7 @@ export default function CancelarVenta() {
                         Aceptar
                     </Button>
                     <Button 
-                        onClick={handleClickOpen} 
+                        onClick={() => setOpen(!open)} 
                         variant="contained" 
                         color="secondary"
                         size="large"

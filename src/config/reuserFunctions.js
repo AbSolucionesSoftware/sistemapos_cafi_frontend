@@ -269,7 +269,19 @@ export const calculatePrices2 = async ({ newP, cantidad, granel, origen, precio_
       newP.granel_producto  = granel;
       newP.precio_a_vender = ob.totalCalculo;
       newP.precio_actual_producto = parseFloat((precio_actual.precio_neto).toFixed(2));
-      newP.precio_actual_object = precio_actual;
+      newP.precio_actual_object = {
+        cantidad_unidad: precio_actual.cantidad_unidad ? precio_actual.cantidad_unidad : null,
+        numero_precio: precio_actual.numero_precio ? precio_actual.numero_precio : null,
+        unidad_maxima: precio_actual.unidad_maxima ? precio_actual.unidad_maxima : null,
+        precio_general: precio_actual.precio_general ? precio_actual.precio_general : null,
+        precio_neto: precio_actual.precio_neto ? precio_actual.precio_neto : null,
+        precio_venta: precio_actual.precio_venta ? precio_actual.precio_venta : null,
+        iva_precio: precio_actual.iva_precio ? precio_actual.iva_precio : null,
+        ieps_precio: precio_actual.ieps_precio ? precio_actual.ieps_precio : null,
+        utilidad: precio_actual.utilidad ? precio_actual.utilidad : null,
+        porciento: precio_actual.porciento ? precio_actual.porciento : null,
+        dinero_descontado: precio_actual.dinero_descontado ? precio_actual.dinero_descontado : null,
+      };
     }else if(origen === "Ventas2") {
       newP.granel_producto = granel;
       newP.precio_a_vender = ob.totalCalculo;

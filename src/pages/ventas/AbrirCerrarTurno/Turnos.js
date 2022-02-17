@@ -89,12 +89,6 @@ export default function Turnos() {
 
 	window.addEventListener('keydown', Mi_función); 
 
-	if(!turnoEnCurso){
-		console.log(true);
-	}else{
-		console.log(false);
-	}
-
 	function Mi_función(e){
 		if(e.altKey && e.keyCode === 85){ 
 			handleClickOpen();

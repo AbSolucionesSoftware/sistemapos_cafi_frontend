@@ -11,6 +11,8 @@ import { Box, Button, Dialog, DialogActions, DialogContent, IconButton, Typograp
 import DeleteIcon from '@material-ui/icons/Delete';
 import AutorenewIcon from '@material-ui/icons/Autorenew';
 import { VentasContext } from '../../../context/Ventas/ventasContext';
+import { AccesosContext } from '../../../context/Accesos/accesosCtx';
+import { useEffect } from 'react';
 
 const columns = [
 	{ id: 'folio', label: 'Folio', minWidth: 20, align: 'center' },
@@ -74,8 +76,16 @@ export default function ListaVentas() {
 
 const RowsVentas = ({ venta, index }) => {
 
+	const { 
+		reloadEliminarVentaEspera, 
+        setReloadEliminarVentaEspera,
+		setAbrirPanelAcceso,
+        abrirPanelAcceso,
+		setDepartamentos
+	} = useContext(AccesosContext);
     const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
-	const [open, setOpen] = useState(false);
+	const [ open, setOpen] = useState(false);
+	const [ keyIndex, setKeyIndex ] = useState('');
     const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
 	let listaEnEspera = JSON.parse(localStorage.getItem("ListaEnEspera"));
@@ -93,7 +103,6 @@ const RowsVentas = ({ venta, index }) => {
 		}else{
 			return null
 		}
-        
     };
 
 	const AgregarVentaDeNuevo = (key) => {
@@ -114,6 +123,25 @@ const RowsVentas = ({ venta, index }) => {
 	const handleClickOpen = () => {
 		setOpen(!open);
 	};
+
+	const verificarPermisos = (key) => {
+		setKeyIndex(key)
+		if(sesion.accesos.ventas.eliminar_ventas.ver === true){
+			setKeyIndex(''); 
+            borrarVenta(key);
+        }else{
+			setAbrirPanelAcceso(!abrirPanelAcceso);
+			setDepartamentos({departamento: 'ventas', subDepartamento: 'eliminar_ventas', tipo_acceso: 'ver'})
+		}
+	};	
+
+	useEffect(() => {
+		if (reloadEliminarVentaEspera === true) {	
+			borrarVenta(keyIndex);
+			setReloadEliminarVentaEspera(false);
+		}
+	}, [reloadEliminarVentaEspera]);
+	
 
 	return(
 		<>
@@ -151,7 +179,7 @@ const RowsVentas = ({ venta, index }) => {
 					<IconButton 
 						aria-label="delete" 
 						size='small'
-						onClick={() => borrarVenta(index)}
+						onClick={() => verificarPermisos(index)}
 					>
 						<DeleteIcon fontSize="medium" />
 					</IconButton>

@@ -33,6 +33,8 @@ import { RegProductoContext } from "../../../context/Catalogos/CtxRegProducto";
 import { useMutation, useQuery } from "@apollo/client";
 import { CREAR_PRODUCTO_RAPIDO, OBTENER_CONSULTAS } from "../../../gql/Catalogos/productos";
 import { VentasContext } from "../../../context/Ventas/ventasContext";
+import Acceso from "../../../components/AccesosPassword/Acceso";
+import { AccesosContext } from "../../../context/Accesos/accesosCtx";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -127,10 +129,24 @@ export default function ArticuloRapido() {
     presentaciones,
     setPresentaciones,
   } = useContext(RegProductoContext);
-  const { setAlert, open, setOpen } = useContext(VentasContext);
+
+  const { 
+    setAlert, 
+    open, 
+    setOpen
+  } = useContext(VentasContext);
+
+  const { 
+    reloadProductoRapido, 
+    setReloadProductoRapido,
+    setAbrirPanelAcceso,
+    setDepartamentos
+  } = useContext(AccesosContext);
+
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const [ crearProductoRapido ] = useMutation(CREAR_PRODUCTO_RAPIDO);
-  const {  data, refetch, loading } = useQuery(OBTENER_CONSULTAS, {
+
+  const { data, refetch, loading } = useQuery(OBTENER_CONSULTAS, {
     variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
   });
 
@@ -146,23 +162,42 @@ export default function ArticuloRapido() {
     setValue(0);
   };
   
-  const [abrirTallaColor, setAbrirTallaColor] = useState(false);
-  const [cantidad, setCantidad] = useState(0);
+  const [ abrirTallaColor, setAbrirTallaColor ] = useState(false);
+
+  const [ cantidad, setCantidad ] = useState(0);
 
   const handleClickOpen = () => {
-    if(sesion.accesos.ventas.producto_rapido.ver === true){
-      resetInitialStates();
-      setOpen(!open);
-      setAbrirTallaColor(false);
-    }
+    setOpen(!open);
+    resetInitialStates();
+    setAbrirTallaColor(false);
 	};
+
+  const AceesoProductoRapido = () => {
+		if(sesion.accesos.ventas.producto_rapido.ver === true){
+      handleClickOpen();
+    }else{
+      setAbrirPanelAcceso(true);
+      setDepartamentos({
+        departamento: 'ventas', 
+        subDepartamento: 'producto_rapido', 
+        tipo_acceso: 'ver'
+      });
+		}
+	};
+
+  useEffect(() => {
+    if(reloadProductoRapido === true){
+      handleClickOpen();
+      setReloadProductoRapido(false);
+    }
+  }, [reloadProductoRapido]);
 
   useEffect(() => {
     return () => {
       refetch();
     };
   }, []);
-  
+
   if(loading || !data) { return null }
   if (loading)
   return (
@@ -222,6 +257,7 @@ export default function ArticuloRapido() {
         setPresentaciones(initial_state_presentaciones)
         setCantidad(0)
     };
+
     const data = {
       datos_generales,
       precios,
@@ -324,8 +360,9 @@ export default function ArticuloRapido() {
 
   return (
     <>
+			<Acceso/>
       <Button
-        onClick={() =>{handleClickOpen()}}
+        onClick={() =>{AceesoProductoRapido()}}
         value="articulo-rapido"
         style={{textTransform: 'none', height: '100%', width: '60%'}}
       >

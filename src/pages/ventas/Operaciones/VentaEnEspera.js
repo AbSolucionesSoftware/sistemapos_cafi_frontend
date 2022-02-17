@@ -98,7 +98,7 @@ export default function VentaEnEspera() {
                                 </Typography>
                             </Box>
                         </Box>
-                        </Grid>
+                    </Grid>
                 </DialogContent>
                 <DialogActions>
                     <Button 

@@ -33,7 +33,6 @@ export default function NuevaCotizacion({ handleClickOpen }) {
 
     
     const classes = useStyles();
-    
 
     const obtenerDatos = (e) => {
         setNewCotizacion({...newCotizacion, [e.target.name]: e.target.value});
@@ -286,8 +285,6 @@ export default function NuevaCotizacion({ handleClickOpen }) {
     function valuetext(e) {
         return `${e}`;
     };
-
-    console.log(datosVentas);
 
     const obtenerPorciento = (event, newValue) => {
         setValue(newValue);
