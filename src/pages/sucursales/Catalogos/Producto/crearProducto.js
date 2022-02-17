@@ -4,7 +4,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import DoneIcon from "@material-ui/icons/Done";
 import {
   Button,
-  AppBar,
   Badge,
   Typography,
   CircularProgress,
@@ -149,15 +148,6 @@ function a11yProps(index) {
 }
 
 const useStyles = makeStyles((theme) => ({
-  formInputFlex: {
-    display: "flex",
-    "& > *": {
-      margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-    },
-  },
-  formInput: {
-    margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-  },
   root_app: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
@@ -200,7 +190,6 @@ export default function CrearProducto({
     setPreciosP,
     imagenes,
     setImagenes,
-    unidadesVenta,
     setUnidadesVenta,
     almacen_inicial,
     setAlmacenInicial,
@@ -299,7 +288,7 @@ export default function CrearProducto({
       }
     } */
 
-    console.log(copy_unidadesVenta);
+    /* console.log(copy_unidadesVenta); */
 
     precios.precios_producto = preciosP;
 
@@ -331,7 +320,7 @@ export default function CrearProducto({
     };
 
     /* const clean_data = cleanTypenames(input); */
-    console.log(input);
+    /* console.log(input); */
 
     setLoading(true);
      try {
@@ -455,7 +444,7 @@ export default function CrearProducto({
       onClick={() => saveData()}
       size="large"
       startIcon={<DoneIcon />}
-      /* disabled={
+      disabled={
         !datos_generales.clave_alterna ||
         !datos_generales.tipo_producto ||
         !datos_generales.nombre_generico ||
@@ -465,7 +454,7 @@ export default function CrearProducto({
         !precios.unidad_de_compra.cantidad
           ? true
           : false
-      } */
+      }
     >
       Guardar
     </Button>

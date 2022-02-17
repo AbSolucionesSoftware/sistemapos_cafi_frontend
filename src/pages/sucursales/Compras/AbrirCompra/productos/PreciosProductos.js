@@ -16,7 +16,6 @@ import Done from "@material-ui/icons/Done";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
 import { CircularProgress, DialogTitle } from "@material-ui/core";
 import TablaPresentaciones from "../../../Catalogos/Producto/TallasColores/TablaPresentaciones";
-import { initial_state_unidadVentaSecundaria, initial_state_unidadVentaXDefecto } from "../../../../../context/Catalogos/initialStatesProducto";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;

@@ -88,7 +88,6 @@ export default function DatosProducto({ status }) {
     setPreciosP,
     imagenes,
     setImagenes,
-    unidadesVenta,
     setUnidadesVenta,
     almacen_inicial,
     setAlmacenInicial,

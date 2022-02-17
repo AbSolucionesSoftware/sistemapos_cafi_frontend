@@ -39,14 +39,12 @@ import {
 import { REGISTRAR_DEPARTAMENTO } from "../../../../../gql/Catalogos/departamentos";
 import { REGISTRAR_MARCAS } from "../../../../../gql/Catalogos/marcas";
 import SnackBarMessages from "../../../../../components/SnackBarMessages";
+import CategoriasProducto from "./Categorias";
+import SubcategoriasProducto from "./Subcategorias";
+import DepartamentosProducto from "./Departamentos";
+import MarcasProducto from "./Marcas";
 
 const useStyles = makeStyles((theme) => ({
-  formInputFlex: {
-    display: "flex",
-    "& > *": {
-      margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
-    },
-  },
   formInput: {
     margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
   },
@@ -394,169 +392,16 @@ export default function RegistroInfoGenerales({
           </Grid>
 
           <Grid item md={6} xs={12}>
-            <Typography className={classes.titulos}>Categoria</Typography>
-            <Box display="flex">
-              <FormControl variant="outlined" fullWidth size="small">
-                <Select
-                  id="form-producto-categoria"
-                  value={
-                    datos_generales.categoria ? datos_generales.categoria : ""
-                  }
-                  onChange={(event, child) => obtenerIDs(event, child)}
-                  name="categoria"
-                >
-                  <MenuItem value="">
-                    <em>Seleccione uno</em>
-                  </MenuItem>
-                  {categorias ? (
-                    categorias.map((res) => {
-                      return (
-                        <MenuItem
-                          name="id_categoria"
-                          key={res._id}
-                          value={res.categoria}
-                          id={res._id}
-                          categoria={res}
-                        >
-                          {res.categoria}
-                        </MenuItem>
-                      );
-                    })
-                  ) : (
-                    <MenuItem value="" />
-                  )}
-                </Select>
-              </FormControl>
-              <RegistrarNuevoSelect
-                tipo="categoria"
-                name="categoria"
-                refetch={refetch}
-              />
-            </Box>
+            <CategoriasProducto refetch={refetch} categorias={categorias} />
           </Grid>
           <Grid item md={6} xs={12}>
-            <Typography className={classes.titulos}>Subcategoria</Typography>
-            <Box display="flex">
-              <FormControl variant="outlined" fullWidth size="small">
-                <Select
-                  id="form-producto-subcategoria"
-                  name="subcategoria"
-                  value={
-                    datos_generales.subcategoria
-                      ? datos_generales.subcategoria
-                      : ""
-                  }
-                  onChange={(event, child) => obtenerIDs(event, child)}
-                >
-                  <MenuItem value="">
-                    <em>Seleccione uno</em>
-                  </MenuItem>
-                  {subcategorias ? (
-                    subcategorias.map((res) => {
-                      return (
-                        <MenuItem
-                          name="id_subcategoria"
-                          key={res._id}
-                          value={res.subcategoria}
-                          id={res._id}
-                        >
-                          {res.subcategoria}
-                        </MenuItem>
-                      );
-                    })
-                  ) : (
-                    <MenuItem value="" />
-                  )}
-                </Select>
-              </FormControl>
-              <RegistrarNuevoSelect
-                tipo="subcategoria"
-                name="subcategoria"
-                refetch={refetch}
-                subcategorias={subcategorias}
-                setSubcategorias={setSubcategorias}
-              />
-            </Box>
+            <SubcategoriasProducto refetch={refetch} />
           </Grid>
           <Grid item md={6} xs={12}>
-            <Typography className={classes.titulos}>Departamento</Typography>
-            <Box display="flex">
-              <FormControl variant="outlined" fullWidth size="small">
-                <Select
-                  id="form-producto-departamento"
-                  name="departamento"
-                  value={
-                    datos_generales.departamento
-                      ? datos_generales.departamento
-                      : ""
-                  }
-                  onChange={(event, child) => obtenerIDs(event, child)}
-                >
-                  <MenuItem value="">
-                    <em>Seleccione uno</em>
-                  </MenuItem>
-                  {departamentos ? (
-                    departamentos.map((res) => {
-                      return (
-                        <MenuItem
-                          name="id_departamento"
-                          key={res._id}
-                          value={res.nombre_departamentos}
-                          id={res._id}
-                        >
-                          {res.nombre_departamentos}
-                        </MenuItem>
-                      );
-                    })
-                  ) : (
-                    <MenuItem value="" />
-                  )}
-                </Select>
-              </FormControl>
-              <RegistrarNuevoSelect
-                tipo="departamento"
-                name="nombre_departamentos"
-                refetch={refetch}
-              />
-            </Box>
+            <DepartamentosProducto refetch={refetch} departamentos={departamentos} />
           </Grid>
           <Grid item md={6} xs={12}>
-            <Typography className={classes.titulos}>Marca</Typography>
-            <Box display="flex">
-              <FormControl variant="outlined" fullWidth size="small">
-                <Select
-                  id="form-producto-marca"
-                  name="marca"
-                  value={datos_generales.marca ? datos_generales.marca : ""}
-                  onChange={(event, child) => obtenerIDs(event, child)}
-                >
-                  <MenuItem value="">
-                    <em>Seleccione uno</em>
-                  </MenuItem>
-                  {marcas ? (
-                    marcas.map((res) => {
-                      return (
-                        <MenuItem
-                          name="id_marca"
-                          key={res._id}
-                          value={res.nombre_marca}
-                          id={res._id}
-                        >
-                          {res.nombre_marca}
-                        </MenuItem>
-                      );
-                    })
-                  ) : (
-                    <MenuItem value="" />
-                  )}
-                </Select>
-              </FormControl>
-              <RegistrarNuevoSelect
-                tipo="marca"
-                name="nombre_marca"
-                refetch={refetch}
-              />
-            </Box>
+            <MarcasProducto refetch={refetch} marcas={marcas} />
           </Grid>
         </Grid>
         <Box display="flex" mt={4}>
