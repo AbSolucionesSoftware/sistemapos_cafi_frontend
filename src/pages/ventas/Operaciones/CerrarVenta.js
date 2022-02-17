@@ -81,6 +81,8 @@ export default function CerrarVenta() {
   // const [descuentoAplicadoVenta, setDescuentoAplicadoVenta] = useState(0);
   const [ventaOriginal, setVentaOriginal] = useState(0);
 
+  const [creditoActivo, setCreditoActivo] = useState(false);
+
   //States de los montos a pagar
   const [efectivo, setEfectivo] = useState(0);
   const [tarjeta, setTarjeta] = useState(0);
@@ -104,7 +106,6 @@ export default function CerrarVenta() {
     localStorage.setItem(
       "DatosVentas",
       JSON.stringify({
-        cliente: {},
         venta_cliente: false,
         monedero: 0,
         productos: [],
@@ -455,6 +456,14 @@ export default function CerrarVenta() {
     const total = venta === null ? 0 : venta.total;
     const monederoVenta = venta === null ? 0 : venta.monedero;
     const cliente = venta === null ? {} : venta.cliente;
+
+    console.log("Cliente >>> ",cliente.numero_cliente);
+
+    if(cliente.numero_cliente === undefined){
+      setCreditoActivo(true);
+    }else{
+      setCreditoActivo(false);
+    }
 
     setTotalVenta(total.toFixed(2));
     setEfectivo(total.toFixed(2));
@@ -925,6 +934,7 @@ export default function CerrarVenta() {
                   color="primary"
                   onClick={() => setVisible(!visible)}
                   startIcon={<CreditCardIcon style={{ fontSize: "28px" }} />}
+                  disabled={creditoActivo}
                 >
                   Credito
                 </Button>
