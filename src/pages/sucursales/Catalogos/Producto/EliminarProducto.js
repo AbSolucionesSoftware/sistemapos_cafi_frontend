@@ -18,6 +18,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 export default function EliminarProducto({ datos, productosRefetch }) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   /* const [ alert, setAlert ] = useState({ message: '', status: '', open: false }); */
   const { actualizarLista, setActualizarLista, setAlert } = useContext(
     RegProductoContext

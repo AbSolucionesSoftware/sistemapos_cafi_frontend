@@ -1,47 +1,58 @@
-import React, { useContext, useState, Fragment, useEffect, useCallback } from 'react';
-import { Typography, MenuItem, Divider, Tooltip, FormLabel } from '@material-ui/core';
-import { Box, FormControl, Grid, Select } from '@material-ui/core';
-import { makeStyles, useTheme } from '@material-ui/core';
-import Zoom from '@material-ui/core/Zoom';
+import React, { useContext, useState, useEffect, useCallback } from "react";
+import { Typography, Tooltip, Box, Grid } from "@material-ui/core";
+import { makeStyles, useTheme } from "@material-ui/core";
+import Zoom from "@material-ui/core/Zoom";
 
-import { Done } from '@material-ui/icons';
-import TablaPresentaciones from './TablaPresentaciones';
-import { RegProductoContext } from '../../../../../context/Catalogos/CtxRegProducto';
-import { AlmacenProvider } from '../../../../../context/Almacenes/crearAlmacen';
-import ContainerRegistroAlmacen from '../../../Almacenes/RegistroAlmacen/ContainerRegistroAlmacen';
-import CrearColorProducto from './crearColor';
-import CrearTallasProducto from './crearTalla';
+import { Done } from "@material-ui/icons";
+import TablaPresentaciones from "./TablaPresentaciones";
+import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
+import CrearColorProducto from "./crearColor";
+import CrearTallasProducto from "./crearTalla";
 
 const useStyles = makeStyles((theme) => ({
-	colorContainer: {
-		border: '1px solid rgba(0,0,0, .3)',
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center',
-		height: 50,
-		width: 50,
-		margin: 1,
-		borderRadius: '15%',
-		cursor: 'pointer'
-	}
+  colorContainer: {
+    border: "1px solid rgba(0,0,0, .3)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: 50,
+    width: 50,
+    margin: 1,
+    borderRadius: "15%",
+    cursor: "pointer",
+  },
+  titulos: {
+    fontWeight: 500,
+  },
 }));
 
 const GenCodigoBarras = () => {
 	return Math.floor(Math.random() * (999999999999 - 100000000000 + 1) + 100000000000).toString();
 };
 
-export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos }) {
-	const {
-		almacen_inicial,
-		setAlmacenInicial,
-		presentaciones,
-		datos_generales,
-	} = useContext(RegProductoContext);
-	const { almacenes, colores, tallas, calzados } = obtenerConsultasProducto;
-	const [ medidasSeleccionadas, setMedidasSeleccionadas ] = useState([]);
-	const [ coloresSeleccionados, setColoresSeleccionados ] = useState([]);
-	const medidas = datos_generales.tipo_producto === 'ROPA' ? [ ...tallas ] : [ ...calzados ];
-	const [ onUpdate, setOnUpdate ] = useState([]);
+export default function ColoresTallas({
+  obtenerConsultasProducto,
+  refetch,
+  from,
+  withoutPrice,
+}) {
+  const {
+    /* almacen_inicial,
+    setAlmacenInicial, */
+    presentaciones,
+    datos_generales,
+  } = useContext(RegProductoContext);
+  const {
+    /* almacenes, */ colores,
+    tallas,
+    calzados,
+  } = obtenerConsultasProducto;
+  const [medidasSeleccionadas, setMedidasSeleccionadas] = useState([]);
+  const [coloresSeleccionados, setColoresSeleccionados] = useState([]);
+  const medidas =
+    datos_generales.tipo_producto === "ROPA" ? [...tallas] : [...calzados];
+  const [onUpdate, setOnUpdate] = useState([]);
+  const classes = useStyles();
 
 	const obtenerColoresSeleccinados = useCallback(
 		() => {
@@ -88,122 +99,145 @@ export default function ColoresTallas({ obtenerConsultasProducto, refetch, datos
 		[ obtenerColoresSeleccinados ]
 	);
 
-	return (
-		<div>
-			<Grid container spacing={2}>
-				<Grid item md={9}>
-					<TablaPresentaciones datos={datos} setOnUpdate={setOnUpdate} onUpdate={onUpdate} />
-				</Grid>
-				<Grid item md={3}>
-					{!datos.medidas_registradas ? (
-						<Fragment>
-							<Box width="100%" mb={2}>
-								<Typography>Almacen</Typography>
-								<Box display="flex">
-									<FormControl
-										disabled={presentaciones.length === 0}
-										variant="outlined"
-										fullWidth
-										size="small"
-										name="almacen"
-										error={presentaciones.length > 0 && !almacen_inicial.almacen}
-									>
-										<Select
-											name="almacen"
-											value={almacen_inicial.almacen}
-											onChange={obtenerAlmacenes}
-										>
-											<MenuItem value="">
-												<em>Seleccione uno</em>
-											</MenuItem>
-											{almacenes ? (
-												almacenes.map((res) => {
-													return (
-														<MenuItem
-															name="id_almacen"
-															key={res._id}
-															value={res.nombre_almacen}
-															id={res._id}
-														>
-															{res.nombre_almacen}
-														</MenuItem>
-													);
-												})
-											) : (
-												<MenuItem value="" />
-											)}
-										</Select>
-										{presentaciones.length > 0 && !almacen_inicial.almacen ? (
-											<FormLabel>* Campo obligatorio</FormLabel>
-										) : null}
-									</FormControl>
-									<AlmacenProvider>
-										<ContainerRegistroAlmacen accion="registrar" refetch={refetch} />
-									</AlmacenProvider>
-								</Box>
-							</Box>
-							<Divider />
-						</Fragment>
-					) : null}
-					<Box
-						width="100%"
-						my={2}
-						style={
-							onUpdate.length > 0 ? (
-								{
-									pointerEvents: 'none',
-									opacity: 0.4
-								}
-							) : null
-						}
-					>
-						<Typography>{datos_generales.tipo_producto === 'ROPA' ? 'Talla' : 'Número'}</Typography>
-						<CrearTallasProducto setMedidasSeleccionadas={setMedidasSeleccionadas} refetch={refetch} />
-						<Grid container>
-							{medidas.map((talla, index) => (
-								<RenderTallas
-									key={index}
-									talla={talla}
-									coloresSeleccionados={coloresSeleccionados}
-									medidasSeleccionadas={medidasSeleccionadas}
-									setMedidasSeleccionadas={setMedidasSeleccionadas}
-									datos={datos}
-								/>
-							))}
-						</Grid>
-					</Box>
-					<Divider />
-					<Box
-						width="100%"
-						mt={1}
-						style={
-							onUpdate.length > 0 ? (
-								{
-									pointerEvents: 'none',
-									opacity: 0.4
-								}
-							) : null
-						}
-					>
-						<Typography>Color</Typography>
-						<CrearColorProducto refetch={refetch} />
-						<Grid container>
-							{colores.map((color, index) => (
-								<Colores
-									key={index}
-									color={color}
-									coloresSeleccionados={coloresSeleccionados}
-									setColoresSeleccionados={setColoresSeleccionados}
-									medidasSeleccionadas={medidasSeleccionadas}
-									datos={datos}
-								/>
-							))}
-						</Grid>
-					</Box>
-				</Grid>
-			</Grid>
-		</div>
-	);
+  return (
+    <div>
+      <Box>
+        <Grid container spacing={2}>
+          {/* {!almacen_existente ? (
+            <Grid item md={4}>
+              <Box width="100%">
+                <Typography>Almacen</Typography>
+                <Box display="flex" >
+                  <FormControl
+                    disabled={presentaciones.length === 0 || from === "compra"}
+                    variant="outlined"
+                    fullWidth
+                    size="small"
+                    name="almacen"
+                    error={
+                      presentaciones.length > 0 && !almacen_inicial.almacen
+                    }
+                  >
+                    <Select
+                      name="almacen"
+                      value={almacen_inicial.almacen}
+                      onChange={obtenerAlmacenes}
+                    >
+                      <MenuItem value="">
+                        <em>Seleccione uno</em>
+                      </MenuItem>
+                      {almacenes ? (
+                        almacenes.map((res) => {
+                          return (
+                            <MenuItem
+                              name="id_almacen"
+                              key={res._id}
+                              value={res.nombre_almacen}
+                              id={res._id}
+                            >
+                              {res.nombre_almacen}
+                            </MenuItem>
+                          );
+                        })
+                      ) : (
+                        <MenuItem value="" />
+                      )}
+                    </Select>
+                    {presentaciones.length > 0 && !almacen_inicial.almacen ? (
+                      <FormLabel>* Campo obligatorio</FormLabel>
+                    ) : null}
+                  </FormControl>
+                  {from === "compra" ? null : (
+                    <AlmacenProvider>
+                      <ContainerRegistroAlmacen
+                        accion="registrar"
+                        refetch={refetch}
+                      />
+                    </AlmacenProvider>
+                  )}
+                </Box>
+              </Box>
+            </Grid>
+          ) : null} */}
+
+          <Grid item md={6}>
+            <Box
+              width="100%"
+              style={
+                onUpdate.length > 0
+                  ? {
+                      pointerEvents: "none",
+                      opacity: 0.4,
+                    }
+                  : null
+              }
+            >
+              <Box display="flex" alignItems="center">
+                <Typography className={classes.titulos}>
+                  {datos_generales.tipo_producto === "ROPA"
+                    ? "Talla"
+                    : "Número"}
+                </Typography>
+                <Box mx={1} />
+                <CrearTallasProducto
+                  setMedidasSeleccionadas={setMedidasSeleccionadas}
+                  refetch={refetch}
+                />
+              </Box>
+              <Grid container>
+                {medidas.map((talla, index) => (
+                  <RenderTallas
+                    key={index}
+                    talla={talla}
+                    coloresSeleccionados={coloresSeleccionados}
+                    medidasSeleccionadas={medidasSeleccionadas}
+                    setMedidasSeleccionadas={setMedidasSeleccionadas}
+                  />
+                ))}
+              </Grid>
+            </Box>
+          </Grid>
+          <Grid item md={6}>
+            <Box
+              width="100%"
+              style={
+                onUpdate.length > 0
+                  ? {
+                      pointerEvents: "none",
+                      opacity: 0.4,
+                    }
+                  : null
+              }
+            >
+              <Box display="flex" alignItems="center">
+                <Typography className={classes.titulos}>Color</Typography>
+                <Box mx={1} />
+                <CrearColorProducto refetch={refetch} />
+              </Box>
+              <Grid container>
+                {colores.map((color, index) => (
+                  <Colores
+                    key={index}
+                    color={color}
+                    coloresSeleccionados={coloresSeleccionados}
+                    setColoresSeleccionados={setColoresSeleccionados}
+                    medidasSeleccionadas={medidasSeleccionadas}
+                  />
+                ))}
+              </Grid>
+            </Box>
+          </Grid>
+        </Grid>
+        <Box mt={3} />
+        <TablaPresentaciones
+          from={from}
+          withoutPrice={withoutPrice}
+          setOnUpdate={setOnUpdate}
+          onUpdate={onUpdate}
+        />
+      </Box>
+    </div>
+  );
 }
 
 const RenderTallas = ({

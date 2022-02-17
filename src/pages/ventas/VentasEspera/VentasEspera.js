@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import useStyles from '../styles';
 
-import { Box, Button, DialogActions,Dialog, DialogContent, Divider,Grid, Typography, Slide, Badge } from '@material-ui/core'
+import { Box, Button, Dialog, DialogContent, Divider,Grid, Typography, Slide, Badge } from '@material-ui/core'
 import ListaVentas from './ListaVentas';
 import CloseIcon from '@material-ui/icons/Close';
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -90,11 +90,6 @@ export default function VentasEspera() {
                             <ListaVentas />
                         </Grid>
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClickOpen} variant="contained" color="primary" size="large">
-                        Aceptar
-                    </Button>
-                </DialogActions>
             </Dialog>
         </>
     )

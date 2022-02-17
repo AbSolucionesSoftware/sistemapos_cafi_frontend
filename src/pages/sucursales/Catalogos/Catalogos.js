@@ -29,11 +29,13 @@ export default function Catalogos() {
 						</Box>
 					</Grid>
 				)}
-				<Grid item lg={2}>
-					<Box display="flex" justifyContent="center" alignItems="center">
-						<Productos />
-					</Box>
-				</Grid>
+				{permisosUsuario.accesos.catalogos.productos.ver === false ? (null):(
+					<Grid item lg={2}>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<Productos />
+						</Box>
+					</Grid>
+				)}
 				{permisosUsuario.accesos.catalogos.tallas_numeros.ver === false ? (null):(
 					<Grid item lg={2}>
 						<Box display="flex" justifyContent="center" alignItems="center">

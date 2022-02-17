@@ -1,12 +1,15 @@
-import React, { forwardRef } from 'react';
-import { AppBar, Toolbar, Typography, IconButton, Select,useTheme,FormControl,
-Slide, Button, Box, Dialog,Input, TextField, Grid, InputLabel, MenuItem,CircularProgress} from '@material-ui/core';
+import React, { forwardRef, useContext, useState, useEffect } from 'react';
+import { AppBar, Toolbar, Typography, IconButton,FormControl,
+Slide, Button, Box, Dialog, OutlinedInput, InputAdornment,CircularProgress} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { Search } from "@material-ui/icons";
 import { useQuery } from '@apollo/client';
 import {Close} from '@material-ui/icons';
 import ListaProductos from './ListaProductos'
+import ExportarExcel from '../../../../components/ExportExcel'
 import ErrorPage from '../../../../components/ErrorPage'
 import { useDebounce } from 'use-debounce';
+import { TraspasosAlmacenContext } from "../../../../context/Almacenes/traspasosAlmacen";
 import { OBTENER_PRODUCTOS_ALMACEN, OBTENER_CATEGORIAS,OBTENER_ALMACENES } from '../../../../gql/Almacenes/Almacen';
 
 const useStyles = makeStyles((theme) => ({
@@ -41,31 +44,11 @@ const Transition = forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const ITEM_HEIGHT = 200;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 400,
-    },
-  },
-};
-function getStyles(tipo, tipoName, theme) {
-  return {
-    fontWeight:
-      tipoName.indexOf(tipo) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
-}
+
 export default function InventariosPorAlmacen() {
     const classes = useStyles();
-	const theme = useTheme();
-	const [ open, setOpen ] = React.useState(false);
-
-
-
+	const [ open, setOpen ] = useState(false);
+	
 	const handleClickOpen = () => {
 		setOpen(true);
 	};
@@ -93,28 +76,23 @@ export default function InventariosPorAlmacen() {
 
 const InventarioPorAlmacen = (props) =>{
 	const classes = useStyles();
-	const theme = useTheme();
-	const [ loading, setLoading ] = React.useState(true);
+	const [ loading, setLoading ] = useState(true);
 	  
-	const [ filtro, setFiltro ] = React.useState({  codigo_barras: '',clave_alterna: '',tipo_producto: '',nombre_comercial: '',
-        nombre_generico: '',categoria: '',subcategoria: ''});
-		
-	const [ filtroTo, setFiltroTo ] = React.useState({});
+	const [ filtro, setFiltro ] = useState('');
 
+	const {dataExcel, setDataExcel } = useContext(TraspasosAlmacenContext);
+	
+	const [ productos, setProductos] = 	useState([]);
+	const [ obtenerAlmacenes, setObtenerAlmacenes] = 	useState([]);
 	// const [ almacen, setAlmacen ] = React.useState('');
-	const [ categoria ] = React.useState('');
-	const [ subcategoria ] = React.useState('');
-	const [ categoriaTo, setCategoriaTo ] = React.useState('');
-	const [ subcategoriaTo, setSubCategoriaTo ] = React.useState('');
-	const [ subcategorias, setSubcategorias ] = React.useState([]);
-	const [value] = useDebounce(filtro, 1000);
+
+	const [value] = useDebounce(filtro, 700);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
-	let productos = [];
-	// let tipos = ['ROPA','CALZADO','OTROS'];
-	let categorias = [];
 	
-	let obtenerAlmacenes = [];
+	// let tipos = ['ROPA','CALZADO','OTROS'];
+	const [columns, setColumns] = useState([])
+	
 	 	/* Queries */
 	//const {  data, error, refetch } = useQuery(OBTENER_PRODUCTOS_ALMACEN,{
     const productosAlmacenQuery = useQuery(OBTENER_PRODUCTOS_ALMACEN,{
@@ -137,108 +115,72 @@ const InventarioPorAlmacen = (props) =>{
 			id: sesion.sucursal._id
 		}
 	});	
-	React.useEffect(
-		() => {
+	
 
-			setFiltroTo(value)
-		},
-		[ value ]
-	);
-
-	React.useEffect(
-		() => {
-		
-			productosAlmacenQuery.refetch();
-		},
-		[ filtroTo ]
-	);
-	React.useEffect(
+	useEffect(
 		() => {
 			queryObtenerAlmacenes.refetch();
 		},
 		[ queryObtenerAlmacenes.update, queryObtenerAlmacenes ]
 	);
 
-	React.useEffect(
-		() => {
-		
-			productosAlmacenQuery.refetch();
-			setLoading(false);
-		},
-		[ ]
-	);
-	React.useEffect(
-		() => {
-		
-		},
-		[ productosAlmacenQuery.error]
-	);
-	React.useEffect(
-		() => {
-		
-			categoriasQuery.refetch();
-			
-		},
-		[ categoriasQuery.refetch ]
-	); 
-
-
-	if(productosAlmacenQuery.data){
-		
-		productos = productosAlmacenQuery.data.obtenerProductosAlmacenes;
-	}
-	if(categoriasQuery.data){
-		categorias = categoriasQuery.data.obtenerCategorias;
-	}
 	
-	if(queryObtenerAlmacenes.data){
-		obtenerAlmacenes = queryObtenerAlmacenes.data.obtenerAlmacenes;
-	}
+	useEffect(
+		() => {
+			if(props.open){
+				setDataExcel([])
+				productosAlmacenQuery.refetch();
+				queryObtenerAlmacenes.refetch();
+				setLoading(false);
+			}
+			
+		},
+		[props.open ]
+	);
 	
-	 const setValToFilter = (label,value) => {
-		try {
-			setLoading(true);
-		
-			if(label === 'categoria' && value !== ''){
-				const cat = categorias.find(element => element.categoria === value);
-				setSubcategorias(cat.subcategorias)
-			}
-
-			if(label === 'categoria' ){
-				
-				let fil = {...filtro, subcategoria : subcategoriaTo, categoria:value}
-			
-				productosAlmacenQuery.refetch(
-					{
-						filtro: fil
-					}
-				)
-				setCategoriaTo((value !== '') ? value : '')
-				setSubCategoriaTo('');
-			} 
-			if(label === 'subcategoria'&& value !== '' ){
-			
-				productosAlmacenQuery.refetch(
-					{
-						filtro: {...filtro, subcategoria : value, categoria:categoriaTo}
-					}
-				)
-				setSubCategoriaTo((value !== '') ? value : '')
-			}
-			if(label !== 'categoria' && label !== 'subcategoria' ){
-				setFiltro({...filtro, [label] : value, subcategoria : subcategoriaTo, categoria:categoriaTo});
-			}
-			//setLoading(false)	
-		} catch (error) {
-			
+	useEffect(
+		() => {
+		if(productosAlmacenQuery.data){
+			//setDataExcel([]);
+			setProductos(productosAlmacenQuery.data.obtenerProductosAlmacenes);
 		}
-    };
+		},
+		[ productosAlmacenQuery.data]
+	);
+
+	useEffect(
+		() => {
+			if(queryObtenerAlmacenes.data){
+				const columnsEffect = [
+					{ id: 'codigo_barras', label: 'Código de barras', minWidth: 60 , widthPx: 160, },
+					{ id: 'nombre_comercial', label: 'Nombre comercial', minWidth: 170, widthPx: 160, }
+				];
+				let almace = queryObtenerAlmacenes.data.obtenerAlmacenes;
+				almace.forEach(element => {
+							
+					columnsEffect.push({ id: element._id, label: element.nombre_almacen, minWidth: 60, widthPx: 160,})
+				}); 
+				columnsEffect.push({ id: 'total', label: 'Total existencias', minWidth: 60, widthPx: 160,})
+				setObtenerAlmacenes(almace);
+				setColumns(columnsEffect);
+			}
+			
+		},
+		[ queryObtenerAlmacenes.data]
+	);
+
+	
+	
+	
+	
+
+	 
 	return(
 		<Dialog fullScreen open={props.open} onClose={props.handleClose} TransitionComponent={Transition}>
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-                                Almacenes
+                                Inventario por almacén
 						</Typography>
 						<Box mx={3}>
 							<Box m={1}>
@@ -252,137 +194,50 @@ const InventarioPorAlmacen = (props) =>{
 						</IconButton>
 					</Toolbar>
 				</AppBar>
-				<Grid container direction="row">
-                        <Box width="20%" className={classes.inputBox} >
-                            <Typography>Código de barras</Typography>
-                            <Box display="flex">
-                                <TextField
-                                    fullWidth
-                                    size="small"
-                                    /* error */
-                                    name="codigo_barras"
-                                    id="form-producto-codigo-barras"
-                                    variant="outlined"
-                                    /* helperText="Incorrect entry." */
-                                    onChange={(e) =>  setValToFilter('codigo_barras', e.target.value)}
-                                />
-                            </Box>
-                        </Box>
-                        <Box width="20%" className={classes.inputBox} >
-                            <Typography>Clave alterna</Typography>
-                            <Box display="flex">
-                                <TextField
-                                    fullWidth
-                                    size="small"
-                                    /* error */
-                                    name="clave_alterna"
-                                    id="form-producto-clave-alterna"
-                                    variant="outlined"
-                                    /* helperText="Incorrect entry." */
-									onChange={(e) =>  setValToFilter('clave_alterna', e.target.value)}
-                                />
-                            </Box>
-                        </Box>
-                        
-                        <Box width="20%" className={classes.inputBox} >
-                            <Typography>Nombre comercial</Typography>
-                            <Box display="flex">
-                                <TextField
-                                    fullWidth
-                                    size="small"
-                                    /* error */
-                                    name="clave_alterna"
-                                    id="form-producto-clave-alterna"
-                                    variant="outlined"
-                                    /* helperText="Incorrect entry." */
-									onChange={(e) =>  setValToFilter('nombre_comercial', e.target.value)}
-                                />
-                            </Box>
-                        </Box>
-                        <Box width="20%" className={classes.inputBox} >
-                            <Typography>Nombre génerico</Typography>
-                            <Box display="flex">
-                                <TextField
-                                    fullWidth
-                                    size="small"
-                                    /* error */
-                                    name="nombre_generico"
-                                    id="form-producto-nombre-generico"
-                                    variant="outlined"
-                                    /* helperText="Incorrect entry." */
-									onChange={(e) =>  setValToFilter('nombre_generico', e.target.value)}
-                                />
-                            </Box>
-                        </Box>
-                        <FormControl className={classes.boxControl} >
-                        
-                            <InputLabel id="tipo-label"  >Tipo</InputLabel>
-                            <Select
-                            labelId="tipo-label"
-                            id="tipo_producto"
-                            value={filtro.tipo_producto}
-                            onChange={(e) => setValToFilter('tipo_producto', e.target.value )}
-                            input={<Input />}
-                            MenuProps={MenuProps}
-                            >
-                                <MenuItem value="">
-                                    <em>Selecciona uno</em>
-                                </MenuItem>
-                                <MenuItem value="ROPA">Ropa</MenuItem>
-                                <MenuItem value="CALZADO">Calzado</MenuItem>
-                                <MenuItem value="OTROS">Otros</MenuItem>
-                            </Select>
+					<Box mt={2}>
+						<Box ml={4} >
+						<Typography className={classes.subtitle}>
+                            <b>Buscar producto</b>
+                        </Typography>
+						</Box>
+						<Box ml={4} display="flex" >
                             
-                        </FormControl>
-                        <FormControl className={classes.boxControl} >
-                        
-                            <InputLabel id="categoria-label"  >Categoría</InputLabel>
-                            <Select
-                            labelId="categoria-label"
-                            id="categoria"
-                            value={categoriaTo}
-                            onChange={(e) => setValToFilter('categoria', e.target.value )}
-                            input={<Input />}
-                            MenuProps={MenuProps}
-                            >
-							 <MenuItem value="">
-                                <em>Selecciona una</em>
-                            </MenuItem>
-                            {categorias.map((cat) => (
-                                <MenuItem key={cat._id} value={cat.categoria}  style={getStyles(cat._id, categoria, theme)}>
-                                {cat.categoria}
-                                </MenuItem>
-                            ))}
-                            </Select>
-                            
-                        </FormControl>
-						<FormControl className={classes.boxControl} >
-                        
-                            <InputLabel id="subcategoria-label"  >Subcategoría</InputLabel>
-                            <Select
-                            labelId="subcategoria-label"
-                            id="subcategoria"
-                            value={subcategoriaTo}
-                            onChange={(e) => setValToFilter('subcategoria', e.target.value )}
-                            input={<Input />}
-                            MenuProps={MenuProps}
-                            >
-							 <MenuItem value="">
-                                    <em>Selecciona una</em>
-                                </MenuItem>
-                            {subcategorias.map((subcat) => (
-                                <MenuItem key={subcat._id} value={subcat.subcategoria} style={getStyles(subcat._id, subcategoria, theme)}>
-                                {subcat.subcategoria}
-                                </MenuItem>
-                            ))}
-                            </Select>
-                            
-                        </FormControl>
-                    
-                      {/*   <Button  variant="contained" color="primary" className={classes.button} style={{width:"20%"}} >
-                            Buscar producto
-                        </Button> */}
-                    </Grid> 
+                            <Box style={{  width: "35%" }}>
+                                
+                                    <FormControl variant="outlined" fullWidth size="small">
+                                    <OutlinedInput
+                                        id="search-producto"
+                                        type="text"
+                                        value={filtro}
+                                        onChange={(e) => setFiltro(e.target.value)}
+                                        endAdornment={
+                                        <InputAdornment position="start">
+                                            <IconButton
+                                            type="submit"
+                                            aria-label="search producto"
+                                            edge="end"
+                                            >
+                                            <Search />
+                                            </IconButton>
+                                        </InputAdornment>
+                                        }
+                                    />
+                                    </FormControl>
+                                    
+                                
+                            </Box>
+							{(productos.length > 0) ?
+								<Box ml={4} mrstyle={{ backgroundColor:'red', alignContent:'flex-end'}}  justifyContent="flex-end" alignItems="center" >
+									<Box  >
+										<ExportarExcel fileName="Inventarios almacen" data={dataExcel} columnName={columns} />
+									</Box>
+								</Box>
+								:
+								<div/>
+							}
+						</Box>
+						
+					</Box>			
 
 				{
 					(loading) ?
@@ -394,8 +249,8 @@ const InventarioPorAlmacen = (props) =>{
 						(productosAlmacenQuery.error || categoriasQuery.error) ?
 							<ErrorPage error={productosAlmacenQuery.error} />
 						:
-						<Box mx={5}>
-							<ListaProductos productos={productos} obtenerAlmacenes={obtenerAlmacenes} />
+						<Box mx={5} mt={1} >
+							<ListaProductos productos={productos} obtenerAlmacenes={obtenerAlmacenes} columns={columns} />
 						</Box>
 					
 				}

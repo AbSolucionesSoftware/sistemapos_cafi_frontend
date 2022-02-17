@@ -18,7 +18,7 @@ import { FacturacionCtx } from "../../../../context/Facturacion/facturacionCtx";
 import { CREAR_FACTURA } from "../../../../gql/Facturacion/Facturacion";
 import { useMutation } from "@apollo/client";
 import { formaPago, metodoPago, tiposCfdi, usosCfdi } from "../catalogos";
-import { Done } from "@material-ui/icons";
+import { Close, Done } from "@material-ui/icons";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -32,7 +32,7 @@ export default function RealizarFactura({ setAlert }) {
     setDatosFactura,
     codigo_postal,
     setCodigoPostal,
-    productosFactura,
+    productos,
     setProductosFactura,
     setError,
   } = useContext(FacturacionCtx);
@@ -55,14 +55,15 @@ export default function RealizarFactura({ setAlert }) {
 
   const crearFactura = async () => {
     try {
-      setLoading(true);
+      /* setLoading(true); */
       let nuevo_obj = { ...datosFactura };
-      const productos = [
-        {
+
+      /* 
+      {
           ProductCode: "50202306",
           IdentificationNumber: "61b7bf6e3454b727a0c2e357",
           Description: "COCACOLA",
-          /* Unit: "Unidad de Servicio", */
+          //Unit: "Unidad de Servicio",
           UnitCode: "XBX",
           UnitPrice: "36",
           Quantity: "1",
@@ -78,8 +79,51 @@ export default function RealizarFactura({ setAlert }) {
             },
           ],
           Total: "35.49",
-        },
-      ];
+        }, */
+
+      const items = [];
+
+      productos.forEach(producto => {
+        console.log(producto);
+        let {iva, ieps} = producto.id_producto.precios;
+        let Taxes = [];
+
+        if(producto.iva_total){
+          Taxes.push({
+            Total: producto.iva_total,
+            Name: "IVA",
+            Base: producto.precio_a_vender,
+            Rate: `0.${iva < 10 ? `0${iva}` : iva}`,
+            IsRetention: "true",
+          })
+        }
+        if(producto.ieps_total){
+          Taxes.push({
+            Total: producto.ieps_total,
+            Name: "IEPS",
+            Base: producto.precio_a_vender,
+            Rate: `0.${ieps < 10 ? `0${ieps}` : ieps}`,
+            IsRetention: "true",
+          })
+        }
+        items.push(
+          {
+            ProductCode: producto.id_producto.datos_generales.clave_producto_sat.Value,
+            IdentificationNumber: producto.id_producto._id,
+            Description: producto.id_producto.datos_generales.nombre_comercial,
+            UnitCode: producto.codigo_unidad,
+            UnitPrice: producto.precio_actual_object.precio_venta,
+            Quantity: producto.cantidad_venta,
+            Subtotal: producto.subtotal,
+            Discount: producto.precio_actual_object.dinero_descontado ? producto.precio_actual_object.dinero_descontado : 0,
+            Taxes,
+            Total: producto.total
+          },
+        )
+      });
+      
+console.log(items);
+      return
 
       //poner la fecha de facturacion
       if (datosFactura.date === "1") {
@@ -108,18 +152,18 @@ export default function RealizarFactura({ setAlert }) {
       }
       setError({ status: false, message: "" });
 
-      /* let result = await CrearFactura({
+      let result = await CrearFactura({
         variables: {
           input: nuevo_obj,
         },
       });
-      console.log("result", result); */
+      console.log("result", result);
       setLoading(false);
-      /* setAlert({
+      setAlert({
         message: `¡Listo! ${result.data.crearFactura.message}`,
         status: "success",
         open: true,
-      }); */
+      });
       /* limpiarCampos(); */
     } catch (error) {
       console.log(error);
@@ -143,29 +187,46 @@ export default function RealizarFactura({ setAlert }) {
     <div>
       <Button
         color="primary"
+        variant="contained"
         startIcon={<DoneIcon />}
         size="large"
         onClick={() => handleClickOpen()}
       >
-        Generar CFDI
+        Guardar
       </Button>
       <Dialog
         open={open}
         TransitionComponent={Transition}
         keepMounted
-        onClose={() => handleClose()}
+        onClose={(_, reason) => {
+          if (reason !== "backdropClick") {
+            handleClose();
+          }
+        }}
         fullWidth
         maxWidth="xs"
       >
+        <Box display="flex" justifyContent="flex-end" m={1}>
+          <Button
+            onClick={() => handleClose()}
+            size="large"
+            color="secondary"
+            variant="contained"
+          >
+            <Close />
+          </Button>
+        </Box>
         <DialogContent>
           <InputsFacturaModal />
         </DialogContent>
-        <DialogActions style={{ justifyContent: "center" }}>
-          <Button onClick={() => handleClose()} color="primary">
-            Cancelar
-          </Button>
-          <Button startIcon={<Done />} onClick={() => crearFactura()} color="primary">
-            Realizar Factura
+        <DialogActions style={{justifyContent: "center"}}>
+          <Button
+            startIcon={<Done />}
+            onClick={() => crearFactura()}
+            variant="contained"
+            color="primary"
+          >
+            Guardar
           </Button>
         </DialogActions>
       </Dialog>

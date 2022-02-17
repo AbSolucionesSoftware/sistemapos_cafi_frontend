@@ -26,7 +26,7 @@ import { OBTENER_SERIES } from "../../../../gql/Facturacion/Facturacion";
 import ErrorPage from "../../../../components/ErrorPage";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 import RealizarFactura from "./RealizarFactura";
-import { factura_initial_state } from "./initial_factura_states";
+import CancelarFactura from "./CancelarFactura";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -43,7 +43,6 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 
 export default function NuevaFactura() {
-  const classes = useStyles();
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -78,27 +77,11 @@ export default function NuevaFactura() {
           fullScreen
           open={open}
           onClose={() => handleClose()}
+          disableEscapeKeyDown
           TransitionComponent={Transition}
         >
-          <AppBar className={classes.appBar}>
-            <Toolbar>
-              <Typography variant="h6" className={classes.title}>
-                Generar nuevo CFDI
-              </Typography>
-              <Box m={1}>
-                <Button
-                  /* variant="contained" */
-                  color="inherit"
-                  onClick={() => handleClose()}
-                  size="large"
-                >
-                  <CloseIcon style={{ fontSize: 30 }} />
-                </Button>
-              </Box>
-            </Toolbar>
-          </AppBar>
           <FacturacionProvider>
-            <FacturaModalContent handleClose={handleClose} />
+            <DialogFacturaPrincipal handleClose={handleClose} />
           </FacturacionProvider>
         </Dialog>
       </ClienteProvider>
@@ -106,12 +89,62 @@ export default function NuevaFactura() {
   );
 }
 
-const FacturaModalContent = ({ handleClose }) => {
-  const { setDatosFactura, setCodigoPostal, setProductosFactura } = useContext(
-    FacturacionCtx
-  );
-  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+const DialogFacturaPrincipal = ({ handleClose }) => {
+  const classes = useStyles();
+  const { venta_factura } = useContext(FacturacionCtx);
+  const [openCancel, setOpenCancel] = React.useState(false);
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
+
+  const handleClickOpen = () => {
+    setOpenCancel(true);
+  };
+
+  const cancelarCFDI = () => {
+    if (venta_factura !== null) {
+      handleClickOpen();
+    } else {
+      handleClose();
+    }
+  };
+
+  return (
+    <Fragment>
+      <AppBar className={classes.appBar}>
+        <Toolbar>
+          <Typography variant="h6" className={classes.title}>
+            Generar nuevo CFDI
+          </Typography>
+          <Box m={1}>
+            <Button
+              variant="contained"
+              color="inherit"
+              onClick={() => cancelarCFDI()}
+              color="secondary"
+              size="large"
+            >
+              <CloseIcon style={{ fontSize: 30 }} />
+            </Button>
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <DialogContent>
+        <SnackBarMessages alert={alert} setAlert={setAlert} />
+        <FacturaModalContent />
+      </DialogContent>
+      <DialogActions>
+        <RealizarFactura setAlert={setAlert} />
+      </DialogActions>
+      <CancelarFactura
+        open={openCancel}
+        setOpen={setOpenCancel}
+        handleCloseFactura={handleClose}
+      />
+    </Fragment>
+  );
+};
+
+const FacturaModalContent = () => {
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
   const { loading, data, error } = useQuery(OBTENER_SERIES, {
     variables: {
@@ -146,39 +179,15 @@ const FacturaModalContent = ({ handleClose }) => {
     console.log(serie_default);
   }
 
-  const limpiarCampos = () => {
-    setDatosFactura(factura_initial_state);
-    setProductosFactura([]);
-    setCodigoPostal("");
-  };
-
-  const cancelarCFDI = () => {
-    limpiarCampos();
-    handleClose();
-  };
-
   return (
     <Fragment>
-      <DialogContent>
-        <SnackBarMessages alert={alert} setAlert={setAlert} />
-        {!seriesCfdi.length ? (
-          <Alert severity="warning">No tienes Series CFDI registradas</Alert>
-        ) : null}
-        <Box my={2}>
-          <RegistroFactura serie_default={serie_default} />
-        </Box>
-        {/* <Box>
-          <ListaDocumentos />
-        </Box> */}
-        <DetallesFactura />
-      </DialogContent>
-
-      <DialogActions style={{ justifyContent: "center" }}>
-        <Button onClick={() => cancelarCFDI()} size="large">
-          Cancelar
-        </Button>
-        <RealizarFactura setAlert={setAlert} />
-      </DialogActions>
+      {!seriesCfdi.length ? (
+        <Alert severity="warning">No tienes Series CFDI registradas</Alert>
+      ) : null}
+      <Box my={2}>
+        <RegistroFactura serie_default={serie_default} />
+      </Box>
+      <DetallesFactura />
     </Fragment>
   );
 };

@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
 import useStyles from '../styles';
 
-import { Box, Button, CircularProgress, 
+import { Box, Button,
         DialogActions, DialogContent,  
         FormControl, Grid, MenuItem, 
         Select, TextField, Typography 
     } from '@material-ui/core'
+import BackdropComponent from '../../../components/Layouts/BackDrop'
 import { useMutation, useQuery } from '@apollo/client';
 import { OBTENER_CAJAS } from '../../../gql/Cajas/cajas';
 import { REGISTRAR_TURNOS } from '../../../gql/Ventas/abrir_cerrar_turno';
@@ -205,15 +206,16 @@ export default function AbrirTurno({handleClickOpen, loading, type, setLoading})
 
     if (cajas.loading) 
 	return (
-		<Box
-		display="flex"
-		flexDirection="column"
-		justifyContent="center"
-		alignItems="center"
-		height="80vh"
-		>
-			<CircularProgress />
-		</Box>
+        <BackdropComponent loading={loading} />
+		// <Box
+		// display="flex"
+		// flexDirection="column"
+		// justifyContent="center"
+		// alignItems="center"
+		// height="80vh"
+		// >
+		// 	<CircularProgress />
+		// </Box>
 	);
 
     return (
@@ -336,7 +338,7 @@ export default function AbrirTurno({handleClickOpen, loading, type, setLoading})
                         color="primary" 
                         size="large"
                     >
-                        ABRIR TURNO
+                        Guardar
                     </Button>
                 </Box>
             </DialogActions>

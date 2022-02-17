@@ -109,13 +109,13 @@ export default function EliminarProductoFactura({ venta, producto, index }) {
                   <TableCell>{datos_generales.nombre_comercial}</TableCell>
                   <TableCell>{producto.cantidad_venta}</TableCell>
                   <TableCell>
-                    ${formatoMexico(producto.subtotal_total_producto)}
+                    ${formatoMexico(producto.subtotal)}
                   </TableCell>
                   <TableCell>
-                    ${formatoMexico(producto.impuestos_total_producto)}
+                    ${formatoMexico(producto.impuestos)}
                   </TableCell>
                   <TableCell>
-                    ${formatoMexico(producto.total_total_producto)}
+                    ${formatoMexico(producto.total)}
                   </TableCell>
                 </TableRow>
               </TableBody>

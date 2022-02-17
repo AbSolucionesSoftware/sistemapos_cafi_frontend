@@ -129,6 +129,7 @@ export default function ListaAlmacen() {
 }
 
 const RowsRender = ({ datos }) => {
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));	
 
 	return (
 		<TableRow hover role="checkbox" tabIndex={-1}>
@@ -169,12 +170,16 @@ const RowsRender = ({ datos }) => {
 				<Typography>{datos.direccion.pais ? datos.direccion.pais : ""}</Typography>
 			</TableCell>
 			<TableCell width={50}>
-				<ContainerRegistroAlmacen accion="actualizar" datos={datos} />
+				{sesion.accesos.almacenes.almacen.editar === false ? (null):(
+					<ContainerRegistroAlmacen accion="actualizar" datos={datos} />
+				)}
 			</TableCell>
 			<TableCell width={50}>
-				<IconButton color="secondary">
-					<Delete />
-				</IconButton>
+				{sesion.accesos.almacenes.almacen.eliminar === false ? (null):(
+					<IconButton color="secondary">
+						<Delete />
+					</IconButton>
+				)}
 			</TableCell>
 			{/* <TableCell width={50}>
 				<ModalDetalles openDetalles={openDetalles} handleDetalles={handleDetalles} datos={datos} />

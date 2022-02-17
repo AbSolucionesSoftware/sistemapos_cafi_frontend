@@ -7,8 +7,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { Box, Button, Dialog, DialogActions, DialogContent, IconButton, Typography } from '@material-ui/core';
+import { Box, Button, Dialog, DialogContent, IconButton, Typography } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
+import CloseIcon from '@material-ui/icons/Close';
 import AutorenewIcon from '@material-ui/icons/Autorenew';
 import { VentasContext } from '../../../context/Ventas/ventasContext';
 import { AccesosContext } from '../../../context/Accesos/accesosCtx';
@@ -83,6 +84,7 @@ const RowsVentas = ({ venta, index }) => {
         abrirPanelAcceso,
 		setDepartamentos
 	} = useContext(AccesosContext);
+	
     const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
 	const [ open, setOpen] = useState(false);
 	const [ keyIndex, setKeyIndex ] = useState('');
@@ -189,24 +191,22 @@ const RowsVentas = ({ venta, index }) => {
 			<Dialog
 				open={open} 
 				onClose={handleClickOpen} 
+				fullWidth
+				maxWidth='xs'
 			>
+				
 				<DialogContent>
-					<Box p={1}>
+					<Box p={1} display='flex'>
 						<Typography variant="h6">
 							No puedes agregar una venta, cuando ya esta una en curso.
 						</Typography>
+						<Box display='flex' justifyContent={'flex-end'} p={2}>
+							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+								<CloseIcon />
+							</Button>
+						</Box>
 					</Box>
 				</DialogContent>
-				<DialogActions>
-					<Button
-						color="primary"
-						size="large"
-						variant="contained"
-						onClick={handleClickOpen}
-					>
-						Aceptar
-					</Button>
-				</DialogActions>
 			</Dialog>
 		</>
 

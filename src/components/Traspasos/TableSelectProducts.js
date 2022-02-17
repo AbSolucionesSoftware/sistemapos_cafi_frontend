@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { Grid,Box, TextField } from '@material-ui/core';
 import { lighten, makeStyles } from '@material-ui/core/styles';
-import {Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel} from '@material-ui/core';
+import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel} from '@material-ui/core';
 import {Toolbar, Typography, Paper, IconButton, Tooltip, Dialog, Checkbox ,Slide, Button, DialogTitle, DialogActions} from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -14,7 +14,7 @@ import TallasColoresTraspasos from './TallasColoresTraspasos';
 import TableSelectMedidas from './TableSelectMedidas';
 import { useQuery } from '@apollo/client';
 import {  OBTENER_CONSULTAS } from "../../gql/Catalogos/productos";
-import { RegProductoContext } from '../../context/Catalogos/CtxRegProducto';
+
 // function createData(name, cantidad, precio) {
 //   return { name, cantidad, precio };
 // }
@@ -29,7 +29,7 @@ function descendingComparator(a, b, orderBy) {
   return 0;
 }
 
-function getComparator(order, orderBy) {
+/* function getComparator(order, orderBy) {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
@@ -43,7 +43,7 @@ function stableSort(array, comparator) {
     return a[1] - b[1];
   });
   return stabilizedThis.map((el) => el[0]);
-}
+} */
 
 const headCells = (add) => {
 
@@ -316,11 +316,7 @@ const EnhancedTableToolbar = (props) => {
   const { product_selected, setproduct_selected, tipoPieza, update } = props;
    const {
         setProductosTras,
-        productosTras,
-        setProductosEmpTo,
-        setProductosTo, 
-        productosTo,
-        productosEmpTo
+        productosTras
     } = useContext(TraspasosAlmacenContext);
 
 
@@ -412,6 +408,7 @@ const setValueToTrans =(cantidad_total) =>{
         setProductosTras([...productosTras, obj]);
     }
     }
+    setproduct_selected(undefined);
      return;
   } catch (error) {
      //console.log(error)
@@ -455,23 +452,31 @@ useEffect(() => {
     
   };        
   function onlyNumbers(value){
-   
+    props.setError({error:false, mensaje:''})
       //const onlyNums = value.toString().replace(/[^0-9]/g, '');
-      const intValue = parseFloat(value);
+      const intValue = (value !== '') ? parseFloat(value) : 0;
       try {
         if(props.almacenOrigen !== null){
+          console.log(intValue)
           if( !tipoPieza.piezas  ){
             if(intValue <= product_selected.inventario_general[0].cantidad_existente_maxima){
-              setCantidadTo(intValue);
+              setCantidadTo((intValue !== 0) ? intValue : '');
               //console.log(intValue)
+              return;
+            }else{
+              props.setError({error:true, mensaje:'La cantidad ingresada sobrepasa la cantidad existente.'})
               return;
             } 
           }else{
             
               if(intValue <= product_selected.inventario_general[0].cantidad_existente){
-                setCantidadTo(intValue);
+                 setCantidadTo((intValue !== 0) ? intValue : '');
                 return;
               }
+              else{
+              props.setError({error:true, mensaje:'La cantidad ingresada sobrepasa la cantidad existente.'})
+              return;
+            } 
             }
           }else{
           
@@ -785,7 +790,7 @@ export default function EnhancedTable(props) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = data.map((n) => n.name);
+      //const newSelecteds = data.map((n) => n.name);
       setSelected(event.target.checked);
       return;
     }
@@ -794,7 +799,7 @@ export default function EnhancedTable(props) {
   const data = (!props.add) ?  productosTras  : (!props.almacenOrigen) ? productosEmpTo : productosTo  ; 
 
   const handleClick = (event, elemento, cant) => {
- 
+  setError({error:false, mensaje:''})
     if(elemento.datos_generales.tipo_producto === 'OTROS'){
       let haveCant= 0;
       productosTras.forEach(producto => {
@@ -915,7 +920,7 @@ export default function EnhancedTable(props) {
 
   
   function onlyNumbers(value){
-   
+   setError({error:false, mensaje:''})
       //const onlyNums = value.toString().replace(/[^0-9]/g, '');
       const intValue = parseFloat(value);
       try {
@@ -935,7 +940,7 @@ export default function EnhancedTable(props) {
             }
           }else{
            
-           
+          
             
             return;
           }

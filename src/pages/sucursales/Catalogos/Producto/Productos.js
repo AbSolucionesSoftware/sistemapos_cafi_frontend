@@ -8,6 +8,7 @@ import Button from "@material-ui/core/Button";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Box from "@material-ui/core/Box";
+import CloseIcon from "@material-ui/icons/Close";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import FormControl from "@material-ui/core/FormControl";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
@@ -87,15 +88,17 @@ export default function Productos() {
             <Typography variant="h6" className={classes.title}>
               Productos
             </Typography>
-            <Button
-              autoFocus
-              color="inherit"
-              size="large"
-              onClick={() => handleClose()}
-              startIcon={<Close />}
-            >
-              Cerrar
-            </Button>
+
+            <Box m={1}>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleClose}
+                size="large"
+              >
+                <CloseIcon style={{ fontSize: 30 }} />
+              </Button>
+            </Box>
           </Toolbar>
         </AppBar>
         <RegistroComponent />
@@ -114,11 +117,11 @@ const RegistroComponent = () => {
 
   const handleChange = (event, value) => {
     setValue(value);
-	if(value === 0){
-		setExistencias(true)
-	}else{
-		setExistencias(false)
-	}
+    if (value === 0) {
+      setExistencias(true);
+    } else {
+      setExistencias(false);
+    }
   };
 
   /* Queries */
@@ -127,9 +130,9 @@ const RegistroComponent = () => {
       sucursal: sesion.sucursal._id,
       empresa: sesion.empresa._id,
       filtro,
-	  existencias,
+      existencias,
     },
-	fetchPolicy: "network-only",
+    fetchPolicy: "network-only",
   });
 
   if (loading)
@@ -204,17 +207,18 @@ const RegistroComponent = () => {
         <Box display="flex">
           <ProductosEliminados productosActivosRefetch={refetch} />
           <Box mx={1} />
-          <CrearProducto accion={false} productosRefetch={refetch} />
+          {sesion.accesos.catalogos.productos.agregar === false ? null : (
+            <CrearProducto accion={false} productosRefetch={refetch} />
+          )}
         </Box>
       </Box>
       <Box mx={4}>
         <div className={classes.root}>
           <Tabs
-		  	indicatorColor="primary"
+            indicatorColor="primary"
             value={value}
             onChange={handleChange}
             aria-label="simple tabs example"
-			
           >
             <Tab label="Productos de Sucursal" />
             <Tab label="Todos los productos" />

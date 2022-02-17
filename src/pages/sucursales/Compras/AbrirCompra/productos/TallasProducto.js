@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import { Button, CircularProgress, Tooltip } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -25,13 +25,13 @@ export default function AlertDialogSlide({verificate, setVerificate}) {
     variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
   });
 
-  useEffect(() => {
+  /* useEffect(() => {
     if(loading){
       setLoadingProductos(true);
     }else{
       setLoadingProductos(false);
     }
-  }, [loading]);
+  }, [loading]); */
 
   if (loading)
     return (

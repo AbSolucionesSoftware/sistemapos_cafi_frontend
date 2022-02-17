@@ -14,7 +14,7 @@ import { CREAR_COTIZACION } from "../../../gql/Ventas/cotizaciones";
 import { VentasContext } from '../../../context/Ventas/ventasContext';
 import { useMutation } from '@apollo/client';
 
-export default function NuevaCotizacion({ handleClickOpen }) {
+export default function NuevaCotizacion({ setOpen }) {
     const { setAlert } = useContext(VentasContext);
 
     const [ CrearCotizacion ] = useMutation(CREAR_COTIZACION);
@@ -575,7 +575,7 @@ export default function NuevaCotizacion({ handleClickOpen }) {
                     color="secondary"
                     variant="outlined"
                     size="large"
-                    onClick={handleClickOpen}
+                    onClick={() => setOpen(false)}
                 >
                     Cancelar
                 </Button>

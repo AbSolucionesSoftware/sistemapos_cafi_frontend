@@ -24,8 +24,9 @@ export default function ExportExcel({historialCortes}) {
     const classes = useStyles();
     let arrayExcel = [];
 
-    const agruparDatos = (historialCortes) => {
-        datosExcel.splice(0, datosExcel.length);
+    const agruparDatos = () => {
+       
+        
         for (let i = 0; i < historialCortes.length; i++) {
             arrayExcel = { 
                 fecha: historialCortes[i].fecha_salida.completa,
@@ -45,7 +46,7 @@ export default function ExportExcel({historialCortes}) {
                 monto_transferencia: historialCortes[i].montos_en_caja.monto_transferencia.monto ,
                 monto_vales_despensa: historialCortes[i].montos_en_caja.monto_vales_despensa.monto ,
             };
-            datosExcel.push(arrayExcel);
+            setDatosExcel(arrayExcel);
         };
     };
 
@@ -59,7 +60,7 @@ export default function ExportExcel({historialCortes}) {
                         color="primary"
                         aria-label="Guardar"
                         className={classes.iconSave}
-                        onClick={() => agruparDatos(historialCortes)}
+                        onClick={() => agruparDatos()}
                     >
                         <SaveIcon className={classes.margin} />
                         Exportar

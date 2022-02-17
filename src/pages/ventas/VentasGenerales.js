@@ -127,7 +127,7 @@ export default function VentasGenerales() {
         let data_key = isNaN(data[0]) ? data[0] : data[1];
         setGranelBase({
           granel: true,
-          valor: data_operation,
+          valor: parseFloat(data_operation),
         });
         obtenerProductos({
           variables: {

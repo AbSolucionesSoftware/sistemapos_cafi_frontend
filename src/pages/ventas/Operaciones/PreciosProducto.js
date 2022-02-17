@@ -112,6 +112,8 @@ export default function PreciosProductos() {
             granel: newProductoPrecioNuevo.granel_producto, 
             origen: "" 
           });
+
+          console.log(precioSelectProductoVenta[0])
         const new_suma = await calculatePrices2({
           newP: newProductoPrecioActual, 
           cantidad: newProductoPrecioActual.cantidad_venta, 
@@ -151,6 +153,12 @@ export default function PreciosProductos() {
           1,
           newProductoPrecioActual
         );
+
+        console.log("venta >>", venta_existente.subTotal);
+
+        console.log("resta >>", new_resta.subtotalCalculo);
+
+        console.log("suma >>", new_suma.subtotalCalculo)
 
       const CalculosData = {
         subTotal:
@@ -258,39 +266,25 @@ export default function PreciosProductos() {
       <Dialog
         maxWidth="lg"
         open={open}
-        onClose={handleClickOpen}
+        onClose={() => setOpen(!open)}
         TransitionComponent={Transition}
       >
         <DialogContent>
-          <Grid container item lg={12}>
-            <Box display="flex" justifyContent="center">
-              <Box mt={3}>
-                <img
-                  src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/money.svg"
-                  alt="icono caja"
-                  className={classes.iconSizeDialogs}
-                />
-              </Box>
-              <Box m={2}>
-                <Divider orientation="vertical" />
-              </Box>
-              <Box>
-                <Box textAlign="right" mb={1}>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => setOpen(!open)}
-                    size="medium"
-                  >
-                    <CloseIcon />
-                  </Button>
-                </Box>
-                <Box mt={2}>
-                  <Typography variant="h6">Precios de Producto</Typography>
-                </Box>
-              </Box>
+          <Box display='flex' p={2}> 
+            <Box flexGrow={1}>
+              <Typography variant="h6">Precios de Producto</Typography>
             </Box>
-          </Grid>
+            <Box>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => setOpen(!open)}
+                size="large"
+              >
+                <CloseIcon />
+              </Button>
+            </Box>
+          </Box>
           <Grid>
             <div className={classes.formInputFlex}>
               <Box width="100%">
@@ -346,7 +340,7 @@ export default function PreciosProductos() {
             color="primary"
             size="large"
           >
-            Aceptar
+            Guardar
           </Button>
         </DialogActions>
       </Dialog>

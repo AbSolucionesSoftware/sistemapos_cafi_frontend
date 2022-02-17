@@ -300,34 +300,6 @@ export default function EnhancedTable({
     <div className={classes.root}>
       <Paper>
         <TableContainer className={classes.container}>
-          {/* <div
-            style={{
-              display: 'flex', 
-              width: '80%', 
-              height: '60%', 
-              alignItems: 'center',
-              backgroundPosition: 'center',
-              justifyContent: 'center',
-              zIndex: 'auto',
-              position: 'absolute',
-            }}
-          >
-            <div
-              style={{
-                maxWidth: '40%'
-              }}
-            >
-              <Avatar
-                alt="Imagen fondo empresa"
-                src={sesion.empresa.imagen}
-                style={{
-                  height: '100%',
-                  width: '100%',
-                  opacity: .2
-                }}
-              />
-            </div>
-          </div> */}
           <Table
             stickyHeader
             size="small"
@@ -403,6 +375,7 @@ const RenderTableRows = ({
   }, [producto.cantidad_venta]);
 
   useEffect(() => {
+    console.log(value);
     CalculeDataPricing(value);
   }, [value]);
   
@@ -443,6 +416,7 @@ const RenderTableRows = ({
       const producto_encontrado = await findProductArray(
         producto
       );
+      
       if (producto_encontrado.found) {
         const { cantidad_venta, ...newP } =
           producto_encontrado.producto_found.producto;
@@ -451,7 +425,10 @@ const RenderTableRows = ({
         const newPrising = verify_prising.found ? verify_prising.object_prising : newP.precio_actual_object;
         
         const new_resta = await calculatePrices2({newP, cantidad: cantidad_venta, precio_boolean: true, precio: newP.precio_actual_object, granel: newP.granel_producto, origen: "Tabla" });
-        const new_suma = await calculatePrices2({newP, cantidad: new_cant, precio_boolean: true, precio: newPrising, granel: newP.granel_producto, origen: "Tabla" });
+        const new_suma = await calculatePrices2({newP, cantidad: parseInt(new_cant), precio_boolean: true, precio: newPrising, granel: newP.granel_producto, origen: "Tabla" });
+
+        console.log(new_resta);
+        console.log(new_suma);
 
         newP.iva_total_producto = parseFloat(new_suma.ivaCalculo);
         newP.ieps_total_producto = parseFloat(new_suma.iepsCalculo);
@@ -587,8 +564,8 @@ const RenderTableRows = ({
         </TableCell>
         <TableCell  style={{ textAlign:"center"}} >
           %{" "}
-          {producto.descuento_activo === true
-            ? producto.descuento.porciento
+          {producto.precio_actual_object.porciento !== null
+            ? producto.precio_actual_object.porciento
             : 0}
         </TableCell>
         <TableCell style={{ textAlign:"center"}} >
@@ -602,7 +579,7 @@ const RenderTableRows = ({
           )}
         </TableCell>
         <TableCell style={{ textAlign:"center"}} >
-          $ { producto.precio_actual_producto}
+          $ { producto.precio_actual_object.precio_neto}
         </TableCell>
         <TableCell style={{ textAlign:"center"}} >
           <EliminarProductoVenta

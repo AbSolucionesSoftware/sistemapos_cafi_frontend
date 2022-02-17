@@ -7,7 +7,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import { OBTENER_CONTABILIDAD } from '../../../gql/Catalogos/contabilidad';
 import { CREAR_HISTORIAL_CAJA, OBTENER_PRE_CORTE_CAJA } from '../../../gql/Cajas/cajas';
-
 import useStyles from '../styles';
 import moment from 'moment';
 import 'moment/locale/es';
@@ -289,7 +288,7 @@ export default function DepositoRetiroCaja() {
                                 </Box>
                             </Box>
                             <Box ml={10} mb={7} display="flex" alignItems="center">
-                                    <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
+                                <Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
                                     <CloseIcon />
                                 </Button>
                             </Box>
@@ -408,7 +407,7 @@ export default function DepositoRetiroCaja() {
                         color="primary" 
                         size="large"
                     >
-                        Registrar
+                        Guardar
                     </Button>
                 </DialogActions>
             </Dialog>

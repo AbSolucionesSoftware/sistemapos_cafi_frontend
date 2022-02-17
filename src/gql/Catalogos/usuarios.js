@@ -184,6 +184,26 @@ export const CREAR_USUARIO = gql`
 						eliminar
 					}
 				}
+				facturacion {
+					generar_cdfi {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					cdfi_realizados {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					registro_series_cdfi {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
 				almacenes {
 					almacen {
 						ver
@@ -212,6 +232,12 @@ export const CREAR_USUARIO = gql`
 						eliminar
 					}
 					usuarios {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					productos {
 						ver
 						agregar
 						editar
@@ -493,6 +519,26 @@ export const OBTENER_USUARIOS = gql`
 						eliminar
 					}
 				}
+				facturacion {
+					generar_cdfi {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					cdfi_realizados {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					registro_series_cdfi {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+				}
 				catalogos {
 					clientes {
 						ver
@@ -501,6 +547,12 @@ export const OBTENER_USUARIOS = gql`
 						eliminar
 					}
 					usuarios {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					productos {
 						ver
 						agregar
 						editar

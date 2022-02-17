@@ -239,7 +239,7 @@ export const calculatePrices2 = async ({ newP, cantidad, granel, origen, precio_
       monederoCalculo = 0;
     // const descuento = newP.descuento_activo === null ? false : true;
     const cantidadNueva = cantidad > 0 ? cantidad : 1;
-    const valor_granel = granel.granel ? granel.valor : 1;
+    const valor_granel = granel.granel ? parseFloat(granel.valor) : 1;
     const precio_actual = precio_boolean ? precio : newP.descuento_activo ? newP.descuento : newP.precio_unidad;
     const cantidadCaja =
     precio_actual.unidad_maxima === true
@@ -270,17 +270,17 @@ export const calculatePrices2 = async ({ newP, cantidad, granel, origen, precio_
       newP.precio_a_vender = ob.totalCalculo;
       newP.precio_actual_producto = parseFloat((precio_actual.precio_neto).toFixed(2));
       newP.precio_actual_object = {
-        cantidad_unidad: precio_actual.cantidad_unidad ? precio_actual.cantidad_unidad : null,
-        numero_precio: precio_actual.numero_precio ? precio_actual.numero_precio : null,
-        unidad_maxima: precio_actual.unidad_maxima ? precio_actual.unidad_maxima : null,
-        precio_general: precio_actual.precio_general ? precio_actual.precio_general : null,
-        precio_neto: precio_actual.precio_neto ? precio_actual.precio_neto : null,
-        precio_venta: precio_actual.precio_venta ? precio_actual.precio_venta : null,
-        iva_precio: precio_actual.iva_precio ? precio_actual.iva_precio : null,
-        ieps_precio: precio_actual.ieps_precio ? precio_actual.ieps_precio : null,
-        utilidad: precio_actual.utilidad ? precio_actual.utilidad : null,
-        porciento: precio_actual.porciento ? precio_actual.porciento : null,
-        dinero_descontado: precio_actual.dinero_descontado ? precio_actual.dinero_descontado : null,
+        cantidad_unidad: precio_actual.cantidad_unidad ? precio_actual.cantidad_unidad : 1,
+        numero_precio: precio_actual.numero_precio ? precio_actual.numero_precio : 1,
+        unidad_maxima: precio_actual.unidad_maxima ? precio_actual.unidad_maxima : false,
+        precio_general: precio_actual.precio_general ? precio_actual.precio_general : 0,
+        precio_neto: precio_actual.precio_neto ? precio_actual.precio_neto : 0,
+        precio_venta: precio_actual.precio_venta ? precio_actual.precio_venta : 0,
+        iva_precio: precio_actual.iva_precio ? precio_actual.iva_precio : 0,
+        ieps_precio: precio_actual.ieps_precio ? precio_actual.ieps_precio : 0,
+        utilidad: precio_actual.utilidad ? precio_actual.utilidad : 0,
+        porciento: precio_actual.porciento ? precio_actual.porciento : 0,
+        dinero_descontado: precio_actual.dinero_descontado ? precio_actual.dinero_descontado : 0,
       };
     }else if(origen === "Ventas2") {
       newP.granel_producto = granel;
@@ -291,6 +291,7 @@ export const calculatePrices2 = async ({ newP, cantidad, granel, origen, precio_
     return ob;
 
   } catch (error) {
+    console.log(error);
     return false;
   }
 };
