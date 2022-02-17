@@ -84,13 +84,13 @@ export default function ColoresTallas({
 		[ presentaciones ]
 	);
 
-	const obtenerAlmacenes = (event, child) => {
-		setAlmacenInicial({
-			...almacen_inicial,
-			[event.target.name]: event.target.value,
-			[child.props.name]: child.props.id
-		});
-	};
+	// const obtenerAlmacenes = (event, child) => {
+	// 	setAlmacenInicial({
+	// 		...almacen_inicial,
+	// 		[event.target.name]: event.target.value,
+	// 		[child.props.name]: child.props.id
+	// 	});
+	// };
 
 	useEffect(
 		() => {
