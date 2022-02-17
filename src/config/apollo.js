@@ -5,7 +5,8 @@ import {
 import { createUploadLink } from "apollo-upload-client";
 
 const httpLink = createUploadLink({
-	uri: 'https://cafi-punto-venta.herokuapp.com/'
+	// uri: 'https://cafi-punto-venta.herokuapp.com/',
+  uri: 'http://localhost:4000/'
 });
 
 const client = new ApolloClient({
