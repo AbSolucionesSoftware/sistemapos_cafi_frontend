@@ -8,6 +8,7 @@ import client from './config/apollo';
 import { ApolloProvider } from '@apollo/client';
 import { AccesosProvider } from './context/Accesos/accesosCtx';
 
+
 function App() {
 	return (
 		<Box height='100vh' >
