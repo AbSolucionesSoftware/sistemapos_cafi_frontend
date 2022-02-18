@@ -248,6 +248,7 @@ export const CONSULTA_PRODUCTOS_VENTAS = gql`
 export const OBTENER_CLIENTES_VENTAS = gql`
   query ObtenerClientesVentas($empresa: ID!, $sucursal: ID!) {
     obtenerClientesVentas(empresa: $empresa, sucursal: $sucursal) {
+      _id
       numero_cliente
       clave_cliente
       nombre_cliente
