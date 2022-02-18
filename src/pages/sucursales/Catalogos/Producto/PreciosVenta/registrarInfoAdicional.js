@@ -3,7 +3,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import {
   Box,
   Checkbox,
-  FormControlLabel,
   TextField,
   MenuItem,
   FormHelperText,
@@ -13,7 +12,6 @@ import {
 import { Typography, Divider, FormControl, Select } from "@material-ui/core";
 import PreciosDeCompra from "./UnidadesVenta";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
-import { Alert } from "@material-ui/lab";
 import { useDebounce } from "use-debounce/lib";
 import PreciosDeVenta from "./Precios";
 import { unitCodes, unitCodes_granel } from "../unidades";

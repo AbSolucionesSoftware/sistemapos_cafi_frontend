@@ -137,9 +137,9 @@ export default function CrearCliente({
                   : venta_actual.descuento,
               monedero:
                 venta_actual.monedero === undefined ? 0 : venta_actual.monedero,
-              tipo_cambio: venta_actual.tipo_cambio
-                ? venta_actual.tipo_cambio
-                : {},
+              // tipo_cambio: venta_actual.tipo_cambio
+              //   ? venta_actual.tipo_cambio
+              //   : {},
               cliente: clienteBase.data.crearCliente,
               venta_cliente: true,
               productos:

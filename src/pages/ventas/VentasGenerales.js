@@ -57,7 +57,7 @@ export default function VentasGenerales() {
     ieps: 0,
     descuento: 0,
     monedero: 0,
-    tipo_cambio: {},
+    // tipo_cambio: {},
   });
 
   const [alert, setAlert] = useState({ message: '', status: '', open: false });

@@ -271,18 +271,6 @@ const UnidadesVentaSecundaria = () => {
     );
     let precio_general = parseFloat((precio_neto * cantidad).toFixed(2));
 
-    console.log({
-      precio_venta_unit,
-      PVCDSI,
-      dineroDescontado,
-      iva_precio,
-      ieps_precio,
-      PCSI,
-      utilidad,
-      precio_neto,
-      precio_general
-    });
-
     setPrecio(precio_general);
     setUnidadVentaSecundaria({
       ...unidadVentaSecundaria,

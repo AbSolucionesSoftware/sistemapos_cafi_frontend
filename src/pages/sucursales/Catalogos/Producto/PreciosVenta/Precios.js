@@ -7,6 +7,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
+import { useState } from "react";
 
 const useStyles = makeStyles((theme) => ({
   precioTitle: {
@@ -63,6 +64,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     setUnidadVentaSecundaria,
   } = useContext(RegProductoContext);
   let preciosVenta = { ...preciosP[index] };
+  const [ error, setError ] = useState(false);
 
   const obtenerUtilidad = (valor_base) => {
     if (!valor_base) {
@@ -74,7 +76,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
 
     /* let utilidad = 1; */
     let PUCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
-    let { unidad, cantidad, descuento, descuento_activo } = unidadVentaXDefecto;
+    let { /* unidad, cantidad,  */descuento, descuento_activo } = unidadVentaXDefecto;
     let cantidad_sec = unidadVentaSecundaria.cantidad;
     let descuento_sec = unidadVentaSecundaria.descuento;
     let descuento_activo_sec = unidadVentaSecundaria.descuento_activo;
@@ -91,6 +93,13 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
 
     preciosVenta.utilidad = parseFloat(valor_base);
     preciosVenta.precio_venta = parseFloat(precio_venta.toFixed(2));
+
+    let PCCI = precios.precio_de_compra.precio_con_impuesto;
+    if(precio_neto < PCCI && precio_neto !== 0){
+      setError(true);
+    }else{
+      setError(false);
+    }
     preciosVenta.precio_neto = parseFloat(precio_neto.toFixed(2));
 
     //meter los precios a unidadXdefecto
@@ -196,15 +205,17 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
   };
 
   const obtenerPrecioNeto = (value) => {
+    
     if (!value) {
-      preciosVenta.precio_neto = "";
+      console.log(value);
+      preciosVenta.precio_neto = 0;
       newPreciosP.splice(index, 1, preciosVenta);
       setPreciosP(newPreciosP);
       return;
     }
 
     let precio_neto = parseFloat(value);
-    let { unidad, cantidad, descuento, descuento_activo } = unidadVentaXDefecto;
+    let { /* unidad, cantidad,  */descuento, descuento_activo } = unidadVentaXDefecto;
     let cantidad_sec = unidadVentaSecundaria.cantidad;
     let descuento_sec = unidadVentaSecundaria.descuento;
     let descuento_activo_sec = unidadVentaSecundaria.descuento_activo;
@@ -225,6 +236,13 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     preciosVenta.precio_neto = precio_neto;
     preciosVenta.precio_venta = precio_venta;
     preciosVenta.utilidad = parseFloat(utilidad_base.toFixed(2));
+
+    let PCCI = precios.precio_de_compra.precio_con_impuesto;
+    if(precio_neto < PCCI && precio_neto !== 0){
+      setError(true);
+    }else{
+      setError(false);
+    }
 
     //meter los precios a unidadXdefecto
     let unidadXDefecto = {
@@ -334,7 +352,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
 
   const calculos = () => {
     let { iva, ieps } = precios;
-    let { unidad, cantidad, descuento, descuento_activo } = unidadVentaXDefecto;
+    let { /* unidad, cantidad,  */descuento, descuento_activo } = unidadVentaXDefecto;
     let cantidad_sec = unidadVentaSecundaria.cantidad;
     let descuento_sec = unidadVentaSecundaria.descuento;
     let descuento_activo_sec = unidadVentaSecundaria.descuento_activo;
@@ -463,7 +481,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     /* preciosP.splice(index, 1, preciosVenta); */
   }, [
     precios.unidad_de_compra.precio_unitario_con_impuesto,
-    preciosVenta.precio_neto,
+    preciosVenta.precio_venta,
   ]);
 
   const verificarCampoVacio = (name, value) => {
@@ -608,7 +626,8 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
             onBlur={() =>
               verificarCampoVacio("precio_neto", preciosVenta.precio_neto)
             }
-            error={preciosVenta.precio_neto === ""}
+            error={preciosVenta.precio_neto === "" || error}
+            helperText={error ? "Precio menor a costo" : ""}
           />
         </Box>
       </Box>
