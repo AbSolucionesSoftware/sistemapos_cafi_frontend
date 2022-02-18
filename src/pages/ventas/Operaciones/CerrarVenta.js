@@ -9,33 +9,24 @@ import {
   DialogContent,
   Divider,
   Grid,
-  IconButton,
   Paper,
   Slide,
   TextField,
   Typography,
   InputAdornment,
 } from "@material-ui/core";
-// import tarjetaIcon from "../../../icons/ventas/tarjeta-de-credito.svg";
 import { FcDonate, FcShop } from "react-icons/fc";
-// import { Search } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
 import CreditCardIcon from "@material-ui/icons/CreditCard";
 import LocalOfferIcon from "@material-ui/icons/LocalOffer";
-
 import ClearIcon from "@material-ui/icons/Clear";
-
-import { Edit, ImportExport, PartyMode } from "@material-ui/icons";
-
+import { Edit } from "@material-ui/icons";
 import { FcBusinessman, FcSalesPerformance } from "react-icons/fc";
-// import { parse } from "graphql";
 import { numerosRandom } from "../../../config/reuserFunctions";
 import { formaPago } from "../../../pages/sucursales/Facturacion/catalogos";
-
 import { CREAR_VENTA } from "../../../gql/Ventas/ventas_generales";
 import { useMutation } from "@apollo/client";
 import moment from "moment";
-import { parse } from "graphql";
 
 import { VentasContext } from "../../../context/Ventas/ventasContext";
 
@@ -51,15 +42,11 @@ export default function CerrarVenta() {
     setCambio(!cambio);
   };
   const [open, setOpen] = useState(false);
-
   const [openModalDescuento, setOpenModalDescuento] = useState(false);
-
   const [recalcular, setRecalcular] = useState(false);
-
   //Datos del context
-  const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
-
-  //states de venta
+  const { updateTablaVentas, setUpdateTablaVentas, setClientesVentas } = useContext(VentasContext);
+  //States de venta
   const [totalVenta, setTotalVenta] = useState(0);
   const [montoPagado, setMontoPagado] = useState(0);
   const [cambioVenta, setCambioVenta] = useState(0);
@@ -90,8 +77,6 @@ export default function CerrarVenta() {
   const [transferencia, setTransferencia] = useState(0);
   const [cheque, setCheque] = useState(0);
 
-  const [descuentoAplicado, setdescuentoAplicado] = useState(false);
-
   const [createVenta] = useMutation(CREAR_VENTA);
 
   const handleClickOpen = () => {
@@ -106,6 +91,7 @@ export default function CerrarVenta() {
     localStorage.setItem(
       "DatosVentas",
       JSON.stringify({
+        cliente:{},
         venta_cliente: false,
         monedero: 0,
         productos: [],
@@ -119,7 +105,10 @@ export default function CerrarVenta() {
     );
     //Actualizar la tabla de ventas
     setUpdateTablaVentas(!updateTablaVentas);
-  }
+    setClientesVentas("N/A")
+    //Quitar venta a credito
+    setCreditoActivo(false);
+  };
 
   function funcion_tecla(event) {
     const tecla_escape = event.keyCode;
@@ -130,16 +119,16 @@ export default function CerrarVenta() {
 
   const handleClickFinishVenta = async () => {
     try {
-
       //TODO: Colocar loading en el modal
+      //Obtener datos del storage
       const sesion = JSON.parse(localStorage.getItem("turnoEnCurso"));
       const usuario = JSON.parse(localStorage.getItem("sesionCafi"));
-
+      //Obtener ventad final
       const ventaFinal = { ...ventaActual };
-
       //Generar folio
       const folio = numerosRandom(100000000000, 999999999999);
-      console.log(folio);
+      //Agregar folio venta
+      ventaFinal.folio = `${folio}`;
       //Agregar los montos en caja
       const montosEnCaja = {
         monto_efectivo: {
@@ -159,7 +148,7 @@ export default function CerrarVenta() {
           metodo_pago: "",
         },
         monto_monedero: {
-          monto: parseFloat(tarjeta),
+          monto: parseFloat(puntos),
           metodo_pago: formaPago[4].Value,
         },
         monto_transferencia: {
@@ -176,9 +165,7 @@ export default function CerrarVenta() {
         },
       };
       ventaFinal.montos_en_caja = montosEnCaja;
-      //Agregar folio venta
-      ventaFinal.folio = `${folio}`;
-      //Credito a credito false
+      //Colocamos si es venta a credito
       ventaFinal.credito = visible;
       //Agregar descuentos de ventas
       ventaFinal.descuento_general_activo = false;
@@ -190,11 +177,12 @@ export default function CerrarVenta() {
       ventaFinal.fecha_de_vencimiento_credito = fechaVencimientoDate;
       ventaFinal.fecha_vencimiento_cotizacion = null;
       ventaFinal.cambio = cambioVenta;
+      //Editar cliente
+      ventaFinal.editar_cliente = editableClient;
+      //Agregando los puntos finales
+      ventaFinal.puntos_totales_venta = monederoTotal;
       //Enviar los datos
-
-      console.log(ventaFinal);
-
-      const venta_realizada = await createVenta({
+      await createVenta({
         variables: {
           input: ventaFinal,
           empresa: sesion.empresa,
@@ -203,16 +191,12 @@ export default function CerrarVenta() {
           caja: sesion.id_caja,
         },
       });
-
-      //Mandar mensaje de error en dado caso de que la venta sea incorrecta
-
+      //TODO: Mandar mensaje de error en dado caso de que la venta sea incorrecta
       //TODO: Quitar loading
       //Cerrar modal venta
       setOpen(!open);
       //Mandar mensaje de cambio en dado caso de ser correcta
       setCambio(!cambio);
-      
-      console.log(ventaActual);
     } catch (error) {
       console.log(error);
       if (error.networkError.result) {
@@ -238,8 +222,12 @@ export default function CerrarVenta() {
         if (valor <= monederoTotal) {
           const valor2 = valorPuntoProducto * parseFloat(valor);
           setPuntos(valor);
-          setValorFinalCambioPuntos(valor2);
-          console.log("valor2 >>", valor2);
+          // setValorFinalCambioPuntos(valor2);
+          setEfectivo(efectivo - valor2);
+          setTotalVenta(totalVenta - valor2);
+          // console.log("Valor efectivo >>> ", efectivo);
+          // console.log("Valor2 >>", valor2);
+          // console.log("Faltante >>> ",efectivo - valor2);
         }
         break;
       case "TRANSFERENCIA":
@@ -450,27 +438,25 @@ export default function CerrarVenta() {
 
   useEffect(() => {
     const venta = JSON.parse(localStorage.getItem("DatosVentas"));
+    const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
     setVentaActual(venta);
 
     setVentaOriginal(venta);
     const total = venta === null ? 0 : venta.total;
     const monederoVenta = venta === null ? 0 : venta.monedero;
     const cliente = venta === null ? {} : venta.cliente;
-
-    console.log("Cliente >>> ",cliente.numero_cliente);
-
-    if(cliente.numero_cliente === undefined){
+    if (cliente.numero_cliente === undefined) {
       setCreditoActivo(true);
-    }else{
+    } else {
       setCreditoActivo(false);
     }
-
+    setValorPuntoProducto(parseFloat(sesion.empresa.valor_puntos));
     setTotalVenta(total.toFixed(2));
     setEfectivo(total.toFixed(2));
     setDatosCliente(cliente);
     setMonedero(parseFloat(monederoVenta));
     setMonederoTotal(
-      !cliente.monedero_electronico 
+      !cliente.monedero_electronico
         ? parseFloat(monederoVenta)
         : parseFloat(cliente.monedero_electronico) + parseFloat(monederoVenta)
     );
@@ -722,6 +708,18 @@ export default function CerrarVenta() {
                     </Typography>
                   </Box>
                   <Typography variant="subtitle1">{monederoTotal}</Typography>
+                </Box>
+
+                <Box display="flex">
+                  <Box display="flex" alignItems={"center"} mr={2}>
+                    <Box mt={0.5} mr={0.5}>
+                      <FcSalesPerformance style={{ fontSize: 19 }} />
+                    </Box>
+                    <Typography variant="subtitle1">
+                      <b>Valor:</b>
+                    </Typography>
+                  </Box>
+                  <Typography variant="subtitle1">${monederoTotal * valorPuntoProducto}</Typography>
                 </Box>
               </Box>
 
@@ -993,7 +991,7 @@ export default function CerrarVenta() {
                     value={descuentoAplicarVenta}
                     onChange={(e) => handlerChangeDiscountVenta(e)}
                     variant="outlined"
-                    disabled={descuentoAplicado}
+                    disabled={false}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">$</InputAdornment>
@@ -1017,7 +1015,7 @@ export default function CerrarVenta() {
                     value={descuentoPorsentajeVenta}
                     onChange={(e) => handleChangePorsentDiscount(e)}
                     type="number"
-                    disabled={descuentoAplicado}
+                    disabled={false}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">%</InputAdornment>
@@ -1054,7 +1052,7 @@ export default function CerrarVenta() {
 
       <Dialog
         open={cambio}
-        onClose={() => abrirCajon()}
+        onClose={() => hancleClickCerrarVentaCambio()}
         TransitionComponent={Transition}
       >
         <DialogContent>

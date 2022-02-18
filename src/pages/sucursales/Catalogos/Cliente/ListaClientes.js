@@ -101,7 +101,7 @@ export default function ListaClientes({
             venta_actual.descuento === undefined ? 0 : venta_actual.descuento,
           monedero:
             venta_actual.monedero === undefined ? 0 : venta_actual.monedero,
-          tipo_cambio: venta_actual.tipo_cambio ? venta_actual.tipo_cambio : {},
+          // tipo_cambio: venta_actual.tipo_cambio ? venta_actual.tipo_cambio : {},
           cliente: dataSelectRowClient,
           venta_cliente: true,
           productos:
