@@ -38,8 +38,12 @@ export default function ClientesVentas() {
       // console.log("llego al final");
       const venta = JSON.parse(localStorage.getItem("DatosVentas"));
       if (venta !== null) {
-        setSelectClient(venta.cliente);
-        setClientesVentas(venta.cliente);
+        if(venta.cliente.nombre_cliente === undefined) {
+            setSelectClient('N/A');
+        }else{
+          setSelectClient(venta.cliente);
+          setClientesVentas(venta.cliente);
+        }
         refetch();
       }
     }

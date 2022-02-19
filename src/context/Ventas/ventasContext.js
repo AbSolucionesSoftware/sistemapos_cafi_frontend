@@ -49,6 +49,7 @@ export const VentasProvider = ({ children }) => {
     // const [precioSeleccionadoTabla, setPrecioSeleccionadoTabla] = useState(false);
 
     const [updateTablaVentas, setUpdateTablaVentas] = useState(false);
+    const [openBackDrop, setOpenBackDrop] = useState(false);
 
 	return (
 		<VentasContext.Provider value={
@@ -85,6 +86,8 @@ export const VentasProvider = ({ children }) => {
                 setUbicacionTurno,
                 // precioSeleccionadoTabla,
                 // setPrecioSeleccionadoTabla
+                setOpenBackDrop,
+                openBackDrop,
             }
         }>
 			{children}
