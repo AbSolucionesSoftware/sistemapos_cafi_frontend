@@ -45,7 +45,7 @@ export default function CerrarVenta() {
   const [openModalDescuento, setOpenModalDescuento] = useState(false);
   const [recalcular, setRecalcular] = useState(false);
   //Datos del context
-  const { updateTablaVentas, setUpdateTablaVentas, setClientesVentas } = useContext(VentasContext);
+  const { updateTablaVentas, setUpdateTablaVentas, updateClientVenta, setUpdateClientVenta, openBackDrop, setOpenBackDrop } = useContext(VentasContext);
   //States de venta
   const [totalVenta, setTotalVenta] = useState(0);
   const [montoPagado, setMontoPagado] = useState(0);
@@ -87,6 +87,7 @@ export default function CerrarVenta() {
 
   const hancleClickCerrarVentaCambio = () => {
     setCambio(!cambio);
+
     //Limpiar el storage de ventas
     localStorage.setItem(
       "DatosVentas",
@@ -105,7 +106,7 @@ export default function CerrarVenta() {
     );
     //Actualizar la tabla de ventas
     setUpdateTablaVentas(!updateTablaVentas);
-    setClientesVentas("N/A")
+    setUpdateClientVenta(!updateClientVenta);
     //Quitar venta a credito
     setCreditoActivo(false);
   };
@@ -120,6 +121,7 @@ export default function CerrarVenta() {
   const handleClickFinishVenta = async () => {
     try {
       //TODO: Colocar loading en el modal
+      setOpenBackDrop(!openBackDrop);
       //Obtener datos del storage
       const sesion = JSON.parse(localStorage.getItem("turnoEnCurso"));
       const usuario = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -192,11 +194,13 @@ export default function CerrarVenta() {
         },
       });
       //TODO: Mandar mensaje de error en dado caso de que la venta sea incorrecta
-      //TODO: Quitar loading
       //Cerrar modal venta
       setOpen(!open);
       //Mandar mensaje de cambio en dado caso de ser correcta
-      setCambio(!cambio);
+      //Quitar loading
+      setOpenBackDrop(false);
+      hancleClickCerrarVentaCambio();
+      
     } catch (error) {
       console.log(error);
       if (error.networkError.result) {
@@ -1052,7 +1056,7 @@ export default function CerrarVenta() {
 
       <Dialog
         open={cambio}
-        onClose={() => hancleClickCerrarVentaCambio()}
+        onClose={() => setCambio(!cambio)}
         TransitionComponent={Transition}
       >
         <DialogContent>
@@ -1077,7 +1081,7 @@ export default function CerrarVenta() {
 
         <DialogActions>
           <Button
-            onClick={() => hancleClickCerrarVentaCambio()}
+            onClick={() => setCambio(!cambio)}
             variant="contained"
             size="large"
             color="primary"
