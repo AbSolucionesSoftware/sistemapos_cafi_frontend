@@ -165,10 +165,13 @@ const DialogTallas = (props) => {
 
   const [new_medidas, setNew_medidas] = useState([]);
   const {setProductosTras, productosTras} = useContext(TraspasosAlmacenContext);
- 
+  
+
+  
   const setProd = () =>{
     let newMedidasCopy = new_medidas;
     let cantidad_total = 0;
+    
     
 
      try {
@@ -457,7 +460,7 @@ useEffect(() => {
       const intValue = (value !== '') ? parseFloat(value) : 0;
       try {
         if(props.almacenOrigen !== null){
-          console.log(intValue)
+          
           if( !tipoPieza.piezas  ){
             if(intValue <= product_selected.inventario_general[0].cantidad_existente_maxima){
               setCantidadTo((intValue !== 0) ? intValue : '');

@@ -492,7 +492,7 @@ export default function Traspasos() {
 
     const traspasar = async () => {
         try {
-          
+         
             if(productosTras.length){
                setOpenEnd(false)
                setLoading(true)
@@ -523,7 +523,7 @@ export default function Traspasos() {
                     empresa: sesion.empresa._id
                 }
             }  
-           
+            console.log(input);
              const traspaso =    await CrearTraspaso(input) 
            
                 //console.log(traspaso)
@@ -548,8 +548,9 @@ export default function Traspasos() {
         } catch (error) {
              setLoading(false);
              setOpenEnd(false)
+             console.log(error)
            if(error.networkError !== undefined){
-			  console.log('traspaso networkError', error.networkError)
+			  console.log('traspaso networkError', error.networkError.result)
             }else if(error.graphQLErrors!== undefined){
                 console.log('traspaso graphQLErrors', error.graphQLErrors)
             }else{
