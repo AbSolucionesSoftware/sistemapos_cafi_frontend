@@ -67,7 +67,8 @@ export default function PreciosDeCompra() {
                 <TableCell>{unidadVentaXDefecto.unidad}</TableCell>
                 <TableCell>
                   <Box display="flex" alignItems="center">
-                    {unidadVentaXDefecto.descuento_activo !== null ? (
+                    {unidadVentaXDefecto.descuento_activo &&
+                    unidadVentaXDefecto.descuento_activo !== null ? (
                       <LocalOffer
                         color={
                           unidadVentaXDefecto.descuento_activo === true
@@ -81,7 +82,8 @@ export default function PreciosDeCompra() {
                       <b>
                         $
                         {formatoMexico(
-                          unidadVentaXDefecto.descuento_activo === true
+                          unidadVentaXDefecto.descuento_activo &&
+                            unidadVentaXDefecto.descuento_activo === true
                             ? unidadVentaXDefecto.descuento.precio_neto
                             : unidadVentaXDefecto.precio
                         )}
@@ -91,7 +93,8 @@ export default function PreciosDeCompra() {
                 </TableCell>
                 <TableCell>{unidadVentaXDefecto.cantidad}</TableCell>
                 <TableCell>
-                  {unidadVentaXDefecto.descuento_activo !== null ? (
+                  {unidadVentaXDefecto.descuento_activo &&
+                  unidadVentaXDefecto.descuento_activo !== null ? (
                     <Box display="flex" alignItems="center">
                       <Checkbox
                         checked={
@@ -182,7 +185,7 @@ const UnidadesVentaSecundaria = () => {
       unidadVentaSecundaria.descuento_activo === true
     ) {
       setPrecio(value);
-      calcularUnidadDesucuento(value)
+      calcularUnidadDesucuento(value);
     } else {
       setPrecio(value);
     }
@@ -191,7 +194,7 @@ const UnidadesVentaSecundaria = () => {
   const calcularUnidadDesucuento = (value) => {
     const { cantidad, precio_unidad } = unidadVentaSecundaria;
     if (!value || !cantidad) return;
-    
+
     const precio_unit = value / cantidad;
     const { iva, ieps, unidad_de_compra } = precios;
     const { precio_venta, numero_precio, unidad_maxima } = precio_unidad;
@@ -204,7 +207,9 @@ const UnidadesVentaSecundaria = () => {
     let porcentaje = parseFloat(((PVSI / precio_venta_unit) * 100).toFixed(2));
     let descuento = parseFloat((100 - porcentaje).toFixed(2));
 
-    let PVCDSI = parseFloat(((precio_venta_unit * porcentaje) / 100).toFixed(2));
+    let PVCDSI = parseFloat(
+      ((precio_venta_unit * porcentaje) / 100).toFixed(2)
+    );
     let dineroDescontado = parseFloat((precio_venta_unit - PVCDSI).toFixed(2));
 
     let iva_precio = parseFloat(
@@ -241,7 +246,7 @@ const UnidadesVentaSecundaria = () => {
   const calcularUnidadDesucuentoCheck = (boolean) => {
     const { cantidad, precio_unidad, descuento } = unidadVentaSecundaria;
     if (!precio || !cantidad) return;
-    
+
     /* const precio_unit = value / cantidad; */
     const { iva, ieps, unidad_de_compra } = precios;
     const { precio_venta, numero_precio, unidad_maxima } = precio_unidad;
@@ -251,7 +256,9 @@ const UnidadesVentaSecundaria = () => {
     let suma_impuestos =
       parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
       parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
-    let PVSI = parseFloat((precio_venta_unit / (suma_impuestos + 1)).toFixed(2));
+    let PVSI = parseFloat(
+      (precio_venta_unit / (suma_impuestos + 1)).toFixed(2)
+    );
     /* let porcentaje = parseFloat(((PVSI / precio_venta_unit) * 100).toFixed(2));
     let descuento = parseFloat((100 - porcentaje).toFixed(2)); */
 
@@ -365,18 +372,17 @@ const UnidadesVentaSecundaria = () => {
 
   const aplicarDescuento = (boolean) => {
     let precio = boolean
-        ? unidadVentaSecundaria.descuento.precio_neto
-        : unidadVentaSecundaria.precio
-    if(boolean){
+      ? unidadVentaSecundaria.descuento.precio_neto
+      : unidadVentaSecundaria.precio;
+    if (boolean) {
       calcularUnidadDesucuentoCheck(boolean);
-    }else{
+    } else {
       setUnidadVentaSecundaria({
-      ...unidadVentaSecundaria,
-      descuento_activo: boolean,
-    });
-    setPrecio(precio);
+        ...unidadVentaSecundaria,
+        descuento_activo: boolean,
+      });
+      setPrecio(precio);
     }
-    
   };
 
   return (
@@ -411,8 +417,10 @@ const UnidadesVentaSecundaria = () => {
           onBlur={(e) => calcularUnidad(e)}
           onChange={obtenerPrecio}
           value={precio}
-          disabled={unidadVentaSecundaria.descuento_activo !== null &&
-            unidadVentaSecundaria.descuento_activo === true}
+          disabled={
+            unidadVentaSecundaria.descuento_activo !== null &&
+            unidadVentaSecundaria.descuento_activo === true
+          }
           InputProps={{
             inputProps: { min: 0 },
             startAdornment: <InputAdornment position="start">$</InputAdornment>,

@@ -304,6 +304,7 @@ export default function DatosProducto({ status }) {
 
       setDatosProducto({
         ...datosProducto,
+        impuestos_descuento: parseFloat(nuevo_impuesto.toFixed(2)),
         costo: parseFloat(precio_neto),
         descuento_precio: parseFloat(cantidad_descontada),
         subtotal_descuento: parseFloat(subtotal),
@@ -313,6 +314,7 @@ export default function DatosProducto({ status }) {
     }
     setDatosProducto({
       ...datosProducto,
+      impuestos_descuento: parseFloat(nuevo_impuesto.toFixed(2)),
       costo: parseFloat(precio_neto),
       subtotal_descuento: parseFloat(precio_sin_impuesto),
       total_descuento: parseFloat(precio_sin_impuesto + nuevo_impuesto),
@@ -579,12 +581,12 @@ export default function DatosProducto({ status }) {
   const setInitialStates = (producto) => {
     const { precios_producto, ...new_precios } = producto.precios;
     const { unidades_de_venta } = producto;
-    /* let unidades_venta = producto.unidades_de_venta.filter(
-      (res) => !res.default
+    let unidades_secundaria = unidades_de_venta.filter(
+      (res) => res.default === false
     );
-    const unidadxdefecto = producto.unidades_de_venta.filter(
+    let unidadxdefecto = unidades_de_venta.filter(
       (res) => res.default === true
-    ); */
+    );
     setDatosGenerales(producto.datos_generales);
     setPrecios(new_precios);
     setCentroDeCostos(
@@ -596,16 +598,8 @@ export default function DatosProducto({ status }) {
     setPreciosPlazos(producto.precio_plazos);
     setUnidadesVenta(unidades_de_venta);
     setPreciosP(producto.precios.precios_producto);
-    setUnidadVentaXDefecto(
-      unidades_de_venta.length > 0
-        ? unidades_de_venta[0]
-        : initial_state_unidadVentaXDefecto
-    );
-    setUnidadVentaSecundaria(
-      unidades_de_venta.length > 0
-        ? unidades_de_venta[1]
-        : initial_state_unidadVentaSecundaria
-    );
+    setUnidadVentaXDefecto(unidadxdefecto[0]);
+    setUnidadVentaSecundaria(unidades_secundaria[0]);
     setPresentaciones(
       producto.medidas_producto ? producto.medidas_producto : []
     );
@@ -783,6 +777,7 @@ export default function DatosProducto({ status }) {
                   fullWidth
                   aria-readonly="true"
                   value={datosProducto.producto.precios.unidad_de_compra.unidad}
+                  disabled
                 />
               </Box>
             </Grid>
@@ -794,7 +789,10 @@ export default function DatosProducto({ status }) {
                   variant="outlined"
                   size="small"
                   fullWidth
-                  inputMode="numeric"
+                  type="number"
+                  InputProps={{
+                    inputProps: { min: 1 },
+                  }}
                   disabled={!datosProducto.producto.datos_generales}
                   value={cantidad}
                   onChange={(e) => setCantidad(e.target.value)}

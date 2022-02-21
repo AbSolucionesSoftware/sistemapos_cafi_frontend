@@ -34,11 +34,15 @@ export const SetOrResetData = (accion,setStates, producto) => {
   } = setStates
 
   if (accion === "SET") {
+    
     const { precios_producto, ...new_precios } = producto.precios;
     const { unidades_de_venta } = producto;
-    /* const unidadxdefecto = producto.unidades_de_venta.filter(
-      (res) => res.default
-    ); */
+    let unidades_secundaria = unidades_de_venta.filter(
+      (res) => res.default === false
+    );
+    let unidadxdefecto = unidades_de_venta.filter(
+      (res) => res.default === true
+    );
 
     setDatosGenerales(producto.datos_generales);
     setPrecios(new_precios);
@@ -51,17 +55,8 @@ export const SetOrResetData = (accion,setStates, producto) => {
     setPreciosPlazos(producto.precio_plazos);
     setUnidadesVenta(unidades_de_venta);
     setPreciosP(producto.precios.precios_producto);
-    /* setUnidadVentaXDefecto(unidadxdefecto[0]); */
-    setUnidadVentaXDefecto(
-      unidades_de_venta.length > 0
-        ? unidades_de_venta[0]
-        : initial_state_unidadVentaXDefecto
-    );
-    setUnidadVentaSecundaria(
-      unidades_de_venta.length > 0
-        ? unidades_de_venta[1]
-        : initial_state_unidadVentaSecundaria
-    );
+    setUnidadVentaXDefecto(unidadxdefecto[0]);
+    setUnidadVentaSecundaria(unidades_secundaria[0]);
     setPresentaciones(
       producto.presentaciones ? producto.presentaciones : []
     );
