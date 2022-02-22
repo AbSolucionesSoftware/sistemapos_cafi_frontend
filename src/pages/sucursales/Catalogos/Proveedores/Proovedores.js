@@ -7,22 +7,14 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
-import {
-  Box,
-  CircularProgress,
-  DialogContent,
-  Grid,
-  IconButton,
-  InputBase,
-  Paper,
-} from "@material-ui/core";
+import { Box, CircularProgress, DialogContent, Grid, IconButton, InputBase, Paper } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import TablaProovedores from "./ListaProveedores";
 import CrearCliente from "../Cliente/CrearCliente";
 import { ClienteProvider } from "../../../../context/Catalogos/crearClienteCtx";
+import ErrorPage from "../../../../components/ErrorPage";
 import { useQuery } from "@apollo/client";
 import { OBTENER_CLIENTES } from "../../../../gql/Catalogos/clientes";
-import ErrorPage from "../../../../components/ErrorPage";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -110,6 +102,10 @@ const ProveedoresComponent = () => {
   const [filtro, setFiltro] = useState("");
   const [values, setValues] = useState("");
 
+  const pressEnter = (e) => {
+    if (e.key === "Enter") setFiltro(e.target.defaultValue);
+  };
+
   const { loading, data, error, refetch } = useQuery(OBTENER_CLIENTES, {
     variables: { tipo: "PROVEEDOR", filtro },
     fetchPolicy: "network-only",
@@ -131,10 +127,6 @@ const ProveedoresComponent = () => {
   }
 
   const { obtenerClientes } = data;
-
-  const pressEnter = (e) => {
-    if (e.key === "Enter") setFiltro(e.target.defaultValue);
-  };
 
   return (
     <Box my={3}>
@@ -160,7 +152,7 @@ const ProveedoresComponent = () => {
           style={{ display: "flex", justifyContent: "flex-end" }}
         >
           {permisosUsuario.accesos.catalogos.provedores.ver === false ? null : (
-            <CrearCliente tipo="PROVEEDOR" accion="registrar" refetch={refetch} />
+            <CrearCliente tipo="PROVEEDOR" accion="registrar" />
           )}
         </Grid>
       </Grid>

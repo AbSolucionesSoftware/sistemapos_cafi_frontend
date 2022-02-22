@@ -1,4 +1,4 @@
-import React, { useContext, useState, Fragment } from "react";
+import React, { useContext, useState, Fragment, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -55,7 +55,7 @@ export default function ListaClientes({
   handleClickOpen,
 }) {
   const classes = useStyles();
-  const { setUpdateClientVenta, updateClientVenta } = useContext(
+  const { setUpdateClientVenta, updateClientVenta, update } = useContext(
     ClienteCtx
   );
   const [value] = useDebounce(filtro, 1000);
@@ -66,9 +66,9 @@ export default function ListaClientes({
     fetchPolicy: "network-only",
   });
 
-  /* useEffect(() => {
+  useEffect(() => {
     refetch();
-  }, [update, refetch]); */
+  }, [update, refetch]);
 
   //show modal accept client
   const [showModal, setShowModal] = useState(false);
@@ -212,6 +212,8 @@ const RowsRender = ({
   refetch,
 }) => {
   const permisosUsuario = JSON.parse(localStorage.getItem("sesionCafi"));
+
+  const { update, setUpdate } = useContext(ClienteCtx);
   const [loading, setLoading] = useState(false);
 
   /* console.log(datos); */
@@ -230,8 +232,7 @@ const RowsRender = ({
           id: datos._id,
         },
       });
-      /* setUpdate(!update); */
-      refetch();
+      setUpdate(!update);
       setLoading(false);
     } catch (error) {
       setLoading(false);
