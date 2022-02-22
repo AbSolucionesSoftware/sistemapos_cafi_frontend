@@ -152,7 +152,7 @@ const ProveedoresComponent = () => {
           style={{ display: "flex", justifyContent: "flex-end" }}
         >
           {permisosUsuario.accesos.catalogos.provedores.ver === false ? null : (
-            <CrearCliente tipo="PROVEEDOR" accion="registrar" />
+            <CrearCliente tipo="PROVEEDOR" accion="registrar" refetch={refetch} />
           )}
         </Grid>
       </Grid>
