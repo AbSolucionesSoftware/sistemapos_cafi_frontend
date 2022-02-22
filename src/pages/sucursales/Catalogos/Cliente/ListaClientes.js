@@ -212,8 +212,6 @@ const RowsRender = ({
   refetch,
 }) => {
   const permisosUsuario = JSON.parse(localStorage.getItem("sesionCafi"));
-
-  const { update, setUpdate } = useContext(ClienteCtx);
   const [loading, setLoading] = useState(false);
 
   /* console.log(datos); */
@@ -232,7 +230,8 @@ const RowsRender = ({
           id: datos._id,
         },
       });
-      setUpdate(!update);
+      /* setUpdate(!update); */
+      refetch();
       setLoading(false);
     } catch (error) {
       setLoading(false);

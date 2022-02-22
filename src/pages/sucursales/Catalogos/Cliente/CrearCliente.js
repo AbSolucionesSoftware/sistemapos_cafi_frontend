@@ -37,8 +37,6 @@ export default function CrearCliente({
     cliente,
     setCliente,
     setError,
-    update,
-    setUpdate,
     updateClientVenta,
     setUpdateClientVenta,
   } = useContext(ClienteCtx);
@@ -168,10 +166,11 @@ export default function CrearCliente({
           },
         });
       }
-      if (refetch) {
+      /* if (refetch) {
         refetch();
-      }
-      setUpdate(!update);
+      } */
+      refetch();
+      /* setUpdate(!update); */
       setAlert({ message: "¡Listo!", status: "success", open: true });
       setError(false);
       setLoading(false);
