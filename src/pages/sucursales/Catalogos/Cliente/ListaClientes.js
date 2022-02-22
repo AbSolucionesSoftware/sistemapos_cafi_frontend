@@ -43,7 +43,7 @@ const useStyles = makeStyles({
     width: "100%",
   },
   container: {
-    maxHeight: "75vh",
+    height: "75vh",
   },
 });
 
@@ -137,9 +137,9 @@ export default function ListaClientes({
   return (
     <Fragment>
       <SnackBarMessages alert={alert} setAlert={setAlert} />
-      <Paper className={classes.root}>
+      <Paper className={classes.root} variant="outlined">
         <TableContainer className={classes.container}>
-          <Table stickyHeader size="small" aria-label="a dense table">
+          <Table stickyHeader size="small">
             <TableHead>
               <TableRow>
                 <TableCell width="110">No. Cliente</TableCell>
@@ -242,7 +242,6 @@ const RowsRender = ({
   return (
     <Fragment>
       <TableRow
-        hover
         role="checkbox"
         tabIndex={-1}
         onClick={(e) => handleClickOpenModal(datos, e)}

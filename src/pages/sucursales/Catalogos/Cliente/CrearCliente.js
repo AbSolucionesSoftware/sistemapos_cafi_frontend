@@ -212,12 +212,23 @@ export default function CrearCliente({
           <Edit />
         </IconButton>
       )}
-      <Dialog open={open} onClose={onCloseModal} fullWidth maxWidth="md">
+      <Dialog
+        open={open}
+        onClose={(_, reason) => {
+          if (reason !== "backdropClick") {
+            onCloseModal();
+          }
+        }}
+        fullWidth
+        maxWidth="md"
+      >
         <DialogTitle style={{ padding: 0 }}>
           <BackdropComponent loading={loading} setLoading={setLoading} />
           <AppBar position="static" color="default" elevation={0}>
             <Toolbar>
-              <Typography variant="h6">{accion === "registrar" ? "Registrar" : "Actualizar"}</Typography>
+              <Typography variant="h6">
+                {accion === "registrar" ? "Registrar" : "Actualizar"}
+              </Typography>
               <Box flexGrow={1} />
               <Button
                 variant="contained"

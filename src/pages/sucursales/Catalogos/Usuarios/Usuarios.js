@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import { Search } from '@material-ui/icons';
 import Slide from '@material-ui/core/Slide';
-import { Box, Paper, InputBase, IconButton } from '@material-ui/core';
+import { Box, Paper, InputBase, IconButton, Grid } from '@material-ui/core';
 import ListaUsuarios from './ListaUsuario';
 import CrearUsuario from './CrearUsuario';
 import { UsuarioProvider } from '../../../../context/Catalogos/usuarioContext';
@@ -79,6 +79,9 @@ export default function Usuarios() {
 							</Box>
 						</Toolbar>
 					</AppBar>
+					{/* <Grid container spacing={2}> */}
+						{/* <Grid item xs={8} */}
+					{/* </Grid> */}
 
 					<Box m={3} display="flex" justifyContent="space-between">
 						<Box mr={5} minWidth="70%">
