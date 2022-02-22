@@ -332,7 +332,7 @@ const RenderTallas = ({
             nombre_comercial: producto.datos_generales.nombre_comercial,
             medida: producto_medida,
             color: { nombre: "", hex: "" },
-            precios: producto.precios,
+            //precios: producto.precios,
             precio: producto.precios.precios_producto[0].precio_neto,
             cantidad: 0,
             //nuevo: true
@@ -386,7 +386,7 @@ const RenderTallas = ({
               nombre_comercial: producto.datos_generales.nombre_comercial,
               medida: producto_medida,
               color: { nombre: "", hex: "" },
-              precios:producto.precios,
+              //precios:producto.precios,
               precio: producto.precios.precios_producto[0].precio_neto,
               cantidad: 0,
               //nuevo: true
@@ -423,7 +423,7 @@ const RenderTallas = ({
               nombre_comercial: array_medidad_finales[i].medida.nombre_comercial,
               medida: medidas_seleccionadas_temp[k],
               color: array_medidad_finales[i].medida.color,
-              precios:producto.precios,
+              //precios:producto.precios,
               precio: array_medidad_finales[i].medida.precio,
               cantidad: array_medidad_finales[i].medida.cantidad,
               //nuevo: true
@@ -472,7 +472,7 @@ const RenderTallas = ({
                 nombre_comercial: producto.datos_generales.nombre_comercial,
                 medida: producto_medida,
                 color: producto_color,
-                 precios:producto.precios,
+                 //precios:producto.precios,
                 precio: producto.precios.precios_producto[0].precio_neto,
                 cantidad: 0,
                 precio_unidad: {
@@ -513,7 +513,7 @@ const RenderTallas = ({
                 nombre_comercial: objeto_presentaciones_final.medida.nombre_comercial,
                 medida: objeto_presentaciones_final.medida.medida,
                 color: objeto_presentaciones_final.medida.color,
-                precios:producto.precios,
+                //precios:producto.precios,
                 precio: objeto_presentaciones_final.medida.precio,
                 cantidad: objeto_presentaciones_final.medida.cantidad,
                 //nuevo: true
@@ -638,7 +638,7 @@ const Colores = ({
               nombre_comercial: producto.datos_generales.nombre_comercial,
               medida: {},
               color: producto_color,
-              precios:producto.precios,
+              //precios:producto.precios,
               precio: producto.precios.precios_producto[0].precio_neto,
               cantidad: 0,
               //nuevo: true
@@ -690,7 +690,7 @@ const Colores = ({
               nombre_comercial: producto.datos_generales.nombre_comercial,
               medida: {},
               color: producto_color,
-              precios:producto.precios,
+              //precios:producto.precios,
               precio: producto.precios.precios_producto[0].precio_neto,
               cantidad: 0,
               //nuevo: true
@@ -773,7 +773,7 @@ const Colores = ({
                 nombre_comercial: producto.datos_generales.nombre_comercial,
                 medida: producto_medida,
                 color: producto_color,
-                 precios:producto.precios,
+                // precios:producto.precios,
                 precio: producto.precios.precios_producto[0].precio_neto,
                 cantidad: 0,
                 //nuevo: true
@@ -816,7 +816,7 @@ const Colores = ({
                 nombre_comercial: objeto_presentaciones_final.medida.nombre_comercial,
                 medida: objeto_presentaciones_final.medida.medida,
                 color: { nombre: "", hex: "" },
-                 precios:producto.precios,
+                // precios:producto.precios,
                 precio: objeto_presentaciones_final.medida.precio,
                 cantidad: objeto_presentaciones_final.medida.cantidad,
                 //nuevo: true

@@ -523,7 +523,7 @@ export default function Traspasos() {
                     empresa: sesion.empresa._id
                 }
             }  
-            console.log(input);
+            
              const traspaso =    await CrearTraspaso(input) 
            
                 //console.log(traspaso)

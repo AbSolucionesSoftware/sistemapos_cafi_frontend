@@ -88,10 +88,7 @@ export default function TablaPresentaciones({
    let mostrar_presentaciones = [...datos].sort((a, b) =>
     compareFunction(a, b)
   ); 
-   React.useEffect(() => {
-   console.log(datos)
- }, [datos
- ])
+
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -224,7 +221,7 @@ const RenderPresentacionesRows = ({
         setNew_medidas(copy_presentaciones);
         return;
       }
-  
+    
     let precio_neto = parseFloat(value);
       let { iva, ieps } = productoData.precios;
     
@@ -235,7 +232,7 @@ const RenderPresentacionesRows = ({
       let PUCSI = productoData.precios.unidad_de_compra.precio_unitario_sin_impuesto;
       let utilidad = parseFloat((((precio_venta - PUCSI) / PUCSI) * 100).toFixed(2));
       
-console.log("DATOS",precio_venta , PUCSI);
+
       let {descuento_activo, descuento} = copy_element_presentacion;
       if (descuento_activo && descuento_activo === true) {
         let new_precio_venta_desc = (precio_venta * descuento.porciento) / 100;
