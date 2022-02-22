@@ -129,7 +129,7 @@ const RowsRender = ({ datos, setAlert, refetch }) => {
       </TableCell>
       {permisosUsuario.accesos.catalogos.provedores.editar === false ? null : (
         <TableCell width={50}>
-          <CrearCliente tipo="PRROVEEDOR" accion="actualizar" datos={datos} />
+          <CrearCliente tipo="PRROVEEDOR" accion="actualizar" datos={datos} refetch={refetch} />
         </TableCell>
       )}
       {permisosUsuario.accesos.catalogos.provedores.eliminar ===
