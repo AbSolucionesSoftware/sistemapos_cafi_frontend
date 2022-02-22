@@ -52,6 +52,9 @@ const useStyles = makeStyles((theme) => ({
   spin: {
     zIndex: 9999,
   },
+  titulos: {
+    fontWeight: 500,
+  },
 }));
 
 export default function CatalogosProductosSAT({ codigos, refetch }) {
@@ -223,7 +226,7 @@ export default function CatalogosProductosSAT({ codigos, refetch }) {
   return (
     <div>
       <SnackBarMessages alert={alert} setAlert={setAlert} />
-      <Typography>Clave de producto SAT</Typography>
+      <Typography className={classes.titulos}>Clave de producto SAT</Typography>
       <Box display="flex">
         <Autocomplete
           id="catalogos-bd-productos"

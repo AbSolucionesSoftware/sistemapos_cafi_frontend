@@ -38,8 +38,12 @@ export default function ClientesVentas() {
       // console.log("llego al final");
       const venta = JSON.parse(localStorage.getItem("DatosVentas"));
       if (venta !== null) {
-        setSelectClient(venta.cliente);
-        setClientesVentas(venta.cliente);
+        if(venta.cliente.nombre_cliente === undefined) {
+            setSelectClient('N/A');
+        }else{
+          setSelectClient(venta.cliente);
+          setClientesVentas(venta.cliente);
+        }
         refetch();
       }
     }
@@ -65,7 +69,7 @@ export default function ClientesVentas() {
           descuento:
             venta_actual.descuento === undefined ? 0 : venta_actual.descuento,
           monedero: venta_actual.monedero === undefined ? 0 : venta_actual.monedero,
-          tipo_cambio: venta_actual.tipo_cambio ? venta_actual.tipo_cambio : {},
+          // tipo_cambio: venta_actual.tipo_cambio ? venta_actual.tipo_cambio : {},
           venta_cliente: value === null ? false : true,
           productos:
             venta_actual.productos?.length > 0 ? venta_actual. productos : [],

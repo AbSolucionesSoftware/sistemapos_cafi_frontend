@@ -40,6 +40,7 @@ export const initial_state_unidadVentaXDefecto = {
   codigo_unidad: "H87",
   cantidad: 1,
   precio: 0,
+  descuento_activo: null,
   precio_unidad: {
     numero_precio: 0,
     precio_neto: 0,
@@ -54,6 +55,29 @@ export const initial_state_unidadVentaXDefecto = {
   },
   unidad_principal: true,
   default: true,
+};
+
+export const initial_state_unidadVentaSecundaria = {
+  codigo_barras: "",
+  unidad: "Caja",
+  codigo_unidad: "XBX",
+  cantidad: 1,
+  precio: 0,
+  descuento_activo: null,
+  precio_unidad: {
+    numero_precio: 0,
+    precio_neto: 0,
+    precio_venta: 0,
+    unidad_mayoreo: 0,
+    iva_precio: 0,
+    ieps_precio: 0,
+    utilidad: 0,
+    precio_general: 0,
+    cantidad_unidad: 0,
+    unidad_maxima: false
+  },
+  unidad_principal: false,
+  default: false,
 };
 
 export const initial_state_preciosP = [
@@ -113,7 +137,9 @@ export const initial_state_preciosP = [
   },
 ];
 
-export const initial_state_unidadesVenta = [];
+export const initial_state_unidadesVenta = [
+  
+];
 
 export const initial_state_almacen_inicial = {
   id_almacen: "",

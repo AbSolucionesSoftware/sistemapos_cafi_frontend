@@ -39,19 +39,20 @@ import {
 import { REGISTRAR_DEPARTAMENTO } from "../../../../../gql/Catalogos/departamentos";
 import { REGISTRAR_MARCAS } from "../../../../../gql/Catalogos/marcas";
 import SnackBarMessages from "../../../../../components/SnackBarMessages";
+import CategoriasProducto from "./Categorias";
+import SubcategoriasProducto from "./Subcategorias";
+import DepartamentosProducto from "./Departamentos";
+import MarcasProducto from "./Marcas";
 
 const useStyles = makeStyles((theme) => ({
-  formInputFlex: {
-    display: "flex",
-    "& > *": {
-      margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
-    },
-  },
   formInput: {
     margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
   },
   obligatorio: {
     color: "red",
+  },
+  titulos: {
+    fontWeight: 500,
   },
 }));
 
@@ -74,6 +75,8 @@ export default function RegistroInfoGenerales({
     setSubcategorias,
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
+    unidadVentaSecundaria,
+    setUnidadVentaSecundaria,
     update,
   } = useContext(RegProductoContext);
   const {
@@ -135,25 +138,51 @@ export default function RegistroInfoGenerales({
       setPrecios({
         ...precios,
         [e.target.name]: e.target.checked,
-        inventario: { ...precios.inventario, unidad_de_inventario: "Kg", codigo_unidad: "KGM" },
-        unidad_de_compra: { ...precios.unidad_de_compra, unidad: "Kg", codigo_unidad: "KGM" },
+        inventario: {
+          ...precios.inventario,
+          unidad_de_inventario: "Kg",
+          codigo_unidad: "KGM",
+        },
+        unidad_de_compra: {
+          ...precios.unidad_de_compra,
+          unidad: "Kg",
+          codigo_unidad: "KGM",
+        },
       });
       setUnidadVentaXDefecto({
         ...unidadVentaXDefecto,
         unidad: "Kg",
-        codigo_unidad: "KGM"
+        codigo_unidad: "KGM",
+      });
+      setUnidadVentaSecundaria({
+        ...unidadVentaSecundaria,
+        unidad: "Costal",
+        codigo_unidad: "KGM",
       });
     } else {
       setPrecios({
         ...precios,
         [e.target.name]: e.target.checked,
-        inventario: { ...precios.inventario, unidad_de_inventario: "Pz", codigo_unidad: "H87" },
-        unidad_de_compra: { ...precios.unidad_de_compra, unidad: "Pz", codigo_unidad: "H87" },
+        inventario: {
+          ...precios.inventario,
+          unidad_de_inventario: "Pz",
+          codigo_unidad: "H87",
+        },
+        unidad_de_compra: {
+          ...precios.unidad_de_compra,
+          unidad: "Pz",
+          codigo_unidad: "H87",
+        },
       });
       setUnidadVentaXDefecto({
         ...unidadVentaXDefecto,
         unidad: "Pz",
-        codigo_unidad: "H87"
+        codigo_unidad: "H87",
+      });
+      setUnidadVentaSecundaria({
+        ...unidadVentaSecundaria,
+        unidad: "Caja",
+        codigo_unidad: "XBX",
       });
     }
   };
@@ -223,7 +252,9 @@ export default function RegistroInfoGenerales({
               name="codigo_barras"
               fullWidth
             >
-              <Typography>Código de barras</Typography>
+              <Typography className={classes.titulos}>
+                Código de barras
+              </Typography>
               <OutlinedInput
                 disabled={update && datos_generales.codigo_barras}
                 style={{ padding: 0 }}
@@ -252,7 +283,7 @@ export default function RegistroInfoGenerales({
             </FormControl>
           </Grid>
           <Grid item md={2} xs={12}>
-            <Typography>
+            <Typography className={classes.titulos}>
               <span className={classes.obligatorio}>* </span>Clave alterna
             </Typography>
             <TextField
@@ -272,7 +303,7 @@ export default function RegistroInfoGenerales({
             />
           </Grid>
           <Grid item md={2} xs={12}>
-            <Typography>
+            <Typography className={classes.titulos}>
               <span className={classes.obligatorio}>* </span>Tipo de producto
             </Typography>
             <FormControl
@@ -306,7 +337,7 @@ export default function RegistroInfoGenerales({
           </Grid>
 
           <Grid item md={4} xs={12}>
-            <Typography>
+            <Typography className={classes.titulos}>
               <span className={classes.obligatorio}>* </span>Nombre comercial
             </Typography>
             <TextField
@@ -326,7 +357,7 @@ export default function RegistroInfoGenerales({
             />
           </Grid>
           <Grid item md={4} xs={12}>
-            <Typography>
+            <Typography className={classes.titulos}>
               <span className={classes.obligatorio}>* </span>Nombre genérico
             </Typography>
             <TextField
@@ -346,7 +377,7 @@ export default function RegistroInfoGenerales({
             />
           </Grid>
           <Grid item md={4} xs={12}>
-            <Typography>Descripción</Typography>
+            <Typography className={classes.titulos}>Descripción</Typography>
             <TextField
               fullWidth
               size="small"
@@ -361,169 +392,16 @@ export default function RegistroInfoGenerales({
           </Grid>
 
           <Grid item md={6} xs={12}>
-            <Typography>Categoria</Typography>
-            <Box display="flex">
-              <FormControl variant="outlined" fullWidth size="small">
-                <Select
-                  id="form-producto-categoria"
-                  value={
-                    datos_generales.categoria ? datos_generales.categoria : ""
-                  }
-                  onChange={(event, child) => obtenerIDs(event, child)}
-                  name="categoria"
-                >
-                  <MenuItem value="">
-                    <em>Seleccione uno</em>
-                  </MenuItem>
-                  {categorias ? (
-                    categorias.map((res) => {
-                      return (
-                        <MenuItem
-                          name="id_categoria"
-                          key={res._id}
-                          value={res.categoria}
-                          id={res._id}
-                          categoria={res}
-                        >
-                          {res.categoria}
-                        </MenuItem>
-                      );
-                    })
-                  ) : (
-                    <MenuItem value="" />
-                  )}
-                </Select>
-              </FormControl>
-              <RegistrarNuevoSelect
-                tipo="categoria"
-                name="categoria"
-                refetch={refetch}
-              />
-            </Box>
+            <CategoriasProducto refetch={refetch} categorias={categorias} />
           </Grid>
           <Grid item md={6} xs={12}>
-            <Typography>Subcategoria</Typography>
-            <Box display="flex">
-              <FormControl variant="outlined" fullWidth size="small">
-                <Select
-                  id="form-producto-subcategoria"
-                  name="subcategoria"
-                  value={
-                    datos_generales.subcategoria
-                      ? datos_generales.subcategoria
-                      : ""
-                  }
-                  onChange={(event, child) => obtenerIDs(event, child)}
-                >
-                  <MenuItem value="">
-                    <em>Seleccione uno</em>
-                  </MenuItem>
-                  {subcategorias ? (
-                    subcategorias.map((res) => {
-                      return (
-                        <MenuItem
-                          name="id_subcategoria"
-                          key={res._id}
-                          value={res.subcategoria}
-                          id={res._id}
-                        >
-                          {res.subcategoria}
-                        </MenuItem>
-                      );
-                    })
-                  ) : (
-                    <MenuItem value="" />
-                  )}
-                </Select>
-              </FormControl>
-              <RegistrarNuevoSelect
-                tipo="subcategoria"
-                name="subcategoria"
-                refetch={refetch}
-                subcategorias={subcategorias}
-                setSubcategorias={setSubcategorias}
-              />
-            </Box>
+            <SubcategoriasProducto refetch={refetch} />
           </Grid>
           <Grid item md={6} xs={12}>
-            <Typography>Departamento</Typography>
-            <Box display="flex">
-              <FormControl variant="outlined" fullWidth size="small">
-                <Select
-                  id="form-producto-departamento"
-                  name="departamento"
-                  value={
-                    datos_generales.departamento
-                      ? datos_generales.departamento
-                      : ""
-                  }
-                  onChange={(event, child) => obtenerIDs(event, child)}
-                >
-                  <MenuItem value="">
-                    <em>Seleccione uno</em>
-                  </MenuItem>
-                  {departamentos ? (
-                    departamentos.map((res) => {
-                      return (
-                        <MenuItem
-                          name="id_departamento"
-                          key={res._id}
-                          value={res.nombre_departamentos}
-                          id={res._id}
-                        >
-                          {res.nombre_departamentos}
-                        </MenuItem>
-                      );
-                    })
-                  ) : (
-                    <MenuItem value="" />
-                  )}
-                </Select>
-              </FormControl>
-              <RegistrarNuevoSelect
-                tipo="departamento"
-                name="nombre_departamentos"
-                refetch={refetch}
-              />
-            </Box>
+            <DepartamentosProducto refetch={refetch} departamentos={departamentos} />
           </Grid>
           <Grid item md={6} xs={12}>
-            <Typography>Marca</Typography>
-            <Box display="flex">
-              <FormControl variant="outlined" fullWidth size="small">
-                <Select
-                  id="form-producto-marca"
-                  name="marca"
-                  value={datos_generales.marca ? datos_generales.marca : ""}
-                  onChange={(event, child) => obtenerIDs(event, child)}
-                >
-                  <MenuItem value="">
-                    <em>Seleccione uno</em>
-                  </MenuItem>
-                  {marcas ? (
-                    marcas.map((res) => {
-                      return (
-                        <MenuItem
-                          name="id_marca"
-                          key={res._id}
-                          value={res.nombre_marca}
-                          id={res._id}
-                        >
-                          {res.nombre_marca}
-                        </MenuItem>
-                      );
-                    })
-                  ) : (
-                    <MenuItem value="" />
-                  )}
-                </Select>
-              </FormControl>
-              <RegistrarNuevoSelect
-                tipo="marca"
-                name="nombre_marca"
-                refetch={refetch}
-              />
-            </Box>
+            <MarcasProducto refetch={refetch} marcas={marcas} />
           </Grid>
         </Grid>
         <Box display="flex" mt={4}>

@@ -20,6 +20,7 @@ export const ComprasProvider = ({ children }) => {
     impuestos: 0,
     total: 0,
     mantener_precio: true,
+    impuestos_descuento: 0,
     subtotal_descuento: 0,
     total_descuento: 0,
   });
@@ -114,15 +115,6 @@ export const ComprasProvider = ({ children }) => {
   const [issue, setIssue] = useState(false);
   const [loadingProductos, setLoadingProductos] = useState(false);
 
-  const [descuentoCompra, setDescuentoCompra] = useState({
-    subtotal: 0,
-    total: 0,
-    descuento_aplicado: false,
-    porcentaje: 0,
-    cantidad_descontada: 0,
-    precio_con_descuento: 0,
-  });
-
   return (
     <ComprasContext.Provider
       value={{
@@ -148,8 +140,6 @@ export const ComprasProvider = ({ children }) => {
         setIssue,
         loadingProductos,
         setLoadingProductos,
-        descuentoCompra,
-        setDescuentoCompra,
       }}
     >
       {children}

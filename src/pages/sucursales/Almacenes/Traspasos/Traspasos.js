@@ -157,7 +157,7 @@ export default function Traspasos() {
 	const [ open, setOpen ] = useState(false);
     const [ loading, setLoading ] = useState(false);
     const [ filtro, setFiltro ] = useState('');
-	const [value] = useDebounce(filtro, 1000);
+	const [value] = useDebounce(filtro, 700);
 
     const [ haveConcepto, setHaveConcepto ] = useState(false);
     const [ conceptoTraspaso, setConceptoTraspaso ] = useState(null);
@@ -492,7 +492,7 @@ export default function Traspasos() {
 
     const traspasar = async () => {
         try {
-          
+         
             if(productosTras.length){
                setOpenEnd(false)
                setLoading(true)
@@ -523,7 +523,7 @@ export default function Traspasos() {
                     empresa: sesion.empresa._id
                 }
             }  
-           
+            console.log(input);
              const traspaso =    await CrearTraspaso(input) 
            
                 //console.log(traspaso)
@@ -548,8 +548,9 @@ export default function Traspasos() {
         } catch (error) {
              setLoading(false);
              setOpenEnd(false)
+             console.log(error)
            if(error.networkError !== undefined){
-			  console.log('traspaso networkError', error.networkError)
+			  console.log('traspaso networkError', error.networkError.result)
             }else if(error.graphQLErrors!== undefined){
                 console.log('traspaso graphQLErrors', error.graphQLErrors)
             }else{
@@ -564,7 +565,7 @@ export default function Traspasos() {
 
     return (
         <>
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: '100%',  }}>
             <Button fullWidth onClick={handleClickOpen}>
                 <Box display="flex" flexDirection="column">
                     <Box display="flex" justifyContent="center" alignItems="center">
@@ -612,7 +613,7 @@ export default function Traspasos() {
 						</IconButton>
 					</Toolbar>
 				</AppBar>
-                <Box style={{ width: '50%',alignSelf:'center' }}>
+                <Box style={{ width: '50%',alignSelf:'center', alignContent:'center', alignItems:'center' }}>
                   
                     <Stepper activeStep={activeStep}>
                         {steps.map((label, index) => {
@@ -814,11 +815,12 @@ export default function Traspasos() {
                     </Grid>
                 :
                     <Box>
-                        <Box style={{width:'100%'}} ml={1} >
+                        <Box ml={1} style={{width:'100%'}}  >
+                            <Box ml={2}>
                             <Typography className={classes.subtitle}>
                                 <b>Buscar producto</b>
                             </Typography>
-                            <Box style={{ width: "500px" }}>
+                            <Box  style={{ width: "35%" }}>
                                 
                                     <FormControl variant="outlined" fullWidth size="small">
                                     <OutlinedInput
@@ -842,7 +844,7 @@ export default function Traspasos() {
                                     
                                 
                             </Box>
-                    
+                            </Box>
                             <Box  mt={2}>
                                 <Grid container spacing={2} style={{width:'100%'}}>
                                     <Grid item md={6}>
@@ -863,8 +865,8 @@ export default function Traspasos() {
                     </Box>
                 }
                 
-                
-                <Box style={{ display: 'flex', flexDirection: 'row', pt: 2 }} >
+                   <DialogActions style={{justifyContent:'center'}}>
+                    <Box sx={{ flexDirection: 'row',alignSelf: 'center',  width: '15%',display: 'flex', pt: 2 }} >
                             <Button
                             color="inherit"
                             disabled={activeStep === 0}
@@ -885,6 +887,7 @@ export default function Traspasos() {
                                 </Button>
                         
                         </Box>
+                   </DialogActions>    
                 </Box>
                 <Dialog open={openEnd} onClose={handleModal}>
                     <DialogTitle>{'¿Está seguro de realizar este traspaso?'}</DialogTitle>

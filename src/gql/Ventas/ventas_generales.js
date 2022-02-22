@@ -138,6 +138,7 @@ export const CONSULTA_PRODUCTO_UNITARIO = gql`
           precios_producto {
             numero_precio
             precio_neto
+            precio_venta
             iva_precio
             ieps_precio
             unidad_mayoreo
@@ -247,6 +248,7 @@ export const CONSULTA_PRODUCTOS_VENTAS = gql`
 export const OBTENER_CLIENTES_VENTAS = gql`
   query ObtenerClientesVentas($empresa: ID!, $sucursal: ID!) {
     obtenerClientesVentas(empresa: $empresa, sucursal: $sucursal) {
+      _id
       numero_cliente
       clave_cliente
       nombre_cliente

@@ -4,7 +4,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import DoneIcon from "@material-ui/icons/Done";
 import {
   Button,
-  AppBar,
   Badge,
   Typography,
   CircularProgress,
@@ -44,6 +43,8 @@ import {
   initial_state_almacen_inicial,
   initial_state_centro_de_costos,
   initial_state_preciosPlazos,
+  initial_state_unidadVentaSecundaria,
+  initial_state_unidadesVenta,
 } from "../../../../context/Catalogos/initialStatesProducto";
 import {
   Add,
@@ -147,15 +148,6 @@ function a11yProps(index) {
 }
 
 const useStyles = makeStyles((theme) => ({
-  formInputFlex: {
-    display: "flex",
-    "& > *": {
-      margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-    },
-  },
-  formInput: {
-    margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-  },
   root_app: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
@@ -198,7 +190,6 @@ export default function CrearProducto({
     setPreciosP,
     imagenes,
     setImagenes,
-    unidadesVenta,
     setUnidadesVenta,
     almacen_inicial,
     setAlmacenInicial,
@@ -220,6 +211,8 @@ export default function CrearProducto({
     setPresentacionesEliminadas,
     setAlmacenExistente,
     almacen_existente,
+    unidadVentaSecundaria,
+    setUnidadVentaSecundaria,
   } = useContext(RegProductoContext);
 
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -282,9 +275,9 @@ export default function CrearProducto({
       }
     }
 
-    let copy_unidadesVenta = [...unidadesVenta];
+    let copy_unidadesVenta = [{...unidadVentaXDefecto}, {...unidadVentaSecundaria}];
 
-    if (copy_unidadesVenta.length === 0) {
+    /* if (copy_unidadesVenta.length === 0) {
       copy_unidadesVenta.push(unidadVentaXDefecto);
     } else {
       const unidadxdefecto = copy_unidadesVenta.filter(
@@ -293,7 +286,9 @@ export default function CrearProducto({
       if (unidadxdefecto.length === 0) {
         copy_unidadesVenta.splice(0, 0, unidadVentaXDefecto);
       }
-    }
+    } */
+
+    /* console.log(copy_unidadesVenta); */
 
     precios.precios_producto = preciosP;
 
@@ -328,7 +323,7 @@ export default function CrearProducto({
     /* console.log(input); */
 
     setLoading(true);
-    try {
+     try {
       if (accion) {
         const result = await actualizarProducto({
           variables: {
@@ -381,8 +376,9 @@ export default function CrearProducto({
     setDatosGenerales(initial_state_datos_generales);
     setPrecios(initial_state_precios);
     setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
+    setUnidadVentaSecundaria(initial_state_unidadVentaSecundaria);
     setPreciosP(initial_state_preciosP);
-    setUnidadesVenta([]);
+    setUnidadesVenta(initial_state_unidadesVenta);
     setAlmacenInicial(initial_state_almacen_inicial);
     setCentroDeCostos({});
     setPreciosPlazos(initial_state_preciosPlazos);
@@ -400,13 +396,14 @@ export default function CrearProducto({
   /* SET STATES WHEN UPDATING */
   const setInitialStates = (producto) => {
     /* const producto = cleanTypenames(product); */
-    /* console.log(producto); */
+    console.log(producto);
     const { precios_producto, ...new_precios } = producto.precios;
-    let unidades_venta = producto.unidades_de_venta.filter(
-      (res) => !res.default
+    const { unidades_de_venta } = producto;
+    let unidades_secundaria = producto.unidades_de_venta.filter(
+      (res) => res.default === false
     );
     let unidadxdefecto = producto.unidades_de_venta.filter(
-      (res) => res.default
+      (res) => res.default === true
     );
     setDatosGenerales(producto.datos_generales);
     setPrecios(new_precios);
@@ -417,9 +414,10 @@ export default function CrearProducto({
     );
     setImagenes(producto.imagenes);
     setPreciosPlazos(producto.precio_plazos);
-    setUnidadesVenta(unidades_venta);
+    setUnidadesVenta(unidades_de_venta);
     setPreciosP(producto.precios.precios_producto);
     setUnidadVentaXDefecto(unidadxdefecto[0]);
+    setUnidadVentaSecundaria(unidades_secundaria[0]);
     setPresentaciones(
       producto.medidas_producto ? producto.medidas_producto : []
     );
@@ -446,7 +444,7 @@ export default function CrearProducto({
       onClick={() => saveData()}
       size="large"
       startIcon={<DoneIcon />}
-      /* disabled={
+      disabled={
         !datos_generales.clave_alterna ||
         !datos_generales.tipo_producto ||
         !datos_generales.nombre_generico ||
@@ -456,18 +454,18 @@ export default function CrearProducto({
         !precios.unidad_de_compra.cantidad
           ? true
           : false
-      } */
+      }
     >
       Guardar
     </Button>
   );
 
   const ButtonActions = () => {
-    if (!accion && value === 5) {
+    if (!accion && value === 4) {
       return saveButton;
-    } else if (accion && tipo === "OTROS" && value === 5) {
+    } else if (accion && tipo === "OTROS" && value === 4) {
       return saveButton;
-    } else if (accion && tipo !== "OTROS" && value === 6) {
+    } else if (accion && tipo !== "OTROS" && value === 5) {
       return saveButton;
     } else {
       return (
@@ -673,10 +671,7 @@ export default function CrearProducto({
               ) : null
             ) : null}
           </Tabs>
-          <DialogContent className={classes.dialogContent}>
-            <Backdrop className={classes.backdrop} open={loading}>
-              <CircularProgress color="inherit" />
-            </Backdrop>
+          <Box width="100%">
             <Box m={1} display="flex" justifyContent="flex-end">
               <Button
                 variant="contained"
@@ -687,8 +682,13 @@ export default function CrearProducto({
                 <Close />
               </Button>
             </Box>
-            <ContenidoModal value={value} />
-          </DialogContent>
+            <DialogContent className={classes.dialogContent}>
+              <Backdrop className={classes.backdrop} open={loading}>
+                <CircularProgress color="inherit" />
+              </Backdrop>
+              <ContenidoModal value={value} />
+            </DialogContent>
+          </Box>
         </div>
 
         <DialogActions

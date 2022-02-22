@@ -1,4 +1,4 @@
-export const calcular_iva = (input, name, value, precios) => {
+export const calcular_iva = (name, value, precios) => {
   let precio_con_impuesto = 0;
   let precio_sin_impuesto = 0;
   let iva = 0;
@@ -82,7 +82,7 @@ export const calcular_iva = (input, name, value, precios) => {
   };
 };
 
-export const calcular_ieps = (input, name, value, precios) => {
+export const calcular_ieps = (name, value, precios) => {
   let precio_con_impuesto = 0;
   let precio_sin_impuesto = 0;
   let iva = 0;
@@ -161,16 +161,3 @@ export const calcular_ieps = (input, name, value, precios) => {
   };
 };
 
-/* export const calcular_precios = (
-  input,
-  name,
-  value,
-  precios,
-  preciosP,
-  unidadVentaXDefecto
-) => {
-  
-    return "hola piter"
-
-  //retornar todo array de precios, preciosP y unidades de venta
-}; */

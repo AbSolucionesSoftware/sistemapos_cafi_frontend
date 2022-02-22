@@ -16,6 +16,7 @@ export const initial_state_datosProducto = {
   impuestos: 0,
   total: 0,
   mantener_precio: true,
+  impuestos_descuento: 0,
   subtotal_descuento: 0,
   total_descuento: 0,
 };

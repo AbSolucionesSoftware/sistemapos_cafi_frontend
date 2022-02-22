@@ -112,6 +112,8 @@ export default function PreciosProductos() {
             granel: newProductoPrecioNuevo.granel_producto, 
             origen: "" 
           });
+
+          console.log(precioSelectProductoVenta[0])
         const new_suma = await calculatePrices2({
           newP: newProductoPrecioActual, 
           cantidad: newProductoPrecioActual.cantidad_venta, 
@@ -151,6 +153,12 @@ export default function PreciosProductos() {
           1,
           newProductoPrecioActual
         );
+
+        console.log("venta >>", venta_existente.subTotal);
+
+        console.log("resta >>", new_resta.subtotalCalculo);
+
+        console.log("suma >>", new_suma.subtotalCalculo)
 
       const CalculosData = {
         subTotal:

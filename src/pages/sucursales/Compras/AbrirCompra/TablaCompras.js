@@ -68,10 +68,8 @@ export default function ListaCompras() {
               <TableCell padding="checkbox">Cantidad regalo</TableCell>
               <TableCell padding="checkbox">Cantidad total</TableCell>
               <TableCell padding="checkbox">Presentaciones</TableCell>
-              <TableCell>IVA</TableCell>
-              <TableCell>IEPS</TableCell>
-              <TableCell>Total IVA</TableCell>
-              <TableCell>Total IEPS</TableCell>
+              <TableCell>IVA Total</TableCell>
+              <TableCell>IEPS Total</TableCell>
               <TableCell>Editar</TableCell>
               <TableCell>Remover</TableCell>
             </TableRow>
@@ -89,23 +87,32 @@ export default function ListaCompras() {
           </TableBody>
         </Table>
       </TableContainer>
-        <Grid container spacing={2}>
-          <Grid item>
-            <Typography style={{ fontSize: 18 }}>
-              Subtotal: <b>${ datosCompra.subtotal ? formatoMexico(datosCompra.subtotal) : 0}</b>
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Typography style={{ fontSize: 18 }}>
-              Impuestos: <b>${datosCompra.impuestos ? formatoMexico(datosCompra.impuestos) : 0}</b>
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Typography style={{ fontSize: 18 }}>
-              <b>Total: ${datosCompra.total ? formatoMexico(datosCompra.total) : 0}</b>
-            </Typography>
-          </Grid>
+      <Grid container spacing={2} justifyContent="flex-end">
+        <Grid item>
+          <Typography style={{ fontSize: 18 }}>
+            Subtotal:{" "}
+            <b>
+              ${datosCompra.subtotal ? formatoMexico(datosCompra.subtotal) : 0}
+            </b>
+          </Typography>
         </Grid>
+        <Grid item>
+          <Typography style={{ fontSize: 18 }}>
+            Impuestos:{" "}
+            <b>
+              $
+              {datosCompra.impuestos ? formatoMexico(datosCompra.impuestos) : 0}
+            </b>
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Typography style={{ fontSize: 18 }}>
+            <b>
+              Total: ${datosCompra.total ? formatoMexico(datosCompra.total) : 0}
+            </b>
+          </Typography>
+        </Grid>
+      </Grid>
     </Paper>
   );
 }
@@ -136,6 +143,7 @@ const RenderProductosCompra = ({ producto, index }) => {
     almacen_inicial: productoCTX.almacen_inicial,
     setAlmacenInicial: productoCTX.setAlmacenInicial,
     setUnidadVentaXDefecto: productoCTX.setUnidadVentaXDefecto,
+    setUnidadVentaSecundaria: productoCTX.setUnidadVentaSecundaria,
     setCentroDeCostos: productoCTX.setCentroDeCostos,
     setPreciosPlazos: productoCTX.setPreciosPlazos,
     setSubcategorias: productoCTX.setSubcategorias,
@@ -230,11 +238,9 @@ const RenderProductosCompra = ({ producto, index }) => {
           ? producto.producto.presentaciones.length
           : "N/A"}
       </TableCell>
-      <TableCell>{producto.producto.precios.iva}%</TableCell>
-      <TableCell>{producto.producto.precios.ieps}%</TableCell>
-      <TableCell>${producto.iva_total}</TableCell>
-      <TableCell>${producto.ieps_total}</TableCell>
-      <TableCell>
+      <TableCell width={140}>{`${producto.producto.precios.iva}% - $${producto.iva_total ? formatoMexico(producto.iva_total) : 0}`}</TableCell>
+      <TableCell width={140}>{`${producto.producto.precios.ieps}% - $${producto.ieps_total ? formatoMexico(producto.ieps_total) : 0}`}</TableCell>
+      <TableCell width={50}>
         {isSelected ? (
           <IconButton
             color="inherit"
@@ -249,7 +255,7 @@ const RenderProductosCompra = ({ producto, index }) => {
           </IconButton>
         )}
       </TableCell>
-      <TableCell>
+      <TableCell width={50}>
         <ModalDeleteProducto index={index} isSelected={isSelected} />
       </TableCell>
     </TableRow>

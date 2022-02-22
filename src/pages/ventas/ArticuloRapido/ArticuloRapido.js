@@ -27,6 +27,7 @@ import {
   initial_state_preciosP,
   initial_state_unidadVentaXDefecto,
   initial_state_presentaciones,
+  initial_state_unidadVentaSecundaria,
 } from "../../../context/Catalogos/initialStatesProducto";
 import { cleanTypenames } from "../../../config/reuserFunctions";
 import TallasColoresRapidos from "./TallasColoresRapidos/TallasColoresRapidos";
@@ -128,6 +129,8 @@ export default function ArticuloRapido() {
     setUnidadesVenta,
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
+    unidadVentaSecundaria,
+    setUnidadVentaSecundaria,
     setCentroDeCostos,
     presentaciones,
     setPresentaciones,
@@ -153,6 +156,7 @@ export default function ArticuloRapido() {
     setDatosGenerales(initial_state_datos_generales);
     setPrecios(initial_state_precios);
     setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
+    setUnidadVentaSecundaria(initial_state_unidadVentaSecundaria);
     setPreciosP(initial_state_preciosP);
     setUnidadesVenta([]);
     setCentroDeCostos({});
@@ -244,14 +248,15 @@ export default function ArticuloRapido() {
         return setValidacion(true);
       }
     }
-    if (unidadesVenta.length === 0) {
+    /* if (unidadesVenta.length === 0) {
       unidadesVenta.push(unidadVentaXDefecto);
     } else {
       const unidadxdefecto = unidadesVenta.filter(
         (unidades) => unidades.default
       );
       if (unidadxdefecto.length === 0) unidadesVenta.push(unidadVentaXDefecto);
-    }
+    } */
+    let copy_unidadesVenta = [{...unidadVentaXDefecto}, {...unidadVentaSecundaria}];
     precios.precios_producto = preciosP;
 
     if (datos_generales.tipo_producto === "OTROS" && cantidad < 1) {
@@ -262,7 +267,7 @@ export default function ArticuloRapido() {
     const data = {
       datos_generales,
       precios,
-      unidades_de_venta: unidadesVenta,
+      unidades_de_venta: copy_unidadesVenta,
       presentaciones,
       cantidad,
       empresa: sesion.empresa._id,

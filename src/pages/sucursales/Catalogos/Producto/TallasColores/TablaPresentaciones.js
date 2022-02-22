@@ -197,7 +197,7 @@ const RenderPresentacionesRows = ({
   withoutPrice,
   onlyPrice,
 }) => {
-  const { presentaciones, setPresentaciones, preciosP, precios, unidadVentaXDefecto, setUnidadVentaXDefecto } = useContext(
+  const { presentaciones, setPresentaciones, preciosP, precios } = useContext(
     RegProductoContext
   );
   const [disabledInput, setDisabledInput] = useState(true);

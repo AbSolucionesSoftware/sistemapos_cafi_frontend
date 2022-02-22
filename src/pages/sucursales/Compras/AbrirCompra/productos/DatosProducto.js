@@ -34,6 +34,7 @@ import {
   initial_state_precios,
   initial_state_preciosPlazos,
   initial_state_unidadVentaXDefecto,
+  initial_state_unidadVentaSecundaria,
 } from "../../../../../context/Catalogos/initialStatesProducto";
 
 import CrearProducto, {
@@ -87,12 +88,13 @@ export default function DatosProducto({ status }) {
     setPreciosP,
     imagenes,
     setImagenes,
-    unidadesVenta,
     setUnidadesVenta,
     almacen_inicial,
     setAlmacenInicial,
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
+    unidadVentaSecundaria,
+    setUnidadVentaSecundaria,
     centro_de_costos,
     setCentroDeCostos,
     preciosPlazos,
@@ -302,6 +304,7 @@ export default function DatosProducto({ status }) {
 
       setDatosProducto({
         ...datosProducto,
+        impuestos_descuento: parseFloat(nuevo_impuesto.toFixed(2)),
         costo: parseFloat(precio_neto),
         descuento_precio: parseFloat(cantidad_descontada),
         subtotal_descuento: parseFloat(subtotal),
@@ -311,6 +314,7 @@ export default function DatosProducto({ status }) {
     }
     setDatosProducto({
       ...datosProducto,
+      impuestos_descuento: parseFloat(nuevo_impuesto.toFixed(2)),
       costo: parseFloat(precio_neto),
       subtotal_descuento: parseFloat(precio_sin_impuesto),
       total_descuento: parseFloat(precio_sin_impuesto + nuevo_impuesto),
@@ -356,9 +360,13 @@ export default function DatosProducto({ status }) {
       }
     }
 
-    let copy_unidadesVenta = [...unidadesVenta];
+    /* let copy_unidadesVenta = [...unidadesVenta]; */
+    let copy_unidadesVenta = [
+      { ...unidadVentaXDefecto },
+      { ...unidadVentaSecundaria },
+    ];
 
-    if (copy_unidadesVenta.length === 0) {
+    /* if (copy_unidadesVenta.length === 0) {
       copy_unidadesVenta.push(unidadVentaXDefecto);
     } else {
       const unidadxdefecto = copy_unidadesVenta.filter(
@@ -367,7 +375,7 @@ export default function DatosProducto({ status }) {
       if (unidadxdefecto.length === 0) {
         copy_unidadesVenta.splice(0, 0, unidadVentaXDefecto);
       }
-    }
+    } */
 
     if (actualizar_Precios) {
       copy_datosProducto.mantener_precio = false;
@@ -572,10 +580,11 @@ export default function DatosProducto({ status }) {
   /* SET STATES WHEN UPDATING */
   const setInitialStates = (producto) => {
     const { precios_producto, ...new_precios } = producto.precios;
-    let unidades_venta = producto.unidades_de_venta.filter(
-      (res) => !res.default
+    const { unidades_de_venta } = producto;
+    let unidades_secundaria = unidades_de_venta.filter(
+      (res) => res.default === false
     );
-    const unidadxdefecto = producto.unidades_de_venta.filter(
+    let unidadxdefecto = unidades_de_venta.filter(
       (res) => res.default === true
     );
     setDatosGenerales(producto.datos_generales);
@@ -587,9 +596,10 @@ export default function DatosProducto({ status }) {
     );
     setImagenes(producto.imagenes);
     setPreciosPlazos(producto.precio_plazos);
-    setUnidadesVenta(unidades_venta);
+    setUnidadesVenta(unidades_de_venta);
     setPreciosP(producto.precios.precios_producto);
     setUnidadVentaXDefecto(unidadxdefecto[0]);
+    setUnidadVentaSecundaria(unidades_secundaria[0]);
     setPresentaciones(
       producto.medidas_producto ? producto.medidas_producto : []
     );
@@ -616,6 +626,7 @@ export default function DatosProducto({ status }) {
     setDatosGenerales(initial_state_datos_generales);
     setPrecios(initial_state_precios);
     setUnidadVentaXDefecto(initial_state_unidadVentaXDefecto);
+    setUnidadVentaSecundaria(initial_state_unidadVentaSecundaria);
     setPreciosP(initial_state_preciosP);
     setUnidadesVenta([]);
     setAlmacenInicial(initial_state_almacen_inicial);
@@ -766,6 +777,7 @@ export default function DatosProducto({ status }) {
                   fullWidth
                   aria-readonly="true"
                   value={datosProducto.producto.precios.unidad_de_compra.unidad}
+                  disabled
                 />
               </Box>
             </Grid>
@@ -777,7 +789,10 @@ export default function DatosProducto({ status }) {
                   variant="outlined"
                   size="small"
                   fullWidth
-                  inputMode="numeric"
+                  type="number"
+                  InputProps={{
+                    inputProps: { min: 1 },
+                  }}
                   disabled={!datosProducto.producto.datos_generales}
                   value={cantidad}
                   onChange={(e) => setCantidad(e.target.value)}

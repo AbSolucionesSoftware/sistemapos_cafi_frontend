@@ -56,11 +56,13 @@ export default function ColoresTallas({
     producto.datos_generales.tipo_producto === "ROPA" ? [...obtenerConsultasProducto.tallas] : [...obtenerConsultasProducto.calzados]; */ 
     const [onUpdate, setOnUpdate] = useState([]);
  //console.log(data.obtenerConsultasProducto)
+
   const obtenerColoresSeleccinados = useCallback(() => {
     let colors = [];
     let medidas = [];
     
-    const copy_presentaciones =  [...new_medidas ];
+    let copy_presentaciones =  [...new_medidas ];
+  
     
  
 //const copy_presentaciones = [];
@@ -156,6 +158,7 @@ export default function ColoresTallas({
                     <Grid container >
                         {obtenerConsultasProducto.tallas.map((talla, index) => (
                         <RenderTallas
+                     
                             producto={producto}
                             key={index}
                             talla={talla}
@@ -232,6 +235,7 @@ export default function ColoresTallas({
         </Grid>
         <Box mt={2} />
         <TablaPresentacionesNotOrigen
+          productoData = {producto}
           datos={new_medidas}
           setOnUpdate={setOnUpdate}
           onUpdate={onUpdate}
@@ -302,23 +306,48 @@ const RenderTallas = ({
 
     let presentacion_temp = [];
     const array_medidad_finales = [...datos];
+    const { iva, ieps } = producto.precios;
     //const array_medidad_finales = [];
     if (!coloresSeleccionados.length && !array_medidad_finales.length) {
       /* SI NO HAY COLORES NI VALORES EN EL ARRAY FINAL SE AGREGA EL PRIMER ELEMENTO */
       for (let i = 0; i < medidas_seleccionadas_temp.length; i++) {
         const producto_medida = medidas_seleccionadas_temp[i];
+        let iva_precio = parseFloat(
+          (
+            producto.precios.precios_producto[0].precio_venta *
+            parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
+          ).toFixed(2)
+        );
+        let ieps_precio = parseFloat(
+          (
+            producto.precios.precios_producto[0].precio_venta *
+            parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
+          ).toFixed(2)
+        );
         presentacion_temp.push({
           medida :{
-            _id: "",
+           
             existencia: false,
             codigo_barras: GenCodigoBarras(),
             nombre_comercial: producto.datos_generales.nombre_comercial,
             medida: producto_medida,
             color: { nombre: "", hex: "" },
+            precios: producto.precios,
             precio: producto.precios.precios_producto[0].precio_neto,
             cantidad: 0,
             //nuevo: true
+             precio_unidad: {
+              numero_precio: 1,
+              precio_venta: producto.precios.precios_producto[0].precio_venta,
+              precio_neto: producto.precios.precios_producto[0].precio_neto,
+              unidad_mayoreo: 0,
+              iva_precio: iva_precio,
+              ieps_precio: ieps_precio,
+              utilidad: producto.precios.precios_producto[0].utilidad,
+              unidad_maxima: false,
+            }
           },
+         
           nuevaCantidad: 0
           
         });
@@ -334,21 +363,45 @@ const RenderTallas = ({
         const result = array_medidad_finales.filter(
           (res) => res.medida.medida._id === producto_medida._id
         );
+        let iva_precio = parseFloat(
+          (
+            producto.precios.precios_producto[0].precio_venta *
+            parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
+          ).toFixed(2)
+        );
+        let ieps_precio = parseFloat(
+          (
+            producto.precios.precios_producto[0].precio_venta *
+            parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
+          ).toFixed(2)
+        );
         if (result.length) {
           presentacion_temp.push(result[0]);
         } else {
           presentacion_temp.push({
               medida :{
-              _id: "",
+              
               existencia: false,
               codigo_barras: GenCodigoBarras(),
               nombre_comercial: producto.datos_generales.nombre_comercial,
               medida: producto_medida,
               color: { nombre: "", hex: "" },
+              precios:producto.precios,
               precio: producto.precios.precios_producto[0].precio_neto,
               cantidad: 0,
               //nuevo: true
+              precio_unidad: {
+                numero_precio: 1,
+                precio_venta: producto.precios.precios_producto[0].precio_venta,
+                precio_neto: producto.precios.precios_producto[0].precio_neto,
+                unidad_mayoreo: 0,
+                iva_precio: iva_precio,
+                ieps_precio: ieps_precio,
+                utilidad: producto.precios.precios_producto[0].utilidad,
+                unidad_maxima: false
+              },
             },
+            
             nuevaCantidad: 0,
     
           });
@@ -364,16 +417,19 @@ const RenderTallas = ({
         for (let k = 0; k < medidas_seleccionadas_temp.length; k++) {
           presentacion_temp.push({
              medida :{
-              _id: "",
+              
               existencia: array_medidad_finales[i].medida.existencia,
               codigo_barras: array_medidad_finales[i].medida.codigo_barras,
               nombre_comercial: array_medidad_finales[i].medida.nombre_comercial,
               medida: medidas_seleccionadas_temp[k],
               color: array_medidad_finales[i].medida.color,
+              precios:producto.precios,
               precio: array_medidad_finales[i].medida.precio,
               cantidad: array_medidad_finales[i].medida.cantidad,
               //nuevo: true
+               precio_unidad: array_medidad_finales[i].medida.precio_unidad
             },
+           
             nuevaCantidad: array_medidad_finales[i].nuevaCantidad,
            
           });
@@ -393,22 +449,45 @@ const RenderTallas = ({
               producto_array_final.medida.medida._id === producto_medida._id &&
               producto_color._id === producto_array_final.medida.color._id
           );
+          let iva_precio = parseFloat(
+            (
+              producto.precios.precios_producto[0].precio_venta *
+              parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
+            ).toFixed(2)
+          );
+          let ieps_precio = parseFloat(
+            (
+              producto.precios.precios_producto[0].precio_venta *
+              parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
+            ).toFixed(2)
+          );
           if (!presentacion_existente.length) {
             //console.log('YA HAY COLORES Y MEDIDAS EN LAS PRESENTACIONES, SE AGREGAN NORMAL' , array_medidad_finales, producto_medida, producto_color)
             presentacion_temp.push({
               
               medida :{
-                _id: "",
+                
                 existencia: false,
                 codigo_barras: GenCodigoBarras(),
                 nombre_comercial: producto.datos_generales.nombre_comercial,
                 medida: producto_medida,
                 color: producto_color,
-                precio: 0,
+                 precios:producto.precios,
+                precio: producto.precios.precios_producto[0].precio_neto,
                 cantidad: 0,
-                
+                precio_unidad: {
+                  numero_precio: 1,
+                  precio_venta: producto.precios.precios_producto[0].precio_venta,
+                  precio_neto: producto.precios.precios_producto[0].precio_neto,
+                  unidad_mayoreo: 0,
+                  iva_precio: iva_precio,
+                  ieps_precio: ieps_precio,
+                  utilidad: producto.precios.precios_producto[0].utilidad,
+                  unidad_maxima: false
+                },
               },
               nuevaCantidad: 0,
+              
             });
           } else {
             presentacion_temp.push(presentacion_existente[0]);
@@ -429,16 +508,18 @@ const RenderTallas = ({
           presentacion_temp.push({
               
               medida :{
-                _id: "",
                 existencia: objeto_presentaciones_final.medida.existencia,
                 codigo_barras: objeto_presentaciones_final.medida.codigo_barras,
                 nombre_comercial: objeto_presentaciones_final.medida.nombre_comercial,
                 medida: objeto_presentaciones_final.medida.medida,
                 color: objeto_presentaciones_final.medida.color,
+                precios:producto.precios,
                 precio: objeto_presentaciones_final.medida.precio,
                 cantidad: objeto_presentaciones_final.medida.cantidad,
                 //nuevo: true
+                precio_unidad: objeto_presentaciones_final.precio_unidad
               },
+              
               nuevaCantidad: objeto_presentaciones_final.nuevaCantidad, 
 
           
@@ -532,23 +613,47 @@ const Colores = ({
     }
     let presentacion_temp = [];
     const array_medidad_finales = [...datos];
-
+    const { iva, ieps } = producto.precios;
     if (!medidasSeleccionadas.length && !array_medidad_finales.length) {
       /* SI NO HAY COLORES NI VALORES EN EL ARRAY FINAL SE AGREGA EL PRIMER ELEMENTO */
       for (let i = 0; i < coloresSeleccionados.length; i++) {
         const producto_color = coloresSeleccionados[i];
+         let iva_precio = parseFloat(
+            (
+              producto.precios.precios_producto[0].precio_venta *
+              parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
+            ).toFixed(2)
+          );
+          let ieps_precio = parseFloat(
+            (
+              producto.precios.precios_producto[0].precio_venta *
+              parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
+            ).toFixed(2)
+          );
         presentacion_temp.push({
           medida :{
-              _id: "",
+             
               existencia: false,
               codigo_barras: GenCodigoBarras(),
               nombre_comercial: producto.datos_generales.nombre_comercial,
               medida: {},
               color: producto_color,
+              precios:producto.precios,
               precio: producto.precios.precios_producto[0].precio_neto,
               cantidad: 0,
               //nuevo: true
+              precio_unidad: {
+                numero_precio: 1,
+                precio_venta: producto.precios.precios_producto[0].precio_venta,
+                precio_neto: producto.precios.precios_producto[0].precio_neto,
+                unidad_mayoreo: 0,
+                iva_precio: iva_precio,
+                ieps_precio: ieps_precio,
+                utilidad: producto.precios.precios_producto[0].utilidad,
+                unidad_maxima: false,
+              }
             },
+            
             nuevaCantidad: 0,
         });
       }
@@ -562,21 +667,45 @@ const Colores = ({
         const result = array_medidad_finales.filter(
           (res) => res.medida.color._id === producto_color._id
         );
+        let iva_precio = parseFloat(
+          (
+            producto.precios.precios_producto[0].precio_venta *
+            parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
+          ).toFixed(2)
+        );
+        let ieps_precio = parseFloat(
+          (
+            producto.precios.precios_producto[0].precio_venta *
+            parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
+          ).toFixed(2)
+        );
         if (result.length) {
           presentacion_temp.push(result[0]);
         } else {
           presentacion_temp.push({
              medida :{
-              _id: "",
+            
               existencia: false,
               codigo_barras: GenCodigoBarras(),
               nombre_comercial: producto.datos_generales.nombre_comercial,
               medida: {},
               color: producto_color,
+              precios:producto.precios,
               precio: producto.precios.precios_producto[0].precio_neto,
               cantidad: 0,
               //nuevo: true
+              precio_unidad: {
+                numero_precio: 1,
+                precio_venta: producto.precios.precios_producto[0].precio_venta,
+                precio_neto: producto.precios.precios_producto[0].precio_neto,
+                unidad_mayoreo: 0,
+                iva_precio: iva_precio,
+                ieps_precio: ieps_precio,
+                utilidad: producto.precios.precios_producto[0].utilidad,
+                unidad_maxima: false,
+              }
             },
+            
             nuevaCantidad: 0,
           });
         }
@@ -591,7 +720,7 @@ const Colores = ({
         for (let k = 0; k < coloresSeleccionados.length; k++) {
           presentacion_temp.push({
             medida :{
-              _id: "",
+            
               existencia: array_medidad_finales[i].medida.existencia,
               codigo_barras: array_medidad_finales[i].medida.codigo_barras,
               nombre_comercial: array_medidad_finales[i].medida.nombre_comercial,
@@ -599,8 +728,11 @@ const Colores = ({
               color: coloresSeleccionados[k],
               precio: array_medidad_finales[i].medida.precio,
               cantidad: array_medidad_finales[i].medida.cantidad,
+              
               //nuevo: true
+              precio_unidad: array_medidad_finales[i].medida.precio_unidad,
             },
+           
             nuevaCantidad: array_medidad_finales[i].nuevaCantidad,
            
           });
@@ -620,19 +752,43 @@ const Colores = ({
               producto_array_final.medida.medida._id === producto_medida._id &&
               producto_color._id === producto_array_final.medida.color._id
           );
+          let iva_precio = parseFloat(
+            (
+              producto.precios.precios_producto[0].precio_venta *
+              parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
+            ).toFixed(2)
+          );
+          let ieps_precio = parseFloat(
+            (
+              producto.precios.precios_producto[0].precio_venta *
+              parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
+            ).toFixed(2)
+          );
           if (!presentacion_existente.length) {
             presentacion_temp.push({
                medida :{
-                _id: "",
+               
                 existencia: false,
                 codigo_barras: GenCodigoBarras(),
                 nombre_comercial: producto.datos_generales.nombre_comercial,
                 medida: producto_medida,
                 color: producto_color,
-                precio: 0,
+                 precios:producto.precios,
+                precio: producto.precios.precios_producto[0].precio_neto,
                 cantidad: 0,
                 //nuevo: true
+                precio_unidad: {
+                  numero_precio: 1,
+                  precio_venta: producto.precios.precios_producto[0].precio_venta,
+                  precio_neto: producto.precios.precios_producto[0].precio_neto,
+                  unidad_mayoreo: 0,
+                  iva_precio: iva_precio,
+                  ieps_precio: ieps_precio,
+                  utilidad: producto.precios.precios_producto[0].utilidad,
+                  unidad_maxima: false,
+                }
               },
+              
               nuevaCantidad: 0,
               
             });
@@ -654,17 +810,20 @@ const Colores = ({
           const objeto_presentaciones_final = array_medidad_finales[x];
           presentacion_temp.push({
             medida :{
-                _id: objeto_presentaciones_final.medida._id,
+                
                 existencia: objeto_presentaciones_final.medida.existencia,
                 codigo_barras: objeto_presentaciones_final.medida.codigo_barras,
                 nombre_comercial: objeto_presentaciones_final.medida.nombre_comercial,
                 medida: objeto_presentaciones_final.medida.medida,
                 color: { nombre: "", hex: "" },
+                 precios:producto.precios,
                 precio: objeto_presentaciones_final.medida.precio,
                 cantidad: objeto_presentaciones_final.medida.cantidad,
                 //nuevo: true
+                precio_unidad: objeto_presentaciones_final.medida.precio_unidad
               },
-            nuevaCantidad: objeto_presentaciones_final.nuevaCantidad,
+              
+              nuevaCantidad: objeto_presentaciones_final.nuevaCantidad,
 
           });
         }
