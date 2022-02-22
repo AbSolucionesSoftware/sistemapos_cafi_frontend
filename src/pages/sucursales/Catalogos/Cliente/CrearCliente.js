@@ -30,6 +30,7 @@ export default function CrearCliente({
   accion,
   datos,
   refetch,
+  fromCompras,
   ventas,
   handleClickOpen,
 }) {
@@ -166,9 +167,6 @@ export default function CrearCliente({
           },
         });
       }
-      /* if (refetch) {
-        refetch();
-      } */
       refetch();
       /* setUpdate(!update); */
       setAlert({ message: "¡Listo!", status: "success", open: true });
@@ -191,7 +189,7 @@ export default function CrearCliente({
     <Fragment>
       <SnackBarMessages alert={alert} setAlert={setAlert} />
       {accion === "registrar" ? (
-        refetch ? (
+        fromCompras ? (
           <IconButton color="primary" onClick={toggleModal}>
             <Add />
           </IconButton>

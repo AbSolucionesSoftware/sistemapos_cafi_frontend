@@ -7,11 +7,22 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
-import { Box, Grid, IconButton, InputBase, Paper } from "@material-ui/core";
+import {
+  Box,
+  CircularProgress,
+  DialogContent,
+  Grid,
+  IconButton,
+  InputBase,
+  Paper,
+} from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import TablaProovedores from "./ListaProveedores";
 import CrearCliente from "../Cliente/CrearCliente";
 import { ClienteProvider } from "../../../../context/Catalogos/crearClienteCtx";
+import { useQuery } from "@apollo/client";
+import { OBTENER_CLIENTES } from "../../../../gql/Catalogos/clientes";
+import ErrorPage from "../../../../components/ErrorPage";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -35,12 +46,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Proveedores() {
-  const permisosUsuario = JSON.parse(localStorage.getItem("sesionCafi"));
-
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const [filtro, setFiltro] = useState("");
-  const [values, setValues] = useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -48,10 +55,6 @@ export default function Proveedores() {
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const pressEnter = (e) => {
-    if (e.key === "Enter") setFiltro(e.target.defaultValue);
   };
 
   return (
@@ -92,41 +95,78 @@ export default function Proveedores() {
               </Box>
             </Toolbar>
           </AppBar>
-
-          <Box mx={4} my={3}>
-            <Grid container spacing={2}>
-              <Grid item md={6} xs={8}>
-                <Paper className={classes.root}>
-                  <InputBase
-                    fullWidth
-                    placeholder="Buscar proveedor..."
-                    onChange={(e) => setValues(e.target.value)}
-                    onKeyPress={pressEnter}
-                    value={values}
-                  />
-                  <IconButton onClick={() => setFiltro(values)}>
-                    <Search />
-                  </IconButton>
-                </Paper>
-              </Grid>
-              <Grid
-                item
-                md={6}
-                xs={4}
-                style={{ display: "flex", justifyContent: "flex-end" }}
-              >
-                {permisosUsuario.accesos.catalogos.provedores.ver ===
-                false ? null : (
-                  <CrearCliente tipo="PROVEEDOR" accion="registrar" />
-                )}
-              </Grid>
-            </Grid>
-          </Box>
-          <Box mx={4}>
-            <TablaProovedores tipo="PROVEEDOR" filtro={filtro} />
-          </Box>
+          <DialogContent>
+            <ProveedoresComponent />
+          </DialogContent>
         </Dialog>
       </ClienteProvider>
     </div>
   );
 }
+
+const ProveedoresComponent = () => {
+  const classes = useStyles();
+  const permisosUsuario = JSON.parse(localStorage.getItem("sesionCafi"));
+  const [filtro, setFiltro] = useState("");
+  const [values, setValues] = useState("");
+
+  const { loading, data, error, refetch } = useQuery(OBTENER_CLIENTES, {
+    variables: { tipo: "PROVEEDOR", filtro },
+    fetchPolicy: "network-only",
+  });
+
+  if (loading)
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="30vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  if (error) {
+    return <ErrorPage error={error} />;
+  }
+
+  const { obtenerClientes } = data;
+
+  const pressEnter = (e) => {
+    if (e.key === "Enter") setFiltro(e.target.defaultValue);
+  };
+
+  return (
+    <Box my={3}>
+      <Grid container spacing={2}>
+        <Grid item md={6} xs={8}>
+          <Paper className={classes.root}>
+            <InputBase
+              fullWidth
+              placeholder="Buscar proveedor..."
+              onChange={(e) => setValues(e.target.value)}
+              onKeyPress={pressEnter}
+              value={values}
+            />
+            <IconButton onClick={() => setFiltro(values)}>
+              <Search />
+            </IconButton>
+          </Paper>
+        </Grid>
+        <Grid
+          item
+          md={6}
+          xs={4}
+          style={{ display: "flex", justifyContent: "flex-end" }}
+        >
+          {permisosUsuario.accesos.catalogos.provedores.ver === false ? null : (
+            <CrearCliente tipo="PROVEEDOR" accion="registrar" refetch={refetch} />
+          )}
+        </Grid>
+      </Grid>
+      <Box mt={3}>
+        <TablaProovedores obtenerClientes={obtenerClientes} refetch={refetch} />
+      </Box>
+    </Box>
+  );
+};

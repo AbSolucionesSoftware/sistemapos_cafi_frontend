@@ -9,13 +9,11 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import CrearCliente from "../Cliente/CrearCliente";
 
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import {
   ELIMINAR_CLIENTE,
-  OBTENER_CLIENTES,
 } from "../../../../gql/Catalogos/clientes";
 import {
-  Box,
   Button,
   CircularProgress,
   Dialog,
@@ -24,7 +22,6 @@ import {
 } from "@material-ui/core";
 import { DialogTitle, IconButton, Typography } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
-import ErrorPage from "../../../../components/ErrorPage";
 import { formatoFechaCorta } from "../../../../config/reuserFunctions";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 
@@ -47,7 +44,7 @@ const useStyles = makeStyles({
     width: "100%",
   },
   container: {
-    height: "75vh",
+    height: "74vh",
   },
   avatar: {
     width: 130,
@@ -55,32 +52,10 @@ const useStyles = makeStyles({
   },
 });
 
-export default function TablaProveedores({ tipo, filtro }) {
+export default function TablaProveedores({ obtenerClientes, refetch }) {
   const permisosUsuario = JSON.parse(localStorage.getItem("sesionCafi"));
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
   const classes = useStyles();
-
-  const { loading, data, error, refetch } = useQuery(OBTENER_CLIENTES, {
-    variables: { tipo, filtro },
-    fetchPolicy: "network-only",
-  });
-
-  if (loading)
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="30vh"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  if (error) {
-    return <ErrorPage error={error} />;
-  }
-
-  const { obtenerClientes } = data;
 
   return (
     <Paper className={classes.root} variant="outlined">
