@@ -40,6 +40,8 @@ export default function CrearCliente({
     setError,
     updateClientVenta,
     setUpdateClientVenta,
+    update,
+    setUpdate
   } = useContext(ClienteCtx);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -170,7 +172,7 @@ export default function CrearCliente({
       if(refetch){
         refetch();
       }
-      /* setUpdate(!update); */
+      setUpdate(!update);
       setAlert({ message: "¡Listo!", status: "success", open: true });
       setError(false);
       setLoading(false);
