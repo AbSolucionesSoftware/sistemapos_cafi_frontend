@@ -62,18 +62,20 @@ export default function VentasGenerales() {
     setOpen,
     clientesVentas,
     openBackDrop,
+    DatosVentasActual,
+    setDatosVentasActual
   } = useContext(VentasContext);
 
-  const [DatosVentasActual, setDatosVentasActual] = useState({
-    subTotal: 0,
-    total: 0,
-    impuestos: 0,
-    iva: 0,
-    ieps: 0,
-    descuento: 0,
-    monedero: 0,
-    // tipo_cambio: {},
-  });
+  // const [DatosVentasActual, setDatosVentasActual] = useState({
+  //   subTotal: 0,
+  //   total: 0,
+  //   impuestos: 0,
+  //   iva: 0,
+  //   ieps: 0,
+  //   descuento: 0,
+  //   monedero: 0,
+  //   // tipo_cambio: {},
+  // });
 
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
 
@@ -239,7 +241,7 @@ export default function VentasGenerales() {
         new_prices.totalCalculo
       );
 
-      console.log(new_prices.newP);
+      // console.log(new_prices.newP);
 
       productosVentasTemp.push(new_prices.newP);
 
@@ -272,7 +274,7 @@ export default function VentasGenerales() {
 
       const verify_prising = await verifiPrising(newP);
 
-      console.log(verify_prising);
+      // console.log(verify_prising);
 
       //Verificar si el precio fue encontrado
       if (verify_prising.found) {
@@ -298,7 +300,7 @@ export default function VentasGenerales() {
         newP.precio_anterior = newP.precio_actual_producto;
         newP.precio_actual_producto = verify_prising.pricing;
 
-        console.log(calculo_sumar);
+        // console.log(calculo_sumar);
 
         newP.iva_total_producto = parseFloat(calculo_sumar.ivaCalculo);
         newP.ieps_total_producto = parseFloat(calculo_sumar.iepsCalculo);
@@ -310,7 +312,7 @@ export default function VentasGenerales() {
         );
         newP.total_total_producto = parseFloat(calculo_sumar.totalCalculo);
 
-        console.log(newP);
+        // console.log(newP);
 
         newP.precio_actual_object = {
           cantidad_unidad: verify_prising.object_prising.cantidad_unidad
@@ -385,7 +387,7 @@ export default function VentasGenerales() {
             calculo_sumar.monederoCalculo,
         };
       } else {
-        console.log("Entro");
+        // console.log("Entro");
         const productoPrecioFinal = newP.descuento_activo
           ? newP.descuento.precio_neto
           : newP.precio_unidad.precio_neto;
@@ -399,7 +401,7 @@ export default function VentasGenerales() {
 
         new_prices.newP.precio_actual_producto = productoPrecioFinal;
 
-        console.log(new_prices);
+        // console.log(new_prices);
 
         new_prices.newP.iva_total_producto =
           parseFloat(new_prices.ivaCalculo) * parseFloat(newP.cantidad_venta);
