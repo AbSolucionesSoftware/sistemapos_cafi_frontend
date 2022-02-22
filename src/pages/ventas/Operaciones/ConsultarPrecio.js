@@ -32,6 +32,7 @@ export default function ConsultarPrecio() {
 
     let productoBase = null;
     if (data) productoBase = data.obtenerUnProductoVentas;
+    console.log(data)
 
     const [open, setOpen] = useState(false);
     
@@ -221,7 +222,7 @@ export default function ConsultarPrecio() {
                                             </Typography>
                                             <Typography variant="h3">
                                                 {productoBase?.descuento_activo === true ? 
-                                                    (<b style={{color: "red"}}>${productoBase?.descuento?.precio_con_descuento.toFixed(2)}</b>) :
+                                                    (<b style={{color: "red"}}>${productoBase?.descuento?.precio_neto.toFixed(2)}</b>) :
                                                     (<b style={{color: "green"}}>${productoBase?.precio}</b>)}
                                             </Typography>
                                         </Box>

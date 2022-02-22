@@ -1,98 +1,79 @@
-import React, {useState, useEffect} from 'react';
-import { Box, Button } from '@material-ui/core';
-import { Add } from '@material-ui/icons';
-import { useMutation, useQuery } from '@apollo/client';
-import TablaCajas from './ListaCajas';
-import SnackBarMessages from '../../../../components/SnackBarMessages';
-import BackdropComponent from '../../../../components/Layouts/BackDrop';
-import { CREAR_CAJA, OBTENER_CAJAS, ELIMINAR_CAJA } from '../../../../gql/Cajas/cajas';
+import React, { useState } from "react";
+import { Box, Button, CircularProgress } from "@material-ui/core";
+import { Add } from "@material-ui/icons";
+import { useMutation, useQuery } from "@apollo/client";
+import TablaCajas from "./ListaCajas";
+import SnackBarMessages from "../../../../components/SnackBarMessages";
+import { CREAR_CAJA, OBTENER_CAJAS } from "../../../../gql/Cajas/cajas";
 
 export default function RegistroCajas() {
-	const [ loading, setLoading ] = React.useState(false);
-    // const [ open, setOpen ] = React.useState(false);
-	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-	
-	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+  const [loading, setLoading] = React.useState(false);
+  const [alert, setAlert] = useState({ message: "", status: "", open: false });
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
-	let obtenerCajasSucursal = [];
-	  /* Mutation */
-	const [ crearCaja ] = useMutation(CREAR_CAJA);
-	const [ eliminarCaja ] = useMutation(ELIMINAR_CAJA);
+  let obtenerCajasSucursal = [];
+  /* Mutation */
+  const [crearCaja] = useMutation(CREAR_CAJA);
 
+  /* Queries */
+  const { data, refetch } = useQuery(OBTENER_CAJAS, {
+    variables: {
+      empresa: sesion.empresa._id,
+      sucursal: sesion.sucursal._id,
+    },
+  });
+  const nuevaCaja = async () => {
+    try {
+      setLoading(true);
+      await crearCaja({
+        variables: {
+          input: {
+            usuario_creador: sesion._id,
+            numero_usuario_creador: sesion.numero_usuario,
+            nombre_usuario_creador: sesion.nombre,
+          },
+          empresa: sesion.empresa._id,
+          sucursal: sesion.sucursal._id,
+        },
+      });
+      refetch();
+      setAlert({ message: "¡Listo!", status: "success", open: true });
+      setLoading(false);
+    } catch (error) {
+      setAlert({ message: "Hubo un error", status: "error", open: true });
+      setLoading(false);
+    }
+  };
 
-	  /* Queries */
-	const {  data, refetch } = useQuery(OBTENER_CAJAS,{
-		variables: {
-            empresa: sesion.empresa._id,
-			sucursal: sesion.sucursal._id
-		}
-	});	
-	const nuevaCaja = async () => {
-		try {
-            setLoading(true);
-				await crearCaja({
-					variables: {
-						input:{usuario_creador:  sesion._id, numero_usuario_creador: sesion.numero_usuario, nombre_usuario_creador: sesion.nombre},
-						empresa: sesion.empresa._id,
-						sucursal: sesion.sucursal._id
-		
-					}
-				});
-			refetch();
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
-			setLoading(false);
-		
-			
-		} catch (error) {
-			setAlert({ message: 'Hubo un error', status: 'error', open: true });
-			setLoading(false);
-		}
-	};
-	
-	const deleteCaja = async (id) => {
-		try {
-            setLoading(true);
-				await eliminarCaja({
-					variables: {
-						id: id
-					}
-				});
-			refetch();
-			setAlert({ message: '¡Listo!', status: 'success', open: true });
-			setLoading(false);
-		} catch (error) {
-			setAlert({ message: 'Hubo un error', status: 'error', open: true });
-			setLoading(false);
-		}
-	};
-	
-	if(data){
-		obtenerCajasSucursal = data.obtenerCajasSucursal;
-	}
+  if (data) {
+    obtenerCajasSucursal = data.obtenerCajasSucursal;
+  }
 
-	useEffect(
-		() => {
-			setLoading(true);
-			refetch();
-			setLoading(false);
-		},
-		[ refetch ]
-	); 
-
-	return (
-		<Box>
-			<SnackBarMessages alert={alert} setAlert={setAlert} />	
-			<BackdropComponent loading={loading} setLoading={setLoading} />
-			<Box display="flex" justifyContent="left" alignItems="left" my={2}>
-			
-				<Box ml={1} />
-				{sesion.accesos.catalogos.cajas.agregar === false ? (null):(
-					<Button color="primary" variant="contained" size="large" disableElevation onClick={() => nuevaCaja()}>
-						<Add />Agregar
-					</Button>
-				)}
-			</Box>
-			<TablaCajas obtenerCajasSucursal={obtenerCajasSucursal} deleteCaja={deleteCaja} />
-		</Box>
-	);
+  return (
+    <Box>
+      <SnackBarMessages alert={alert} setAlert={setAlert} />
+      <Box display="flex" justifyContent="flex-end" my={2}>
+        {sesion.accesos.catalogos.cajas.agregar === false ? null : (
+          <Button
+            color="primary"
+            variant="contained"
+            size="large"
+            disableElevation
+            onClick={() => nuevaCaja()}
+            disabled={loading}
+            startIcon={
+              loading ? <CircularProgress color="inherit" size={20} /> : <Add />
+            }
+          >
+            Agregar
+          </Button>
+        )}
+      </Box>
+      <TablaCajas
+        obtenerCajasSucursal={obtenerCajasSucursal}
+        setAlert={setAlert}
+        refetch={refetch}
+      />
+    </Box>
+  );
 }

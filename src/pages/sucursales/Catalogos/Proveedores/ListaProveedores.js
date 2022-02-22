@@ -83,7 +83,7 @@ export default function TablaProveedores({ tipo, filtro }) {
   const { obtenerClientes } = data;
 
   return (
-    <Paper className={classes.root}>
+    <Paper className={classes.root} variant="outlined">
       <SnackBarMessages alert={alert} setAlert={setAlert} />
       <TableContainer className={classes.container}>
         <Table stickyHeader aria-label="sticky table" size="small">
@@ -130,7 +130,7 @@ const RowsRender = ({ datos, setAlert, refetch }) => {
   const permisosUsuario = JSON.parse(localStorage.getItem("sesionCafi"));
 
   return (
-    <TableRow hover role="checkbox" tabIndex={-1}>
+    <TableRow role="checkbox" tabIndex={-1}>
       <TableCell>
         <Typography>{datos.numero_cliente}</Typography>
       </TableCell>

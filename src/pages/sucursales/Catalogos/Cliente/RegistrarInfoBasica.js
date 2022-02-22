@@ -168,6 +168,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 }
                 helperText={error ? "Campo Requerido" : ""}
                 onChange={obtenerCampos}
+                inputProps={{ style: { textTransform: "uppercase" } }}
               />
             </Grid>
             {tipo === "CLIENTE" ? null : (
@@ -188,6 +189,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                   }
                   helperText={error ? "Campo Requerido" : ""}
                   onChange={obtenerCampos}
+                  inputProps={{ style: { textTransform: "uppercase" } }}
                 />
               </Grid>
             )}
@@ -248,6 +250,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 variant="outlined"
                 value={cliente.curp ? cliente.curp : ""}
                 onChange={obtenerCampos}
+                inputProps={{ style: { textTransform: "uppercase" } }}
               />
             </Grid>
             <Grid item md={3} xs={12}>
@@ -321,6 +324,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 }
                 helperText={error ? "Campo Requerido" : ""}
                 onChange={obtenerCamposDireccion}
+                inputProps={{ style: { textTransform: "uppercase" } }}
               />
             </Grid>
             <Grid item md={2} xs={12}>
@@ -336,6 +340,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 value={cliente.direccion.no_ext ? cliente.direccion.no_ext : ""}
                 helperText={error ? "Campo Requerido" : ""}
                 onChange={obtenerCamposDireccion}
+                inputProps={{ style: { textTransform: "uppercase" } }}
               />
             </Grid>
             <Grid item md={2} xs={12}>
@@ -347,6 +352,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 variant="outlined"
                 value={cliente.direccion.no_int ? cliente.direccion.no_int : ""}
                 onChange={obtenerCamposDireccion}
+                inputProps={{ style: { textTransform: "uppercase" } }}
               />
             </Grid>
             <Grid item md={2} xs={12}>
@@ -385,6 +391,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 }
                 helperText={error ? "Campo Requerido" : ""}
                 onChange={obtenerCamposDireccion}
+                inputProps={{ style: { textTransform: "uppercase" } }}
               />
             </Grid>
             <Grid item md={3} xs={12}>
@@ -404,6 +411,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 }
                 helperText={error ? "Campo Requerido" : ""}
                 onChange={obtenerCamposDireccion}
+                inputProps={{ style: { textTransform: "uppercase" } }}
               />
             </Grid>
             <Grid item md={3} xs={12}>
@@ -418,6 +426,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                     : ""
                 }
                 onChange={obtenerCamposDireccion}
+                inputProps={{ style: { textTransform: "uppercase" } }}
               />
             </Grid>
             <Grid item md={3} xs={12}>
@@ -437,6 +446,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 }
                 helperText={error ? "Campo Requerido" : ""}
                 onChange={obtenerCamposDireccion}
+                inputProps={{ style: { textTransform: "uppercase" } }}
               />
             </Grid>
             <Grid item md={3} xs={12}>
@@ -456,6 +466,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 }
                 helperText={error ? "Campo Requerido" : ""}
                 onChange={obtenerCamposDireccion}
+                inputProps={{ style: { textTransform: "uppercase" } }}
               />
             </Grid>
           </Grid>

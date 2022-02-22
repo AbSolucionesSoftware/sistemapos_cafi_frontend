@@ -3,7 +3,16 @@ import React, { createContext, useState } from 'react';
 export const VentasContext = createContext();
 
 export const VentasProvider = ({ children }) => {
-
+    const [DatosVentasActual, setDatosVentasActual] = useState({
+        subTotal: 0,
+        total: 0,
+        impuestos: 0,
+        iva: 0,
+        ieps: 0,
+        descuento: 0,
+        monedero: 0,
+        // tipo_cambio: {},
+      });
     const [datosProductoVentas, setDatosProductoVentas] = useState(
         {
             _id: null,
@@ -84,6 +93,7 @@ export const VentasProvider = ({ children }) => {
                 setTurnoActivo,
                 ubicacionTurno, 
                 setUbicacionTurno,
+                DatosVentasActual, setDatosVentasActual,
                 // precioSeleccionadoTabla,
                 // setPrecioSeleccionadoTabla
                 setOpenBackDrop,

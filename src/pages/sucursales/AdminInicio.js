@@ -93,6 +93,12 @@ function AdminInicio(props) {
               icon={<FcShop className={classes.icon} />}
               {...a11yProps(0)}
             />
+
+            <Tab
+              label="Catalogos"
+              icon={<FcNews className={classes.icon} />}
+              {...a11yProps(1)}
+            />
             <Tab
               label="Almacenes"
               icon={
@@ -102,45 +108,13 @@ function AdminInicio(props) {
                   className={classes.iconSvg}
                 />
               }
-              {...a11yProps(1)}
+              {...a11yProps(2)}
             />
 
             <Tab
               label="Compras"
               icon={<FcPaid className={classes.icon} />}
-              {...a11yProps(2)}
-            />
-            <Tab
-              label="Catalogos"
-              icon={<FcNews className={classes.icon} />}
               {...a11yProps(3)}
-            />
-            <Tab
-              label="Tesoreria"
-              icon={
-                <img
-                  src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/money.svg"
-                  alt="icono money"
-                  className={classes.iconSvg}
-                />
-              }
-              {...a11yProps(4)}
-            />
-            <Tab
-              label="Reportes"
-              icon={<FcSurvey className={classes.icon} />}
-              {...a11yProps(5)}
-            />
-			<Tab
-              label="Facturación"
-              icon={
-                <img
-                  src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/factura.svg"
-                  alt="icono factura"
-                  className={classes.iconSvg}
-                />
-              }
-              {...a11yProps(6)}
             />
             <Tab
               label="Ventas"
@@ -151,8 +125,35 @@ function AdminInicio(props) {
                   className={classes.iconSvg}
                 />
               }
-              {...a11yProps(7)}
+              {...a11yProps(4)}
               onClick={() => props.history.push("/ventas/venta-general")}
+            />
+            <Tab
+              label="Reportes"
+              icon={<FcSurvey className={classes.icon} />}
+              {...a11yProps(5)}
+            />
+            <Tab
+              label="Tesoreria"
+              icon={
+                <img
+                  src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/money.svg"
+                  alt="icono money"
+                  className={classes.iconSvg}
+                />
+              }
+              {...a11yProps(6)}
+            />
+            <Tab
+              label="Facturación"
+              icon={
+                <img
+                  src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/factura.svg"
+                  alt="icono factura"
+                  className={classes.iconSvg}
+                />
+              }
+              {...a11yProps(7)}
             />
           </Tabs>
         </AppBar>
@@ -165,24 +166,26 @@ function AdminInicio(props) {
             <Empresa />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <Almacenes />
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            <Compras />
-          </TabPanel>
-          <TabPanel value={value} index={3}>
             <Catalogos />
           </TabPanel>
+          <TabPanel value={value} index={2}>
+            <Almacenes />
+          </TabPanel>
+          <TabPanel value={value} index={3}>
+            <Compras />
+          </TabPanel>
           <TabPanel value={value} index={4}>
-            <IndexTesoreria />
+            {/* ventas */}
           </TabPanel>
           <TabPanel value={value} index={5}>
             <Reportes />
           </TabPanel>
-		  <TabPanel value={value} index={6}>
+          <TabPanel value={value} index={6}>
+            <IndexTesoreria />
+          </TabPanel>
+          <TabPanel value={value} index={7}>
             <Facturacion />
           </TabPanel>
-          <TabPanel value={value} index={7}></TabPanel>
         </SwipeableViews>
       </Box>
     </div>

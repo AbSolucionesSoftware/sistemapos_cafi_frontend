@@ -31,7 +31,7 @@ export default function MostrarPrecios() {
         <Grid item>
           <Typography style={{ fontSize: 16 }}>Impuestos:</Typography>
           <Typography style={{ fontSize: 18 }}>
-            <b>${formatoMexico(datosProducto.impuestos * cantidad_total)}</b>
+            <b>${formatoMexico(datosProducto.impuestos_descuento * cantidad_total)}</b>
           </Typography>
         </Grid>
         <Grid item>
@@ -65,7 +65,7 @@ export default function MostrarPrecios() {
         <Grid item>
           <Typography style={{ fontSize: 16 }}>Impuestos:</Typography>
           <Typography style={{ fontSize: 18 }}>
-            <b>${formatoMexico(datosProducto.impuestos * datosProducto.cantidad)}</b>
+            <b>${formatoMexico(datosProducto.impuestos_descuento * datosProducto.cantidad)}</b>
           </Typography>
         </Grid>
         <Grid item>

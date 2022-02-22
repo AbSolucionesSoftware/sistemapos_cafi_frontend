@@ -93,7 +93,7 @@ export default function Proveedores() {
             </Toolbar>
           </AppBar>
 
-          <Box m={3}>
+          <Box mx={4} my={3}>
             <Grid container spacing={2}>
               <Grid item md={6} xs={8}>
                 <Paper className={classes.root}>

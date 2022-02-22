@@ -37,8 +37,6 @@ import Close from "@material-ui/icons/Close";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 import BackdropComponent from "../../../../components/Layouts/BackDrop";
 import ConfirmarCompra from "./ConfirmarCompra";
-import CompraCredito from "./CompraCredito";
-import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -123,9 +121,6 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     setDatosCompra,
     setProductoOriginal,
     setPreciosVenta,
-    issue,
-    descuentoCompra,
-    setDescuentoCompra,
   } = useContext(ComprasContext);
   const [openDelete, setOpenDelete] = useState(false);
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
@@ -141,14 +136,6 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     setDatosCompra(initial_state_datosCompra);
     setProductoOriginal(initial_state_productoOriginal);
     setPreciosVenta(initial_state_precios_venta);
-    setDescuentoCompra({
-      subtotal: 0,
-      total: 0,
-      descuento_aplicado: false,
-      porcentaje: 0,
-      cantidad_descontada: 0,
-      precio_con_descuento: 0,
-    });
   };
 
   useEffect(() => {
@@ -162,12 +149,15 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     compra_en_espera,
     credito,
     handleClose,
-    setLoadingModal
+    setLoadingModal,
+    descuento_compra,
+    productos_con_descuento
   ) => {
     let datos = { ...datosCompra };
-    let productos = productosCompra;
+    let copy_datosProducto = { ...productosCompra };
+    let productos = copy_datosProducto;
     if (status === "enEspera") {
-      productos = productosCompra.map((res) => {
+      productos = copy_datosProducto.map((res) => {
         delete res.conflicto;
         return res;
       });
@@ -201,16 +191,19 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
           datos.compra_credito = true;
           datos.saldo_credito_pendiente = datos.total;
         }
-        if (descuentoCompra.descuento_aplicado) {
+        if (descuento_compra.descuento_aplicado) {
           const {
             descuento_aplicado,
             subtotal,
             total,
+            impuestos,
             ...descuento
-          } = descuentoCompra;
-          datos.descuento_aplicado = descuentoCompra.descuento_aplicado;
-          datos.subtotal = descuentoCompra.subtotal;
-          datos.total = descuentoCompra.total;
+          } = descuento_compra;
+          datos.productos = productos_con_descuento;
+          datos.descuento_aplicado = descuento_compra.descuento_aplicado;
+          datos.subtotal = descuento_compra.subtotal;
+          datos.impuestos = descuento_compra.impuestos;
+          datos.total = descuento_compra.total;
           datos.descuento = descuento;
         }
         /* console.log(datos); */
@@ -302,20 +295,16 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
         <ListaCompras />
       </DialogContent>
 
-      <DialogActions style={{ justifyContent: "center" }}>
-        <Button
-          color="inherit"
-          size="large"
-          onClick={() => handleToggleDelete()}
-          startIcon={<Close />}
-        >
-          Cancelar
-        </Button>
+      <DialogActions
+        style={{
+          justifyContent: status === "enEspera" ? "flex-end" : "space-between",
+        }}
+      >
         {status === "enEspera" ? null : (
           <Button
             autoFocus
             color="primary"
-            variant="text"
+            variant="contained"
             size="large"
             onClick={() => realizarCompraBD(true)} //realiza la compra en espera en la funcion
             disabled={!productosCompra.length}
@@ -324,7 +313,6 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
             Compra en espera
           </Button>
         )}
-        <CompraCredito realizarCompraBD={realizarCompraBD} />
         <ConfirmarCompra realizarCompraBD={realizarCompraBD} />
       </DialogActions>
     </Dialog>

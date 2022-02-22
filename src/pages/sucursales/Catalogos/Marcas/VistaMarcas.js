@@ -29,9 +29,10 @@ export default function VistaMarcas() {
 	const [ actualizarMarca ] = useMutation(ACTUALIZAR_MARCAS);
 
     const obtenerDatos = (e) => {
+        
         setData({
             ...data,
-            [e.target.name]: e.target.value
+            [e.target.name]: e.target.value.toUpperCase()
         })
     }
 
@@ -96,6 +97,7 @@ export default function VistaMarcas() {
                         variant="outlined"
                         size="small"
                         fullWidth
+                        inputProps={{ style: { textTransform: "uppercase" } }}
                         onChange={obtenerDatos}
                         error={error}
                         onKeyPress={pressEnter}

@@ -6,18 +6,19 @@ export default function DescuentosInputs() {
   const { datosProducto, setDatosProducto, productoOriginal } = useContext(
     ComprasContext
   );
-  const {
-    precio_sin_impuesto,
-    precio_con_impuesto,
-    iva,
-    ieps,
-  } = productoOriginal.precios.precio_de_compra;
-  const impuestos = iva + ieps;
+  const { iva, ieps, precio_de_compra } = productoOriginal.precios;
+  const { precio_sin_impuesto, precio_con_impuesto } = precio_de_compra;
+  const iva_precio_actual = precio_de_compra.iva;
+  const ieps_precio_actual = precio_de_compra.ieps;
+  const impuesto_actual = iva_precio_actual + ieps_precio_actual;
+  const { costo } = datosProducto;
+  const PCSI_actual = costo - impuesto_actual;
 
   const obtenerPorcentaje = (value) => {
     if (!value || parseFloat(value) === 0) {
       setDatosProducto({
         ...datosProducto,
+        impuestos_descuento: impuesto_actual,
         descuento_porcentaje: "",
         descuento_precio: "",
         subtotal_descuento: precio_sin_impuesto,
@@ -26,17 +27,25 @@ export default function DescuentosInputs() {
       return;
     }
     let porcentaje = parseFloat(value);
-    let cantidad_descontada = Math.round(
-      (datosProducto.subtotal * porcentaje) / 100
-    );
-    let subtotal = datosProducto.subtotal - cantidad_descontada;
-    let total = subtotal + impuestos;
+    let cantidad_descontada = Math.round((PCSI_actual * porcentaje) / 100);
+
+    let subtotal_con_descuento = PCSI_actual - cantidad_descontada;
+    const iva_precio =
+      parseFloat(subtotal_con_descuento) *
+      parseFloat(iva < 10 ? ".0" + iva : "." + iva);
+    const ieps_precio =
+      parseFloat(subtotal_con_descuento) *
+      parseFloat(ieps < 10 ? ".0" + ieps : "." + ieps);
+    const impuestos = iva_precio + ieps_precio;
+
+    let total = subtotal_con_descuento + impuestos;
 
     setDatosProducto({
       ...datosProducto,
+      impuestos_descuento: parseFloat(impuestos.toFixed(2)),
       descuento_porcentaje: parseFloat(porcentaje),
       descuento_precio: parseFloat(cantidad_descontada.toFixed(2)),
-      subtotal_descuento: parseFloat(subtotal.toFixed(2)),
+      subtotal_descuento: parseFloat(subtotal_con_descuento.toFixed(2)),
       total_descuento: parseFloat(total.toFixed(2)),
     });
   };
@@ -45,6 +54,7 @@ export default function DescuentosInputs() {
     if (!value || parseFloat(value) === 0) {
       setDatosProducto({
         ...datosProducto,
+        impuestos_descuento: impuesto_actual,
         descuento_porcentaje: "",
         descuento_precio: "",
         subtotal_descuento: precio_sin_impuesto,
@@ -53,20 +63,23 @@ export default function DescuentosInputs() {
       return;
     }
     let cantidad_descontada = parseFloat(value);
-
-    let porcentaje = Math.round(
-      (cantidad_descontada / datosProducto.subtotal) * 100
-    );
-    /* let descuento_porcentaje = 100 - porcentaje; */
-    /* let total = datosProducto.total - cantidad_descontada; */
-    let subtotal = datosProducto.subtotal - cantidad_descontada;
-    let total = subtotal + impuestos;
+    let porcentaje = Math.round((cantidad_descontada / PCSI_actual) * 100);
+    let subtotal_con_descuento = PCSI_actual - cantidad_descontada;
+    const iva_precio =
+      parseFloat(subtotal_con_descuento) *
+      parseFloat(iva < 10 ? ".0" + iva : "." + iva);
+    const ieps_precio =
+      parseFloat(subtotal_con_descuento) *
+      parseFloat(ieps < 10 ? ".0" + ieps : "." + ieps);
+    const impuestos = iva_precio + ieps_precio;
+    let total = subtotal_con_descuento + impuestos;
 
     setDatosProducto({
       ...datosProducto,
+      impuestos_descuento: impuestos,
       descuento_porcentaje: parseFloat(porcentaje),
       descuento_precio: parseFloat(cantidad_descontada.toFixed(2)),
-      subtotal_descuento: parseFloat(subtotal.toFixed(2)),
+      subtotal_descuento: parseFloat(subtotal_con_descuento.toFixed(2)),
       total_descuento: parseFloat(total.toFixed(2)),
     });
   };

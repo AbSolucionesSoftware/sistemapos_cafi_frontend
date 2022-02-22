@@ -63,7 +63,7 @@ export default function ListaProductos({
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{productosBusqueda.map((producto) => {
+						{productosBusqueda?.map((producto) => {
 							return (
 								<RowsProductos 
 									producto={producto}

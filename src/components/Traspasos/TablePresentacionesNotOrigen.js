@@ -73,15 +73,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function TablaPresentaciones({
+  productoData,
   datos,
   setOnUpdate,
   onUpdate,
   setNew_medidas
 }) {
-  
+ 
   const classes = useStyles();
   //const { presentaciones, setPresentaciones } = useContext([]);
  //let mostrar_presentaciones = [];
+
+ 
    let mostrar_presentaciones = [...datos].sort((a, b) =>
     compareFunction(a, b)
   ); 
@@ -118,10 +121,11 @@ export default function TablaPresentaciones({
               </TableRow>
             </TableHead>
             <TableBody>
-              {mostrar_presentaciones.map((producto, index) => {
+              {datos.map((producto, index) => {
                 return (
                   <RenderPresentacionesRows
                     key={index}
+                    productoData={productoData}
                     producto={producto}
                     index={index}
                     datos={datos}
@@ -140,6 +144,7 @@ export default function TablaPresentaciones({
 }
 
 const RenderPresentacionesRows = ({
+  productoData,
   producto,
   index,
   datos,
@@ -209,23 +214,52 @@ const RenderPresentacionesRows = ({
       copy_element_presentacion.nuevaCantidad = parseFloat(value);
       copy_element_presentacion.medida.existencia = true;
     } else if (name === "precio") {
-      if (!value) {
+      
+        if (!value) {
         copy_element_presentacion.medida.precio = 0;
         copy_presentaciones.splice(index, 1, copy_element_presentacion);
         setNew_medidas(copy_presentaciones);
         return;
       }
-      if(copy_element_presentacion.medida.descuento_activo && copy_element_presentacion.medida.descuento_activo === true){
-        let precio_con_descuento = Math.round(
-          (value * copy_element_presentacion.medida.descuento.porciento) / 100
+    
+    let precio_neto = parseFloat(value);
+      let { iva, ieps } = productoData.precios;
+    
+      let suma_impuestos = parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) + parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+      let precio_venta = parseFloat((precio_neto / (suma_impuestos+1)).toFixed(2));
+      let iva_precio = parseFloat((precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)).toFixed(2));
+      let ieps_precio = parseFloat((precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)).toFixed(2));
+      let PUCSI = productoData.precios.unidad_de_compra.precio_unitario_sin_impuesto;
+      let utilidad = parseFloat((((precio_venta - PUCSI) / PUCSI) * 100).toFixed(2));
+      
+
+      let {descuento_activo, descuento} = copy_element_presentacion;
+      if (descuento_activo && descuento_activo === true) {
+        let new_precio_venta_desc = (precio_venta * descuento.porciento) / 100;
+        let new_iva_precio =
+          new_precio_venta_desc * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
+        let new_ieps_precio =
+          new_precio_venta_desc * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+        let new_impuestos = new_iva_precio + new_ieps_precio;
+        let precio_con_descuento = new_precio_venta_desc + new_impuestos;
+
+        copy_element_presentacion_descuento.precio_neto = parseFloat(
+          (precio_con_descuento).toFixed(2)
         );
-        copy_element_presentacion_descuento.medida.precio_con_descuento = parseFloat(precio_con_descuento);
         copy_element_presentacion.medida.precio = parseFloat(value);
-        copy_element_presentacion.medida.descuento = copy_element_presentacion_descuento
-      }else{
+        copy_element_presentacion.medida.descuento = copy_element_presentacion_descuento;
+      } else {
         copy_element_presentacion.medida.precio = parseFloat(value);
       }
+  
+      copy_element_presentacion.medida.precio_unidad.precio_venta = precio_venta;
+      copy_element_presentacion.medida.precio_unidad.precio_neto = precio_neto;
+      copy_element_presentacion.medida.precio_unidad.utilidad = utilidad;
+      copy_element_presentacion.medida.precio_unidad.iva_precio = iva_precio;
+      copy_element_presentacion.medida.precio_unidad.ieps_precio = ieps_precio;
+       
     } 
+  
       else if (name === "descuento") {
       /* if (!value) {
         copy_element_presentacion.medida.precio = 0;
@@ -256,7 +290,9 @@ const RenderPresentacionesRows = ({
       copy_element_presentacion.medida.codigo_barras = value;
     }
      copy_presentaciones.splice(index, 1, copy_element_presentacion);
+   
     setNew_medidas(copy_presentaciones); 
+    //console.log(copy_presentaciones)
   };
 
   const GenCodigoBarras = () => {

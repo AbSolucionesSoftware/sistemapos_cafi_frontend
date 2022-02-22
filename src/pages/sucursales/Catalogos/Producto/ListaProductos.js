@@ -8,7 +8,6 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import CrearProducto from "./crearProducto";
 import DescuentoProductos from "./Descuentos/Descuento";
-import InfoProductoDrawer from "./infoProductoDrawer";
 import EliminarProducto from "./EliminarProducto";
 
 const useStyles = makeStyles({
@@ -42,7 +41,6 @@ export default function ListaProductos({ obtenerProductos, productosRefetch }) {
               <TableCell>Nombre comercial</TableCell>
               <TableCell>Existencia</TableCell>
               <TableCell>Tipo</TableCell>
-              <TableCell>Información</TableCell>
               <TableCell>Editar</TableCell>
               <TableCell>Descuento</TableCell>
               <TableCell>Eliminar</TableCell>
@@ -70,20 +68,17 @@ const RenderTableRows = ({ producto, productosRefetch }) => {
 
   return (
     <Fragment>
-      <TableRow hover>
+      <TableRow>
         <TableCell>{producto.datos_generales.codigo_barras}</TableCell>
         <TableCell>{producto.datos_generales.clave_alterna}</TableCell>
         <TableCell>{producto.datos_generales.nombre_comercial}</TableCell>
-        <TableCell align="center" padding="checkbox">
+        <TableCell>
           {producto.inventario_general.map(
             (existencia) =>
               `${existencia.cantidad_existente} ${existencia.unidad_inventario}`
           )}
         </TableCell>
         <TableCell>{producto.datos_generales.tipo_producto}</TableCell>
-        <TableCell align="center" padding="checkbox">
-          <InfoProductoDrawer producto={producto} />
-        </TableCell>
         <TableCell align="center" padding="checkbox">
           {sesion.accesos.catalogos.productos.editar === false ? (null):(
             <CrearProducto

@@ -48,6 +48,7 @@ export default function RegistrarInfoCredito({ tipo }) {
             variant="outlined"
             value={cliente.rfc ? cliente.rfc : ""}
             onChange={obtenerCampos}
+            inputProps={{ style: { textTransform: "uppercase" } }}
           />
         </Grid>
         <Grid item md={6} xs={12}>
@@ -61,6 +62,7 @@ export default function RegistrarInfoCredito({ tipo }) {
               cliente.razon_social ? cliente.razon_social : ""
             }
             onChange={obtenerCampos}
+            inputProps={{ style: { textTransform: "uppercase" } }}
           />
         </Grid>
         <Grid item md={4} xs={12}>
@@ -96,6 +98,7 @@ export default function RegistrarInfoCredito({ tipo }) {
               cliente.dias_credito ? cliente.dias_credito : ""
             }
             onChange={obtenerCampos}
+            inputProps={{ style: { textTransform: "uppercase" } }}
           />
         </Grid>
       </Grid>
@@ -117,6 +120,7 @@ export default function RegistrarInfoCredito({ tipo }) {
                 variant="outlined"
                 value={cliente.banco ? cliente.banco : ""}
                 onChange={obtenerCampos}
+                inputProps={{ style: { textTransform: "uppercase" } }}
               />
             </Grid>
             <Grid item md={6} xs={12}>

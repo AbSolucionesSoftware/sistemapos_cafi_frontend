@@ -185,10 +185,40 @@ export const CONSULTA_PRODUCTOS_VENTAS = gql`
       unidad
       unidad_principal
       codigo_barras
+      codigo_unidad
+      precio_unidad {
+        numero_precio
+        precio_neto
+        precio_venta
+        iva_precio
+        ieps_precio
+        unidad_mayoreo
+        precio_general
+        cantidad_unidad
+        unidad_maxima
+      }
       descuento {
-        porciento
+        cantidad_unidad
+        numero_precio
+        unidad_maxima
+        precio_general
+        precio_neto
+        precio_venta
+        iva_precio
+        ieps_precio
+        utilidad
         dinero_descontado
-        precio_con_descuento
+        porciento
+      }
+      medida {
+        talla
+        tipo
+        _id
+      }
+      color {
+        hex
+        nombre
+        _id
       }
       descuento_activo
       default
@@ -202,6 +232,21 @@ export const CONSULTA_PRODUCTOS_VENTAS = gql`
           codigo_barras
           tipo_producto
           clave_alterna
+          nombre_generico
+          descripcion
+          id_categoria
+          categoria
+          subcategoria
+          id_subcategoria
+          id_departamento
+          departamento
+          id_marca
+          marca
+          clave_producto_sat {
+            Name
+            Value
+          }
+          receta_farmacia
         }
         precios {
           ieps
@@ -210,6 +255,7 @@ export const CONSULTA_PRODUCTOS_VENTAS = gql`
             inventario_minimo
             inventario_maximo
             unidad_de_inventario
+            codigo_unidad
           }
           iva
           iva_activo
@@ -224,14 +270,21 @@ export const CONSULTA_PRODUCTOS_VENTAS = gql`
           precios_producto {
             numero_precio
             precio_neto
+            precio_venta
+            iva_precio
+            ieps_precio
             unidad_mayoreo
             utilidad
+            precio_general
+            cantidad_unidad
+            unidad_maxima
           }
           unidad_de_compra {
             cantidad
             precio_unitario_con_impuesto
             precio_unitario_sin_impuesto
             unidad
+            codigo_unidad
           }
         }
       }
@@ -240,6 +293,7 @@ export const CONSULTA_PRODUCTOS_VENTAS = gql`
         unidad_inventario
         cantidad_existente_maxima
         unidad_maxima
+        codigo_unidad
       }
     }
   }

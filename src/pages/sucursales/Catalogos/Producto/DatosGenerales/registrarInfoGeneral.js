@@ -54,6 +54,19 @@ const useStyles = makeStyles((theme) => ({
   titulos: {
     fontWeight: 500,
   },
+  without_arrows: {
+    "& input[type=number]": {
+      "-moz-appearance": "textfield",
+    },
+    "& input[type=number]::-webkit-outer-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    },
+    "& input[type=number]::-webkit-inner-spin-button": {
+      "-webkit-appearance": "none",
+      margin: 0,
+    },
+  },
 }));
 
 export default function RegistroInfoGenerales({
@@ -71,7 +84,6 @@ export default function RegistroInfoGenerales({
     setSubcostos,
   } = useContext(RegProductoContext);
   const {
-    subcategorias,
     setSubcategorias,
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
@@ -251,6 +263,7 @@ export default function RegistroInfoGenerales({
               size="small"
               name="codigo_barras"
               fullWidth
+              className={classes.without_arrows}
             >
               <Typography className={classes.titulos}>
                 Código de barras
@@ -265,6 +278,7 @@ export default function RegistroInfoGenerales({
                     ? datos_generales.codigo_barras
                     : ""
                 }
+                type="number"
                 onChange={obtenerCampos}
                 endAdornment={
                   <InputAdornment position="start">
@@ -300,6 +314,7 @@ export default function RegistroInfoGenerales({
               }
               helperText={validacion.message}
               onChange={obtenerCampos}
+              inputProps={{ style: { textTransform: "uppercase" } }}
             />
           </Grid>
           <Grid item md={2} xs={12}>
@@ -354,6 +369,7 @@ export default function RegistroInfoGenerales({
               }
               helperText={validacion.message}
               onChange={obtenerCampos}
+              inputProps={{ style: { textTransform: "uppercase" } }}
             />
           </Grid>
           <Grid item md={4} xs={12}>
@@ -374,6 +390,7 @@ export default function RegistroInfoGenerales({
               }
               helperText={validacion.message}
               onChange={obtenerCampos}
+              inputProps={{ style: { textTransform: "uppercase" } }}
             />
           </Grid>
           <Grid item md={4} xs={12}>
@@ -388,6 +405,7 @@ export default function RegistroInfoGenerales({
                 datos_generales.descripcion ? datos_generales.descripcion : ""
               }
               onChange={obtenerCampos}
+              inputProps={{ style: { textTransform: "uppercase" } }}
             />
           </Grid>
 

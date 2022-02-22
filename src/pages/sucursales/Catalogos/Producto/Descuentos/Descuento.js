@@ -111,7 +111,7 @@ export default function DescuentoProductos({datos, productosRefetch}) {
             let iva_precio = parseFloat((PVCDSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)));
 
             let ieps_precio = parseFloat((PVCDSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)));
-            let utilidad = parseFloat((((PVCDSI - PCSI) / PCSI) * 100).toFixed(2));
+            let utilidad = parseFloat(((( PVCDSI - PCSI ) / PCSI) * 100).toFixed(2));
             let precio_neto = parseFloat((PVCDSI + iva_precio + ieps_precio).toFixed(2));
             let precio_general = parseFloat((precio_neto * cantidad_unidad).toFixed(2));
 
