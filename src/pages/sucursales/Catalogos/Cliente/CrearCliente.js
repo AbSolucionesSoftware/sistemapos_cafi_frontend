@@ -167,7 +167,9 @@ export default function CrearCliente({
           },
         });
       }
-      refetch();
+      if(refetch){
+        refetch();
+      }
       /* setUpdate(!update); */
       setAlert({ message: "¡Listo!", status: "success", open: true });
       setError(false);
