@@ -24,7 +24,7 @@ export default function RegistroTallas({ tipo }) {
   const [toUpdate, setToUpdate] = useState("");
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-  const [loading_bd, setLoadingBD] = useState({loading: false, tipo: ''});
+  const [loading_bd, setLoadingBD] = useState({ loading: false, tipo: "" });
 
   /* Queries */
   const { loading, data, error, refetch } = useQuery(OBTENER_TALLAS, {
@@ -52,7 +52,7 @@ export default function RegistroTallas({ tipo }) {
   const { obtenerTallas } = data;
 
   const GuardarDatosBD = async () => {
-	  setLoadingBD({loading: true, tipo});
+    setLoadingBD({ loading: true, tipo });
     let resp;
     if (!value) {
       return;
@@ -101,7 +101,7 @@ export default function RegistroTallas({ tipo }) {
       refetch();
       setValue("");
       setToUpdate("");
-	  setLoadingBD({loading: false, tipo: ''});
+      setLoadingBD({ loading: false, tipo: "" });
       let msgAlert = toUpdate
         ? {
             message: resp.data.actualizarTalla.message,
@@ -115,11 +115,11 @@ export default function RegistroTallas({ tipo }) {
           };
       setAlert(msgAlert);
     } catch (error) {
-		setLoadingBD({loading: false, tipo: ''});
-		if(error.message){
-			setAlert({ message: error.message, status: "error", open: true });
-			return
-		}
+      setLoadingBD({ loading: false, tipo: "" });
+      if (error.message) {
+        setAlert({ message: error.message, status: "error", open: true });
+        return;
+      }
       setAlert({ message: "Hubo un error", status: "error", open: true });
     }
   };
@@ -127,7 +127,7 @@ export default function RegistroTallas({ tipo }) {
   return (
     <Box>
       <SnackBarMessages alert={alert} setAlert={setAlert} />
-	
+
       <Box my={2}>
         <Grid container spacing={2} justifyContent="center">
           <Grid item>
@@ -153,8 +153,8 @@ export default function RegistroTallas({ tipo }) {
               size="small"
               value={value}
               onChange={(e) => setValue(e.target.value)}
-			  inputProps={{ style: { textTransform: "uppercase" } }}
-			  disabled={loading_bd.loading}
+              inputProps={{ style: { textTransform: "uppercase" } }}
+              disabled={loading_bd.loading}
             />
           </Grid>
           <Grid item>
@@ -164,8 +164,14 @@ export default function RegistroTallas({ tipo }) {
               size="large"
               disableElevation
               onClick={GuardarDatosBD}
-			  disabled={loading_bd.loading && loading_bd.tipo === tipo}
-			  startIcon={loading_bd.loading && loading_bd.tipo === tipo ? <CircularProgress color="inherit" size={20} /> : <Add />}
+              disabled={loading_bd.loading && loading_bd.tipo === tipo}
+              startIcon={
+                loading_bd.loading && loading_bd.tipo === tipo ? (
+                  <CircularProgress color="inherit" size={20} />
+                ) : (
+                  <Add />
+                )
+              }
             >
               Guardar
             </Button>
