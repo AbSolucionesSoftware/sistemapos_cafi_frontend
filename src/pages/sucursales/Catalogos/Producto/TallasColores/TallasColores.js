@@ -270,8 +270,10 @@ const RenderTallas = ({
 		[ seleccionarMedidas ]
 	);
 
-	const handleAddTallas = (value) => {
-		const medidas_seleccionadas_temp = [ ...medidasSeleccionadas ];
+  console.log("hola")
+
+  const handleAddTallas = (value) => {
+    const medidas_seleccionadas_temp = [...medidasSeleccionadas];
 
 		if (!selected) {
 			medidas_seleccionadas_temp.push(talla);
