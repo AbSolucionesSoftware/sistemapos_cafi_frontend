@@ -1,202 +1,239 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { 
-    Paper, 
-    makeStyles, 
-    Table, 
-    TableBody, 
-    TableCell, 
-    TableContainer, 
-    TableHead, 
-    TableRow,
-	IconButton,
-	TablePagination,
-	Dialog,
-	DialogTitle,
-	DialogActions,
-	Button
-} from '@material-ui/core/';
- 
-import { Delete, Edit, Close } from '@material-ui/icons';
+import React, { useState, useEffect, useContext } from "react";
+import {
+  Paper,
+  makeStyles,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  Button,
+  Box,
+} from "@material-ui/core/";
 
-import { useQuery, useMutation } from '@apollo/client';
-import { OBTENER_DEPARTAMENTOS, ELIMINAR_DEPARTAMENTO } from '../../../../gql/Catalogos/departamentos';
+import { Delete, Edit, Close } from "@material-ui/icons";
+
+import { useQuery, useMutation } from "@apollo/client";
+import {
+  OBTENER_DEPARTAMENTOS,
+  ELIMINAR_DEPARTAMENTO,
+} from "../../../../gql/Catalogos/departamentos";
 // import ContainerRegistroAlmacen from './RegistroDepartamento';
- import { CreateDepartamentosContext } from '../../../../context/Catalogos/Departamentos';
+import { CreateDepartamentosContext } from "../../../../context/Catalogos/Departamentos";
+import ErrorPage from "../../../../components/ErrorPage";
 
 const useStyles = makeStyles((theme) => ({
-	root: { 
-		width: '100%'
-	},
-	paper: {
-		width: '100%',
-		marginBottom: theme.spacing(2)
-	}
+  root: {
+    width: "100%",
+  },
+  container: {
+    height: "55vh",
+  },
 }));
 
 export default function TablaDepartamentos() {
-	const classes = useStyles();
-	const [ page, setPage ] = useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = useState(8);
-	const [open, setOpen] = useState(false);
-	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
-	let obtenerDepartamentos = [];
+  const classes = useStyles();
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  let obtenerDepartamentos = [];
+  const { update, setData } = useContext(CreateDepartamentosContext);
 
-	const { update, setAccion, idDepartamento,setIdDepartamento, setData, setAlert, setLoading } = useContext(CreateDepartamentosContext);
-	const [ eliminarDepartamento ] = useMutation(ELIMINAR_DEPARTAMENTO);
-	/* Queries */
-	const { data, refetch } = useQuery(OBTENER_DEPARTAMENTOS,{
-		variables: {
-			empresa: sesion.empresa._id,
-			sucursal: sesion.sucursal._id
-		}
-	});	
+  /* Queries */
+  const { data, loading, error, refetch } = useQuery(OBTENER_DEPARTAMENTOS, {
+    variables: {
+      empresa: sesion.empresa._id,
+      sucursal: sesion.sucursal._id,
+    },
+  });
 
-	const handleModal = () => setOpen(!open);
-	useEffect(
-		() => {
-			refetch();
-		},
-		[ update, refetch ]
-	);
+  useEffect(() => {
+    refetch();
+  }, [update, refetch]);
 
-	const handleDelete = async () => {
-   
-		setLoading(true);
-		try {
-            const resultado = await eliminarDepartamento({
-                variables: {
-                    id: idDepartamento
-                }
-            });
+  if (loading)
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="30vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  if (error) {
+    return <ErrorPage error={error} />;
+  }
 
-			if(resultado.data.eliminarDepartamento.message === 'false'){
-				setAlert({ message: 'Departamento eliminado con exito', status: 'success', open: true });
-			}else{
-				setAlert({ message: resultado.data.eliminarDepartamento.message, status: 'error', open: true });
-			};
+  if (data) {
+    obtenerDepartamentos = data.obtenerDepartamentos;
+  }
 
-			refetch();
-			setLoading(false);
-			setOpen(false)
-			setIdDepartamento('');
-		
-		} catch (error) {
-			console.log(error);
-			setAlert({ message: 'Hubo un error', status: 'error', open: true });
-			setLoading(false);
-		}
-	};
-
-	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
-
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(parseInt(event.target.value, 10));
-		setPage(0);
-	};
-
-	if(data){
-		obtenerDepartamentos = data.obtenerDepartamentos
-	}
-
-	return (
-		<div className={classes.root}>
-			<Paper className={classes.paper}>
-				<TableContainer>
-					<Table
-						className={classes.table}
-						aria-labelledby="tableTitle"
-						size="medium"
-						aria-label="enhanced table"
-					>
-						<TableHead>
-							<TableRow>
-								<TableCell>Departamentos</TableCell>
-								{sesion.accesos.catalogos.departamentos.editar === false ? (null):(
-									<TableCell padding="default">Editar</TableCell>
-								)}
-								{sesion.accesos.catalogos.departamentos.eliminar === false ? (null):(
-									<TableCell padding="default">Eliminar</TableCell>
-								)}
-							</TableRow>
-						</TableHead>
-						<TableBody>
-							{obtenerDepartamentos?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)?.map((row, index) => {
-									return (
-										<TableRow hover role="checkbox" tabIndex={-1} key={row._id}selected={idDepartamento === row._id ? true : false}>
-											<TableCell>{row.nombre_departamentos}</TableCell>
-											{sesion.accesos.catalogos.departamentos.editar === false ?(null):(
-												<TableCell padding="checkbox">
-													{idDepartamento === row._id ? (
-														<IconButton onClick={() => {
-															setIdDepartamento("");
-															setData({
-																nombre_departamentos: ""
-															}); 
-															}}>
-															<Close />
-														</IconButton>
-													) : (
-														<IconButton onClick={() => {
-															setAccion(false)
-															setData({
-																nombre_departamentos: row.nombre_departamentos
-															});
-															setIdDepartamento(row._id);
-														}}>
-															<Edit />
-														</IconButton>
-													)}
-												</TableCell>
-											)}
-											{sesion.accesos.catalogos.departamentos.eliminar === false ?(null):(
-												<TableCell padding="checkbox">
-													<IconButton onClick={() => {
-														setIdDepartamento(row._id);
-														handleModal();
-													}}>
-														<Delete />
-													</IconButton>
-												</TableCell>
-											)}
-										</TableRow>
-									);
-								})}
-							
-						</TableBody>
-					</Table>
-				</TableContainer>
-				<TablePagination
-					rowsPerPageOptions={[]}
-					component="div"
-					count={obtenerDepartamentos.length}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onChangePage={handleChangePage}
-					onChangeRowsPerPage={handleChangeRowsPerPage}
-				/>
-			</Paper>
-			<Modal handleModal={handleModal} openModal={open} handleDelete={handleDelete} />
-		</div>
-	);
+  return (
+    <div className={classes.root}>
+      <Paper variant="outlined">
+        <TableContainer className={classes.container}>
+          <Table
+            className={classes.table}
+            aria-labelledby="tableTitle"
+            size="medium"
+            aria-label="enhanced table"
+          >
+            <TableHead>
+              <TableRow>
+                <TableCell>Departamentos</TableCell>
+                {sesion.accesos.catalogos.departamentos.editar ===
+                false ? null : (
+                  <TableCell padding="default">Editar</TableCell>
+                )}
+                {sesion.accesos.catalogos.departamentos.eliminar ===
+                false ? null : (
+                  <TableCell padding="default">Eliminar</TableCell>
+                )}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {obtenerDepartamentos.map((row, index) => {
+                return (
+                  <ListaDepartamentosRender
+                    key={index}
+                    row={row}
+                    setData={setData}
+                    refetch={refetch}
+                  />
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
+    </div>
+  );
 }
 
+const ListaDepartamentosRender = ({ row, setData, refetch }) => {
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  const [selected, setSelected] = useState(false);
+  const { setAccion } = useContext(CreateDepartamentosContext);
 
-const Modal = ({ handleModal, openModal, handleDelete }) => {
-	return (
-		<div>
-			<Dialog open={openModal} onClose={handleModal}>
-				<DialogTitle>{'¿Seguro que quieres eliminar esto?'}</DialogTitle>
-				<DialogActions>
-					<Button onClick={handleModal} color="primary">
-						Cancelar
-					</Button>
-					<Button color="secondary" autoFocus variant="contained" onClick={handleDelete}>
-						OK
-					</Button>
-				</DialogActions>
-			</Dialog>
-		</div>
-	);
+  return (
+    <TableRow role="checkbox" tabIndex={-1} selected={selected}>
+      <TableCell>{row.nombre_departamentos}</TableCell>
+      {sesion.accesos.catalogos.departamentos.editar === false ? null : (
+        <TableCell padding="checkbox">
+          {selected ? (
+            <IconButton
+              onClick={() => {
+                setAccion(true);
+                setSelected(false);
+                setData({
+                  nombre_departamentos: "",
+                });
+              }}
+            >
+              <Close />
+            </IconButton>
+          ) : (
+            <IconButton
+              onClick={() => {
+                setAccion(false);
+                setData({
+                  nombre_departamentos: row.nombre_departamentos,
+                });
+                setSelected(true);
+              }}
+            >
+              <Edit />
+            </IconButton>
+          )}
+        </TableCell>
+      )}
+      {sesion.accesos.catalogos.departamentos.eliminar === false ? null : (
+        <TableCell padding="checkbox">
+          <DeleteDepartamento data={row} refetch={refetch} />
+        </TableCell>
+      )}
+    </TableRow>
+  );
+};
+
+const DeleteDepartamento = ({ data, refetch }) => {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState();
+  const handleModal = () => setOpen(!open);
+  const { setAlert } = useContext(CreateDepartamentosContext);
+
+  const [eliminarDepartamento] = useMutation(ELIMINAR_DEPARTAMENTO);
+
+  const handleDelete = async () => {
+    setLoading(true);
+    try {
+      const resultado = await eliminarDepartamento({
+        variables: {
+          id: data._id,
+        },
+      });
+
+      if (resultado.data.eliminarDepartamento.message === "false") {
+        setAlert({
+          message: "Departamento eliminado con exito",
+          status: "success",
+          open: true,
+        });
+      } else {
+        setAlert({
+          message: resultado.data.eliminarDepartamento.message,
+          status: "error",
+          open: true,
+        });
+      }
+
+      refetch();
+      setLoading(false);
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+      setAlert({ message: "Hubo un error", status: "error", open: true });
+      setLoading(false);
+    }
+  };
+  return (
+    <div>
+      <IconButton
+        onClick={() => {
+          handleModal();
+        }}
+      >
+        <Delete />
+      </IconButton>
+      <Dialog open={open} onClose={handleModal}>
+        <DialogTitle>{"¿Seguro que quieres eliminar esto?"}</DialogTitle>
+        <DialogActions>
+          <Button onClick={handleModal} color="primary">
+            Cancelar
+          </Button>
+          <Button
+            color="secondary"
+            autoFocus
+            variant="contained"
+            onClick={handleDelete}
+            startIcon={
+              loading ? (
+                <CircularProgress color="inherit" size={20} />
+              ) : (
+                <Delete />
+              )
+            }
+          >
+            Eliminar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
 };
