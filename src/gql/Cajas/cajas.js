@@ -30,6 +30,7 @@ export const OBTENER_CAJAS = gql`
         }
     }
 `;
+
 export const CREAR_HISTORIAL_CAJA = gql`
     mutation CrearHistorialCaja($input: CrearHistorialCajasInput!, $empresa: ID!, $sucursal: ID!){
         crearHistorialCaja(input: $input, empresa: $empresa, sucursal: $sucursal){
