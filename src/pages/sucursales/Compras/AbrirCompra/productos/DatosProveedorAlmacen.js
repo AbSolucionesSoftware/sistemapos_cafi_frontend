@@ -204,13 +204,12 @@ export default function DatosProveedorAlmacen({
                   ? datosCompra.proveedor
                   : null
               }
-            />
+            /> 
             <ClienteProvider>
               <RegistroProvedor
                 accion="registrar"
                 tipo="PROVEEDOR"
                 refetch={refetch}
-                fromCompras={true}
               />
             </ClienteProvider>
           </Box>
