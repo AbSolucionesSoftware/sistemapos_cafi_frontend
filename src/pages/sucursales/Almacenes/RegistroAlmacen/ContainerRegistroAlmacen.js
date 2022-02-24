@@ -1,5 +1,6 @@
 import React, { useState, Fragment, useContext, useCallback } from 'react';
 import {
+    AppBar,
     Button,
     Dialog,
     TextField,
@@ -11,8 +12,10 @@ import {
     Divider,
     FormControl,
     Select,
-    MenuItem
+    MenuItem,
+    Toolbar
 } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
 import { CrearAlmacenContext } from '../../../../context/Almacenes/crearAlmacen';
 import { useMutation, useQuery } from '@apollo/client';
@@ -22,6 +25,8 @@ import BackdropComponent from '../../../../components/Layouts/BackDrop';
 import { OBTENER_USUARIOS } from '../../../../gql/Catalogos/usuarios';
 import { Edit } from '@material-ui/icons';
 import { RegProductoContext } from '../../../../context/Catalogos/CtxRegProducto';
+import { UsuarioProvider } from "../../../../context/Catalogos/usuarioContext";
+import RegistroUsuario from "../../Catalogos/Usuarios/CrearUsuario";
 import Add from '@material-ui/icons/Add';
 
 const useStyles = makeStyles((theme) => ({
@@ -30,16 +35,14 @@ const useStyles = makeStyles((theme) => ({
         '& > *': {
             margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
         },
-        '& span': {
-            color: 'red'
-        }
+       
     },
     formInput: {
         margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
     }
 }));
 
-export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
+export default function ContainerRegistroAlmacen({ accion, datos, fromEmergent }) {
 
     /* const sucursal = {
         _id: "60c8e180340d5d223432a916",
@@ -48,7 +51,7 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const [CrearAlmacen] = useMutation(REGISTRO_ALMACEN);
     const [ActualizarAlmacen] = useMutation(ACTUALIZAR_ALMACEN);
-    const { data } = useQuery(OBTENER_USUARIOS, {
+    const { data, refetch } = useQuery(OBTENER_USUARIOS, {
         variables: {
             sucursal: `${sesion.sucursal._id}`
         }
@@ -108,14 +111,14 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
     const obtenerCampos = (e) => {
         setDatosAlmacen({
             ...datosAlmacen,
-            [e.target.name]: e.target.value
+            [e.target.name]: e.target.value.toUpperCase()
         });
     };
 
     const obtenerCamposDireccion = (e) => {
         setDatosAlmacen({
             ...datosAlmacen,
-            direccion: { ...datosAlmacen.direccion, [e.target.name]: e.target.value }
+            direccion: { ...datosAlmacen.direccion, [e.target.name]: e.target.value.toUpperCase() }
         });
     };
 
@@ -185,7 +188,7 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
     return (
         <Fragment>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
-            {accion === 'registrar' ? refetch ? (
+            {accion === 'registrar' ? fromEmergent ? (
                 <IconButton color="primary" onClick={toggleModal}>
                     <Add />
                 </IconButton>
@@ -199,12 +202,22 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                 </IconButton>
             )}
             <Dialog open={open} onClose={onCloseModal} fullWidth maxWidth="md">
+             
                 <BackdropComponent loading={loading} setLoading={setLoading} />
-                <DialogTitle id="form-dialog-title">Registro almacen</DialogTitle>
+                <Box display='flex' flexDirection='row'>
+                    <Box style={{width:'93%'}}>
+                    <DialogTitle id="form-dialog-title" >Registro almacen</DialogTitle>
+                    </Box>
+                    <Box m={1}>
+                        <Button variant="contained" color="secondary" onClick={ onCloseModal} size="large">
+                            <CloseIcon style={{fontSize: 30}} />
+                        </Button>
+                    </Box>
+                </Box>
                 <Container maxWidth="md">
                     <div className={classes.formInputFlex}>
-                        <Box width="100%">
-                            <Typography><span>* </span>Nombre Almacen</Typography>
+                        <Box width="80%">
+                            <Typography><span style={{color:'red'}}>* </span><b>Nombre Almacen</b></Typography>
                             <TextField
                                 fullWidth
                                 size="small"
@@ -215,10 +228,12 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                                 value={datosAlmacen.nombre_almacen}
                                 /* helperText="Incorrect entry." */
                                 onChange={obtenerCampos}
+                                inputProps={{ style: { textTransform: "uppercase" } }}
                             />
                         </Box>
-                        <Box width="100%">
-                            <Typography>Encargado de almacen</Typography>
+                        <Box  width="100%" display='flex' flexDirection='row' >
+                            <Box   width="70%">
+                            <Typography><b>Encargado de almacen</b></Typography>
                             <FormControl fullWidth size="small" variant="outlined">
                                 <Select
                                     labelId="demo-simple-select-label"
@@ -234,12 +249,19 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                                     }
                                 </Select>
                             </FormControl>
-                        </Box>
-                        <Box width="100%">
-                            <Typography>Sucursal</Typography>
-                            <Typography style={{ marginTop: "7px", fontWeight: "bold" }}>{sesion.sucursal.nombre_sucursal}</Typography>
-                        </Box>
+                            </Box>
+                            <Box mt={2} width="10%">
+                                <UsuarioProvider>
+                                    <RegistroUsuario  accion='registrar' fromEmergent={true} refetch={refetch} />
+                                </UsuarioProvider>
+                            </Box>
+                            <Box width="35%">
+                                <Typography><b>Sucursal</b></Typography>
+                                <Typography style={{ marginTop: "7px" }}>{sesion.sucursal.nombre_sucursal}</Typography>
+                            </Box>
+                        </Box> 
                     </div>
+                   
                     <Box mt={2}>
                         <Typography>
                             <b>Domicilio</b>
@@ -248,7 +270,7 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                     </Box>
                     <div className={classes.formInputFlex}>
                         <Box width="100%">
-                            <Typography>Calle</Typography>
+                            <Typography><b>Calle</b></Typography>
                             <TextField
                                 fullWidth
                                 size="small"
@@ -257,10 +279,11 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                                 variant="outlined"
                                 value={datosAlmacen.direccion.calle}
                                 onChange={obtenerCamposDireccion}
+                                inputProps={{ style: { textTransform: "uppercase" } }}
                             />
                         </Box>
                         <Box width="100%">
-                            <Typography>No. exterior</Typography>
+                            <Typography><b>No. exterior</b></Typography>
                             <TextField
                                 fullWidth
                                 size="small"
@@ -269,10 +292,11 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                                 variant="outlined"
                                 value={datosAlmacen.direccion.no_ext}
                                 onChange={obtenerCamposDireccion}
+                                inputProps={{ style: { textTransform: "uppercase" } }}
                             />
                         </Box>
                         <Box width="100%">
-                            <Typography>No. interior</Typography>
+                            <Typography><b>No. interior </b></Typography>
                             <TextField
                                 fullWidth
                                 size="small"
@@ -281,12 +305,13 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                                 variant="outlined"
                                 value={datosAlmacen.direccion.no_int}
                                 onChange={obtenerCamposDireccion}
+                                inputProps={{ style: { textTransform: "uppercase" } }}
                             />
                         </Box>
                     </div>
                     <div className={classes.formInputFlex}>
                         <Box width="100%">
-                            <Typography>Codigo Postal</Typography>
+                            <Typography><b>Codigo Postal</b></Typography>
                             <TextField
                                 fullWidth
                                 size="small"
@@ -296,10 +321,11 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                                 variant="outlined"
                                 value={datosAlmacen.direccion.codigo_postal}
                                 onChange={obtenerCamposDireccion}
+                                inputProps={{ style: { textTransform: "uppercase" } }}
                             />
                         </Box>
                         <Box width="100%">
-                            <Typography>Colonia</Typography>
+                            <Typography><b>Colonia</b></Typography>
                             <TextField
                                 fullWidth
                                 size="small"
@@ -308,10 +334,11 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                                 variant="outlined"
                                 value={datosAlmacen.direccion.colonia}
                                 onChange={obtenerCamposDireccion}
+                                inputProps={{ style: { textTransform: "uppercase" } }}
                             />
                         </Box>
                         <Box width="100%">
-                            <Typography>Municipio</Typography>
+                            <Typography><b>Municipio</b></Typography>
                             <TextField
                                 fullWidth
                                 size="small"
@@ -320,12 +347,14 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                                 variant="outlined"
                                 value={datosAlmacen.direccion.municipio}
                                 onChange={obtenerCamposDireccion}
+                                inputProps={{ style: { textTransform: "uppercase" } }}
                             />
+
                         </Box>
                     </div>
                     <div className={classes.formInputFlex}>
                         <Box width="100%">
-                            <Typography>Localidad</Typography>
+                            <Typography><b>Localidad</b></Typography>
                             <TextField
                                 fullWidth
                                 size="small"
@@ -334,10 +363,11 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                                 variant="outlined"
                                 value={datosAlmacen.direccion.localidad}
                                 onChange={obtenerCamposDireccion}
+                                inputProps={{ style: { textTransform: "uppercase" } }}
                             />
                         </Box>
                         <Box width="100%">
-                            <Typography>Estado</Typography>
+                            <Typography><b>Estado</b></Typography>
                             <TextField
                                 fullWidth
                                 size="small"
@@ -345,11 +375,12 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                                 name="estado"
                                 variant="outlined"
                                 value={datosAlmacen.direccion.estado}
+                                inputProps={{ style: { textTransform: "uppercase" } }}
                                 onChange={obtenerCamposDireccion}
                             />
                         </Box>
                         <Box width="100%">
-                            <Typography>Pais</Typography>
+                            <Typography><b>País</b></Typography>
                             <TextField
                                 fullWidth
                                 size="small"
@@ -358,6 +389,7 @@ export default function ContainerRegistroAlmacen({ accion, datos, refetch }) {
                                 variant="outlined"
                                 value={datosAlmacen.direccion.pais}
                                 onChange={obtenerCamposDireccion}
+                                inputProps={{ style: { textTransform: "uppercase" } }}
                             />
                         </Box>
                     </div>

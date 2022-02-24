@@ -28,8 +28,15 @@ const useStyles = makeStyles({
       minWidth: 650,
     },
 	root: {
-		width: '100%'
-	}
+		width: '100%',
+		heigth: '75%'
+	},
+	container: {
+		maxHeight: "77vh",
+		'& ::-webkit-scrollbar': {
+			display: 'none'
+		}
+  	},
   });
 
   const columns = [
@@ -95,8 +102,8 @@ export default function ListaAlmacen() {
 
     return (
 		<Paper className={classes.root}>
-			<TableContainer component={Paper}>
-				<Table className={classes.table} aria-label="simple table">
+			<TableContainer component={Paper}  className={classes.container}>
+				<Table className={classes.table}  aria-label="a dense table">
 					<TableHead>
 						<TableRow>
 							{columns.map((column) => (
@@ -115,7 +122,7 @@ export default function ListaAlmacen() {
 					</TableBody>
 				</Table>
 			</TableContainer>
-			<TablePagination
+		{/* 	<TablePagination
 				rowsPerPageOptions={[]}
 				component="div"
 				count={obtenerAlmacenes.length}
@@ -123,7 +130,7 @@ export default function ListaAlmacen() {
 				page={page}
 				onChangePage={handleChangePage}
 				onChangeRowsPerPage={handleChangeRowsPerPage}
-			/>
+			/> */}
 		</Paper>
     )
 }

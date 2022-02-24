@@ -204,7 +204,7 @@ export default function DatosProveedorAlmacen({
                   ? datosCompra.proveedor
                   : null
               }
-            />
+            /> 
             <ClienteProvider>
               <RegistroProvedor
                 accion="registrar"

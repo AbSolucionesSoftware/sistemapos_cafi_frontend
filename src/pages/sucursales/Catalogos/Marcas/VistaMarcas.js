@@ -5,6 +5,7 @@ import {
     TextField
 } from '@material-ui/core';
 import ListaMarcas from './ListaMarcas';
+import BackdropComponent from '../../../../components/Layouts/BackDrop'
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import { Add } from '@material-ui/icons';
 import { /* OBTENER_MARCAS, */ REGISTRAR_MARCAS, ACTUALIZAR_MARCAS} from '../../../../gql/Catalogos/marcas';
@@ -20,6 +21,7 @@ export default function VistaMarcas() {
         nombre_marca: ""
     });
     const [ toUpdate, setToUpdate ] = useState('');
+    const [loading, setLoading] = useState(false);
     const [updateData, setUpdateData] = useState(false);
     const { /* datosMarcas, setDatosMarcas, */ error, setError } = useContext(CreateMarcasContext);
 
@@ -42,6 +44,7 @@ export default function VistaMarcas() {
                 setError(true);
 			    return;
             }else{
+               
                 if(toUpdate){
                     if (sesion.accesos.catalogos.marcas.editar === false) {
                         return setAlert({ message: '¡Lo sentimos no tienes autorización para esta acción !', status: 'error', open: true });
@@ -74,10 +77,19 @@ export default function VistaMarcas() {
                 }
                 setToUpdate('');
                 setUpdateData(!updateData);
+                setLoading(false);
                 setAlert({ message: '¡Listo!', status: 'success', open: true });
                 setError(false);
             }
         } catch (error) {
+            console.log(error);
+            setLoading(false);
+            if (error.message) {
+                setAlert({ message: error.message, status: "error", open: true });
+                return;
+            }
+            setAlert({ message: "Hubo un error", status: "error", open: true });
+ 
         }
     }
 
@@ -87,11 +99,12 @@ export default function VistaMarcas() {
 
     return (
         <div>
+             <BackdropComponent loading={loading} />
             <SnackBarMessages alert={alert} setAlert={setAlert} />
                 <Box display="flex" justifyContent="center" alignItems="center" my={2}>
                     <TextField
                         id="outlined-error-helper-text"
-                        label="Nombre departamento"
+                        label="Nombre de marca"
                         value={data.nombre_marca ? data.nombre_marca : ""}
                         name="nombre_marca"
                         variant="outlined"

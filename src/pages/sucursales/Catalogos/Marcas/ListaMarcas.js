@@ -74,12 +74,12 @@ export default function ListaMarcas({updateData, toUpdate, setToUpdate, setData}
         <div className={classes.root}>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<Paper className={classes.paper}>
-				<TableContainer>
+				<TableContainer style={{height:'72vh'}}>
 					<Table
 						className={classes.table}
 						aria-labelledby="tableTitle"
 						size="medium"
-						aria-label="enhanced table"
+            			aria-label="a dense table"
 					>
 						<TableHead>
 							<TableRow>
@@ -94,16 +94,14 @@ export default function ListaMarcas({updateData, toUpdate, setToUpdate, setData}
 						</TableHead>
 						<TableBody>
 							{
-							obtenerMarcas
-								?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-								?.map((row, index) => {
+							obtenerMarcas.map((row, index) => {
 									return <RowsRender key={index} setAlert={setAlert} refetch={refetch} datos={row} toUpdate={toUpdate} setToUpdate={setToUpdate} setData={setData} />;
 								})
 							}
 						</TableBody>
 					</Table>
 				</TableContainer>
-				<TablePagination
+				{/* <TablePagination
 					rowsPerPageOptions={[]}
 					component="div"
 					count={obtenerMarcas.length}
@@ -111,7 +109,7 @@ export default function ListaMarcas({updateData, toUpdate, setToUpdate, setData}
 					page={page}
 					onChangePage={handleChangePage}
 					onChangeRowsPerPage={handleChangeRowsPerPage}
-				/>
+				/> */}
 			</Paper>
 		</div>
     )
