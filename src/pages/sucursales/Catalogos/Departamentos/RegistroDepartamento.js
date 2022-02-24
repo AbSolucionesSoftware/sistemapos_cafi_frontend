@@ -38,12 +38,14 @@ export default function RegistroDepartamentos() {
   const [CrearDepartamentos] = useMutation(REGISTRAR_DEPARTAMENTO);
   const [ActualzarDepartamentos] = useMutation(ACTUALIZAR_DEPARTAMENTO);
 
-  const saveData = async () => {
+  const saveData = async (e) => {
+    e.preventDefault();
     try {
       if (!data.nombre_departamentos) {
         setError(true);
         return;
       } else {
+        setLoading(true);
         const input = data;
         if (accion) {
           if (sesion.accesos.catalogos.departamentos.agregar === false) {
@@ -102,38 +104,37 @@ export default function RegistroDepartamentos() {
   return (
     <Box>
       <SnackBarMessages alert={alert} setAlert={setAlert} />
-      <Box display="flex" justifyContent="center" alignItems="center" my={2}>
-        <form>
-          
-        </form>
-        <TextField
-          id="outlined-error-helper-text"
-          label="Nombre departamento"
-          value={data.nombre_departamentos}
-          name="nombre_departamentos"
-          variant="outlined"
-          size="small"
-          fullWidth
-          onChange={obtenerDatos}
-          error={error}
-          disabled={loading}
-          inputProps={{ style: { textTransform: "uppercase" } }}
-        />
-        <Box ml={1} />
-        <Button
-          color="primary"
-          variant="contained"
-          size="large"
-          disableElevation
-          onClick={saveData}
-          disabled={loading}
-          startIcon={
-            loading ? <CircularProgress color="inherit" size={20} /> : <Add />
-          }
-        >
-          Agregar
-        </Button>
-      </Box>
+      <form onSubmit={saveData}>
+        <Box display="flex" justifyContent="center" alignItems="center" my={2}>
+          <TextField
+            id="outlined-error-helper-text"
+            label="Nombre departamento"
+            value={data.nombre_departamentos}
+            name="nombre_departamentos"
+            variant="outlined"
+            size="small"
+            fullWidth
+            onChange={obtenerDatos}
+            error={error}
+            disabled={loading}
+            inputProps={{ style: { textTransform: "uppercase" } }}
+          />
+          <Box ml={1} />
+          <Button
+            color="primary"
+            variant="contained"
+            size="large"
+            disableElevation
+            type="submit"
+            disabled={loading}
+            startIcon={
+              loading ? <CircularProgress color="inherit" size={20} /> : <Add />
+            }
+          >
+            Agregar
+          </Button>
+        </Box>
+      </form>
       <TablaDepartamentos />
     </Box>
   );

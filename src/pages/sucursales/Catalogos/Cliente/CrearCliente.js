@@ -41,7 +41,7 @@ export default function CrearCliente({
     updateClientVenta,
     setUpdateClientVenta,
     update,
-    setUpdate
+    setUpdate,
   } = useContext(ClienteCtx);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -81,7 +81,8 @@ export default function CrearCliente({
   const [crearCliente] = useMutation(CREAR_CLIENTE);
   const [actualizarCliente] = useMutation(ACTUALIZAR_CLIENTE);
 
-  const saveData = async () => {
+  const saveData = async (e) => {
+    e.preventDefault();
     let copy_cliente = { ...cliente };
     if (
       !copy_cliente.clave_cliente ||
@@ -169,7 +170,7 @@ export default function CrearCliente({
           },
         });
       }
-      if(refetch){
+      if (refetch) {
         refetch();
       }
       setUpdate(!update);
@@ -244,26 +245,29 @@ export default function CrearCliente({
         </DialogTitle>
         <DialogContent>
           <Container>
-            <Typography>
-              <b>Información básica</b>
-            </Typography>
-            <Divider />
-            <RegistrarInfoBasica tipo={tipo} accion={accion} />
-            <Box my={2} />
-            <Typography>
-              <b>Información de credito</b>
-            </Typography>
-            <Divider />
-            <RegistrarInfoCredito tipo={tipo} accion={accion} />
+            <form id="crear-cliente-form" onSubmit={saveData}>
+              <Typography>
+                <b>Información básica</b>
+              </Typography>
+              <Divider />
+              <RegistrarInfoBasica tipo={tipo} accion={accion} />
+              <Box my={2} />
+              <Typography>
+                <b>Información de credito</b>
+              </Typography>
+              <Divider />
+              <RegistrarInfoCredito tipo={tipo} accion={accion} />
+            </form>
           </Container>
         </DialogContent>
         <DialogActions>
           <Button
             variant="contained"
             color="primary"
-            onClick={saveData}
             size="large"
             startIcon={<Done />}
+            type="submit"
+            form="crear-cliente-form"
           >
             Guardar
           </Button>

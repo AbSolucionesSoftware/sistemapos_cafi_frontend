@@ -51,12 +51,13 @@ export default function RegistroTallas({ tipo }) {
 
   const { obtenerTallas } = data;
 
-  const GuardarDatosBD = async () => {
-    setLoadingBD({ loading: true, tipo });
-    let resp;
+  const guardarDatosBD = async (e) => {
+    e.preventDefault();
     if (!value) {
       return;
     }
+    setLoadingBD({ loading: true, tipo });
+    let resp;
     try {
       const nueva_talla = value;
       if (toUpdate) {
@@ -146,16 +147,18 @@ export default function RegistroTallas({ tipo }) {
             )}
           </Grid>
           <Grid item>
-            <TextField
-              id="outlined-error-helper-text"
-              label={tipo === "ROPA" ? "Talla" : "Número"}
-              variant="outlined"
-              size="small"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              inputProps={{ style: { textTransform: "uppercase" } }}
-              disabled={loading_bd.loading}
-            />
+            <form id="form-talla" onSubmit={guardarDatosBD}>
+              <TextField
+                id="outlined-error-helper-text"
+                label={tipo === "ROPA" ? "Talla" : "Número"}
+                variant="outlined"
+                size="small"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                inputProps={{ style: { textTransform: "uppercase" } }}
+                disabled={loading_bd.loading}
+              />
+            </form>
           </Grid>
           <Grid item>
             <Button
@@ -163,7 +166,8 @@ export default function RegistroTallas({ tipo }) {
               variant="contained"
               size="large"
               disableElevation
-              onClick={GuardarDatosBD}
+              type="submit"
+              form="form-talla"
               disabled={loading_bd.loading && loading_bd.tipo === tipo}
               startIcon={
                 loading_bd.loading && loading_bd.tipo === tipo ? (

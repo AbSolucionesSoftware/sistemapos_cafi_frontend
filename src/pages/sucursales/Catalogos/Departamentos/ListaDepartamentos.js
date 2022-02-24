@@ -119,35 +119,43 @@ export default function TablaDepartamentos() {
 const ListaDepartamentosRender = ({ row, setData, refetch }) => {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const [selected, setSelected] = useState(false);
-  const { setAccion } = useContext(CreateDepartamentosContext);
+  const { setAccion, setIdDepartamento, idDepartamento } = useContext(
+    CreateDepartamentosContext
+  );
+
+  const handleCancel = () => {
+    setIdDepartamento("");
+    setAccion(true);
+    setSelected(false);
+    setData({
+      nombre_departamentos: "",
+    });
+  };
+
+  const handleEdit = () => {
+    setIdDepartamento(row._id);
+    setAccion(false);
+    setData({
+      nombre_departamentos: row.nombre_departamentos,
+    });
+    setSelected(true);
+  };
 
   return (
-    <TableRow role="checkbox" tabIndex={-1} selected={selected}>
+    <TableRow
+      role="checkbox"
+      tabIndex={-1}
+      selected={idDepartamento === row._id}
+    >
       <TableCell>{row.nombre_departamentos}</TableCell>
       {sesion.accesos.catalogos.departamentos.editar === false ? null : (
         <TableCell padding="checkbox">
-          {selected ? (
-            <IconButton
-              onClick={() => {
-                setAccion(true);
-                setSelected(false);
-                setData({
-                  nombre_departamentos: "",
-                });
-              }}
-            >
+          {idDepartamento === row._id ? (
+            <IconButton onClick={() => handleCancel()}>
               <Close />
             </IconButton>
           ) : (
-            <IconButton
-              onClick={() => {
-                setAccion(false);
-                setData({
-                  nombre_departamentos: row.nombre_departamentos,
-                });
-                setSelected(true);
-              }}
-            >
+            <IconButton onClick={() => handleEdit()}>
               <Edit />
             </IconButton>
           )}

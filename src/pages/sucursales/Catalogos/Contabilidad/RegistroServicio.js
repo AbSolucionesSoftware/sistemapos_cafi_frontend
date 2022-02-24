@@ -44,7 +44,9 @@ export default function RegistroServicios() {
     });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if(!data.nombre_servicio) return
     try {
       setLoading(true);
       if (!data.nombre_servicio) {
@@ -103,10 +105,6 @@ export default function RegistroServicios() {
     }
   };
 
-  const pressEnter = (e) => {
-    if (e.key === "Enter") handleSubmit();
-  };
-
   return (
     <div className={classes.root}>
       <SnackBarMessages alert={alert} setAlert={setAlert} />
@@ -114,24 +112,28 @@ export default function RegistroServicios() {
         <b>Tipo de Servicio</b>
       </Typography>
       <Box display="flex" alignItems="center" mb={2}>
-        <TextField
-          error={error}
-          id="outlined-error-helper-text"
-          variant="outlined"
-          size="small"
-          name="nombre_servicio"
-          value={data.nombre_servicio}
-          onChange={handleChangeInput}
-          onKeyPress={pressEnter}
-          inputProps={{ style: { textTransform: "uppercase", width: "400px" } }}
-          disabled={loading}
-        />
+        <form id="form-contabilidad" onSubmit={handleSubmit}>
+          <TextField
+            error={error}
+            id="outlined-error-helper-text"
+            variant="outlined"
+            size="small"
+            name="nombre_servicio"
+            value={data.nombre_servicio}
+            onChange={handleChangeInput}
+            inputProps={{
+              style: { textTransform: "uppercase", width: "400px" },
+            }}
+            disabled={loading}
+          />
+        </form>
         <Box ml={1} />
         <Button
           color="primary"
           variant="contained"
           size="large"
-          onClick={handleSubmit}
+          type="submit"
+          form="form-contabilidad"
           disableElevation
           startIcon={
             loading ? <CircularProgress color="inherit" size={20} /> : <Add />
