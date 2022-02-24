@@ -1002,7 +1002,6 @@ export default function EnhancedTable(props) {
             className={classes.table}
             aria-labelledby="tableTitle"
             size={'small'}
-           
             aria-label="a dense table"
           >
             <EnhancedTableHead

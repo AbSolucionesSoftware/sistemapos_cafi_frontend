@@ -210,6 +210,7 @@ export default function DatosProveedorAlmacen({
                 accion="registrar"
                 tipo="PROVEEDOR"
                 refetch={refetch}
+                fromCompras={true}
               />
             </ClienteProvider>
           </Box>

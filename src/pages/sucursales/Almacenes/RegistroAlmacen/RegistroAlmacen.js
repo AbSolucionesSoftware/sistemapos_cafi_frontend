@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { FcPlus } from 'react-icons/fc';
 import ContainerRegistroAlmacen from './ContainerRegistroAlmacen';
 import ListaAlmacen from './ListaAlmacen';
+
 import { AlmacenProvider } from '../../../../context/Almacenes/crearAlmacen';
 import CloseIcon from '@material-ui/icons/Close';
 const useStyles = makeStyles((theme) => ({

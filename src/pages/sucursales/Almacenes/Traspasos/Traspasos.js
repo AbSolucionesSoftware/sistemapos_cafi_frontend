@@ -593,7 +593,7 @@ export default function Traspasos() {
                 </Box>
 					
 			</Button>
-			<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+			<Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition} >
                 <BackdropComponent loading={loading} setLoading={setLoading} />
                 <AppBar className={classes.appBar}>
                
