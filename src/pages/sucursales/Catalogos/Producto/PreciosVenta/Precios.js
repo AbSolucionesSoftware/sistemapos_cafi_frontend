@@ -64,7 +64,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     setUnidadVentaSecundaria,
   } = useContext(RegProductoContext);
   let preciosVenta = { ...preciosP[index] };
-  const [ error, setError ] = useState(false);
+  const [error, setError] = useState(false);
 
   const obtenerUtilidad = (valor_base) => {
     if (!valor_base) {
@@ -76,7 +76,10 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
 
     /* let utilidad = 1; */
     let PUCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
-    let { /* unidad, cantidad,  */descuento, descuento_activo } = unidadVentaXDefecto;
+    let {
+      /* unidad, cantidad,  */ descuento,
+      descuento_activo,
+    } = unidadVentaXDefecto;
     let cantidad_sec = unidadVentaSecundaria.cantidad;
     let descuento_sec = unidadVentaSecundaria.descuento;
     let descuento_activo_sec = unidadVentaSecundaria.descuento_activo;
@@ -93,11 +96,13 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
 
     preciosVenta.utilidad = parseFloat(valor_base);
     preciosVenta.precio_venta = parseFloat(precio_venta.toFixed(2));
+    preciosVenta.iva_precio = iva_precio;
+    preciosVenta.ieps_precio = ieps_precio;
 
     let PCCI = precios.precio_de_compra.precio_con_impuesto;
-    if(precio_neto < PCCI && precio_neto !== 0){
+    if (precio_neto < PCCI && precio_neto !== 0) {
       setError(true);
-    }else{
+    } else {
       setError(false);
     }
     preciosVenta.precio_neto = parseFloat(precio_neto.toFixed(2));
@@ -133,23 +138,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     };
 
     if (preciosVenta.numero_precio === 1) {
-      /* if (unidad === "Caja" || unidad === "Costal") {
-        unidadXDefecto = {
-          ...unidadXDefecto,
-          precio: precio_neto,
-        };
-      } else {
-        unidadSecundaria = {
-          ...unidadSecundaria,
-          precio: parseFloat((cantidad * precio_neto).toFixed(2)),
-        };
-      } */
       if (descuento_activo === true) {
-        //calcular nuevo precio entre %
-        /* let precio_con_descuento = Math.round(
-          precio_neto - precio_neto * parseFloat("." + descuento.porciento)
-        ); */
-
         let new_precio_venta_desc = (precio_venta * descuento.porciento) / 100;
         let new_iva_precio =
           new_precio_venta_desc * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
@@ -178,21 +167,26 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
       }
       if (descuento_activo_sec === true) {
         //calcular nuevo precio entre %
-        let new_precio_venta_desc_sec = (precio_venta * descuento_sec.porciento) / 100;
+        let new_precio_venta_desc_sec =
+          (precio_venta * descuento_sec.porciento) / 100;
         let new_iva_precio_sec =
-          new_precio_venta_desc_sec * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
+          new_precio_venta_desc_sec *
+          parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
         let new_ieps_precio_sec =
           new_precio_venta_desc_sec *
           parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
         let new_impuestos_sec = new_iva_precio_sec + new_ieps_precio_sec;
-        let precio_con_descuento_sec = new_precio_venta_desc_sec + new_impuestos_sec;
+        let precio_con_descuento_sec =
+          new_precio_venta_desc_sec + new_impuestos_sec;
 
         unidadSecundaria = {
           ...unidadSecundaria,
           precio: parseFloat((cantidad_sec * precio_neto).toFixed(2)),
           descuento: {
             ...unidadVentaSecundaria.descuento,
-            precio_neto: parseFloat((cantidad_sec * precio_con_descuento_sec).toFixed(2)),
+            precio_neto: parseFloat(
+              (cantidad_sec * precio_con_descuento_sec).toFixed(2)
+            ),
           },
         };
       }
@@ -205,17 +199,19 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
   };
 
   const obtenerPrecioNeto = (value) => {
-    
     if (!value) {
       console.log(value);
-      preciosVenta.precio_neto = 0;
+      preciosVenta.precio_neto = "";
       newPreciosP.splice(index, 1, preciosVenta);
       setPreciosP(newPreciosP);
       return;
     }
 
     let precio_neto = parseFloat(value);
-    let { /* unidad, cantidad,  */descuento, descuento_activo } = unidadVentaXDefecto;
+    let {
+      /* unidad, cantidad,  */ descuento,
+      descuento_activo,
+    } = unidadVentaXDefecto;
     let cantidad_sec = unidadVentaSecundaria.cantidad;
     let descuento_sec = unidadVentaSecundaria.descuento;
     let descuento_activo_sec = unidadVentaSecundaria.descuento_activo;
@@ -235,12 +231,14 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
 
     preciosVenta.precio_neto = precio_neto;
     preciosVenta.precio_venta = precio_venta;
+    preciosVenta.iva_precio = iva_precio;
+    preciosVenta.ieps_precio = ieps_precio;
     preciosVenta.utilidad = parseFloat(utilidad_base.toFixed(2));
 
     let PCCI = precios.precio_de_compra.precio_con_impuesto;
-    if(precio_neto < PCCI && precio_neto !== 0){
+    if (precio_neto < PCCI && precio_neto !== 0) {
       setError(true);
-    }else{
+    } else {
       setError(false);
     }
 
@@ -275,23 +273,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     };
 
     if (preciosVenta.numero_precio === 1) {
-      /* if (unidad === "Caja" || unidad === "Costal") {
-        unidadXDefecto = {
-          ...unidadXDefecto,
-          precio: precio_neto,
-        };
-      } else {
-        unidadSecundaria = {
-          ...unidadSecundaria,
-          precio: parseFloat((cantidad * precio_neto).toFixed(2)),
-        };
-      } */
       if (descuento_activo === true) {
-        //calcular nuevo precio entre %
-        /* let precio_con_descuento = Math.round(
-          precio_neto - precio_neto * parseFloat("." + descuento.porciento)
-        ); */
-
         let new_precio_venta_desc = (precio_venta * descuento.porciento) / 100;
         let new_iva_precio =
           new_precio_venta_desc * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
@@ -312,21 +294,26 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
       }
       if (descuento_activo_sec === true) {
         //calcular nuevo precio entre %
-        let new_precio_venta_desc_sec = (precio_venta * descuento_sec.porciento) / 100;
+        let new_precio_venta_desc_sec =
+          (precio_venta * descuento_sec.porciento) / 100;
         let new_iva_precio_sec =
-          new_precio_venta_desc_sec * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
+          new_precio_venta_desc_sec *
+          parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
         let new_ieps_precio_sec =
           new_precio_venta_desc_sec *
           parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
         let new_impuestos_sec = new_iva_precio_sec + new_ieps_precio_sec;
-        let precio_con_descuento_sec = new_precio_venta_desc_sec + new_impuestos_sec;
+        let precio_con_descuento_sec =
+          new_precio_venta_desc_sec + new_impuestos_sec;
 
         unidadSecundaria = {
           ...unidadSecundaria,
           precio: parseFloat((cantidad_sec * precio_neto).toFixed(2)),
           descuento: {
             ...unidadVentaSecundaria.descuento,
-            precio_neto: parseFloat((cantidad_sec * precio_con_descuento_sec).toFixed(2)),
+            precio_neto: parseFloat(
+              (cantidad_sec * precio_con_descuento_sec).toFixed(2)
+            ),
           },
         };
       }
@@ -352,7 +339,10 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
 
   const calculos = () => {
     let { iva, ieps } = precios;
-    let { /* unidad, cantidad,  */descuento, descuento_activo } = unidadVentaXDefecto;
+    let {
+      /* unidad, cantidad,  */ descuento,
+      descuento_activo,
+    } = unidadVentaXDefecto;
     let cantidad_sec = unidadVentaSecundaria.cantidad;
     let descuento_sec = unidadVentaSecundaria.descuento;
     let descuento_activo_sec = unidadVentaSecundaria.descuento_activo;
@@ -445,21 +435,26 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
       }
       if (descuento_activo_sec === true) {
         //calcular nuevo precio entre %
-        let new_precio_venta_desc_sec = (precio_venta * descuento_sec.porciento) / 100;
+        let new_precio_venta_desc_sec =
+          (precio_venta * descuento_sec.porciento) / 100;
         let new_iva_precio_sec =
-          new_precio_venta_desc_sec * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
+          new_precio_venta_desc_sec *
+          parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
         let new_ieps_precio_sec =
           new_precio_venta_desc_sec *
           parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
         let new_impuestos_sec = new_iva_precio_sec + new_ieps_precio_sec;
-        let precio_con_descuento_sec = new_precio_venta_desc_sec + new_impuestos_sec;
+        let precio_con_descuento_sec =
+          new_precio_venta_desc_sec + new_impuestos_sec;
 
         unidadSecundaria = {
           ...unidadSecundaria,
           precio: parseFloat((cantidad_sec * precio_neto).toFixed(2)),
           descuento: {
             ...unidadVentaSecundaria.descuento,
-            precio_neto: parseFloat((cantidad_sec * precio_con_descuento_sec).toFixed(2)),
+            precio_neto: parseFloat(
+              (cantidad_sec * precio_con_descuento_sec).toFixed(2)
+            ),
           },
         };
       }
@@ -477,12 +472,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     } else if (preciosVenta.numero_precio > 1 && preciosVenta.precio_neto) {
       calculos();
     }
-
-    /* preciosP.splice(index, 1, preciosVenta); */
-  }, [
-    precios.unidad_de_compra.precio_unitario_con_impuesto,
-    preciosVenta.precio_venta,
-  ]);
+  }, [precios.unidad_de_compra.precio_unitario_con_impuesto]);
 
   const verificarCampoVacio = (name, value) => {
     switch (name) {
@@ -495,6 +485,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
               : precios.unidad_de_compra.precio_unitario_con_impuesto;
           newPreciosP.splice(index, 1, preciosVenta);
           setPreciosP(newPreciosP);
+          setError(false);
         }
         break;
       case "precio_neto":
@@ -506,6 +497,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
           preciosVenta.utilidad = 0;
           newPreciosP.splice(index, 1, preciosVenta);
           setPreciosP(newPreciosP);
+          setError(false);
         }
         break;
       case "unidad_mayoreo":

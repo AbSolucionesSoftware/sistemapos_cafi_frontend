@@ -218,21 +218,12 @@ EnhancedTableToolbar.propTypes = {
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    marginTop: 7
-  },
-  paper: {
-    width: "100%",
-    marginBottom: theme.spacing(2),
   },
   container: {
     height: "100%",
     '& ::-webkit-scrollbar': {
       display: 'none'
     }
-  },
-  table: {
-    minWidth: 750,
-    height: "55vh",
   },
   visuallyHidden: {
     border: 0,

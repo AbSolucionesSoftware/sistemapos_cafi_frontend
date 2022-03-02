@@ -1,4 +1,4 @@
-import React, { Fragment, useContext } from "react";
+import React, { Fragment, useContext, useEffect } from "react";
 import {
   IconButton,
   InputAdornment,
@@ -145,12 +145,19 @@ const UnidadesVentaSecundaria = () => {
     unidadVentaSecundaria,
     setUnidadVentaSecundaria,
   } = useContext(RegProductoContext);
-  const [precio, setPrecio] = useState(
-    unidadVentaSecundaria.descuento_activo !== null &&
+  const [precio, setPrecio] = useState(0);
+
+  useEffect(() => {
+    let price =
+      unidadVentaSecundaria.descuento_activo &&
       unidadVentaSecundaria.descuento_activo === true
-      ? unidadVentaSecundaria.descuento.precio_neto
-      : unidadVentaSecundaria.precio
-  );
+        ? unidadVentaSecundaria.descuento.precio_neto
+        : unidadVentaSecundaria.precio;
+
+    return () => {
+      setPrecio(price);
+    };
+  }, [unidadVentaSecundaria]);
 
   const GenCodigoBarras = () => {
     const max = 999999999999;

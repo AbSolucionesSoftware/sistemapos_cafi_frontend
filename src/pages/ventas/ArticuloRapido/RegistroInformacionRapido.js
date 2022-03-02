@@ -8,6 +8,7 @@ import {
   FormControl,
   FormControlLabel,
   FormHelperText,
+  Grid,
   InputAdornment,
   makeStyles,
   MenuItem,
@@ -18,20 +19,13 @@ import {
 } from "@material-ui/core";
 import { RegProductoContext } from "../../../context/Catalogos/CtxRegProducto";
 import CatalogosProductosSAT from "../../sucursales/Catalogos/Producto/DatosGenerales/CatalogoProductosSAT";
-// import RegistroInfoAdidional from '../../sucursales/Catalogos/Producto/PreciosVenta/registrarInfoAdicional';
 
 const useStyles = makeStyles((theme) => ({
-  formInputFlex: {
-    display: "flex",
-    "& > *": {
-      margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`,
-    },
+  titulos: {
+    fontWeight: 500,
     "& .obligatorio": {
       color: "red",
     },
-  },
-  formInput: {
-    margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
   },
 }));
 
@@ -155,21 +149,21 @@ export default function RegistroInformacionRapido({
 
   return (
     <Fragment>
-      <Box>
+      <Box mb={2}>
         <Typography>
           <b>Información General</b>
         </Typography>
       </Box>
       <Divider />
-      <div className={classes.formInputFlex}>
-        <Box width="100%">
+      <Grid container spacing={2}>
+        <Grid item md={3} xs={12}>
           <FormControl
             variant="outlined"
             size="small"
             name="codigo_barras"
             fullWidth
           >
-            <Typography>Código de barras</Typography>
+            <Typography className={classes.titulos}>Código de barras</Typography>
             <OutlinedInput
               disabled={update && datos_generales.codigo_barras}
               style={{ padding: 0 }}
@@ -197,9 +191,9 @@ export default function RegistroInformacionRapido({
               }
             />
           </FormControl>
-        </Box>
-        <Box width="100%">
-          <Typography>
+        </Grid>
+        <Grid item md={3} xs={12}>
+          <Typography className={classes.titulos}>
             <span className="obligatorio">* </span>Clave alterna
           </Typography>
           <TextField
@@ -214,11 +208,11 @@ export default function RegistroInformacionRapido({
             }
             helperText={validacion.message}
             onChange={obtenerCampos}
+            inputProps={{ style: { textTransform: "uppercase" } }}
           />
-        </Box>
-
-        <Box width="100%">
-          <Typography>
+        </Grid>
+        <Grid item md={3} xs={12}>
+          <Typography className={classes.titulos}>
             <span className="obligatorio">* </span>Nombre comercial
           </Typography>
           <TextField
@@ -235,18 +229,21 @@ export default function RegistroInformacionRapido({
             }
             helperText={validacion.message}
             onChange={obtenerCampos}
+            inputProps={{ style: { textTransform: "uppercase" } }}
           />
-        </Box>
-        <Box width="100%">
+        </Grid>
+        <Grid item md={3} xs={12}>
           <CatalogosProductosSAT
             refetch={refetch}
             codigos={obtenerConsultasProducto.codigos}
           />
-        </Box>
-      </div>
-      <div className={classes.formInputFlex}>
-        <Box width="100%">
-          <Typography>
+        </Grid>
+        <Grid
+          item
+          md={datos_generales.tipo_producto === "OTROS" ? 4 : 8}
+          xs={12}
+        >
+          <Typography className={classes.titulos}>
             <span className="obligatorio">* </span>Nombre genérico
           </Typography>
           <TextField
@@ -263,10 +260,15 @@ export default function RegistroInformacionRapido({
             }
             helperText={validacion.message}
             onChange={obtenerCampos}
+            inputProps={{ style: { textTransform: "uppercase" } }}
           />
-        </Box>
-        <Box width="60%">
-          <Typography>
+        </Grid>
+        <Grid
+          item
+          md={datos_generales.tipo_producto === "OTROS" ? 2 : 4}
+          xs={12}
+        >
+          <Typography className={classes.titulos}>
             <span className="obligatorio">* </span>Tipo de producto
           </Typography>
           <FormControl
@@ -288,18 +290,18 @@ export default function RegistroInformacionRapido({
               <MenuItem value="">
                 <em>Selecciona uno</em>
               </MenuItem>
-              <MenuItem value="ROPA">Ropa</MenuItem>
-              <MenuItem value="CALZADO">Calzado</MenuItem>
-              <MenuItem value="OTROS">Otros</MenuItem>
+              <MenuItem value="ROPA">ROPA</MenuItem>
+              <MenuItem value="CALZADO">CALZADO</MenuItem>
+              <MenuItem value="OTROS">OTROS</MenuItem>
             </Select>
             <FormHelperText>{validacion.message}</FormHelperText>
           </FormControl>
-        </Box>
+        </Grid>
         {datos_generales.tipo_producto === "OTROS" ? (
-          <>
-            <Box width="50%">
-              <Typography>
-                <span className="obligatorio">* </span>Cantidad
+          <Fragment>
+            <Grid item md={2} xs={12}>
+              <Typography className={classes.titulos}>
+                <span className="obligatorio">* </span>Cantidad en Almacen
               </Typography>
               <TextField
                 fullWidth
@@ -313,16 +315,16 @@ export default function RegistroInformacionRapido({
                 helperText={validacion.message}
                 onChange={(e) => setCantidad(parseInt(e.target.value))}
               />
-            </Box>
-            <Box width="80%">
-              <Typography>Granel</Typography>
+            </Grid>
+            <Grid item md={2} xs={12}>
+              <Typography  className={classes.titulos}>Granel</Typography>
               <FormControlLabel
                 control={<Checkbox onChange={obtenerChecks} name="granel" />}
                 label="Vender a granel"
               />
-            </Box>
-            <Box width="80%">
-              <Typography>Medicamento</Typography>
+            </Grid>
+            <Grid item md={2} xs={12}>
+              <Typography  className={classes.titulos}>Medicamento</Typography>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -334,10 +336,10 @@ export default function RegistroInformacionRapido({
                 label="Necesita receta"
                 name="receta_farmacia"
               />
-            </Box>
-          </>
+            </Grid>
+          </Fragment>
         ) : null}
-      </div>
+      </Grid>
     </Fragment>
   );
 }

@@ -40,6 +40,7 @@ import {
 import { VentasContext } from "../../../context/Ventas/ventasContext";
 import Acceso from "../../../components/AccesosPassword/Acceso";
 import { AccesosContext } from "../../../context/Accesos/accesosCtx";
+import { validateJsonEdit } from "../../sucursales/Catalogos/Producto/validateDatos";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -125,7 +126,6 @@ export default function ArticuloRapido() {
     setValidacion,
     setPreciosP,
     preciosP,
-    unidadesVenta,
     setUnidadesVenta,
     unidadVentaXDefecto,
     setUnidadVentaXDefecto,
@@ -146,9 +146,11 @@ export default function ArticuloRapido() {
   } = useContext(AccesosContext);
 
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  const turno_activo = localStorage.getItem("turnoEnCurso")
   const [crearProductoRapido] = useMutation(CREAR_PRODUCTO_RAPIDO);
+  console.log(turno_activo)
 
-  const { data, refetch, loading } = useQuery(OBTENER_CONSULTAS, {
+  const { data, refetch, loading, error } = useQuery(OBTENER_CONSULTAS, {
     variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
   });
 
@@ -208,21 +210,35 @@ export default function ArticuloRapido() {
     }
   }
 
-  if (loading || !data) {
-    return null;
-  }
-  if (loading)
+  if (loading | !data || error)
     return (
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        height="80vh"
+      <Button
+        disabled
+        value="articulo-rapido"
+        style={{
+          textTransform: "none",
+          height: "100%",
+          width: "100%",
+          pointerEvents: "none",
+          opacity: 0.5,
+        }}
       >
-        <CircularProgress />
-        <Typography variant="h6">Cargando...</Typography>
-      </Box>
+        <Box display="flex" flexDirection="column">
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <img
+              src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/tiempo-rapido.svg"
+              alt="icono caja2"
+              className={classes.iconSizeSecondSuperior}
+            />
+          </Box>
+          <Typography variant="body2">
+            <b>Producto Rapido</b>
+          </Typography>
+          <Typography variant="caption" style={{ color: "#808080" }}>
+            <b>Alt + R</b>
+          </Typography>
+        </Box>
+      </Button>
     );
 
   const { obtenerConsultasProducto } = data;
@@ -256,7 +272,10 @@ export default function ArticuloRapido() {
       );
       if (unidadxdefecto.length === 0) unidadesVenta.push(unidadVentaXDefecto);
     } */
-    let copy_unidadesVenta = [{...unidadVentaXDefecto}, {...unidadVentaSecundaria}];
+    let copy_unidadesVenta = [
+      { ...unidadVentaXDefecto },
+      { ...unidadVentaSecundaria },
+    ];
     precios.precios_producto = preciosP;
 
     if (datos_generales.tipo_producto === "OTROS" && cantidad < 1) {
@@ -265,9 +284,15 @@ export default function ArticuloRapido() {
     }
 
     const data = {
-      datos_generales,
+      datos_generales: await validateJsonEdit(
+        datos_generales,
+        "datos_generales"
+      ),
       precios,
-      unidades_de_venta: copy_unidadesVenta,
+      unidades_de_venta: await validateJsonEdit(
+        copy_unidadesVenta,
+        "unidades_de_venta"
+      ),
       presentaciones,
       cantidad,
       empresa: sesion.empresa._id,
@@ -301,6 +326,12 @@ export default function ArticuloRapido() {
       });
       setCargando(false);
       handleClickOpen();
+      console.log(error);
+      if (error.networkError) {
+        console.log(error.networkError.result);
+      } else if (error.graphQLErrors) {
+        console.log(error.graphQLErrors);
+      }
     }
   };
 
@@ -372,7 +403,8 @@ export default function ArticuloRapido() {
           AceesoProductoRapido();
         }}
         value="articulo-rapido"
-        style={{ textTransform: "none", height: "100%", width: "60%" }}
+        style={{ textTransform: "none", height: "100%", width: "100%" }}
+        /* disabled={} */
       >
         <Box display="flex" flexDirection="column">
           <Box display="flex" justifyContent="center" alignItems="center">
@@ -397,7 +429,11 @@ export default function ArticuloRapido() {
       <Dialog
         maxWidth="lg"
         open={open}
-        onClose={handleClickOpen}
+        onClose={(_, reason) => {
+          if (reason !== "backdropClick") {
+            handleClickOpen();
+          }
+        }}
         TransitionComponent={Transition}
       >
         <AppBar position="static" color="default" elevation={0}>
@@ -468,8 +504,8 @@ export default function ArticuloRapido() {
                 variant="contained"
                 color="secondary"
                 onClick={() => {
-                  handleClickOpen() 
-                  resetInitialStates()
+                  handleClickOpen();
+                  resetInitialStates();
                 }}
                 size="large"
               >
@@ -501,7 +537,9 @@ export default function ArticuloRapido() {
             </TabPanel>
           </div>
         </DialogContent>
-        <DialogActions style={{ display: "flex", justifyContent: "space-between" }}>
+        <DialogActions
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
           <Box p={1}>
             <Button
               variant="outlined"
@@ -512,7 +550,7 @@ export default function ArticuloRapido() {
               disabled={value === 0}
             >
               Anterior
-          </Button>
+            </Button>
           </Box>
           <Box p={1}>
             <ButtonActions />

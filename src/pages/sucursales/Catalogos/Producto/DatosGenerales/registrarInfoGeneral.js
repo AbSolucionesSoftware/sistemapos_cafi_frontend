@@ -340,9 +340,9 @@ export default function RegistroInfoGenerales({
                 <MenuItem value="">
                   <em>Selecciona uno</em>
                 </MenuItem>
-                <MenuItem value="ROPA">Ropa</MenuItem>
-                <MenuItem value="CALZADO">Calzado</MenuItem>
-                <MenuItem value="OTROS">Otros</MenuItem>
+                <MenuItem value="ROPA">ROPA</MenuItem>
+                <MenuItem value="CALZADO">CALZADO</MenuItem>
+                <MenuItem value="OTROS">OTROS</MenuItem>
               </Select>
               <FormHelperText>{validacion.message}</FormHelperText>
             </FormControl>

@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
 		backgroundColor: 'white',
 	},
 	drawerColor:{
-		height: '100%',
+		height: '95vh',
 		backgroundColor: 'white',
 	},
 	drawerPaper: {
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
 		height: '100%'
 	},
 	navigationTop:{
-		height: '100%'
+		height: "100%"
 	},
 	iconSizeSuperior: {
 		fontSize: 30,
@@ -53,7 +53,8 @@ const useStyles = makeStyles((theme) => ({
 	avatar: {
 		width: theme.spacing(3),
 		height: theme.spacing(3),
-		marginRight: theme.spacing(1)
+		marginRight: theme.spacing(1),
+		marginLeft: theme.spacing(1)
 	},
 	borderBoton:{
 		minWidth: '100%',

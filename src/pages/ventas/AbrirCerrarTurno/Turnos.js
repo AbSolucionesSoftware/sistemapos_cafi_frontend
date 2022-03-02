@@ -14,7 +14,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
-import BackdropComponent from '../../../components/Layouts/BackDrop'
+import BackdropComponent from "../../../components/Layouts/BackDrop";
 
 import AbrirTurno from "./AbrirTurno";
 import CerrarTurno from "./CerrarTurno";
@@ -84,8 +84,11 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function Turnos() {
-  const { abrirTurnosDialog, setAbrirTurnosDialog, setTurnoActivo } =
-    useContext(VentasContext);
+  const {
+    abrirTurnosDialog,
+    setAbrirTurnosDialog,
+    setTurnoActivo,
+  } = useContext(VentasContext);
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
 
@@ -113,7 +116,7 @@ export default function Turnos() {
     <>
       <Button
         onClick={() => handleClickOpen()}
-        style={{ textTransform: "none", height: "100%", width: "60%" }}
+        style={{ textTransform: "none", height: "100%", width: "100%" }}
       >
         <Box
           display="flex"
@@ -142,7 +145,7 @@ export default function Turnos() {
 
       <Dialog
         maxWidth="xs"
-		fullWidth
+        fullWidth
         open={abrirTurnosDialog}
         onClose={handleClickOpen}
         TransitionComponent={Transition}
@@ -225,10 +228,7 @@ const ContenidoTurnos = ({ handleClickOpen, value }) => {
 
   const [loading, setLoading] = useState(false);
 
-  if (loading)
-    return (
-      <BackdropComponent loading={loading} />
-    )
+  if (loading) return <BackdropComponent loading={loading} />;
 
   return (
     <DialogContent style={{ padding: 0 }}>

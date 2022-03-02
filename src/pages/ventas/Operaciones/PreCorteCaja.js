@@ -72,7 +72,7 @@ export default function PreCorteCaja() {
                     handleClickOpen()
                     refetch()
                 }}
-                style={{textTransform: 'none', height: '100%', width: '60%'}}
+                style={{textTransform: 'none', height: '100%', width: '100%'}}
             >
                 <Box display="flex" flexDirection="column">
                     <Box display="flex" justifyContent="center" alignItems="center">
