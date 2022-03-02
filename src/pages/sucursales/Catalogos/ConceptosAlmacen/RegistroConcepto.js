@@ -121,7 +121,7 @@ export default function RegistroServicios() {
 				
 			}
 		} catch (error) {
-			
+			setAlert({ message: error.message, status: 'error', open: true });
 		}
 	}
 
@@ -165,6 +165,7 @@ export default function RegistroServicios() {
                             value={data.nombre_concepto}
                             onChange={handleChangeInput}
                             onKeyPress={pressEnter}
+							inputProps={{ style: { textTransform: "uppercase" } }}
                         />
                         
                     </Box>

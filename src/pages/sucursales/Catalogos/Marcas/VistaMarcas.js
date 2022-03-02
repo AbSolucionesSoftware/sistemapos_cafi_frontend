@@ -34,7 +34,7 @@ export default function VistaMarcas() {
         
         setData({
             ...data,
-            [e.target.name]: e.target.value.toUpperCase()
+            [e.target.name]: e.target.value
         })
     }
 

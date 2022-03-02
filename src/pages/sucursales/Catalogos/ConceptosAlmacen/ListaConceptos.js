@@ -107,7 +107,7 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 						className={classes.table}
 						aria-labelledby="tableTitle"
 						size="medium"
-						aria-label="enhanced table"
+						aria-label="a dense table"
 					>
 						<TableHead>
 							<TableRow>
@@ -123,7 +123,7 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{obtenerConcepto?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)?.map((row, index) => {
+							{obtenerConcepto.map((row, index) => {
 								return (
 									<TableRow hover role="checkbox" tabIndex={-1} key={row._id}>
 										<TableCell>{row.nombre_concepto}</TableCell>
@@ -165,7 +165,7 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 						</TableBody>
 					</Table>
 				</TableContainer>
-				<TablePagination
+			{/* 	<TablePagination
 					rowsPerPageOptions={[]}
 					component="div"
 					count={obtenerConcepto.length}
@@ -173,7 +173,7 @@ export default function TablaConceptos({setData, setIdConcepto, idConcepto, setA
 					page={page}
 					onChangePage={handleChangePage}
 					onChangeRowsPerPage={handleChangeRowsPerPage}
-				/>
+				/> */}
 			</Paper>
 			<Modal handleModal={handleModal} openModal={openModal} handleDelete={handleDelete} />
 		</div>

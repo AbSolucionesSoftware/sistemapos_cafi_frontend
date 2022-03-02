@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function RegistroCategorias() {
+export default function RegistroCentroCostos() {
 	const classes = useStyles();
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	const [ cuenta, setCuenta ] = useState('');
@@ -121,14 +121,23 @@ export default function RegistroCategorias() {
 		}
 	};
 
-    
+    const pressEnter = (e) => {
+		try {
+		if (e.key === "Enter") {
+			guardarCuenta()
+		}
+		} catch (error) {
+		
+		}
+		
+	};  
 	return (
 		<div className={classes.root}>
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<BackdropComponent loading={loadingBackDrop} setLoading={setLoadingBackDrop} />
 			<Typography variant="h6">Cuentas</Typography>
 			<Box display="flex" alignItems="center" mb={2}>
-				<TextField value={cuenta} variant="outlined" size="small" onChange={obtenerDatos} />
+				<TextField value={cuenta} variant="outlined" inputProps={{ style: { textTransform: "uppercase" } }} size="small" style={{width:'35%'}} onKeyPress={pressEnter} onChange={obtenerDatos}  />
 				<Box ml={1} />
 				<Button color="primary" variant="contained" size="large" disableElevation onClick={guardarCuenta}>
 					<Add />Guardar
@@ -247,7 +256,17 @@ const RenderCuentas = ({ cuenta, setToUpdateID, setCuenta, refetch, toUpdateID }
 			setLoadingBackDrop(false);
 		}
 	};
-    
+
+    const pressEnter = (e) => {
+		try {
+		if (e.key === "Enter") {
+			guardarSubcuenta()
+		}
+		} catch (error) {
+		
+		}
+		
+	}; 
 
 	return (
 		<Fragment>
@@ -262,7 +281,7 @@ const RenderCuentas = ({ cuenta, setToUpdateID, setCuenta, refetch, toUpdateID }
 					id={`cuenta-${cuenta._id}`}
 				>
 					<Box display="flex" alignItems="center" width="100%">
-						<Typography variant="h6">{cuenta.cuenta}</Typography>
+						<Typography style={{fontSize:15}}>{cuenta.cuenta}</Typography>
 						<div className={classes.flexGrow} />
 						{toUpdateID && toUpdateID === cuenta._id ? (
 							<IconButton onClick={cancelarUpdate} onFocus={(event) => event.stopPropagation()}>
@@ -293,7 +312,7 @@ const RenderCuentas = ({ cuenta, setToUpdateID, setCuenta, refetch, toUpdateID }
 						<Divider />
 						<Box mb={2} />
 						<Box ml={5} width="100%" display="flex">
-							<Typography variant="h6">Subcuenta</Typography>
+							<Typography  variant="h6" style={{fontSize:20}}>Subcuenta</Typography>
 							<Box mr={2} />
 							<Box display="flex" alignItems="center" mb={2}>
 								<TextField
@@ -301,6 +320,8 @@ const RenderCuentas = ({ cuenta, setToUpdateID, setCuenta, refetch, toUpdateID }
 									variant="outlined"
 									size="small"
 									onChange={obtenerDatos}
+									onKeyPress={pressEnter} 
+									inputProps={{ style: { textTransform: "uppercase" } }}
 								/>
 								<Box ml={1} />
 								<Button
@@ -387,11 +408,9 @@ const RenderSubcuentas = ({ idCuenta,subcuenta, toUpdateID, setToUpdateID, setSu
 								<Close />
 							</IconButton>
 						) : (
-							
-								<IconButton onClick={obtenerCamposParaActualizar} onFocus={(event) => event.stopPropagation()}>
-									<Edit />
-								</IconButton>
-							
+							<IconButton onClick={obtenerCamposParaActualizar} onFocus={(event) => event.stopPropagation()}>
+								<Edit />
+							</IconButton>
 						)
 					)
 				}
