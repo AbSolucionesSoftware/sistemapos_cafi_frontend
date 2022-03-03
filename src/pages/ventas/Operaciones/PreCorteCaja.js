@@ -73,6 +73,7 @@ export default function PreCorteCaja() {
                     refetch()
                 }}
                 style={{textTransform: 'none', height: '100%', width: '100%'}}
+                disabled={!turnoEnCurso}
             >
                 <Box display="flex" flexDirection="column">
                     <Box display="flex" justifyContent="center" alignItems="center">

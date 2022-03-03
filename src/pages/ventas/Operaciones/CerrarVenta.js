@@ -37,6 +37,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function CerrarVenta() {
   const classes = useStyles();
   const [cambio, setCambio] = useState(false);
+  const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
+  const datosVenta = JSON.parse(localStorage.getItem("DatosVenta"));
 
   const abrirCajon = () => {
     setCambio(!cambio);
@@ -45,7 +47,14 @@ export default function CerrarVenta() {
   const [openModalDescuento, setOpenModalDescuento] = useState(false);
   const [recalcular, setRecalcular] = useState(false);
   //Datos del context
-  const { updateTablaVentas, setUpdateTablaVentas, updateClientVenta, setUpdateClientVenta, openBackDrop, setOpenBackDrop } = useContext(VentasContext);
+  const {
+    updateTablaVentas,
+    setUpdateTablaVentas,
+    updateClientVenta,
+    setUpdateClientVenta,
+    openBackDrop,
+    setOpenBackDrop,
+  } = useContext(VentasContext);
   //States de venta
   const [totalVenta, setTotalVenta] = useState(0);
   const [montoPagado, setMontoPagado] = useState(0);
@@ -67,7 +76,6 @@ export default function CerrarVenta() {
 
   // const [descuentoAplicadoVenta, setDescuentoAplicadoVenta] = useState(0);
   const [ventaOriginal, setVentaOriginal] = useState(0);
-
   const [creditoActivo, setCreditoActivo] = useState(false);
 
   //States de los montos a pagar
@@ -89,10 +97,11 @@ export default function CerrarVenta() {
     setCambio(!cambio);
 
     //Limpiar el storage de ventas
-    localStorage.setItem(
+    localStorage.removeItem("DatosVentas");
+    /* localStorage.setItem(
       "DatosVentas",
       JSON.stringify({
-        cliente:{},
+        cliente: {},
         venta_cliente: false,
         monedero: 0,
         productos: [],
@@ -103,7 +112,7 @@ export default function CerrarVenta() {
         ieps: 0,
         descuento: 0,
       })
-    );
+    ); */
     //Actualizar la tabla de ventas
     setUpdateTablaVentas(!updateTablaVentas);
     setUpdateClientVenta(!updateClientVenta);
@@ -113,7 +122,7 @@ export default function CerrarVenta() {
 
   function funcion_tecla(event) {
     const tecla_escape = event.keyCode;
-    if (tecla_escape === 27) {
+    if (tecla_escape === 27 && datosVenta) {
       handleClickOpen();
     }
   }
@@ -200,7 +209,6 @@ export default function CerrarVenta() {
       //Quitar loading
       setOpenBackDrop(false);
       hancleClickCerrarVentaCambio();
-      
     } catch (error) {
       console.log(error);
       if (error.networkError.result) {
@@ -495,7 +503,11 @@ export default function CerrarVenta() {
 
   return (
     <>
-      <Button className={classes.borderBotonChico} onClick={handleClickOpen}>
+      <Button
+        className={classes.borderBotonChico}
+        onClick={handleClickOpen}
+        disabled={!turnoEnCurso || !datosVenta}
+      >
         <Box>
           <Box>
             <img
@@ -723,7 +735,9 @@ export default function CerrarVenta() {
                       <b>Valor:</b>
                     </Typography>
                   </Box>
-                  <Typography variant="subtitle1">${monederoTotal * valorPuntoProducto}</Typography>
+                  <Typography variant="subtitle1">
+                    ${monederoTotal * valorPuntoProducto}
+                  </Typography>
                 </Box>
               </Box>
 
@@ -936,7 +950,7 @@ export default function CerrarVenta() {
                   color="primary"
                   onClick={() => setVisible(!visible)}
                   startIcon={<CreditCardIcon style={{ fontSize: "28px" }} />}
-                  disabled={creditoActivo}
+                  disabled={creditoActivo || !ventaActual}
                 >
                   Credito
                 </Button>
@@ -950,6 +964,7 @@ export default function CerrarVenta() {
                 color="primary"
                 startIcon={<LocalOfferIcon style={{ fontSize: "28px" }} />}
                 onClick={() => setOpenModalDescuento(!openModalDescuento)}
+                disabled={!ventaActual}
               >
                 Descuento
               </Button>
@@ -963,6 +978,7 @@ export default function CerrarVenta() {
             variant="contained"
             color="primary"
             autoFocus
+            disabled={!ventaActual}
           >
             Terminar
           </Button>

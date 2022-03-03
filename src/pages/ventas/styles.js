@@ -53,6 +53,12 @@ const useStyles = makeStyles((theme) => ({
         alignItems: "center",
         justifyItems: "center"
 	},
+    titulos: {
+        fontWeight: 500,
+        '& .obligatorio': {
+			color: 'red'
+		},
+    },
 	formInput: {
 		// margin: `${theme.spacing(1)}px ${theme.spacing(1)}px`
 	},

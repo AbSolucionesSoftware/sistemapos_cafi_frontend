@@ -42,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ClientesVentas() {
   const classes = useStyles();
+  const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
 
   const [values, setValues] = useState("");
 
@@ -72,6 +73,7 @@ export default function ClientesVentas() {
             border: ".6px solid #DBDBDB",
           }}
           onClick={handleClickOpen}
+          disabled={!turnoEnCurso}
         >
           <Box>
             <Box>

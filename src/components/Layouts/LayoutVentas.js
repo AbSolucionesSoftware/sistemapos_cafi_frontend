@@ -137,19 +137,38 @@ const NavDataCajaUsers = ({ props }) => {
           <b>{moment().format("h:mm")} hrs.</b>
         </Typography>
       </Grid>
-      <Grid item md={4} style={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button onClick={() => Administrador()} startIcon={<Settings />}>
+      <Grid
+        item
+        md={4}
+        style={
+          !turnoEnCurso
+            ? { display: "flex", justifyContent: "flex-end", zIndex: 99999 }
+            : { display: "flex", justifyContent: "flex-end" }
+        }
+      >
+        <Button
+          onClick={() => Administrador()}
+          startIcon={<Settings />}
+          style={
+            !turnoEnCurso ? { color: "white", borderColor: "white" } : null
+          }
+        >
           F1 Administrador
         </Button>
+        <Box mx={1} />
         <Button
           color="secondary"
           onClick={() => {
             signOut();
           }}
           startIcon={<PowerSettingsNew />}
+          style={
+            !turnoEnCurso ? { color: "white", borderColor: "white" } : null
+          }
         >
           Salir
         </Button>
+        <Box mr={2} />
       </Grid>
     </Grid>
   );

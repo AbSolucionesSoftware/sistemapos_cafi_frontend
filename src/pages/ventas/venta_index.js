@@ -2,14 +2,15 @@ import React, { useContext, useEffect, useState } from "react";
 import VentasGenerales from "./VentasGenerales";
 import { ClienteProvider } from "../../context/Catalogos/crearClienteCtx";
 import AbrirTurno from "../ventas/AbrirCerrarTurno/AbrirTurno";
-import {
-  Box,
-  CircularProgress,
-  Grid,
-  Paper,
-  Typography,
-} from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
+import Dialog from "@material-ui/core/Dialog";
+import Slide from "@material-ui/core/Slide";
 import { VentasContext } from "../../context/Ventas/ventasContext";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 export default function VentaIndex() {
   const { turnoActivo, setTurnoActivo } = useContext(VentasContext);
@@ -38,31 +39,21 @@ export default function VentaIndex() {
 function AbrirTurnoEnVentas() {
   const [loading, setLoading] = useState(false);
 
-  if (loading)
-    return (
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        height="80vh"
-      >
-        <CircularProgress />
-      </Box>
-    );
-
   return (
-    <Grid container direction="row" justifyContent="center" alignItems="center">
-      <Box mt={5}>
-        <Paper elevation={5}>
-          <Box p={2} textAlign="center">
-            <Typography variant="h6">
-              Si deseas realizar ventas inicia tu turno primeramente.
-            </Typography>
-          </Box>
-          <AbrirTurno type="FRENTE" setLoading={setLoading} />
-        </Paper>
+    <Dialog
+      open={true}
+      maxWidth="sm"
+      fullWidth
+      keepMounted
+      TransitionComponent={Transition}
+      disableEscapeKeyDown={false}
+    >
+      <Box p={2} textAlign="center">
+        <Typography variant="h6">
+          Si deseas realizar ventas inicia tu turno primeramente.
+        </Typography>
       </Box>
-    </Grid>
+      <AbrirTurno type="FRENTE" setLoading={setLoading} loading={loading} />
+    </Dialog>
   );
 }

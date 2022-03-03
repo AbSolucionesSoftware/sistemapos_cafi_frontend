@@ -146,9 +146,8 @@ export default function ArticuloRapido() {
   } = useContext(AccesosContext);
 
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-  const turno_activo = localStorage.getItem("turnoEnCurso")
+  const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
   const [crearProductoRapido] = useMutation(CREAR_PRODUCTO_RAPIDO);
-  console.log(turno_activo)
 
   const { data, refetch, loading, error } = useQuery(OBTENER_CONSULTAS, {
     variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
@@ -404,7 +403,7 @@ export default function ArticuloRapido() {
         }}
         value="articulo-rapido"
         style={{ textTransform: "none", height: "100%", width: "100%" }}
-        /* disabled={} */
+        disabled={!turnoEnCurso}
       >
         <Box display="flex" flexDirection="column">
           <Box display="flex" justifyContent="center" alignItems="center">
