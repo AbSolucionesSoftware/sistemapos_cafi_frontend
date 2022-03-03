@@ -9,7 +9,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
 import { Box, Container, Grid } from "@material-ui/core";
 import RegistroTallas from "./RegistroTallas";
-
+import DescripcionCatalogo from "../../../../components/DescripcionCatalogo";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -41,7 +41,7 @@ export default function Tallas() {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => setOpen(!open);
-
+  const descripcion = 'En este apartado se registran las  tallas y/o números que se asignarán a un producto tipo Ropa o Calzado según sea el caso .';
   return (
     <div>
       <Button fullWidth onClick={handleClickOpen}>
@@ -67,7 +67,8 @@ export default function Tallas() {
             <Typography variant="h6" className={classes.title}>
               Tallas y números
             </Typography>
-            <Box m={1}>
+            <Box m={1} flexDirection='row' display='flex'>
+              <DescripcionCatalogo  texto={descripcion} />
               <Button
                 variant="contained"
                 color="secondary"
@@ -80,16 +81,14 @@ export default function Tallas() {
           </Toolbar>
         </AppBar>
         <Container>
-          {/* <Box p={1} my={3} border={1} display="flex" justifyContent="center">
-            [DESCRIPCION]
-          </Box> */}
+          
           <Box>
             <Grid container spacing={5}>
               <Grid item md={6} xs={12}>
-			  	<RegistroTallas tipo="ROPA" />
+			  	      <RegistroTallas tipo="ROPA" />
               </Grid>
               <Grid item md={6} xs={12}>
-			  	<RegistroTallas tipo="CALZADO" />
+			        	<RegistroTallas tipo="CALZADO" />
               </Grid>
             </Grid>
           </Box>

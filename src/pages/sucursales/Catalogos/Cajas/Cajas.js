@@ -9,7 +9,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
 import { Box, Container } from "@material-ui/core";
 import RegistroCajas from "./RegistrarCajas";
-
+import DescripcionCatalogo from "../../../../components/DescripcionCatalogo";
 const useStyles = makeStyles((theme) => ({
   appBar: {
     position: "relative",
@@ -31,7 +31,7 @@ export default function Cajas() {
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(false);
-
+   const descripcion = 'En este apartado se registran las cajas necesarias para realizar los movimientos operativos de ventas.';
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -65,7 +65,8 @@ export default function Cajas() {
             <Typography variant="h6" className={classes.title}>
               Cajas
             </Typography>
-            <Box m={1}>
+            <Box m={1} display='flex' flexDirection='row'>
+							<DescripcionCatalogo  texto={descripcion} />
               <Button
                 variant="contained"
                 color="secondary"
@@ -77,13 +78,11 @@ export default function Cajas() {
             </Box>
           </Toolbar>
         </AppBar>
-        <Box mt={3}>
+        
+        <Box>
+       
           <Container maxWidth="sm">
-            {/* <Box p={1} my={3} border={1} display="flex" justifyContent="center">
-              [DESCRIPCION]
-            </Box> */}
-          </Container>
-          <Container maxWidth="sm">
+          
             <RegistroCajas />
           </Container>
         </Box>

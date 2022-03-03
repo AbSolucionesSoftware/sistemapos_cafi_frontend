@@ -14,7 +14,7 @@ import { FcRating } from "react-icons/fc";
 import CloseIcon from '@material-ui/icons/Close';
 import VistaMarcas from './VistaMarcas';
 import { MarcasProvider } from '../../../../context/Catalogos/Marcas';
-
+import DescripcionCatalogo from "../../../../components/DescripcionCatalogo";
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
 export default function Marcas() {
     const classes = useStyles();
     const [ open, setOpen ] = React.useState(false);
-
+	const descripcion = 'En este apartado se registran las marcas que se asignarán a un producto.';
     const handleClickOpen = () => {
 		setOpen(true);
 	};
@@ -61,13 +61,15 @@ export default function Marcas() {
 							<Typography variant="h6" className={classes.title}>
 								Marcas
 							</Typography>
-							<Box m={1}>
+							<Box m={1} display='flex' flexDirection='row'>
+								<DescripcionCatalogo  texto={descripcion} />
 								<Button variant="contained" color="secondary" onClick={handleClose} size="large">
 									<CloseIcon style={{fontSize: 30}} />
 								</Button>
 							</Box>
 						</Toolbar>
 					</AppBar>
+				
 					<Box mt={4}>
 						<Container maxWidth="md">
 							<VistaMarcas />

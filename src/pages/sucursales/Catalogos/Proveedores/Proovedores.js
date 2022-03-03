@@ -13,6 +13,7 @@ import TablaProovedores from "./ListaProveedores";
 import CrearCliente from "../Cliente/CrearCliente";
 import { ClienteProvider } from "../../../../context/Catalogos/crearClienteCtx";
 import ErrorPage from "../../../../components/ErrorPage";
+import DescripcionCatalogo from "../../../../components/DescripcionCatalogo";
 import { useQuery } from "@apollo/client";
 import { OBTENER_CLIENTES } from "../../../../gql/Catalogos/clientes";
 
@@ -40,7 +41,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function Proveedores() {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-
+  const descripcion = 'En este apartado se registran los proveedores que se podrán seleccionar en la compra de un producto.';
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -75,7 +76,8 @@ export default function Proveedores() {
               <Typography variant="h6" className={classes.title}>
                 Proveedores
               </Typography>
-              <Box m={1}>
+              <Box m={1} display='flex' flexDirection='row'>
+							  <DescripcionCatalogo  texto={descripcion} />
                 <Button
                   variant="contained"
                   color="secondary"

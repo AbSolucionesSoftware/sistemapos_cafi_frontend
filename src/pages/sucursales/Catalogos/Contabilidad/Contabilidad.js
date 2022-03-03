@@ -9,7 +9,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
 import { Box, Container } from "@material-ui/core";
 import RegistroServicios from "./RegistroServicio";
-
+import DescripcionCatalogo from "../../../../components/DescripcionCatalogo";
 const useStyles = makeStyles((theme) => ({
   appBar: {
     position: "relative",
@@ -30,7 +30,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function Contabilidad() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-
+  const descripcion = 'En este apartado se registran conceptos para pagos.';
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -64,7 +64,8 @@ export default function Contabilidad() {
             <Typography variant="h6" className={classes.title}>
               Contabilidad
             </Typography>
-            <Box m={1}>
+            <Box m={1} display='flex' flexDirection='row'>
+							<DescripcionCatalogo  texto={descripcion} />
               <Button
                 variant="contained"
                 color="secondary"
@@ -76,11 +77,11 @@ export default function Contabilidad() {
             </Box>
           </Toolbar>
         </AppBar>
-        <Box mt={4}>
+        
+        <Box >
+          
           <Container maxWidth="md">
-            {/* <Box p={1} my={3} border={1} display="flex" justifyContent="center">
-              [DESCRIPCION]
-            </Box> */}
+           
             <RegistroServicios />
           </Container>
         </Box>

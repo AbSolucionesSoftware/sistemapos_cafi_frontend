@@ -9,6 +9,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
 import { Box, Container } from "@material-ui/core";
 import RegistroCategorias from "./RegistroCategorias";
+import DescripcionCatalogo from "../../../../components/DescripcionCatalogo";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -31,6 +32,7 @@ export default function Categorias() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
+  const descripcion= 'En este apartado se registran las categorias que se podrán asignar a un producto.';
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -64,7 +66,8 @@ export default function Categorias() {
             <Typography variant="h6" className={classes.title}>
               Categorias
             </Typography>
-            <Box m={1}>
+            <Box m={1} display='flex' flexDirection='row'>
+							<DescripcionCatalogo  texto={descripcion} />
               <Button
                 variant="contained"
                 color="secondary"
@@ -76,11 +79,9 @@ export default function Categorias() {
             </Box>
           </Toolbar>
         </AppBar>
-        <Box mt={3}>
+     
+        <Box>
           <Container maxWidth="md">
-            <Box p={1} my={3} border={1} display="flex" justifyContent="center">
-              [DESCRIPCION]
-            </Box>
             <RegistroCategorias />
           </Container>
         </Box>

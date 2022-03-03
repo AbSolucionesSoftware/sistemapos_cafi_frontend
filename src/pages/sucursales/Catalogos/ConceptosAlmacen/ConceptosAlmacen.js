@@ -9,7 +9,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, Container } from '@material-ui/core';
 import RegistroConcepto from './RegistroConcepto';
-
+import DescripcionCatalogo from "../../../../components/DescripcionCatalogo";
 const useStyles = makeStyles((theme) => ({
 	appBar: {
 		position: 'relative'
@@ -30,7 +30,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function ConceptosAlmacen() {
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
-
+	const descripcion = 'En este apartado podrás registrar los conceptos que definirán la acción para los traspasos entre almacenes.';
 	const handleClickOpen = () => {
 		setOpen(true);
 	};
@@ -55,13 +55,15 @@ export default function ConceptosAlmacen() {
 						<Typography variant="h6" className={classes.title}>
 							Conceptos almacén
 						</Typography>
-						<Box m={1}>
+						<Box m={1} display='flex' flexDirection='row'>
+							<DescripcionCatalogo  texto={descripcion} />
 							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
 								<CloseIcon style={{fontSize: 30}} />
 							</Button>
 						</Box>
 					</Toolbar>
 				</AppBar>
+				
 				<Box mt={4} alignSelf='center' >
 					<Container >
 						<RegistroConcepto />

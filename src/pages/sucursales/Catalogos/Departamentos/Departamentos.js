@@ -10,6 +10,7 @@ import Slide from "@material-ui/core/Slide";
 import { Box, Container } from "@material-ui/core";
 import RegistroDepartamentos from "./RegistroDepartamento";
 import { DepartamentosProvider } from "../../../../context/Catalogos/Departamentos";
+import DescripcionCatalogo from "../../../../components/DescripcionCatalogo";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -31,7 +32,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function Departamentos() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-
+  const descripcion = 'En este apartado se registran los departamentos que se le podrá asignar a un producto.';
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -66,7 +67,8 @@ export default function Departamentos() {
               <Typography variant="h6" className={classes.title}>
                 Departamentos
               </Typography>
-              <Box m={1}>
+              <Box m={1} display='flex' flexDirection='row'>
+							<DescripcionCatalogo  texto={descripcion} />
                 <Button
                   variant="contained"
                   color="secondary"
@@ -78,17 +80,9 @@ export default function Departamentos() {
               </Box>
             </Toolbar>
           </AppBar>
-          <Box mt={3}>
+
+          <Box >
             <Container maxWidth="sm">
-              <Box
-                p={1}
-                my={3}
-                border={1}
-                display="flex"
-                justifyContent="center"
-              >
-                [DESCRIPCION]
-              </Box>
               <RegistroDepartamentos accion="registrar" />
             </Container>
           </Box>

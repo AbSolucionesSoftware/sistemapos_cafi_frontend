@@ -155,7 +155,7 @@ export default function RegistroCategorias() {
   return (
     <div className={classes.root}>
       <SnackBarMessages alert={alert} setAlert={setAlert} />
-      <Box my={2}>
+      <Box>
         <Typography>
           <b>Categoria</b>
         </Typography>
@@ -343,7 +343,7 @@ const RenderCategorias = ({
         >
           <Box display="flex" alignItems="center" width="100%">
             <Typography>
-              <b>{categoria.categoria}</b>
+              {categoria.categoria}
             </Typography>
             <div className={classes.flexGrow} />
             {sesion.accesos.catalogos.categorias.editar ===

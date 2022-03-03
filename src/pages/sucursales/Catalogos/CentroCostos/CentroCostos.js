@@ -9,7 +9,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, Container } from '@material-ui/core';
 import RegistroCentroCostos from './RegistroCentroCostos';
-
+import DescripcionCatalogo from "../../../../components/DescripcionCatalogo";
 const useStyles = makeStyles((theme) => ({
 	appBar: {
 		position: 'relative'
@@ -30,7 +30,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function CentroCostos() {
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
-
+	const descripcion = 'En este apartado podrás registrar tus cuentas y subcuentas que utilizarás al momento de llevar tu control financiero. Por ejemplo: Compras, Ventas.'
 	const handleClickOpen = () => {
 		setOpen(true);
 	};
@@ -55,14 +55,16 @@ export default function CentroCostos() {
 						<Typography variant="h6" className={classes.title}>
 							Centro de costos
 						</Typography>
-						<Box m={1}>
+						<Box m={1} display='flex' flexDirection='row'>
+							<DescripcionCatalogo  texto={descripcion} />
 							<Button variant="contained" color="secondary" onClick={handleClose} size="large">
 								<CloseIcon style={{fontSize: 30}} />
 							</Button>
 						</Box>
 					</Toolbar>
 				</AppBar>
-				<Box mt={3}>
+			
+				<Box>
 					<Container maxWidth="md">
 						<RegistroCentroCostos />
 					</Container>
