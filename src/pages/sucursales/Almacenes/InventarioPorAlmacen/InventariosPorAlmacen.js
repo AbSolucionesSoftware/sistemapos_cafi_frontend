@@ -10,7 +10,7 @@ import ExportarExcel from '../../../../components/ExportExcel'
 import ErrorPage from '../../../../components/ErrorPage'
 import { useDebounce } from 'use-debounce';
 import { TraspasosAlmacenContext } from "../../../../context/Almacenes/traspasosAlmacen";
-import { OBTENER_PRODUCTOS_ALMACEN, OBTENER_CATEGORIAS,OBTENER_ALMACENES } from '../../../../gql/Almacenes/Almacen';
+import { OBTENER_CATEGORIAS,OBTENER_ALMACENES } from '../../../../gql/Almacenes/Almacen';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {
@@ -45,7 +45,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 
 
-export default function InventariosPorAlmacen() {
+export default function InventariosPorAlmacen(props) {
     const classes = useStyles();
 	const [ open, setOpen ] = useState(false);
 	
@@ -69,7 +69,7 @@ export default function InventariosPorAlmacen() {
 					Inventario por almacen
 				</Box>
 			</Button>
-			<InventarioPorAlmacen open={open} handleClose={handleClose} />
+			<InventarioPorAlmacen open={open} productosAlmacenQuery={props.productosAlmacenQuery}  handleClose={handleClose} />
         </div>
     )
 }
@@ -95,25 +95,37 @@ const InventarioPorAlmacen = (props) =>{
 	
 	 	/* Queries */
 	//const {  data, error, refetch } = useQuery(OBTENER_PRODUCTOS_ALMACEN,{
-    const productosAlmacenQuery = useQuery(OBTENER_PRODUCTOS_ALMACEN,{
+/* 	const [getQuery, { data, error }] = useLazyQuery(OBTENER_PRODUCTOS_ALMACEN, {
 		variables: {
             empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id,
 			filtro: value
-		}
-	});	
+		},
+		fetchPolicy: "network-only"
+	}); */
+   /*  const productosAlmacenQuery = useQuery(OBTENER_PRODUCTOS_ALMACEN,{
+		variables: {
+            empresa: sesion.empresa._id,
+			sucursal: sesion.sucursal._id,
+			filtro: ''
+		},
+		fetchPolicy: "network-only"
+	});	  */
+
 
 	const categoriasQuery = useQuery(OBTENER_CATEGORIAS,{
 		variables: {
             empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id,	
-		}
+		},
+		fetchPolicy: "network-only"
 	});
 	
 	const queryObtenerAlmacenes = useQuery(OBTENER_ALMACENES,{
 		variables: {
 			id: sesion.sucursal._id
-		}
+		},
+		fetchPolicy: "network-only"
 	});	
 	
 
@@ -127,25 +139,36 @@ const InventarioPorAlmacen = (props) =>{
 	
 	useEffect(
 		() => {
-			if(props.open){
-				setDataExcel([])
-				productosAlmacenQuery.refetch();
-				queryObtenerAlmacenes.refetch();
-				setLoading(false);
+			try {
+				if(props.open){
+					setDataExcel([])
+					queryObtenerAlmacenes.refetch();
+					props.productosAlmacenQuery.refetch({
+						empresa: sesion.empresa._id,
+						sucursal: sesion.sucursal._id,
+						filtro: value});
+				}
+			} catch (error) {
+				console.log(error)
 			}
-			
 		},
 		[props.open ]
 	);
 	
 	useEffect(
 		() => {
-		if(productosAlmacenQuery.data){
-			//setDataExcel([]);
-			setProductos(productosAlmacenQuery.data.obtenerProductosAlmacenes);
-		}
+			try {
+				if(props.productosAlmacenQuery.data){
+				//setDataExcel([]);
+				setProductos(props.productosAlmacenQuery.data.obtenerProductosAlmacenes);
+				setLoading(false);
+			}
+			} catch (error) {
+				
+			}
+		
 		},
-		[ productosAlmacenQuery.data]
+		[ props.productosAlmacenQuery.data]
 	);
 
 	useEffect(
@@ -184,7 +207,7 @@ const InventarioPorAlmacen = (props) =>{
 						</Typography>
 						<Box mx={3}>
 							<Box m={1}>
-								<Button variant="contained" color="secondary" onClick={props.handleClose} size="large">
+								<Button variant="contained" color="secondary" onClick={() => {setLoading(true);props.handleClose()}} size="large">
 									<Close style={{ fontSize: 30}}/>
 								</Button>
 							</Box>
@@ -240,16 +263,17 @@ const InventarioPorAlmacen = (props) =>{
 					</Box>			
 
 				{
-					(loading) ?
+					(loading && productos.length === 0) ?
 		
 					<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
 						<CircularProgress />
 					</Box>
 					: 
-						(productosAlmacenQuery.error || categoriasQuery.error) ?
-							<ErrorPage error={productosAlmacenQuery.error} />
+						(props.productosAlmacenQuery.error || categoriasQuery.error) ?
+							<ErrorPage error={props.productosAlmacenQuery.error} />
 						:
 						<Box mx={5} mt={1} >
+
 							<ListaProductos productos={productos} obtenerAlmacenes={obtenerAlmacenes} columns={columns} />
 						</Box>
 					

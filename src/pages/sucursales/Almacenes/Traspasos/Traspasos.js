@@ -142,7 +142,7 @@ const transportes = [
 
 const steps = ['Datos traspaso', 'Seleccionar productos'];
 
-export default function Traspasos() {
+export default function Traspasos(props) {
     const classes = useStyles();
     const theme = useTheme();
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
@@ -179,6 +179,7 @@ export default function Traspasos() {
 
     let conceptos= [];
     let almacenes = [];
+    
     
     const queryObtenerAlmacenes = useQuery(OBTENER_ALMACENES,{
         variables: {
@@ -242,7 +243,7 @@ export default function Traspasos() {
         } catch (error) {
            console.log(error)
         }   
-    },[]); */
+    },[]); */ 
 
     const obtenerProductosAlmacen = useCallback(async() =>{
         try {
@@ -543,7 +544,7 @@ export default function Traspasos() {
             }
             
            
-           
+            props.refetch();
             setLoading(false);
         } catch (error) {
              setLoading(false);

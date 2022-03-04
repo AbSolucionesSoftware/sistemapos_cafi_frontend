@@ -455,6 +455,7 @@ useEffect(() => {
     
   };        
   function onlyNumbers(value){
+   
     props.setError({error:false, mensaje:''})
       //const onlyNums = value.toString().replace(/[^0-9]/g, '');
       const intValue = (value !== '') ? parseFloat(value) : 0;
@@ -859,12 +860,13 @@ export default function EnhancedTable(props) {
 
     }
   }
-  const setValueToTrans =(cantidad_total) =>{
+  const setValueToTrans =(cantidad_total, rowSelected) =>{
   try {
     //setError({error:false, mensaje:''})
    
-    if(cantidad_total === 0 || cantidad_total === '') return;
-   let element = productosTras.find(element => element.product_selected._id === selected._id);
+    
+   let element = productosTras.find(element => element.product_selected._id === rowSelected._id);
+   if(cantidad_total === 0 || cantidad_total === '') {element.cantidad_total = 0;return;};
   /*   let elementTablaTo = (props.almacenOrigen !== null) ? 
         productosEmpTo.find(element => element.product_selected._id === product_selected._id)
         :
@@ -875,15 +877,15 @@ export default function EnhancedTable(props) {
       //SUMA CANTIDAD TOTAL
       
       if(props.add){
-        if(selected.inventario_general !== undefined){
+        if(rowSelected.inventario_general !== undefined){
           if( !tipoPieza.piezas ){
-            if(totalCantExistMasNuevaCantidad <=  selected.inventario_general[0].cantidad_existente_maxima){
+            if(totalCantExistMasNuevaCantidad <=  rowSelected.inventario_general[0].cantidad_existente_maxima){
               element.cantidad_total = totalCantExistMasNuevaCantidad;
             }else{
               setError({error:true, mensaje:'La cantidad ingresada sobrepasa la cantidad existente del producto seleccionado.'})
             }  
           }else{
-            if(totalCantExistMasNuevaCantidad <=  selected.inventario_general[0].cantidad_existente){
+            if(totalCantExistMasNuevaCantidad <=  rowSelected.inventario_general[0].cantidad_existente){
               element.cantidad_total = totalCantExistMasNuevaCantidad;
             
             }else{
@@ -922,33 +924,40 @@ export default function EnhancedTable(props) {
 }
 
   
-  function onlyNumbers(value){
+  function onlyNumbers(value, rowSelected){
+   
+    
    setError({error:false, mensaje:''})
       //const onlyNums = value.toString().replace(/[^0-9]/g, '');
+      if(value === '') {setValueToTrans('', rowSelected);return;}
       const intValue = parseFloat(value);
+
       try {
+         
         if(props.almacenOrigen !== null){
-          if( !tipoPieza.piezas  ){
-            if(intValue <= selected.inventario_general[0].cantidad_existente_maxima){
-               setValueToTrans(intValue)
-              //console.log(intValue)
-              return;
-            } 
-          }else{
+            if( !tipoPieza.piezas  ){
+              if(intValue <= rowSelected.inventario_general[0].cantidad_existente_maxima){
+                setValueToTrans(intValue, rowSelected)
+                //console.log(intValue)
+                return;
+              } 
+            }else{
             
-              if(intValue <= selected.inventario_general[0].cantidad_existente){
-                setValueToTrans(intValue)
+              if(intValue <= rowSelected.inventario_general[0].cantidad_existente){
+                
+                setValueToTrans(intValue, rowSelected)
                 return;
               }
             }
-          }else{
            
-          
-            
+        }else{
+           
+           
+            setValueToTrans(intValue, rowSelected)
             return;
           }
       } catch (error) {
-        
+        console.log(error);
       }
     
   }
@@ -1045,9 +1054,7 @@ export default function EnhancedTable(props) {
                         
                         <TableCell align="left"> {row.datos_generales.tipo_producto}</TableCell>
                         <TableCell align="left"> {row.inventario_general[0].cantidad_existente }  {row.inventario_general[0].unidad_inventario} </TableCell>
-                        
-                        
-                      
+
                       </TableRow>
                     );
                     }else{
@@ -1082,7 +1089,7 @@ export default function EnhancedTable(props) {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                       key={(props.add === true) ? row._id : row.product_selected._id}
+                      key={(props.add === true) ? row._id : row.product_selected._id}
                       selected={isItemSelected}
                       
                     >
@@ -1094,7 +1101,7 @@ export default function EnhancedTable(props) {
                       </TableCell>
                       <TableCell align="left" > {row.product_selected.datos_generales.tipo_producto}</TableCell>
                       {
-                        (row.product_selected.datos_generales.tipo_producto  === "OTROS") ? 
+                        (row.product_selected.datos_generales.tipo_producto  === "OTROS" ) ? 
                           <TableCell align="left"  width={20} > 
                             <TextField
                               size="small"
@@ -1102,8 +1109,8 @@ export default function EnhancedTable(props) {
                               variant="outlined"
                               type="number"
                               InputProps={{ inputProps: { min: 0 } }}
-                              value={row.cantidad_total}
-                              onChange={(value) => onlyNumbers(value.target.value)}
+                              value={row.cantidad_total} 
+                              onChange={(value) => onlyNumbers(value.target.value, row.product_selected)}
                             
                             />
                           </TableCell> 

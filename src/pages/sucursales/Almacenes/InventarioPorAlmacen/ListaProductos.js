@@ -92,7 +92,7 @@ const Rowrow = (rowProps) => {
 				{/* <TableCell style={{textAlign: 'center',}} >{(producto.datos_generales.receta_farmacia) ? "SI" : "NO"}</TableCell> */}
 				{ 
 					arrayCantidades.map((cantidad, index) => {
-						return(<TableCell key={index} style={{backgroundColor:'rgba(255, 253, 150, 0.1)', color:'black',fontSize:17, textAlign:'center',minWidth:60 }}>{cantidad + " " + unidad_minima}</TableCell>)	
+						return(<TableCell key={index} onClick={() => console.log('TABLECELL', index)} style={{backgroundColor:'rgba(255, 253, 150, 0.1)', color:'black',fontSize:17, textAlign:'center',minWidth:60 }}>{cantidad + " " + unidad_minima}</TableCell>)	
 					})	
 				}
 				<TableCell  style={{backgroundColor:'rgba(255, 253, 150, 0.1)', color:'black', fontSize:18,fontWeight:'bold', textAlign:'center' ,minWidth:60}}>{total + " " + unidad_minima }</TableCell>
