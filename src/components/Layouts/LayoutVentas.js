@@ -37,7 +37,7 @@ const LayoutWithProvider = ({ props }) => {
         <NavDataCajaUsers props={props} />
       </Box>
       <Grid container>
-        <Grid lg={9} md={8}>
+        <Grid item lg={9} md={8}>
           <Box height="10vh">
             <NavegacionVentas />
           </Box>
@@ -45,7 +45,7 @@ const LayoutWithProvider = ({ props }) => {
             <VentaIndex />
           </Box>
         </Grid>
-        <Grid lg={3} md={4}>
+        <Grid item lg={3} md={4}>
           <NavegacionVentasLateral />
         </Grid>
       </Grid>

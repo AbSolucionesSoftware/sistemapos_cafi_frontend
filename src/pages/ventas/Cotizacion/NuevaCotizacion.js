@@ -260,7 +260,7 @@ export default function NuevaCotizacion({ setOpen }) {
                     </Box>
                 </div>
                 <Grid container>
-                    <Grid lg={6}>
+                    <Grid item lg={6}>
                         <Box p={1}>
                             <Paper elevation={3} >
                                 <Box p={2} textAlign={'center'}>
@@ -334,7 +334,7 @@ export default function NuevaCotizacion({ setOpen }) {
                             </Paper>
                         </Box>
                     </Grid>
-                    <Grid lg={6}>
+                    <Grid item lg={6}>
                         <Box mr={2} mt={2}>
                             <Box display="flex" flexDirection="row-reverse" width="100%">
                                 <Typography style={{fontSize: 18}}>

@@ -29,6 +29,7 @@ import { useMutation } from "@apollo/client";
 import moment from "moment";
 
 import { VentasContext } from "../../../context/Ventas/ventasContext";
+import { ClienteCtx } from "../../../context/Catalogos/crearClienteCtx";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -38,7 +39,7 @@ export default function CerrarVenta() {
   const classes = useStyles();
   const [cambio, setCambio] = useState(false);
   const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
-  const datosVenta = JSON.parse(localStorage.getItem("DatosVenta"));
+  const datosVenta = JSON.parse(localStorage.getItem("DatosVentas"));
 
   const abrirCajon = () => {
     setCambio(!cambio);
@@ -50,11 +51,11 @@ export default function CerrarVenta() {
   const {
     updateTablaVentas,
     setUpdateTablaVentas,
-    updateClientVenta,
-    setUpdateClientVenta,
+    setDatosVentasActual,
     openBackDrop,
     setOpenBackDrop,
   } = useContext(VentasContext);
+  const { updateClientVenta, setUpdateClientVenta } = useContext(ClienteCtx);
   //States de venta
   const [totalVenta, setTotalVenta] = useState(0);
   const [montoPagado, setMontoPagado] = useState(0);
@@ -86,7 +87,6 @@ export default function CerrarVenta() {
   const [cheque, setCheque] = useState(0);
 
   const [createVenta] = useMutation(CREAR_VENTA);
-
   const handleClickOpen = () => {
     setOpen(!open);
     setRecalcular(!recalcular);
@@ -116,6 +116,15 @@ export default function CerrarVenta() {
     //Actualizar la tabla de ventas
     setUpdateTablaVentas(!updateTablaVentas);
     setUpdateClientVenta(!updateClientVenta);
+    setDatosVentasActual({
+      subTotal: 0,
+      total: 0,
+      impuestos: 0,
+      iva: 0,
+      ieps: 0,
+      descuento: 0,
+      monedero: 0,
+    });
     //Quitar venta a credito
     setCreditoActivo(false);
   };
@@ -456,7 +465,7 @@ export default function CerrarVenta() {
     setVentaOriginal(venta);
     const total = venta === null ? 0 : venta.total;
     const monederoVenta = venta === null ? 0 : venta.monedero;
-    const cliente = venta === null ? {} : venta.cliente;
+    const cliente = venta && venta.cliente ? venta.cliente : {};
     if (cliente.numero_cliente === undefined) {
       setCreditoActivo(true);
     } else {

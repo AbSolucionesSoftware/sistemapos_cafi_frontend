@@ -80,41 +80,14 @@ export default function DepositoRetiroCaja() {
   var dineroEnCaja = 0;
 
   if (!data || !preCorteDeCaja.data) {
-    return null;
+    return <ComponenteSinConexion />;
   } else {
     dineroEnCaja =
       preCorteDeCaja.data.obtenerPreCorteCaja.monto_efectivo_precorte;
   }
 
   if (loading || error || preCorteDeCaja.loading || preCorteDeCaja.error)
-    return (
-      <Button
-        disabled
-        style={{
-          textTransform: "none",
-          height: "100%",
-          width: "100%",
-          pointerEvents: "none",
-          opacity: 0.5,
-        }}
-      >
-        <Box display="flex" flexDirection="column">
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <img
-              src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cash-register2.svg"
-              alt="icono caja"
-              style={{ width: 20 }}
-            />
-          </Box>
-          <Typography variant="body2">
-            <b>Deposito/Retiro</b>
-          </Typography>
-          <Typography variant="caption" style={{ color: "#808080" }}>
-            <b>Alt + D</b>
-          </Typography>
-        </Box>
-      </Button>
-    );
+    return <ComponenteSinConexion />;
 
   window.addEventListener("keydown", Mi_función);
   function Mi_función(e) {
@@ -402,9 +375,9 @@ export default function DepositoRetiroCaja() {
                       <MenuItem value="">
                         <em>Selecciona uno</em>
                       </MenuItem>
-                      {data?.obtenerContabilidad.map((concepto) => {
+                      {data?.obtenerContabilidad.map((concepto, index) => {
                         return (
-                          <MenuItem value={concepto.nombre_servicio}>
+                          <MenuItem key={index} value={concepto.nombre_servicio}>
                             {concepto.nombre_servicio}
                           </MenuItem>
                         );
@@ -444,3 +417,34 @@ export default function DepositoRetiroCaja() {
     </>
   );
 }
+
+const ComponenteSinConexion = () => {
+  return (
+    <Button
+      disabled
+      style={{
+        textTransform: "none",
+        height: "100%",
+        width: "100%",
+        pointerEvents: "none",
+        opacity: 0.5,
+      }}
+    >
+      <Box display="flex" flexDirection="column">
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <img
+            src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cash-register2.svg"
+            alt="icono caja"
+            style={{ width: 20 }}
+          />
+        </Box>
+        <Typography variant="body2">
+          <b>Deposito/Retiro</b>
+        </Typography>
+        <Typography variant="caption" style={{ color: "#808080" }}>
+          <b>Alt + D</b>
+        </Typography>
+      </Box>
+    </Button>
+  );
+};

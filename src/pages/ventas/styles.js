@@ -9,8 +9,8 @@ const useStyles = makeStyles((theme) => ({
         minHeight: '40vh',
     },
     containerImage:{
-        maxWidth: 150,
-        maxHeight: 150,
+        maxWidth: 100,
+        maxHeight: 100,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',

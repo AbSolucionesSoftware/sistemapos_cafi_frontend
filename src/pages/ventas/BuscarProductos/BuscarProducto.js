@@ -1,19 +1,20 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
   DialogActions,
   Dialog,
   DialogContent,
-  Divider,
   Grid,
   Typography,
   Slide,
   InputBase,
   Paper,
   IconButton,
+  DialogTitle,
+  TextField,
+  InputAdornment,
 } from "@material-ui/core";
-import PhotoLibraryIcon from "@material-ui/icons/PhotoLibrary";
 import useStyles from "../styles";
 import { useDebounce } from "use-debounce/lib";
 import { FcSearch } from "react-icons/fc";
@@ -41,7 +42,6 @@ export default function BuscarProducto() {
   const {
     updateTablaVentas,
     setUpdateTablaVentas,
-    DatosVentasActual,
     setDatosVentasActual,
   } = useContext(VentasContext);
 
@@ -71,13 +71,6 @@ export default function BuscarProducto() {
 
   const obtenerDatos = (e) => {
     setSearchProducto({ ...searchProducto, [e.target.name]: e.target.value });
-  };
-
-  const keyUpEvent = async (e) => {
-    if (e.code === "Enter" || e.code === "NumpadEnter") {
-      setSearchProducto({ ...searchProducto, [e.target.name]: e.target.value });
-      refetch();
-    }
   };
 
   const handleClickOpen = () => {
@@ -381,7 +374,7 @@ export default function BuscarProducto() {
   };
 
   return (
-    <>
+    <Fragment>
       <Button
         className={classes.borderBotonChico}
         onClick={handleClickOpen}
@@ -410,74 +403,43 @@ export default function BuscarProducto() {
         onClose={handleClickOpen}
         TransitionComponent={Transition}
       >
+        <DialogTitle>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography variant="h6">Buscar productos</Typography>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleClickOpen}
+              size="large"
+            >
+              <CloseIcon />
+            </Button>
+          </Box>
+        </DialogTitle>
         <DialogContent>
-          <Grid container>
-            <Grid item lg={3}>
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                width="100%"
-              >
-                {productoSeleccionado?.id_producto?.imagenes.length > 0 ? (
-                  <Box className={classes.containerImage}>
-                    <img
-                      alt="Imagen producto"
-                      src={
-                        productoSeleccionado?.id_producto?.imagenes[0]
-                          .url_imagen
-                      }
-                      className={classes.imagen}
-                    />
-                  </Box>
-                ) : (
-                  <Box
-                    p={8}
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                  >
-                    <PhotoLibraryIcon style={{ fontSize: 40 }} />
-                  </Box>
-                )}
-              </Box>
-            </Grid>
-            <Grid item lg={9}>
-              <Box display="flex">
-                <Box display="flex" flexGrow={1}>
-                  <Box>
-                    <Typography variant="h6">Buscar Productos</Typography>
-                  </Box>
-                </Box>
-                <Box>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={handleClickOpen}
-                    size="large"
-                  >
-                    <CloseIcon />
-                  </Button>
-                </Box>
-              </Box>
-              <div className={classes.formInputFlex}>
-                <Box width="50%">
-                  <Paper className={classes.rootBusqueda}>
-                    <InputBase
-                      fullWidth
-                      name="producto"
-                      placeholder="Buscar producto..."
-                      onChange={obtenerDatos}
-                      onKeyUp={keyUpEvent}
-                    />
+          <Box>
+            <TextField
+              variant="outlined"
+              placeholder="Buscar producto"
+              name="producto"
+              size="small"
+              fullWidth
+              onChange={obtenerDatos}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
                     <IconButton>
                       <Search />
                     </IconButton>
-                  </Paper>
-                </Box>
-              </div>
-            </Grid>
-          </Grid>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
           <InformacionProducto productoSeleccionado={productoSeleccionado} />
           <Grid>
             <ListaProductos
@@ -498,6 +460,6 @@ export default function BuscarProducto() {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Fragment>
   );
 }

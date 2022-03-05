@@ -93,7 +93,6 @@ function NavegacionVentas(props) {
         onChange={(event, newValue) => {
           setValue(newValue);
         }}
-        showLabels
         className={classes.navigationTop}
       >
         <ProductoRapidoIndex />

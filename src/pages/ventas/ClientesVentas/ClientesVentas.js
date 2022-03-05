@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import {
   Box,
   Button,
@@ -15,7 +15,6 @@ import {
 import { Search } from "@material-ui/icons";
 import ListaClientes from "../../sucursales/Catalogos/Cliente/ListaClientes";
 import CrearCliente from "../../sucursales/Catalogos/Cliente/CrearCliente";
-import { ClienteProvider } from "../../../context/Catalogos/crearClienteCtx";
 import CloseIcon from "@material-ui/icons/Close";
 import { FcBusinessman } from "react-icons/fc";
 
@@ -64,8 +63,7 @@ export default function ClientesVentas() {
   }
 
   return (
-    <>
-      <ClienteProvider>
+    <Fragment>
         <Button
           style={{
             height: "100%",
@@ -150,7 +148,6 @@ export default function ClientesVentas() {
             </Box>
           </DialogContent>
         </Dialog>
-      </ClienteProvider>
-    </>
+    </Fragment>
   );
 }

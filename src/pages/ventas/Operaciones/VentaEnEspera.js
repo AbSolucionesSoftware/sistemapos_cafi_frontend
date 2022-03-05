@@ -46,6 +46,7 @@ export default function VentaEnEspera() {
         localStorage.setItem("ListaEnEspera", JSON.stringify(data));
         localStorage.removeItem("DatosVentas");
         setUpdateTablaVentas(!updateTablaVentas);
+        handleClickOpen();
       }
     }
   };
@@ -90,7 +91,7 @@ export default function VentaEnEspera() {
         open={open}
         autoHideDuration={3000}
         onClose={handleClickOpen}
-        message="Note archived"
+        message="Compra agregada en espera"
         action={
           <IconButton
             size="small"

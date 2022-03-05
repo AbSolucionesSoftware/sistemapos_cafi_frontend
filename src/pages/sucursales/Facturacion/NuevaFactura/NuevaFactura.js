@@ -15,7 +15,6 @@ import Alert from "@material-ui/lab/Alert";
 
 import RegistroFactura from "./RegistroFactura";
 import DetallesFactura from "./TablaVenta/TablaDetallesFactura";
-import { ClienteProvider } from "../../../../context/Catalogos/crearClienteCtx";
 import {
   FacturacionCtx,
   FacturacionProvider,
@@ -55,36 +54,34 @@ export default function NuevaFactura() {
 
   return (
     <div>
-      <ClienteProvider>
-        <Button fullWidth onClick={() => handleClickOpen()}>
-          <Box display="flex" flexDirection="column">
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              mb={2}
-            >
-              <img
-                src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/factura-2.png"
-                alt="icono Factura"
-                style={{ width: 100 }}
-              />
-            </Box>
-            Generar nuevo CFDI
+      <Button fullWidth onClick={() => handleClickOpen()}>
+        <Box display="flex" flexDirection="column">
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            mb={2}
+          >
+            <img
+              src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/factura-2.png"
+              alt="icono Factura"
+              style={{ width: 100 }}
+            />
           </Box>
-        </Button>
-        <Dialog
-          fullScreen
-          open={open}
-          onClose={() => handleClose()}
-          disableEscapeKeyDown
-          TransitionComponent={Transition}
-        >
-          <FacturacionProvider>
-            <DialogFacturaPrincipal handleClose={handleClose} />
-          </FacturacionProvider>
-        </Dialog>
-      </ClienteProvider>
+          Generar nuevo CFDI
+        </Box>
+      </Button>
+      <Dialog
+        fullScreen
+        open={open}
+        onClose={() => handleClose()}
+        disableEscapeKeyDown
+        TransitionComponent={Transition}
+      >
+        <FacturacionProvider>
+          <DialogFacturaPrincipal handleClose={handleClose} />
+        </FacturacionProvider>
+      </Dialog>
     </div>
   );
 }

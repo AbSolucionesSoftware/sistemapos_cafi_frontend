@@ -13,6 +13,8 @@ import {
 import useStyles from "../styles";
 import { AccesosContext } from "../../../context/Accesos/accesosCtx";
 import CloseIcon from "@material-ui/icons/Close";
+import { VentasContext } from "../../../context/Ventas/ventasContext";
+import { ClienteCtx } from "../../../context/Catalogos/crearClienteCtx";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -21,7 +23,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function CancelarVenta() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
-  const datosVenta = JSON.parse(localStorage.getItem("DatosVenta"));
+  const datosVenta = JSON.parse(localStorage.getItem("DatosVentas"));
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
@@ -32,6 +34,12 @@ export default function CancelarVenta() {
     abrirPanelAcceso,
     setDepartamentos,
   } = useContext(AccesosContext);
+  const {
+    updateTablaVentas,
+    setUpdateTablaVentas,
+    setDatosVentasActual,
+  } = useContext(VentasContext);
+  const { updateClientVenta, setUpdateClientVenta } = useContext(ClienteCtx);
 
   const handleClickOpen = () => {
     if (sesion.accesos.ventas.cancelar_venta.ver === true) {
@@ -59,6 +67,22 @@ export default function CancelarVenta() {
       setReloadCancelarVenta(false);
     }
   }, [reloadCancelarVenta]);
+
+  const cancelarVenta = () => {
+    localStorage.removeItem("DatosVentas");
+    setUpdateTablaVentas(!updateTablaVentas);
+    setUpdateClientVenta(!updateClientVenta);
+    setDatosVentasActual({
+      subTotal: 0,
+      total: 0,
+      impuestos: 0,
+      iva: 0,
+      ieps: 0,
+      descuento: 0,
+      monedero: 0,
+    });
+    setOpen(!open);
+  };
 
   return (
     <>
@@ -134,10 +158,7 @@ export default function CancelarVenta() {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => {
-              localStorage.removeItem("DatosVentas");
-              setOpen(!open);
-            }}
+            onClick={() => cancelarVenta()}
             variant="contained"
             color="primary"
             size="large"
@@ -145,15 +166,6 @@ export default function CancelarVenta() {
           >
             Aceptar
           </Button>
-          {/* <Button 
-                        onClick={() => setOpen(!open)} 
-                        variant="contained" 
-                        color="secondary"
-                        size="large"
-                        autoFocus
-                    >
-                        Cancelar
-                    </Button> */}
         </DialogActions>
       </Dialog>
     </>

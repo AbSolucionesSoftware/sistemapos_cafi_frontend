@@ -7,6 +7,7 @@ import theme from "./config/colors";
 import client from "./config/apollo";
 import { ApolloProvider } from "@apollo/client";
 import { AccesosProvider } from "./context/Accesos/accesosCtx";
+import { ClienteProvider } from "./context/Catalogos/crearClienteCtx";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
       <CssBaseline />
       <ApolloProvider client={client}>
         <AccesosProvider>
+          <ClienteProvider>
             <ThemeProvider theme={theme}>
               <Router>
                 <Switch>
@@ -23,6 +25,7 @@ function App() {
                 </Switch>
               </Router>
             </ThemeProvider>
+          </ClienteProvider>
         </AccesosProvider>
       </ApolloProvider>
     </Box>

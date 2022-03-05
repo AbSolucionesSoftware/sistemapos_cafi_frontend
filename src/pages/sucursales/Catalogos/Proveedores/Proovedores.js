@@ -7,11 +7,18 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
-import { Box, CircularProgress, DialogContent, Grid, IconButton, InputBase, Paper } from "@material-ui/core";
+import {
+  Box,
+  CircularProgress,
+  DialogContent,
+  Grid,
+  IconButton,
+  InputBase,
+  Paper,
+} from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import TablaProovedores from "./ListaProveedores";
 import CrearCliente from "../Cliente/CrearCliente";
-import { ClienteProvider } from "../../../../context/Catalogos/crearClienteCtx";
 import ErrorPage from "../../../../components/ErrorPage";
 import DescripcionCatalogo from "../../../../components/DescripcionCatalogo";
 import { useQuery } from "@apollo/client";
@@ -41,7 +48,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function Proveedores() {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const descripcion = 'En este apartado se registran los proveedores que se podrán seleccionar en la compra de un producto.';
+  const descripcion =
+    "En este apartado se registran los proveedores que se podrán seleccionar en la compra de un producto.";
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -52,48 +60,46 @@ export default function Proveedores() {
 
   return (
     <div>
-      <ClienteProvider>
-        <Button fullWidth onClick={handleClickOpen}>
-          <Box display="flex" flexDirection="column">
-            <Box display="flex" justifyContent="center" alignItems="center">
-              <img
-                src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/distribution.svg"
-                alt="icono numero calzado"
-                className={classes.icon}
-              />
-            </Box>
-            Proveedores
+      <Button fullWidth onClick={handleClickOpen}>
+        <Box display="flex" flexDirection="column">
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <img
+              src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/distribution.svg"
+              alt="icono numero calzado"
+              className={classes.icon}
+            />
           </Box>
-        </Button>
-        <Dialog
-          fullScreen
-          open={open}
-          onClose={handleClose}
-          TransitionComponent={Transition}
-        >
-          <AppBar className={classes.appBar}>
-            <Toolbar>
-              <Typography variant="h6" className={classes.title}>
-                Proveedores
-              </Typography>
-              <Box m={1} display='flex' flexDirection='row'>
-							  <DescripcionCatalogo  texto={descripcion} />
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleClose}
-                  size="large"
-                >
-                  <CloseIcon style={{ fontSize: 30 }} />
-                </Button>
-              </Box>
-            </Toolbar>
-          </AppBar>
-          <DialogContent>
-            <ProveedoresComponent />
-          </DialogContent>
-        </Dialog>
-      </ClienteProvider>
+          Proveedores
+        </Box>
+      </Button>
+      <Dialog
+        fullScreen
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Transition}
+      >
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <Typography variant="h6" className={classes.title}>
+              Proveedores
+            </Typography>
+            <Box m={1} display="flex" flexDirection="row">
+              <DescripcionCatalogo texto={descripcion} />
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleClose}
+                size="large"
+              >
+                <CloseIcon style={{ fontSize: 30 }} />
+              </Button>
+            </Box>
+          </Toolbar>
+        </AppBar>
+        <DialogContent>
+          <ProveedoresComponent />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -154,7 +160,11 @@ const ProveedoresComponent = () => {
           style={{ display: "flex", justifyContent: "flex-end" }}
         >
           {permisosUsuario.accesos.catalogos.provedores.ver === false ? null : (
-            <CrearCliente tipo="PROVEEDOR" accion="registrar" refetch={refetch} />
+            <CrearCliente
+              tipo="PROVEEDOR"
+              accion="registrar"
+              refetch={refetch}
+            />
           )}
         </Grid>
       </Grid>

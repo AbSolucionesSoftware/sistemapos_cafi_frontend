@@ -7,7 +7,6 @@ import {
   TextField,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
-import { ClienteProvider } from "../../../../../context/Catalogos/crearClienteCtx";
 import { AlmacenProvider } from "../../../../../context/Almacenes/crearAlmacen";
 import { ComprasContext } from "../../../../../context/Compras/comprasContext";
 import RegistroProvedor from "../../../Catalogos/Cliente/CrearCliente";
@@ -28,10 +27,7 @@ import {
   initial_state_unidadVentaSecundaria,
 } from "../../../../../context/Catalogos/initialStatesProducto";
 
-export default function DatosProveedorAlmacen({
-  getProductos,
-  status,
-}) {
+export default function DatosProveedorAlmacen({ getProductos, status }) {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const {
     datosCompra,
@@ -204,15 +200,13 @@ export default function DatosProveedorAlmacen({
                   ? datosCompra.proveedor
                   : null
               }
-            /> 
-            <ClienteProvider>
-              <RegistroProvedor
-                accion="registrar"
-                tipo="PROVEEDOR"
-                refetch={refetch}
-                fromCompras={true}
-              />
-            </ClienteProvider>
+            />
+            <RegistroProvedor
+              accion="registrar"
+              tipo="PROVEEDOR"
+              refetch={refetch}
+              fromCompras={true}
+            />
           </Box>
         </Grid>
         <Grid item xs={12} md={4}>

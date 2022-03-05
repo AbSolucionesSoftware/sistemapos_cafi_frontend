@@ -221,7 +221,7 @@ export default function AbrirTurno({
     }
   };
 
-  if (cajas.loading)
+  /* if (cajas.loading)
     return (
       <BackdropComponent loading={loading} />
       // <Box
@@ -233,7 +233,7 @@ export default function AbrirTurno({
       // >
       // 	<CircularProgress />
       // </Box>
-    );
+    ); */
 
   return (
     <div>
@@ -348,8 +348,8 @@ export default function AbrirTurno({
             variant="contained"
             color="primary"
             size="large"
-            startIcon={loading ? <CircularProgress color="inherit" size={20} /> : null}
-            disabled={loading}
+            startIcon={loading || cajas.loading ? <CircularProgress color="inherit" size={20} /> : null}
+            disabled={loading || cajas.loading}
           >
             Guardar
           </Button>

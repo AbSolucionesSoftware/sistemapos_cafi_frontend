@@ -24,7 +24,6 @@ import { useQuery } from "@apollo/client";
 import { OBTENER_CLIENTES } from "../../../../gql/Catalogos/clientes";
 import { FacturacionCtx } from "../../../../context/Facturacion/facturacionCtx";
 import CrearCliente from "../../Catalogos/Cliente/CrearCliente";
-import { ClienteProvider } from "../../../../context/Catalogos/crearClienteCtx";
 import { Alert } from "@material-ui/lab";
 import { useDebounce } from "use-debounce";
 
@@ -108,54 +107,52 @@ const BuscadorClienteComponent = ({ handleClose }) => {
 
   return (
     <Fragment>
-      <ClienteProvider>
-        <Dialog
-          open={openAlertRfc}
-          TransitionComponent={Transition}
-          keepMounted
-          onClose={(_, reason) => {
-            if (reason !== "backdropClick") {
-              handleCloseAlertRFC();
-            }
-          }}
-        >
-          <DialogContent>
-            <Alert severity="info">
-              Deber registrar un RFC y RAZON SOCIAL a este cliente.
-            </Alert>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => handleCloseAlertRFC()} color="primary">
-              Aceptar
-            </Button>
-          </DialogActions>
-        </Dialog>
-        <Box mb={2} display="flex" alignItems="center">
-          <TextField
-            fullWidth
-            size="small"
-            placeholder="Buscar por: Numero de cliente, clave o nombre"
-            variant="outlined"
-            onChange={(e) => setFiltro(e.target.value)}
-            value={filtro}
-          />
-          <CrearCliente
-            tipo="CLIENTE"
-            accion="registrar"
-            refetch={resultado_clientes.refetch}
-          />
-        </Box>
-        <Box my={1}>
+      <Dialog
+        open={openAlertRfc}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={(_, reason) => {
+          if (reason !== "backdropClick") {
+            handleCloseAlertRFC();
+          }
+        }}
+      >
+        <DialogContent>
           <Alert severity="info">
-            Para seleccionar un cliente haz un doble click!
+            Deber registrar un RFC y RAZON SOCIAL a este cliente.
           </Alert>
-        </Box>
-        <RenderListClientes
-          handleClose={handleClose}
-          resultado_clientes={resultado_clientes}
-          openAlertRFC={openAlertRFC}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleCloseAlertRFC()} color="primary">
+            Aceptar
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Box mb={2} display="flex" alignItems="center">
+        <TextField
+          fullWidth
+          size="small"
+          placeholder="Buscar por: Numero de cliente, clave o nombre"
+          variant="outlined"
+          onChange={(e) => setFiltro(e.target.value)}
+          value={filtro}
         />
-      </ClienteProvider>
+        <CrearCliente
+          tipo="CLIENTE"
+          accion="registrar"
+          refetch={resultado_clientes.refetch}
+        />
+      </Box>
+      <Box my={1}>
+        <Alert severity="info">
+          Para seleccionar un cliente haz un doble click!
+        </Alert>
+      </Box>
+      <RenderListClientes
+        handleClose={handleClose}
+        resultado_clientes={resultado_clientes}
+        openAlertRFC={openAlertRFC}
+      />
     </Fragment>
   );
 };

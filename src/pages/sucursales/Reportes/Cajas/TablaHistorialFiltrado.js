@@ -116,14 +116,14 @@ function RowsRender({datos}) {
 			>
 				<DialogContent>
 					<Grid container>
-						<Grid lg={12} xs={12}>
+						<Grid item lg={12} xs={12}>
 							<Box textAlign="center" p={2}>
 								<Typography variant="h6">
 									Información de movimiento
 								</Typography>
 							</Box>
 						</Grid>
-						<Grid lg={12} xs={12}>
+						<Grid item lg={12} xs={12}>
 							<Box display="flex" textAlign="left" p={1}>
 								<Typography>
 									<b>Fecha Movimiento: </b> {moment(datos.fecha_movimiento.completa).format('YYYY-MM-DD')}

@@ -123,14 +123,14 @@ function RowsRender({turno}) {
 			>
 				<DialogContent>
 					<Grid container>
-						<Grid lg={12} xs={12}>
+						<Grid item lg={12} xs={12}>
 							<Box textAlign="center" p={2}>
 								<Typography variant="h6">
 									Información del turno
 								</Typography>
 							</Box>
 						</Grid>
-						<Grid lg={6} xs={12}>
+						<Grid item lg={6} xs={12}>
 							<Box p={1}>
 								<Typography>
 									<b>Usuario</b>: {turno.usuario_en_turno.nombre}
@@ -175,7 +175,7 @@ function RowsRender({turno}) {
 								</Typography>
 							</Box>
 						</Grid>
-						<Grid lg={6} xs={12}>
+						<Grid item lg={6} xs={12}>
 							<Paper className={classes.root}>
 								<TableContainer className={classes.container}>
 									<Table stickyHeader size="small" aria-label="a dense table">

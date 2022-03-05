@@ -12,7 +12,6 @@ import { Box, Grid, IconButton, InputBase, Paper } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import ListaClientes from "./ListaClientes";
 import CrearCliente from "./CrearCliente";
-import { ClienteProvider } from "../../../../context/Catalogos/crearClienteCtx";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -57,72 +56,70 @@ export default function Cliente() {
 
   return (
     <div>
-      <ClienteProvider>
-        <Button onClick={handleClickOpen}>
-          <Box display="flex" flexDirection="column">
-            <Box display="flex" justifyContent="center" alignItems="center">
-              <FcManager className={classes.icon} />
-            </Box>
-            Cliente
+      <Button onClick={handleClickOpen}>
+        <Box display="flex" flexDirection="column">
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <FcManager className={classes.icon} />
           </Box>
-        </Button>
-        <Dialog
-          fullScreen
-          open={open}
-          onClose={handleClose}
-          TransitionComponent={Transition}
-        >
-          <AppBar className={classes.appBar}>
-            <Toolbar>
-              <Typography variant="h6" className={classes.title}>
-                Cliente
-              </Typography>
-              <Box m={1}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleClose}
-                  size="large"
-                >
-                  <CloseIcon style={{ fontSize: 30 }} />
-                </Button>
-              </Box>
-            </Toolbar>
-          </AppBar>
-          <Box mx={4} my={3}>
-            <Grid container spacing={2}>
-              <Grid item md={6} xs={8}>
-                <Paper className={classes.root}>
-                  <InputBase
-                    fullWidth
-                    placeholder="Buscar cliente..."
-                    onChange={(e) => setValues(e.target.value)}
-                    onKeyPress={pressEnter}
-                    value={values}
-                  />
-                  <IconButton onClick={() => setValues(values)}>
-                    <Search />
-                  </IconButton>
-                </Paper>
-              </Grid>
-              <Grid
-                item
-                md={6}
-                xs={4}
-                style={{ display: "flex", justifyContent: "flex-end" }}
+          Cliente
+        </Box>
+      </Button>
+      <Dialog
+        fullScreen
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Transition}
+      >
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <Typography variant="h6" className={classes.title}>
+              Cliente
+            </Typography>
+            <Box m={1}>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleClose}
+                size="large"
               >
-                {permisosUsuario.accesos.catalogos.clientes.agregar ===
-                false ? null : (
-                  <CrearCliente tipo="CLIENTE" accion="registrar" />
-                )}
-              </Grid>
+                <CloseIcon style={{ fontSize: 30 }} />
+              </Button>
+            </Box>
+          </Toolbar>
+        </AppBar>
+        <Box mx={4} my={3}>
+          <Grid container spacing={2}>
+            <Grid item md={6} xs={8}>
+              <Paper className={classes.root}>
+                <InputBase
+                  fullWidth
+                  placeholder="Buscar cliente..."
+                  onChange={(e) => setValues(e.target.value)}
+                  onKeyPress={pressEnter}
+                  value={values}
+                />
+                <IconButton onClick={() => setValues(values)}>
+                  <Search />
+                </IconButton>
+              </Paper>
             </Grid>
-          </Box>
-          <Box mx={4}>
-            <ListaClientes tipo="CLIENTE" filtro={values} />
-          </Box>
-        </Dialog>
-      </ClienteProvider>
+            <Grid
+              item
+              md={6}
+              xs={4}
+              style={{ display: "flex", justifyContent: "flex-end" }}
+            >
+              {permisosUsuario.accesos.catalogos.clientes.agregar ===
+              false ? null : (
+                <CrearCliente tipo="CLIENTE" accion="registrar" />
+              )}
+            </Grid>
+          </Grid>
+        </Box>
+        <Box mx={4}>
+          <ListaClientes tipo="CLIENTE" filtro={values} />
+        </Box>
+      </Dialog>
     </div>
   );
 }
