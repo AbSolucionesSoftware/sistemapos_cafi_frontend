@@ -5,7 +5,7 @@ import {
 import { createUploadLink } from "apollo-upload-client";
 
 const httpLink = createUploadLink({
-  uri: "http://localhost:4000/",
+  uri: process.env.REACT_APP_ENDPOINT,
 });
 
 const client = new ApolloClient({
