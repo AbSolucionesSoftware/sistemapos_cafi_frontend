@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useEffect} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -34,7 +34,10 @@ export default function ListaProductos({
   loading,
 }) {
   const classes = useStyles();
-
+   useEffect(() => {
+     console.log('PRODUCTOS BUSQUEDA',productosBusqueda)
+   }, [productosBusqueda])
+   
   if (loading)
     return (
       <Box

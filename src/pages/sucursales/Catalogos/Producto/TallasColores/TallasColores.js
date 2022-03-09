@@ -315,6 +315,8 @@ const RenderTallas = ({
         );
         presentacion_temp.push({
           _id: "",
+          unidad: "Pz",
+          codigo_unidad: "H87",
           existencia: false,
           codigo_barras: GenCodigoBarras(),
           nombre_comercial: datos_generales.nombre_comercial,
@@ -363,6 +365,8 @@ const RenderTallas = ({
         } else {
           presentacion_temp.push({
             _id: "",
+            unidad: "Pz",
+            codigo_unidad: "H87",
             existencia: false,
             codigo_barras: GenCodigoBarras(),
             nombre_comercial: datos_generales.nombre_comercial,
@@ -395,6 +399,8 @@ const RenderTallas = ({
         for (let k = 0; k < medidas_seleccionadas_temp.length; k++) {
           presentacion_temp.push({
             _id: "",
+            unidad: "Pz",
+            codigo_unidad: "H87",
             existencia: array_medidad_finales[i].existencia,
             codigo_barras: array_medidad_finales[i].codigo_barras,
             nombre_comercial: array_medidad_finales[i].nombre_comercial,
@@ -437,6 +443,8 @@ const RenderTallas = ({
           if (!presentacion_existente.length) {
             presentacion_temp.push({
               _id: "",
+              unidad: "Pz",
+              codigo_unidad: "H87",
               existencia: false,
               codigo_barras: GenCodigoBarras(),
               nombre_comercial: datos_generales.nombre_comercial,
@@ -475,6 +483,8 @@ const RenderTallas = ({
           const objeto_presentaciones_final = array_medidad_finales[x];
           presentacion_temp.push({
             _id: objeto_presentaciones_final._id,
+            unidad: "Pz",
+            codigo_unidad: "H87",
             existencia: objeto_presentaciones_final.existencia,
             codigo_barras: objeto_presentaciones_final.codigo_barras,
             nombre_comercial: objeto_presentaciones_final.nombre_comercial,
@@ -601,6 +611,8 @@ const Colores = ({
 
         presentacion_temp.push({
           _id: "",
+          unidad: "Pz",
+          codigo_unidad: "H87",
           existencia: false,
           codigo_barras: GenCodigoBarras(),
           nombre_comercial: datos_generales.nombre_comercial,
@@ -649,6 +661,8 @@ const Colores = ({
         } else {
           presentacion_temp.push({
             _id: "",
+            unidad: "Pz",
+            codigo_unidad: "H87",
             existencia: false,
             codigo_barras: GenCodigoBarras(),
             nombre_comercial: datos_generales.nombre_comercial,
@@ -681,6 +695,8 @@ const Colores = ({
         for (let k = 0; k < coloresSeleccionados.length; k++) {
           presentacion_temp.push({
             _id: "",
+            unidad: "Pz",
+            codigo_unidad: "H87",
             existencia: array_medidad_finales[i].existencia,
             codigo_barras: array_medidad_finales[i].codigo_barras,
             nombre_comercial: array_medidad_finales[i].nombre_comercial,
@@ -723,6 +739,8 @@ const Colores = ({
           if (!presentacion_existente.length) {
             presentacion_temp.push({
               _id: "",
+              unidad: "Pz",
+              codigo_unidad: "H87",
               existencia: false,
               codigo_barras: GenCodigoBarras(),
               nombre_comercial: datos_generales.nombre_comercial,
@@ -761,6 +779,8 @@ const Colores = ({
           const objeto_presentaciones_final = array_medidad_finales[x];
           presentacion_temp.push({
             _id: objeto_presentaciones_final._id,
+            unidad: "Pz",
+            codigo_unidad: "H87",
             existencia: objeto_presentaciones_final.existencia,
             codigo_barras: objeto_presentaciones_final.codigo_barras,
             nombre_comercial: objeto_presentaciones_final.nombre_comercial,

@@ -1,11 +1,13 @@
 import React, { Fragment, useContext } from "react";
 import { Box, InputAdornment, TextField } from "@material-ui/core";
 import { ComprasContext } from "../../../../../context/Compras/comprasContext";
+import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
 
 export default function DescuentosInputs() {
   const { datosProducto, setDatosProducto, productoOriginal } = useContext(
     ComprasContext
   );
+  const { presentaciones } = useContext(RegProductoContext);
   const { iva, ieps, precio_de_compra } = productoOriginal.precios;
   const { precio_sin_impuesto, precio_con_impuesto } = precio_de_compra;
   const iva_precio_actual = precio_de_compra.iva;
@@ -14,22 +16,43 @@ export default function DescuentosInputs() {
   const { costo } = datosProducto;
   const PCSI_actual = costo - impuesto_actual;
 
+  let cantidad_total = 0;
+  let cantida_suma = 0;
+  if (presentaciones.length > 0) {
+    presentaciones.forEach((presentacion) => {
+      const { cantidad_nueva } = presentacion;
+      let nueva = cantidad_nueva ? cantidad_nueva : 0;
+      cantida_suma += nueva;
+    });
+    if (isNaN(cantida_suma)) return;
+    cantidad_total = cantida_suma;
+  } else {
+    cantidad_total = datosProducto.cantidad;
+  }
+
+  let PCSI_ACTUAL_TOTAL = PCSI_actual * cantidad_total;
+
   const obtenerPorcentaje = (value) => {
     if (!value || parseFloat(value) === 0) {
       setDatosProducto({
         ...datosProducto,
-        impuestos_descuento: impuesto_actual,
+        impuestos_descuento: impuesto_actual * cantidad_total,
         descuento_porcentaje: "",
         descuento_precio: "",
-        subtotal_descuento: precio_sin_impuesto,
-        total_descuento: precio_con_impuesto,
+        subtotal_descuento: precio_sin_impuesto * cantidad_total,
+        total_descuento: precio_con_impuesto * cantidad_total,
+        iva_total: iva_precio_actual * cantidad_total,
+        ieps_total: ieps_precio_actual * cantidad_total,
       });
       return;
     }
     let porcentaje = parseFloat(value);
-    let cantidad_descontada = Math.round((PCSI_actual * porcentaje) / 100);
+    let cantidad_descontada = Math.round(
+      (PCSI_ACTUAL_TOTAL * porcentaje) / 100
+    );
 
-    let subtotal_con_descuento = PCSI_actual - cantidad_descontada;
+    let subtotal_con_descuento = PCSI_ACTUAL_TOTAL - cantidad_descontada;
+
     const iva_precio =
       parseFloat(subtotal_con_descuento) *
       parseFloat(iva < 10 ? ".0" + iva : "." + iva);
@@ -47,6 +70,8 @@ export default function DescuentosInputs() {
       descuento_precio: parseFloat(cantidad_descontada.toFixed(2)),
       subtotal_descuento: parseFloat(subtotal_con_descuento.toFixed(2)),
       total_descuento: parseFloat(total.toFixed(2)),
+      iva_total: parseFloat(iva_precio.toFixed(2)),
+      ieps_total: parseFloat(ieps_precio.toFixed(2)),
     });
   };
 
@@ -54,17 +79,19 @@ export default function DescuentosInputs() {
     if (!value || parseFloat(value) === 0) {
       setDatosProducto({
         ...datosProducto,
-        impuestos_descuento: impuesto_actual,
+        impuestos_descuento: impuesto_actual * cantidad_total,
         descuento_porcentaje: "",
         descuento_precio: "",
-        subtotal_descuento: precio_sin_impuesto,
-        total_descuento: precio_con_impuesto,
+        subtotal_descuento: precio_sin_impuesto * cantidad_total,
+        total_descuento: precio_con_impuesto * cantidad_total,
+        iva_total: iva_precio_actual * cantidad_total,
+        ieps_total: ieps_precio_actual * cantidad_total,
       });
       return;
     }
     let cantidad_descontada = parseFloat(value);
-    let porcentaje = Math.round((cantidad_descontada / PCSI_actual) * 100);
-    let subtotal_con_descuento = PCSI_actual - cantidad_descontada;
+    let porcentaje = Math.round((cantidad_descontada / PCSI_ACTUAL_TOTAL) * 100);
+    let subtotal_con_descuento = PCSI_ACTUAL_TOTAL - cantidad_descontada;
     const iva_precio =
       parseFloat(subtotal_con_descuento) *
       parseFloat(iva < 10 ? ".0" + iva : "." + iva);
@@ -81,12 +108,14 @@ export default function DescuentosInputs() {
       descuento_precio: parseFloat(cantidad_descontada.toFixed(2)),
       subtotal_descuento: parseFloat(subtotal_con_descuento.toFixed(2)),
       total_descuento: parseFloat(total.toFixed(2)),
+      iva_total: parseFloat(iva_precio.toFixed(2)),
+      ieps_total: parseFloat(ieps_precio.toFixed(2)),
     });
   };
 
   return (
     <Fragment>
-      <Box display="flex" width={160}>
+      <Box display="flex" width={200}>
         <TextField
           variant="outlined"
           size="small"

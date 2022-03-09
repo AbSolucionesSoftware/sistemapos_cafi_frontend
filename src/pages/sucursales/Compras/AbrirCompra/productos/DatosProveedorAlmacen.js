@@ -228,7 +228,7 @@ export default function DatosProveedorAlmacen({ getProductos, status }) {
               }
             />
             <AlmacenProvider>
-              <RegistroAlmacen accion="registrar" refetch={refetch} />
+              <RegistroAlmacen accion="registrar" fromEmergent={true} refetch={refetch} />
             </AlmacenProvider>
           </Box>
         </Grid>

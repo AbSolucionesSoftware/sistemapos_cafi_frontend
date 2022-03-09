@@ -9,10 +9,10 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import ErrorPage from '../../../../components/ErrorPage'
-
-import { useQuery } from '@apollo/client';
-import { OBTENER_ALMACENES } from '../../../../gql/Almacenes/Almacen';
+//import ErrorPage from '../../../../components/ErrorPage';
+import DialogMedidasAlmacenes from './DialogMedidasAlmacenes';
+//import { useQuery } from '@apollo/client';
+//import { OBTENER_ALMACENES } from '../../../../gql/Almacenes/Almacen';
 
 const useStyles = makeStyles({
 	root: {
@@ -34,8 +34,8 @@ const Rowrow = (rowProps) => {
 					border: { bottom: { style: 'thin', color: { rgb: '000000' } } 
 				}}});
 	const [total , setTotal] = useState(0)
-	const [unidad_minima , setUnidad_Minima] = useState('')
-		
+	const [unidad_minima , setUnidad_Minima] = useState('');
+	
 		
 		useEffect(() => {
 			let tot= 0;
@@ -81,8 +81,9 @@ const Rowrow = (rowProps) => {
 		
 		}, [dataExcelHere])
 		
+
 		return(
-			<TableRow hover role="checkbox" tabIndex={-1} key={rowProps.producto._id} >
+			<TableRow hover role="checkbox" tabIndex={-1} key={rowProps.producto._id} onClick={() => rowProps.toShowMedidasAlmacen(rowProps.producto)}>
 				<TableCell style={{minWidth:60}} >{rowProps.producto.datos_generales.codigo_barras}</TableCell>
 						
 			
@@ -102,7 +103,7 @@ const Rowrow = (rowProps) => {
 	}
 export default function ListaAlmacenes(props) {
 	const classes = useStyles();
-	
+	const [medidasAlmacen , setMedidasAlmacen] = useState({open: false, producto: {}})	
 	
 	//const sesion = JSON.parse(localStorage.getItem('sesionCafi'));	
 	// const almacenesColumnas = [];
@@ -147,6 +148,18 @@ export default function ListaAlmacenes(props) {
 	} */
 
 	
+	const toShowMedidasAlmacen = (producto) =>{
+		try {
+			console.log(producto);
+			let tipo_producto = producto.datos_generales.tipo_producto;
+			if(tipo_producto !== "OTROS"){
+				setMedidasAlmacen({open:true, producto});
+			}
+			
+		} catch (error) {
+			console.log(error)
+		}
+	};
 	return (
 		<div>
 		
@@ -168,7 +181,7 @@ export default function ListaAlmacenes(props) {
 						    let key =  index;
 							
 							return (
-								<Rowrow producto={row} index={key} key={index} productosLength={props.productos.length} dataExcel ={props.dataExcel} setDataExcel={props.setDataExcel} obtenerAlmacenes={props.obtenerAlmacenes} />
+								<Rowrow producto={row} index={key} key={index} productosLength={props.productos.length} dataExcel ={props.dataExcel} setDataExcel={props.setDataExcel} obtenerAlmacenes={props.obtenerAlmacenes} toShowMedidasAlmacen={toShowMedidasAlmacen} />
 							);
 						})}
 					</TableBody>
@@ -186,7 +199,7 @@ export default function ListaAlmacenes(props) {
 			/> */}
 			
 		</Paper>
-		
+		<DialogMedidasAlmacenes medidasAlmacen={medidasAlmacen} setMedidasAlmacen={setMedidasAlmacen} obtenerAlmacenes={props.obtenerAlmacenes} />
 		</div>
 	);
 }
