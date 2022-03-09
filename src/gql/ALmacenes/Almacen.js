@@ -97,7 +97,51 @@ export const OBTENER_PRODUCTOS_ALMACEN = gql`
           codigo_unidad
         }
       }
-  
+      medidas_producto {
+        _id
+        cantidad
+        almacen
+        descuento_activo
+        descuento {
+          cantidad_unidad
+          numero_precio
+          unidad_maxima
+          precio_general
+          precio_neto
+          precio_venta
+          iva_precio
+          ieps_precio
+          utilidad
+          porciento
+          dinero_descontado
+        }
+        codigo_barras
+        color {
+          _id
+          nombre
+          hex
+        }
+        existencia
+        medida {
+          _id
+          talla
+          tipo
+        }
+        nombre_comercial
+        precio
+        precio_unidad {
+          numero_precio
+          precio_neto
+          precio_venta
+          iva_precio
+          ieps_precio
+          unidad_mayoreo
+          utilidad
+          precio_general
+          cantidad_unidad
+          unidad_maxima
+        }
+      }
       existencia_almacenes {
         _id {
           producto
