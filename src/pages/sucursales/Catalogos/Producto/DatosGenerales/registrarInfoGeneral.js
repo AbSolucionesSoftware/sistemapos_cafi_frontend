@@ -100,29 +100,56 @@ export default function RegistroInfoGenerales({
   } = obtenerConsultasProducto;
 
   const obtenerCampos = (e) => {
-    if (e.target.name === "monedero_electronico") {
-      if (!e.target.value) {
+    const { name, value } = e.target;
+    if (name === "monedero_electronico") {
+      if (!value) {
         setPrecios({
           ...precios,
-          [e.target.name]: "",
+          [name]: "",
         });
         return;
       }
       setPrecios({
         ...precios,
-        [e.target.name]: parseFloat(e.target.value),
+        [name]: parseFloat(value),
       });
       return;
     }
-    if (e.target.name === "codigo_barras") {
+    if (name === "codigo_barras") {
       setUnidadVentaXDefecto({
         ...unidadVentaXDefecto,
-        codigo_barras: e.target.value,
+        codigo_barras: value,
+      });
+    }
+    if(name === "tipo_producto" && value !== "OTROS"){
+      setPrecios({
+        ...precios,
+        granel: false,
+        inventario: {
+          ...precios.inventario,
+          unidad_de_inventario: "Pz",
+          codigo_unidad: "H87",
+        },
+        unidad_de_compra: {
+          ...precios.unidad_de_compra,
+          unidad: "Pz",
+          codigo_unidad: "H87",
+        },
+      });
+      setUnidadVentaXDefecto({
+        ...unidadVentaXDefecto,
+        unidad: "Pz",
+        codigo_unidad: "H87",
+      });
+      setUnidadVentaSecundaria({
+        ...unidadVentaSecundaria,
+        unidad: "Caja",
+        codigo_unidad: "XBX",
       });
     }
     setDatosGenerales({
       ...datos_generales,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
   };
 
@@ -134,22 +161,23 @@ export default function RegistroInfoGenerales({
   };
 
   const obtenerChecks = (e) => {
-    if (e.target.name === "monedero" && e.target.checked) {
+    const { name, checked } = e.target;
+    if (name === "monedero" && checked) {
       setPrecios({
         ...precios,
         monedero_electronico: 1,
-        monedero: e.target.checked,
+        monedero: checked,
       });
       return;
     }
     /* setPrecios({
 			...precios,
-			[e.target.name]: e.target.checked
+			[name]: checked
 		}); */
-    if (e.target.name === "granel" && e.target.checked) {
+    if (name === "granel" && checked) {
       setPrecios({
         ...precios,
-        [e.target.name]: e.target.checked,
+        [name]: checked,
         inventario: {
           ...precios.inventario,
           unidad_de_inventario: "Kg",
@@ -174,7 +202,7 @@ export default function RegistroInfoGenerales({
     } else {
       setPrecios({
         ...precios,
-        [e.target.name]: e.target.checked,
+        [name]: checked,
         inventario: {
           ...precios.inventario,
           unidad_de_inventario: "Pz",
@@ -440,6 +468,7 @@ export default function RegistroInfoGenerales({
                           checked={precios.granel ? precios.granel : false}
                           onChange={obtenerChecks}
                           name="granel"
+                          disabled={datos_generales.tipo_producto !== "OTROS"}
                         />
                       }
                       label="Vender a granel"

@@ -99,8 +99,8 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     preciosVenta.iva_precio = iva_precio;
     preciosVenta.ieps_precio = ieps_precio;
 
-    let PCCI = precios.precio_de_compra.precio_con_impuesto;
-    if (precio_neto < PCCI && precio_neto !== 0) {
+    let PUCCI = precios.unidad_de_compra.precio_unitario_con_impuesto;
+    if (precio_neto < PUCCI && precio_neto !== 0) {
       setError(true);
     } else {
       setError(false);
@@ -200,7 +200,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
 
   const obtenerPrecioNeto = (value) => {
     if (!value) {
-      console.log(value);
+      /* console.log(value); */
       preciosVenta.precio_neto = "";
       newPreciosP.splice(index, 1, preciosVenta);
       setPreciosP(newPreciosP);
@@ -235,8 +235,8 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     preciosVenta.ieps_precio = ieps_precio;
     preciosVenta.utilidad = parseFloat(utilidad_base.toFixed(2));
 
-    let PCCI = precios.precio_de_compra.precio_con_impuesto;
-    if (precio_neto < PCCI && precio_neto !== 0) {
+    let PUCCI = precios.unidad_de_compra.precio_unitario_con_impuesto;
+    if (precio_neto < PUCCI && precio_neto !== 0) {
       setError(true);
     } else {
       setError(false);

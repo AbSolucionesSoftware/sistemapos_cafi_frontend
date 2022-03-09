@@ -128,7 +128,9 @@ export default function PreciosDeCompra() {
                   />
                 </TableCell>
               </TableRow>
-              <UnidadesVentaSecundaria />
+              {datos_generales.tipo_producto !== "OTROS" ? null : (
+                <UnidadesVentaSecundaria />
+              )}
             </TableBody>
           </Table>
         </TableContainer>
