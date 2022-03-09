@@ -27,13 +27,7 @@ const useStyles = makeStyles({
 
 export default function MedidasAlmacenes(props) {
 	const classes = useStyles();
-	useEffect(() => {
-		try {
-			console.log(props.medidasAlmacen)
-		} catch (error) {
-			
-		}
-	}, [props])
+
 
 		return (
 		<div className={classes.root}>
@@ -83,7 +77,7 @@ const Row = ({item, almacenSeleccionado}) =>{
 	const classes = useStyles();
 	try {
 		let ItemReturn= <div/>;
-		console.log(item, almacenSeleccionado);
+		
 		if(almacenSeleccionado._id  === item.almacen){
 			ItemReturn = 
 				<TableRow>

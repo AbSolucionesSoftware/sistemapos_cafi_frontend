@@ -39,13 +39,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function DialogMedidasAlmacenes(props) {
 	const classes = useStyles();
 	const [almacen, setAlmacen] = useState({});
-	useEffect(() => {
-		try {
-			console.log(props.obtenerAlmacenes)
-		} catch (error) {
-			
-		}
-	}, [props])
+
 
 	const handleChangeAlmacen = (value) =>{
 		setAlmacen(value);
