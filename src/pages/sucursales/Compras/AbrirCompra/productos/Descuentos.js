@@ -37,8 +37,8 @@ export default function DescuentosInputs() {
       setDatosProducto({
         ...datosProducto,
         impuestos_descuento: impuesto_actual * cantidad_total,
-        descuento_porcentaje: "",
-        descuento_precio: "",
+        descuento_porcentaje: 0,
+        descuento_precio: 0,
         subtotal_descuento: precio_sin_impuesto * cantidad_total,
         total_descuento: precio_con_impuesto * cantidad_total,
         iva_total: iva_precio_actual * cantidad_total,
@@ -80,8 +80,8 @@ export default function DescuentosInputs() {
       setDatosProducto({
         ...datosProducto,
         impuestos_descuento: impuesto_actual * cantidad_total,
-        descuento_porcentaje: "",
-        descuento_precio: "",
+        descuento_porcentaje: 0,
+        descuento_precio: 0,
         subtotal_descuento: precio_sin_impuesto * cantidad_total,
         total_descuento: precio_con_impuesto * cantidad_total,
         iva_total: iva_precio_actual * cantidad_total,
