@@ -154,7 +154,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     productos_con_descuento
   ) => {
     let datos = { ...datosCompra };
-    let copy_datosProducto = { ...productosCompra };
+    let copy_datosProducto = [ ...productosCompra ];
     let productos = copy_datosProducto;
     if (status === "enEspera") {
       productos = copy_datosProducto.map((res) => {
@@ -206,7 +206,6 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
           datos.total = descuento_compra.total;
           datos.descuento = descuento;
         }
-        /* console.log(datos); */
         const result = await crearCompra({
           variables: {
             input: datos,
