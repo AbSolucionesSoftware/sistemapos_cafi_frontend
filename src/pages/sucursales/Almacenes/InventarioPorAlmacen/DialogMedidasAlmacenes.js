@@ -1,10 +1,7 @@
-import React, {useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {Close} from '@material-ui/icons';
-import { AppBar, Toolbar, Typography, IconButton, Slide,
-	Button, Box, Dialog, Grid, DialogActions, TextField,Divider,
-	InputLabel, Select, Input, MenuItem, FormControl, useTheme, OutlinedInput, InputAdornment,
-	Stepper, Step, StepLabel, DialogTitle } from '@material-ui/core';
+import { Slide,Button, Box, Dialog, InputLabel, Select, Input, MenuItem, FormControl, DialogTitle } from '@material-ui/core';
 import MedidasAlmacens from './MedidasAlmacenes'
 
 	const ITEM_HEIGHT = 200;
@@ -38,22 +35,28 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 export default function DialogMedidasAlmacenes(props) {
 	const classes = useStyles();
-	const [almacen, setAlmacen] = useState({});
+	const [almacen, setAlmacen] = useState(props.obtenerAlmacenes[0]);
 
 
-	const handleChangeAlmacen = (value) =>{
-		setAlmacen(value);
+	const handleChangeAlmacen = (e) =>{
+		try {
+		
+			setAlmacen(e.target.value);
+		} catch (error) {
+			
+		}
+		
 	}
 		return (
-			<Dialog open={props.medidasAlmacen.open} TransitionComponent={Transition} fullWidth maxWidth={"md"} >
-			
-				<Box mx={3} display='flex' justifyContent="flex-end" width="98%">
-					<Box m={1}  >
-						<Button variant="contained" color="secondary" onClick={() => {props.setMedidasAlmacen({open:false, producto:{}}); setAlmacen({});}} size="large">
-							<Close style={{ fontSize: 30}}/>
-						</Button>
-					</Box>
+			<Dialog open={props.medidasAlmacen.open} TransitionComponent={Transition} fullWidth maxWidth={"sm"} >
+				<DialogTitle>
+				<Box display='flex' justifyContent="flex-end" width="98%">
+					
+					<Button variant="contained" color="secondary" onClick={() => {props.setMedidasAlmacen({open:false, producto:{}}); setAlmacen({});}} size="large">
+						<Close style={{ fontSize: 30}}/>
+					</Button>
 				</Box>
+				</DialogTitle>
 				<Box mx={3}>
 				<FormControl className={classes.formControl}>
 					<InputLabel id="almacen-label">Almacén</InputLabel>
@@ -61,7 +64,7 @@ export default function DialogMedidasAlmacenes(props) {
 						labelId="almacen-label"
 						id="almacen"
 						value={(almacen) ? almacen.nombre_almacen : ""}
-						onChange={(value) => handleChangeAlmacen(value.target.value)}
+						onChange={ handleChangeAlmacen}
 						input={<Input />}
 						MenuProps={MenuProps}
 						>
