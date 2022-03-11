@@ -3,7 +3,7 @@ import {
   AppBar,
   Box,
   Button,
-  Dialog,
+  Dialog, 
   Slide,
   Typography,
 } from "@material-ui/core";

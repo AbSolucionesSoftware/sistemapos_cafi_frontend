@@ -7,12 +7,14 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { Box, CircularProgress } from "@material-ui/core";
+import { Box, CircularProgress, Tooltip } from "@material-ui/core";
 
 const columns = [
   { id: "clave", label: "Clave", minWidth: 40, align: "center" },
   { id: "codigo", label: "C. Barras", minWidth: 40, align: "center" },
   { id: "descripcion", label: "Nombre/Descrip.", minWidth: 330 },
+  { id: "medida", label: "Medida", minWidth: 40, align: "center" },
+  { id: "color", label: "Color", minWidth: 40, align: "center" },
   { id: "existencia", label: "Exist.", minWidth: 30, align: "center" },
   { id: "unidad", label: "Unidad", minWidth: 30, align: "center" },
   { id: "precio", label: "Precio", minWidth: 30, align: "center" },
@@ -26,6 +28,12 @@ const useStyles = makeStyles({
   container: {
     height: "40vh",
   },
+  colorContainer: {
+		border: "1px solid rgba(0,0,0, .3)",
+		height: 18,
+		width: 18,
+		borderRadius: "15%",
+	  },
 });
 
 export default function ListaProductos({
@@ -33,10 +41,10 @@ export default function ListaProductos({
   setProductoSeleccionado,
   loading,
 }) {
-  const classes = useStyles();
+/*   const classes = useStyles();
    useEffect(() => {
      console.log('PRODUCTOS BUSQUEDA',productosBusqueda)
-   }, [productosBusqueda])
+   }, [productosBusqueda]) */
    
   if (loading)
     return (
@@ -86,6 +94,46 @@ export default function ListaProductos({
 }
 
 function RowsProductos({ producto, setProductoSeleccionado }) {
+  const classes = useStyles();
+ //console.log(producto);
+  let ComponenteMedida = () => {
+    if(producto.medida){
+      return(
+      <TableCell align="center">
+        <Tooltip
+          title={producto.color.nombre}
+          placement="top"
+          arrow
+        
+        >
+          <div
+          className={classes.colorContainer}
+          style={{
+            backgroundColor: producto.color.hex,
+          }}
+          />
+        </Tooltip>
+      </TableCell>
+      )
+    }else{
+      return(
+        <TableCell align="center">{"N/A"}</TableCell>
+      )
+    }
+  };
+
+  let ComponenteColor = () => {
+    if(producto.medida){
+      return(<TableCell align="center">
+        {producto.medida.talla}
+      </TableCell>)
+    }else{
+      return(
+        <TableCell align="center">{"N/A"}</TableCell>
+        
+      )
+    }
+  };
   return (
     <>
       <TableRow
@@ -104,6 +152,9 @@ function RowsProductos({ producto, setProductoSeleccionado }) {
         <TableCell>
           {producto.id_producto.datos_generales.nombre_comercial}
         </TableCell>
+        <ComponenteColor/>
+        <ComponenteMedida/>
+        
         <TableCell align="center">{producto.cantidad}</TableCell>
         <TableCell align="center">{producto.unidad}</TableCell>
         <TableCell align="center">{producto.precio}</TableCell>

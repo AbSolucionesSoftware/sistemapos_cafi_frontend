@@ -30,6 +30,7 @@ export const CONSULTA_PRODUCTOS = gql`
         unidad_inventario
         cantidad_existente_maxima
         unidad_maxima
+        
       }
     }
   }
@@ -294,6 +295,7 @@ export const CONSULTA_PRODUCTOS_VENTAS = gql`
         cantidad_existente_maxima
         unidad_maxima
         codigo_unidad
+        id_almacen_general
       }
     }
   }

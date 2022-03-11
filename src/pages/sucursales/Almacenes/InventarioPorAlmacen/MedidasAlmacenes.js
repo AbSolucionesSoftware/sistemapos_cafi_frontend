@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -11,11 +11,12 @@ import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles({
 	root: {
-		width: '100%'
+		width: '100%',
+		height: '48vh'
 	},
 	container: {
 		
-		maxHeight: '76vh'
+		maxHeight: '74vh'
 	},
 	colorContainer: {
 		border: "1px solid rgba(0,0,0, .3)",
@@ -31,8 +32,8 @@ export default function MedidasAlmacenes(props) {
 
 		return (
 		<div className={classes.root}>
-			<Paper className={classes.paper}>
-				<TableContainer style={{height:400}}>
+			<Paper >
+				<TableContainer style={{height:'45vh'}}>
 					<Table
 						className={classes.table}
 						aria-labelledby="tableTitle"
@@ -53,7 +54,8 @@ export default function MedidasAlmacenes(props) {
 							{props.producto.medidas_producto.map((item, index) => {	
 								
 								return (
-									<Row item={item} almacenSeleccionado={props.almacen} />
+									
+									<Row item={item}  almacenSeleccionado={props.almacen} />
 								);
 							})}
 						</TableBody>
@@ -75,6 +77,7 @@ export default function MedidasAlmacenes(props) {
 
 const Row = ({item, almacenSeleccionado}) =>{
 	const classes = useStyles();
+	
 	try {
 		let ItemReturn= <div/>;
 		
@@ -108,7 +111,7 @@ const Row = ({item, almacenSeleccionado}) =>{
 			ItemReturn
 		);
 	} catch (error) {
-		
+		console.log(error)
 	}
 	
 }
