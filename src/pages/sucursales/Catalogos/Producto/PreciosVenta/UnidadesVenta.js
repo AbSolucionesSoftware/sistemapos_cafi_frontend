@@ -156,9 +156,7 @@ const UnidadesVentaSecundaria = () => {
         ? unidadVentaSecundaria.descuento.precio_neto
         : unidadVentaSecundaria.precio;
 
-    return () => {
       setPrecio(price);
-    };
   }, [unidadVentaSecundaria]);
 
   const GenCodigoBarras = () => {
@@ -189,10 +187,13 @@ const UnidadesVentaSecundaria = () => {
     if (value) {
       value = parseFloat(value);
     }
+    console.log(unidadVentaSecundaria.descuento_activo ,
+      unidadVentaSecundaria.descuento_activo)
     if (
       unidadVentaSecundaria.descuento_activo &&
       unidadVentaSecundaria.descuento_activo === true
     ) {
+      console.log("a")
       setPrecio(value);
       calcularUnidadDesucuento(value);
     } else {
@@ -324,7 +325,7 @@ const UnidadesVentaSecundaria = () => {
     if (!unidadVentaSecundaria.precio || !unidadVentaSecundaria.cantidad)
       return;
 
-    const { precio, cantidad } = unidadVentaSecundaria;
+    const { cantidad } = unidadVentaSecundaria;
 
     const { iva, ieps } = precios;
 

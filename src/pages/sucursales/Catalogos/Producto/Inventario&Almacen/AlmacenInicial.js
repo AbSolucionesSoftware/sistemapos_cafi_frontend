@@ -327,6 +327,7 @@ export default function RegistroAlmacenInicial({
                     <ContainerRegistroAlmacen
                       accion="registrar"
                       refetch={refetch}
+                      fromEmergent={true}
                     />
                   </AlmacenProvider>
                 </Box>
