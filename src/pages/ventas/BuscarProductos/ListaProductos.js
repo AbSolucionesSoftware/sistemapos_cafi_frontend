@@ -41,8 +41,8 @@ export default function ListaProductos({
   setProductoSeleccionado,
   loading,
 }) {
-/*   const classes = useStyles();
-   useEffect(() => {
+   const classes = useStyles();
+ /*  useEffect(() => {
      console.log('PRODUCTOS BUSQUEDA',productosBusqueda)
    }, [productosBusqueda]) */
    
