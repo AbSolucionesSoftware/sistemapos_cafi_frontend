@@ -57,7 +57,6 @@ export default function ConsultarPrecio() {
 
   let productoBase = null;
   if (dataQuery.data) productoBase = dataQuery.data.obtenerUnProductoVentas;
-  console.log(dataQuery.data);
 
   const [open, setOpen] = useState(false);
 

@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useContext } from "react";
-import Box from "@material-ui/core/Box"
-import Grid from "@material-ui/core/Grid"
-import FormControl from "@material-ui/core/FormControl"
-import IconButton from "@material-ui/core/IconButton"
-import MenuItem from "@material-ui/core/MenuItem"
-import Paper from "@material-ui/core/Paper"
-import Select from "@material-ui/core/Select"
-import Typography from "@material-ui/core/Typography"
-import CircularProgress from "@material-ui/core/CircularProgress"
-import Backdrop from "@material-ui/core/Backdrop"
-import Portal from "@material-ui/core/Portal"
-import TextField from "@material-ui/core/TextField"
-import InputAdornment from "@material-ui/core/InputAdornment"
+import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid";
+import FormControl from "@material-ui/core/FormControl";
+import IconButton from "@material-ui/core/IconButton";
+import MenuItem from "@material-ui/core/MenuItem";
+import Paper from "@material-ui/core/Paper";
+import Select from "@material-ui/core/Select";
+import Typography from "@material-ui/core/Typography";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Backdrop from "@material-ui/core/Backdrop";
+import Portal from "@material-ui/core/Portal";
+import TextField from "@material-ui/core/TextField";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import useStyles from "./styles";
 
 import { FcBusinessman, FcCalendar, FcSalesPerformance } from "react-icons/fc";
@@ -55,6 +55,7 @@ export default function VentasGenerales() {
 
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
   const [clave, setClave] = useState("");
+  const [loading, setLoading] = useState(false);
   const client = useApolloClient();
 
   const obtenerProductos = async (input) => {
@@ -92,67 +93,77 @@ export default function VentasGenerales() {
   }, [updateTablaVentas]);
 
   const keyUpEvent = async (event) => {
-    if (
-      event.code === "Enter" ||
-      event.code === "NumpadEnter" ||
-      event.type === "click"
-    ) {
-      const input_value = clave;
-      const data = input_value.split("*");
-      let datosQuery = {
-        data: undefined,
-        loading: false,
-        error: undefined,
-      };
-      if (data.length > 1) {
-        let data_operation = isNaN(data[0]) ? data[1] : data[0];
-        let data_key = isNaN(data[0]) ? data[0] : data[1];
-        setGranelBase({
-          granel: true,
-          valor: parseFloat(data_operation),
-        });
-        datosQuery = await obtenerProductos(data_key);
-        setConsultaBase(!consultaBase);
-      } else {
-        setGranelBase({
-          granel: false,
-          valor: 0,
-        });
-        datosQuery = await obtenerProductos(input_value);
-        setConsultaBase(!consultaBase);
-      }
+    if (loading) return;
+    try {
       
-      if (datosQuery.error) {
-        if (datosQuery.error.networkError) {
-          setAlert({
-            message: `Error de servidor`,
-            status: "error",
-            open: true,
+      if (
+        event.code === "Enter" ||
+        event.code === "NumpadEnter" ||
+        event.type === "click"
+      ) {
+        setLoading(true);
+        const input_value = clave;
+        const data = input_value.split("*");
+        let datosQuery = {
+          data: undefined,
+          loading: false,
+          error: undefined,
+        };
+        if (data.length > 1) {
+          let data_operation = isNaN(data[0]) ? data[1] : data[0];
+          let data_key = isNaN(data[0]) ? data[0] : data[1];
+          setGranelBase({
+            granel: true,
+            valor: parseFloat(data_operation),
           });
-        } else if (datosQuery.error.graphQLErrors) {
-          setAlert({
-            message: `${datosQuery.error.graphQLErrors[0]?.message}`,
-            status: "error",
-            open: true,
+          datosQuery = await obtenerProductos(data_key);
+          setConsultaBase(!consultaBase);
+        } else {
+          setGranelBase({
+            granel: false,
+            valor: 0,
           });
+          datosQuery = await obtenerProductos(input_value);
+          setConsultaBase(!consultaBase);
         }
-        return;
-      }
-      if (datosQuery.data) {
-        let productosBase = datosQuery.data.obtenerUnProductoVentas;
-        if (productosBase !== null) {
-          if (productosBase.cantidad !== null) {
-            agregarProductos(productosBase);
-          } else {
-            setOpen(true);
+
+        if (datosQuery.error) {
+          if (datosQuery.error.networkError) {
             setAlert({
-              message: `Este producto no existe`,
+              message: `Error de servidor`,
+              status: "error",
+              open: true,
+            });
+          } else if (datosQuery.error.graphQLErrors) {
+            setAlert({
+              message: `${datosQuery.error.graphQLErrors[0]?.message}`,
               status: "error",
               open: true,
             });
           }
+          setLoading(false);
+          return;
         }
+        if (datosQuery.data) {
+          let productosBase = datosQuery.data.obtenerUnProductoVentas;
+          if (productosBase !== null) {
+            if (productosBase.cantidad !== null) {
+              agregarProductos(productosBase);
+            } else {
+              setOpen(true);
+              setAlert({
+                message: `Este producto no existe`,
+                status: "error",
+                open: true,
+              });
+            }
+          }
+        }
+        setLoading(false);
       }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
     }
   };
 
@@ -468,12 +479,25 @@ export default function VentasGenerales() {
                 size="small"
                 onKeyUp={(e) => keyUpEvent(e)}
                 onChange={(e) => setClave(e.target.value)}
+                disabled={loading}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="start">
-                      <IconButton onClick={(e) => keyUpEvent(e)}>
+                      {loading ? (
+                        <IconButton
+                        disabled={loading}
+                      >
+                        <CircularProgress size={20} color="primary" />
+                      </IconButton>
+                      ) : 
+                      (
+                        <IconButton
+                        onClick={(e) => keyUpEvent(e)}
+                        disabled={loading}
+                      >
                         <Search />
                       </IconButton>
+                      )}
                     </InputAdornment>
                   ),
                 }}
@@ -538,7 +562,13 @@ export default function VentasGenerales() {
         </Grid>
       </Paper>
 
-      <Box height="100%">
+      <Box
+        height="100%"
+        style={loading ? {
+          pointerEvents: "none",
+          opacity: 0.6,
+        } : null}
+      >
         <TablaVentasCheckbox setDatosVentasActual={setDatosVentasActual} />
       </Box>
 
