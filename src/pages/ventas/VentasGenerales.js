@@ -1,26 +1,20 @@
 import React, { useState, useEffect, useContext } from "react";
-import {
-  Box,
-  FormControl,
-  Grid,
-  IconButton,
-  MenuItem,
-  Paper,
-  Select,
-  Typography,
-  CircularProgress,
-  Backdrop,
-  Portal,
-  TextField,
-  InputAdornment,
-} from "@material-ui/core";
+import Box from "@material-ui/core/Box"
+import Grid from "@material-ui/core/Grid"
+import FormControl from "@material-ui/core/FormControl"
+import IconButton from "@material-ui/core/IconButton"
+import MenuItem from "@material-ui/core/MenuItem"
+import Paper from "@material-ui/core/Paper"
+import Select from "@material-ui/core/Select"
+import Typography from "@material-ui/core/Typography"
+import CircularProgress from "@material-ui/core/CircularProgress"
+import Backdrop from "@material-ui/core/Backdrop"
+import Portal from "@material-ui/core/Portal"
+import TextField from "@material-ui/core/TextField"
+import InputAdornment from "@material-ui/core/InputAdornment"
 import useStyles from "./styles";
 
-import {
-  FcBusinessman,
-  FcCalendar,
-  FcSalesPerformance,
-} from "react-icons/fc";
+import { FcBusinessman, FcCalendar, FcSalesPerformance } from "react-icons/fc";
 import { FaBarcode, FaMoneyCheckAlt } from "react-icons/fa";
 import { AiOutlineFieldNumber } from "react-icons/ai";
 import { Search } from "@material-ui/icons";
@@ -28,7 +22,7 @@ import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 
 import TablaVentasCheckbox from "./Tabla_ventas_checkbox";
 import { CONSULTA_PRODUCTO_UNITARIO } from "../../gql/Ventas/ventas_generales";
-import { useLazyQuery } from "@apollo/client";
+import { useApolloClient } from "@apollo/client";
 import ClientesVentas from "./ClientesVentas";
 import { VentasContext } from "../../context/Ventas/ventasContext";
 import SnackBarMessages from "../../components/SnackBarMessages";
@@ -59,63 +53,24 @@ export default function VentasGenerales() {
     setDatosVentasActual,
   } = useContext(VentasContext);
 
-  // const [DatosVentasActual, setDatosVentasActual] = useState({
-  //   subTotal: 0,
-  //   total: 0,
-  //   impuestos: 0,
-  //   iva: 0,
-  //   ieps: 0,
-  //   descuento: 0,
-  //   monedero: 0,
-  //   // tipo_cambio: {},
-  // });
-
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
+  const [clave, setClave] = useState("");
+  const client = useApolloClient();
 
-  const [obtenerProductos, { data, loading, error }] = useLazyQuery(
-    CONSULTA_PRODUCTO_UNITARIO,
-    {
+  const obtenerProductos = async (input) => {
+    const response = await client.query({
+      query: CONSULTA_PRODUCTO_UNITARIO,
+      variables: {
+        datosProductos: input.toUpperCase(),
+        empresa: sesion.empresa._id,
+        sucursal: sesion.sucursal._id,
+      },
       fetchPolicy: "network-only",
-    }
-  );
+    });
+    return response;
+  };
 
   const [consultaBase, setConsultaBase] = useState(false);
-
-  let productosBase = null;
-  if (error) {
-    console.log(data, loading, error.networkError);
-    console.log(data, loading, error.graphQLErrors);
-  }
-  // console.log(data,loading, error);
-  if (data) productosBase = data.obtenerUnProductoVentas;
-  // console.log(productosBase);
-
-  useEffect(() => {
-    if (error) {
-      if (error.networkError) {
-        setAlert({ message: `Error de servidor`, status: "error", open: true });
-      } else if (error.graphQLErrors) {
-        setAlert({
-          message: `${error.graphQLErrors[0]?.message}`,
-          status: "error",
-          open: true,
-        });
-      }
-    } else {
-      if (productosBase !== null) {
-        if (productosBase.cantidad !== null) {
-          agregarProductos(productosBase);
-        } else {
-          setOpen(true);
-          setAlert({
-            message: `Este producto no existe`,
-            status: "error",
-            open: true,
-          });
-        }
-      }
-    }
-  }, [loading]);
 
   useEffect(() => {
     setGranelBase({
@@ -137,9 +92,18 @@ export default function VentasGenerales() {
   }, [updateTablaVentas]);
 
   const keyUpEvent = async (event) => {
-    if (event.code === "Enter" || event.code === "NumpadEnter") {
-      const input_value = event.target.value.trim();
+    if (
+      event.code === "Enter" ||
+      event.code === "NumpadEnter" ||
+      event.type === "click"
+    ) {
+      const input_value = clave;
       const data = input_value.split("*");
+      let datosQuery = {
+        data: undefined,
+        loading: false,
+        error: undefined,
+      };
       if (data.length > 1) {
         let data_operation = isNaN(data[0]) ? data[1] : data[0];
         let data_key = isNaN(data[0]) ? data[0] : data[1];
@@ -147,29 +111,47 @@ export default function VentasGenerales() {
           granel: true,
           valor: parseFloat(data_operation),
         });
-        obtenerProductos({
-          variables: {
-            datosProductos: data_key,
-            sucursal: sesion.sucursal._id,
-            empresa: sesion.empresa._id,
-          },
-          fetchPolicy: "network-only",
-        });
+        datosQuery = await obtenerProductos(data_key);
         setConsultaBase(!consultaBase);
       } else {
         setGranelBase({
           granel: false,
           valor: 0,
         });
-        obtenerProductos({
-          variables: {
-            datosProductos: input_value,
-            sucursal: sesion.sucursal._id,
-            empresa: sesion.empresa._id,
-          },
-          fetchPolicy: "network-only",
-        });
+        datosQuery = await obtenerProductos(input_value);
         setConsultaBase(!consultaBase);
+      }
+      
+      if (datosQuery.error) {
+        if (datosQuery.error.networkError) {
+          setAlert({
+            message: `Error de servidor`,
+            status: "error",
+            open: true,
+          });
+        } else if (datosQuery.error.graphQLErrors) {
+          setAlert({
+            message: `${datosQuery.error.graphQLErrors[0]?.message}`,
+            status: "error",
+            open: true,
+          });
+        }
+        return;
+      }
+      if (datosQuery.data) {
+        let productosBase = datosQuery.data.obtenerUnProductoVentas;
+        if (productosBase !== null) {
+          if (productosBase.cantidad !== null) {
+            agregarProductos(productosBase);
+          } else {
+            setOpen(true);
+            setAlert({
+              message: `Este producto no existe`,
+              status: "error",
+              open: true,
+            });
+          }
+        }
       }
     }
   };
@@ -484,16 +466,18 @@ export default function VentasGenerales() {
                 placeholder="Buscar producto..."
                 variant="outlined"
                 size="small"
-                onKeyUp={keyUpEvent}
+                onKeyUp={(e) => keyUpEvent(e)}
+                onChange={(e) => setClave(e.target.value)}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="start">
-                      <IconButton>
+                      <IconButton onClick={(e) => keyUpEvent(e)}>
                         <Search />
                       </IconButton>
                     </InputAdornment>
                   ),
                 }}
+                inputProps={{ style: { textTransform: "uppercase" } }}
               />
             </Box>
           </Grid>

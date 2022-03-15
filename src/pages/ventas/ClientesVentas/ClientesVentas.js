@@ -1,9 +1,10 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Box,
   Button,
   Dialog,
   DialogContent,
+  DialogTitle,
   Grid,
   IconButton,
   InputBase,
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ClientesVentas() {
   const classes = useStyles();
-  const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
+  let turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
 
   const [values, setValues] = useState("");
 
@@ -62,92 +63,101 @@ export default function ClientesVentas() {
     }
   }
 
+  useEffect(() => {
+    turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
+  }, [turnoEnCurso]);
+
   return (
     <Fragment>
-        <Button
-          style={{
-            height: "100%",
-            width: "100%",
-            border: ".6px solid #DBDBDB",
-          }}
-          onClick={handleClickOpen}
-          disabled={!turnoEnCurso}
-        >
+      <Button
+        style={{
+          height: "100%",
+          width: "100%",
+          border: ".6px solid #DBDBDB",
+        }}
+        onClick={handleClickOpen}
+        disabled={!turnoEnCurso}
+      >
+        <Box>
           <Box>
-            <Box>
-              <FcBusinessman style={{ fontSize: 45 }} />
-            </Box>
-            <Box>
-              <Typography variant="body2">
-                <b>Clientes</b>
-              </Typography>
-            </Box>
-            <Box>
-              <Typography variant="caption" style={{ color: "#808080" }}>
-                <b>aLT + C</b>
-              </Typography>
-            </Box>
+            <FcBusinessman style={{ fontSize: 45 }} />
           </Box>
-        </Button>
-        <Dialog
-          maxWidth="lg"
-          open={open}
-          onClose={handleClickOpen}
-          TransitionComponent={Transition}
-        >
-          <DialogContent>
-            <Grid container item lg={12}>
-              <Box ml={3} display="flex" flexGrow={1} alignItems="center">
-                <Box>
-                  <FcBusinessman style={{ fontSize: 65 }} />
-                </Box>
-                <Typography variant="h6" className={classes.title}>
-                  Clientes
-                </Typography>
-              </Box>
-              <Box mr={2}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleClickOpen}
-                  size="large"
-                >
-                  <CloseIcon style={{ fontSize: 30 }} />
-                </Button>
-              </Box>
+          <Box>
+            <Typography variant="body2">
+              <b>Clientes</b>
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="caption" style={{ color: "#808080" }}>
+              <b>aLT + C</b>
+            </Typography>
+          </Box>
+        </Box>
+      </Button>
+      <Dialog
+        fullWidth
+        maxWidth="lg"
+        open={open}
+        onClose={handleClickOpen}
+        TransitionComponent={Transition}
+      >
+        <DialogTitle>
+          <Box display="flex" justifyContent="space-between">
+            <Box display="flex" alignItems="center">
+              <FcBusinessman style={{ fontSize: 45 }} />
+              <Box mx={1} />
+              <Typography variant="h6">Clientes</Typography>
+            </Box>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleClickOpen}
+              size="large"
+            >
+              <CloseIcon style={{ fontSize: 30 }} />
+            </Button>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <Grid container spacing={2}>
+            <Grid item md={6} xs={8}>
+              <Paper className={classes.root}>
+                <InputBase
+                  fullWidth
+                  placeholder="Buscar cliente..."
+                  onChange={(e) => setValues(e.target.value)}
+                  onKeyPress={pressEnter}
+                  value={values}
+                />
+                <IconButton onClick={() => setValues(values)}>
+                  <Search />
+                </IconButton>
+              </Paper>
             </Grid>
-            <Box m={2} display="flex" justifyContent="space-between">
-              <Box mr={5} minWidth="70%">
-                <Paper className={classes.root}>
-                  <InputBase
-                    fullWidth
-                    placeholder="Buscar cliente..."
-                    onChange={(e) => setValues(e.target.value)}
-                    onKeyPress={pressEnter}
-                    value={values}
-                  />
-                  <IconButton onClick={() => setValues(values)}>
-                    <Search />
-                  </IconButton>
-                </Paper>
-              </Box>
+            <Grid
+              item
+              md={6}
+              xs={4}
+              style={{ display: "flex", justifyContent: "flex-end" }}
+            >
               <CrearCliente
                 tipo="CLIENTE"
                 accion="registrar"
                 ventas={true}
                 handleClickOpen={handleClickOpen}
               />
-            </Box>
-            <Box mx={2}>
-              <ListaClientes
-                tipo="CLIENTE"
-                filtro={values}
-                ventas={true}
-                handleClickOpen={handleClickOpen}
-              />
-            </Box>
-          </DialogContent>
-        </Dialog>
+            </Grid>
+          </Grid>
+          <Box my={2} height="70vh">
+            <ListaClientes
+              tipo="CLIENTE"
+              filtro={values}
+              ventas={true}
+              handleClickOpen={handleClickOpen}
+            />
+          </Box>
+        </DialogContent>
+      </Dialog>
     </Fragment>
   );
 }

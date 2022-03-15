@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Snackbar,
-  Slide,
   Typography,
   IconButton,
 } from "@material-ui/core";
@@ -12,14 +11,16 @@ import { FcExpired } from "react-icons/fc";
 import moment from "moment";
 import "moment/locale/es";
 import { VentasContext } from "../../../context/Ventas/ventasContext";
+import { ClienteCtx } from "../../../context/Catalogos/crearClienteCtx";
 moment.locale("es");
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
 export default function VentaEnEspera() {
-  const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
+  const {
+    updateTablaVentas,
+    setUpdateTablaVentas,
+    setDatosVentasActual,
+  } = useContext(VentasContext);
+  const { updateClientVenta, setUpdateClientVenta } = useContext(ClienteCtx);
   const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
   const [open, setOpen] = useState(false);
 
@@ -37,18 +38,31 @@ export default function VentaEnEspera() {
           "ListaEnEspera",
           JSON.stringify([{ datosVenta, fecha: moment().format("MM/DD/YYYY") }])
         );
-        localStorage.removeItem("DatosVentas");
-        setUpdateTablaVentas(!updateTablaVentas);
+        cleanData();
         handleClickOpen();
       } else {
         let data = JSON.parse(datos);
         data.push({ datosVenta, fecha: moment().format("MM/DD/YYYY") });
         localStorage.setItem("ListaEnEspera", JSON.stringify(data));
-        localStorage.removeItem("DatosVentas");
-        setUpdateTablaVentas(!updateTablaVentas);
+        cleanData();
         handleClickOpen();
       }
     }
+  };
+
+  const cleanData = () => {
+    localStorage.removeItem("DatosVentas");
+    setUpdateTablaVentas(!updateTablaVentas);
+    setUpdateClientVenta(!updateClientVenta);
+    setDatosVentasActual({
+      subTotal: 0,
+      total: 0,
+      impuestos: 0,
+      iva: 0,
+      ieps: 0,
+      descuento: 0,
+      monedero: 0,
+    });
   };
 
   window.addEventListener("keydown", Mi_función);

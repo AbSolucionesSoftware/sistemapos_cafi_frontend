@@ -565,9 +565,7 @@ const RenderTableRows = ({
             : "No"}
         </TableCell>
         <TableCell style={{ textAlign:"center"}} >
-          {producto.inventario_general.map(
-            (existencia) => `${existencia.unidad_inventario}`
-          )}
+          {producto.unidad}
         </TableCell>
         <TableCell style={{ textAlign:"center"}} >
           $ { producto.precio_actual_object.precio_neto}
