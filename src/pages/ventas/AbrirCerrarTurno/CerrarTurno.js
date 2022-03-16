@@ -382,7 +382,7 @@ function CerrarTurno(props) {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} justify="flex-end">
+          <Grid item xs={12}>
             <Typography className={classes.titulos}>Comentarios:</Typography>
             <TextField
               fullWidth

@@ -17,7 +17,7 @@ export default function Tesoreria() {
 	return (
 		<Container>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
-			<Grid container spacing={2} justify="center">
+			<Grid container spacing={2} justifyContent="center">
 				{permisosUsuario.accesos.tesoreria.cuentas_empresa.ver === false ? (null):(
 					<Grid item lg={2}>
 						<Box display="flex" justifyContent="center" alignItems="center">

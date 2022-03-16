@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Box,
@@ -6,7 +6,6 @@ import {
   TextField,
   Button,
   Dialog,
-  Avatar,
   DialogContent,
   Container,
 } from "@material-ui/core";
@@ -26,9 +25,9 @@ import SnackBarMessages from "../../../../components/SnackBarMessages";
 import BackdropComponent from "../../../../components/Layouts/BackDrop";
 import ErrorPage from "../../../../components/ErrorPage";
 import {
-  OBTENER_DATOS_SUCURSAL, ACTUALIZAR_SUCURSAL
+  OBTENER_DATOS_SUCURSAL,
+  ACTUALIZAR_SUCURSAL,
 } from "../../../../gql/Empresa/sucursales";
-import { cleanTypenames } from "../../../../config/reuserFunctions";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -87,7 +86,6 @@ export default function DatosSucursal() {
   );
 
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
- 
 
   const [actualizarSucursal] = useMutation(ACTUALIZAR_SUCURSAL);
 
@@ -99,7 +97,7 @@ export default function DatosSucursal() {
   const [sucursalDatos, setSucursalDatos] = useState({
     nombre_sucursal: "",
     descripcion: "",
-    telefono:"",
+    telefono: "",
     direccion: {
       calle: "",
       no_ext: "",
@@ -110,16 +108,16 @@ export default function DatosSucursal() {
       localidad: "",
       estado: "",
       pais: "",
-    }    
+    },
   });
-  
+
   useEffect(() => {
     try {
       refetch();
     } catch (errorCatch) {
       // console.log("SESSIONREFECTUPDATE",errorCatch)
     }
-  },  [refetch]);
+  }, [refetch]);
   useEffect(() => {
     try {
       setLoadingPage(loading);
@@ -130,7 +128,6 @@ export default function DatosSucursal() {
   useEffect(() => {
     try {
       if (data !== undefined) {
-        
         setSucursalDatos(data.obtenerDatosSucursal[0]);
       }
     } catch (errorCatch) {
@@ -144,7 +141,6 @@ export default function DatosSucursal() {
       // console.log("SESSIONREFECT",errorCatch)
     }
   }, [error]);
-  
 
   const actEmp = async () => {
     try {
@@ -156,7 +152,7 @@ export default function DatosSucursal() {
           input: sucursalDatos,
         },
       });
-     
+
       setLoadingPage(false);
       setAlert({
         message: "Se han actualizado correctamente los datos.",
@@ -191,7 +187,10 @@ export default function DatosSucursal() {
   const obtenerCamposDireccion = (e) => {
     setSucursalDatos({
       ...sucursalDatos,
-      direccion: { ...sucursalDatos.direccion, [e.target.name]: e.target.value },
+      direccion: {
+        ...sucursalDatos.direccion,
+        [e.target.name]: e.target.value,
+      },
     });
   };
 
@@ -259,11 +258,12 @@ export default function DatosSucursal() {
           ) : (
             <Container style={{ marginTop: 8 }}>
               <Grid container spacing={3} className={classes.require}>
-              
-                <Grid item md={4} flexdirection='row'>
+                <Grid item md={4} flexdirection="row">
                   <Box>
                     <Typography>
-                      <b><span>* </span>Nombre de empresa</b>
+                      <b>
+                        <span>* </span>Nombre de empresa
+                      </b>
                     </Typography>
                     <TextField
                       fullWidth
@@ -313,7 +313,7 @@ export default function DatosSucursal() {
                       onChange={obtenerCampos}
                     />
                   </Box>
-                 {/*  <Box>
+                  {/*  <Box>
                     <Typography>Teléfono</Typography>
                     <TextField
                       fullWidth
@@ -330,7 +330,6 @@ export default function DatosSucursal() {
                     />
                   </Box> */}
                 </Grid>
-                
               </Grid>
 
               <Box mt={5}>
@@ -342,7 +341,9 @@ export default function DatosSucursal() {
               <Grid container spacing={3} className={classes.require}>
                 <Grid item md={4}>
                   <Box>
-                    <Typography><b>Calle</b></Typography>
+                    <Typography>
+                      <b>Calle</b>
+                    </Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -358,7 +359,9 @@ export default function DatosSucursal() {
                     />
                   </Box>
                   <Box>
-                    <Typography><b>Num. Ext</b></Typography>
+                    <Typography>
+                      <b>Num. Ext</b>
+                    </Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -374,7 +377,9 @@ export default function DatosSucursal() {
                     />
                   </Box>
                   <Box>
-                    <Typography><b>Num. Int</b></Typography>
+                    <Typography>
+                      <b>Num. Int</b>
+                    </Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -392,7 +397,9 @@ export default function DatosSucursal() {
                 </Grid>
                 <Grid item md={4}>
                   <Box>
-                    <Typography><b>C.P.</b></Typography>
+                    <Typography>
+                      <b>C.P.</b>
+                    </Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -408,7 +415,9 @@ export default function DatosSucursal() {
                     />
                   </Box>
                   <Box>
-                    <Typography><b>Colonia</b></Typography>
+                    <Typography>
+                      <b>Colonia</b>
+                    </Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -424,7 +433,9 @@ export default function DatosSucursal() {
                     />
                   </Box>
                   <Box>
-                    <Typography><b>Municipio</b></Typography>
+                    <Typography>
+                      <b>Municipio</b>
+                    </Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -442,7 +453,9 @@ export default function DatosSucursal() {
                 </Grid>
                 <Grid item md={4}>
                   <Box>
-                    <Typography><b>Localidad</b></Typography>
+                    <Typography>
+                      <b>Localidad</b>
+                    </Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -458,7 +471,9 @@ export default function DatosSucursal() {
                     />
                   </Box>
                   <Box>
-                    <Typography><b>Estado</b></Typography>
+                    <Typography>
+                      <b>Estado</b>
+                    </Typography>
                     <TextField
                       fullWidth
                       size="small"
@@ -474,7 +489,9 @@ export default function DatosSucursal() {
                     />
                   </Box>
                   <Box>
-                    <Typography><b>Pais</b></Typography>
+                    <Typography>
+                      <b>Pais</b>
+                    </Typography>
                     <TextField
                       fullWidth
                       size="small"

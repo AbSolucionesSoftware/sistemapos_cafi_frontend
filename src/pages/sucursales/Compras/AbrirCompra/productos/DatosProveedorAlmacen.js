@@ -242,7 +242,6 @@ export default function DatosProveedorAlmacen({ getProductos, status }) {
               variant="outlined"
               type="date"
               onChange={(e) => {
-                console.log(e.target.value);
                 setDatosCompra({
                   ...datosCompra,
                   fecha_registro: e.target.value,

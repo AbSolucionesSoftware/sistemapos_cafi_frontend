@@ -13,7 +13,7 @@ export default function Reportes() {
 
 	return (
 		<Container>
-			<Grid container spacing={3} justify="center">
+			<Grid container spacing={3} justifyContent="center">
 				{permisosUsuario.accesos.reportes.reporte_historial_cajas.ver === false ? (null) : (
 					<Grid item lg={2} >
 						<Box display="flex" justifyContent="center" alignItems="center">

@@ -194,7 +194,7 @@ export default function PrecioPlazos() {
         </Box>
       </Box>
       <Box>
-        <Grid container spacing={2} justify="center">
+        <Grid container spacing={2} justifyContent="center">
           {precios.granel ? (
             <Fragment>
               <Grid item lg={3}>

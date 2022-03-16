@@ -174,7 +174,7 @@ export default function Cajas() {
 				</Toolbar>		
 			</Box>
 			<Box></Box>
-			<Grid container spacing={1} justify="center" >
+			<Grid container spacing={1} justifyContent="center" >
                {  obtenerCajasSucursal?.map((caja, index) => {
                     
                     return(

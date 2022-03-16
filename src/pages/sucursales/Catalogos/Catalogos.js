@@ -21,7 +21,7 @@ export default function Catalogos() {
 	
 	return (
 		<Container>
-			<Grid container spacing={5} justify="center">
+			<Grid container spacing={5} justifyContent="center">
 				{permisosUsuario.accesos.catalogos.clientes.ver === false ? (null):(
 					<Grid item lg={2}>
 						<Box display="flex" justifyContent="center" alignItems="center">

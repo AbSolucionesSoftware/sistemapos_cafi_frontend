@@ -102,7 +102,7 @@ export default function Cajas() {
 						</Box>
 					</Toolbar>
 				</AppBar>
-				<Grid container spacing={1} justify="center" >
+				<Grid container spacing={1} justifyContent="center" >
 					{obtenerCajasSucursal?.map((caja, index) => {
 						return(
 							<Button key={index} onClick={()=>{handleClickOpenHistorial(); setCajaSelected(caja)}}>
