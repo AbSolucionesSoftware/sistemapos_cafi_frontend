@@ -29,7 +29,9 @@ const useStyles = makeStyles({
     height: "40vh",
   },
   colorContainer: {
+ 
 		border: "1px solid rgba(0,0,0, .3)",
+    marginLeft:8,
 		height: 18,
 		width: 18,
 		borderRadius: "15%",
@@ -95,11 +97,12 @@ export default function ListaProductos({
 
 function RowsProductos({ producto, setProductoSeleccionado }) {
   const classes = useStyles();
- //console.log(producto);
-  let ComponenteMedida = () => {
-    if(producto.medida){
+ console.log(producto);
+ try {
+  let ComponenteColor = () => {
+    if(producto.color){
       return(
-      <TableCell align="center">
+      <TableCell  >
         <Tooltip
           title={producto.color.nombre}
           placement="top"
@@ -122,7 +125,7 @@ function RowsProductos({ producto, setProductoSeleccionado }) {
     }
   };
 
-  let ComponenteColor = () => {
+  let ComponenteMedida = () => {
     if(producto.medida){
       return(<TableCell align="center">
         {producto.medida.talla}
@@ -133,6 +136,20 @@ function RowsProductos({ producto, setProductoSeleccionado }) {
         
       )
     }
+  };
+
+  let ComponentCantidad = () => {
+    let cantidad = "";
+    //console.log(producto)
+      if(producto.id_producto.datos_generales.tipo_producto === "OTROS"){
+        cantidad = (producto.unidad === "Costal" || producto.unidad === "Caja") ?  producto.inventario_general[0].cantidad_existente_maxima : producto.inventario_general[0].cantidad_existente;
+      }else{
+        cantidad = producto.cantidad;
+      }
+      return(<TableCell align="center">
+        {cantidad}
+      </TableCell>)
+   
   };
   return (
     <>
@@ -152,13 +169,16 @@ function RowsProductos({ producto, setProductoSeleccionado }) {
         <TableCell>
           {producto.id_producto.datos_generales.nombre_comercial}
         </TableCell>
-        <ComponenteColor/>
         <ComponenteMedida/>
-        
-        <TableCell align="center">{producto.cantidad}</TableCell>
+        <ComponenteColor/>
+        <ComponentCantidad/>
         <TableCell align="center">{producto.unidad}</TableCell>
         <TableCell align="center">{producto.precio}</TableCell>
       </TableRow>
     </>
   );
+ } catch (error) {
+   
+ }
+  
 }

@@ -19,7 +19,7 @@ export default function Almacenes() {
 	});
 	return (
 		<Container>
-			<Grid container spacing={3} justify="center" >
+			<Grid container spacing={3} justifyContent="center" >
 			{sesion.accesos.almacenes.almacen.ver === false ? (null):(
 				<Grid item lg={2} >
 					<Box display="flex" justifyContent="center" alignItems="center">

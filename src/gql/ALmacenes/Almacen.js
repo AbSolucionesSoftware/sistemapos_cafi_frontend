@@ -44,6 +44,7 @@ export const OBTENER_ALMACENES = gql`
         estado
         pais
       }
+      default_almacen
     }
   }
 `;
@@ -95,6 +96,12 @@ export const OBTENER_PRODUCTOS_ALMACEN = gql`
           inventario_minimo
           unidad_de_inventario
           codigo_unidad
+        }
+        precio_de_compra{
+          ieps
+          iva
+          precio_con_impuesto
+          precio_sin_impuesto
         }
       }
       medidas_producto {

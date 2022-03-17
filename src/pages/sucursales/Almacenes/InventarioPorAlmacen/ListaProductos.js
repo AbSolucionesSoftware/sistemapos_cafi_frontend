@@ -36,7 +36,7 @@ const Rowrow = (rowProps) => {
 	const [total , setTotal] = useState(0)
 	const [unidad_minima , setUnidad_Minima] = useState('');
 	
-		
+		//console.log(rowProps)
 		useEffect(() => {
 			let tot= 0;
 			let r = row;
@@ -88,8 +88,8 @@ const Rowrow = (rowProps) => {
 						
 			
 				<TableCell style={{minWidth:170}} >{rowProps.producto.datos_generales.nombre_comercial}</TableCell>
-			
-			
+				<TableCell style={{textAlign:'center',minWidth:60 }} >${parseFloat(rowProps.producto.precios.precio_de_compra.precio_con_impuesto).toFixed(2)}</TableCell>
+				<TableCell style={{textAlign:'center',minWidth:80 }} >${ parseFloat((rowProps.producto.precios.precio_de_compra.precio_con_impuesto * total)).toFixed(2)}</TableCell>
 				{/* <TableCell style={{textAlign: 'center',}} >{(producto.datos_generales.receta_farmacia) ? "SI" : "NO"}</TableCell> */}
 				{ 
 					arrayCantidades.map((cantidad, index) => {
@@ -104,7 +104,7 @@ const Rowrow = (rowProps) => {
 export default function ListaAlmacenes(props) {
 	const classes = useStyles();
 	const [medidasAlmacen , setMedidasAlmacen] = useState({open: false, producto: {}})	
-	
+
 	//const sesion = JSON.parse(localStorage.getItem('sesionCafi'));	
 	// const almacenesColumnas = [];
 	// const productosRows = [];
@@ -179,7 +179,6 @@ export default function ListaAlmacenes(props) {
 					<TableBody>
 						{props.productos.map((row, index) => {
 						    let key =  index;
-							
 							return (
 								<Rowrow producto={row} index={key} key={index} productosLength={props.productos.length} dataExcel ={props.dataExcel} setDataExcel={props.setDataExcel} obtenerAlmacenes={props.obtenerAlmacenes} toShowMedidasAlmacen={toShowMedidasAlmacen} />
 							);

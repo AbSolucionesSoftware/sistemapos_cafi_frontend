@@ -367,6 +367,7 @@ export default function Traspasos(props) {
 	};
 
      const handleChange = (event) => {
+         console.log(event.target.value)
         setAlmacenOrigen(event.target.value);
        /*   productosQuery.refetch({
             variables: { 
@@ -508,8 +509,26 @@ export default function Traspasos(props) {
                             origen: conceptoTraspaso.origen,
                             editable: conceptoTraspaso.editable,
                         },
-                        almacen_origen: (almacenOrigen !== null) ? almacenOrigen._id : '',
-                        almacen_destino: (almacenDestino !== null) ? almacenDestino._id : '',
+                        almacen_origen: 
+                            (almacenOrigen !== null) ? 
+                                {_id: almacenOrigen._id,
+                                nombre_almacen: almacenOrigen.nombre_almacen,
+                                default_almacen: almacenOrigen.default_almacen }
+                            : 
+                                {_id:"",
+                                nombre_almacen: "",
+                                default_almacen: false }
+                        ,
+                        almacen_destino: 
+                            (almacenDestino !== null) ?  
+                            {_id: almacenDestino._id,
+                            nombre_almacen: almacenDestino.nombre_almacen,
+                            default_almacen: almacenDestino.default_almacen }
+                        : 
+                            {_id:"",
+                            nombre_almacen: "",
+                            default_almacen: false }
+                        ,
                         productos: productosTras,
                         datos_transporte :{
                             transporte: transporte,
@@ -572,7 +591,7 @@ export default function Traspasos(props) {
                     <Box display="flex" justifyContent="center" alignItems="center">
                         <FcAdvance className={classes.icon} />
 					</Box>
-                    <Grid container spacing={10} justify="center" >
+                    <Grid container spacing={10} justifyContent="center" >
                         <Grid item lg={2} >
                             <Box display="flex" justifyContent="center" alignItems="center">
                                     <Box display="flex" justifyContent="center" alignItems="center">

@@ -46,7 +46,7 @@ export default function BuscarProducto() {
   } = useContext(VentasContext);
 
   const [open, setOpen] = useState(false);
-  const [searchProducto, setSearchProducto] = useState([]);
+  const [searchProducto, setSearchProducto] = useState({producto: ""});
   const [productoSeleccionado, setProductoSeleccionado] = useState([]);
   const [granelBase, setGranelBase] = useState({
     granel: false,
@@ -70,12 +70,14 @@ export default function BuscarProducto() {
   if (data) productosBusqueda = data.obtenerProductosVentas;
 
   const obtenerDatos = (e) => {
+  
     setSearchProducto({ ...searchProducto, [e.target.name]: e.target.value });
   };
 
   const handleClickOpen = () => {
     setProductoSeleccionado([]);
-    refetch();
+    //refetch();
+    //productosBusqueda = [];
     setOpen(!open);
   };
 
@@ -428,6 +430,7 @@ export default function BuscarProducto() {
               name="producto"
               size="small"
               fullWidth
+              value={searchProducto.producto}
               onChange={obtenerDatos}
               InputProps={{
                 endAdornment: (
