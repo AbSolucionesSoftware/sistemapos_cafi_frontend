@@ -79,9 +79,9 @@ export default function NuevaCotizacion({ setOpen }) {
                 const registroCotizacion = await CrearCotizacion({
                     variables: {
                         input,
-                        empresa: "60c120b6a694891f58d32a1d",
-                        sucursal: "60c8e180340d5d223432a916",
-                        usuario: "60dde52c5cda9d5510c4b7d0",
+                        empresa: sesion.empresa,
+                        sucursal:  sesion.sucursal,
+                        usuario: sesion._id,
                         caja: "61a5037918594a4ecdc1c7bf"
                     }
                 });
@@ -157,7 +157,7 @@ export default function NuevaCotizacion({ setOpen }) {
         <>
             <DialogContent style={{padding: 0}} >
                 <div className={classes.formInputFlex}>
-                    <Box width="100%">
+                    <Box width="33%">
                         <Typography>
                             Usuario:
                         </Typography>
@@ -172,7 +172,7 @@ export default function NuevaCotizacion({ setOpen }) {
                             />
                         </Box>
                     </Box>
-                    <Box width="100%">
+                    <Box width="33%">
                         <Typography>
                             Fecha:
                         </Typography>
@@ -187,56 +187,7 @@ export default function NuevaCotizacion({ setOpen }) {
                             />
                         </Box>
                     </Box>
-                </div>
-                <div className={classes.formInputFlex}>
-                    <Box width="100%">
-                        <Typography>
-                            Cliente:
-                        </Typography>
-                        <Box display="flex">
-                            <TextField
-                                fullWidth
-                                size="small"
-                                disabled={true}
-                                onChange={obtenerDatos}
-                                variant="outlined"
-                                value={datosVentas.cliente?.nombre_cliente ? datosVentas.cliente?.nombre_cliente : "Publico General"}
-                            />
-                        </Box>
-                    </Box>
-                    <Box width="100%">
-                        <Typography>
-                            Fecha Vencimiento:
-                        </Typography>
-                        <Box display="flex">
-                            <TextField
-                                fullWidth
-                                type='date'
-                                onChange={obtenerDatos}
-                                size="small"
-                                name="fecha_vencimiento"
-                                variant="outlined"
-                            />
-                        </Box>
-                    </Box>
-                </div>
-                <div className={classes.formInputFlex}>
-                    <Box width="100%">
-                        <Typography>
-                            No. Cliente:
-                        </Typography>
-                        <Box display="flex">
-                            <TextField
-                                fullWidth
-                                size="small"
-                                disabled={true}
-                                onChange={obtenerDatos}
-                                variant="outlined"
-                                value={datosVentas ? datosVentas.cliente?.numero_cliente : ""}
-                            />
-                        </Box>
-                    </Box>
-                    <Box width="100%">
+                    <Box width="33%">
                         <Typography>
                             Tipo de Venta:
                         </Typography>
@@ -259,27 +210,81 @@ export default function NuevaCotizacion({ setOpen }) {
                         </FormControl>
                     </Box>
                 </div>
+                <div className={classes.formInputFlex}>
+                    <Box width={(datosVentas.cliente?.nombre_cliente) ? "33%" : "32%"}>
+                        <Typography>
+                            Cliente:
+                        </Typography>
+                        <Box display="flex">
+                            <TextField
+                                fullWidth
+                                size="small"
+                                disabled={true}
+                                onChange={obtenerDatos}
+                                variant="outlined"
+                                value={datosVentas.cliente?.nombre_cliente ? datosVentas.cliente?.nombre_cliente : "Publico General"}
+                            />
+                        </Box>
+                    </Box>
+                    {
+                        (datosVentas.cliente?.nombre_cliente) ? 
+                        <Box width="33%">
+                            <Typography>
+                                No. Cliente:
+                            </Typography>
+                            <Box display="flex">
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    disabled={true}
+                                    onChange={obtenerDatos}
+                                    variant="outlined"
+                                    value={datosVentas ? datosVentas.cliente?.numero_cliente : ""}
+                                />
+                            </Box>
+                        </Box>
+                        :
+                        <div/>
+                    }
+                    
+                    <Box width={(datosVentas.cliente?.nombre_cliente) ? "33%" : "32%"}>
+                        <Typography>
+                            Fecha Vencimiento:
+                        </Typography>
+                        <Box display="flex">
+                            <TextField
+                                fullWidth
+                                type='date'
+                                onChange={obtenerDatos}
+                                size="small"
+                                name="fecha_vencimiento"
+                                variant="outlined"
+                            />
+                        </Box>
+                    </Box>
+                </div>
+             
                 <Grid container>
                     <Grid item lg={6}>
-                        <Box p={1}>
+                        <Box pt={1} >
                             <Paper elevation={3} >
-                                <Box p={2} textAlign={'center'}>
+                                <Box p={2} pt={0} textAlign={'center'}>
                                     <Typography variant="h6">
-                                        Agregar descuento total a la venta.
+                                        Agregar descuento total a la venta
                                     </Typography>
                                 </Box>
-                                <Box textAlign={'center'} p={2}>
+                                <Box textAlign="center"  p={2} pt={1}>
                                     <div className={classes.formInputFlex}>
-                                        <Box width="95%">
+                                        <Box width="94%">
                                             <Box display="flex" alignItems="center">
-                                                <Box display="flex" justifyContent="center" alignItems="center" p={1}>
+                                                <Box display="flex" justifyContent="center" alignItems="center" mr={1} >
                                                     <img 
                                                         src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/price-tag.png' 
                                                         alt="icono admin" 
-                                                        style={{width: 30}}                                   
+                                                        style={{width: 26}}                                   
                                                     />
                                                 </Box>
-                                                <Typography variant="h6">
+                                                <Typography style={{ fontSize: 18 }}>
                                                     Porciento descuento
                                                 </Typography>
                                             </Box>
@@ -295,14 +300,16 @@ export default function NuevaCotizacion({ setOpen }) {
                                         </Box>
                                     </div>
                                     <div className={classes.formInputFlex}>
-                                        <Box width="100%">
-                                            <Typography variant="h6" >
-                                                Total con descuento:
+                                        <Box width="100%" display="flex" flexDirection="row" alignItems="center">
+                                        
+                                            <Box >
+                                                <MoneyOffIcon style={{fontSize: 30, color: "green"}} />
+                                            </Box>
+                                            <Typography style={{ fontSize: 18 }} >
+                                                Total con descuento
                                             </Typography>
-                                            <Box display="flex">
-                                                <Box display="flex" justifyContent="center" alignItems="center" mr={1}>
-                                                    <MoneyOffIcon style={{fontSize: 38, color: "green"}} />
-                                                </Box>
+                                            <Box display="flex" ml={1}>
+                                                
                                                 <TextField
                                                     fullWidth
                                                     size="small"
@@ -319,13 +326,14 @@ export default function NuevaCotizacion({ setOpen }) {
                                 </Box>
                                 <Box 
                                     p={1}
+                                    pt={0}
                                     display="flex"
                                     flexDirection='row-reverse'
                                 >
                                     <Button 
                                         variant="outlined"
                                         color="secondary"
-                                        size="large"
+                                        size="medium"
                                         onClick={eliminarDescuento}
                                     >
                                         Eliminar Descuento
@@ -337,33 +345,33 @@ export default function NuevaCotizacion({ setOpen }) {
                     <Grid item lg={6}>
                         <Box mr={2} mt={2}>
                             <Box display="flex" flexDirection="row-reverse" width="100%">
-                                <Typography style={{fontSize: 18}}>
+                                <Typography style={{fontSize: 17}}>
                                     <b>No. Productos: </b> {datosVentas.productos.length}
                                 </Typography>
                             </Box>
                             <Box display="flex" flexDirection="row-reverse" width="100%">
-                                <Typography style={{fontSize: 18}}>
+                                <Typography style={{fontSize: 17}}>
                                     <b>Sub total:</b> ${datosVentas ? (datosVentas.subTotal).toFixed(2) : 0}
                                 </Typography>
                             </Box>
                             <Box display="flex" flexDirection="row-reverse" width="100%">
-                                <Typography style={{fontSize: 18}}>
+                                <Typography style={{fontSize: 17}}>
                                     <b>Impuestos:</b> ${datosVentas ? (datosVentas.impuestos).toFixed(2): 0}
                                 </Typography>
                             </Box>
                             <Box display="flex" flexDirection="row-reverse" width="100%">
-                                <Typography style={{fontSize: 18}}>
+                                <Typography style={{fontSize: 17}}>
                                     <b>I.V.A.:</b> ${datosVentas ? (datosVentas.iva).toFixed(2) : 0}
                                 </Typography>
                             </Box>
                             <Box display="flex" flexDirection="row-reverse" width="100%">
-                                <Typography style={{fontSize: 18}}>
+                                <Typography style={{fontSize: 17}}>
                                     <b>Descuento:</b> <b style={{color: "green"}}>${preciosDescuentos?.descuento_general ? (preciosDescuentos?.descuento_general?.cantidad_descontado).toFixed(2) : 0} </b>
                                 </Typography>
                             </Box>
                         </Box>
-                        <Box display="flex" flexDirection="row-reverse" p={1}>
-                            <Typography variant="h4">
+                        <Box display="flex" flexDirection="row-reverse" p={2}>
+                            <Typography style={{fontSize: 27}}>
                                 Total: 
                                 <b style={{color: "green"}}>
                                     ${preciosDescuentos?.descuento_general && preciosDescuentos?.descuento_general?.precio_con_descuento > 0? 
@@ -372,12 +380,12 @@ export default function NuevaCotizacion({ setOpen }) {
                                     )}
                                 </b>
                             </Typography>
-                            <Box mt={.5} mr={1}>
+                           {/*  <Box  mr={1}>
                                 <MonetizationOnIcon style={{fontSize: 37, color: "green"}} />
-                            </Box>
+                            </Box> */}
                         </Box>
                         <Box display='flex' justifyContent={'flex-end'}  >
-                            <Box mt={6}>
+                            <Box mr={2}>
                                 <Button
                                     color="primary"
                                     variant="contained"
