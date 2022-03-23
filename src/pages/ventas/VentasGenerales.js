@@ -18,7 +18,6 @@ import { FcBusinessman, FcCalendar, FcSalesPerformance } from "react-icons/fc";
 import { FaBarcode, FaMoneyCheckAlt } from "react-icons/fa";
 import { AiOutlineFieldNumber } from "react-icons/ai";
 import { Search } from "@material-ui/icons";
-import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 
 import TablaVentasCheckbox from "./Tabla_ventas_checkbox";
 import { CONSULTA_PRODUCTO_UNITARIO } from "../../gql/Ventas/ventas_generales";
@@ -31,6 +30,7 @@ import {
   findProductArray,
   verifiPrising,
   calculatePrices2,
+  formatoMexico,
 } from "../../config/reuserFunctions";
 
 export default function VentasGenerales() {
@@ -95,7 +95,6 @@ export default function VentasGenerales() {
   const keyUpEvent = async (event) => {
     if (loading) return;
     try {
-      
       if (
         event.code === "Enter" ||
         event.code === "NumpadEnter" ||
@@ -484,19 +483,16 @@ export default function VentasGenerales() {
                   endAdornment: (
                     <InputAdornment position="start">
                       {loading ? (
+                        <IconButton disabled={loading}>
+                          <CircularProgress size={20} color="primary" />
+                        </IconButton>
+                      ) : (
                         <IconButton
-                        disabled={loading}
-                      >
-                        <CircularProgress size={20} color="primary" />
-                      </IconButton>
-                      ) : 
-                      (
-                        <IconButton
-                        onClick={(e) => keyUpEvent(e)}
-                        disabled={loading}
-                      >
-                        <Search />
-                      </IconButton>
+                          onClick={(e) => keyUpEvent(e)}
+                          disabled={loading}
+                        >
+                          <Search />
+                        </IconButton>
                       )}
                     </InputAdornment>
                   ),
@@ -564,25 +560,28 @@ export default function VentasGenerales() {
 
       <Box
         height="100%"
-        style={loading ? {
-          pointerEvents: "none",
-          opacity: 0.6,
-        } : null}
+        style={
+          loading
+            ? {
+                pointerEvents: "none",
+                opacity: 0.6,
+              }
+            : null
+        }
       >
         <TablaVentasCheckbox setDatosVentasActual={setDatosVentasActual} />
       </Box>
 
       <Box display="flex" justifyContent="flex-end" flexDirection="column">
-        <Paper elevantion={3} style={{ padding: 2, marginTop: 2 }}>
-          <Grid container>
-            <Grid item lg={7}>
+        <Paper variant="outlined">
+          <Grid container spacing={2}>
+            <Grid item md={6} sm={6} xs={12}>
               <Grid
                 container
-                direction="row"
-                justifyContent="flex-end"
-                alignItems="center"
+                /* justifyContent="flex-end"
+                alignItems="center" */
               >
-                <Grid item lg={7}>
+                <Grid item md={6} xs={12}>
                   <Box
                     flexDirection="row-reverse"
                     display="flex"
@@ -635,7 +634,7 @@ export default function VentasGenerales() {
                     </Box>
                   </Box>
                 </Grid>
-                <Grid item lg={5}>
+                <Grid item md={6} xs={12}>
                   <Box
                     flexDirection="row-reverse"
                     display="flex"
@@ -645,7 +644,10 @@ export default function VentasGenerales() {
                       <Typography variant="subtitle1">
                         Limite Credito:{" "}
                         <b style={{ fontSize: 16 }}>
-                          ${clientesVentas ? clientesVentas.limite_credito : 0}
+                          $
+                          {clientesVentas && clientesVentas.limite_credito
+                            ? formatoMexico(clientesVentas.limite_credito)
+                            : 0}
                         </b>
                       </Typography>
                     </Box>
@@ -680,8 +682,9 @@ export default function VentasGenerales() {
                       <Typography variant="subtitle1">
                         Dias Credito:{" "}
                         <b style={{ fontSize: 16 }}>
-                          {clientesVentas ? clientesVentas.dias_credito : 0}{" "}
-                          Dias
+                          {clientesVentas && clientesVentas.dias_credito
+                            ? clientesVentas.dias_credito
+                            : 0}
                         </b>
                       </Typography>
                     </Box>
@@ -692,9 +695,9 @@ export default function VentasGenerales() {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item lg={5}>
-              <Grid container>
-                <Grid item lg={7}>
+            <Grid item md={6} sm={6} xs={12}>
+              <Grid container spacing={2}>
+                <Grid item md={6} xs={12}>
                   <Box
                     display="flex"
                     alignItems="center"
@@ -706,7 +709,9 @@ export default function VentasGenerales() {
                         <b style={{ fontSize: 17 }}>
                           ${" "}
                           {DatosVentasActual
-                            ? DatosVentasActual?.monedero?.toFixed(2)
+                            ? DatosVentasActual.monedero
+                              ? formatoMexico(DatosVentasActual.monedero)
+                              : 0
                             : 0}
                         </b>
                       </Typography>
@@ -724,9 +729,11 @@ export default function VentasGenerales() {
                       <Typography variant="subtitle1">
                         Descuento:{" "}
                         <b style={{ fontSize: 17 }}>
-                          $
+                          ${" "}
                           {DatosVentasActual
-                            ? DatosVentasActual?.descuento?.toFixed(2)
+                            ? DatosVentasActual.descuento
+                              ? formatoMexico(DatosVentasActual.descuento)
+                              : 0
                             : 0}
                         </b>
                       </Typography>
@@ -746,14 +753,14 @@ export default function VentasGenerales() {
                     </Box>
                   </Box>
                 </Grid>
-                <Grid item lg={5}>
+                <Grid item md={6} xs={12}>
                   <Box flexDirection="row-reverse" display="flex" mr={1}>
                     <Typography variant="subtitle1">
                       Subtotal:{" "}
                       <b style={{ fontSize: 17 }}>
                         ${" "}
                         {DatosVentasActual?.subTotal
-                          ? DatosVentasActual?.subTotal?.toFixed(2)
+                          ? formatoMexico(DatosVentasActual.subTotal)
                           : 0}
                       </b>
                     </Typography>
@@ -764,7 +771,7 @@ export default function VentasGenerales() {
                       <b style={{ fontSize: 17 }}>
                         ${" "}
                         {DatosVentasActual?.impuestos
-                          ? DatosVentasActual?.impuestos?.toFixed(2)
+                          ? formatoMexico(DatosVentasActual.impuestos)
                           : 0}
                       </b>
                     </Typography>
@@ -790,13 +797,13 @@ export default function VentasGenerales() {
               <b style={{ color: "green" }}>
                 $
                 {DatosVentasActual?.total
-                  ? DatosVentasActual?.total.toFixed(2)
+                  ? formatoMexico(DatosVentasActual.total)
                   : 0}
               </b>
             </Typography>
-            <Box mt={0.5} mr={1}>
+            {/* <Box mt={0.5} mr={1}>
               <MonetizationOnIcon style={{ fontSize: 37, color: "green" }} />
-            </Box>
+            </Box> */}
           </Box>
         </Paper>
       </Box>

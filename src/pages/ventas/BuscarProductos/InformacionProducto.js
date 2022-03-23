@@ -13,17 +13,21 @@ import {
   Grid,
   Typography,
 } from "@material-ui/core";
+import { formatoMexico } from "../../../config/reuserFunctions";
 
-export default function InformacionProducto({ producto, productoSeleccionado }) {
+export default function InformacionProducto({
+  producto,
+  productoSeleccionado,
+}) {
   const classes = useStyles();
 
-  console.log(producto)
-  console.log(productoSeleccionado)
-  if (productoSeleccionado.length === 0) return null;
+  /* console.log(producto);
+  console.log(productoSeleccionado); */
+  /* if (productoSeleccionado.length === 0) return null; */
 
   return (
-    <Grid container>
-      <Grid item md={2} style={{display: "flex", justifyContent: "center"}}>
+    <Grid container alignItems="center">
+      <Grid item md={2} style={{ display: "flex", justifyContent: "center" }}>
         {productoSeleccionado?.id_producto?.imagenes.length > 0 ? (
           <Box className={classes.containerImage}>
             <img
@@ -39,70 +43,70 @@ export default function InformacionProducto({ producto, productoSeleccionado }) 
         )}
       </Grid>
       <Grid item md={10}>
-        <div className={classes.formInputFlex}>
-          <Box width="100%">
+        <Grid container spacing={2}>
+          <Grid item md={3} xs={12}>
             <Typography>
               <b>Nombre:</b>
             </Typography>
-            <Box display="flex">
-              <Typography>
-                {
-                  productoSeleccionado.id_producto.datos_generales.nombre_comercial
-                }
-              </Typography>
-            </Box>
-          </Box>
-          <Box width="100%">
+
+            <Typography>
+              {productoSeleccionado.id_producto
+                ? productoSeleccionado.id_producto.datos_generales
+                    .nombre_comercial
+                : "-"}
+            </Typography>
+          </Grid>
+          <Grid item md={2} xs={12}>
             <Typography>
               <b>Codigo Barras:</b>
             </Typography>
-            <Box display="flex">
-              <Typography>{productoSeleccionado.codigo_barras ? productoSeleccionado.codigo_barras : "N/A"}</Typography>
-            </Box>
-          </Box>
-          <Box width="70%">
             <Typography>
+              {productoSeleccionado.codigo_barras
+                ? productoSeleccionado.codigo_barras
+                : "N/A"}
+            </Typography>
+          </Grid>
+          <Grid item md={2} xs={12}>
+            <Typography align="center">
               <b>Cantidad:</b>
             </Typography>
-            <Box display="flex">
-              <Typography>{productoSeleccionado?.cantidad}</Typography>
-            </Box>
-          </Box>
-          <Box width="70%">
-            <Typography>
+            <Typography align="center">
+              {productoSeleccionado.cantidad
+                ? productoSeleccionado.cantidad
+                : "-"}
+            </Typography>
+          </Grid>
+          <Grid item md={1} xs={12}>
+            <Typography align="center">
               <b>Unidad:</b>
             </Typography>
-            <Box display="flex">
-              <Typography>{productoSeleccionado?.unidad}</Typography>
-            </Box>
-          </Box>
-          <Box width="70%">
-            <Typography>
+            <Typography align="center">
+              {productoSeleccionado.unidad ? productoSeleccionado.unidad : "-"}
+            </Typography>
+          </Grid>
+          <Grid item md={2} xs={12}>
+            <Typography align="center">
               <b>Descuento:</b>
             </Typography>
-            <Box display="flex">
-              <Typography>
-                {productoSeleccionado?.descuento
-                  ? productoSeleccionado?.descuento.precio_neto
-                  : 0}
-              </Typography>
-            </Box>
-          </Box>
-          <Box width="70%">
-            <Typography>
+            <Typography align="center">
+              {productoSeleccionado.descuento
+                ? productoSeleccionado.descuento.precio_neto
+                : 0}
+            </Typography>
+          </Grid>
+          <Grid item md={2} xs={12}>
+            <Typography align="center">
               <b>% Descuento:</b>
             </Typography>
-            <Box display="flex">
-              <Typography>
-                {productoSeleccionado?.descuento
-                  ? productoSeleccionado?.descuento.precio_neto
-                  : 0}
-              </Typography>
-            </Box>
-          </Box>
-        </div>
+            <Typography align="center">
+              {productoSeleccionado.descuento
+                ? productoSeleccionado.descuento.precio_neto
+                : 0}
+            </Typography>
+          </Grid>
+        </Grid>
       </Grid>
-      <Grid item lg={12}>
+      <Grid item md={12} lg={12}>
         <PreciosDeVentaCompras
           precios={productoSeleccionado?.id_producto?.precios?.precios_producto}
         />
@@ -113,12 +117,12 @@ export default function InformacionProducto({ producto, productoSeleccionado }) 
 
 function PreciosDeVentaCompras({ precios }) {
   return (
-    <div>
+    <Box>
       <TableContainer>
         <Table aria-label="simple table" size="small">
           <TableHead>
             <TableRow>
-              <TableCell style={{ minWidth: 150 }}>Precios de venta</TableCell>
+              <TableCell>Numero precio</TableCell>
               {[1, 2, 3, 4, 5, 6].map((numero, index) => (
                 <TableCell style={{ minWidth: 100 }} key={index}>
                   {numero}
@@ -127,14 +131,14 @@ function PreciosDeVentaCompras({ precios }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {["Precio de venta"].map((tipo, index) => (
+            {["Precios de venta"].map((tipo, index) => (
               <TableRow key={index}>
                 <TableCell style={{ border: 0 }}>
                   <b>{tipo}</b>
                 </TableCell>
                 {precios?.map((data, index) => (
                   <TableCell key={index} style={{ border: 0 }}>
-                    {data?.precio_neto}
+                    ${data?.precio_neto ? formatoMexico(data.precio_neto) : 0}
                   </TableCell>
                 ))}
               </TableRow>
@@ -142,6 +146,6 @@ function PreciosDeVentaCompras({ precios }) {
           </TableBody>
         </Table>
       </TableContainer>
-    </div>
+    </Box>
   );
 }
