@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
 		width: 28,
 	},
     iconSizeDialogs:{
-        width: 80,
+        width: 50,
     },
     iconSizeDialogsPequeno:{
         width: 50,

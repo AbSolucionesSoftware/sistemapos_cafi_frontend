@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import useStyles from "../styles";
 
 import {
@@ -7,6 +7,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogTitle,
   Divider,
   Grid,
   IconButton,
@@ -15,7 +16,7 @@ import {
   Slide,
   Typography,
 } from "@material-ui/core";
-import { Search } from "@material-ui/icons";
+import { Close, Search } from "@material-ui/icons";
 import ListaVentasRealizadas from "./ListaVentasRealizadas";
 import CloseIcon from "@material-ui/icons/Close";
 import { FcPaid, FcSearch } from "react-icons/fc";
@@ -42,7 +43,7 @@ export default function VentasRealizadas() {
   }
 
   return (
-    <>
+    <Fragment>
       <Button
         className={classes.borderBotonChico}
         onClick={handleClickOpen}
@@ -65,54 +66,32 @@ export default function VentasRealizadas() {
         </Box>
       </Button>
       <Dialog
-        maxWidth="lg"
+        fullWidth
+        maxWidth="md"
         open={open}
         onClose={handleClickOpen}
         TransitionComponent={Transition}
       >
-        <DialogContent>
-          <Grid container item lg={12}>
-            <Box display="flex" flexGrow={1}>
-              <Box>
+        <DialogTitle>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+              <Box display="flex" alignItems="center"> 
                 <img
                   src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/lista-de-espera.svg"
                   alt="icono caja"
                   className={classes.iconSizeDialogs}
                 />
-              </Box>
-              <Box m={2}>
-                <Divider orientation="vertical" />
-              </Box>
-              <Box mt={3}>
+                <Box mx={2} />
                 <Typography variant="h6">Ventas Realizadas</Typography>
               </Box>
-            </Box>
-            <Box>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleClickOpen}
-                size="large"
-              >
-                <CloseIcon />
+              <Button size="small" color="secondary" variant="contained" onClick={() => handleClickOpen()}>
+                <Close />
               </Button>
             </Box>
-          </Grid>
-          <Grid>
-            <div className={classes.formInputFlex}>
-              <Box width="100%">
-                <Paper className={classes.rootBusqueda}>
-                  <InputBase fullWidth placeholder="Buscar venta..." />
-                  <IconButton>
-                    <Search />
-                  </IconButton>
-                </Paper>
-              </Box>
-            </div>
-            <ListaVentasRealizadas />
-          </Grid>
+        </DialogTitle>
+        <DialogContent>
+            <ListaVentasRealizadas handleClose={handleClickOpen} />
         </DialogContent>
       </Dialog>
-    </>
+    </Fragment>
   );
 }

@@ -621,7 +621,45 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String ) {
         default
         unidad
         codigo_unidad
-        id_unidad_venta
+        id_unidad_venta{
+          _id
+          precio
+          cantidad
+          concepto
+          unidad
+          codigo_unidad
+          unidad_principal
+          unidad_activa
+          codigo_barras
+          id_producto
+          descuento{
+            cantidad_unidad
+            numero_precio
+            unidad_maxima
+            precio_general
+            precio_neto
+            precio_venta
+            iva_precio
+            ieps_precio
+            utilidad
+            porciento
+            dinero_descontado
+          }
+          descuento_activo
+          default
+          precio_unidad{
+            numero_precio
+            precio_neto
+            precio_venta
+            iva_precio
+            ieps_precio
+            unidad_mayoreo
+            utilidad
+            precio_general
+            cantidad_unidad
+            unidad_maxima
+          }
+        }
         year_registro
         fecha_registro
         precio_unidad{

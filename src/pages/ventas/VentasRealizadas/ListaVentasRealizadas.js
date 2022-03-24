@@ -1,118 +1,250 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import { IconButton, TablePagination } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
+import React, { Fragment, useContext, useState } from "react";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import IconButton from "@material-ui/core/IconButton";
+import Paper from "@material-ui/core/Paper";
+import Slide from "@material-ui/core/Slide";
+import TextField from "@material-ui/core/TextField";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Grid from "@material-ui/core/Grid";
+import { makeStyles, Snackbar } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
 
-const columns = [
-	{ id: 'folio', label: 'Folio', minWidth: 20, align: 'center' },
-	{ id: 'cliente', label: 'Cliente', minWidth: 330 },
-	{ id: 'fecha', label: 'Fecha.', minWidth: 100, align: 'center'},
-	{ id: 'total', label: 'Total', minWidth: 100, align: 'center'},
-];
+import { Close, Search } from "@material-ui/icons";
+import ErrorPage from "../../../components/ErrorPage";
+import { useQuery } from "@apollo/client";
+import { FacturacionCtx } from "../../../context/Facturacion/facturacionCtx";
+import { OBTENER_VENTAS_SUCURSAL } from "../../../gql/Ventas/ventas_generales";
+import { formatoMexico } from "../../../config/reuserFunctions";
+import { Alert } from "@material-ui/lab";
+import { useDebounce } from "use-debounce/lib";
+import { VentasContext } from "../../../context/Ventas/ventasContext";
+import { ClienteCtx } from "../../../context/Catalogos/crearClienteCtx";
 
-function createData(folio, cliente, fecha, total) {
-	return { folio, cliente, fecha, total};
-}
-
-const rows = [
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-	createData(2, 'Jabon', 50, 10),
-];
-
-const useStyles = makeStyles({
-	root: {
-		width: '100%'
-	},
-	container: {
-		maxHeight: '50vh'
-	}
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function ListaVentasRealizadas() {
-	const classes = useStyles();
-	const [ page, setPage ] = React.useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = React.useState(8);
+const useStyles = makeStyles((theme) => ({
+  container: {
+    height: "50vh",
+  },
+}));
 
-	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
+export default function ListaVentasRealizadas({ handleClose }) {
+  const [filtro, setFiltro] = useState("");
 
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(+event.target.value);
-		setPage(0);
-	};
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  const [open_productos, setOpenProductos] = useState(false);
+  const [productos_sin_clave, setProductosSinClave] = useState([]);
 
-	return (
-		<Paper className={classes.root}>
-			<TableContainer className={classes.container}>
-				<Table stickyHeader size="small" aria-label="a dense table">
-					<TableHead>
-						<TableRow>
-							{columns.map((column) => (
-								<TableCell key={column.id} align={column.align} style={{ width: column.minWidth }}>
-									{column.label}
-								</TableCell>
-							))}
-							<TableCell align='center' style={{ width: 35 }}>
-								Eliminar
-							</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-							return (
-								<TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-									{columns.map((column) => {
-										const value = row[column.id];
-										return (
-											<TableCell key={column.id} align={column.align}>
-												{column.format && typeof value === 'number' ? (
-													column.format(value)
-												) : (
-													value
-												)}
-											</TableCell>
-										);
-									})}
-									<TableCell align='center' >
-										<IconButton aria-label="delete" size='small'>
-											<DeleteIcon fontSize="small" />
-										</IconButton>
-									</TableCell>
-								</TableRow>
-							);
-						})}
-					</TableBody>
-				</Table>
-			</TableContainer>
-			<TablePagination
-				rowsPerPageOptions={[ 10, 25, 100 ]}
-				component="div"
-				count={rows.length}
-				rowsPerPage={rowsPerPage}
-				page={page}
-				onChangePage={handleChangePage}
-				onChangeRowsPerPage={handleChangeRowsPerPage}
-			/>
-		</Paper>
-	);
+  const openProductosClaves = () => setOpenProductos(true);
+  const closeProductosClaves = () => setOpenProductos(false);
+
+  const [value] = useDebounce(filtro, 500);
+
+  /* Queries */
+  const resultado_ventas = useQuery(OBTENER_VENTAS_SUCURSAL, {
+    variables: {
+      empresa: sesion.empresa._id,
+      sucursal: sesion.sucursal._id,
+      filtro: value,
+    },
+    fetchPolicy: "network-only",
+  });
+
+  return (
+    <Fragment>
+      {/* <ProductosSinClaveSat
+		  productos={productos_sin_clave}
+		  open={open_productos}
+		  handleClose={closeProductosClaves}
+		/> */}
+      <Box mb={2}>
+        <Grid container spacing={2}>
+          <Grid item sm={8} xs={12}>
+            <TextField
+              fullWidth
+              size="small"
+              placeholder="Buscar por: Folio, cliente, clave o nombre"
+              variant="outlined"
+              onChange={(e) => setFiltro(e.target.value)}
+              value={filtro}
+            />
+          </Grid>
+          <Grid item sm={4} xs={12}>
+            <TextField
+              fullWidth
+              size="small"
+              variant="outlined"
+              type="date"
+              onChange={(e) => setFiltro(e.target.value)}
+            />
+          </Grid>
+        </Grid>
+      </Box>
+      <Box my={1}>
+        <Alert severity="info">
+          Para seleccionar una venta haz un doble click!
+        </Alert>
+      </Box>
+      <RenderLista
+        resultado_ventas={resultado_ventas}
+        handleClose={handleClose}
+        setProductosSinClave={setProductosSinClave}
+        openProductosClaves={openProductosClaves}
+      />
+    </Fragment>
+  );
 }
+
+const RenderLista = ({
+  resultado_ventas,
+  handleClose,
+  setProductosSinClave,
+  openProductosClaves,
+}) => {
+  const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
+  const { updateClientVenta, setUpdateClientVenta } = useContext(ClienteCtx);
+  const classes = useStyles();
+  const [selected, setSelected] = useState("");
+  const [open, setOpen] = useState(false);
+  const { loading, data, error } = resultado_ventas;
+
+  if (loading)
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="50vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
+  if (error) {
+    return <ErrorPage />;
+  }
+
+  const { obtenerVentasSucursal } = data;
+
+  const obtenerVenta = (click, data) => {
+    setSelected(data.folio);
+    console.log(data);
+    if (click === 2) {
+      let datosVenta = JSON.parse(localStorage.getItem("DatosVentas"));
+
+      if (datosVenta === null) {
+        //se agregan la venta a localStorage
+        /* localStorage.setItem("DatosVentas", JSON.stringify(venta.datosVenta)); */
+        /* updateDataStorage(); */
+        /* handleModalEspera(); */
+      } else {
+        handleClickOpen();
+      }
+      /* console.log(data);
+      const without_sat_code = data.productos.filter(
+        (res) => !res.id_producto.datos_generales.clave_producto_sat.Value
+      );
+
+      if (without_sat_code.length > 0) {
+        setProductosSinClave(without_sat_code);
+        openProductosClaves();
+        return;
+      }
+
+      const { productos, ...venta } = {...data}
+      const productos_base = [...data.productos]
+      setVentaFactura(venta);
+      setProductos(productos_base);
+      handleClose(); */
+    }
+  };
+
+  const handleClickOpen = () => {
+    setOpen(!open);
+  };
+
+  const updateDataStorage = () => {
+    setUpdateTablaVentas(!updateTablaVentas);
+    setUpdateClientVenta(!updateClientVenta);
+  };
+
+  return (
+    <Paper variant="outlined">
+      <Snackbar
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={open}
+        autoHideDuration={5000}
+        onClose={handleClickOpen}
+        message="No puedes agregar una venta cuando ya está una en curso."
+        action={
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleClickOpen}
+          >
+            <Close fontSize="small" />
+          </IconButton>
+        }
+      />
+      <TableContainer className={classes.container}>
+        <Table stickyHeader size="small" aria-label="a dense table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Folio</TableCell>
+              <TableCell>Cliente</TableCell>
+              <TableCell>Usuario</TableCell>
+              <TableCell>Caja</TableCell>
+              <TableCell>Descuento</TableCell>
+              <TableCell>Subtotal</TableCell>
+              <TableCell>Impuestos</TableCell>
+              <TableCell>Total</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {obtenerVentasSucursal.map((data, index) => {
+              return (
+                <TableRow
+                  key={index}
+                  hover
+                  role="checkbox"
+                  tabIndex={-1}
+                  selected={data.folio === selected}
+                  onClick={(e) => obtenerVenta(e.detail, data)}
+                >
+                  <TableCell>{data.folio}</TableCell>
+                  <TableCell>
+                    {data.cliente !== null ? data.cliente.nombre_cliente : "-"}
+                  </TableCell>
+                  <TableCell>{data.usuario.nombre}</TableCell>
+                  <TableCell>{data.id_caja.numero_caja}</TableCell>
+                  <TableCell>
+                    ${data.descuento ? formatoMexico(data.descuento) : 0}
+                  </TableCell>
+                  <TableCell>${formatoMexico(data.subTotal)}</TableCell>
+                  <TableCell>${formatoMexico(data.impuestos)}</TableCell>
+                  <TableCell>${formatoMexico(data.total)}</TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
+  );
+};
