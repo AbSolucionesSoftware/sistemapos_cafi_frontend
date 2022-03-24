@@ -14,15 +14,17 @@ import {
   TextField,
   Typography,
   InputAdornment,
+  DialogTitle,
+  Container,
 } from "@material-ui/core";
 import { FcDonate, FcShop } from "react-icons/fc";
 import CloseIcon from "@material-ui/icons/Close";
 import CreditCardIcon from "@material-ui/icons/CreditCard";
 import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import ClearIcon from "@material-ui/icons/Clear";
-import { Edit } from "@material-ui/icons";
+import { Close, Done, Edit } from "@material-ui/icons";
 import { FcBusinessman, FcSalesPerformance } from "react-icons/fc";
-import { numerosRandom } from "../../../config/reuserFunctions";
+import { formatoMexico, numerosRandom } from "../../../config/reuserFunctions";
 import { formaPago } from "../../../pages/sucursales/Facturacion/catalogos";
 import { CREAR_VENTA } from "../../../gql/Ventas/ventas_generales";
 import { useMutation } from "@apollo/client";
@@ -30,6 +32,7 @@ import moment from "moment";
 
 import { VentasContext } from "../../../context/Ventas/ventasContext";
 import { ClienteCtx } from "../../../context/Catalogos/crearClienteCtx";
+import { Alert } from "@material-ui/lab";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -58,6 +61,8 @@ export default function CerrarVenta() {
   const { updateClientVenta, setUpdateClientVenta } = useContext(ClienteCtx);
   //States de venta
   const [totalVenta, setTotalVenta] = useState(0);
+  const [subtotalVenta, setSubtotalVenta] = useState(0);
+  const [impuestosVenta, setImpuestosVenta] = useState(0);
   const [montoPagado, setMontoPagado] = useState(0);
   const [cambioVenta, setCambioVenta] = useState(0);
   const [datosCliente, setDatosCliente] = useState({});
@@ -80,6 +85,8 @@ export default function CerrarVenta() {
   const [creditoActivo, setCreditoActivo] = useState(false);
 
   //States de los montos a pagar
+  const [monto_efectivo_real, setMontoEfectivo] = useState(0);
+
   const [efectivo, setEfectivo] = useState(0);
   const [tarjeta, setTarjeta] = useState(0);
   const [puntos, setPuntos] = useState(0);
@@ -127,6 +134,39 @@ export default function CerrarVenta() {
     });
     //Quitar venta a credito
     setCreditoActivo(false);
+    //limpiar states
+  };
+
+  const resetStates = () => {
+    setTotalVenta(0);
+    setSubtotalVenta(0);
+    setImpuestosVenta(0);
+    setMontoPagado(0);
+    setCambioVenta(0);
+    setDatosCliente({});
+    setMonedero(0);
+    setDescuentoVenta(0);
+    setfechaVencimientoDate("");
+    setValorPuntoProducto(0.5);
+    setValorFinalCambioPuntos(0);
+    setMonederoTotal(0);
+    setVentaActual(0);
+    setEditableClient(true);
+    setVisible(false);
+
+    //States descuento venta
+    setDescuentoAplicarVenta(0);
+    setDescuentoPorsentajeVenta(0);
+    setVentaOriginal(0);
+    setCreditoActivo(false);
+
+    //States de los montos a pagar
+    setMontoEfectivo(0);
+    setEfectivo(0);
+    setTarjeta(0);
+    setPuntos(0);
+    setTransferencia(0);
+    setCheque(0);
   };
 
   function funcion_tecla(event) {
@@ -152,7 +192,7 @@ export default function CerrarVenta() {
       //Agregar los montos en caja
       const montosEnCaja = {
         monto_efectivo: {
-          monto: parseFloat(efectivo),
+          monto: parseFloat(monto_efectivo_real),
           metodo_pago: formaPago[0].Value,
         },
         monto_tarjeta_debito: {
@@ -189,7 +229,7 @@ export default function CerrarVenta() {
       ventaFinal.credito = visible;
       //Agregar descuentos de ventas
       ventaFinal.descuento_general_activo = false;
-      ventaFinal.decuento_general = null;
+      ventaFinal.descuento_general = null;
       //Declarar dias de credito como false
       ventaFinal.dias_de_credito_venta = datosCliente
         ? datosCliente.dias_credito
@@ -218,6 +258,7 @@ export default function CerrarVenta() {
       //Quitar loading
       setOpenBackDrop(false);
       hancleClickCerrarVentaCambio();
+      resetStates();
     } catch (error) {
       console.log(error);
       if (error.networkError.result) {
@@ -238,7 +279,7 @@ export default function CerrarVenta() {
         break;
 
       case "PUNTOS":
-        const valor = e.target.value != "" ? parseInt(e.target.value) : 0;
+        const valor = e.target.value !== "" ? parseInt(e.target.value) : 0;
         console.log(e.target.value, valor);
         if (valor <= monederoTotal) {
           const valor2 = valorPuntoProducto * parseFloat(valor);
@@ -464,6 +505,8 @@ export default function CerrarVenta() {
 
     setVentaOriginal(venta);
     const total = venta === null ? 0 : venta.total;
+    const subtotal = venta === null ? 0 : venta.subTotal;
+    const impuestos = venta === null ? 0 : venta.impuestos;
     const monederoVenta = venta === null ? 0 : venta.monedero;
     const cliente = venta && venta.cliente ? venta.cliente : {};
     if (cliente.numero_cliente === undefined) {
@@ -473,7 +516,10 @@ export default function CerrarVenta() {
     }
     setValorPuntoProducto(parseFloat(sesion.empresa.valor_puntos));
     setTotalVenta(total.toFixed(2));
+    setSubtotalVenta(subtotal);
+    setImpuestosVenta(impuestos);
     setEfectivo(total.toFixed(2));
+    setMontoEfectivo(total.toFixed(2));
     setDatosCliente(cliente);
     setMonedero(parseFloat(monederoVenta));
     setMonederoTotal(
@@ -497,18 +543,102 @@ export default function CerrarVenta() {
   }, [datosCliente, datosCliente.dias_credito]);
 
   useEffect(() => {
-    setMontoPagado(
+    let monto_caja = 0;
+    let monto_pagado =
       parseFloat(efectivo) +
-        parseFloat(tarjeta) +
-        parseFloat(valorFinalCambioPuntos) +
-        parseFloat(transferencia) +
-        parseFloat(cheque)
-    );
+      parseFloat(tarjeta) +
+      parseFloat(valorFinalCambioPuntos) +
+      parseFloat(transferencia) +
+      parseFloat(cheque);
+    let cambio_caja = parseFloat(monto_pagado) - parseFloat(totalVenta);
+
+    monto_caja = parseFloat(efectivo - cambio_caja);
+
+    setMontoEfectivo(monto_caja);
+    setMontoPagado(monto_pagado);
   }, [efectivo, tarjeta, puntos, transferencia, cheque]);
 
   useEffect(() => {
     setCambioVenta(montoPagado - totalVenta);
   }, [montoPagado]);
+
+  const clearFieldOnFocus = (e) => {
+    const { name, value } = e.target;
+    const val = parseFloat(value)
+    switch (name) {
+      case "EFECTIVO":
+        if (val === 0) {
+          setEfectivo('');
+        }
+        break;
+      case "TARJETA":
+        if (val === 0) {
+          setTarjeta('');
+        }
+        break;
+      case "PUNTOS":
+        if (val === 0) {
+          setPuntos('');
+        }
+        break;
+      case "TRANSFERENCIA":
+        if (val === 0) {
+          setTransferencia('');
+        }
+        break;
+      case "CHEQUE":
+        if (val === 0) {
+          setCheque('');
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
+  const validateCantidadesCorrectas = (e) => {
+    const { name, value } = e.target;
+    const monto = parseFloat(monto_efectivo_real);
+    switch (name) {
+      case "EFECTIVO":
+        if (value === "") {
+          setEfectivo(0);
+        } /* else if(parseFloat(value) > parseFloat(monto_efectivo_real)){
+          setEfectivo(parseFloat(monto_efectivo_real));
+        } */
+        break;
+      case "TARJETA":
+        if (value === "") {
+          setTarjeta(0);
+        } else if (monto < 0) {
+          setTarjeta(0);
+        }
+        break;
+      case "PUNTOS":
+        if (value === "") {
+          setPuntos(0);
+        } else if (monto < 0) {
+          setPuntos(0);
+        }
+        break;
+      case "TRANSFERENCIA":
+        if (value === "") {
+          setTransferencia(0);
+        } else if (monto < 0) {
+          setTransferencia(0);
+        }
+        break;
+      case "CHEQUE":
+        if (value === "") {
+          setCheque(0);
+        } else if (monto < 0) {
+          setCheque(0);
+        }
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <>
@@ -538,402 +668,432 @@ export default function CerrarVenta() {
         </Box>
       </Button>
       <Dialog
-        maxWidth="lg"
+        fullWidth
+        maxWidth="md"
         open={open}
         onClose={handleClickOpen}
         TransitionComponent={Transition}
       >
+        <DialogTitle>
+          <Box display="flex" alignItems="center">
+            <Box>
+              <img
+                src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cart.svg"
+                alt="icono ventas"
+                className={classes.iconSizeDialogsPequeno}
+              />
+            </Box>
+            <Box mx={1} flexGrow={1}>
+              <Typography variant="h4">Ticket</Typography>
+            </Box>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleClickOpen}
+              size="large"
+            >
+              <CloseIcon />
+            </Button>
+          </Box>
+        </DialogTitle>
         <DialogContent>
-          <Grid container item lg={12}>
-            <Box display="flex" justifyContent="center" flexGrow={1}>
+          <div className={classes.formInputFlex}>
+            <Box width="25%" textAlign="center">
               <Box>
                 <img
-                  src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/cart.svg"
+                  src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/money.svg"
                   alt="icono ventas"
                   className={classes.iconSizeDialogsPequeno}
+                  style={{ cursor: "pointer" }}
                 />
               </Box>
-              <Box m={2}>
-                <Divider orientation="vertical" />
-              </Box>
-              <Box mt={1} textAlign="center">
-                <Typography variant="h4">Ticket</Typography>
+              <Typography variant="caption">Efectivo</Typography>
+              <Box display="flex">
+                <TextField
+                  fullWidth
+                  size="small"
+                  name="EFECTIVO"
+                  id="form-producto-efectivo"
+                  variant="outlined"
+                  value={efectivo}
+                  onChange={(e) => handlerChangeValue(e, "EFECTIVO")}
+                  onBlur={validateCantidadesCorrectas}
+                  onFocus={clearFieldOnFocus}
+                />
               </Box>
             </Box>
-            <Box>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleClickOpen}
-                size="large"
-              >
-                <CloseIcon />
-              </Button>
+            <Box width="25%" textAlign="center">
+              <Box>
+                <img
+                  src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tarjeta-de-credito.svg"
+                  alt="icono ventas"
+                  className={classes.iconSizeDialogsPequeno}
+                  style={{ cursor: "pointer" }}
+                />
+              </Box>
+              <Typography variant="caption">Tarjeta</Typography>
+              <Box display="flex">
+                <TextField
+                  fullWidth
+                  size="small"
+                  name="TARJETA"
+                  variant="outlined"
+                  value={tarjeta}
+                  onChange={(e) => handlerChangeValue(e, "TARJETA")}
+                  onBlur={validateCantidadesCorrectas}
+                  onFocus={clearFieldOnFocus}
+                />
+              </Box>
             </Box>
-          </Grid>
-          <Grid>
-            <div className={classes.formInputFlex}>
-              <Box width="25%" textAlign="center">
-                <Box>
-                  <img
-                    src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/money.svg"
-                    alt="icono ventas"
-                    className={classes.iconSizeDialogsPequeno}
-                    style={{ cursor: "pointer" }}
-                  />
-                </Box>
-                <Typography variant="caption">Efectivo</Typography>
-                <Box display="flex">
-                  <TextField
-                    fullWidth
-                    size="small"
-                    name="efectivo"
-                    id="form-producto-efectivo"
-                    variant="outlined"
-                    value={efectivo}
-                    onChange={(e) => handlerChangeValue(e, "EFECTIVO")}
-                  />
-                </Box>
+            <Box width="25%" textAlign="center">
+              <Box>
+                <FcShop style={{ fontSize: 50, cursor: "pointer" }} />
               </Box>
-              <Box width="25%" textAlign="center">
-                <Box>
-                  <img
-                    src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/tarjeta-de-credito.svg"
-                    alt="icono ventas"
-                    className={classes.iconSizeDialogsPequeno}
-                    style={{ cursor: "pointer" }}
-                  />
-                </Box>
-                <Typography variant="caption">Tarjeta</Typography>
-                <Box display="flex">
-                  <TextField
-                    fullWidth
-                    size="small"
-                    name="codigo_barras"
-                    id="form-producto-codigo-barras"
-                    variant="outlined"
-                    value={tarjeta}
-                    onChange={(e) => handlerChangeValue(e, "TARJETA")}
-                  />
-                </Box>
+              <Typography variant="caption">Puntos</Typography>
+              <Box display="flex">
+                <TextField
+                  fullWidth
+                  size="small"
+                  name="PUNTOS"
+                  variant="outlined"
+                  value={puntos}
+                  onChange={(e) => handlerChangeValue(e, "PUNTOS")}
+                  onBlur={validateCantidadesCorrectas}
+                  onFocus={clearFieldOnFocus}
+                />
               </Box>
-              <Box width="25%" textAlign="center">
-                <Box>
-                  <FcShop style={{ fontSize: 50, cursor: "pointer" }} />
-                </Box>
-                <Typography variant="caption">Puntos</Typography>
-                <Box display="flex">
-                  <TextField
-                    fullWidth
-                    size="small"
-                    name="codigo_barras"
-                    id="form-producto-codigo-barras"
-                    variant="outlined"
-                    value={puntos}
-                    onChange={(e) => handlerChangeValue(e, "PUNTOS")}
-                  />
-                </Box>
+            </Box>
+            <Box width="25%" textAlign="center">
+              <Box p={0}>
+                <img
+                  src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/transferencia-bancaria.svg"
+                  alt="icono ventas"
+                  className={classes.iconSizeDialogsPequeno}
+                  style={{ cursor: "pointer" }}
+                />
               </Box>
-              <Box width="25%" textAlign="center">
-                <Box p={0}>
-                  <img
-                    src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/transferencia-bancaria.svg"
-                    alt="icono ventas"
-                    className={classes.iconSizeDialogsPequeno}
-                    style={{ cursor: "pointer" }}
-                  />
-                </Box>
-                <Typography variant="caption">Transferencia</Typography>
-                <Box display="flex">
-                  <TextField
-                    fullWidth
-                    size="small"
-                    name="codigo_barras"
-                    id="form-producto-codigo-barras"
-                    variant="outlined"
-                    value={transferencia}
-                    onChange={(e) => handlerChangeValue(e, "TRANSFERENCIA")}
-                  />
-                </Box>
+              <Typography variant="caption">Transferencia</Typography>
+              <Box display="flex">
+                <TextField
+                  fullWidth
+                  size="small"
+                  name="TRANSFERENCIA"
+                  variant="outlined"
+                  value={transferencia}
+                  onChange={(e) => handlerChangeValue(e, "TRANSFERENCIA")}
+                  onBlur={validateCantidadesCorrectas}
+                  onFocus={clearFieldOnFocus}
+                />
               </Box>
-              <Box width="25%" textAlign="center">
-                <Box p={0}>
-                  <img
-                    src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/cheque.png"
-                    alt="icono ventas"
-                    className={classes.iconSizeDialogsPequeno}
-                    style={{ cursor: "pointer" }}
-                  />
-                </Box>
-                <Typography variant="caption">Cheque</Typography>
-                <Box display="flex">
-                  <TextField
-                    fullWidth
-                    size="small"
-                    name="codigo_barras"
-                    id="form-producto-codigo-barras"
-                    variant="outlined"
-                    value={cheque}
-                    onChange={(e) => handlerChangeValue(e, "CHEQUE")}
-                  />
-                </Box>
+            </Box>
+            <Box width="25%" textAlign="center">
+              <Box p={0}>
+                <img
+                  src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/cheque.png"
+                  alt="icono ventas"
+                  className={classes.iconSizeDialogsPequeno}
+                  style={{ cursor: "pointer" }}
+                />
               </Box>
-            </div>
-            <div className={classes.formInputFlex}>
-              <Box width="70%" textAlign="left">
-                <Box display="flex">
-                  <Box display="flex" alignItems={"center"} mr={2}>
-                    <Box mt={0.5} mr={0.5}>
-                      <FcBusinessman style={{ fontSize: 19 }} />
+              <Typography variant="caption">Cheque</Typography>
+              <Box display="flex">
+                <TextField
+                  fullWidth
+                  size="small"
+                  name="CHEQUE"
+                  variant="outlined"
+                  value={cheque}
+                  onChange={(e) => handlerChangeValue(e, "CHEQUE")}
+                  onBlur={validateCantidadesCorrectas}
+                  onFocus={clearFieldOnFocus}
+                />
+              </Box>
+            </Box>
+          </div>
+          <Container maxWidth="lg">
+            <Box my={1}>
+              <Grid container spacing={2} justifyContent="space-between">
+                <Grid item md={5} xs={12}>
+                  <Box textAlign="left">
+                    <Box display="flex">
+                      <Box display="flex" alignItems={"center"} mr={2}>
+                        <Box mt={0.5} mr={0.5}>
+                          <FcBusinessman style={{ fontSize: 19 }} />
+                        </Box>
+                        <Typography variant="subtitle1">
+                          <b>Cliente:</b>
+                        </Typography>
+                      </Box>
+                      <Typography variant="subtitle1">
+                        {datosCliente
+                          ? datosCliente.nombre_cliente
+                          : "Sin cliente"}
+                      </Typography>
                     </Box>
-                    <Typography variant="subtitle1">
-                      <b>Cliente:</b>
-                    </Typography>
-                  </Box>
-                  <Typography variant="subtitle1">
-                    {datosCliente ? datosCliente.nombre_cliente : "Sin cliente"}
-                  </Typography>
-                </Box>
 
-                <Box display="flex">
-                  <Box display="flex" alignItems={"center"} mr={2}>
-                    <Box mt={0.5} mr={0.5}>
-                      <FcSalesPerformance style={{ fontSize: 19 }} />
+                    <Box display="flex">
+                      <Box display="flex" alignItems={"center"} mr={2}>
+                        <Box mt={0.5} mr={0.5}>
+                          <FcSalesPerformance style={{ fontSize: 19 }} />
+                        </Box>
+                        <Typography variant="subtitle1">
+                          <b>Puntos Generados:</b>
+                        </Typography>
+                      </Box>
+                      <Typography variant="subtitle1">{monedero}</Typography>
                     </Box>
-                    <Typography variant="subtitle1">
-                      <b>Puntos Generados:</b>
-                    </Typography>
-                  </Box>
-                  <Typography variant="subtitle1">{monedero}</Typography>
-                </Box>
 
-                <Box display="flex">
-                  <Box display="flex" alignItems={"center"} mr={2}>
-                    <Box mt={0.5} mr={0.5}>
-                      <FcSalesPerformance style={{ fontSize: 19 }} />
-                    </Box>
-                    <Typography variant="subtitle1">
-                      <b>Puntos Disponibles:</b>
-                    </Typography>
-                  </Box>
-                  <Typography variant="subtitle1">
-                    {!datosCliente.monedero_electronico
-                      ? 0
-                      : datosCliente.monedero_electronico}
-                  </Typography>
-                </Box>
-
-                <Box display="flex">
-                  <Box display="flex" alignItems={"center"} mr={2}>
-                    <Box mt={0.5} mr={0.5}>
-                      <FcSalesPerformance style={{ fontSize: 19 }} />
-                    </Box>
-                    <Typography variant="subtitle1">
-                      <b>Total puntos:</b>
-                    </Typography>
-                  </Box>
-                  <Typography variant="subtitle1">{monederoTotal}</Typography>
-                </Box>
-
-                <Box display="flex">
-                  <Box display="flex" alignItems={"center"} mr={2}>
-                    <Box mt={0.5} mr={0.5}>
-                      <FcSalesPerformance style={{ fontSize: 19 }} />
-                    </Box>
-                    <Typography variant="subtitle1">
-                      <b>Valor:</b>
-                    </Typography>
-                  </Box>
-                  <Typography variant="subtitle1">
-                    ${monederoTotal * valorPuntoProducto}
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Box width="45%" textAlign="right">
-                <Box
-                  display={"flex"}
-                  justifyContent={"space-between"}
-                  alignItems="center"
-                >
-                  <Typography style={{ fontSize: "17px" }}>
-                    <b>Monto pagado:</b>
-                  </Typography>
-                  <Typography variant="h6">
-                    $ {montoPagado.toFixed(2)}
-                  </Typography>
-                </Box>
-
-                <Box
-                  display={"flex"}
-                  justifyContent={"space-between"}
-                  alignItems="center"
-                >
-                  <Typography style={{ fontSize: "17px" }}>
-                    <b>Total:</b>
-                  </Typography>
-                  <Typography variant="h6">$ {totalVenta}</Typography>
-                </Box>
-
-                <Box
-                  display={"flex"}
-                  justifyContent={"space-between"}
-                  alignItems="center"
-                >
-                  <Typography style={{ fontSize: "17px" }}>
-                    <b>Descuento:</b>
-                  </Typography>
-                  <Typography variant="h6">
-                    $ {descuentoVenta.toFixed(2)}
-                  </Typography>
-                </Box>
-
-                <Box
-                  display={"flex"}
-                  justifyContent={"space-between"}
-                  alignItems="center"
-                >
-                  <Typography style={{ fontSize: "17px" }}>
-                    <b>Cambio:</b>
-                  </Typography>
-                  <Typography variant="h6">
-                    $ {cambioVenta.toFixed(2)}
-                  </Typography>
-                </Box>
-              </Box>
-            </div>
-
-            <div style={{ display: visible ? "block" : "none" }}>
-              <div className={classes.formInputFlex}>
-                <Box width="20%">
-                  <Typography variant="caption">
-                    <b>Dias de Crédito:</b>
-                  </Typography>
-                  <Box display="flex" alignItems="center">
-                    <TextField
-                      fullWidth
-                      size="small"
-                      name="codigo_barras"
-                      id="form-producto-codigo-barras"
-                      variant="outlined"
-                      value={
-                        datosCliente.dias_credito === null
+                    <Box display="flex">
+                      <Box display="flex" alignItems={"center"} mr={2}>
+                        <Box mt={0.5} mr={0.5}>
+                          <FcSalesPerformance style={{ fontSize: 19 }} />
+                        </Box>
+                        <Typography variant="subtitle1">
+                          <b>Puntos Disponibles:</b>
+                        </Typography>
+                      </Box>
+                      <Typography variant="subtitle1">
+                        {!datosCliente.monedero_electronico
                           ? 0
-                          : datosCliente.dias_credito
-                      }
-                      onChange={(e) =>
-                        setDatosCliente({
-                          ...datosCliente,
-                          dias_credito: e.target.value,
-                        })
-                      }
-                      disabled={editableClient}
-                    />
-                  </Box>
-                </Box>
-                <Box width="20%">
-                  <Typography variant="caption">
-                    <b>Límite de Crédito:</b>
-                  </Typography>
-                  <Box display="flex" alignItems="center">
-                    <TextField
-                      fullWidth
-                      size="small"
-                      name="codigo_barras"
-                      id="form-producto-codigo-barras"
-                      variant="outlined"
-                      value={
-                        datosCliente.limite_credito === null
-                          ? 0
-                          : datosCliente.limite_credito
-                      }
-                      disabled={editableClient}
-                    />
-                  </Box>
-                </Box>
-                <Box width="20%">
-                  <Typography variant="caption">
-                    <b>Crédito Disponible:</b>
-                  </Typography>
-                  <Box display="flex" alignItems="center">
-                    <TextField
-                      fullWidth
-                      size="small"
-                      name="codigo_barras"
-                      id="form-producto-codigo-barras"
-                      variant="outlined"
-                      value={
-                        datosCliente.credito_disponible === null
-                          ? 0
-                          : datosCliente.credito_disponible
-                      }
-                      disabled={true}
-                    />
-                  </Box>
-                </Box>
+                          : datosCliente.monedero_electronico}
+                      </Typography>
+                    </Box>
 
-                <Box>
-                  <Box width="100%" mt={2.5}>
-                    <Button
-                      color="primary"
-                      variant="outlined"
-                      size="large"
-                      startIcon={<Edit />}
-                      onClick={() => setEditableClient(!editableClient)}
+                    <Box display="flex">
+                      <Box display="flex" alignItems={"center"} mr={2}>
+                        <Box mt={0.5} mr={0.5}>
+                          <FcSalesPerformance style={{ fontSize: 19 }} />
+                        </Box>
+                        <Typography variant="subtitle1">
+                          <b>Total puntos:</b>
+                        </Typography>
+                      </Box>
+                      <Typography variant="subtitle1">
+                        {monederoTotal}
+                      </Typography>
+                    </Box>
+
+                    <Box display="flex">
+                      <Box display="flex" alignItems={"center"} mr={2}>
+                        <Box mt={0.5} mr={0.5}>
+                          <FcSalesPerformance style={{ fontSize: 19 }} />
+                        </Box>
+                        <Typography variant="subtitle1">
+                          <b>Valor:</b>
+                        </Typography>
+                      </Box>
+                      <Typography variant="subtitle1">
+                        ${monederoTotal * valorPuntoProducto}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Grid item md={5} xs={12}>
+                  <Box>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="space-between"
                     >
-                      Editar
-                    </Button>
+                      <Typography style={{ fontSize: "17px" }}>
+                        <b>Monto pagado:</b>
+                      </Typography>
+                      <Box mx={1} />
+                      <Typography variant="h6">
+                        $ {formatoMexico(montoPagado)}
+                      </Typography>
+                    </Box>
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Typography style={{ fontSize: "17px" }}>
+                        <b>Subtotal:</b>
+                      </Typography>
+                      <Box mx={1} />
+                      <Typography variant="h6">
+                        $ {formatoMexico(subtotalVenta)}
+                      </Typography>
+                    </Box>
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Typography style={{ fontSize: "17px" }}>
+                        <b>Impuestos:</b>
+                      </Typography>
+                      <Box mx={1} />
+                      <Typography variant="h6">
+                        $ {formatoMexico(impuestosVenta)}
+                      </Typography>
+                    </Box>
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Typography style={{ fontSize: "17px" }}>
+                        <b>Total:</b>
+                      </Typography>
+                      <Box mx={1} />
+                      <Typography variant="h6">
+                        $ {formatoMexico(totalVenta)}
+                      </Typography>
+                    </Box>
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Typography style={{ fontSize: "17px" }}>
+                        <b>Descuento:</b>
+                      </Typography>
+                      <Box mx={1} />
+                      <Typography variant="h6">
+                        $ {descuentoVenta ? formatoMexico(descuentoVenta) : 0}
+                      </Typography>
+                    </Box>
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Typography align="left" style={{ fontSize: "17px" }}>
+                        <b>Cambio:</b>
+                      </Typography>
+                      <Box mx={1} />
+                      <Typography variant="h6">
+                        $ {cambioVenta ? formatoMexico(cambioVenta) : 0}
+                      </Typography>
+                    </Box>
                   </Box>
-                </Box>
-              </div>
-              <div className={classes.formInputFlex}>
-                <Box width="20%">
-                  <Typography variant="caption">
-                    <b>Total a Crédito:</b>
-                  </Typography>
-                  <Box display="flex" alignItems="center">
-                    <TextField
-                      fullWidth
-                      size="small"
-                      name="codigo_barras"
-                      id="form-producto-codigo-barras"
-                      variant="outlined"
-                      disabled={editableClient}
-                      value={totalVenta}
-                    />
-                  </Box>
-                </Box>
+                </Grid>
+                {visible ? (
+                  <Grid item xs={12}>
+                    <Grid container spacing={1}>
+                      <Grid item md={2} xs={12}>
+                        <Typography variant="caption">
+                          <b>Dias de Crédito:</b>
+                        </Typography>
 
-                <Box width="20%">
-                  <Typography variant="caption">
-                    <b>Fecha de Vencimiento:</b>
-                  </Typography>
-                  <Box display="flex" alignItems="center">
-                    <TextField
-                      fullWidth
-                      size="small"
-                      name="codigo_barras"
-                      id="form-producto-codigo-barras"
-                      variant="outlined"
-                      type="date"
-                      value={fechaVencimientoDate}
-                      onChange={(e) => {
-                        const modelDate = moment(e.target.value).add(1, "days");
-                        const hoy = moment();
-                        const diasDiff = modelDate.diff(hoy, "days");
-                        setfechaVencimientoDate(e.target.value);
-                        setDatosCliente({
-                          ...datosCliente,
-                          dias_credito: diasDiff,
-                        });
-                      }}
-                      disabled={editableClient}
-                    />
-                  </Box>
-                </Box>
-              </div>
-            </div>
-          </Grid>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          name="codigo_barras"
+                          id="form-producto-codigo-barras"
+                          variant="outlined"
+                          value={
+                            datosCliente.dias_credito === null
+                              ? 0
+                              : datosCliente.dias_credito
+                          }
+                          onChange={(e) =>
+                            setDatosCliente({
+                              ...datosCliente,
+                              dias_credito: e.target.value,
+                            })
+                          }
+                          disabled={editableClient}
+                        />
+                      </Grid>
+                      <Grid item md={2} xs={12}>
+                        <Typography variant="caption">
+                          <b>Límite de Crédito:</b>
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          name="codigo_barras"
+                          id="form-producto-codigo-barras"
+                          variant="outlined"
+                          value={
+                            datosCliente.limite_credito === null
+                              ? 0
+                              : datosCliente.limite_credito
+                          }
+                          disabled={editableClient}
+                        />
+                      </Grid>
+                      <Grid item md={2} xs={12}>
+                        <Typography variant="caption">
+                          <b>Crédito Disponible:</b>
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          name="codigo_barras"
+                          id="form-producto-codigo-barras"
+                          variant="outlined"
+                          value={
+                            datosCliente.credito_disponible === null
+                              ? 0
+                              : datosCliente.credito_disponible
+                          }
+                          disabled={true}
+                        />
+                      </Grid>
+                      <Grid item md={2} xs={12}>
+                        <Typography variant="caption">
+                          <b>Total a Crédito:</b>
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          name="codigo_barras"
+                          id="form-producto-codigo-barras"
+                          variant="outlined"
+                          disabled={editableClient}
+                          value={totalVenta}
+                        />
+                      </Grid>
+                      <Grid item md={3} xs={12}>
+                        <Typography variant="caption">
+                          <b>Fecha de Vencimiento:</b>
+                        </Typography>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          name="codigo_barras"
+                          id="form-producto-codigo-barras"
+                          variant="outlined"
+                          type="date"
+                          value={fechaVencimientoDate}
+                          onChange={(e) => {
+                            const modelDate = moment(e.target.value).add(
+                              1,
+                              "days"
+                            );
+                            const hoy = moment();
+                            const diasDiff = modelDate.diff(hoy, "days");
+                            setfechaVencimientoDate(e.target.value);
+                            setDatosCliente({
+                              ...datosCliente,
+                              dias_credito: diasDiff,
+                            });
+                          }}
+                          disabled={editableClient}
+                        />
+                      </Grid>
+                      <Grid item md={1} xs={12}>
+                        <Box display="flex" alignItems="flex-end" height="100%">
+                          <Button
+                            color="primary"
+                            variant="outlined"
+                            size="large"
+                            onClick={() => setEditableClient(!editableClient)}
+                          >
+                            <Edit />
+                          </Button>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                ) : null}
+              </Grid>
+            </Box>
+          </Container>
         </DialogContent>
 
         <DialogActions style={{ justifyContent: "space-between" }}>
@@ -995,86 +1155,86 @@ export default function CerrarVenta() {
       </Dialog>
 
       <Dialog
+        fullWidth
+        maxWidth="xs"
         open={openModalDescuento}
         onClose={abrirCajon}
         TransitionComponent={Transition}
       >
-        <DialogContent>
-          <Box textAlign="center">
-            <Box textAlign="center">
-              <Typography variant="h5">Descuento</Typography>
-            </Box>
+        <DialogTitle>
+          <Box textAlign="center" display="flex" justifyContent="space-between">
+            <Typography variant="h5">Descuento</Typography>
+            <Button
+              color="secondary"
+              variant="contained"
+              size="small"
+              onClick={() => setOpenModalDescuento(!openModalDescuento)}
+            >
+              <Close />
+            </Button>
           </Box>
-          <Grid item lg={12}>
-            <div className={classes.formInputFlex}>
-              <Box width="50%">
-                <Typography variant="caption">
+        </DialogTitle>
+        <DialogContent>
+          <Alert severity="info">
+            El descuento se aplica apartir del <b>SUBTOTAL</b>
+          </Alert>
+          <Box my={1}>
+            <Grid container spacing={2}>
+              <Grid item md={6} xs={12}>
+                <Typography>
                   <b>Dinero a descontar:</b>
                 </Typography>
-                <Box display="flex" alignItems="center">
-                  <TextField
-                    fullWidth
-                    size="small"
-                    name="dinero-descuento"
-                    id="form-venta-dinero-descuento"
-                    value={descuentoAplicarVenta}
-                    onChange={(e) => handlerChangeDiscountVenta(e)}
-                    variant="outlined"
-                    disabled={false}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">$</InputAdornment>
-                      ),
-                    }}
-                  />
-                </Box>
-              </Box>
-
-              <Box width="50%">
-                <Typography variant="caption">
-                  <b>Porsentaje:</b>
+                <TextField
+                  fullWidth
+                  size="small"
+                  name="dinero-descuento"
+                  id="form-venta-dinero-descuento"
+                  value={descuentoAplicarVenta}
+                  onChange={(e) => handlerChangeDiscountVenta(e)}
+                  variant="outlined"
+                  disabled={false}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+              <Grid item md={6} xs={12}>
+                <Typography>
+                  <b>Porcentaje:</b>
                 </Typography>
-                <Box display="flex" alignItems="center">
-                  <TextField
-                    fullWidth
-                    size="small"
-                    name="codigo_barras"
-                    id="form-venta-porsentaje-descuento"
-                    variant="outlined"
-                    value={descuentoPorsentajeVenta}
-                    onChange={(e) => handleChangePorsentDiscount(e)}
-                    type="number"
-                    disabled={false}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">%</InputAdornment>
-                      ),
-                    }}
-                  />
-                </Box>
-              </Box>
-            </div>
-          </Grid>
-        </DialogContent>
 
+                <TextField
+                  fullWidth
+                  size="small"
+                  name="codigo_barras"
+                  id="form-venta-porsentaje-descuento"
+                  variant="outlined"
+                  value={descuentoPorsentajeVenta}
+                  onChange={(e) => handleChangePorsentDiscount(e)}
+                  type="number"
+                  disabled={false}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">%</InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
+            </Grid>
+          </Box>
+        </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() => setOpenModalDescuento(!openModalDescuento)}
-            variant="contained"
-            size="large"
-            color="secondary"
-            autoFocus
-          >
-            Cancelar
-          </Button>
           <Button
             onClick={() => handleCalculateNewDiscountVenta()}
             variant="contained"
             size="large"
             color="primary"
             autoFocus
+            startIcon={<Done />}
           >
-            Aceptar
+            Guardar
           </Button>
         </DialogActions>
       </Dialog>

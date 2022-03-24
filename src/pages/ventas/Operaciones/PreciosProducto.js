@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  Divider,
   Grid,
   Paper,
   Slide,
@@ -17,17 +16,19 @@ import {
   TableRow,
   Typography,
   Checkbox,
+  DialogTitle,
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import useStyles from "../styles";
 import { VentasContext } from "../../../context/Ventas/ventasContext";
 import SnackBarMessages from "../../../components/SnackBarMessages";
 import {
-  calculatePrices,
   findProductArray,
   calculatePrices2,
+  formatoMexico,
 } from "../../../config/reuserFunctions";
 import { AccesosContext } from "../../../context/Accesos/accesosCtx";
+import { ControlCameraOutlined } from "@material-ui/icons";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -125,7 +126,7 @@ export default function PreciosProductos() {
           origen: "",
         });
 
-        console.log(precioSelectProductoVenta[0]);
+        /* console.log(precioSelectProductoVenta[0]); */
         const new_suma = await calculatePrices2({
           newP: newProductoPrecioActual,
           cantidad: newProductoPrecioActual.cantidad_venta,
@@ -202,11 +203,11 @@ export default function PreciosProductos() {
           newProductoPrecioActual
         );
 
-        console.log("venta >>", venta_existente.subTotal);
+        /* console.log("venta >>", venta_existente.subTotal);
 
         console.log("resta >>", new_resta.subtotalCalculo);
 
-        console.log("suma >>", new_suma.subtotalCalculo);
+        console.log("suma >>", new_suma.subtotalCalculo); */
 
         const CalculosData = {
           subTotal:
@@ -294,10 +295,19 @@ export default function PreciosProductos() {
       <Button
         className={classes.borderBotonChico}
         onClick={handleClickOpen}
-        disabled={!turnoEnCurso}
+        disabled={!turnoEnCurso || !precioSelectProductoVenta.length}
       >
         <Box>
-          <Box>
+          <Box
+            style={
+              !turnoEnCurso || !precioSelectProductoVenta.length
+                ? {
+                    pointerEvents: "none",
+                    opacity: 0.5,
+                  }
+                : null
+            }
+          >
             <img
               src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/money.svg"
               alt="icono money"
@@ -323,11 +333,9 @@ export default function PreciosProductos() {
         onClose={() => setOpen(!open)}
         TransitionComponent={Transition}
       >
-        <DialogContent>
-          <Box display="flex" p={2}>
-            <Box flexGrow={1}>
-              <Typography variant="h6">Precios de Producto</Typography>
-            </Box>
+        <DialogTitle>
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="h6">Precios de Producto</Typography>
             <Box>
               <Button
                 variant="contained"
@@ -339,53 +347,48 @@ export default function PreciosProductos() {
               </Button>
             </Box>
           </Box>
-          <Grid>
-            <div className={classes.formInputFlex}>
-              <Box width="100%">
-                <Typography>
-                  Nombre:{" "}
-                  {productoCambioPrecio
-                    ? productoCambioPrecio?.id_producto?.datos_generales
-                        ?.nombre_comercial
-                    : ""}
-                </Typography>
-              </Box>
-            </div>
-            <Paper className={classes.root}>
-              <TableContainer className={classes.container}>
-                <Table stickyHeader size="small" aria-label="a dense table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell style={{ width: 25 }}></TableCell>
-                      <TableCell style={{ width: 20 }}>Precio</TableCell>
-                      <TableCell style={{ width: 20 }}>Precio neto</TableCell>
-                      <TableCell style={{ width: 200 }}>
-                        Unidad mayoreo
-                      </TableCell>
-                      <TableCell style={{ width: 100 }}>Utilidad</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {preciosProductos?.id_producto?.precios?.precios_producto?.map(
-                      (precio, index) => {
-                        const isItemSelected = isSelected(precio);
-                        const labelId = `enhanced-table-checkbox-${index}`;
-                        return (
-                          <RenderTableRows
-                            key={index}
-                            precio={precio}
-                            isItemSelected={isItemSelected}
-                            labelId={labelId}
-                            handleClick={handleClick}
-                          />
-                        );
-                      }
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
-          </Grid>
+        </DialogTitle>
+        <DialogContent>
+          <Box my={1}>
+            <Typography variant="h6" align="center">
+              {productoCambioPrecio
+                ? productoCambioPrecio?.id_producto?.datos_generales
+                    ?.nombre_comercial
+                : ""}
+            </Typography>
+          </Box>
+          <Paper variant="outlined">
+            <TableContainer>
+              <Table stickyHeader size="small" aria-label="a dense table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell padding="checkbox"></TableCell>
+                    <TableCell>No. Precio</TableCell>
+                    <TableCell>Precio neto</TableCell>
+                    <TableCell>Unidad mayoreo</TableCell>
+                    <TableCell>Utilidad</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {preciosProductos?.id_producto?.precios?.precios_producto?.map(
+                    (precio, index) => {
+                      const isItemSelected = isSelected(precio);
+                      const labelId = `enhanced-table-checkbox-${index}`;
+                      return (
+                        <RenderTableRows
+                          key={index}
+                          precio={precio}
+                          isItemSelected={isItemSelected}
+                          labelId={labelId}
+                          handleClick={handleClick}
+                        />
+                      );
+                    }
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
         </DialogContent>
         <DialogActions>
           <Button
@@ -404,6 +407,7 @@ export default function PreciosProductos() {
 
 const RenderTableRows = ({ precio, isItemSelected, labelId, handleClick }) => {
   const doubleClick = (e) => {
+    if (precio.precio_neto <= 0) return;
     try {
       if (e.detail === 2) {
         handleClick(precio);
@@ -426,6 +430,7 @@ const RenderTableRows = ({ precio, isItemSelected, labelId, handleClick }) => {
       >
         <TableCell padding="checkbox">
           <Checkbox
+            disabled={precio.precio_neto <= 0}
             onClick={(event) => {
               handleClick(precio);
             }}
@@ -435,7 +440,7 @@ const RenderTableRows = ({ precio, isItemSelected, labelId, handleClick }) => {
         </TableCell>
         <TableCell align={"center"}>{precio.numero_precio}</TableCell>
         <TableCell align={"center"}>
-          {precio.precio_neto > 0 ? precio.precio_neto.toFixed(2) : 0}
+          {precio.precio_neto > 0 ? formatoMexico(precio.precio_neto) : 0}
         </TableCell>
         <TableCell align={"center"}>{precio.unidad_mayoreo}</TableCell>
         <TableCell align={"center"}>{precio.utilidad} %</TableCell>

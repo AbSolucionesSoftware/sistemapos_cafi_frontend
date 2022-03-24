@@ -79,7 +79,16 @@ export default function ClientesVentas() {
         disabled={!turnoEnCurso}
       >
         <Box>
-          <Box>
+          <Box
+            style={
+              !turnoEnCurso
+                ? {
+                    pointerEvents: "none",
+                    opacity: 0.5,
+                  }
+                : null
+            }
+          >
             <FcBusinessman style={{ fontSize: 45 }} />
           </Box>
           <Box>

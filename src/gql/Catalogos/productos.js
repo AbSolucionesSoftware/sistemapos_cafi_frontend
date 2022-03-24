@@ -213,6 +213,8 @@ export const OBTENER_PRODUCTOS = gql`
       medidas_producto {
         _id
         cantidad
+        codigo_unidad
+        unidad
         almacen
         descuento_activo
         descuento {
