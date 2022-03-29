@@ -52,6 +52,7 @@ export const VentasProvider = ({ children }) => {
     const [ alert, setAlert ] = useState({ message: "", status: "", open: false });
     const [ abrirTurnosDialog, setAbrirTurnosDialog ] = useState(false);
     const [ updateClientVenta, setUpdateClientVenta ] = useState(false);
+    const [ venta_retomada, setVentaRetomada] = useState(null);
 
     const [open, setOpen] = useState(false);
 
@@ -98,6 +99,8 @@ export const VentasProvider = ({ children }) => {
                 // setPrecioSeleccionadoTabla
                 setOpenBackDrop,
                 openBackDrop,
+                venta_retomada, 
+                setVentaRetomada
             }
         }>
 			{children}
