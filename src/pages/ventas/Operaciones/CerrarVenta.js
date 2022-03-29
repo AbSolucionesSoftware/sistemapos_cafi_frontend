@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, Fragment } from "react";
 import useStyles from "../styles";
 
 import {
@@ -16,6 +16,8 @@ import {
   InputAdornment,
   DialogTitle,
   Container,
+  Snackbar,
+  IconButton,
 } from "@material-ui/core";
 import { FcDonate, FcShop } from "react-icons/fc";
 import CloseIcon from "@material-ui/icons/Close";
@@ -57,6 +59,7 @@ export default function CerrarVenta() {
     setDatosVentasActual,
     openBackDrop,
     setOpenBackDrop,
+    setVentaRetomada
   } = useContext(VentasContext);
   const { updateClientVenta, setUpdateClientVenta } = useContext(ClienteCtx);
   //States de venta
@@ -92,6 +95,8 @@ export default function CerrarVenta() {
   const [puntos, setPuntos] = useState(0);
   const [transferencia, setTransferencia] = useState(0);
   const [cheque, setCheque] = useState(0);
+
+  const [limite_superado, setLimiteSuperado] = useState(false);
 
   const [createVenta] = useMutation(CREAR_VENTA);
   const handleClickOpen = () => {
@@ -167,6 +172,7 @@ export default function CerrarVenta() {
     setPuntos(0);
     setTransferencia(0);
     setCheque(0);
+    setVentaRetomada(null);
   };
 
   function funcion_tecla(event) {
@@ -177,6 +183,11 @@ export default function CerrarVenta() {
   }
 
   const handleClickFinishVenta = async () => {
+    if(visible && ventaActual.total > datosCliente.credito_disponible){
+      setLimiteSuperado(true);
+      return;
+    }
+    setLimiteSuperado(false);
     try {
       //TODO: Colocar loading en el modal
       setOpenBackDrop(!openBackDrop);
@@ -641,7 +652,7 @@ export default function CerrarVenta() {
   };
 
   return (
-    <>
+    <Fragment>
       <Button
         className={classes.borderBotonChico}
         onClick={handleClickOpen}
@@ -674,6 +685,26 @@ export default function CerrarVenta() {
         onClose={handleClickOpen}
         TransitionComponent={Transition}
       >
+        <Snackbar
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          open={limite_superado}
+          autoHideDuration={5000}
+          onClose={() => setLimiteSuperado(false)}
+          message="La cantidad total de la venta supera el crédito disponible del cliente"
+          action={
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={() => setLimiteSuperado(false)}
+            >
+              <Close fontSize="small" />
+            </IconButton>
+          }
+        />
         <DialogTitle>
           <Box display="flex" alignItems="center">
             <Box>
@@ -1276,6 +1307,6 @@ export default function CerrarVenta() {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Fragment>
   );
 }

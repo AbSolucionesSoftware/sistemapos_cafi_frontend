@@ -67,7 +67,7 @@ export default function VentasRealizadas() {
       </Button>
       <Dialog
         fullWidth
-        maxWidth="md"
+        maxWidth="lg"
         open={open}
         onClose={handleClickOpen}
         TransitionComponent={Transition}

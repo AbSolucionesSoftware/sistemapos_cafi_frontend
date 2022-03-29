@@ -1,15 +1,9 @@
 import React, { Fragment, useContext, useState } from "react";
 import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
-import Slide from "@material-ui/core/Slide";
 import TextField from "@material-ui/core/TextField";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -17,27 +11,27 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Grid from "@material-ui/core/Grid";
-import { makeStyles, Snackbar } from "@material-ui/core";
-import Typography from "@material-ui/core/Typography";
+import { makeStyles, Snackbar, Typography } from "@material-ui/core";
+import moment from "moment";
 
-import { Close, Search } from "@material-ui/icons";
+import { Close } from "@material-ui/icons";
 import ErrorPage from "../../../components/ErrorPage";
 import { useQuery } from "@apollo/client";
-import { FacturacionCtx } from "../../../context/Facturacion/facturacionCtx";
 import { OBTENER_VENTAS_SUCURSAL } from "../../../gql/Ventas/ventas_generales";
-import { formatoMexico } from "../../../config/reuserFunctions";
+import {
+  formatoFechaCorta,
+  formatoMexico,
+} from "../../../config/reuserFunctions";
 import { Alert } from "@material-ui/lab";
 import { useDebounce } from "use-debounce/lib";
 import { VentasContext } from "../../../context/Ventas/ventasContext";
 import { ClienteCtx } from "../../../context/Catalogos/crearClienteCtx";
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+import InfoVentaFolio from "./InfoVenta";
+import CancelarFolio from "./CancelarFolio";
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    height: "50vh",
+    height: "60vh",
   },
 }));
 
@@ -45,12 +39,6 @@ export default function ListaVentasRealizadas({ handleClose }) {
   const [filtro, setFiltro] = useState("");
 
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-  const [open_productos, setOpenProductos] = useState(false);
-  const [productos_sin_clave, setProductosSinClave] = useState([]);
-
-  const openProductosClaves = () => setOpenProductos(true);
-  const closeProductosClaves = () => setOpenProductos(false);
-
   const [value] = useDebounce(filtro, 500);
 
   /* Queries */
@@ -65,11 +53,6 @@ export default function ListaVentasRealizadas({ handleClose }) {
 
   return (
     <Fragment>
-      {/* <ProductosSinClaveSat
-		  productos={productos_sin_clave}
-		  open={open_productos}
-		  handleClose={closeProductosClaves}
-		/> */}
       <Box mb={2}>
         <Grid container spacing={2}>
           <Grid item sm={8} xs={12}>
@@ -95,31 +78,50 @@ export default function ListaVentasRealizadas({ handleClose }) {
       </Box>
       <Box my={1}>
         <Alert severity="info">
-          Para seleccionar una venta haz un doble click!
+          Para ver la información completa una venta haz un doble click!
         </Alert>
+      </Box>
+      <Box my={1} display="flex">
+        <Box
+          border={1}
+          borderColor="#EAEAEA"
+          bgcolor="#EDFFF3"
+          height="24px"
+          width="24px"
+        />
+        <Box mx={1} />
+        <Typography>
+          <b>- Ventas de hoy</b>
+        </Typography>
       </Box>
       <RenderLista
         resultado_ventas={resultado_ventas}
         handleClose={handleClose}
-        setProductosSinClave={setProductosSinClave}
-        openProductosClaves={openProductosClaves}
       />
     </Fragment>
   );
 }
 
-const RenderLista = ({
-  resultado_ventas,
-  handleClose,
-  setProductosSinClave,
-  openProductosClaves,
-}) => {
-  const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
+const RenderLista = ({ resultado_ventas, handleClose }) => {
+  const {
+    updateTablaVentas,
+    setUpdateTablaVentas,
+    setVentaRetomada,
+  } = useContext(VentasContext);
   const { updateClientVenta, setUpdateClientVenta } = useContext(ClienteCtx);
   const classes = useStyles();
   const [selected, setSelected] = useState("");
   const [open, setOpen] = useState(false);
   const { loading, data, error } = resultado_ventas;
+  const [view, setView] = useState(false);
+
+  const handleClickView = () => {
+    setView(true);
+  };
+
+  const handleCloseView = () => {
+    setView(false);
+  };
 
   if (loading)
     return (
@@ -139,35 +141,72 @@ const RenderLista = ({
   const { obtenerVentasSucursal } = data;
 
   const obtenerVenta = (click, data) => {
-    setSelected(data.folio);
+    setSelected(data);
     console.log(data);
-    if (click === 2) {
+    let temp = true;
+    if (click === 2 && !temp) {
       let datosVenta = JSON.parse(localStorage.getItem("DatosVentas"));
-
       if (datosVenta === null) {
+        //armar array de productos
+        let productos = [];
+
+        data.productos.forEach((res) => {
+          productos.push({
+            cantidad: res.cantidad,
+            cantidad_venta: res.cantidad_venta,
+            codigo_barras: res.id_producto.datos_generales.codigo_barras,
+            codigo_unidad: res.codigo_unidad,
+            color: res.color,
+            concepto: res.concepto,
+            default: res.default,
+            descuento: res.id_unidad_venta.descuento,
+            descuento_activo: res.id_unidad_venta.descuento_activo,
+            granel_producto: res.granel_producto,
+            id_producto: res.id_producto,
+            ieps_total_producto: res.ieps_total,
+            impuestos_total_producto: res.impuestos,
+            inventario_general: res.inventario_general,
+            iva_total_producto: res.iva_total,
+            medida: res.medida,
+            precio: res.precio,
+            precio_a_vender: res.precio_a_vender,
+            precio_actual_object: res.precio_actual_object,
+            precio_actual_producto: res.precio_actual_producto,
+            precio_anterior: res.precio_actual_producto,
+            precio_unidad: res.precio_unidad,
+            subtotal_total_producto: res.subtotal,
+            total_total_producto: res.total,
+            unidad: res.unidad,
+            unidad_principal: res.id_unidad_venta.unidad_principal,
+            _id: res.id_unidad_venta._id,
+          });
+        });
+
+        //armar objeto para Storage
+
+        let datosVenta = {
+          cliente: data.cliente,
+          descuento: data.descuento,
+          ieps: data.ieps,
+          impuestos: data.impuestos,
+          iva: data.iva,
+          monedero: data.monedero,
+          productos,
+          subTotal: data.subTotal,
+          total: data.total,
+          venta_cliente: data.venta_cliente,
+        };
+
         //se agregan la venta a localStorage
-        /* localStorage.setItem("DatosVentas", JSON.stringify(venta.datosVenta)); */
-        /* updateDataStorage(); */
-        /* handleModalEspera(); */
+        localStorage.setItem("DatosVentas", JSON.stringify(datosVenta));
+        setVentaRetomada(datosVenta);
+        updateDataStorage();
+        handleClose();
       } else {
         handleClickOpen();
       }
-      /* console.log(data);
-      const without_sat_code = data.productos.filter(
-        (res) => !res.id_producto.datos_generales.clave_producto_sat.Value
-      );
-
-      if (without_sat_code.length > 0) {
-        setProductosSinClave(without_sat_code);
-        openProductosClaves();
-        return;
-      }
-
-      const { productos, ...venta } = {...data}
-      const productos_base = [...data.productos]
-      setVentaFactura(venta);
-      setProductos(productos_base);
-      handleClose(); */
+    } else if (click === 2 && temp) {
+      handleClickView();
     }
   };
 
@@ -179,6 +218,8 @@ const RenderLista = ({
     setUpdateTablaVentas(!updateTablaVentas);
     setUpdateClientVenta(!updateClientVenta);
   };
+
+  console.log(moment().format("YYYY-MM-DD"));
 
   return (
     <Paper variant="outlined">
@@ -207,6 +248,7 @@ const RenderLista = ({
           <TableHead>
             <TableRow>
               <TableCell>Folio</TableCell>
+              <TableCell>Fecha</TableCell>
               <TableCell>Cliente</TableCell>
               <TableCell>Usuario</TableCell>
               <TableCell>Caja</TableCell>
@@ -214,37 +256,77 @@ const RenderLista = ({
               <TableCell>Subtotal</TableCell>
               <TableCell>Impuestos</TableCell>
               <TableCell>Total</TableCell>
+              <TableCell>Cancelar Venta</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {obtenerVentasSucursal.map((data, index) => {
               return (
-                <TableRow
+                <RowComprasRealizadas
                   key={index}
-                  hover
-                  role="checkbox"
-                  tabIndex={-1}
-                  selected={data.folio === selected}
-                  onClick={(e) => obtenerVenta(e.detail, data)}
-                >
-                  <TableCell>{data.folio}</TableCell>
-                  <TableCell>
-                    {data.cliente !== null ? data.cliente.nombre_cliente : "-"}
-                  </TableCell>
-                  <TableCell>{data.usuario.nombre}</TableCell>
-                  <TableCell>{data.id_caja.numero_caja}</TableCell>
-                  <TableCell>
-                    ${data.descuento ? formatoMexico(data.descuento) : 0}
-                  </TableCell>
-                  <TableCell>${formatoMexico(data.subTotal)}</TableCell>
-                  <TableCell>${formatoMexico(data.impuestos)}</TableCell>
-                  <TableCell>${formatoMexico(data.total)}</TableCell>
-                </TableRow>
+                  data={data}
+                  selected={selected}
+                  obtenerVenta={obtenerVenta}
+                />
               );
             })}
           </TableBody>
         </Table>
+        <InfoVentaFolio
+          venta={selected}
+          open={view}
+          handleClose={handleCloseView}
+        />
       </TableContainer>
     </Paper>
+  );
+};
+
+const tableStyles = makeStyles((theme) => ({
+  today_color: {
+    backgroundColor: "#EDFFF3",
+    "&:hover": {
+      backgroundColor: "#D8FFE5",
+    },
+  },
+  normal_color: {
+    backgroundColor: "#FFF",
+    "&:hover": {
+      backgroundColor: "#F5F5F5",
+    },
+  },
+}));
+
+const RowComprasRealizadas = ({ data, selected, obtenerVenta }) => {
+  const classes = tableStyles();
+  let today = data.fecha_registro === moment().format("YYYY-MM-DD");
+
+  return (
+    <TableRow
+      role="checkbox"
+      tabIndex={-1}
+      selected={data.folio === selected.folio}
+      onClick={(e) => obtenerVenta(e.detail, data)}
+      className={today ? classes.today_color : classes.normal_color}
+    >
+      <TableCell>{data.folio}</TableCell>
+      <TableCell>{formatoFechaCorta(data.fecha_registro)}</TableCell>
+      <TableCell>
+        {data.cliente !== null
+          ? data.cliente.nombre_cliente
+          : "Publico General"}
+      </TableCell>
+      <TableCell>{data.usuario.nombre}</TableCell>
+      <TableCell>{data.id_caja.numero_caja}</TableCell>
+      <TableCell>
+        ${data.descuento ? formatoMexico(data.descuento) : 0}
+      </TableCell>
+      <TableCell>${formatoMexico(data.subTotal)}</TableCell>
+      <TableCell>${formatoMexico(data.impuestos)}</TableCell>
+      <TableCell>${formatoMexico(data.total)}</TableCell>
+      <TableCell align="center">
+        <CancelarFolio venta={data} />
+      </TableCell>
+    </TableRow>
   );
 };

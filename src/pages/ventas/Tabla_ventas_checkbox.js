@@ -400,11 +400,11 @@ const RenderTableRows = ({
           {producto.id_producto.datos_generales.nombre_comercial}
         </TableCell>
         <TableCell style={{ textAlign: "center" }}>
-          {producto.concepto === "medida"
-            ? producto.cantidad
-            : producto.inventario_general.map(
-                (existencia) => `${existencia.cantidad_existente}`
-              )}
+          {producto.id_producto.datos_generales.tipo_producto === "OTROS"
+            ? producto.unidad === "Costal" || producto.unidad === "Caja"
+              ? producto.inventario_general[0].cantidad_existente_maxima
+              : producto.inventario_general[0].cantidad_existente
+            : producto.cantidad}
         </TableCell>
         <TableCell style={{ textAlign: "center" }}>
           %{" "}

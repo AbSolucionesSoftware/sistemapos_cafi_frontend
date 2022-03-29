@@ -366,12 +366,34 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String ) {
         _id
         numero_cliente
         clave_cliente
+        representante
         nombre_cliente
         rfc
+        curp
         telefono
         celular
         email
+        numero_descuento
+        limite_credito
+        dias_credito
         razon_social
+        direccion{
+          calle
+          no_ext
+          no_int
+          codigo_postal
+          colonia
+          municipio
+          localidad
+          estado
+          pais
+        }
+        imagen
+        eliminado
+        banco
+        numero_cuenta
+        monedero_electronico
+        credito_disponible
       }
       descuento
       ieps
@@ -660,6 +682,16 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String ) {
             unidad_maxima
           }
         }
+        inventario_general{
+          _id
+          cantidad_existente
+          unidad_inventario
+          codigo_unidad
+          cantidad_existente_maxima
+          unidad_maxima
+          id_almacen_general
+          eliminado
+        }
         year_registro
         fecha_registro
         precio_unidad{
@@ -689,6 +721,7 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String ) {
           dinero_descontado
         }
       }
+      fecha_registro
 		}
 	}
 `;

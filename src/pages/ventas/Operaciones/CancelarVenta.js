@@ -38,6 +38,7 @@ export default function CancelarVenta() {
     updateTablaVentas,
     setUpdateTablaVentas,
     setDatosVentasActual,
+    setVentaRetomada
   } = useContext(VentasContext);
   const { updateClientVenta, setUpdateClientVenta } = useContext(ClienteCtx);
 
@@ -81,6 +82,7 @@ export default function CancelarVenta() {
       descuento: 0,
       monedero: 0,
     });
+    setVentaRetomada(datosVenta);
     setOpen(!open);
   };
 
