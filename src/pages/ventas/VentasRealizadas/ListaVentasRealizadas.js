@@ -142,7 +142,6 @@ const RenderLista = ({ resultado_ventas, handleClose }) => {
 
   const obtenerVenta = (click, data) => {
     setSelected(data);
-    console.log(data);
     let temp = true;
     if (click === 2 && !temp) {
       let datosVenta = JSON.parse(localStorage.getItem("DatosVentas"));
@@ -218,8 +217,6 @@ const RenderLista = ({ resultado_ventas, handleClose }) => {
     setUpdateTablaVentas(!updateTablaVentas);
     setUpdateClientVenta(!updateClientVenta);
   };
-
-  console.log(moment().format("YYYY-MM-DD"));
 
   return (
     <Paper variant="outlined">
@@ -310,7 +307,7 @@ const RowComprasRealizadas = ({ data, selected, obtenerVenta }) => {
       className={today ? classes.today_color : classes.normal_color}
     >
       <TableCell>{data.folio}</TableCell>
-      <TableCell>{formatoFechaCorta(data.fecha_registro)}</TableCell>
+      <TableCell>{moment(data.fecha_registro).format("DD/MM/YYYY")}</TableCell>
       <TableCell>
         {data.cliente !== null
           ? data.cliente.nombre_cliente

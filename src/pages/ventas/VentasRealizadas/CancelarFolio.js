@@ -23,6 +23,12 @@ export default function CancelarFolio({ venta, handleCloseInfoVenta }) {
     setOpen(false);
   };
 
+  const handleCancelSale = () => {
+
+    console.log(venta)
+    /* handleClose() */
+  }
+
   return (
     <div>
       {handleCloseInfoVenta ? (
@@ -45,19 +51,16 @@ export default function CancelarFolio({ venta, handleCloseInfoVenta }) {
         TransitionComponent={Transition}
         keepMounted
         onClose={handleClose}
-        aria-labelledby="alert-dialog-slide-title"
-        aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle id="alert-dialog-slide-title">
-          {"Use Google's location service?"}
+        <DialogTitle>
+            ¿Seguro que deseas cancelar esta venta?
         </DialogTitle>
-        <DialogContent></DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Disagree
+          <Button onClick={handleClose} color="inherit">
+            Salir
           </Button>
-          <Button onClick={handleClose} color="primary">
-            Agree
+          <Button onClick={handleCancelSale} color="secondary">
+            Cancelar Venta
           </Button>
         </DialogActions>
       </Dialog>
