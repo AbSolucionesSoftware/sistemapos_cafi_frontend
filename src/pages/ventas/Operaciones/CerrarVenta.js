@@ -501,8 +501,9 @@ export default function CerrarVenta() {
   useEffect(() => {
     const venta = JSON.parse(localStorage.getItem("DatosVentas"));
     const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+    console.log(venta);
     setVentaActual(venta);
-
+   
     setVentaOriginal(venta);
     const total = venta === null ? 0 : venta.total;
     const subtotal = venta === null ? 0 : venta.subTotal;

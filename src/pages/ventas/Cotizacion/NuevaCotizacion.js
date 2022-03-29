@@ -26,11 +26,11 @@ export default function NuevaCotizacion({ setOpen }) {
 
     const [ newCotizacion, setNewCotizacion ] = useState([]);
     const [ preciosDescuentos, setPreciosDescuentos ] = useState([]);
-    const [ totalDescount, setTotalDescount ] = useState(preciosDescuentos ? preciosDescuentos?.descuento_general?.precio_con_descuento : 0);
+    const [ totalDescount, setTotalDescount ] = useState(preciosDescuentos ? preciosDescuentos?.descuento_general?.precio_con_descuento : datosVentas?.total);
     const [ value, setValue ] =  useState(preciosDescuentos?.descuento_general?.porciento ? preciosDescuentos?.descuento_general?.porciento : 0);
 
     let descuento_general = [];
-    var totalCompra = datosVentas?.total;
+    var totalCompra = datosVentas?.subTotal;
 
     
     const classes = useStyles();
@@ -40,34 +40,11 @@ export default function NuevaCotizacion({ setOpen }) {
     };
     console.log(newCotizacion)
 
-    const input = {
-        folio: generateCodeNumerico(8), 
-        descuento: datosVentas.descuento,
-        ieps: datosVentas.ieps,
-        impuestos: datosVentas.impuestos,
-        iva: datosVentas.iva,
-        monedero: datosVentas.monedero,
-        subTotal: datosVentas.subTotal,
-        total: datosVentas.total,
-        venta_cliente:  datosVentas.cliente ? true : false,
-        montos_en_caja: {},
-        credito: newCotizacion.tipo_venta === 'CREDITO' ? true : false,
-        descuento_general_activo: preciosDescuentos?.descuento_general_activo ? preciosDescuentos?.descuento_general_activo : false,
-        decuento_general: preciosDescuentos?.descuento_general ? preciosDescuentos?.descuento_general :
-        {
-            "porciento": 0,
-            "precio_con_descuento": 0,
-            "cantidad_descontado": 0
-        },
-        dias_de_credito_venta: "", 
-        fecha_de_vencimiento_credito: "",
-        fecha_vencimiento_cotizacion: newCotizacion.fecha_vencimiento,
-        cliente: datosVentas.cliente ?  datosVentas.cliente : {},
-        productos: datosVentas.productos,
-    };
+
 
     const crearCotizacion = async () => {
         try {
+            console.log(datosVentas.productos[0].concepto)
             if(!newCotizacion.fecha_vencimiento || !newCotizacion.tipo_venta){
                 setAlert({
                     message: `Por favor completa los datos necesarios`,
@@ -78,11 +55,36 @@ export default function NuevaCotizacion({ setOpen }) {
             }else{
                 const registroCotizacion = await CrearCotizacion({
                     variables: {
-                        input,
-                        empresa: sesion.empresa,
-                        sucursal:  sesion.sucursal,
+                        input:{
+                            folio: generateCodeNumerico(8), 
+                            descuento: datosVentas.descuento,
+                            ieps: datosVentas.ieps,
+                            impuestos: datosVentas.impuestos,
+                            iva: datosVentas.iva,
+                            monedero: datosVentas.monedero,
+                            subTotal: datosVentas.subTotal,
+                            total: datosVentas.total,
+                            venta_cliente:  datosVentas.cliente ? true : false,
+                            montos_en_caja: {},
+                            credito: newCotizacion.tipo_venta === 'CREDITO' ? true : false,
+                            descuento_general_activo: preciosDescuentos?.descuento_general_activo ? preciosDescuentos?.descuento_general_activo : false,
+                            descuento_general: preciosDescuentos?.descuento_general ? preciosDescuentos?.descuento_general :
+                            {
+                                "porciento": 0,
+                                "precio_con_descuento": 0,
+                                "cantidad_descontado": 0
+                            },
+                            dias_de_credito_venta: "", 
+                            fecha_de_vencimiento_credito: "",
+                            fecha_vencimiento_cotizacion: newCotizacion.fecha_vencimiento,
+                            cliente: datosVentas.cliente ?  datosVentas.cliente : {},
+                            productos: datosVentas.productos,
+                            inventario_general: datosVentas.inventario_general
+                        },
+                        empresa: sesion.empresa._id,
+                        sucursal:  sesion.sucursal._id,
                         usuario: sesion._id,
-                        caja: "61a5037918594a4ecdc1c7bf"
+                        caja: turnoEnCurso.id_caja
                     }
                 });
                 console.log(registroCotizacion);
@@ -106,14 +108,15 @@ export default function NuevaCotizacion({ setOpen }) {
     const obtenerPorciento = (event, newValue) => {
         setValue(newValue);
         var porcentaje  =  parseFloat((100 - newValue).toFixed(6));
-        var descuento = parseFloat((totalCompra * porcentaje / 100).toFixed(6));
-        var dineroDescontado = parseFloat((totalCompra - descuento).toFixed(6));
+        var descuento = parseFloat((totalCompra - (totalCompra * porcentaje / 100)).toFixed(6));
+        var precioConDescuento = parseFloat((descuento +  datosVentas.impuestos).toFixed(6) );
+     
         descuento_general = {
             "descuento_general_activo": true,
             "descuento_general": {
                 "porciento": newValue,
-                "precio_con_descuento": descuento,
-                "cantidad_descontado": dineroDescontado
+                "precio_con_descuento": precioConDescuento,
+                "cantidad_descontado": descuento
             }
         };
         setPreciosDescuentos(descuento_general);
@@ -121,36 +124,53 @@ export default function NuevaCotizacion({ setOpen }) {
     };
     
     const obtenerPrecioText = (e) => {
-        var valorText = parseFloat(e.target.value);
-        setTotalDescount(valorText);
-        var porcentaje  = parseFloat(((valorText / totalCompra) * 100).toFixed(6));
-        var descuento = parseFloat((100 - porcentaje).toFixed(6));
-        var dineroDescontado = parseFloat((totalCompra - valorText).toFixed(6));
+        try {
+            var valorText = (e.target.value !== '') ?  parseFloat(e.target.value) : '';
+        
+            setTotalDescount(valorText);
+            var porcentaje  = (valorText === '') ? 0 : parseFloat(((valorText / totalCompra) * 100).toFixed(6));
+           
+            var descuento = (valorText === '') ? 0 : parseFloat((porcentaje).toFixed(6));
+            var precioConDescuento =(valorText === '') ? 0 : (parseFloat(((totalCompra - valorText)+  datosVentas.impuestos).toFixed(6) ));
+           
 
-        descuento_general = {
-            "descuento_general_activo": true,
-            "descuento_general": {
-                "porciento": descuento,
-                "precio_con_descuento": valorText,
-                "cantidad_descontado": dineroDescontado
-            }
-        };
-        setPreciosDescuentos(descuento_general);
-        setValue(descuento);
+    
+            descuento_general = {
+                "descuento_general_activo": true,
+                "descuento_general": {
+                    "porciento":  descuento,
+                    "precio_con_descuento": precioConDescuento,
+                    "cantidad_descontado":  valorText
+                }
+            };
+    
+            setPreciosDescuentos(descuento_general);
+            setValue(descuento); 
+        } catch (error) {
+            console.log(error)
+        }
+        
     };
 
     const eliminarDescuento = () => { 
-        descuento_general = {
-            "descuento_general_activo": false,
-            "descuento_general": {
-                "porciento": 0,
-                "precio_con_descuento": 0,
-                "cantidad_descontado": 0
-            }
-        };
-        setValue(0);
-        setTotalDescount(0);
-        setPreciosDescuentos(descuento_general);
+        try {
+            descuento_general = {
+                "descuento_general_activo": false,
+                "descuento_general": {
+                    "porciento": 0,
+                    "precio_con_descuento": 0,
+                    "cantidad_descontado": 0
+                }
+            };
+            setValue(0);
+            setTotalDescount('');
+            setPreciosDescuentos(descuento_general);
+        } catch (error) {
+            console.log('====================================');
+            console.log(error);
+            console.log('====================================');
+        }
+        
     }
 
     return (
@@ -222,7 +242,7 @@ export default function NuevaCotizacion({ setOpen }) {
                                 disabled={true}
                                 onChange={obtenerDatos}
                                 variant="outlined"
-                                value={datosVentas.cliente?.nombre_cliente ? datosVentas.cliente?.nombre_cliente : "Publico General"}
+                                value={datosVentas.cliente?.nombre_cliente ? datosVentas.cliente?.nombre_cliente : "Público General"}
                             />
                         </Box>
                     </Box>
@@ -270,7 +290,7 @@ export default function NuevaCotizacion({ setOpen }) {
                             <Paper elevation={3} >
                                 <Box p={2} pt={0} textAlign={'center'}>
                                     <Typography variant="h6">
-                                        Agregar descuento total a la venta
+                                        Agregar descuento a la venta
                                     </Typography>
                                 </Box>
                                 <Box textAlign="center"  p={2} pt={1}>
@@ -306,7 +326,7 @@ export default function NuevaCotizacion({ setOpen }) {
                                                 <MoneyOffIcon style={{fontSize: 30, color: "green"}} />
                                             </Box>
                                             <Typography style={{ fontSize: 18 }} >
-                                                Total con descuento
+                                                Cantidad a descontar
                                             </Typography>
                                             <Box display="flex" ml={1}>
                                                 
@@ -360,13 +380,13 @@ export default function NuevaCotizacion({ setOpen }) {
                                 </Typography>
                             </Box>
                             <Box display="flex" flexDirection="row-reverse" width="100%">
-                                <Typography style={{fontSize: 17}}>
+                                <Typography style={{fontSize: 16}}>
                                     <b>I.V.A.:</b> ${datosVentas ? (datosVentas.iva).toFixed(2) : 0}
                                 </Typography>
                             </Box>
                             <Box display="flex" flexDirection="row-reverse" width="100%">
                                 <Typography style={{fontSize: 17}}>
-                                    <b>Descuento:</b> <b style={{color: "green"}}>${preciosDescuentos?.descuento_general ? (preciosDescuentos?.descuento_general?.cantidad_descontado).toFixed(2) : 0} </b>
+                                    <b>Descuento:</b> <b style={{color: "green"}}>${(preciosDescuentos?.descuento_general) ? (preciosDescuentos?.descuento_general?.cantidad_descontado !== '') ? (preciosDescuentos?.descuento_general?.cantidad_descontado).toFixed(2) :0 : 0} </b>
                                 </Typography>
                             </Box>
                         </Box>
@@ -374,10 +394,11 @@ export default function NuevaCotizacion({ setOpen }) {
                             <Typography style={{fontSize: 27}}>
                                 Total: 
                                 <b style={{color: "green"}}>
-                                    ${preciosDescuentos?.descuento_general && preciosDescuentos?.descuento_general?.precio_con_descuento > 0? 
-                                    (preciosDescuentos?.descuento_general?.precio_con_descuento).toFixed(2) : (
-                                        datosVentas ? (datosVentas.total).toFixed(2) : 0
-                                    )}
+                                    ${preciosDescuentos?.descuento_general && preciosDescuentos?.descuento_general?.porciento > 0   ? 
+                                        ( preciosDescuentos?.descuento_general.precio_con_descuento).toFixed(2)
+                                     : 
+                                        (datosVentas ) ? (datosVentas.total).toFixed(2) : 0
+                                    }
                                 </b>
                             </Typography>
                            {/*  <Box  mr={1}>
