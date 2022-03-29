@@ -57,14 +57,12 @@ export const CONSULTAR_COTIZACIONES = gql `
       productos {
         _id
          inventario_general {
-            _id
             cantidad_existente
             unidad_inventario
             codigo_unidad
             cantidad_existente_maxima
             unidad_maxima
             id_almacen_general
-            eliminado
           }
         id_producto {
           _id
@@ -127,8 +125,7 @@ export const CONSULTAR_COTIZACIONES = gql `
               unidad
               codigo_unidad
             }
-            granel
-            litros
+           
           }
           imagenes {
             url_imagen
@@ -136,120 +133,11 @@ export const CONSULTAR_COTIZACIONES = gql `
             key_imagen
             extencion_imagen
           }
-          centro_de_costos {
-            cuenta
-            id_cuenta
-            id_subcuenta
-            subcuenta
-          }
-          precio_plazos {
-            precio_cajas {
-              plazo
-              unidad
-              codigo_unidad
-              precio
-            }
-            precio_costales {
-              plazo
-              unidad
-              codigo_unidad
-              precio
-            }
-            precio_piezas {
-              plazo
-              unidad
-              codigo_unidad
-              precio
-            }
-          }
-          unidades_de_venta {
-            _id
-            precio
-            cantidad
-            concepto
-            unidad
-            codigo_unidad
-            unidad_principal
-            codigo_barras
-            codigo_barras
-            id_producto
-            empresa
-            sucursal
-            descuento {
-              cantidad_unidad
-              numero_precio
-              unidad_maxima
-              precio_general
-              precio_neto
-              precio_venta
-              iva_precio
-              ieps_precio
-              utilidad
-              porciento
-              dinero_descontado
-            }
-            descuento_activo
-            default
-            precio_unidad {
-              numero_precio
-              precio_neto
-              precio_venta
-              iva_precio
-              ieps_precio
-              unidad_mayoreo
-              utilidad
-              precio_general
-              cantidad_unidad
-              unidad_maxima
-            }
-          }
+        
          
-          medidas_producto {
-            _id
-            cantidad
-            cantidad_nueva
-            almacen
-            codigo_barras
-            color {
-              hex
-              nombre
-              _id
-            }
-            descuento {
-              cantidad_unidad
-              numero_precio
-              unidad_maxima
-              precio_general
-              precio_neto
-              precio_venta
-              iva_precio
-              ieps_precio
-              utilidad
-              porciento
-              dinero_descontado
-            }
-            descuento_activo
-            existencia
-            medida {
-              talla
-              tipo
-              _id
-            }
-            nombre_comercial
-            precio
-            precio_unidad {
-              numero_precio
-              precio_neto
-              precio_venta
-              iva_precio
-              ieps_precio
-              unidad_mayoreo
-              utilidad
-              precio_general
-              cantidad_unidad
-              unidad_maxima
-            }
-          }
+          
+         
+          
         }
         concepto
         cantidad
