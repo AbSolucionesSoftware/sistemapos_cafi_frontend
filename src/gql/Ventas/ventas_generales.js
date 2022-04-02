@@ -358,8 +358,8 @@ export const CREAR_VENTA = gql`
 `;
 
 export const OBTENER_VENTAS_SUCURSAL = gql`
-query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String ) {
-		obtenerVentasSucursal(empresa: $empresa, sucursal: $sucursal, filtro: $filtro) {
+query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String, $params: String, $realizadas: Boolean ) {
+		obtenerVentasSucursal(empresa: $empresa, sucursal: $sucursal, filtro: $filtro, params: $params, realizadas: $realizadas) {
 			_id
       folio
       cliente {
@@ -614,6 +614,8 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String ) {
               unidad_maxima
             }
           }
+          empresa
+          sucursal
         }
         concepto
         cantidad
@@ -722,6 +724,107 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String ) {
         }
       }
       fecha_registro
+      factura{
+        id_cfdi
+        serie
+        currency
+        expedition_place
+        folio
+        cfdi_type
+        payment_form
+        payment_method
+        logo_url
+        date
+        issuer{
+          FiscalRegime
+          Rfc
+          Name
+        }
+        receiver{
+          Rfc
+          Name
+          CfdiUse
+        }
+        items{
+          ProductCode
+          IdentificationNumber
+          Description
+          Unit
+          UnitCode
+          UnitPrice
+          Quantity
+          Subtotal
+          Discount
+          Taxes{
+            Total
+            Name
+            Base
+            Rate
+            IsRetention
+          }
+          Total
+        }
+        original_string
+        sub_total
+        total
+        discount
+        fecha_registro
+        empresa
+        sucursal
+      }
+      montos_en_caja{
+        monto_efectivo{
+          monto
+          metodo_pago
+        }
+        monto_tarjeta_debito{
+          monto
+          metodo_pago
+        }
+        monto_tarjeta_credito{
+          monto
+          metodo_pago
+        }
+        monto_creditos{
+          monto
+          metodo_pago
+        }
+        monto_monedero{
+          monto
+          metodo_pago
+        }
+        monto_transferencia{
+          monto
+          metodo_pago
+        }
+        monto_cheques{
+          monto
+          metodo_pago
+        }
+        monto_vales_despensa{
+          monto
+          metodo_pago
+        }
+      }
+      status
 		}
 	}
 `;
+
+export const CANCELAR_VENTA_SUCURSAL = gql`
+  mutation cancelarVentasSucursal(
+    $empresa: ID!
+    $sucursal: ID!
+    $folio: String!
+  	$input: cancelarVentaInput
+  ) {
+    cancelarVentasSucursal(
+      empresa: $empresa
+      sucursal: $sucursal
+      folio: $folio
+      input: $input
+    ) {
+      message
+    }
+  }
+`

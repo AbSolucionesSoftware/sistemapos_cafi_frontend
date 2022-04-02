@@ -11,6 +11,9 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Grid from "@material-ui/core/Grid";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles, Snackbar, Typography } from "@material-ui/core";
 import moment from "moment";
 
@@ -18,10 +21,7 @@ import { Close } from "@material-ui/icons";
 import ErrorPage from "../../../components/ErrorPage";
 import { useQuery } from "@apollo/client";
 import { OBTENER_VENTAS_SUCURSAL } from "../../../gql/Ventas/ventas_generales";
-import {
-  formatoFechaCorta,
-  formatoMexico,
-} from "../../../config/reuserFunctions";
+import { formatoMexico } from "../../../config/reuserFunctions";
 import { Alert } from "@material-ui/lab";
 import { useDebounce } from "use-debounce/lib";
 import { VentasContext } from "../../../context/Ventas/ventasContext";
@@ -37,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ListaVentasRealizadas({ handleClose }) {
   const [filtro, setFiltro] = useState("");
+  const [params, setParams] = useState("TODAS");
 
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const [value] = useDebounce(filtro, 500);
@@ -47,6 +48,8 @@ export default function ListaVentasRealizadas({ handleClose }) {
       empresa: sesion.empresa._id,
       sucursal: sesion.sucursal._id,
       filtro: value,
+      params: params,
+      realizadas: false,
     },
     fetchPolicy: "network-only",
   });
@@ -55,7 +58,7 @@ export default function ListaVentasRealizadas({ handleClose }) {
     <Fragment>
       <Box mb={2}>
         <Grid container spacing={2}>
-          <Grid item sm={8} xs={12}>
+          <Grid item sm={6} xs={12}>
             <TextField
               fullWidth
               size="small"
@@ -65,7 +68,22 @@ export default function ListaVentasRealizadas({ handleClose }) {
               value={filtro}
             />
           </Grid>
-          <Grid item sm={4} xs={12}>
+          <Grid item sm={3} xs={12}>
+            <FormControl variant="outlined" size="small" fullWidth>
+              <Select
+                value={params}
+                onChange={(e) => setParams(e.target.value)}
+              >
+                <MenuItem value="TODAS">
+                  <em>Todas</em>
+                </MenuItem>
+                <MenuItem value="HOY">Ventas de hoy</MenuItem>
+                <MenuItem value="REALIZADAS">Ventas realizadas</MenuItem>
+                <MenuItem value="CANCELADAS">Ventas canceladas</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item sm={3} xs={12}>
             <TextField
               fullWidth
               size="small"
@@ -84,7 +102,7 @@ export default function ListaVentasRealizadas({ handleClose }) {
       <Box my={1} display="flex">
         <Box
           border={1}
-          borderColor="#EAEAEA"
+          borderColor="#58ff8f"
           bgcolor="#EDFFF3"
           height="24px"
           width="24px"
@@ -92,6 +110,18 @@ export default function ListaVentasRealizadas({ handleClose }) {
         <Box mx={1} />
         <Typography>
           <b>- Ventas de hoy</b>
+        </Typography>
+        <Box mx={2} />
+        <Box
+          border={1}
+          borderColor="#FF8A8A"
+          bgcolor="#FFF4F4"
+          height="24px"
+          width="24px"
+        />
+        <Box mx={1} />
+        <Typography>
+          <b>- Ventas canceladas</b>
         </Typography>
       </Box>
       <RenderLista
@@ -112,7 +142,7 @@ const RenderLista = ({ resultado_ventas, handleClose }) => {
   const classes = useStyles();
   const [selected, setSelected] = useState("");
   const [open, setOpen] = useState(false);
-  const { loading, data, error } = resultado_ventas;
+  const { loading, data, error, refetch } = resultado_ventas;
   const [view, setView] = useState(false);
 
   const handleClickView = () => {
@@ -264,6 +294,7 @@ const RenderLista = ({ resultado_ventas, handleClose }) => {
                   data={data}
                   selected={selected}
                   obtenerVenta={obtenerVenta}
+				  refetch={refetch}
                 />
               );
             })}
@@ -273,6 +304,7 @@ const RenderLista = ({ resultado_ventas, handleClose }) => {
           venta={selected}
           open={view}
           handleClose={handleCloseView}
+		  refetch={refetch}
         />
       </TableContainer>
     </Paper>
@@ -292,9 +324,23 @@ const tableStyles = makeStyles((theme) => ({
       backgroundColor: "#F5F5F5",
     },
   },
+  root: {
+    "&$root": {
+      backgroundColor: "#FFF4F4",
+      color: "#FF8A8A",
+    },
+    "&$root:hover": {
+      backgroundColor: "#FFE0E0",
+    },
+  },
+  selected: {
+    "&$selected, &$selected:hover": {
+      backgroundColor: "#E8F4FD",
+    },
+  },
 }));
 
-const RowComprasRealizadas = ({ data, selected, obtenerVenta }) => {
+const RowComprasRealizadas = ({ data, selected, obtenerVenta, refetch }) => {
   const classes = tableStyles();
   let today = data.fecha_registro === moment().format("YYYY-MM-DD");
 
@@ -304,25 +350,37 @@ const RowComprasRealizadas = ({ data, selected, obtenerVenta }) => {
       tabIndex={-1}
       selected={data.folio === selected.folio}
       onClick={(e) => obtenerVenta(e.detail, data)}
+      classes={{
+        selected: classes.selected,
+        root: data.status === "CANCELADA" ? classes.root : null,
+      }}
       className={today ? classes.today_color : classes.normal_color}
     >
-      <TableCell>{data.folio}</TableCell>
-      <TableCell>{moment(data.fecha_registro).format("DD/MM/YYYY")}</TableCell>
-      <TableCell>
+      <TableCell className="delete-color">{data.folio}</TableCell>
+      <TableCell className="delete-color">
+        {moment(data.fecha_registro).format("DD/MM/YYYY")}
+      </TableCell>
+      <TableCell className="delete-color">
         {data.cliente !== null
           ? data.cliente.nombre_cliente
           : "Publico General"}
       </TableCell>
-      <TableCell>{data.usuario.nombre}</TableCell>
-      <TableCell>{data.id_caja.numero_caja}</TableCell>
-      <TableCell>
+      <TableCell className="delete-color">{data.usuario.nombre}</TableCell>
+      <TableCell className="delete-color">{data.id_caja.numero_caja}</TableCell>
+      <TableCell className="delete-color">
         ${data.descuento ? formatoMexico(data.descuento) : 0}
       </TableCell>
-      <TableCell>${formatoMexico(data.subTotal)}</TableCell>
-      <TableCell>${formatoMexico(data.impuestos)}</TableCell>
-      <TableCell>${formatoMexico(data.total)}</TableCell>
-      <TableCell align="center">
-        <CancelarFolio venta={data} />
+      <TableCell className="delete-color">
+        ${formatoMexico(data.subTotal)}
+      </TableCell>
+      <TableCell className="delete-color">
+        ${formatoMexico(data.impuestos)}
+      </TableCell>
+      <TableCell className="delete-color">
+        ${formatoMexico(data.total)}
+      </TableCell>
+      <TableCell className="delete-color" align="center">
+        <CancelarFolio venta={data} refetch={refetch} />
       </TableCell>
     </TableRow>
   );

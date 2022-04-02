@@ -5,21 +5,14 @@ import {
   Box,
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
-  Divider,
-  Grid,
-  IconButton,
-  InputBase,
-  Paper,
   Slide,
   Typography,
 } from "@material-ui/core";
-import { Close, Search } from "@material-ui/icons";
+import { Close } from "@material-ui/icons";
 import ListaVentasRealizadas from "./ListaVentasRealizadas";
-import CloseIcon from "@material-ui/icons/Close";
-import { FcPaid, FcSearch } from "react-icons/fc";
+import { FcSearch } from "react-icons/fc";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;

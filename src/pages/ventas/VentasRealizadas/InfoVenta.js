@@ -45,9 +45,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function InfoVentaFolio({ venta, open, handleClose }) {
-  const classes = useStyles();
-
+export default function InfoVentaFolio({ venta, open, handleClose, refetch }) {
   if (!venta) return null;
 
   return (
@@ -246,7 +244,11 @@ export default function InfoVentaFolio({ venta, open, handleClose }) {
       <DialogActions
         style={{ display: "flex", justifyContent: "space-between" }}
       >
-        <CancelarFolio venta={venta} handleCloseInfoVenta={handleClose} />
+        <CancelarFolio
+          venta={venta}
+          handleCloseInfoVenta={handleClose}
+          refetch={refetch}
+        />
         <Button
           onClick={handleClose}
           color="primary"
