@@ -33,6 +33,7 @@ export const REGISTRAR_TURNOS = gql`
 				no_semana_year
 				no_dia_year
 			}
+			fecha_movimiento
 			montos_en_caja {
 				monto_efectivo{
                     monto 

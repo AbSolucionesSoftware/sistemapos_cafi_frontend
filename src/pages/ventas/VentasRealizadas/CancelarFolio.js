@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -20,12 +20,25 @@ import { Close, Delete } from "@material-ui/icons";
 import { useMutation } from "@apollo/client";
 import { CANCELAR_VENTA_SUCURSAL } from "../../../gql/Ventas/ventas_generales";
 import SnackBarMessages from "../../../components/SnackBarMessages";
+import { AccesosContext } from "../../../context/Accesos/accesosCtx";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function CancelarFolio({ venta, handleCloseInfoVenta, refetch }) {
+export default function CancelarFolio({
+  venta,
+  handleCloseInfoVenta,
+  refetch,
+  dinero_disponible,
+}) {
+  const {
+    reloadCancelarVenta,
+    setReloadCancelarVenta,
+    setAbrirPanelAcceso,
+    abrirPanelAcceso,
+    setDepartamentos,
+  } = useContext(AccesosContext);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
@@ -40,6 +53,8 @@ export default function CancelarFolio({ venta, handleCloseInfoVenta, refetch }) 
   const [cancelarVentasSucursal] = useMutation(CANCELAR_VENTA_SUCURSAL);
 
   const handleClickOpen = () => {
+    if (!reloadCancelarVenta) return;
+    setReloadCancelarVenta(false);
     setOpen(true);
   };
 
@@ -59,18 +74,18 @@ export default function CancelarFolio({ venta, handleCloseInfoVenta, refetch }) 
     console.log(venta);
     setLoading(true);
     try {
-      values.turno =  {
+      values.turno = {
         horario_en_turno: turnoEnCurso.horario_en_turno,
         numero_caja: parseInt(turnoEnCurso.numero_caja),
         id_caja: turnoEnCurso.id_caja,
         usuario_en_turno: {
-            nombre: turnoEnCurso.usuario_en_turno.nombre,
-            numero_usuario: turnoEnCurso.usuario_en_turno.numero_usuario,
-            _id: sesion._id
+          nombre: turnoEnCurso.usuario_en_turno.nombre,
+          numero_usuario: turnoEnCurso.usuario_en_turno.numero_usuario,
+          _id: sesion._id,
         },
         empresa: turnoEnCurso.empresa,
         sucursal: turnoEnCurso.sucursal,
-    }
+      };
       console.log(values);
       const result = await cancelarVentasSucursal({
         variables: {
@@ -90,7 +105,7 @@ export default function CancelarFolio({ venta, handleCloseInfoVenta, refetch }) 
         devolucion_efectivo: false,
         devolucion_inventario: true,
         devolucion_credito: false,
-      })
+      });
       refetch();
       handleClose();
     } catch (error) {
@@ -117,20 +132,47 @@ export default function CancelarFolio({ venta, handleCloseInfoVenta, refetch }) 
     }
   };
 
+  const verificarPermisos = () => {
+    if (sesion.accesos.ventas.cancelar_venta.editar === true) {
+      handleClickOpen();
+    } else {
+      setAbrirPanelAcceso(!abrirPanelAcceso);
+      setDepartamentos({
+        departamento: "ventas",
+        subDepartamento: "cancelar_venta",
+        tipo_acceso: "editar",
+      });
+    }
+  };
+
+  const [control, setControl] = useState(true);
+
+  useEffect(() => {
+    if (reloadCancelarVenta === true && control) {
+      handleClickOpen();
+      setControl(false);
+    }
+  }, [reloadCancelarVenta]);
+
   return (
     <div>
       {handleCloseInfoVenta ? (
         <Button
           variant="contained"
           color="secondary"
-          onClick={handleClickOpen}
+          onClick={() => verificarPermisos()}
           startIcon={<Delete />}
           disabled={venta.status === "CANCELADA"}
         >
           Cancelar venta
         </Button>
       ) : (
-        <IconButton size="small" color="secondary" onClick={handleClickOpen} disabled={venta.status === "CANCELADA"}> 
+        <IconButton
+          size="small"
+          color="secondary"
+          onClick={() => verificarPermisos()}
+          disabled={venta.status === "CANCELADA"}
+        >
           <Delete />
         </IconButton>
       )}
@@ -179,6 +221,10 @@ export default function CancelarFolio({ venta, handleCloseInfoVenta, refetch }) 
                   checked={values.devolucion_efectivo}
                   onChange={handleChangeChecks}
                   name="devolucion_efectivo"
+                  disabled={
+                    venta.montos_en_caja.monto_efectivo.monto >
+                    dinero_disponible
+                  }
                 />
               }
               label="Realizar devolucion de dinero"

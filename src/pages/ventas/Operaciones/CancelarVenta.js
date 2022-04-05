@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import {
   Box,
   Button,
@@ -11,7 +11,6 @@ import {
   Typography,
 } from "@material-ui/core";
 import useStyles from "../styles";
-import { AccesosContext } from "../../../context/Accesos/accesosCtx";
 import CloseIcon from "@material-ui/icons/Close";
 import { VentasContext } from "../../../context/Ventas/ventasContext";
 import { ClienteCtx } from "../../../context/Catalogos/crearClienteCtx";
@@ -21,38 +20,21 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function CancelarVenta() {
-  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
   const datosVenta = JSON.parse(localStorage.getItem("DatosVentas"));
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
   const {
-    reloadCancelarVenta,
-    setReloadCancelarVenta,
-    setAbrirPanelAcceso,
-    abrirPanelAcceso,
-    setDepartamentos,
-  } = useContext(AccesosContext);
-  const {
     updateTablaVentas,
     setUpdateTablaVentas,
     setDatosVentasActual,
-    setVentaRetomada
+    setVentaRetomada,
   } = useContext(VentasContext);
   const { updateClientVenta, setUpdateClientVenta } = useContext(ClienteCtx);
 
   const handleClickOpen = () => {
-    if (sesion.accesos.ventas.cancelar_venta.ver === true) {
-      setOpen(!open);
-    } else {
-      setAbrirPanelAcceso(!abrirPanelAcceso);
-      setDepartamentos({
-        departamento: "ventas",
-        subDepartamento: "cancelar_venta",
-        tipo_acceso: "ver",
-      });
-    }
+    setOpen(!open);
   };
 
   window.addEventListener("keydown", Mi_función);
@@ -61,13 +43,6 @@ export default function CancelarVenta() {
       handleClickOpen();
     }
   }
-
-  useEffect(() => {
-    if (reloadCancelarVenta === true) {
-      setOpen(!open);
-      setReloadCancelarVenta(false);
-    }
-  }, [reloadCancelarVenta]);
 
   const cancelarVenta = () => {
     localStorage.removeItem("DatosVentas");
@@ -87,7 +62,7 @@ export default function CancelarVenta() {
   };
 
   return (
-    <>
+    <Fragment>
       <Button
         className={classes.borderBotonChico}
         onClick={handleClickOpen}
@@ -170,6 +145,6 @@ export default function CancelarVenta() {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Fragment>
   );
 }

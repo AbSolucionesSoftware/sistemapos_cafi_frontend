@@ -358,8 +358,8 @@ export const CREAR_VENTA = gql`
 `;
 
 export const OBTENER_VENTAS_SUCURSAL = gql`
-query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String, $params: String, $realizadas: Boolean ) {
-		obtenerVentasSucursal(empresa: $empresa, sucursal: $sucursal, filtro: $filtro, params: $params, realizadas: $realizadas) {
+query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtros: filtrosObtenerVentas ) {
+		obtenerVentasSucursal(empresa: $empresa, sucursal: $sucursal, filtros: $filtros) {
 			_id
       folio
       cliente {

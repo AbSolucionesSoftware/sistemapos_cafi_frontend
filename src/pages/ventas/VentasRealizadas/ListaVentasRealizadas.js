@@ -28,6 +28,7 @@ import { VentasContext } from "../../../context/Ventas/ventasContext";
 import { ClienteCtx } from "../../../context/Catalogos/crearClienteCtx";
 import InfoVentaFolio from "./InfoVenta";
 import CancelarFolio from "./CancelarFolio";
+import { OBTENER_PRE_CORTE_CAJA } from "../../../gql/Cajas/cajas";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -40,18 +41,46 @@ export default function ListaVentasRealizadas({ handleClose }) {
   const [params, setParams] = useState("TODAS");
 
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
   const [value] = useDebounce(filtro, 500);
+
+  const admin = sesion.accesos.ventas.cancelar_venta.editar;
+  const fecha_entrada = turnoEnCurso.fecha_movimiento;
+
+  const input_precorte = {
+    horario_en_turno: "ABRIR TURNO",
+    id_caja: turnoEnCurso ? turnoEnCurso.id_caja : "",
+    id_usuario: sesion._id,
+    token_turno_user: turnoEnCurso ? turnoEnCurso.token_turno_user : "",
+  };
 
   /* Queries */
   const resultado_ventas = useQuery(OBTENER_VENTAS_SUCURSAL, {
-    variables: {
-      empresa: sesion.empresa._id,
-      sucursal: sesion.sucursal._id,
-      filtro: value,
-      params: params,
-      realizadas: false,
-    },
-    fetchPolicy: "network-only",
+	variables: {
+	  empresa: sesion.empresa._id,
+	  sucursal: sesion.sucursal._id,
+	  filtro: value,
+	  params: params,
+	  realizadas: false,
+	  filtros: {
+		busqueda: value,
+		filtro: params,
+		vista: "VENTAS",
+		turno: {
+		  id_caja: turnoEnCurso.id_caja,
+		  fecha_entrada,
+		},
+		admin,
+	  },
+	},
+	fetchPolicy: "network-only",
+  });
+  const res_precorte = useQuery(OBTENER_PRE_CORTE_CAJA, {
+	variables: {
+	  empresa: sesion.empresa._id,
+	  sucursal: sesion.sucursal._id,
+	  input: input_precorte,
+	},
   });
 
   return (
@@ -100,18 +129,22 @@ export default function ListaVentasRealizadas({ handleClose }) {
         </Alert>
       </Box>
       <Box my={1} display="flex">
-        <Box
-          border={1}
-          borderColor="#58ff8f"
-          bgcolor="#EDFFF3"
-          height="24px"
-          width="24px"
-        />
-        <Box mx={1} />
-        <Typography>
-          <b>- Ventas de hoy</b>
-        </Typography>
-        <Box mx={2} />
+        {admin ? (
+          <Fragment>
+            <Box
+              border={1}
+              borderColor="#58ff8f"
+              bgcolor="#EDFFF3"
+              height="24px"
+              width="24px"
+            />
+            <Box mx={1} />
+            <Typography>
+              <b>- Ventas de hoy</b>
+            </Typography>
+            <Box mx={2} />
+          </Fragment>
+        ) : null}
         <Box
           border={1}
           borderColor="#FF8A8A"
@@ -126,13 +159,15 @@ export default function ListaVentasRealizadas({ handleClose }) {
       </Box>
       <RenderLista
         resultado_ventas={resultado_ventas}
+		res_precorte={res_precorte}
         handleClose={handleClose}
+        admin={admin}
       />
     </Fragment>
   );
 }
 
-const RenderLista = ({ resultado_ventas, handleClose }) => {
+const RenderLista = ({ resultado_ventas, res_precorte, handleClose, admin }) => {
   const {
     updateTablaVentas,
     setUpdateTablaVentas,
@@ -168,7 +203,10 @@ const RenderLista = ({ resultado_ventas, handleClose }) => {
     return <ErrorPage />;
   }
 
+  //obtener dinero en caja
   const { obtenerVentasSucursal } = data;
+  const data_precorte = res_precorte.data;
+  const pre_corte = data_precorte.obtenerPreCorteCaja ? data_precorte.obtenerPreCorteCaja.monto_efectivo_precorte : 0
 
   const obtenerVenta = (click, data) => {
     setSelected(data);
@@ -294,7 +332,9 @@ const RenderLista = ({ resultado_ventas, handleClose }) => {
                   data={data}
                   selected={selected}
                   obtenerVenta={obtenerVenta}
-				  refetch={refetch}
+                  refetch={refetch}
+                  admin={admin}
+				  pre_corte={pre_corte}
                 />
               );
             })}
@@ -304,7 +344,7 @@ const RenderLista = ({ resultado_ventas, handleClose }) => {
           venta={selected}
           open={view}
           handleClose={handleCloseView}
-		  refetch={refetch}
+          refetch={refetch}
         />
       </TableContainer>
     </Paper>
@@ -340,7 +380,14 @@ const tableStyles = makeStyles((theme) => ({
   },
 }));
 
-const RowComprasRealizadas = ({ data, selected, obtenerVenta, refetch }) => {
+const RowComprasRealizadas = ({
+  data,
+  selected,
+  obtenerVenta,
+  refetch,
+  admin,
+  pre_corte
+}) => {
   const classes = tableStyles();
   let today = data.fecha_registro === moment().format("YYYY-MM-DD");
 
@@ -354,7 +401,7 @@ const RowComprasRealizadas = ({ data, selected, obtenerVenta, refetch }) => {
         selected: classes.selected,
         root: data.status === "CANCELADA" ? classes.root : null,
       }}
-      className={today ? classes.today_color : classes.normal_color}
+      className={today && admin ? classes.today_color : classes.normal_color}
     >
       <TableCell className="delete-color">{data.folio}</TableCell>
       <TableCell className="delete-color">
@@ -380,7 +427,7 @@ const RowComprasRealizadas = ({ data, selected, obtenerVenta, refetch }) => {
         ${formatoMexico(data.total)}
       </TableCell>
       <TableCell className="delete-color" align="center">
-        <CancelarFolio venta={data} refetch={refetch} />
+        <CancelarFolio venta={data} refetch={refetch} dinero_disponible={pre_corte} />
       </TableCell>
     </TableRow>
   );

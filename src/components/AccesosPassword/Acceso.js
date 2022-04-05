@@ -10,11 +10,11 @@ import {
   Typography,
 } from "@material-ui/core";
 import { VentasContext } from "../../context/Ventas/ventasContext";
-import { useApolloClient } from  "@apollo/client";
+import { useApolloClient } from "@apollo/client";
 import { LOGEAR_USUARIO_ACCESOS } from "../../gql/Catalogos/usuarios";
 import BackdropComponent from "../Layouts/BackDrop";
 import { AccesosContext } from "../../context/Accesos/accesosCtx";
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from "@material-ui/icons/Close";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -82,19 +82,28 @@ export default function Acceso() {
         variables: { input },
         fetchPolicy: "network-only",
       });
+      console.log(response);
       if (response.data.obtenerAccesoPermiso.permiso_concedido === true) {
         SwitchPermisos(response.data.obtenerAccesoPermiso.subDepartamento);
-        setAbrirPanelAcceso(false);
-        setLoading(false);
         setAlert({
           message: "Permiso Autorizado",
           status: "success",
           open: true,
         });
         setDatosUser([]);
+        setAbrirPanelAcceso(false);
+        setLoading(false);
       }
     } catch (error) {
+      console.log(error);
       setLoading(false);
+      if (error.message) {
+        setAlert({
+          message: error.message,
+          status: "error",
+          open: true,
+        });
+      }
     }
   };
 
@@ -123,9 +132,9 @@ export default function Acceso() {
         break;
       default:
         setAlert({
-            message: "Permiso no autorizado",
-            status: "error",
-            open: true,
+          message: "Permiso no autorizado",
+          status: "error",
+          open: true,
         });
         break;
     }
@@ -141,16 +150,21 @@ export default function Acceso() {
       >
         <BackdropComponent loading={loading} />
         <Box p={3}>
-          <Box display='flex' p={1}>
+          <Box display="flex" p={1}>
             <Box flexGrow={1}>
               <Typography>
                 <b>Por favor autoriza con tu usuario y contraseña</b>
               </Typography>
             </Box>
-            <Box >
-                <Button variant="contained" color="secondary" onClick={() => handleClickClose()} size="medium">
-                    <CloseIcon />
-                </Button>
+            <Box>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => handleClickClose()}
+                size="medium"
+              >
+                <CloseIcon />
+              </Button>
             </Box>
           </Box>
           <div className={classes.formInputFlex}>

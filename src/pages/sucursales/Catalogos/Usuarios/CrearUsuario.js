@@ -162,6 +162,7 @@ export default function CrearUsuario({ accion, datos, fromEmergent, refetch }) {
         return;
       }
     } else {
+      console.log(usuario);
       if (!usuario.nombre || !usuario.telefono || !usuario.email) {
         setError({ error: true, message: "Este campo es requerido" });
         return;
@@ -290,19 +291,19 @@ export default function CrearUsuario({ accion, datos, fromEmergent, refetch }) {
               </Box>
             </Tabs>
           </AppBar>
-          <TabPanel value={value} index={0}>
-            <Box p={2}>
-              <form id="form-usuario" onSubmit={saveData}>
+          <form id="form-usuario" onSubmit={saveData}>
+            <TabPanel value={value} index={0}>
+              <Box p={2}>
                 <FormularioUsuario accion={accion} />
-              </form>
-            </Box>
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            <AsignarPermisos
-              arregloAccesos={usuario.accesos}
-              obtenerAccesos={obtenerAccesos}
-            />
-          </TabPanel>
+              </Box>
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              <AsignarPermisos
+                arregloAccesos={usuario.accesos}
+                obtenerAccesos={obtenerAccesos}
+              />
+            </TabPanel>
+          </form>
         </Box>
         <DialogActions>
           <Button
