@@ -248,6 +248,7 @@ export default function InfoVentaFolio({ venta, open, handleClose, refetch }) {
           venta={venta}
           handleCloseInfoVenta={handleClose}
           refetch={refetch}
+          selected={venta}
         />
         <Button
           onClick={handleClose}

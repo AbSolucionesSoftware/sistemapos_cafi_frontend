@@ -31,6 +31,8 @@ export default function CancelarFolio({
   handleCloseInfoVenta,
   refetch,
   dinero_disponible,
+  selected,
+  view
 }) {
   const {
     reloadCancelarVenta,
@@ -71,7 +73,6 @@ export default function CancelarFolio({
   };
 
   const handleCancelSale = async () => {
-    console.log(venta);
     setLoading(true);
     try {
       values.turno = {
@@ -86,7 +87,6 @@ export default function CancelarFolio({
         empresa: turnoEnCurso.empresa,
         sucursal: turnoEnCurso.sucursal,
       };
-      console.log(values);
       const result = await cancelarVentasSucursal({
         variables: {
           input: values,
@@ -145,12 +145,14 @@ export default function CancelarFolio({
     }
   };
 
-  const [control, setControl] = useState(true);
+  let seleccionado = "";
+  if(view === "table"){
+    seleccionado = selected
+  }
 
   useEffect(() => {
-    if (reloadCancelarVenta === true && control) {
+    if (reloadCancelarVenta === true && seleccionado._id === venta._id) {
       handleClickOpen();
-      setControl(false);
     }
   }, [reloadCancelarVenta]);
 
