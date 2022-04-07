@@ -64,6 +64,11 @@ export const CONSULTAR_COTIZACIONES = gql `
             unidad_maxima
             id_almacen_general
           }
+        iva_total_producto
+        ieps_total_producto
+        impuestos_total_producto
+        subtotal_total_producto
+        total_total_producto  
         id_producto {
           _id
           datos_generales {
@@ -87,6 +92,7 @@ export const CONSULTAR_COTIZACIONES = gql `
             }
             receta_farmacia
           }
+         
           precios {
             ieps
             ieps_activo
@@ -190,6 +196,16 @@ export const CONSULTAR_COTIZACIONES = gql `
           dinero_descontado
         }
       
+      }
+      id_caja{
+        _id
+        numero_caja
+        activa
+      }
+      usuario{
+        _id
+        numero_usuario
+        nombre
       }
       year_registro
       numero_semana_year

@@ -24,8 +24,9 @@ import {
   formatoMexico,
 } from "../../../config/reuserFunctions";
 import { Tooltip } from "@material-ui/core";
-import { Done } from "@material-ui/icons";
-import CancelarFolio from "./CancelarFolio";
+import CotizacionPdf from "./CotizacionPdf";
+//import { Done } from "@material-ui/icons";
+//import CancelarFolio from "./CancelarFolio";
 
 const useStyles = makeStyles((theme) => ({
   colorContainer: {
@@ -45,9 +46,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function InfoVentaFolio({ venta, open, handleClose, refetch }) {
+export default function DetalleCotizacion({ venta, open, handleClose, refetch }) {
   if (!venta) return null;
-
+    console.log(venta);
   return (
     <Dialog
       open={open}
@@ -58,6 +59,9 @@ export default function InfoVentaFolio({ venta, open, handleClose, refetch }) {
       maxWidth="xl"
     >
       <DialogTitle>
+        <Box>
+            <CotizacionPdf isIcon={false}  />
+        </Box>
         <Box style={{ display: "flex", justifyContent: "space-between" }}>
           <Box>
             <Typography>
@@ -83,7 +87,7 @@ export default function InfoVentaFolio({ venta, open, handleClose, refetch }) {
         </Box>
       </DialogTitle>
       <DialogContent>
-        {venta.cliente !== null ? (
+        {(venta.cliente !== null && venta.cliente.length ) ? (
           <Box my={2}>
             <Box display="flex" alignItems="center">
               <Avatar>
@@ -202,10 +206,11 @@ export default function InfoVentaFolio({ venta, open, handleClose, refetch }) {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {venta.productos.map((row, index) => (
+                    {venta.productos.map((row, index) => {return(
                       <TableRow key={index}>
                         <TableCell>
-                          {row.id_unidad_venta.codigo_barras}
+                            {row.id_producto.datos_generales.codigo_barras}
+                         {/* {row.id_unidad_venta.codigo_barras} */}
                         </TableCell>
                         <TableCell>
                           {row.id_producto.datos_generales.nombre_comercial}
@@ -216,24 +221,24 @@ export default function InfoVentaFolio({ venta, open, handleClose, refetch }) {
                         <TableCell>
                           ${formatoMexico(row.precio_a_vender)}
                         </TableCell>
-                        <ComponenteDescuento producto={row} />
+                        <ComponenteDescuento producto={venta} />
                         <TableCell>
                           $
-                          {row.iva_total
-                            ? formatoMexico(row.iva_total)
+                          {row.iva_total_producto
+                            ? formatoMexico(row.iva_total_producto)
                             : "0.00"}
                         </TableCell>
                         <TableCell>
                           $
-                          {row.ieps_total
-                            ? formatoMexico(row.ieps_total)
+                          {row.ieps_total_producto
+                            ? formatoMexico(row.ieps_total_producto)
                             : "0.00"}
                         </TableCell>
-                        <TableCell>${formatoMexico(row.subtotal)}</TableCell>
-                        <TableCell>${formatoMexico(row.impuestos)}</TableCell>
-                        <TableCell>${formatoMexico(row.total)}</TableCell>
+                        <TableCell>${formatoMexico(row.subtotal_total_producto)}</TableCell>
+                        <TableCell>${formatoMexico(row.impuestos_total_producto)}</TableCell>
+                        <TableCell>${formatoMexico(row.total_total_producto)}</TableCell>
                       </TableRow>
-                    ))}
+                    )})}
                   </TableBody>
                 </Table>
               </TableContainer>
@@ -241,7 +246,7 @@ export default function InfoVentaFolio({ venta, open, handleClose, refetch }) {
           </Box>
         </Box>
       </DialogContent>
-      <DialogActions
+     {/*  <DialogActions
         style={{ display: "flex", justifyContent: "space-between" }}
       >
         <CancelarFolio
@@ -258,7 +263,7 @@ export default function InfoVentaFolio({ venta, open, handleClose, refetch }) {
         >
           Aceptar
         </Button>
-      </DialogActions>
+      </DialogActions> */}
     </Dialog>
   );
 }
@@ -267,10 +272,10 @@ const ComponenteMedidaColor = ({ producto }) => {
   const classes = useStyles();
   const theme = useTheme();
 
-  if (producto.color.color && producto.medida.medida) {
+  if (producto.color.nombre && producto.medida.talla) {
     return (
       <TableCell align="center">
-        <Tooltip title={producto.color.color} placement="top" arrow>
+        <Tooltip title={producto.color.nombre} placement="top" arrow>
           <div
             className={classes.colorContainer}
             style={{
@@ -278,7 +283,7 @@ const ComponenteMedidaColor = ({ producto }) => {
               color: theme.palette.getContrastText(producto.color.hex),
             }}
           >
-            {producto.medida.medida}
+            {producto.medida.talla}
           </div>
         </Tooltip>
       </TableCell>
@@ -289,8 +294,8 @@ const ComponenteMedidaColor = ({ producto }) => {
 };
 
 const ComponenteDescuento = ({ producto }) => {
-  if (producto.id_unidad_venta.descuento_activo === true) {
-    const { dinero_descontado, porciento } = producto.id_unidad_venta.descuento;
+  if (producto.descuento_general_activo === true) {
+    const { dinero_descontado, porciento } = producto.descuento_general;
     return (
       <TableCell>
         {`$${formatoMexico(dinero_descontado)} - %${porciento}`}

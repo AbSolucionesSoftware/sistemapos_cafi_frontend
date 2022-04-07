@@ -1,4 +1,4 @@
-import React, {Fragment, useState, useContext} from 'react';
+import React, {Fragment, useState, useContext, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table'; 
@@ -12,21 +12,22 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Snackbar from "@material-ui/core/Snackbar";
-import { IconButton, TablePagination } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Close from "@material-ui/icons/Close";
 import AutorenewIcon from '@material-ui/icons/Autorenew';
-import {formatoFecha} from '../../../config/reuserFunctions';
+//import {formatoFecha} from '../../../config/reuserFunctions';
 import moment from "moment";
 import { useQuery } from "@apollo/client";
 import { VentasContext } from "../../../context/Ventas/ventasContext";
 import { ClienteCtx } from "../../../context/Catalogos/crearClienteCtx";
 import { CONSULTAR_COTIZACIONES } from "../../../gql/Ventas/cotizaciones";
+import DetalleCotizacion from "./DetalleCotizacion";
 
 const columns = [
 	{ id: 'folio', label: 'Folio', minWidth: 20, align: 'center' },
 	{ id: 'cliente', label: 'Cliente', minWidth: 100 },
-	{ id: 'fecha', label: 'Fecha', minWidth: 60, align: 'center'},
+	{ id: 'fecha', label: 'Fecha', minWidth: 80, align: 'center'},
 	{id: 'fechaVencimiento', label: 'Fecha de vencimiento', minWidth: 60, align: 'center'},
 	{ id: 'productos', label: 'Productos', minWidth: 50, align: 'center'},
 	{ id: 'total', label: 'Total', minWidth: 50, align: 'center'}
@@ -51,7 +52,9 @@ export default function CotizacionesPendientes({ setOpen }) {
 	const classes = useStyles();
 	const [ page, setPage ] = React.useState(0);
 	const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-	const [ rowsPerPage, setRowsPerPage ] = React.useState(10);
+	//const [ rowsPerPage, setRowsPerPage ] = React.useState(10);
+	const [view, setView] = useState(false);
+	const [selected, setSelected] = useState("");
 
 	const { data, refetch, loading } = useQuery(CONSULTAR_COTIZACIONES, {
 		variables: {
@@ -59,16 +62,28 @@ export default function CotizacionesPendientes({ setOpen }) {
 		  sucursal: sesion.sucursal._id
 		 
 		},
-	  });
+	});
+
+	useEffect(() => {
+	  try {
+		 refetch();
+	  } catch (error) {
+		  
+	  }
+	}, [])
+	  
 	let rows = [];
-	const handleChangePage = (event, newPage) => {
+	const handleCloseView = () => {
+		setView(false);
+	  };
+/* 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
 	};
 
 	const handleChangeRowsPerPage = (event) => {
 		setRowsPerPage(+event.target.value);
 		setPage(0);
-	};
+	}; */
 	const handleModalCotizacion = () =>{
 		setOpen(false);
 	}
@@ -93,13 +108,19 @@ export default function CotizacionesPendientes({ setOpen }) {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+						{rows.map((row) => {
 							return (
-								<CotizacionRow cotizacion={row} handleModalCotizacion={handleModalCotizacion} />
+								<CotizacionRow cotizacion={row} handleModalCotizacion={handleModalCotizacion} setView={setView} setSelected={setSelected} />
 							);
 						})}
 					</TableBody>
 				</Table>
+				<DetalleCotizacion
+					venta={selected}
+					open={view}
+					handleClose={handleCloseView}
+					refetch={refetch}
+				/>
 			</TableContainer>
 		{/* 	<TablePagination
 				rowsPerPageOptions={[ 10, 25, 100 ]}
@@ -110,18 +131,20 @@ export default function CotizacionesPendientes({ setOpen }) {
 				onChangePage={handleChangePage}
 				onChangeRowsPerPage={handleChangeRowsPerPage}
 			/> */}
+
 		</Paper>
 	);
 };
 
 
-const CotizacionRow = ({cotizacion, index, handleModalCotizacion}) => {
+const CotizacionRow = ({cotizacion, index, handleModalCotizacion, setSelected, setView}) => {
 	const [openMessage, setOpenMessage] = useState({message: '', open:false});
 	const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 	
 	let datosVenta = JSON.parse(localStorage.getItem("DatosVentas"));
 	const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
 	const { updateClientVenta, setUpdateClientVenta } = useContext(ClienteCtx);
+	
 	const AgregarVentaDeNuevo = () =>{
 		try {
 			
@@ -161,7 +184,18 @@ const CotizacionRow = ({cotizacion, index, handleModalCotizacion}) => {
 		
 	}
 
-	const updateDataStorage = () => {
+	const openDetail = (click) =>{
+		try {
+			if(click === 2) {
+				console.log(cotizacion)
+				setSelected(cotizacion);
+				setView(true);
+			}
+		} catch (error) {
+			
+		}
+	}
+ 	const updateDataStorage = () => {
 		setUpdateTablaVentas(!updateTablaVentas);
 		setUpdateClientVenta(!updateClientVenta);
 	};
@@ -208,7 +242,10 @@ const CotizacionRow = ({cotizacion, index, handleModalCotizacion}) => {
 		  }; */
 		return(
 			<>
-				<TableRow hover role="checkbox" tabIndex={-1} key={cotizacion.code}>
+				<TableRow 
+				hover role="checkbox" 
+				tabIndex={-1} key={cotizacion.code}
+				onClick={(e) => openDetail(e.detail)}>
 					<TableCell align='center' >
 						{cotizacion.folio}
 					</TableCell>
@@ -216,10 +253,10 @@ const CotizacionRow = ({cotizacion, index, handleModalCotizacion}) => {
 						{(cotizacion.cliente.nombre_cliente) ? cotizacion.cliente.nombre_cliente : 'Público general'}
 					</TableCell>
 					<TableCell align='center' >
-						{formatoFecha(cotizacion.fecha_registro)}
+						{cotizacion.fecha_registro}
 					</TableCell>
 					<TableCell align='center' >
-						{formatoFecha(cotizacion.fecha_vencimiento_cotizacion)}
+						{cotizacion.fecha_vencimiento_cotizacion}
 					</TableCell>
 					<TableCell align='center' >
 						{cotizacion.productos.length}
