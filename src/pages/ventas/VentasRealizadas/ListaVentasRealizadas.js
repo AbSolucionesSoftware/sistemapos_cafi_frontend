@@ -427,7 +427,7 @@ const RowComprasRealizadas = ({
         ${formatoMexico(data.total)}
       </TableCell>
       <TableCell className="delete-color" align="center">
-        <CancelarFolio venta={data} refetch={refetch} dinero_disponible={pre_corte} />
+        <CancelarFolio venta={data} refetch={refetch} dinero_disponible={pre_corte} selected={selected} view="table" />
       </TableCell>
     </TableRow>
   );

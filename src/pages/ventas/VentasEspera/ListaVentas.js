@@ -124,8 +124,6 @@ const RowsVentas = ({ venta, index, handleModalEspera }) => {
     }
   }
 
-  console.log(venta)
-
   const AgregarVentaDeNuevo = () => {
     if (datosVenta === null) {
       let nueva_venta_espera = [...listaEnEspera];
