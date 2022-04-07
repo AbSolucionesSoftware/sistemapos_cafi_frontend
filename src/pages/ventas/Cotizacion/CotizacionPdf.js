@@ -3,9 +3,9 @@ import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Box, Button, Container, makeStyles, Typography } from '@material-ui/core';
 import GetAppIcon from '@material-ui/icons/GetApp';
-import { formatoFechaCertificado } from '../../../../config/reuserFunction';
-import Spin from '../../../../components/Spin/spin';
-import MessageSnackbar from '../../../../components/Snackbar/snackbar';
+//import { formatoFechaCertificado } from '../../../../config/reuserFunction';
+//import Spin from '../../../../components/Spin/spin';
+//import MessageSnackbar from '../../../../components/Snackbar/snackbar';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -68,19 +68,19 @@ export default function CotizacionPdf(props) {
 		});
 	};
 
-	if (loading) return <Spin loading={loading} />;
+	//if (loading) return <Spin loading={loading} />;
 
 	return (
 		<Box mt={1}>
-			<MessageSnackbar
+			{/* <MessageSnackbar
 				open={snackbar.open}
 				mensaje={snackbar.mensaje}
 				status={snackbar.status}
 				setSnackbar={setSnackbar}
-			/>
-			<Box display="flex" justifyContent="center" m={2}>
+			/> */}
+			<Box display="flex" justifyContent="center" m={1} mb={0}>
 				<Button variant="outlined" color="primary" onClick={printDocument} startIcon={<GetAppIcon />}>
-					Descargar
+					Descargar PDF
 				</Button>
 			</Box>
 			<Container >

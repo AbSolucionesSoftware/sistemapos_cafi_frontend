@@ -59,31 +59,33 @@ export default function DetalleCotizacion({ venta, open, handleClose, refetch })
       maxWidth="xl"
     >
       <DialogTitle>
-        <Box>
-            <CotizacionPdf isIcon={false}  />
-        </Box>
+      
         <Box style={{ display: "flex", justifyContent: "space-between" }}>
-          <Box>
-            <Typography>
-              <b>Caja: </b>
-              {` ${venta.id_caja.numero_caja}`}
-            </Typography>
-            <Box mx={1} />
-            <Typography>
-              <b>Usuario en caja:</b> {` ${venta.usuario.nombre}`}
-            </Typography>
-          </Box>
-          <Box>
-            <Typography align="right">
-              <b>Folio:</b>
-              {` ${venta.folio}`}
-            </Typography>
-            <Box mx={1} />
-            <Typography>
-              <b>Fecha:</b>
-              {` ${formatoFechaCorta(venta.fecha_registro)}`}
-            </Typography>
-          </Box>
+            <Box>
+                <Typography>
+                <b>Caja: </b>
+                {` ${venta.id_caja.numero_caja}`}
+                </Typography>
+                <Box mx={1} />
+                <Typography>
+                <b>Usuario en caja:</b> {` ${venta.usuario.nombre}`}
+                </Typography>
+            </Box>
+            <Box>
+                <Typography align="right">
+                <b>Folio:</b>
+                {` ${venta.folio}`}
+                </Typography>
+                <Box mx={1} />
+                <Typography>
+                <b>Fecha:</b>
+                {` ${formatoFechaCorta(venta.fecha_registro)}`}
+                </Typography>
+            </Box>
+           
+        </Box>
+        <Box style={{ display: "flex", justifyContent: "flex-end" }}>
+            <CotizacionPdf isIcon={false}  />
         </Box>
       </DialogTitle>
       <DialogContent>
