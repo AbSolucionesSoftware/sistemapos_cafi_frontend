@@ -166,6 +166,8 @@ export default function ListaClientes({
                     handleClickOpenModal={handleClickOpenModal}
                     setAlert={setAlert}
                     refetch={refetch}
+                    ventas={ventas}
+                    dataSelectRowClient={dataSelectRowClient}
                   />
                 );
               })}
@@ -179,9 +181,15 @@ export default function ListaClientes({
           aria-describedby="select-cliente-venta-description"
         >
           <DialogTitle id="select-dialog-cliente-venta">
-            {" Estas seguro que desea seleccionar este cliente ?"}
+            {"¿Estas seguro que desea seleccionar este cliente?"}
           </DialogTitle>
           <DialogContent>
+            <Typography>
+              {`Cliente: ${dataSelectRowClient.nombre_cliente}`}
+            </Typography>
+            <Typography>
+              {`Número de clave: ${dataSelectRowClient.clave_cliente}`}
+            </Typography>
             <DialogContentText id="select-cliente-venta-description">
               Al seleccionar el cliente se colocara en la venta.
             </DialogContentText>
@@ -210,6 +218,8 @@ const RowsRender = ({
   handleClickOpenModal,
   setAlert,
   refetch,
+  ventas,
+  dataSelectRowClient,
 }) => {
   const permisosUsuario = JSON.parse(localStorage.getItem("sesionCafi"));
 
@@ -245,6 +255,11 @@ const RowsRender = ({
         role="checkbox"
         tabIndex={-1}
         onClick={(e) => handleClickOpenModal(datos, e)}
+        hover={ventas}
+        style={ventas ? { cursor: "pointer" } : null}
+        selected={
+          ventas && dataSelectRowClient.numero_cliente === datos.numero_cliente
+        }
       >
         <TableCell>
           <Typography>{datos.numero_cliente}</Typography>

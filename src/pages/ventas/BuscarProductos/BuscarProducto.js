@@ -2,14 +2,11 @@ import React, { Fragment, useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
-  DialogActions,
   Dialog,
   DialogContent,
   Grid,
   Typography,
   Slide,
-  InputBase,
-  Paper,
   IconButton,
   DialogTitle,
   TextField,
@@ -46,7 +43,7 @@ export default function BuscarProducto() {
   } = useContext(VentasContext);
 
   const [open, setOpen] = useState(false);
-  const [searchProducto, setSearchProducto] = useState([]);
+  const [searchProducto, setSearchProducto] = useState({ producto: "" });
   const [productoSeleccionado, setProductoSeleccionado] = useState([]);
   const [granelBase, setGranelBase] = useState({
     granel: false,
@@ -75,7 +72,8 @@ export default function BuscarProducto() {
 
   const handleClickOpen = () => {
     setProductoSeleccionado([]);
-    refetch();
+    //refetch();
+    //productosBusqueda = [];
     setOpen(!open);
   };
 
@@ -370,7 +368,7 @@ export default function BuscarProducto() {
       ...CalculosData,
     });
     setUpdateTablaVentas(!updateTablaVentas);
-    handleClickOpen();
+    /* handleClickOpen(); */
   };
 
   return (
@@ -428,6 +426,7 @@ export default function BuscarProducto() {
               name="producto"
               size="small"
               fullWidth
+              value={searchProducto.producto}
               onChange={obtenerDatos}
               InputProps={{
                 endAdornment: (
@@ -440,25 +439,19 @@ export default function BuscarProducto() {
               }}
             />
           </Box>
-          <InformacionProducto productoSeleccionado={productoSeleccionado} />
+          <Box my={2}>
+            <InformacionProducto productoSeleccionado={productoSeleccionado} />
+          </Box>
           <Grid>
             <ListaProductos
               productosBusqueda={productosBusqueda}
+              productoSeleccionado={productoSeleccionado}
               setProductoSeleccionado={setProductoSeleccionado}
               loading={loading}
+              agregarProductos={agregarProductos}
             />
           </Grid>
         </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => agregarProductos(productoSeleccionado)}
-            variant="contained"
-            color="primary"
-            size="large"
-          >
-            AGREGAR
-          </Button>
-        </DialogActions>
       </Dialog>
     </Fragment>
   );

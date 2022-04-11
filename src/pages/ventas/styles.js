@@ -66,23 +66,20 @@ const useStyles = makeStyles((theme) => ({
 		width: 28,
 	},
     iconSizeDialogs:{
-        width: 80,
+        width: 50,
     },
     iconSizeDialogsPequeno:{
         width: 50,
     },
     containerImagenesProducto:{
-        maxHeight: 300,
-        maxWidth: 300,
+        height: "200px",
         display: 'flex',
-        justifyItems: 'center',
-        alignContent: 'center',
         justifyContent: 'center',
         alignItems: 'center'
     },
     imagenProducto:{
-        height: '100%',
-        width: '100%'
+        maxHeight: '100%',
+        maxWidth: '100%'
     },
     borderBoton:{
 		minWidth: '100%',

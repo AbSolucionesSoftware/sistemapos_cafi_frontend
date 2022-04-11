@@ -1,34 +1,27 @@
 import React, { useState, useEffect, useContext } from "react";
-import {
-  Box,
-  FormControl,
-  Grid,
-  IconButton,
-  MenuItem,
-  Paper,
-  Select,
-  Typography,
-  CircularProgress,
-  Backdrop,
-  Portal,
-  TextField,
-  InputAdornment,
-} from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Grid from "@material-ui/core/Grid";
+import FormControl from "@material-ui/core/FormControl";
+import IconButton from "@material-ui/core/IconButton";
+import MenuItem from "@material-ui/core/MenuItem";
+import Paper from "@material-ui/core/Paper";
+import Select from "@material-ui/core/Select";
+import Typography from "@material-ui/core/Typography";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Backdrop from "@material-ui/core/Backdrop";
+import Portal from "@material-ui/core/Portal";
+import TextField from "@material-ui/core/TextField";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import useStyles from "./styles";
 
-import {
-  FcBusinessman,
-  FcCalendar,
-  FcSalesPerformance,
-} from "react-icons/fc";
+import { FcBusinessman, FcCalendar, FcSalesPerformance } from "react-icons/fc";
 import { FaBarcode, FaMoneyCheckAlt } from "react-icons/fa";
 import { AiOutlineFieldNumber } from "react-icons/ai";
 import { Search } from "@material-ui/icons";
-import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 
 import TablaVentasCheckbox from "./Tabla_ventas_checkbox";
 import { CONSULTA_PRODUCTO_UNITARIO } from "../../gql/Ventas/ventas_generales";
-import { useLazyQuery } from "@apollo/client";
+import { useApolloClient } from "@apollo/client";
 import ClientesVentas from "./ClientesVentas";
 import { VentasContext } from "../../context/Ventas/ventasContext";
 import SnackBarMessages from "../../components/SnackBarMessages";
@@ -37,6 +30,7 @@ import {
   findProductArray,
   verifiPrising,
   calculatePrices2,
+  formatoMexico,
 } from "../../config/reuserFunctions";
 
 export default function VentasGenerales() {
@@ -59,63 +53,25 @@ export default function VentasGenerales() {
     setDatosVentasActual,
   } = useContext(VentasContext);
 
-  // const [DatosVentasActual, setDatosVentasActual] = useState({
-  //   subTotal: 0,
-  //   total: 0,
-  //   impuestos: 0,
-  //   iva: 0,
-  //   ieps: 0,
-  //   descuento: 0,
-  //   monedero: 0,
-  //   // tipo_cambio: {},
-  // });
-
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
+  const [clave, setClave] = useState("");
+  const [loading, setLoading] = useState(false);
+  const client = useApolloClient();
 
-  const [obtenerProductos, { data, loading, error }] = useLazyQuery(
-    CONSULTA_PRODUCTO_UNITARIO,
-    {
+  const obtenerProductos = async (input) => {
+    const response = await client.query({
+      query: CONSULTA_PRODUCTO_UNITARIO,
+      variables: {
+        datosProductos: input.toUpperCase(),
+        empresa: sesion.empresa._id,
+        sucursal: sesion.sucursal._id,
+      },
       fetchPolicy: "network-only",
-    }
-  );
+    });
+    return response;
+  };
 
   const [consultaBase, setConsultaBase] = useState(false);
-
-  let productosBase = null;
-  if (error) {
-    console.log(data, loading, error.networkError);
-    console.log(data, loading, error.graphQLErrors);
-  }
-  // console.log(data,loading, error);
-  if (data) productosBase = data.obtenerUnProductoVentas;
-  // console.log(productosBase);
-
-  useEffect(() => {
-    if (error) {
-      if (error.networkError) {
-        setAlert({ message: `Error de servidor`, status: "error", open: true });
-      } else if (error.graphQLErrors) {
-        setAlert({
-          message: `${error.graphQLErrors[0]?.message}`,
-          status: "error",
-          open: true,
-        });
-      }
-    } else {
-      if (productosBase !== null) {
-        if (productosBase.cantidad !== null) {
-          agregarProductos(productosBase);
-        } else {
-          setOpen(true);
-          setAlert({
-            message: `Este producto no existe`,
-            status: "error",
-            open: true,
-          });
-        }
-      }
-    }
-  }, [loading]);
 
   useEffect(() => {
     setGranelBase({
@@ -137,40 +93,76 @@ export default function VentasGenerales() {
   }, [updateTablaVentas]);
 
   const keyUpEvent = async (event) => {
-    if (event.code === "Enter" || event.code === "NumpadEnter") {
-      const input_value = event.target.value.trim();
-      const data = input_value.split("*");
-      if (data.length > 1) {
-        let data_operation = isNaN(data[0]) ? data[1] : data[0];
-        let data_key = isNaN(data[0]) ? data[0] : data[1];
-        setGranelBase({
-          granel: true,
-          valor: parseFloat(data_operation),
-        });
-        obtenerProductos({
-          variables: {
-            datosProductos: data_key,
-            sucursal: sesion.sucursal._id,
-            empresa: sesion.empresa._id,
-          },
-          fetchPolicy: "network-only",
-        });
-        setConsultaBase(!consultaBase);
-      } else {
-        setGranelBase({
-          granel: false,
-          valor: 0,
-        });
-        obtenerProductos({
-          variables: {
-            datosProductos: input_value,
-            sucursal: sesion.sucursal._id,
-            empresa: sesion.empresa._id,
-          },
-          fetchPolicy: "network-only",
-        });
-        setConsultaBase(!consultaBase);
+    if (loading) return;
+    try {
+      if (
+        event.code === "Enter" ||
+        event.code === "NumpadEnter" ||
+        event.type === "click"
+      ) {
+        setLoading(true);
+        const input_value = clave;
+        const data = input_value.split("*");
+        let datosQuery = {
+          data: undefined,
+          loading: false,
+          error: undefined,
+        };
+        if (data.length > 1) {
+          let data_operation = isNaN(data[0]) ? data[1] : data[0];
+          let data_key = isNaN(data[0]) ? data[0] : data[1];
+          setGranelBase({
+            granel: true,
+            valor: parseFloat(data_operation),
+          });
+          datosQuery = await obtenerProductos(data_key);
+          setConsultaBase(!consultaBase);
+        } else {
+          setGranelBase({
+            granel: false,
+            valor: 0,
+          });
+          datosQuery = await obtenerProductos(input_value);
+          setConsultaBase(!consultaBase);
+        }
+
+        if (datosQuery.error) {
+          if (datosQuery.error.networkError) {
+            setAlert({
+              message: `Error de servidor`,
+              status: "error",
+              open: true,
+            });
+          } else if (datosQuery.error.graphQLErrors) {
+            setAlert({
+              message: `${datosQuery.error.graphQLErrors[0]?.message}`,
+              status: "error",
+              open: true,
+            });
+          }
+          setLoading(false);
+          return;
+        }
+        if (datosQuery.data) {
+          let productosBase = datosQuery.data.obtenerUnProductoVentas;
+          if (productosBase !== null) {
+            if (productosBase.cantidad !== null) {
+              agregarProductos(productosBase);
+            } else {
+              setOpen(true);
+              setAlert({
+                message: `Este producto no existe`,
+                status: "error",
+                open: true,
+              });
+            }
+          }
+        }
+        setLoading(false);
       }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
     }
   };
 
@@ -484,16 +476,28 @@ export default function VentasGenerales() {
                 placeholder="Buscar producto..."
                 variant="outlined"
                 size="small"
-                onKeyUp={keyUpEvent}
+                onKeyUp={(e) => keyUpEvent(e)}
+                onChange={(e) => setClave(e.target.value)}
+                disabled={loading}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="start">
-                      <IconButton>
-                        <Search />
-                      </IconButton>
+                      {loading ? (
+                        <IconButton disabled={loading}>
+                          <CircularProgress size={20} color="primary" />
+                        </IconButton>
+                      ) : (
+                        <IconButton
+                          onClick={(e) => keyUpEvent(e)}
+                          disabled={loading}
+                        >
+                          <Search />
+                        </IconButton>
+                      )}
                     </InputAdornment>
                   ),
                 }}
+                inputProps={{ style: { textTransform: "uppercase" } }}
               />
             </Box>
           </Grid>
@@ -554,44 +558,46 @@ export default function VentasGenerales() {
         </Grid>
       </Paper>
 
-      <Box height="100%">
+      <Box
+        height="100%"
+        style={
+          loading
+            ? {
+                pointerEvents: "none",
+                opacity: 0.6,
+              }
+            : null
+        }
+      >
         <TablaVentasCheckbox setDatosVentasActual={setDatosVentasActual} />
       </Box>
 
       <Box display="flex" justifyContent="flex-end" flexDirection="column">
-        <Paper elevantion={3} style={{ padding: 2, marginTop: 2 }}>
-          <Grid container>
-            <Grid item lg={7}>
-              <Grid
-                container
-                direction="row"
-                justifyContent="flex-end"
-                alignItems="center"
-              >
-                <Grid item lg={7}>
-                  <Box
-                    flexDirection="row-reverse"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Box>
-                      <Typography variant="subtitle1">
-                        Cliente:{" "}
-                        <b style={{ fontSize: 16 }}>
-                          {clientesVentas ? clientesVentas.nombre_cliente : ""}
-                        </b>
-                      </Typography>
+        <Paper variant="outlined">
+          <Grid container spacing={2}>
+            <Grid item md={6} sm={6} xs={12}>
+              <Box mx={2}>
+                <Grid container>
+                  <Grid item xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <Box display="flex" alignItems="center">
+                        <FcBusinessman style={{ fontSize: 19 }} />
+                        <Box mr={1} />
+                        <Typography variant="subtitle1">
+                          Cliente:{" "}
+                          <b style={{ fontSize: 16 }}>
+                            {clientesVentas
+                              ? clientesVentas.nombre_cliente
+                              : ""}
+                          </b>
+                        </Typography>
+                      </Box>
                     </Box>
-                    <Box mt={0.5} mr={1}>
-                      <FcBusinessman style={{ fontSize: 19 }} />
-                    </Box>
-                  </Box>
-                  <Box
-                    flexDirection="row-reverse"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Box>
+                  </Grid>
+                  <Grid item lg={5} xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <AiOutlineFieldNumber style={{ fontSize: 19 }} />
+                      <Box mr={1} />
                       <Typography variant="subtitle1">
                         Cliente.:{" "}
                         <b style={{ fontSize: 16 }}>
@@ -599,16 +605,11 @@ export default function VentasGenerales() {
                         </b>
                       </Typography>
                     </Box>
-                    <Box mt={0.5} mr={1}>
-                      <AiOutlineFieldNumber style={{ fontSize: 22 }} />
-                    </Box>
-                  </Box>
-                  <Box
-                    flexDirection="row-reverse"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Box>
+                  </Grid>
+                  <Grid item lg={7} xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <FaBarcode style={{ fontSize: 19 }} />
+                      <Box mr={1} />
                       <Typography variant="subtitle1">
                         Clave Clte.:{" "}
                         <b style={{ fontSize: 16 }}>
@@ -616,30 +617,38 @@ export default function VentasGenerales() {
                         </b>
                       </Typography>
                     </Box>
-                    <Box mt={0.5} mr={1}>
-                      <FaBarcode style={{ fontSize: 19 }} />
-                    </Box>
-                  </Box>
-                </Grid>
-                <Grid item lg={5}>
-                  <Box
-                    flexDirection="row-reverse"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Box>
+                  </Grid>
+                  <Grid item lg={5} xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <FcCalendar style={{ fontSize: 19 }} />
+                      <Box mr={1} />
                       <Typography variant="subtitle1">
-                        Limite Credito:{" "}
+                        Dias Credito:{" "}
                         <b style={{ fontSize: 16 }}>
-                          ${clientesVentas ? clientesVentas.limite_credito : 0}
+                          {clientesVentas && clientesVentas.dias_credito
+                            ? clientesVentas.dias_credito
+                            : 0}
                         </b>
                       </Typography>
                     </Box>
-                    <Box mt={0.5} mr={1}>
+                  </Grid>
+                  <Grid item lg={7} xs={12}>
+                    <Box display="flex" alignItems="center">
                       <FaMoneyCheckAlt style={{ fontSize: 19 }} />
+                      <Box mr={1} />
+                      <Typography variant="subtitle1">
+                        Limite Credito:{" "}
+                        <b style={{ fontSize: 16 }}>
+                          $
+                          {clientesVentas && clientesVentas.limite_credito
+                            ? formatoMexico(clientesVentas.limite_credito)
+                            : 0}
+                        </b>
+                      </Typography>
                     </Box>
-                  </Box>
-                  {/* <Box
+                  </Grid>
+                 {/* <Grid item md={6} xs={12}>
+                     <Box
                     flexDirection="row-reverse"
                     display="flex"
                     alignItems="center"
@@ -656,31 +665,14 @@ export default function VentasGenerales() {
                     <Box mt={0.5} mr={1}>
                       <AiOutlineFieldNumber style={{ fontSize: 22 }} />
                     </Box>
-                  </Box> */}
-                  <Box
-                    flexDirection="row-reverse"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Box>
-                      <Typography variant="subtitle1">
-                        Dias Credito:{" "}
-                        <b style={{ fontSize: 16 }}>
-                          {clientesVentas ? clientesVentas.dias_credito : 0}{" "}
-                          Dias
-                        </b>
-                      </Typography>
-                    </Box>
-                    <Box mt={0.5} mr={1}>
-                      <FcCalendar style={{ fontSize: 19 }} />
-                    </Box>
-                  </Box>
+                  </Box> 
+                  </Grid>*/}
                 </Grid>
-              </Grid>
+              </Box>
             </Grid>
-            <Grid item lg={5}>
-              <Grid container>
-                <Grid item lg={7}>
+            <Grid item md={6} sm={6} xs={12}>
+              <Grid container spacing={2}>
+                <Grid item lg={6} xs={12}>
                   <Box
                     display="flex"
                     alignItems="center"
@@ -692,7 +684,9 @@ export default function VentasGenerales() {
                         <b style={{ fontSize: 17 }}>
                           ${" "}
                           {DatosVentasActual
-                            ? DatosVentasActual?.monedero?.toFixed(2)
+                            ? DatosVentasActual.monedero
+                              ? formatoMexico(DatosVentasActual.monedero)
+                              : 0
                             : 0}
                         </b>
                       </Typography>
@@ -710,9 +704,11 @@ export default function VentasGenerales() {
                       <Typography variant="subtitle1">
                         Descuento:{" "}
                         <b style={{ fontSize: 17 }}>
-                          $
+                          ${" "}
                           {DatosVentasActual
-                            ? DatosVentasActual?.descuento?.toFixed(2)
+                            ? DatosVentasActual.descuento
+                              ? formatoMexico(DatosVentasActual.descuento)
+                              : 0
                             : 0}
                         </b>
                       </Typography>
@@ -732,14 +728,14 @@ export default function VentasGenerales() {
                     </Box>
                   </Box>
                 </Grid>
-                <Grid item lg={5}>
+                <Grid item lg={6} xs={12}>
                   <Box flexDirection="row-reverse" display="flex" mr={1}>
                     <Typography variant="subtitle1">
                       Subtotal:{" "}
                       <b style={{ fontSize: 17 }}>
                         ${" "}
                         {DatosVentasActual?.subTotal
-                          ? DatosVentasActual?.subTotal?.toFixed(2)
+                          ? formatoMexico(DatosVentasActual.subTotal)
                           : 0}
                       </b>
                     </Typography>
@@ -750,7 +746,7 @@ export default function VentasGenerales() {
                       <b style={{ fontSize: 17 }}>
                         ${" "}
                         {DatosVentasActual?.impuestos
-                          ? DatosVentasActual?.impuestos?.toFixed(2)
+                          ? formatoMexico(DatosVentasActual.impuestos)
                           : 0}
                       </b>
                     </Typography>
@@ -776,13 +772,13 @@ export default function VentasGenerales() {
               <b style={{ color: "green" }}>
                 $
                 {DatosVentasActual?.total
-                  ? DatosVentasActual?.total.toFixed(2)
+                  ? formatoMexico(DatosVentasActual.total)
                   : 0}
               </b>
             </Typography>
-            <Box mt={0.5} mr={1}>
+            {/* <Box mt={0.5} mr={1}>
               <MonetizationOnIcon style={{ fontSize: 37, color: "green" }} />
-            </Box>
+            </Box> */}
           </Box>
         </Paper>
       </Box>

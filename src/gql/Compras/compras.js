@@ -621,6 +621,7 @@ export const OBTENER_CONSULTA_GENERAL_PRODUCTO = gql`
       almacenes {
         _id
         nombre_almacen
+        default_almacen
         id_usuario_encargado {
           _id
           numero_usuario

@@ -100,7 +100,7 @@ export default function VistaRegistroEgreso({handleClickOpen}) {
 							icon={<FcDonate className={classes.iconSize} />}
 							{...a11yProps(0)}
 						/>
-						<Grid container justify="flex-end">
+						<Grid container justifyContent="flex-end">
 							<Box mt={4}>
 								<Typography>Usuario: <b>{sesion.nombre}</b></Typography> 
 								<Box>

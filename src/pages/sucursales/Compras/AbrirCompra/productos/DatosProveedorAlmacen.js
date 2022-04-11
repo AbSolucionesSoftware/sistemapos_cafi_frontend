@@ -88,12 +88,14 @@ export default function DatosProveedorAlmacen({ getProductos, status }) {
         almacen: {
           id_almacen: value._id,
           nombre_almacen: value.nombre_almacen,
+          default_almacen: value.default_almacen,
         },
       });
       setAlmacenInicial({
         ...almacen_inicial,
         id_almacen: value._id,
         almacen: value.nombre_almacen,
+        default_almacen: value.default_almacen,
       });
       getProductos(value._id);
     }
@@ -240,7 +242,6 @@ export default function DatosProveedorAlmacen({ getProductos, status }) {
               variant="outlined"
               type="date"
               onChange={(e) => {
-                console.log(e.target.value);
                 setDatosCompra({
                   ...datosCompra,
                   fecha_registro: e.target.value,

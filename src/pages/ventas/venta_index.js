@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import VentasGenerales from "./VentasGenerales";
 import AbrirTurno from "../ventas/AbrirCerrarTurno/AbrirTurno";
 import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
 import Dialog from "@material-ui/core/Dialog";
 import Slide from "@material-ui/core/Slide";
 import { VentasContext } from "../../context/Ventas/ventasContext";

@@ -50,9 +50,7 @@ export default function EliminarProducto({
           }
         : venta;
 
-    const producto_encontrado = await findProductArray(
-      producto
-    );
+    const producto_encontrado = await findProductArray(producto);
     console.log("llego");
     if (producto_encontrado.found) {
       const { cantidad_venta, ...newP } = producto;
@@ -92,19 +90,25 @@ export default function EliminarProducto({
           parseFloat(venta_existente.monedero) -
           parseFloat(new_resta.monederoCalculo),
       };
-      localStorage.setItem(
-        "DatosVentas",
-        JSON.stringify({
-          ...CalculosData,
-          cliente:
-            venta_actual.venta_cliente === true ? venta_actual.cliente : {},
-          venta_cliente:
-            venta_actual.venta_cliente === true
-              ? venta_actual.venta_cliente
-              : false,
-          productos: productosVentasTemp,
-        })
-      );
+
+      if (productosVentasTemp.length === 0) {
+        localStorage.removeItem("DatosVentas");
+      } else {
+        localStorage.setItem(
+          "DatosVentas",
+          JSON.stringify({
+            ...CalculosData,
+            cliente:
+              venta_actual.venta_cliente === true ? venta_actual.cliente : {},
+            venta_cliente:
+              venta_actual.venta_cliente === true
+                ? venta_actual.venta_cliente
+                : false,
+            productos: productosVentasTemp,
+          })
+        );
+      }
+
       setDatosVentasActual(CalculosData);
       setUpdateTablaVentas(!updateTablaVentas);
     }

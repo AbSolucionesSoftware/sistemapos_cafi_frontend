@@ -176,7 +176,9 @@ const InventarioPorAlmacen = (props) =>{
 			if(queryObtenerAlmacenes.data){
 				const columnsEffect = [
 					{ id: 'codigo_barras', label: 'Código de barras', minWidth: 60 , widthPx: 160, },
-					{ id: 'nombre_comercial', label: 'Nombre comercial', minWidth: 170, widthPx: 160, }
+					{ id: 'nombre_comercial', label: 'Nombre comercial', minWidth: 170, widthPx: 160, },
+					{ id: 'costo_producto', label: 'Costo producto', minWidth: 60, widthPx: 100, },
+					{ id: 'costo_total_productos', label: 'Costo total productos', minWidth: 60, widthPx: 100, }
 				];
 				let almace = queryObtenerAlmacenes.data.obtenerAlmacenes;
 				almace.forEach(element => {

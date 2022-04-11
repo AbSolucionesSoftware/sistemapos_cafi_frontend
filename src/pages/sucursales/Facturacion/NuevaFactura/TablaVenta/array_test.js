@@ -19,7 +19,7 @@ export const compra_test = {
   },
   credito: false,
   descuento_general_activo: false,
-  decuento_general: {
+  descuento_general: {
     cantidad_descontado: 0,
     porciento: 0,
     precio_neto: 0,

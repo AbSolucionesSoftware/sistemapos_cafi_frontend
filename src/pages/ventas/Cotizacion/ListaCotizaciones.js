@@ -12,7 +12,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import CotizacionesPendientes from "./CotizacionesPendientes";
 
 import { FcCurrencyExchange } from "react-icons/fc";
-import moment from "moment";
+
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -20,7 +20,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function ListaCotizaciones() {
   const [open, setOpen] = useState(false);
-  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  //const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
 
   const handleClickOpen = () => {
@@ -54,7 +54,7 @@ export default function ListaCotizaciones() {
       <Dialog
         fullWidth
         open={open}
-        maxWidth={"lg"}
+        maxWidth={"md"}
         onClose={() => setOpen(false)}
         TransitionComponent={Transition}
       >
@@ -65,14 +65,14 @@ export default function ListaCotizaciones() {
                 <img
                   src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/lista-de-espera.svg"
                   alt="icono caja2"
-                  style={{ width: 58 }}
+                  style={{ width: 38 }}
                 />
               </Box>
               <Box p={1} display={"flex"} alignItems={"center"}>
                 <Typography variant="h6">Cotizaciones pendientes</Typography>
               </Box>
             </Box>
-            <Box mt={2} textAlign="right">
+           {/*  <Box mt={2} textAlign="right">
               <Box textAlign="right">
                 <Typography variant="caption">
                   {moment().format("L")}
@@ -91,8 +91,8 @@ export default function ListaCotizaciones() {
                   Caja {!turnoEnCurso ? null : turnoEnCurso.numero_caja}
                 </Typography>
               </Box>
-            </Box>
-            <Box p={3}>
+            </Box> */}
+            <Box p={3} pb={0} pt={2}>
               <Button
                 variant="contained"
                 color="secondary"

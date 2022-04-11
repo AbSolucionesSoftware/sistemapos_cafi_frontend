@@ -63,11 +63,11 @@ export const formatoFechaCorta = (fecha) => {
 
 export const formatoMexico = (number) => {
   if (!number) {
-    return null;
+    return 0.00;
   } else {
     let nueva;
     if (number % 1 === 0) {
-      nueva = number;
+      nueva = parseFloat(number).toFixed(2);
     } else {
       nueva = parseFloat(number).toFixed(2);
     }

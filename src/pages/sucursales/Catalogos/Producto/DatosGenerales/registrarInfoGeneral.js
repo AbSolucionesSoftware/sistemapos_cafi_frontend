@@ -695,6 +695,7 @@ const RegistrarNuevoSelect = ({
               variant="outlined"
               onChange={obtenerDatos}
               helperText={validacion ? "Campo obligatorio" : ""}
+              inputProps={{ style: { textTransform: "uppercase" } }}
             />
           </form>
         </DialogContent>

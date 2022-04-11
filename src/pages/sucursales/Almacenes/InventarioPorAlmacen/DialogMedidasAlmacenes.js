@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {Close} from '@material-ui/icons';
 import { Slide,Button, Box, Dialog, InputLabel, Select, Input, MenuItem, FormControl, DialogTitle } from '@material-ui/core';
@@ -35,18 +35,22 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 export default function DialogMedidasAlmacenes(props) {
 	const classes = useStyles();
-	const [almacen, setAlmacen] = useState(props.obtenerAlmacenes[0]);
+	const [almacen, setAlmacen] = useState({});
 
 
 	const handleChangeAlmacen = (e) =>{
 		try {
 		
 			setAlmacen(e.target.value);
+			console.log(e)
 		} catch (error) {
 			
 		}
 		
 	}
+
+	
+	
 		return (
 			<Dialog open={props.medidasAlmacen.open} TransitionComponent={Transition} fullWidth maxWidth={"sm"} >
 				<DialogTitle>
@@ -66,14 +70,15 @@ export default function DialogMedidasAlmacenes(props) {
 						value={(almacen) ? almacen.nombre_almacen : ""}
 						onChange={ handleChangeAlmacen}
 						input={<Input />}
+					
 						MenuProps={MenuProps}
 						>
+						
 						{props.obtenerAlmacenes.map((alm) => {
-						 
 							return(
-							<MenuItem key={alm._id} value={alm} >
-								{alm.nombre_almacen}
-							</MenuItem>
+								<MenuItem key={alm._id} value={alm} >
+									{alm.nombre_almacen}
+								</MenuItem>
 							)})
 						}
 					</Select>

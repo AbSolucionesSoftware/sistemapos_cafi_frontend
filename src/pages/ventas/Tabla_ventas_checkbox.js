@@ -1,22 +1,19 @@
-import React, { useState, useEffect, Fragment, useRef, useContext } from "react";
-import PropTypes from "prop-types";
-import clsx from "clsx";
-import { lighten, makeStyles } from "@material-ui/core/styles";
+import React, {
+  useState,
+  useEffect,
+  Fragment,
+  useRef,
+  useContext,
+} from "react";
+import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import DeleteIcon from "@material-ui/icons/Delete";
-import FilterListIcon from "@material-ui/icons/FilterList";
 import Input from "@material-ui/core/Input";
 import EliminarProductoVenta from "./EliminarProductoVenta";
 
@@ -24,196 +21,10 @@ import { useDebounce } from "use-debounce";
 import {
   findProductArray,
   verifiPrising,
-  calculatePrices2
+  calculatePrices2,
+  formatoMexico,
 } from "../../config/reuserFunctions";
-import { VentasContext } from '../../context/Ventas/ventasContext';
-import { Avatar } from "@material-ui/core";
-
-
-const headCells = [
-  {
-    id: "Cantidad",
-    numeric: false,
-    disablePadding: true,
-    label: "Cantidad",
-    width: 20,
-  },
-  {
-    id: "Descripcion",
-    numeric: true,
-    disablePadding: false,
-    label: "Descripcion",
-    width: 340,
-  },
-  {
-    id: "Existencias",
-    numeric: true,
-    disablePadding: false,
-    label: "Existencias",
-    width: 40,
-  },
-  {
-    id: "% Desc",
-    numeric: true,
-    disablePadding: false,
-    label: "% Desc",
-    width: 50,
-  },
-  {
-    id: "U. Venta",
-    numeric: true,
-    disablePadding: false,
-    label: "U. Venta",
-    width: 50,
-  },
-  {
-    id: "Precio U",
-    numeric: true,
-    disablePadding: false,
-    label: "Precio U",
-    width: 100,
-  },
-  {
-    id: "Eliminar",
-    numeric: true,
-    disablePadding: false,
-    label: "Eliminar",
-    width: 10,
-  },
-];
-
-function EnhancedTableHead(props) {
-  const {
-    classes,
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-  } = props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
-
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ "aria-label": "select all desserts" }}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
-            style={{ width: headCell.width }}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <span className={classes.visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </span>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-
-EnhancedTableHead.propTypes = {
-  classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(["asc", "desc"]).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
-
-const useToolbarStyles = makeStyles((theme) => ({
-  root: {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(1),
-  },
-  highlight:
-    theme.palette.type === "light"
-      ? {
-          color: theme.palette.secondary.main,
-          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-        }
-      : {
-          color: theme.palette.text.primary,
-          backgroundColor: theme.palette.secondary.dark,
-        },
-  title: {
-    flex: "1 1 100%",
-  },
-}));
-
-const EnhancedTableToolbar = (props) => {
-  const classes = useToolbarStyles();
-  const { numSelected } = props;
-
-  return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          className={classes.title}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          className={classes.title}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Nutrition
-        </Typography>
-      )}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton aria-label="delete">
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
-  );
-};
-
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-};
+import { VentasContext } from "../../context/Ventas/ventasContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -221,32 +32,27 @@ const useStyles = makeStyles((theme) => ({
   },
   container: {
     height: "100%",
-    '& ::-webkit-scrollbar': {
-      display: 'none'
+    maxHeight: "59vh",
+    "& ::-webkit-scrollbar": {
+      display: "none",
+    },
+    [theme.breakpoints.up("xl")]: {
+      maxHeight: "64vh",
     }
   },
-  visuallyHidden: {
-    border: 0,
-    clip: "rect(0 0 0 0)",
-    height: 1,
-    margin: -1,
-    overflow: "hidden",
-    padding: 0,
-    position: "absolute",
-    top: 20,
-    width: 1,
-  },
-
 }));
 
-export default function EnhancedTable({
-  setDatosVentasActual,
-}) {
+export default function EnhancedTable({ setDatosVentasActual }) {
   const classes = useStyles();
-  const [ selected, setSelected ] = useState([]);
-	const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  const [selected, setSelected] = useState([]);
+  /* const sesion = JSON.parse(localStorage.getItem("sesionCafi")); */
 
-  const { setProductoCambioPrecio, setPrecioSelectProductoVenta, updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
+  const {
+    setProductoCambioPrecio,
+    setPrecioSelectProductoVenta,
+    updateTablaVentas,
+    setUpdateTablaVentas,
+  } = useContext(VentasContext);
 
   const [datosTabla, setDatosTabla] = useState([]);
 
@@ -256,28 +62,33 @@ export default function EnhancedTable({
   }, [updateTablaVentas]);
 
   const handleClick = (name) => {
+    if (name.unidad === "Caja" || name.unidad === "Costal") return;
     let newSelected = [];
     const exist = selected.indexOf(name) !== -1;
-    if(exist){
+    if (exist) {
       newSelected = [];
-    }else{
-      newSelected = newSelected.concat([], name);
-    } 
-    const producto = name.id_producto.precios.precios_producto.filter((p) => p.precio_neto === name.precio_actual_producto);
-    if(producto.length > 0) setPrecioSelectProductoVenta(producto);
+      setPrecioSelectProductoVenta([]);
+      setProductoCambioPrecio({});
+      setSelected(newSelected);
+      return;
+    }
+    newSelected = newSelected.concat([], name);
+    const producto = name.id_producto.precios.precios_producto.filter(
+      (p) => p.precio_neto === name.precio_actual_producto
+    );
+    if (producto.length > 0) setPrecioSelectProductoVenta(producto);
     setProductoCambioPrecio(name);
     setSelected(newSelected);
   };
 
   const TwoClickInRowTableBuy = (e, producto) => {
     try {
-      let timer;
-      clearTimeout(timer);
+      /* let timer;
+      clearTimeout(timer); */
       if (e.detail === 2) {
         handleClick(producto);
-        setProductoCambioPrecio(producto);
+        /* setProductoCambioPrecio(producto); */
       }
-      
     } catch (error) {
       console.log(error);
     }
@@ -299,15 +110,21 @@ export default function EnhancedTable({
           >
             <TableHead>
               <TableRow>
-                <TableCell style={{ width: 25, textAlign:"center" }}></TableCell>
-                <TableCell style={{ width: 20, textAlign:"center" }}>Cantidad</TableCell>
-                <TableCell style={{ width: 340 }}>Descripcion</TableCell>
-                <TableCell style={{ width: 40, textAlign:"center" }}>Exis.</TableCell>
-                <TableCell style={{ width: 50, textAlign:"center" }}><b>% Desct.</b></TableCell>
-                <TableCell style={{ width: 40, textAlign:"center" }}>Rx.</TableCell>
-                <TableCell style={{ width: 50, textAlign:"center" }}>U. Venta</TableCell>
-                <TableCell style={{ width: 100, textAlign:"center" }}>Precio U</TableCell>
-                <TableCell align="center" style={{ width: 10 }} />
+                <TableCell padding="checkbox"></TableCell>
+                <TableCell style={{ textAlign: "center" }}>Cantidad</TableCell>
+                <TableCell>Descripcion</TableCell>
+                <TableCell style={{ textAlign: "center" }}>
+                  Existencia
+                </TableCell>
+                <TableCell style={{ textAlign: "center" }}>
+                  <b>Descuento</b>
+                </TableCell>
+                <TableCell style={{ textAlign: "center" }}>Receta</TableCell>
+                <TableCell style={{ textAlign: "center" }}>Unidad</TableCell>
+                <TableCell style={{ width: 140, textAlign: "center" }}>
+                  Precio Unitario
+                </TableCell>
+                <TableCell padding="checkbox" />
               </TableRow>
             </TableHead>
             <TableBody>
@@ -348,28 +165,25 @@ const RenderTableRows = ({
   isItemSelected,
   labelId,
   setSelected,
-  selected
+  selected,
 }) => {
   // const [actuallyProduct, setActuallyProduct] = useState(producto);
   const [newCantidadProduct, setNewCantidadProduct] = useState(
     producto.cantidad_venta
   );
-  
-  const [ tempAmount, setTempAmount ] = useState(producto.cantidad_venta);
+
+  const [tempAmount, setTempAmount] = useState(producto.cantidad_venta);
 
   const textfield = useRef(null);
   const [value] = useDebounce(newCantidadProduct, 500);
-
 
   useEffect(() => {
     setTempAmount(producto.cantidad_venta);
   }, [producto.cantidad_venta]);
 
   useEffect(() => {
-    console.log(value);
     CalculeDataPricing(value);
   }, [value]);
-  
 
   const calculateNewPricingAmount = (cantidad) => {
     try {
@@ -378,12 +192,12 @@ const RenderTableRows = ({
     } catch (error) {
       return false;
     }
-  }
+  };
 
   const CalculeDataPricing = async (new_cant) => {
-    if(new_cant === "" || new_cant == 0){
+    if (new_cant === "" || new_cant == 0) {
       setTempAmount(producto.cantidad_venta);
-    }else{
+    } else {
       let venta = JSON.parse(localStorage.getItem("DatosVentas"));
       let productosVentas = venta === null ? [] : venta.productos;
       const venta_actual = venta === null ? [] : venta;
@@ -397,29 +211,42 @@ const RenderTableRows = ({
               iva: 0,
               ieps: 0,
               descuento: 0,
-              monedero: 0
+              monedero: 0,
             }
           : venta;
 
       let CalculosData = {};
-      
+
       //Buscar y obtener ese producto en el array de ventas
-      const producto_encontrado = await findProductArray(
-        producto
-      );
-      
+      const producto_encontrado = await findProductArray(producto);
+
       if (producto_encontrado.found) {
-        const { cantidad_venta, ...newP } =
-          producto_encontrado.producto_found.producto;
+        const {
+          cantidad_venta,
+          ...newP
+        } = producto_encontrado.producto_found.producto;
         newP.cantidad_venta = parseInt(new_cant);
         const verify_prising = await verifiPrising(newP);
-        const newPrising = verify_prising.found ? verify_prising.object_prising : newP.precio_actual_object;
-        
-        const new_resta = await calculatePrices2({newP, cantidad: cantidad_venta, precio_boolean: true, precio: newP.precio_actual_object, granel: newP.granel_producto, origen: "Tabla" });
-        const new_suma = await calculatePrices2({newP, cantidad: parseInt(new_cant), precio_boolean: true, precio: newPrising, granel: newP.granel_producto, origen: "Tabla" });
+        const newPrising = verify_prising.found
+          ? verify_prising.object_prising
+          : newP.precio_actual_object;
 
-        console.log(new_resta);
-        console.log(new_suma);
+        const new_resta = await calculatePrices2({
+          newP,
+          cantidad: cantidad_venta,
+          precio_boolean: true,
+          precio: newP.precio_actual_object,
+          granel: newP.granel_producto,
+          origen: "Tabla",
+        });
+        const new_suma = await calculatePrices2({
+          newP,
+          cantidad: parseInt(new_cant),
+          precio_boolean: true,
+          precio: newPrising,
+          granel: newP.granel_producto,
+          origen: "Tabla",
+        });
 
         newP.iva_total_producto = parseFloat(new_suma.ivaCalculo);
         newP.ieps_total_producto = parseFloat(new_suma.iepsCalculo);
@@ -434,20 +261,41 @@ const RenderTableRows = ({
           newP.precio_actual_object = verify_prising.object_prising;
 
           newP.precio_actual_object = {
-            cantidad_unidad: verify_prising.object_prising.cantidad_unidad ? verify_prising.object_prising.cantidad_unidad : null,
-            numero_precio: verify_prising.object_prising.numero_precio ? verify_prising.object_prising.numero_precio : null,
-            unidad_maxima: verify_prising.object_prising.unidad_maxima ? verify_prising.object_prising.unidad_maxima : null,
-            precio_general: verify_prising.object_prising.precio_general ? verify_prising.object_prising.precio_general : null,
-            precio_neto: verify_prising.object_prising.precio_neto ? verify_prising.object_prising.precio_neto : null,
-            precio_venta: verify_prising.object_prising.precio_venta ? verify_prising.object_prising.precio_venta : null,
-            iva_precio: verify_prising.object_prising.iva_precio ? verify_prising.object_prising.iva_precio : null,
-            ieps_precio: verify_prising.object_prising.ieps_precio ? verify_prising.object_prising.ieps_precio : null,
-            utilidad: verify_prising.object_prising.utilidad ? verify_prising.object_prising.utilidad : null,
-            porciento: verify_prising.object_prising.porciento ? verify_prising.object_prising.porciento : null,
-            dinero_descontado: verify_prising.object_prising.dinero_descontado ? verify_prising.object_prising.dinero_descontado : null,
+            cantidad_unidad: verify_prising.object_prising.cantidad_unidad
+              ? verify_prising.object_prising.cantidad_unidad
+              : null,
+            numero_precio: verify_prising.object_prising.numero_precio
+              ? verify_prising.object_prising.numero_precio
+              : null,
+            unidad_maxima: verify_prising.object_prising.unidad_maxima
+              ? verify_prising.object_prising.unidad_maxima
+              : null,
+            precio_general: verify_prising.object_prising.precio_general
+              ? verify_prising.object_prising.precio_general
+              : null,
+            precio_neto: verify_prising.object_prising.precio_neto
+              ? verify_prising.object_prising.precio_neto
+              : null,
+            precio_venta: verify_prising.object_prising.precio_venta
+              ? verify_prising.object_prising.precio_venta
+              : null,
+            iva_precio: verify_prising.object_prising.iva_precio
+              ? verify_prising.object_prising.iva_precio
+              : null,
+            ieps_precio: verify_prising.object_prising.ieps_precio
+              ? verify_prising.object_prising.ieps_precio
+              : null,
+            utilidad: verify_prising.object_prising.utilidad
+              ? verify_prising.object_prising.utilidad
+              : null,
+            porciento: verify_prising.object_prising.porciento
+              ? verify_prising.object_prising.porciento
+              : null,
+            dinero_descontado: verify_prising.object_prising.dinero_descontado
+              ? verify_prising.object_prising.dinero_descontado
+              : null,
           };
-
-        }else{
+        } else {
           newP.cantidad_venta = parseInt(new_cant);
           newP.precio_anterior = newP.precio_actual_producto;
           newP.precio_a_vender = new_suma.totalCalculo;
@@ -516,18 +364,18 @@ const RenderTableRows = ({
     <Fragment>
       <TableRow
         role="checkbox"
-        style={{height: '15px'}}
+        style={{ height: "15px" }}
         aria-checked={isItemSelected}
         tabIndex={-1}
         key={producto._id}
         selected={isItemSelected}
         hover
-        onClick={(e) => TwoClickInRowTableBuy(e,producto)}
+        onClick={(e) => TwoClickInRowTableBuy(e, producto)}
       >
-        <TableCell padding="checkbox">
+        <TableCell>
           <Checkbox
             onClick={(event) => {
-              if(selected.length > 0) setSelected([]);
+              if (selected.length > 0) setSelected([]);
               handleClick(producto);
             }}
             checked={isItemSelected}
@@ -541,38 +389,46 @@ const RenderTableRows = ({
             value={tempAmount}
             type="number"
             name="cantidad_venta"
+            inputProps={{
+              min: 1,
+              max:
+                producto.concepto === "medida"
+                  ? producto.cantidad
+                  : producto.inventario_general.map(
+                      (existencia) => `${existencia.cantidad_existente}`
+                    ),
+            }}
           />
         </TableCell>
         <TableCell>
           {producto.id_producto.datos_generales.nombre_comercial}
         </TableCell>
-        <TableCell  style={{ textAlign:"center"}} >
-          {producto.concepto === "medida"
-            ? producto.cantidad
-            : producto.inventario_general.map(
-                (existencia) => `${existencia.cantidad_existente}`
-              )}
+        <TableCell style={{ textAlign: "center" }}>
+          {producto.id_producto.datos_generales.tipo_producto === "OTROS"
+            ? producto.unidad === "Costal" || producto.unidad === "Caja"
+              ? producto.inventario_general[0].cantidad_existente_maxima
+              : producto.inventario_general[0].cantidad_existente
+            : producto.cantidad}
         </TableCell>
-        <TableCell  style={{ textAlign:"center"}} >
+        <TableCell style={{ textAlign: "center" }}>
           %{" "}
           {producto.precio_actual_object.porciento !== null
             ? producto.precio_actual_object.porciento
             : 0}
         </TableCell>
-        <TableCell style={{ textAlign:"center"}} >
+        <TableCell style={{ textAlign: "center" }}>
           {producto.id_producto.datos_generales.receta_farmacia === true
             ? "Si"
             : "No"}
         </TableCell>
-        <TableCell style={{ textAlign:"center"}} >
-          {producto.inventario_general.map(
-            (existencia) => `${existencia.unidad_inventario}`
-          )}
+        <TableCell style={{ textAlign: "center" }}>{producto.unidad}</TableCell>
+        <TableCell style={{ textAlign: "center" }}>
+          ${" "}
+          {producto.precio_actual_object.precio_neto
+            ? formatoMexico(producto.precio_actual_object.precio_neto)
+            : 0}
         </TableCell>
-        <TableCell style={{ textAlign:"center"}} >
-          $ { producto.precio_actual_object.precio_neto}
-        </TableCell>
-        <TableCell style={{ textAlign:"center"}} >
+        <TableCell>
           <EliminarProductoVenta
             producto={producto}
             setDatosVentasActual={setDatosVentasActual}

@@ -107,13 +107,13 @@ export default function Cotizacion({ type }) {
           <Box display={"flex"}>
             <Box display="flex" flexGrow={1}>
               <Box p={2} display={"flex"} alignItems={"center"}>
-                <FcCurrencyExchange style={{ fontSize: 60 }} />
+                <FcCurrencyExchange style={{ fontSize: 38 }} />
               </Box>
               <Box p={1} display={"flex"} alignItems={"center"}>
-                <Typography variant="h6">Nueva Cotización</Typography>
+                <Typography style={{ fontSize: 18 }}>Nueva Cotización</Typography>
               </Box>
             </Box>
-            <Box mt={2} textAlign="right">
+           {/*  <Box mt={2} textAlign="right">
               <Box textAlign="right">
                 <Typography variant="caption">
                   {moment().format("L")}
@@ -132,8 +132,8 @@ export default function Cotizacion({ type }) {
                   Caja {!turnoEnCurso ? null : turnoEnCurso.numero_caja}
                 </Typography>
               </Box>
-            </Box>
-            <Box p={3}>
+            </Box> */}
+            <Box p={2}>
               <Button
                 variant="contained"
                 color="secondary"

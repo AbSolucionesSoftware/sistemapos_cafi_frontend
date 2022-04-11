@@ -7,23 +7,23 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogContent,
-  IconButton,
-  Typography,
-} from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import IconButton from "@material-ui/core/IconButton";
+import Snackbar from "@material-ui/core/Snackbar";
 import DeleteIcon from "@material-ui/icons/Delete";
-import CloseIcon from "@material-ui/icons/Close";
 import AutorenewIcon from "@material-ui/icons/Autorenew";
 import { VentasContext } from "../../../context/Ventas/ventasContext";
 import { AccesosContext } from "../../../context/Accesos/accesosCtx";
 import { useEffect } from "react";
+import { formatoMexico } from "../../../config/reuserFunctions";
+import Close from "@material-ui/icons/Close";
+import { ClienteCtx } from "../../../context/Catalogos/crearClienteCtx";
 
 const columns = [
-  { id: "folio", label: "Folio", minWidth: 20, align: "center" },
+  /* { id: "folio", label: "Folio", minWidth: 20, align: "center" }, */
   { id: "fecha", label: "Fecha", minWidth: 20, align: "center" },
   { id: "cliente", label: "Cliente", minWidth: 330, align: "center" },
   { id: "productos", label: "Productos", minWidth: 20, align: "center" },
@@ -42,7 +42,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ListaVentas() {
+export default function ListaVentas({ handleModalEspera }) {
   const classes = useStyles();
 
   let listaEnEspera = JSON.parse(localStorage.getItem("ListaEnEspera"));
@@ -73,7 +73,14 @@ export default function ListaVentas() {
           </TableHead>
           <TableBody>
             {listaEnEspera?.map((row, index) => {
-              return <RowsVentas venta={row} index={index} key={index} />;
+              return (
+                <RowsVentas
+                  venta={row}
+                  index={index}
+                  key={index}
+                  handleModalEspera={handleModalEspera}
+                />
+              );
             })}
           </TableBody>
         </Table>
@@ -82,7 +89,7 @@ export default function ListaVentas() {
   );
 }
 
-const RowsVentas = ({ venta, index }) => {
+const RowsVentas = ({ venta, index, handleModalEspera }) => {
   const {
     reloadEliminarVentaEspera,
     setReloadEliminarVentaEspera,
@@ -92,54 +99,62 @@ const RowsVentas = ({ venta, index }) => {
   } = useContext(AccesosContext);
 
   const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
+  const { updateClientVenta, setUpdateClientVenta } = useContext(ClienteCtx);
   const [open, setOpen] = useState(false);
-  const [keyIndex, setKeyIndex] = useState("");
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
   let listaEnEspera = JSON.parse(localStorage.getItem("ListaEnEspera"));
-  let VentaEnEspera = JSON.parse(localStorage.getItem("DatosVentas"));
+  let datosVenta = JSON.parse(localStorage.getItem("DatosVentas"));
 
-  function borrarVenta(key) {
+  function borrarVenta() {
     if (sesion.accesos.ventas.eliminar_ventas.ver === true) {
-      listaEnEspera.forEach(function (elemento, indice, array) {
-        if (key === indice) {
-          listaEnEspera.splice(key, 1);
-        }
-      });
+      let nueva_venta_espera = [...listaEnEspera];
+      nueva_venta_espera.splice(index, 1);
+      if (nueva_venta_espera.length === 0) {
+        localStorage.removeItem("ListaEnEspera");
+      } else {
+        localStorage.setItem(
+          "ListaEnEspera",
+          JSON.stringify(nueva_venta_espera)
+        );
+      }
       setUpdateTablaVentas(!updateTablaVentas);
-      localStorage.setItem("ListaEnEspera", JSON.stringify(listaEnEspera));
     } else {
       return null;
     }
   }
 
-  const AgregarVentaDeNuevo = (key) => {
-    if (VentaEnEspera === null) {
-      listaEnEspera.forEach((element, index) => {
-        if (index === key) {
-          localStorage.setItem(
-            "DatosVentas",
-            JSON.stringify(element.VentaEnEspera)
-          );
-          listaEnEspera.splice(key, 1);
-        }
-        localStorage.setItem("ListaEnEspera", JSON.stringify(listaEnEspera));
-      });
-      setUpdateTablaVentas(!updateTablaVentas);
+  const AgregarVentaDeNuevo = () => {
+    if (datosVenta === null) {
+      let nueva_venta_espera = [...listaEnEspera];
+      localStorage.setItem("DatosVentas", JSON.stringify(venta.datosVenta));
+      nueva_venta_espera.splice(index, 1);
+      if (nueva_venta_espera.length === 0) {
+        localStorage.removeItem("ListaEnEspera");
+        updateDataStorage();
+        handleModalEspera();
+        return;
+      }
+      localStorage.setItem("ListaEnEspera", JSON.stringify(nueva_venta_espera));
+      updateDataStorage();
+      handleModalEspera();
     } else {
       setOpen(!open);
     }
+  };
+
+  const updateDataStorage = () => {
+    setUpdateTablaVentas(!updateTablaVentas);
+    setUpdateClientVenta(!updateClientVenta);
   };
 
   const handleClickOpen = () => {
     setOpen(!open);
   };
 
-  const verificarPermisos = (key) => {
-    setKeyIndex(key);
+  const verificarPermisos = () => {
     if (sesion.accesos.ventas.eliminar_ventas.ver === true) {
-      setKeyIndex("");
-      borrarVenta(key);
+      borrarVenta();
     } else {
       setAbrirPanelAcceso(!abrirPanelAcceso);
       setDepartamentos({
@@ -152,15 +167,14 @@ const RowsVentas = ({ venta, index }) => {
 
   useEffect(() => {
     if (reloadEliminarVentaEspera === true) {
-      borrarVenta(keyIndex);
+      borrarVenta();
       setReloadEliminarVentaEspera(false);
     }
   }, [reloadEliminarVentaEspera]);
 
   return (
     <Fragment>
-      <TableRow hover tabIndex={-1} key={index}>
-        <TableCell align="center">{index + 1}</TableCell>
+      <TableRow hover tabIndex={-1}>
         <TableCell align="center">{venta.fecha ? venta.fecha : ""}</TableCell>
         <TableCell align="center">
           {venta.datosVenta.cliente && venta.datosVenta.cliente.nombre_cliente
@@ -171,47 +185,87 @@ const RowsVentas = ({ venta, index }) => {
           {venta.datosVenta.productos.length}
         </TableCell>
         <TableCell align="center">
-          $ {venta.datosVenta.total.toFixed(4)}
+          $ {formatoMexico(venta.datosVenta.total)}
         </TableCell>
         <TableCell align="center">
-          <IconButton
-            aria-label="regresar"
-            color="primary"
-            size="small"
-            onClick={() => AgregarVentaDeNuevo(index)}
-          >
-            <AutorenewIcon fontSize="medium" />
-          </IconButton>
+          <RegresarVenta
+            AgregarVentaDeNuevo={AgregarVentaDeNuevo}
+            open={open}
+            handleClickOpen={handleClickOpen}
+          />
         </TableCell>
         <TableCell align="center">
-          <IconButton
-            aria-label="delete"
-            size="small"
-            onClick={() => verificarPermisos(index)}
-          >
-            <DeleteIcon fontSize="medium" />
-          </IconButton>
+          <EliminarVentaEspera verificarPermisos={verificarPermisos} />
         </TableCell>
       </TableRow>
+    </Fragment>
+  );
+};
 
-      <Dialog open={open} onClose={handleClickOpen} fullWidth maxWidth="xs">
-        <DialogContent>
-          <Box p={1} display="flex">
-            <Typography variant="h6">
-              No puedes agregar una venta, cuando ya esta una en curso.
-            </Typography>
-            <Box display="flex" justifyContent={"flex-end"} p={2}>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleClickOpen}
-                size="large"
-              >
-                <CloseIcon />
-              </Button>
-            </Box>
-          </Box>
-        </DialogContent>
+const RegresarVenta = ({ open, handleClickOpen, AgregarVentaDeNuevo }) => {
+  return (
+    <Fragment>
+      <IconButton
+        aria-label="regresar"
+        color="primary"
+        size="small"
+        onClick={() => AgregarVentaDeNuevo()}
+      >
+        <AutorenewIcon fontSize="medium" />
+      </IconButton>
+      <Snackbar
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={open}
+        autoHideDuration={5000}
+        onClose={handleClickOpen}
+        message="No puedes agregar una venta cuando ya está una en curso."
+        action={
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleClickOpen}
+          >
+            <Close fontSize="small" />
+          </IconButton>
+        }
+      />
+    </Fragment>
+  );
+};
+
+const EliminarVentaEspera = ({ verificarPermisos }) => {
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleClickOpen = () => setOpenModal(true);
+  const handleClose = () => setOpenModal(false);
+
+  return (
+    <Fragment>
+      <IconButton
+        aria-label="delete"
+        size="small"
+        onClick={() => handleClickOpen()}
+      >
+        <DeleteIcon fontSize="medium" />
+      </IconButton>
+      <Dialog onClose={() => handleClose()} open={openModal}>
+        <DialogTitle>Se eliminara esta venta en espera</DialogTitle>
+        <DialogActions>
+          <Button color="inherit" size="small" onClick={() => handleClose()}>
+            Cancelar
+          </Button>
+          <Button
+            color="secondary"
+            size="small"
+            onClick={() => verificarPermisos()}
+          >
+            Eliminar
+          </Button>
+        </DialogActions>
       </Dialog>
     </Fragment>
   );

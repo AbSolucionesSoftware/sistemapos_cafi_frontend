@@ -14,7 +14,6 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import BackdropComponent from "../../../components/Layouts/BackDrop";
 import { useMutation, useQuery } from "@apollo/client";
 import { OBTENER_CAJAS } from "../../../gql/Cajas/cajas";
 import { REGISTRAR_TURNOS } from "../../../gql/Ventas/abrir_cerrar_turno";

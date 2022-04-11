@@ -55,7 +55,7 @@ export default function MedidasAlmacenes(props) {
 								
 								return (
 									
-									<Row item={item}  almacenSeleccionado={props.almacen} />
+									<Row item={item} key={index} almacenSeleccionado={props.almacen} />
 								);
 							})}
 						</TableBody>
@@ -88,19 +88,18 @@ const Row = ({item, almacenSeleccionado}) =>{
 						{item.medida.talla}
 					</TableCell>
 					<TableCell >
-					<Tooltip
-						title={item.color.nombre}
-						placement="top"
-						arrow
-					
-					>
-						<div
-						className={classes.colorContainer}
-						style={{
-							backgroundColor: item.color.hex,
-						}}
-						/>
-					</Tooltip>
+						<Tooltip
+							title={item.color.nombre}
+							placement="top"
+							arrow
+						>
+							<div
+							className={classes.colorContainer}
+							style={{
+								backgroundColor: item.color.hex,
+							}}
+							/>
+						</Tooltip>
 					</TableCell>
 					<TableCell >{item.cantidad}</TableCell>
 				</TableRow>	

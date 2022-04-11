@@ -183,7 +183,7 @@ function CerrarTurno(props) {
         setError(true);
         setLoading(false);
         setAlert({
-          message: `Por favor elija que turno esta cerrando`,
+          message: `Por favor elija que turno está cerrando`,
           status: "error",
           open: true,
         });
@@ -363,7 +363,12 @@ function CerrarTurno(props) {
             <Typography className={classes.titulos}>
               <span className="obligatorio">* </span> Turno:
             </Typography>
-            <FormControl variant="outlined" fullWidth size="small" error={error && !cerrarTurno.horario_en_turno}>
+            <FormControl
+              variant="outlined"
+              fullWidth
+              size="small"
+              error={error && !cerrarTurno.horario_en_turno}
+            >
               <Select
                 onChange={obtenerCampos}
                 id="form-producto-tipo"
@@ -377,7 +382,7 @@ function CerrarTurno(props) {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12} justify="flex-end">
+          <Grid item xs={12}>
             <Typography className={classes.titulos}>Comentarios:</Typography>
             <TextField
               fullWidth

@@ -16,6 +16,7 @@ import "moment/locale/es";
 import { useQuery } from "@apollo/client";
 import { OBTENER_PRE_CORTE_CAJA } from "../../../gql/Cajas/cajas";
 import { AccesosContext } from "../../../context/Accesos/accesosCtx";
+import { formatoMexico } from "../../../config/reuserFunctions";
 moment.locale("es");
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -198,7 +199,7 @@ export default function PreCorteCaja() {
                     </Typography>
                     <Typography variant="h3" style={{ color: "green" }}>
                       <b>
-                        ${data?.obtenerPreCorteCaja?.monto_efectivo_precorte}
+                        ${data?.obtenerPreCorteCaja?.monto_efectivo_precorte ? formatoMexico(data?.obtenerPreCorteCaja?.monto_efectivo_precorte) : 0.00}
                       </b>
                     </Typography>
                   </Box>

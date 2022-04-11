@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import useStyles from "../styles";
 
 import {
@@ -14,12 +14,15 @@ import {
 } from "@material-ui/core";
 import ListaVentas from "./ListaVentas";
 import CloseIcon from "@material-ui/icons/Close";
+import { VentasContext } from "../../../context/Ventas/ventasContext";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 export default function VentasEspera() {
   let listaEnEspera = JSON.parse(localStorage.getItem("ListaEnEspera"));
-  const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
+  let turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
+
+  const { updateTablaVentas } = useContext(VentasContext);
 
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -34,6 +37,16 @@ export default function VentasEspera() {
       handleClickOpen();
     }
   }
+
+  useEffect(() => {
+    if (listaEnEspera) {
+      listaEnEspera = JSON.parse(localStorage.getItem("ListaEnEspera"));
+    }
+  }, [updateTablaVentas]);
+
+  useEffect(() => {
+    turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
+  }, [updateTablaVentas, turnoEnCurso]);
 
   return (
     <>
@@ -103,7 +116,7 @@ export default function VentasEspera() {
             </Box>
           </Grid>
           <Grid>
-            <ListaVentas />
+            <ListaVentas handleModalEspera={handleClickOpen} />
           </Grid>
         </DialogContent>
       </Dialog>

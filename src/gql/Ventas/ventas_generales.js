@@ -358,20 +358,42 @@ export const CREAR_VENTA = gql`
 `;
 
 export const OBTENER_VENTAS_SUCURSAL = gql`
-query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String ) {
-		obtenerVentasSucursal(empresa: $empresa, sucursal: $sucursal, filtro: $filtro) {
+query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtros: filtrosObtenerVentas ) {
+		obtenerVentasSucursal(empresa: $empresa, sucursal: $sucursal, filtros: $filtros) {
 			_id
       folio
       cliente {
         _id
         numero_cliente
         clave_cliente
+        representante
         nombre_cliente
         rfc
+        curp
         telefono
         celular
         email
+        numero_descuento
+        limite_credito
+        dias_credito
         razon_social
+        direccion{
+          calle
+          no_ext
+          no_int
+          codigo_postal
+          colonia
+          municipio
+          localidad
+          estado
+          pais
+        }
+        imagen
+        eliminado
+        banco
+        numero_cuenta
+        monedero_electronico
+        credito_disponible
       }
       descuento
       ieps
@@ -592,6 +614,8 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String ) {
               unidad_maxima
             }
           }
+          empresa
+          sucursal
         }
         concepto
         cantidad
@@ -621,7 +645,55 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String ) {
         default
         unidad
         codigo_unidad
-        id_unidad_venta
+        id_unidad_venta{
+          _id
+          precio
+          cantidad
+          concepto
+          unidad
+          codigo_unidad
+          unidad_principal
+          unidad_activa
+          codigo_barras
+          id_producto
+          descuento{
+            cantidad_unidad
+            numero_precio
+            unidad_maxima
+            precio_general
+            precio_neto
+            precio_venta
+            iva_precio
+            ieps_precio
+            utilidad
+            porciento
+            dinero_descontado
+          }
+          descuento_activo
+          default
+          precio_unidad{
+            numero_precio
+            precio_neto
+            precio_venta
+            iva_precio
+            ieps_precio
+            unidad_mayoreo
+            utilidad
+            precio_general
+            cantidad_unidad
+            unidad_maxima
+          }
+        }
+        inventario_general{
+          _id
+          cantidad_existente
+          unidad_inventario
+          codigo_unidad
+          cantidad_existente_maxima
+          unidad_maxima
+          id_almacen_general
+          eliminado
+        }
         year_registro
         fecha_registro
         precio_unidad{
@@ -651,6 +723,108 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtro: String ) {
           dinero_descontado
         }
       }
+      fecha_registro
+      factura{
+        id_cfdi
+        serie
+        currency
+        expedition_place
+        folio
+        cfdi_type
+        payment_form
+        payment_method
+        logo_url
+        date
+        issuer{
+          FiscalRegime
+          Rfc
+          Name
+        }
+        receiver{
+          Rfc
+          Name
+          CfdiUse
+        }
+        items{
+          ProductCode
+          IdentificationNumber
+          Description
+          Unit
+          UnitCode
+          UnitPrice
+          Quantity
+          Subtotal
+          Discount
+          Taxes{
+            Total
+            Name
+            Base
+            Rate
+            IsRetention
+          }
+          Total
+        }
+        original_string
+        sub_total
+        total
+        discount
+        fecha_registro
+        empresa
+        sucursal
+      }
+      montos_en_caja{
+        monto_efectivo{
+          monto
+          metodo_pago
+        }
+        monto_tarjeta_debito{
+          monto
+          metodo_pago
+        }
+        monto_tarjeta_credito{
+          monto
+          metodo_pago
+        }
+        monto_creditos{
+          monto
+          metodo_pago
+        }
+        monto_monedero{
+          monto
+          metodo_pago
+        }
+        monto_transferencia{
+          monto
+          metodo_pago
+        }
+        monto_cheques{
+          monto
+          metodo_pago
+        }
+        monto_vales_despensa{
+          monto
+          metodo_pago
+        }
+      }
+      status
 		}
 	}
 `;
+
+export const CANCELAR_VENTA_SUCURSAL = gql`
+  mutation cancelarVentasSucursal(
+    $empresa: ID!
+    $sucursal: ID!
+    $folio: String!
+  	$input: cancelarVentaInput
+  ) {
+    cancelarVentasSucursal(
+      empresa: $empresa
+      sucursal: $sucursal
+      folio: $folio
+      input: $input
+    ) {
+      message
+    }
+  }
+`
