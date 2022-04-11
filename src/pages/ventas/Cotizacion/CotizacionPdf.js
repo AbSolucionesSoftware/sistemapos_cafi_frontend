@@ -166,7 +166,7 @@ const CotizacionInformation = ({ cotizacion, classes}) => {
         <div id="divInformation" className={classes.root} >
 			
 			<Box style={{ display: "flex", justifyContent: "space-between" }}>
-			<Typography>
+		{/* 	<Typography>
                 <b>Caja: </b>
                 {` ${cotizacion.id_caja.numero_caja}`}
                 </Typography>
@@ -176,7 +176,7 @@ const CotizacionInformation = ({ cotizacion, classes}) => {
                 <Typography>
                 <b>Usuario en caja:</b> {` ${cotizacion.usuario.nombre}`}
                 </Typography>
-            </Box>
+            </Box> */}
             <Box>
                 <Typography align="right">
                 <b>Folio:</b>
