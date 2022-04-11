@@ -7,7 +7,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  Divider,
   Grid,
   Paper,
   Slide,
@@ -59,11 +58,12 @@ export default function CerrarVenta() {
     setDatosVentasActual,
     openBackDrop,
     setOpenBackDrop,
-    setVentaRetomada
+    setVentaRetomada,
   } = useContext(VentasContext);
   const { updateClientVenta, setUpdateClientVenta } = useContext(ClienteCtx);
   //States de venta
   const [totalVenta, setTotalVenta] = useState(0);
+  const [totalVentaConstante, setTotalVentaConstante] = useState(0);
   const [subtotalVenta, setSubtotalVenta] = useState(0);
   const [impuestosVenta, setImpuestosVenta] = useState(0);
   const [montoPagado, setMontoPagado] = useState(0);
@@ -72,7 +72,7 @@ export default function CerrarVenta() {
   const [monedero, setMonedero] = useState(0);
   const [descuentoVenta, setDescuentoVenta] = useState(0);
   const [fechaVencimientoDate, setfechaVencimientoDate] = useState("");
-  const [valorPuntoProducto, setValorPuntoProducto] = useState(0.5);
+  /* const [valorPuntoProducto, setValorPuntoProducto] = useState(0.5); */
   const [valorFinalCambioPuntos, setValorFinalCambioPuntos] = useState(0);
   const [monederoTotal, setMonederoTotal] = useState(0);
   const [ventaActual, setVentaActual] = useState(0);
@@ -96,6 +96,7 @@ export default function CerrarVenta() {
   const [transferencia, setTransferencia] = useState(0);
   const [cheque, setCheque] = useState(0);
 
+  const [efectivoConstante, setEfectivoConstante] = useState(0);
   const [limite_superado, setLimiteSuperado] = useState(false);
 
   const [createVenta] = useMutation(CREAR_VENTA);
@@ -144,6 +145,7 @@ export default function CerrarVenta() {
 
   const resetStates = () => {
     setTotalVenta(0);
+    setTotalVentaConstante(0);
     setSubtotalVenta(0);
     setImpuestosVenta(0);
     setMontoPagado(0);
@@ -152,7 +154,7 @@ export default function CerrarVenta() {
     setMonedero(0);
     setDescuentoVenta(0);
     setfechaVencimientoDate("");
-    setValorPuntoProducto(0.5);
+    /* setValorPuntoProducto(0.5); */
     setValorFinalCambioPuntos(0);
     setMonederoTotal(0);
     setVentaActual(0);
@@ -168,6 +170,7 @@ export default function CerrarVenta() {
     //States de los montos a pagar
     setMontoEfectivo(0);
     setEfectivo(0);
+    setEfectivoConstante(0);
     setTarjeta(0);
     setPuntos(0);
     setTransferencia(0);
@@ -183,7 +186,7 @@ export default function CerrarVenta() {
   }
 
   const handleClickFinishVenta = async () => {
-    if(visible && ventaActual.total > datosCliente.credito_disponible){
+    if (visible && ventaActual.total > datosCliente.credito_disponible) {
       setLimiteSuperado(true);
       return;
     }
@@ -251,8 +254,12 @@ export default function CerrarVenta() {
       //Editar cliente
       ventaFinal.editar_cliente = editableClient;
       //Agregando los puntos finales
-      ventaFinal.puntos_totales_venta = monederoTotal;
+      //si pago con puntos y su compra genero puntos, hacer que no genere esos puntos
+      ventaFinal.puntos_totales_venta =
+        parseFloat(puntos) > 0 ? monederoTotal - monedero : monederoTotal;
       //Enviar los datos
+
+      /* console.log(ventaFinal); */
       await createVenta({
         variables: {
           input: ventaFinal,
@@ -284,6 +291,7 @@ export default function CerrarVenta() {
     switch (location) {
       case "EFECTIVO":
         setEfectivo(e.target.value);
+        setEfectivoConstante(e.target.value);
         break;
       case "TARJETA":
         setTarjeta(e.target.value);
@@ -291,13 +299,12 @@ export default function CerrarVenta() {
 
       case "PUNTOS":
         const valor = e.target.value !== "" ? parseInt(e.target.value) : 0;
-        console.log(e.target.value, valor);
-        if (valor <= monederoTotal) {
-          const valor2 = valorPuntoProducto * parseFloat(valor);
+        if (valor <= datosCliente.monedero_electronico) {
+          /* const valor2 = valorPuntoProducto * parseFloat(valor); */
           setPuntos(valor);
-          // setValorFinalCambioPuntos(valor2);
-          setEfectivo(efectivo - valor2);
-          setTotalVenta(totalVenta - valor2);
+          setValorFinalCambioPuntos(valor);
+          setEfectivo(efectivoConstante - valor);
+          setTotalVenta(totalVentaConstante - valor);
           // console.log("Valor efectivo >>> ", efectivo);
           // console.log("Valor2 >>", valor2);
           // console.log("Faltante >>> ",efectivo - valor2);
@@ -509,12 +516,26 @@ export default function CerrarVenta() {
     setOpenModalDescuento(!openModalDescuento);
   };
 
+  const calcularMonedero = (venta) => {
+    let suma = 0;
+    if (venta) {
+      venta.productos.forEach((element) => {
+        if (element.id_producto.precios.monedero) {
+          //multiplicacion del puntos de este producto con el total de este
+          const { monedero_electronico } = element.id_producto.precios;
+          const resultado = monedero_electronico * element.precio_a_vender;
+          suma += resultado;
+        }
+      });
+    }
+    return suma;
+  };
+
   useEffect(() => {
     const venta = JSON.parse(localStorage.getItem("DatosVentas"));
-    const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
     console.log(venta);
     setVentaActual(venta);
-   
+
     setVentaOriginal(venta);
     const total = venta === null ? 0 : venta.total;
     const subtotal = venta === null ? 0 : venta.subTotal;
@@ -526,18 +547,24 @@ export default function CerrarVenta() {
     } else {
       setCreditoActivo(false);
     }
-    setValorPuntoProducto(parseFloat(sesion.empresa.valor_puntos));
+    /* setValorPuntoProducto(parseFloat(sesion.empresa.valor_puntos)); */
     setTotalVenta(total.toFixed(2));
+    setTotalVentaConstante(total.toFixed(2));
     setSubtotalVenta(subtotal);
     setImpuestosVenta(impuestos);
     setEfectivo(total.toFixed(2));
+    setEfectivoConstante(total.toFixed(2));
     setMontoEfectivo(total.toFixed(2));
     setDatosCliente(cliente);
-    setMonedero(parseFloat(monederoVenta));
+
+    const monedero_generado = calcularMonedero(venta);
+    /* setMonedero(parseFloat(monederoVenta)); */
+    setMonedero(parseFloat(monedero_generado));
     setMonederoTotal(
       !cliente.monedero_electronico
-        ? parseFloat(monederoVenta)
-        : parseFloat(cliente.monedero_electronico) + parseFloat(monederoVenta)
+        ? parseFloat(monedero_generado)
+        : parseFloat(cliente.monedero_electronico) +
+            parseFloat(monedero_generado)
     );
     //Recargar tabla ventas
     setUpdateTablaVentas(!updateTablaVentas);
@@ -555,6 +582,7 @@ export default function CerrarVenta() {
   }, [datosCliente, datosCliente.dias_credito]);
 
   useEffect(() => {
+    if (visible) return;
     let monto_caja = 0;
     let monto_pagado =
       parseFloat(efectivo) +
@@ -562,7 +590,8 @@ export default function CerrarVenta() {
       parseFloat(valorFinalCambioPuntos) +
       parseFloat(transferencia) +
       parseFloat(cheque);
-    let cambio_caja = parseFloat(monto_pagado) - parseFloat(totalVenta);
+    let cambio_caja =
+      parseFloat(monto_pagado) - parseFloat(totalVentaConstante);
 
     monto_caja = parseFloat(efectivo - cambio_caja);
 
@@ -574,33 +603,50 @@ export default function CerrarVenta() {
     setCambioVenta(montoPagado - totalVenta);
   }, [montoPagado]);
 
+  useEffect(() => {
+    if (visible) {
+      setMontoPagado(totalVentaConstante);
+      setMontoEfectivo(0);
+      setEfectivo(0);
+      setTarjeta(0);
+      setPuntos(0);
+      setTransferencia(0);
+      setCheque(0);
+      setCambioVenta(0);
+    } else {
+      setEfectivo(efectivoConstante);
+      setMontoEfectivo(efectivoConstante);
+    }
+  }, [visible]);
+
   const clearFieldOnFocus = (e) => {
     const { name, value } = e.target;
-    const val = parseFloat(value)
+    const val = parseFloat(value);
     switch (name) {
       case "EFECTIVO":
         if (val === 0) {
-          setEfectivo('');
+          setEfectivo("");
+          setEfectivoConstante("");
         }
         break;
       case "TARJETA":
         if (val === 0) {
-          setTarjeta('');
+          setTarjeta("");
         }
         break;
       case "PUNTOS":
         if (val === 0) {
-          setPuntos('');
+          setPuntos("");
         }
         break;
       case "TRANSFERENCIA":
         if (val === 0) {
-          setTransferencia('');
+          setTransferencia("");
         }
         break;
       case "CHEQUE":
         if (val === 0) {
-          setCheque('');
+          setCheque("");
         }
         break;
       default:
@@ -615,6 +661,7 @@ export default function CerrarVenta() {
       case "EFECTIVO":
         if (value === "") {
           setEfectivo(0);
+          setEfectivoConstante(0);
         } /* else if(parseFloat(value) > parseFloat(monto_efectivo_real)){
           setEfectivo(parseFloat(monto_efectivo_real));
         } */
@@ -629,7 +676,10 @@ export default function CerrarVenta() {
       case "PUNTOS":
         if (value === "") {
           setPuntos(0);
-        } else if (monto < 0) {
+        } else if (
+          monto < 0 &&
+          parseFloat(puntos) !== parseFloat(totalVentaConstante)
+        ) {
           setPuntos(0);
         }
         break;
@@ -792,6 +842,10 @@ export default function CerrarVenta() {
                   onChange={(e) => handlerChangeValue(e, "PUNTOS")}
                   onBlur={validateCantidadesCorrectas}
                   onFocus={clearFieldOnFocus}
+                  InputProps={{
+                    min: 0,
+                    max: datosCliente.monedero_electronico,
+                  }}
                 />
               </Box>
             </Box>
@@ -869,10 +923,12 @@ export default function CerrarVenta() {
                           <FcSalesPerformance style={{ fontSize: 19 }} />
                         </Box>
                         <Typography variant="subtitle1">
-                          <b>Puntos Generados:</b>
+                          <b>Dinero electronico generado:</b>
                         </Typography>
                       </Box>
-                      <Typography variant="subtitle1">{monedero}</Typography>
+                      <Typography variant="subtitle1">
+                        ${monedero ? formatoMexico(monedero) : 0.0}
+                      </Typography>
                     </Box>
 
                     <Box display="flex">
@@ -881,13 +937,16 @@ export default function CerrarVenta() {
                           <FcSalesPerformance style={{ fontSize: 19 }} />
                         </Box>
                         <Typography variant="subtitle1">
-                          <b>Puntos Disponibles:</b>
+                          <b>Dinero electrónico disponible:</b>
                         </Typography>
                       </Box>
                       <Typography variant="subtitle1">
+                        $
                         {!datosCliente.monedero_electronico
-                          ? 0
-                          : datosCliente.monedero_electronico}
+                          ? 0.0
+                          : formatoMexico(
+                              datosCliente.monedero_electronico - puntos
+                            )}
                       </Typography>
                     </Box>
 
@@ -901,11 +960,11 @@ export default function CerrarVenta() {
                         </Typography>
                       </Box>
                       <Typography variant="subtitle1">
-                        {monederoTotal}
+                        ${monederoTotal ? formatoMexico(monederoTotal - puntos) : 0.0}
                       </Typography>
                     </Box>
 
-                    <Box display="flex">
+                    {/* <Box display="flex">
                       <Box display="flex" alignItems={"center"} mr={2}>
                         <Box mt={0.5} mr={0.5}>
                           <FcSalesPerformance style={{ fontSize: 19 }} />
@@ -917,7 +976,7 @@ export default function CerrarVenta() {
                       <Typography variant="subtitle1">
                         ${monederoTotal * valorPuntoProducto}
                       </Typography>
-                    </Box>
+                    </Box> */}
                   </Box>
                 </Grid>
                 <Grid item md={5} xs={12}>

@@ -32,16 +32,20 @@ const useStyles = makeStyles((theme) => ({
   },
   container: {
     height: "100%",
+    maxHeight: "59vh",
     "& ::-webkit-scrollbar": {
       display: "none",
     },
+    [theme.breakpoints.up("xl")]: {
+      maxHeight: "64vh",
+    }
   },
 }));
 
 export default function EnhancedTable({ setDatosVentasActual }) {
   const classes = useStyles();
   const [selected, setSelected] = useState([]);
-  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  /* const sesion = JSON.parse(localStorage.getItem("sesionCafi")); */
 
   const {
     setProductoCambioPrecio,

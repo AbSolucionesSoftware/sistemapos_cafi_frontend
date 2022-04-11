@@ -576,35 +576,28 @@ export default function VentasGenerales() {
         <Paper variant="outlined">
           <Grid container spacing={2}>
             <Grid item md={6} sm={6} xs={12}>
-              <Grid
-                container
-                /* justifyContent="flex-end"
-                alignItems="center" */
-              >
-                <Grid item md={6} xs={12}>
-                  <Box
-                    flexDirection="row-reverse"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Box>
-                      <Typography variant="subtitle1">
-                        Cliente:{" "}
-                        <b style={{ fontSize: 16 }}>
-                          {clientesVentas ? clientesVentas.nombre_cliente : ""}
-                        </b>
-                      </Typography>
+              <Box mx={2}>
+                <Grid container>
+                  <Grid item xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <Box display="flex" alignItems="center">
+                        <FcBusinessman style={{ fontSize: 19 }} />
+                        <Box mr={1} />
+                        <Typography variant="subtitle1">
+                          Cliente:{" "}
+                          <b style={{ fontSize: 16 }}>
+                            {clientesVentas
+                              ? clientesVentas.nombre_cliente
+                              : ""}
+                          </b>
+                        </Typography>
+                      </Box>
                     </Box>
-                    <Box mt={0.5} mr={1}>
-                      <FcBusinessman style={{ fontSize: 19 }} />
-                    </Box>
-                  </Box>
-                  <Box
-                    flexDirection="row-reverse"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Box>
+                  </Grid>
+                  <Grid item lg={5} xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <AiOutlineFieldNumber style={{ fontSize: 19 }} />
+                      <Box mr={1} />
                       <Typography variant="subtitle1">
                         Cliente.:{" "}
                         <b style={{ fontSize: 16 }}>
@@ -612,16 +605,11 @@ export default function VentasGenerales() {
                         </b>
                       </Typography>
                     </Box>
-                    <Box mt={0.5} mr={1}>
-                      <AiOutlineFieldNumber style={{ fontSize: 22 }} />
-                    </Box>
-                  </Box>
-                  <Box
-                    flexDirection="row-reverse"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Box>
+                  </Grid>
+                  <Grid item lg={7} xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <FaBarcode style={{ fontSize: 19 }} />
+                      <Box mr={1} />
                       <Typography variant="subtitle1">
                         Clave Clte.:{" "}
                         <b style={{ fontSize: 16 }}>
@@ -629,18 +617,25 @@ export default function VentasGenerales() {
                         </b>
                       </Typography>
                     </Box>
-                    <Box mt={0.5} mr={1}>
-                      <FaBarcode style={{ fontSize: 19 }} />
+                  </Grid>
+                  <Grid item lg={5} xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <FcCalendar style={{ fontSize: 19 }} />
+                      <Box mr={1} />
+                      <Typography variant="subtitle1">
+                        Dias Credito:{" "}
+                        <b style={{ fontSize: 16 }}>
+                          {clientesVentas && clientesVentas.dias_credito
+                            ? clientesVentas.dias_credito
+                            : 0}
+                        </b>
+                      </Typography>
                     </Box>
-                  </Box>
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <Box
-                    flexDirection="row-reverse"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Box>
+                  </Grid>
+                  <Grid item lg={7} xs={12}>
+                    <Box display="flex" alignItems="center">
+                      <FaMoneyCheckAlt style={{ fontSize: 19 }} />
+                      <Box mr={1} />
                       <Typography variant="subtitle1">
                         Limite Credito:{" "}
                         <b style={{ fontSize: 16 }}>
@@ -651,11 +646,9 @@ export default function VentasGenerales() {
                         </b>
                       </Typography>
                     </Box>
-                    <Box mt={0.5} mr={1}>
-                      <FaMoneyCheckAlt style={{ fontSize: 19 }} />
-                    </Box>
-                  </Box>
-                  {/* <Box
+                  </Grid>
+                 {/* <Grid item md={6} xs={12}>
+                     <Box
                     flexDirection="row-reverse"
                     display="flex"
                     alignItems="center"
@@ -672,32 +665,14 @@ export default function VentasGenerales() {
                     <Box mt={0.5} mr={1}>
                       <AiOutlineFieldNumber style={{ fontSize: 22 }} />
                     </Box>
-                  </Box> */}
-                  <Box
-                    flexDirection="row-reverse"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Box>
-                      <Typography variant="subtitle1">
-                        Dias Credito:{" "}
-                        <b style={{ fontSize: 16 }}>
-                          {clientesVentas && clientesVentas.dias_credito
-                            ? clientesVentas.dias_credito
-                            : 0}
-                        </b>
-                      </Typography>
-                    </Box>
-                    <Box mt={0.5} mr={1}>
-                      <FcCalendar style={{ fontSize: 19 }} />
-                    </Box>
-                  </Box>
+                  </Box> 
+                  </Grid>*/}
                 </Grid>
-              </Grid>
+              </Box>
             </Grid>
             <Grid item md={6} sm={6} xs={12}>
               <Grid container spacing={2}>
-                <Grid item md={6} xs={12}>
+                <Grid item lg={6} xs={12}>
                   <Box
                     display="flex"
                     alignItems="center"
@@ -753,7 +728,7 @@ export default function VentasGenerales() {
                     </Box>
                   </Box>
                 </Grid>
-                <Grid item md={6} xs={12}>
+                <Grid item lg={6} xs={12}>
                   <Box flexDirection="row-reverse" display="flex" mr={1}>
                     <Typography variant="subtitle1">
                       Subtotal:{" "}

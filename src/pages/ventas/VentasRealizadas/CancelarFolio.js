@@ -32,7 +32,7 @@ export default function CancelarFolio({
   refetch,
   dinero_disponible,
   selected,
-  view
+  view,
 }) {
   const {
     reloadCancelarVenta,
@@ -55,9 +55,12 @@ export default function CancelarFolio({
   const [cancelarVentasSucursal] = useMutation(CANCELAR_VENTA_SUCURSAL);
 
   const handleClickOpen = () => {
-    if (!reloadCancelarVenta) return;
-    setReloadCancelarVenta(false);
-    setOpen(true);
+    if (sesion.accesos.ventas.cancelar_venta.editar === true) {
+      setOpen(true);
+    } else {
+      if (!reloadCancelarVenta) return;
+      setOpen(true);
+    }
   };
 
   const handleClose = () => {
@@ -146,13 +149,14 @@ export default function CancelarFolio({
   };
 
   let seleccionado = "";
-  if(view === "table"){
-    seleccionado = selected
+  if (view === "table") {
+    seleccionado = selected;
   }
 
   useEffect(() => {
     if (reloadCancelarVenta === true && seleccionado._id === venta._id) {
       handleClickOpen();
+      setReloadCancelarVenta(false);
     }
   }, [reloadCancelarVenta]);
 

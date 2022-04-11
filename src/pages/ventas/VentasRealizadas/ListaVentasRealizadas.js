@@ -56,31 +56,31 @@ export default function ListaVentasRealizadas({ handleClose }) {
 
   /* Queries */
   const resultado_ventas = useQuery(OBTENER_VENTAS_SUCURSAL, {
-	variables: {
-	  empresa: sesion.empresa._id,
-	  sucursal: sesion.sucursal._id,
-	  filtro: value,
-	  params: params,
-	  realizadas: false,
-	  filtros: {
-		busqueda: value,
-		filtro: params,
-		vista: "VENTAS",
-		turno: {
-		  id_caja: turnoEnCurso.id_caja,
-		  fecha_entrada,
-		},
-		admin,
-	  },
-	},
-	fetchPolicy: "network-only",
+    variables: {
+      empresa: sesion.empresa._id,
+      sucursal: sesion.sucursal._id,
+      filtro: value,
+      params: params,
+      realizadas: false,
+      filtros: {
+        busqueda: value,
+        filtro: params,
+        vista: "VENTAS",
+        turno: {
+          id_caja: turnoEnCurso.id_caja,
+          fecha_entrada,
+        },
+        admin,
+      },
+    },
+    fetchPolicy: "network-only",
   });
   const res_precorte = useQuery(OBTENER_PRE_CORTE_CAJA, {
-	variables: {
-	  empresa: sesion.empresa._id,
-	  sucursal: sesion.sucursal._id,
-	  input: input_precorte,
-	},
+    variables: {
+      empresa: sesion.empresa._id,
+      sucursal: sesion.sucursal._id,
+      input: input_precorte,
+    },
   });
 
   return (
@@ -159,7 +159,7 @@ export default function ListaVentasRealizadas({ handleClose }) {
       </Box>
       <RenderLista
         resultado_ventas={resultado_ventas}
-		res_precorte={res_precorte}
+        res_precorte={res_precorte}
         handleClose={handleClose}
         admin={admin}
       />
@@ -167,7 +167,12 @@ export default function ListaVentasRealizadas({ handleClose }) {
   );
 }
 
-const RenderLista = ({ resultado_ventas, res_precorte, handleClose, admin }) => {
+const RenderLista = ({
+  resultado_ventas,
+  res_precorte,
+  handleClose,
+  admin,
+}) => {
   const {
     updateTablaVentas,
     setUpdateTablaVentas,
@@ -206,7 +211,9 @@ const RenderLista = ({ resultado_ventas, res_precorte, handleClose, admin }) => 
   //obtener dinero en caja
   const { obtenerVentasSucursal } = data;
   const data_precorte = res_precorte.data;
-  const pre_corte = data_precorte.obtenerPreCorteCaja ? data_precorte.obtenerPreCorteCaja.monto_efectivo_precorte : 0
+  const pre_corte = data_precorte.obtenerPreCorteCaja
+    ? data_precorte.obtenerPreCorteCaja.monto_efectivo_precorte
+    : 0;
 
   const obtenerVenta = (click, data) => {
     setSelected(data);
@@ -334,7 +341,7 @@ const RenderLista = ({ resultado_ventas, res_precorte, handleClose, admin }) => 
                   obtenerVenta={obtenerVenta}
                   refetch={refetch}
                   admin={admin}
-				  pre_corte={pre_corte}
+                  pre_corte={pre_corte}
                 />
               );
             })}
@@ -386,10 +393,12 @@ const RowComprasRealizadas = ({
   obtenerVenta,
   refetch,
   admin,
-  pre_corte
+  pre_corte,
 }) => {
   const classes = tableStyles();
-  let today = data.fecha_registro === moment().format("YYYY-MM-DD");
+  let today =
+    moment(data.fecha_registro).format("YYYY-MM-DD") ===
+    moment().format("YYYY-MM-DD");
 
   return (
     <TableRow
@@ -408,11 +417,13 @@ const RowComprasRealizadas = ({
         {moment(data.fecha_registro).format("DD/MM/YYYY")}
       </TableCell>
       <TableCell className="delete-color">
-        {data.cliente !== null
-          ? data.cliente.nombre_cliente
-          : "Publico General"}
+        <div className="noWrap2">
+          {data.cliente !== null
+            ? data.cliente.nombre_cliente
+            : "Publico General"}
+        </div>
       </TableCell>
-      <TableCell className="delete-color">{data.usuario.nombre}</TableCell>
+      <TableCell className="delete-color"><div className="noWrap2">{data.usuario.nombre}</div></TableCell>
       <TableCell className="delete-color">{data.id_caja.numero_caja}</TableCell>
       <TableCell className="delete-color">
         ${data.descuento ? formatoMexico(data.descuento) : 0}
@@ -427,7 +438,13 @@ const RowComprasRealizadas = ({
         ${formatoMexico(data.total)}
       </TableCell>
       <TableCell className="delete-color" align="center">
-        <CancelarFolio venta={data} refetch={refetch} dinero_disponible={pre_corte} selected={selected} view="table" />
+        <CancelarFolio
+          venta={data}
+          refetch={refetch}
+          dinero_disponible={pre_corte}
+          selected={selected}
+          view="table"
+        />
       </TableCell>
     </TableRow>
   );
