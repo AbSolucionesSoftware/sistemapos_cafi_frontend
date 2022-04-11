@@ -7,13 +7,14 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Button from "@material-ui/core/Button";
+/* import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogTitle from "@material-ui/core/DialogTitle"; */
 import Snackbar from "@material-ui/core/Snackbar";
 import { IconButton } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
+//import DeleteIcon from '@material-ui/icons/Delete';
+import BackdropComponent from '../../../components/Layouts/BackDrop';
 import Close from "@material-ui/icons/Close";
 import AutorenewIcon from '@material-ui/icons/Autorenew';
 //import {formatoFecha} from '../../../config/reuserFunctions';
@@ -32,11 +33,11 @@ const columns = [
 	{ id: 'productos', label: 'Productos', minWidth: 50, align: 'center'},
 	{ id: 'total', label: 'Total', minWidth: 50, align: 'center'}
 ];
-
+/* 
 function createData(folio, cliente, fecha, total) {
 	return { folio, cliente, fecha, total};
 }
-
+ */
 
 
 const useStyles = makeStyles({
@@ -50,7 +51,7 @@ const useStyles = makeStyles({
 
 export default function CotizacionesPendientes({ setOpen }) {
 	const classes = useStyles();
-	const [ page, setPage ] = React.useState(0);
+	//const [ page, setPage ] = React.useState(0);
 	const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 	//const [ rowsPerPage, setRowsPerPage ] = React.useState(10);
 	const [view, setView] = useState(false);
@@ -88,8 +89,10 @@ export default function CotizacionesPendientes({ setOpen }) {
 		setOpen(false);
 	}
 	if(data) rows = data.obtenerCotizaciones;
+	if(loading) return (<BackdropComponent loading={loading}  />)
 	return (
 		<Paper className={classes.root}>
+			
 			<TableContainer className={classes.container}>
 				<Table stickyHeader size="medium" aria-label="enhanced table">
 					<TableHead>
@@ -102,9 +105,9 @@ export default function CotizacionesPendientes({ setOpen }) {
 							<TableCell align='center' style={{ width: 35 }}>
 								Retomar
 							</TableCell>
-							<TableCell align='center' style={{ width: 35 }}>
+						{/* 	<TableCell align='center' style={{ width: 35 }}>
 								Eliminar
-							</TableCell>
+							</TableCell> */}
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -139,7 +142,7 @@ export default function CotizacionesPendientes({ setOpen }) {
 
 const CotizacionRow = ({cotizacion, index, handleModalCotizacion, setSelected, setView}) => {
 	const [openMessage, setOpenMessage] = useState({message: '', open:false});
-	const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+	//const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 	
 	let datosVenta = JSON.parse(localStorage.getItem("DatosVentas"));
 	const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
@@ -281,11 +284,11 @@ const CotizacionRow = ({cotizacion, index, handleModalCotizacion, setSelected, s
 						    <AutorenewIcon fontSize="medium" />
 						</IconButton>
 					</TableCell> */}
-					<TableCell align='center' >
+				{/* 	<TableCell align='center' >
 						<IconButton aria-label="delete" size='small'>
 							<DeleteIcon fontSize="small" />
 						</IconButton>
-					</TableCell>
+					</TableCell> */}
 				</TableRow>
 			</>
 		);
@@ -331,7 +334,7 @@ const RegresarVenta = ({ openMessage, handleClickOpen, AgregarVentaDeNuevo }) =>
 	);
   };
   
-  const EliminarVentaEspera = ({ verificarPermisos }) => {
+ /*  const EliminarCotizacion = ({ verificarPermisos }) => {
 	const [openModal, setOpenModal] = useState(false);
   
 	const handleClickOpen = () => setOpenModal(true);
@@ -363,4 +366,4 @@ const RegresarVenta = ({ openMessage, handleClickOpen, AgregarVentaDeNuevo }) =>
 		</Dialog>
 	  </Fragment>
 	);
-  };
+  }; */

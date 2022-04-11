@@ -4,9 +4,8 @@ import Avatar from "@material-ui/core/Avatar";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
-import Button from "@material-ui/core/Button";
+
 import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
@@ -57,6 +56,7 @@ export default function DetalleCotizacion({ venta, open, handleClose, refetch })
       onClose={handleClose}
       fullWidth
       maxWidth="xl"
+    
     >
       <DialogTitle>
       
@@ -85,12 +85,12 @@ export default function DetalleCotizacion({ venta, open, handleClose, refetch })
            
         </Box>
         <Box style={{ display: "flex", justifyContent: "flex-end" }}>
-            <CotizacionPdf isIcon={false}  />
+            <CotizacionPdf isIcon={false} cotizacion={venta} />
         </Box>
       </DialogTitle>
       <DialogContent>
-        {(venta.cliente !== null && venta.cliente.length ) ? (
-          <Box my={2}>
+        {(venta.cliente) ? (
+          <Box my={1}>
             <Box display="flex" alignItems="center">
               <Avatar>
                 <AccountBoxIcon />

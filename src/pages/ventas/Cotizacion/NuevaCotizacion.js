@@ -1,11 +1,11 @@
 import React, { useContext, useState } from 'react';
 import {
     Box, Button, DialogContent, InputAdornment,
-    Grid, Paper,Slider, TextField, Typography 
+    Grid, Paper, TextField, Typography 
 } from '@material-ui/core'
 import useStyles from '../styles';
 //import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
-import MoneyOffIcon from '@material-ui/icons/MoneyOff';
+//import MoneyOffIcon from '@material-ui/icons/MoneyOff';
 import moment from 'moment';
 import 'moment/locale/es';
 import { CREAR_COTIZACION } from "../../../gql/Ventas/cotizaciones";
@@ -13,6 +13,7 @@ import { VentasContext } from '../../../context/Ventas/ventasContext';
 import { useMutation } from '@apollo/client';
 import { generateCodeNumerico } from '../../../config/reuserFunctions';
 import { Alert } from "@material-ui/lab";
+import BackdropComponent from '../../../components/Layouts/BackDrop';
 export default function NuevaCotizacion({ setOpen }) {
     const { setAlert } = useContext(VentasContext);
 
@@ -21,11 +22,17 @@ export default function NuevaCotizacion({ setOpen }) {
     const datosVentas = JSON.parse(localStorage.getItem('DatosVentas'));
     const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
-
+    const {
+        updateTablaVentas,
+        setUpdateTablaVentas,
+        setDatosVentasActual,
+        setVentaRetomada,
+      } = useContext(VentasContext);
     const [ newCotizacion, setNewCotizacion ] = useState([]);
+    const [ loading, setLoading ] = useState(false);
     const [ preciosDescuentos, setPreciosDescuentos ] = useState(
-        { "subTotal": datosVentas.subTotal, "impuestos" : datosVentas.impuestos, 
-        "iva": datosVentas.iva, "ieps": datosVentas.ieps, "total" :  datosVentas.total }
+        { "subTotal": datosVentas?.subTotal, "impuestos" : datosVentas?.impuestos, 
+        "iva": datosVentas?.iva, "ieps": datosVentas?.ieps, "total" :  datosVentas?.total }
         );
     const [ totalDescount, setTotalDescount ] = useState(preciosDescuentos ? preciosDescuentos?.descuento_general?.precio_con_descuento : datosVentas?.total);
     const [ value, setValue ] =  useState(preciosDescuentos?.descuento_general?.porciento ? preciosDescuentos?.descuento_general?.porciento : 0);
@@ -47,6 +54,7 @@ export default function NuevaCotizacion({ setOpen }) {
     const crearCotizacion = async () => {
         try {
             console.log(datosVentas.productos[0].concepto)
+           
             if(!newCotizacion.fecha_vencimiento ){
                 setAlert({
                     message: `Por favor completa los datos necesarios`,
@@ -55,7 +63,8 @@ export default function NuevaCotizacion({ setOpen }) {
                 });
                 return null;
             }else{
-                const registroCotizacion = await CrearCotizacion({
+                setLoading(true);
+                 await CrearCotizacion({
                     variables: {
                         input:{
                             folio: generateCodeNumerico(8), 
@@ -89,11 +98,34 @@ export default function NuevaCotizacion({ setOpen }) {
                         caja: turnoEnCurso.id_caja
                     }
                 });
-                console.log(registroCotizacion);
+                
+                setAlert({
+                    message: `La cotización se realizó correctamente.`,
+                    status: "success",
+                    open: true,
+                });
             }
+            setOpen(false);
+            setLoading(false);
+            localStorage.removeItem("DatosVentas");
+            setUpdateTablaVentas(!updateTablaVentas);
 
+            setDatosVentasActual({
+              subTotal: 0,
+              total: 0,
+              impuestos: 0,
+              iva: 0,
+              ieps: 0,
+              descuento: 0,
+              monedero: 0,
+            });
         } catch (error) {
-            console.log(error);
+           
+            setAlert({
+                message: `Algo salió mal.`,
+                status: "error",
+                open: true,
+            });
             if(error.networkError.result){
 				console.log(error.networkError.result.errors);
 			}else if(error.graphQLErrors){
@@ -103,9 +135,9 @@ export default function NuevaCotizacion({ setOpen }) {
         }
     };
 
-    function valuetext(e) {
+    /* function valuetext(e) {
         return `${e}`;
-    };
+    }; */
 
     const obtenerPorciento = (e) => {
         let newValue = e.target.value;
@@ -145,7 +177,7 @@ export default function NuevaCotizacion({ setOpen }) {
             setTotalDescount(valorText);
             var porcentaje  = (valorText === '') ? 0 : parseFloat(((valorText / ventaSubtotal) * 100).toFixed(6));
             var descuento = (valorText === '') ? 0 : parseFloat((porcentaje).toFixed(6));
-            var precioConDescuento =(valorText === '') ? 0 : (parseFloat(((ventaSubtotal - valorText)+  original_datos_Ventas.impuestos).toFixed(6) ));
+            //var precioConDescuento =(valorText === '') ? 0 : (parseFloat(((ventaSubtotal - valorText)+  original_datos_Ventas.impuestos).toFixed(6) ));
          /*    descuento_general = {
                 "descuento_general_activo": true,
                 "descuento_general": {
@@ -279,7 +311,7 @@ export default function NuevaCotizacion({ setOpen }) {
             unidad_maxima: false,
             utilidad: newUtilidadProduct,
           };
-          console.log('precio_actual_object', precio_actual_object);
+          //console.log('precio_actual_object', precio_actual_object);
           if (product.precio_actual_object.unidad_maxima) {
             //Aqui se calcula la unidad por mayoreo (Cajas y costales)
             precio_actual_object.cantidad_unidad =
@@ -330,7 +362,7 @@ export default function NuevaCotizacion({ setOpen }) {
               product.cantidad_venta
             ).toFixed(2)
           );
-          console.log('descuentoProducto', precio_actual_object.dinero_descontado, valorGranel,  product.cantidad_venta );
+         // console.log('descuentoProducto', precio_actual_object.dinero_descontado, valorGranel,  product.cantidad_venta );
           const descuentoProducto =
             parseFloat(precio_actual_object.dinero_descontado.toFixed(2)) *
             valorGranel *
@@ -351,10 +383,10 @@ export default function NuevaCotizacion({ setOpen }) {
           impuestos += impuestos_total_producto;
           iva += iva_total_producto;
           ieps += ieps_total_producto;
-          descuento += descuentoProducto;
+          //descuento += descuentoProducto;
         }
 
-        console.log(
+    /*     console.log(
             "Total:",total, 
             "SubTotal:",subTotal, 
             "Impuestos:",impuestos, 
@@ -362,7 +394,7 @@ export default function NuevaCotizacion({ setOpen }) {
             "IEPS:", ieps, 
             "Descuento:",descuento, 
             "Productos:",productosFinal
-        );
+        ); */
 
         descuento_general = {
             impuestos,
@@ -394,10 +426,20 @@ export default function NuevaCotizacion({ setOpen }) {
           
       }
     }, [value])
+
+  /*   React.useEffect(() => {
+
+      return () => {
+        <BackdropComponent loading={loading}  />
+      }
+    }, [loading]) */
     
+   
+   
     return (
         <>
             <DialogContent style={{padding: 0}} >
+                <BackdropComponent loading={loading}  />
                 <div className={classes.formInputFlex}>
                     <Box width="25%">
                         <Typography>
@@ -437,7 +479,7 @@ export default function NuevaCotizacion({ setOpen }) {
                             </Select>
                         </FormControl>
                     </Box> */}
-                    <Box width={(datosVentas.cliente?.nombre_cliente) ? "25%" : "24%"}>
+                    <Box width={(datosVentas?.cliente?.nombre_cliente) ? "25%" : "24%"}>
                         <Typography>
                             <b>Cliente:</b>
                         </Typography>
@@ -448,12 +490,12 @@ export default function NuevaCotizacion({ setOpen }) {
                                 disabled={true}
                                 onChange={obtenerDatos}
                                 variant="outlined"
-                                value={datosVentas.cliente?.nombre_cliente ? datosVentas.cliente?.nombre_cliente : "Público General"}
+                                value={datosVentas?.cliente?.nombre_cliente ? datosVentas?.cliente?.nombre_cliente : "Público General"}
                             />
                         </Box>
                     </Box>
                     {
-                        (datosVentas.cliente?.nombre_cliente) ? 
+                        (datosVentas?.cliente?.nombre_cliente) ? 
                         <Box width="12%">
                             <Typography>
                                 <b>No. Cliente:</b>
@@ -487,7 +529,7 @@ export default function NuevaCotizacion({ setOpen }) {
                             />
                         </Box>
                     </Box>
-                    <Box width={(datosVentas.cliente?.nombre_cliente) ? "24%" : "23%"}>
+                    <Box width={(datosVentas?.cliente?.nombre_cliente) ? "24%" : "23%"}>
                         <Typography>
                             <b>Fecha Vencimiento:</b>
                         </Typography>
@@ -608,7 +650,7 @@ export default function NuevaCotizacion({ setOpen }) {
                         <Box p={3} display="flex" flexDirection="flex-end" flexWrap= 'wrap'  width="100%">
                             <Box m={1}  width="30%">
                                 <Typography style={{fontSize: 17}} >
-                                    <b>No. Productos: </b> {datosVentas.productos.length}
+                                    <b>No. Productos: </b> {datosVentas?.productos.length}
                                 </Typography>
                             </Box>
                             <Box m={1} width="32%">

@@ -20,7 +20,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function ListaCotizaciones() {
   const [open, setOpen] = useState(false);
-  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  //const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
 
   const handleClickOpen = () => {
