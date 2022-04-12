@@ -175,6 +175,7 @@ const CotizacionRow = ({cotizacion, index, handleModalCotizacion, setSelected, s
 				return;
 			}
 			localStorage.setItem("DatosVentas", objectToSave);
+			localStorage.setItem("VentaOriginal", objectToSave);
 			handleModalCotizacion();
 			updateDataStorage();	
 		}else{

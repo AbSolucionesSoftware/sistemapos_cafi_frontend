@@ -108,6 +108,7 @@ export default function NuevaCotizacion({ setOpen }) {
             setOpen(false);
             setLoading(false);
             localStorage.removeItem("DatosVentas");
+            localStorage.removeItem("VentaOriginal");
             setUpdateTablaVentas(!updateTablaVentas);
 
             setDatosVentasActual({

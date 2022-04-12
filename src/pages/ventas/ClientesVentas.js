@@ -53,6 +53,12 @@ export default function ClientesVentas() {
       let venta_actual = venta === null ? {} : venta;
       setSelectClient(value);
 
+      if(!value && venta.productos.length === 0){
+        localStorage.removeItem("DatosVentas");
+        localStorage.removeItem("VentaOriginal");
+        return
+      }
+
       // console.log(venta_actual);
       let dataCliente = {
         subTotal:
@@ -71,10 +77,9 @@ export default function ClientesVentas() {
         productos:
           venta_actual.productos?.length > 0 ? venta_actual.productos : [],
       };
-      if (value) {
-        dataCliente = { ...dataCliente, cliente: value };
-      }
+      dataCliente = { ...dataCliente, cliente: value ? value : {} };
       localStorage.setItem("DatosVentas", JSON.stringify(dataCliente));
+      localStorage.setItem("VentaOriginal", JSON.stringify(dataCliente));
       setUpdateClientVenta(!updateClientVenta);
     } catch (error) {
       console.log(error);

@@ -78,6 +78,7 @@ const NavDataCajaUsers = ({ props }) => {
       localStorage.removeItem("sesionCafi");
       localStorage.removeItem("tokenCafi");
       localStorage.removeItem("DatosVentas");
+      localStorage.removeItem("VentaOriginal");
       localStorage.removeItem("turnoEnCurso");
       localStorage.removeItem("ListaEnEspera");
       props.history.push("/");

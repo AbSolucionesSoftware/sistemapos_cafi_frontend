@@ -273,6 +273,7 @@ const RenderLista = ({
 
         //se agregan la venta a localStorage
         localStorage.setItem("DatosVentas", JSON.stringify(datosVenta));
+        localStorage.setItem("VentaOriginal", JSON.stringify(datosVenta));
         setVentaRetomada(datosVenta);
         updateDataStorage();
         handleClose();

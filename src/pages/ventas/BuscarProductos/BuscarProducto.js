@@ -364,6 +364,19 @@ export default function BuscarProducto() {
         productos: productosVentasTemp,
       })
     );
+    localStorage.setItem(
+      "VentaOriginal",
+      JSON.stringify({
+        ...CalculosData,
+        cliente:
+          venta_actual.venta_cliente === true ? venta_actual.cliente : {},
+        venta_cliente:
+          venta_actual.venta_cliente === true
+            ? venta_actual.venta_cliente
+            : false,
+        productos: productosVentasTemp,
+      })
+    );
     setDatosVentasActual({
       ...CalculosData,
     });

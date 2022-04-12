@@ -91,8 +91,9 @@ export default function EliminarProducto({
           parseFloat(new_resta.monederoCalculo),
       };
 
-      if (productosVentasTemp.length === 0) {
+      if (productosVentasTemp.length === 0 && !venta.cliente.nombre_cliente) {
         localStorage.removeItem("DatosVentas");
+        localStorage.removeItem("VentaOriginal");
       } else {
         localStorage.setItem(
           "DatosVentas",

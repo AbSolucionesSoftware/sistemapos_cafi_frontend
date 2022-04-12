@@ -46,6 +46,7 @@ export default function CancelarVenta() {
 
   const cancelarVenta = () => {
     localStorage.removeItem("DatosVentas");
+    localStorage.removeItem("VentaOriginal");
     setUpdateTablaVentas(!updateTablaVentas);
     setUpdateClientVenta(!updateClientVenta);
     setDatosVentasActual({

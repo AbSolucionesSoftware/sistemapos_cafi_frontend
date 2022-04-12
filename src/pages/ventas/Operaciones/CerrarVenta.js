@@ -99,8 +99,13 @@ export default function CerrarVenta() {
   const [efectivoConstante, setEfectivoConstante] = useState(0);
   const [limite_superado, setLimiteSuperado] = useState(false);
 
+  let venta_original = JSON.parse(localStorage.getItem("VentaOriginal"));
+
   const [createVenta] = useMutation(CREAR_VENTA);
   const handleClickOpen = () => {
+    if (open) {
+      localStorage.setItem("DatosVentas", JSON.stringify(venta_original));
+    }
     setOpen(!open);
     setRecalcular(!recalcular);
     //TODO: Guardar la venta original en un context u localstorage por si se quiere resetear el descuento
@@ -111,6 +116,7 @@ export default function CerrarVenta() {
 
     //Limpiar el storage de ventas
     localStorage.removeItem("DatosVentas");
+    localStorage.removeItem("VentaOriginal");
     /* localStorage.setItem(
       "DatosVentas",
       JSON.stringify({
@@ -328,9 +334,9 @@ export default function CerrarVenta() {
     setDescuentoAplicarVenta(valor);
     setDescuentoPorsentajeVenta(0);
     if (valor !== "") {
-      const ventaSubtotal = ventaActual.subTotal;
+      const ventaSubtotal = venta_original.subTotal;
       const descuento =
-        ((ventaSubtotal - parseFloat(valor)) * 100) / ventaActual.subTotal -
+        ((ventaSubtotal - parseFloat(valor)) * 100) / venta_original.subTotal -
         100;
       const positiveDiscount = Math.abs(descuento);
       setDescuentoPorsentajeVenta(parseFloat(positiveDiscount.toFixed(2)));
@@ -342,7 +348,7 @@ export default function CerrarVenta() {
     setDescuentoAplicarVenta(0);
     setDescuentoPorsentajeVenta(valor);
     if (valor !== "") {
-      const ventaSubtotal = ventaActual.subTotal;
+      const ventaSubtotal = venta_original.subTotal;
       const val =
         valor < 10
           ? parseFloat(`0.0${valor.replace(".", "")}`)
@@ -365,17 +371,38 @@ export default function CerrarVenta() {
     //Activar loading
 
     //Obtener productos
-    const productStorage = ventaActual.productos;
+    const productStorage = venta_original.productos;
     //Mapearlos
     for (let i = 0; i < productStorage.length; i++) {
       //Obtener el producto valor i
       const product = productStorage[i];
       let precio_actual_object = {};
       const porsentajeNewDescuento = parseFloat(descuentoPorsentajeVenta);
-      const dineroDescontadoDescuento = parseFloat(
+      /* const dineroDescontadoDescuento = parseFloat(
         product.precio_actual_object.precio_venta *
           parseFloat(`0.${porsentajeNewDescuento}`).toFixed(2)
       );
+ */
+      const dineroDescontadoDescuento =
+        porsentajeNewDescuento > 1
+          ? porsentajeNewDescuento > 10
+            ? parseFloat(
+                (
+                  product.precio_actual_object.precio_venta *
+                  parseFloat(`0.${porsentajeNewDescuento}`)
+                ).toFixed(2)
+              )
+            : parseFloat(
+                (
+                  product.precio_actual_object.precio_venta *
+                  parseFloat(`0.${porsentajeNewDescuento}`)
+                ).toFixed(2) / 10
+              )
+          : parseFloat(
+              (product.precio_actual_object.precio_venta *
+                porsentajeNewDescuento) /
+                100
+            );
       //Calcular los nuevos precios
       const newPrecioVentaProduct = parseFloat(
         (
@@ -385,19 +412,35 @@ export default function CerrarVenta() {
       const newIvaProduct = parseFloat(
         (
           newPrecioVentaProduct *
-          parseFloat(`0.${product.id_producto.precios.iva}`)
+          parseFloat(
+            `0.${
+              product.id_producto.precios.iva < 10
+                ? `0${product.id_producto.precios.iva}`
+                : product.id_producto.precios.iva
+            }`
+          )
         ).toFixed(2)
       );
+
+      /* parseFloat(`0.${product.id_producto.precios.iva < 10 ? `0${product.id_producto.precios.iva}` : product.id_producto.precios.iva}`)
+      parseFloat(`0.${product.id_producto.precios.ieps < 10 ? `0${product.id_producto.precios.ieps}` : product.id_producto.precios.ieps}`) */
+
       const newIepsProduct = parseFloat(
         (
           newPrecioVentaProduct *
-          parseFloat(`0.${product.id_producto.precios.ieps}`)
+          parseFloat(
+            `0.${
+              product.id_producto.precios.ieps < 10
+                ? `0${product.id_producto.precios.ieps}`
+                : product.id_producto.precios.ieps
+            }`
+          )
         ).toFixed(2)
       );
+
       const newPrecioNetoProduct = parseFloat(
         (newPrecioVentaProduct + newIvaProduct + newIepsProduct).toFixed(2)
       );
-
       const newUtilidadProduct = parseFloat(
         (
           ((newPrecioVentaProduct -
@@ -540,7 +583,7 @@ export default function CerrarVenta() {
     const total = venta === null ? 0 : venta.total;
     const subtotal = venta === null ? 0 : venta.subTotal;
     const impuestos = venta === null ? 0 : venta.impuestos;
-    const monederoVenta = venta === null ? 0 : venta.monedero;
+    /* const monederoVenta = venta === null ? 0 : venta.monedero; */
     const cliente = venta && venta.cliente ? venta.cliente : {};
     if (cliente.numero_cliente === undefined) {
       setCreditoActivo(true);
@@ -960,7 +1003,10 @@ export default function CerrarVenta() {
                         </Typography>
                       </Box>
                       <Typography variant="subtitle1">
-                        ${monederoTotal ? formatoMexico(monederoTotal - puntos) : 0.0}
+                        $
+                        {monederoTotal
+                          ? formatoMexico(monederoTotal - puntos)
+                          : 0.0}
                       </Typography>
                     </Box>
 

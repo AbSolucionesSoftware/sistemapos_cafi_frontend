@@ -52,6 +52,7 @@ export default function VentaEnEspera() {
 
   const cleanData = () => {
     localStorage.removeItem("DatosVentas");
+    localStorage.removeItem("VentaOriginal");
     setUpdateTablaVentas(!updateTablaVentas);
     setUpdateClientVenta(!updateClientVenta);
     setDatosVentasActual({
