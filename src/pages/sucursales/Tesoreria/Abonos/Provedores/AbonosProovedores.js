@@ -79,7 +79,7 @@ export default function AbonosProveedores() {
 	};
 
 	return (
-		<div>
+		<div> 
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
@@ -103,23 +103,23 @@ export default function AbonosProveedores() {
 				</AppBar>
 				<Box display='flex' p={2}>
 					<Box minWidth="70%">
-					<form onSubmit={(e) => obtenerBusqueda(e, e.target[0].value)}>
-						<TextField
-							inputRef={searchfilter}
-							fullWidth
-							size="small"
-							variant="outlined"
-							placeholder="Buscar una compra..."
-							InputProps={{
-							endAdornment: (
-								<InputAdornment position="end">
-								<IconButton type="submit" color="primary" size="medium">
-									<SearchOutlined />
-								</IconButton>
-								</InputAdornment>
-							),
-							}}
-						/>
+						<form onSubmit={(e) => obtenerBusqueda(e, e.target[0].value)}>
+							<TextField
+								inputRef={searchfilter}
+								fullWidth
+								size="small"
+								variant="outlined"
+								placeholder="Buscar una compra..."
+								InputProps={{
+								endAdornment: (
+									<InputAdornment position="end">
+									<IconButton type="submit" color="primary" size="medium">
+										<SearchOutlined />
+									</IconButton>
+									</InputAdornment>
+								),
+								}}
+							/>
 						</form>
 					</Box>
 				</Box>

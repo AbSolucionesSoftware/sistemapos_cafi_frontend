@@ -8,23 +8,23 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
-export default function AbonoaRecibir() {
+export default function Liquidar() {
     //listo
     const [open, setOpen] = useState(false);
-
+    
     const handleClick = () => { 
         setOpen(!open);
     } 
 
     return (
-        <div>
+        <Box m={1}>
                 <Button
                     size="large"
                     variant="contained" 
                     color="primary"
                     onClick={handleClick}
                 >
-                   Abonar
+                   Liquidar
                 </Button>
             <Dialog
                 open={open}
@@ -99,6 +99,6 @@ export default function AbonoaRecibir() {
                     </Button>
                 </Box>
             </Dialog>
-        </div>
+        </Box>
     )
 }

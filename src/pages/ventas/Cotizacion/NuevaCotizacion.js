@@ -241,6 +241,7 @@ export default function NuevaCotizacion({ setOpen }) {
             (product.precio_actual_object.precio_venta *
               parseFloat(`0.${porsentajeNewDescuento}`).toFixed(2))
           ); */
+          
           const dineroDescontadoDescuento =  (porsentajeNewDescuento > 1) ? 
            (porsentajeNewDescuento > 10 ) ? 
             parseFloat(

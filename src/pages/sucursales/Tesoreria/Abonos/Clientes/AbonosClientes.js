@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -7,10 +7,11 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { Box, TextField, Grid } from '@material-ui/core';
-
+import { Box, TextField, Grid, IconButton, InputAdornment } from '@material-ui/core';
+import SearchOutlined from '@material-ui/icons/SearchOutlined';
 import TablaAbonos from './Components/TablaAbonos';
-import AbonoaRecibir from './Components/AbonoPercibir';
+import ButtonLiquidar from './Components/Liquidar';
+import ButtonAbonar from './Components/Abonar';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {	
@@ -41,9 +42,15 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function AbonosClientes() {
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
-
+	const [filtro, setFiltro] = useState("");
+	const searchfilter = useRef(null);
 	const handleClickOpen = () => setOpen(!open);
-
+	
+	const obtenerBusqueda = (e, value) => {
+		e.preventDefault();
+		//refetch({ filtro: value, fecha: '' });
+		setFiltro(value);
+	};
 	return (
 		<div>
 			<Button fullWidth onClick={handleClickOpen}>
@@ -58,7 +65,7 @@ export default function AbonosClientes() {
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-                        	Abonos de Clientes
+                        	Abonos de Clientes 
 						</Typography>
 						
                         <Box m={1}>
@@ -69,36 +76,37 @@ export default function AbonosClientes() {
 					</Toolbar>
 				</AppBar>
 				<Grid container>
-					<Box width="50%" p={2}>
-						<Typography>Busqueda por cliente o por cuenta</Typography>
-						<TextField
-							fullWidth
-							size="small"
-							/* error */
-							name="nombre_comercial"
-							id="form-producto-nombre-comercial"
-							variant="outlined"
-							/* value="" */
-							/* helperText="Incorrect entry." */
-							/* onChange={obtenerCampos} */
-						/>
-					</Box>
-					
-					<Box mt={5}>
-						<Button
-							size="large"
-							variant="contained" 
-							color="primary"
-						>
-							Buscar
-						</Button>
-					</Box>
-					<Grid item lg={5}>
-						<Box display="flex" justifyContent="center" mt={4}>
-							<AbonoaRecibir />
+					<Grid item lg={5} >
+						<Box p={2}>
+							<Box minWidth="70%">
+							<form onSubmit={(e) => obtenerBusqueda(e, e.target[0].value)}>
+								<TextField
+									inputRef={searchfilter}
+									fullWidth
+									size="small"
+									variant="outlined"
+									placeholder="Buscar cliente..."
+									InputProps={{
+									endAdornment: (
+										<InputAdornment position="end">
+										<IconButton type="submit" color="primary" size="medium">
+											<SearchOutlined />
+										</IconButton>
+										</InputAdornment>
+									),
+									}}
+								/>
+							</form>
+						</Box>
+					</Box>			
+					</Grid>
+					<Grid item lg={7}>
+						<Box  mt={1} mr={2} display="flex" justifyContent="flex-end" alignContent="space-between">
+							<ButtonLiquidar />
+							<ButtonAbonar />
 						</Box>
 					</Grid>
-				</Grid>
+				</Grid> 		
 				<Box p={2}>
 					<TablaAbonos />
 				</Box>

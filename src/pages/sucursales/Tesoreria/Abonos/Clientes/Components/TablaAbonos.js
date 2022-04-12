@@ -14,33 +14,23 @@ import Checkbox from '@material-ui/core/Checkbox';
 import DetallesCuenta from './DetalleCuenta/DetallesCuenta';
 import LiquidarCuenta from './LiquidarCuenta';
 
-function createData(name, calories, fat, carbs, protein) {
-	return { name, calories, fat, carbs, protein };
+function createData(folio, fecha, cantidadProductos, totalVenta, totalAbonado, faltaPagar) {
+	return { folio, fecha, cantidadProductos, totalVenta, totalAbonado, faltaPagar };
 }
 
 const rows = [
-	createData('Cupcake', 305, 3.7, 67, 4.3),
-	createData('Donut', 452, 25.0, 51, 4.9),
-	createData('Eclair', 262, 16.0, 24, 6.0),
-	createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-	createData('Gingerbread', 356, 16.0, 49, 3.9),
-	createData('Honeycomb', 408, 3.2, 87, 6.5),
-	createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-	createData('Jelly Bean', 375, 0.0, 94, 0.0),
-	createData('KitKat', 518, 26.0, 65, 7.0),
-	createData('Lollipop', 392, 0.2, 98, 0.0),
-	createData('Marshmallow', 318, 0, 81, 2.0),
-	createData('Nougat', 360, 19.0, 9, 37.0),
-	createData('Oreo', 437, 18.0, 63, 4.0)
+	createData('2343243', 45555, 5, 2589.65, 1000, 1589.65),
+	
 ];
 
 const headCells = [
-	{ id: 'name', numeric: false, disablePadding: true, label: 'Cliente' },
-	{ id: 'calories', numeric: true, disablePadding: false, label: 'Abondado' },
-	{ id: 'fat', numeric: true, disablePadding: false, label: 'Restante' },
-	{ id: 'abono', numeric: true, disablePadding: false, label: 'Abono a percibir' },
-	{ id: 'carbs', numeric: true, disablePadding: false, label: 'Detalles' },
-	{ id: 'protein', numeric: true, disablePadding: false, label: 'Liquidar' }
+	{ id: 'folio', numeric: false, disablePadding: true, label: 'Folio' },
+	{ id: 'fecha', numeric: true, disablePadding: false, label: 'Fecha' },
+	{ id: 'cantidadProductos', numeric: true, disablePadding: false, label: 'Cantidad de productos' },
+	{ id: 'totalVenta', numeric: true, disablePadding: false, label: 'Total venta' },
+	{ id: 'totalAbonado', numeric: true, disablePadding: false, label: 'Pagado' },
+	{ id: 'faltaPagar', numeric: true, disablePadding: false, label: 'Falta por pagar' },
+	
 ];
 
 function EnhancedTableHead(props) {
@@ -108,8 +98,8 @@ const useStyles = makeStyles((theme) => ({
 export default function TablaAbonos() {
 	const classes = useStyles();
 	const [ selected, setSelected ] = useState([]);
-	const [ page, setPage ] = useState(0);
-	const [ rowsPerPage, setRowsPerPage ] = useState(10);
+	const [ page ] = useState(0);
+	const [ rowsPerPage ] = useState(10);
 
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {
@@ -137,14 +127,14 @@ export default function TablaAbonos() {
 		setSelected(newSelected);
 	};
 
-	const handleChangePage = (event, newPage) => {
+/* 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
 	};
 
 	const handleChangeRowsPerPage = (event) => {
 		setRowsPerPage(parseInt(event.target.value, 10));
 		setPage(0);
-	};
+	}; */
 
 	const isSelected = (name) => selected.indexOf(name) !== -1;
 
@@ -188,16 +178,17 @@ export default function TablaAbonos() {
 											/>
 										</TableCell>
 										<TableCell component="th" id={labelId} scope="row" padding="none">
-											{row.name}
+											{row.folio}
 										</TableCell>
-										<TableCell align="right">{row.calories}</TableCell>
-										<TableCell align="right">{row.fat}</TableCell>
-										<TableCell align="right">{row.carbs}</TableCell>
+										<TableCell align="right">{row.fecha}</TableCell>
+										<TableCell align="right">{row.cantidadProductos}</TableCell>
+										<TableCell align="right">{row.totalVenta}</TableCell>
 										<TableCell align="right">
-											<DetallesCuenta />
+											{/* <DetallesCuenta /> */}
+											{row.totalAbonado}
 										</TableCell>
 										<TableCell align="right">
-											<LiquidarCuenta />
+											{row.faltaPagar}
 										</TableCell>
 									</TableRow>
 								);
@@ -210,7 +201,7 @@ export default function TablaAbonos() {
 						</TableBody>
 					</Table>
 				</TableContainer>
-				<TablePagination
+				{/* <TablePagination
                     rowsPerPageOptions={[]}
 					component="div"
 					count={rows.length}
@@ -218,7 +209,7 @@ export default function TablaAbonos() {
 					page={page}
 					onChangePage={handleChangePage}
 					onChangeRowsPerPage={handleChangeRowsPerPage}
-				/>
+				/> */}
 			</Paper>
 		</div>
 	);
