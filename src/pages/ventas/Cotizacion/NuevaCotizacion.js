@@ -108,6 +108,7 @@ export default function NuevaCotizacion({ setOpen }) {
             setOpen(false);
             setLoading(false);
             localStorage.removeItem("DatosVentas");
+            localStorage.removeItem("VentaOriginal");
             setUpdateTablaVentas(!updateTablaVentas);
 
             setDatosVentasActual({
@@ -241,6 +242,7 @@ export default function NuevaCotizacion({ setOpen }) {
             (product.precio_actual_object.precio_venta *
               parseFloat(`0.${porsentajeNewDescuento}`).toFixed(2))
           ); */
+          
           const dineroDescontadoDescuento =  (porsentajeNewDescuento > 1) ? 
            (porsentajeNewDescuento > 10 ) ? 
             parseFloat(

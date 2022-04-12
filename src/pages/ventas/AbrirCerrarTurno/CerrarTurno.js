@@ -167,12 +167,14 @@ function CerrarTurno(props) {
       localStorage.removeItem("turnoEnCurso");
       localStorage.removeItem("ListaEnEspera");
       localStorage.removeItem("DatosVentas");
+      localStorage.removeItem("VentaOriginal");
       props.history.push("/");
     } else {
       localStorage.setItem("sesionCafi", JSON.stringify(arraySesion));
       localStorage.removeItem("DatosVentas");
       localStorage.removeItem("ListaEnEspera");
       localStorage.removeItem("turnoEnCurso");
+      localStorage.removeItem("VentaOriginal");
     }
   };
 

@@ -45,8 +45,8 @@ export default function CancelarFolio({
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
   const [values, setValues] = useState({
+    observaciones: "",
     devolucion_efectivo: false,
-    devolucion_inventario: true,
     devolucion_credito: false,
   });
   const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
@@ -106,7 +106,7 @@ export default function CancelarFolio({
       setLoading(false);
       setValues({
         devolucion_efectivo: false,
-        devolucion_inventario: true,
+        observaciones: "",
         devolucion_credito: false,
       });
       refetch();
@@ -211,15 +211,15 @@ export default function CancelarFolio({
         <DialogContent>
           <Box>
             <FormControlLabel
-              style={{ display: "block" }}
               control={
                 <Checkbox
-                  checked={values.devolucion_inventario}
+                  checked={values.devolucion_credito}
                   onChange={handleChangeChecks}
-                  name="devolucion_inventario"
+                  name="devolucion_credito"
+                  disabled={!venta.credito}
                 />
               }
-              label="Devolver a inventario"
+              label="Realizar devolucion de crédito"
             />
             <FormControlLabel
               control={
@@ -370,16 +370,16 @@ export default function CancelarFolio({
                 </Grid>
               </Container>
             </Box>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={values.devolucion_credito}
-                  onChange={handleChangeChecks}
-                  name="devolucion_credito"
-                  disabled={!venta.credito}
-                />
+            <TextField
+              label="Observaciones"
+              variant="outlined"
+              fullWidth
+              multiline
+              rows={3}
+              value={values.observaciones}
+              onChange={(e) =>
+                setValues({ ...values, observaciones: e.target.value })
               }
-              label="Realizar devolucion de crédito"
             />
           </Box>
         </DialogContent>
