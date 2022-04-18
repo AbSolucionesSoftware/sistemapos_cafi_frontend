@@ -26,7 +26,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 import { Close, Done, Edit } from "@material-ui/icons";
 import { FcBusinessman, FcSalesPerformance } from "react-icons/fc";
 import { formatoMexico, numerosRandom } from "../../../config/reuserFunctions";
-import { formaPago } from "../../../pages/sucursales/Facturacion/catalogos";
+import { formaPago } from "../../sucursales/Facturacion/catalogos";
 import { CREAR_VENTA } from "../../../gql/Ventas/ventas_generales";
 import { useMutation } from "@apollo/client";
 import moment from "moment";
@@ -555,6 +555,7 @@ export default function CerrarVenta() {
         descuento,
       })
     );
+    setDescuentoVenta(descuento);
     setRecalcular(!recalcular);
     setOpenModalDescuento(!openModalDescuento);
   };
@@ -808,8 +809,8 @@ export default function CerrarVenta() {
                 className={classes.iconSizeDialogsPequeno}
               />
             </Box>
-            <Box mx={1} flexGrow={1}>
-              <Typography variant="h4">Ticket</Typography>
+            <Box mx={2} flexGrow={1}>
+              <Typography variant="h4">Cerrar Venta</Typography>
             </Box>
             <Button
               variant="contained"

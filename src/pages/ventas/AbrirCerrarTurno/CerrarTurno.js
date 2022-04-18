@@ -8,6 +8,7 @@ import {
   DialogContent,
   FormControl,
   Grid,
+  InputAdornment,
   MenuItem,
   Select,
   TextField,
@@ -25,7 +26,7 @@ moment.locale("es");
 function CerrarTurno(props) {
   const { handleClickOpen, setLoading, loading } = props;
   const [CrearRegistroDeTurno] = useMutation(REGISTRAR_TURNOS);
-  const { setAlert, setTurnoActivo, ubicacionTurno } = useContext(
+  const { setAlert, /* setTurnoActivo, */ ubicacionTurno } = useContext(
     VentasContext
   );
   const [error, setError] = useState(false);
@@ -204,10 +205,9 @@ function CerrarTurno(props) {
         });
 
         actualizarTurnoSesion(ubicacionTurno);
-
-        setLoading(false);
-        handleClickOpen();
-        setTurnoActivo(true);
+        /* setLoading(false); */
+       /*  setTurnoActivo(true); */
+        window.location.reload();
       }
     } catch (error) {
       setAlert({
@@ -241,7 +241,11 @@ function CerrarTurno(props) {
               size="small"
               inputProps={{ min: 0 }}
               type="number"
-              defaultValue={0}
+              /* defaultValue={0} */
+              placeholder="0.00"
+              InputProps={{
+                startAdornment: <InputAdornment position="start">$</InputAdornment>
+              }}
               color="primary"
               onChange={obtenerCamposMontos}
             />
@@ -255,7 +259,11 @@ function CerrarTurno(props) {
               size="small"
               inputProps={{ min: 0 }}
               type="number"
-              defaultValue={0}
+              /* defaultValue={0} */
+              placeholder="0.00"
+              InputProps={{
+                startAdornment: <InputAdornment position="start">$</InputAdornment>
+              }}
               color="primary"
               onChange={obtenerCamposMontos}
             />
@@ -272,7 +280,11 @@ function CerrarTurno(props) {
               size="small"
               inputProps={{ min: 0 }}
               type="number"
-              defaultValue={0}
+              /* defaultValue={0} */
+              placeholder="0.00"
+              InputProps={{
+                startAdornment: <InputAdornment position="start">$</InputAdornment>
+              }}
               color="primary"
               onChange={obtenerCamposMontos}
             />
@@ -289,7 +301,11 @@ function CerrarTurno(props) {
               size="small"
               inputProps={{ min: 0 }}
               type="number"
-              defaultValue={0}
+              /* defaultValue={0} */
+              placeholder="0.00"
+              InputProps={{
+                startAdornment: <InputAdornment position="start">$</InputAdornment>
+              }}
               color="primary"
               onChange={obtenerCamposMontos}
             />
@@ -303,7 +319,11 @@ function CerrarTurno(props) {
               size="small"
               inputProps={{ min: 0 }}
               type="number"
-              defaultValue={0}
+              /* defaultValue={0} */
+              placeholder="0.00"
+              InputProps={{
+                startAdornment: <InputAdornment position="start">$</InputAdornment>
+              }}
               color="primary"
               onChange={obtenerCamposMontos}
             />
@@ -317,7 +337,11 @@ function CerrarTurno(props) {
               size="small"
               inputProps={{ min: 0 }}
               type="number"
-              defaultValue={0}
+              /* defaultValue={0} */
+              placeholder="0.00"
+              InputProps={{
+                startAdornment: <InputAdornment position="start">$</InputAdornment>
+              }}
               color="primary"
               onChange={obtenerCamposMontos}
             />
@@ -331,7 +355,11 @@ function CerrarTurno(props) {
               size="small"
               inputProps={{ min: 0 }}
               type="number"
-              defaultValue={0}
+              /* defaultValue={0} */
+              placeholder="0.00"
+              InputProps={{
+                startAdornment: <InputAdornment position="start">$</InputAdornment>
+              }}
               color="primary"
               onChange={obtenerCamposMontos}
             />
@@ -347,7 +375,11 @@ function CerrarTurno(props) {
               size="small"
               inputProps={{ min: 0 }}
               type="number"
-              defaultValue={0}
+              /* defaultValue={0} */
+              placeholder="0.00"
+              InputProps={{
+                startAdornment: <InputAdornment position="start">$</InputAdornment>
+              }}
               color="primary"
               onChange={obtenerCamposMontos}
             />

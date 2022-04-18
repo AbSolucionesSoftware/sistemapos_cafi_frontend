@@ -4,9 +4,9 @@ import Abonos from "../../pages/ventas/Abonos/Abonos";
 import BuscarProducto from "../../pages/ventas/BuscarProductos/BuscarProducto";
 import ClientesVentas from "../../pages/ventas/ClientesVentas/ClientesVentas";
 import Cotizacion from "../../pages/ventas/Cotizacion/Cotizacion";
-import AbrirCajon from "../../pages/ventas/Operaciones/AbrirCajon";
+/* import AbrirCajon from "../../pages/ventas/Operaciones/AbrirCajon"; */
 import CancelarVenta from "../../pages/ventas/Operaciones/CancelarVenta";
-import CerrarVenta from "../../pages/ventas/Operaciones/CerrarVenta";
+import CerrarVenta from "../../pages/ventas/CerrarVenta/CerrarVenta";
 import ConsultarPrecio from "../../pages/ventas/Operaciones/ConsultarPrecio";
 import PreciosProductos from "../../pages/ventas/Operaciones/PreciosProducto";
 import VentasEspera from "../../pages/ventas/VentasEspera/VentasEspera";
