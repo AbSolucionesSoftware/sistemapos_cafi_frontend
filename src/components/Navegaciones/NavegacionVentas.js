@@ -21,10 +21,7 @@ import ListaCotizaciones from "../../pages/ventas/Cotizacion/ListaCotizaciones";
 function NavegacionVentas(props) {
   const {
     alert,
-    setAlert,
-    abrirTurnosDialog,
-    setAbrirTurnosDialog,
-    setUbicacionTurno,
+    setAlert
   } = useContext(VentasContext);
 
   const {
@@ -38,11 +35,11 @@ function NavegacionVentas(props) {
   const classes = useStyles();
   const [value, setValue] = useState("venta-general");
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-  const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
+  /* const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso")); */
 
   moment.locale("es");
 
-  const signOut = () => {
+  /* const signOut = () => {
     if (sesion.turno_en_caja_activo === true && turnoEnCurso) {
       setAbrirTurnosDialog(!abrirTurnosDialog);
       setUbicacionTurno("SESION");
@@ -55,7 +52,7 @@ function NavegacionVentas(props) {
       localStorage.removeItem("ListaEnEspera");
       props.history.push("/");
     }
-  };
+  }; */
 
   function Mi_función(e) {
     if (e.keyCode === 112) {

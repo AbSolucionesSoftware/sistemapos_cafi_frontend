@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import useStyles from "../styles";
 
 import {
@@ -9,6 +9,7 @@ import {
   DialogContent,
   FormControl,
   Grid,
+  InputAdornment,
   MenuItem,
   Select,
   TextField,
@@ -29,11 +30,11 @@ export default function AbrirTurno({
   type,
   setLoading,
 }) {
-  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-  const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
+  let sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  let turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
 
   const [CrearRegistroDeTurno] = useMutation(REGISTRAR_TURNOS);
-  const { setTurnoActivo, setAlert } = useContext(VentasContext);
+  const { /* setTurnoActivo,  */setAlert } = useContext(VentasContext);
 
   const [error, setError] = useState(false);
   const [abrirTurno, setAbrirTurno] = useState([]);
@@ -72,10 +73,6 @@ export default function AbrirTurno({
     turno_en_caja_activo: true,
     _id: sesion._id,
   };
-
-  useEffect(() => {
-    cajas.refetch();
-  }, [loading]);
 
   const enviarDatos = async () => {
     setLoading(true);
@@ -183,7 +180,6 @@ export default function AbrirTurno({
 
         if (variableTurnoAbierto.data.crearRegistroDeTurno === null) {
           setLoading(false);
-          cajas.refetch();
           setAlert({
             message: `Lo sentimos esta caja ya esta en uso`,
             status: "error",
@@ -195,16 +191,16 @@ export default function AbrirTurno({
             JSON.stringify(variableTurnoAbierto.data.crearRegistroDeTurno)
           );
           localStorage.setItem("sesionCafi", JSON.stringify(arraySesion));
-          setTurnoActivo(true);
+          /* setTurnoActivo(true); */
           setAlert({
             message: `Turno abierto con exito`,
             status: "success",
             open: true,
           });
-          cajas.refetch();
-          if (type !== "FRENTE") {
+          /* if (type !== "FRENTE") {
             handleClickOpen();
-          }
+          } */
+          window.location.reload();
         }
       }
     } catch (error) {
@@ -214,9 +210,9 @@ export default function AbrirTurno({
         status: "error",
         open: true,
       });
-      if (type !== "FRENTE") {
+      /* if (type !== "FRENTE") {
         handleClickOpen();
-      }
+      } */
     }
   };
 
@@ -323,6 +319,10 @@ export default function AbrirTurno({
               id="form-producto-codigo-barras"
               variant="outlined"
               error={error && !abrirTurno.monto_abrir}
+              placeholder="0.00"
+              InputProps={{
+                startAdornment: <InputAdornment position="start">$</InputAdornment>
+              }}
             />
           </Grid>
           <Grid item xs={12}>

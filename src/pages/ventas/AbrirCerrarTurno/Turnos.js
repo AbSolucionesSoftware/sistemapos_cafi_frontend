@@ -30,7 +30,7 @@ export default function Turnos() {
   const {
     abrirTurnosDialog,
     setAbrirTurnosDialog,
-    setTurnoActivo,
+    /* setTurnoActivo, */
   } = useContext(VentasContext);
   const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
   const [loading, setLoading] = useState(false);
@@ -38,7 +38,7 @@ export default function Turnos() {
 
   const handleClickOpen = () => {
     setAbrirTurnosDialog(!abrirTurnosDialog);
-    setTurnoActivo(true);
+    /* setTurnoActivo(true); */
   };
 
   window.addEventListener("keydown", Mi_función);

@@ -41,7 +41,8 @@ export default function ConsultarPrecio() {
   const client = useApolloClient();
 
   const obtenerProducto = async () => {
-    setDataQuery({ ...dataQuery, loading: true });
+    try {
+      setDataQuery({ ...dataQuery, loading: true });
     const response = await client.query({
       query: CONSULTA_PRODUCTO_UNITARIO,
       variables: {
@@ -53,6 +54,9 @@ export default function ConsultarPrecio() {
     });
     const { loading, data, error } = response;
     setDataQuery({ data, loading, error });
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   let productoBase = null;
