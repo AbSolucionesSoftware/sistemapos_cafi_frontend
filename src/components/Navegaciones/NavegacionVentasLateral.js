@@ -7,7 +7,7 @@ import Cotizacion from "../../pages/ventas/Cotizacion/Cotizacion";
 /* import AbrirCajon from "../../pages/ventas/Operaciones/AbrirCajon"; */
 import CancelarVenta from "../../pages/ventas/Operaciones/CancelarVenta";
 import CerrarVenta from "../../pages/ventas/CerrarVenta/CerrarVenta";
-import ConsultarPrecio from "../../pages/ventas/Operaciones/ConsultarPrecio";
+import ConsultarPrecio from "../../pages/ventas/Operaciones/ConsultarPrecio/ConsultarPrecio";
 import PreciosProductos from "../../pages/ventas/Operaciones/PreciosProducto";
 import VentasEspera from "../../pages/ventas/VentasEspera/VentasEspera";
 import VentasRealizadas from "../../pages/ventas/VentasRealizadas/VentasRealizadas";

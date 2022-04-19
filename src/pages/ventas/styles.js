@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
         width: 50,
     },
     containerImagenesProducto:{
-        height: "200px",
+        height: "150px",
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center'
