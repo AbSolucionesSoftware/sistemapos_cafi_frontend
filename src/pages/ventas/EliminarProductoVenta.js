@@ -4,7 +4,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
-import { CircularProgress, IconButton } from "@material-ui/core";
+import { IconButton } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
 import { VentasContext } from "../../context/Ventas/ventasContext";
 
@@ -17,16 +17,8 @@ const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function EliminarProducto({
-  producto,
-  setNewProductoVentas,
-  newProductoVentas,
-  setDatosVentasActual,
-}) {
+export default function EliminarProducto({ producto, setDatosVentasActual }) {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  /* const [ alert, setAlert ] = useState({ message: '', status: '', open: false }); */
-
   const { updateTablaVentas, setUpdateTablaVentas } = useContext(VentasContext);
 
   const handleToggleModal = () => setOpen(!open);
@@ -51,10 +43,8 @@ export default function EliminarProducto({
         : venta;
 
     const producto_encontrado = await findProductArray(producto);
-    console.log("llego");
     if (producto_encontrado.found) {
       const { cantidad_venta, ...newP } = producto;
-      console.log("llego");
 
       // newP.precio_actual_producto = newP.descuento_activo ? newP.descuento.precio_con_descuento :  newP.precio;
       //Sacar los impuestos que se van a restar
@@ -135,13 +125,7 @@ export default function EliminarProducto({
           <Button onClick={() => handleToggleModal()} color="inherit">
             Cancelar
           </Button>
-          <Button
-            onClick={() => eliminarProductoBD()}
-            color="secondary"
-            startIcon={
-              loading ? <CircularProgress color="inherit" size={20} /> : null
-            }
-          >
+          <Button onClick={() => eliminarProductoBD()} color="secondary">
             Eliminar
           </Button>
         </DialogActions>

@@ -40,9 +40,11 @@ export default function ClientesVentas() {
         setClientesVentas(datosVentas.cliente);
       } else {
         setSelectClient(null);
+        setClientesVentas([]);
       }
     } else {
       setSelectClient(null);
+      setClientesVentas([]);
     }
     refetch();
   }, [refetch, updateClientVenta]);
@@ -53,10 +55,10 @@ export default function ClientesVentas() {
       let venta_actual = venta === null ? {} : venta;
       setSelectClient(value);
 
-      if(!value && venta.productos.length === 0){
+      if (!value && venta.productos.length === 0) {
         localStorage.removeItem("DatosVentas");
-        localStorage.removeItem("VentaOriginal");
-        return
+        setUpdateClientVenta(!updateClientVenta);
+        return;
       }
 
       // console.log(venta_actual);
@@ -79,7 +81,6 @@ export default function ClientesVentas() {
       };
       dataCliente = { ...dataCliente, cliente: value ? value : {} };
       localStorage.setItem("DatosVentas", JSON.stringify(dataCliente));
-      localStorage.setItem("VentaOriginal", JSON.stringify(dataCliente));
       setUpdateClientVenta(!updateClientVenta);
     } catch (error) {
       console.log(error);

@@ -186,6 +186,11 @@ const RenderTableRows = ({
   }, [value]);
 
   const calculateNewPricingAmount = (cantidad) => {
+    if(producto.concepto === "medidas"){
+      if(cantidad > producto.cantidad)return
+    }else{
+      if(cantidad > producto.inventario_general[0].cantidad_existente) return;
+    }
     try {
       setTempAmount(cantidad);
       setNewCantidadProduct(cantidad);
@@ -385,6 +390,7 @@ const RenderTableRows = ({
         <TableCell>
           <Input
             inputRef={textfield}
+            onClick={(e) => e.stopPropagation()}
             onChange={(e) => calculateNewPricingAmount(e.target.value)}
             value={tempAmount}
             type="number"
@@ -392,7 +398,7 @@ const RenderTableRows = ({
             inputProps={{
               min: 1,
               max:
-                producto.concepto === "medida"
+                producto.concepto === "medidas"
                   ? producto.cantidad
                   : producto.inventario_general.map(
                       (existencia) => `${existencia.cantidad_existente}`
