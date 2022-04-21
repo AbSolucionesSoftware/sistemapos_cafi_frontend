@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
-  AppBar, 
+  AppBar,
   Box,
   Button,
   Dialog,
@@ -110,29 +110,11 @@ export default function Cotizacion({ type }) {
                 <FcCurrencyExchange style={{ fontSize: 38 }} />
               </Box>
               <Box p={1} display={"flex"} alignItems={"center"}>
-                <Typography style={{ fontSize: 18 }}>Nueva Cotización</Typography>
+                <Typography style={{ fontSize: 18 }}>
+                  Nueva Cotización
+                </Typography>
               </Box>
             </Box>
-           {/*  <Box mt={2} textAlign="right">
-              <Box textAlign="right">
-                <Typography variant="caption">
-                  {moment().format("L")}
-                </Typography>
-              </Box>
-              <Box textAlign="right">
-                <Typography variant="caption">
-                  {moment().format("LT")} hrs.
-                </Typography>
-              </Box>
-              <Box textAlign="right">
-                <Typography variant="caption">{sesion?.nombre}</Typography>
-              </Box>
-              <Box textAlign="right">
-                <Typography variant="caption">
-                  Caja {!turnoEnCurso ? null : turnoEnCurso.numero_caja}
-                </Typography>
-              </Box>
-            </Box> */}
             <Box p={2}>
               <Button
                 variant="contained"
@@ -145,9 +127,7 @@ export default function Cotizacion({ type }) {
             </Box>
           </Box>
         </AppBar>
-        <Box p={2}>
-          <NuevaCotizacion setOpen={setOpen} />
-        </Box>
+        <NuevaCotizacion setOpen={setOpen} />
       </Dialog>
     </>
   );

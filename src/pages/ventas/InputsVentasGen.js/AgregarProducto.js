@@ -21,10 +21,10 @@ import ProductoConMedidas from "./ProductoConMedidas";
 export default function AgregarProductoVenta({ loading, setLoading }) {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const classes = useStyles();
-  const [granelBase, setGranelBase] = useState({
+  /* const [granelBase, setGranelBase] = useState({
     granel: false,
     valor: 0,
-  });
+  }); */
 
   const {
     updateTablaVentas,
@@ -55,10 +55,6 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
   const [consultaBase, setConsultaBase] = useState(false);
 
   useEffect(() => {
-    setGranelBase({
-      granel: false,
-      valor: 0,
-    });
     const venta = JSON.parse(localStorage.getItem("DatosVentas"));
     if (venta !== null) {
       setDatosVentasActual({
@@ -90,20 +86,28 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
           loading: false,
           error: undefined,
         };
+        let granel_base = {
+          granel: false,
+          valor: 0,
+        };
         if (data.length > 1) {
           let data_operation = isNaN(data[0]) ? data[1] : data[0];
           let data_key = isNaN(data[0]) ? data[0] : data[1];
-          setGranelBase({
+          /* setGranelBase({
             granel: true,
             valor: parseFloat(data_operation),
-          });
+          }); */
+          granel_base = {
+            granel: true,
+            valor: parseFloat(data_operation),
+          };
           datosQuery = await obtenerProductos(data_key);
           setConsultaBase(!consultaBase);
         } else {
-          setGranelBase({
+          /* setGranelBase({
             granel: false,
             valor: 0,
-          });
+          }); */
           datosQuery = await obtenerProductos(input_value);
           setConsultaBase(!consultaBase);
         }
@@ -130,7 +134,7 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
           if (productosBase !== null) {
             if (productosBase.length === 1) {
               if (productosBase[0].cantidad !== null) {
-                agregarProductos(productosBase[0]);
+                agregarProductos(productosBase[0], granel_base);
               } else {
                 /* setOpen(true); */
                 setAlert({
@@ -160,7 +164,13 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
     }
   };
 
-  const agregarProductos = async (producto) => {
+  const agregarProductos = async (producto, granel) => {
+    let granel_base = granel
+      ? granel
+      : {
+          granel: false,
+          valor: 0,
+        };
     let venta = JSON.parse(localStorage.getItem("DatosVentas"));
     let productosVentas = venta === null ? [] : venta.productos;
     let venta_actual = venta === null ? [] : venta;
@@ -201,7 +211,7 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
       const new_prices = await calculatePrices2({
         newP,
         cantidad: 0,
-        granel: granelBase,
+        granel: granel_base,
         origen: "Ventas1",
         precio_boolean: false,
       });
@@ -221,8 +231,8 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
       );
 
       // console.log(new_prices.newP);
-
-      productosVentasTemp.push(new_prices.newP);
+      //agregar producto al inicio del arreglo
+      productosVentasTemp.splice(0, 0, new_prices.newP);
 
       CalculosData = {
         subTotal:
@@ -376,7 +386,7 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
         const new_prices = await calculatePrices2({
           newP,
           cantidad: 0,
-          granel: granelBase,
+          granel: granel_base,
           origen: "Ventas2",
         });
 
@@ -452,6 +462,10 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
     setUpdateTablaVentas(!updateTablaVentas);
     setProducto([]);
     setOpenMedidas(false);
+    /* setGranelBase({
+      granel: false,
+      valor: 0,
+    }); */
   };
 
   return (

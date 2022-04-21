@@ -73,7 +73,7 @@ export default function VentasGenerales() {
                       <AiOutlineFieldNumber style={{ fontSize: 19 }} />
                       <Box mr={1} />
                       <Typography variant="subtitle1">
-                        Cliente.:{" "}
+                        No. Cliente:{" "}
                         <b style={{ fontSize: 16 }}>
                           {clientesVentas ? clientesVentas.numero_cliente : ""}
                         </b>
@@ -85,7 +85,7 @@ export default function VentasGenerales() {
                       <FaBarcode style={{ fontSize: 19 }} />
                       <Box mr={1} />
                       <Typography variant="subtitle1">
-                        Clave Clte.:{" "}
+                        Clave Cliente:{" "}
                         <b style={{ fontSize: 16 }}>
                           {clientesVentas ? clientesVentas.clave_cliente : ""}
                         </b>
@@ -121,26 +121,6 @@ export default function VentasGenerales() {
                       </Typography>
                     </Box>
                   </Grid>
-                  {/* <Grid item md={6} xs={12}>
-                     <Box
-                    flexDirection="row-reverse"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Box>
-                      <Typography variant="subtitle1">
-                        Descs.:{" "}
-                        <b style={{ fontSize: 16 }}>
-                          {clientesVentas ? clientesVentas.numero_descuento : 0}
-                          %
-                        </b>
-                      </Typography>
-                    </Box>
-                    <Box mt={0.5} mr={1}>
-                      <AiOutlineFieldNumber style={{ fontSize: 22 }} />
-                    </Box>
-                  </Box> 
-                  </Grid>*/}
                 </Grid>
               </Box>
             </Grid>
@@ -250,9 +230,6 @@ export default function VentasGenerales() {
                   : 0}
               </b>
             </Typography>
-            {/* <Box mt={0.5} mr={1}>
-              <MonetizationOnIcon style={{ fontSize: 37, color: "green" }} />
-            </Box> */}
           </Box>
         </Paper>
       </Box>

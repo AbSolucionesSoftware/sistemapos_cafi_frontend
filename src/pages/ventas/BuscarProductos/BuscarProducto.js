@@ -152,8 +152,8 @@ export default function BuscarProducto() {
       );
 
       //   console.log(new_prices.newP);
-
-      productosVentasTemp.push(new_prices.newP);
+      //agregar producto al inicio del arreglo
+      productosVentasTemp.splice(0, 0, new_prices.newP);
 
       CalculosData = {
         subTotal:

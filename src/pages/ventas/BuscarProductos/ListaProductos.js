@@ -153,7 +153,7 @@ function RowsProductos({ producto, handleTableSelect, productoSeleccionado }) {
         return <TableCell align="center">{"N/A"}</TableCell>;
       }
     };
-    let ComponenteColor = () => {
+    /* let ComponenteColor = () => {
       if (producto.color) {
         return (
           <TableCell>
@@ -170,15 +170,15 @@ function RowsProductos({ producto, handleTableSelect, productoSeleccionado }) {
       } else {
         return <TableCell align="center">{"N/A"}</TableCell>;
       }
-    };
+    }; */
 
-    let ComponenteMedida = () => {
+    /* let ComponenteMedida = () => {
       if (producto.medida) {
         return <TableCell align="center">{producto.medida.talla}</TableCell>;
       } else {
         return <TableCell align="center">{"N/A"}</TableCell>;
       }
-    };
+    }; */
 
     let ComponentCantidad = () => {
       let cantidad = "";

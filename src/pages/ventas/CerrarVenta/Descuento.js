@@ -127,7 +127,7 @@ export default function DescuentoVenta({
  */
       const dineroDescontadoDescuento =
         porsentajeNewDescuento > 1
-          ? porsentajeNewDescuento > 10
+          ? porsentajeNewDescuento >= 10
             ? parseFloat(
                 (
                   product.precio_actual_object.precio_venta *
