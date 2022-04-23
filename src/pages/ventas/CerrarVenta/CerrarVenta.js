@@ -260,7 +260,7 @@ export default function CerrarVenta() {
       //Enviar los datos
 
       console.log(ventaFinal);
-      /* await createVenta({
+      await createVenta({
         variables: {
           input: ventaFinal,
           empresa: sesion.empresa,
@@ -268,7 +268,7 @@ export default function CerrarVenta() {
           usuario: usuario._id,
           caja: sesion.id_caja,
         },
-      }); */
+      });
       //Quitar loading
       setOpenBackDrop(false);
       setOpen(false);
