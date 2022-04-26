@@ -4,6 +4,7 @@ import { Box, Divider, Grid } from "@material-ui/core";
 import { TextField, Typography } from "@material-ui/core";
 import { ClienteCtx } from "../../../../context/Catalogos/crearClienteCtx";
 import { Alert } from "@material-ui/lab";
+import { formatoMexico } from "../../../../config/reuserFunctions";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -11,16 +12,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function RegistrarInfoCredito({ tipo }) {
+export default function RegistrarInfoCredito({ tipo, cliente_base }) {
   const classes = useStyles();
   const { cliente, setCliente } = useContext(ClienteCtx);
 
+  const credito_disponible = cliente_base.credito_disponible;
+  const limite_credito = cliente_base.limite_credito;
+  const credito_usado = limite_credito - credito_disponible;
+
   const obtenerCampos = (e) => {
     const name = e.target.name;
-    if (name === "numero_descuento" || name === "limite_credito") {
+    if (name === "numero_descuento") {
       setCliente({
         ...cliente,
         [e.target.name]: parseInt(e.target.value),
+      });
+      return;
+    }
+    if (name === "limite_credito") {
+      let disponible = parseInt(e.target.value) - credito_usado;
+
+      setCliente({
+        ...cliente,
+        [e.target.name]: parseInt(e.target.value),
+        credito_disponible: disponible,
       });
       return;
     }
@@ -38,6 +53,22 @@ export default function RegistrarInfoCredito({ tipo }) {
           <b>Razon social</b> son obligatorios.
         </Alert>
       </Box>
+      <Grid container spacing={2}>
+        <Grid item>
+          <Typography>
+            <b>Crédito utilizado:</b> ${" "}
+            {credito_usado ? formatoMexico(credito_usado) : 0.0}
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Typography>
+            <b>Crédito disponible:</b> ${" "}
+            {cliente.credito_disponible
+              ? formatoMexico(cliente.credito_disponible)
+              : 0.0}
+          </Typography>
+        </Grid>
+      </Grid>
       <Grid container spacing={2}>
         <Grid item md={6} xs={12}>
           <Typography className={classes.title}>RFC</Typography>
@@ -58,9 +89,7 @@ export default function RegistrarInfoCredito({ tipo }) {
             size="small"
             name="razon_social"
             variant="outlined"
-            value={
-              cliente.razon_social ? cliente.razon_social : ""
-            }
+            value={cliente.razon_social ? cliente.razon_social : ""}
             onChange={obtenerCampos}
             inputProps={{ style: { textTransform: "uppercase" } }}
           />
@@ -85,6 +114,7 @@ export default function RegistrarInfoCredito({ tipo }) {
             variant="outlined"
             value={cliente.limite_credito ? cliente.limite_credito : ""}
             onChange={obtenerCampos}
+            error={credito_usado > cliente.limite_credito}
           />
         </Grid>
         <Grid item md={4} xs={12}>
@@ -94,9 +124,7 @@ export default function RegistrarInfoCredito({ tipo }) {
             size="small"
             name="dias_credito"
             variant="outlined"
-            value={
-              cliente.dias_credito ? cliente.dias_credito : ""
-            }
+            value={cliente.dias_credito ? cliente.dias_credito : ""}
             onChange={obtenerCampos}
             inputProps={{ style: { textTransform: "uppercase" } }}
           />
@@ -105,9 +133,7 @@ export default function RegistrarInfoCredito({ tipo }) {
       {tipo !== "CLIENTE" ? (
         <Fragment>
           <Box my={3}>
-            <Typography className={classes.title}>
-              Datos bancarios
-            </Typography>
+            <Typography className={classes.title}>Datos bancarios</Typography>
             <Divider />
           </Box>
           <Grid container spacing={2}>

@@ -47,6 +47,7 @@ export default function ConsultarPrecio() {
       setDataQuery({ data, loading, error });
     } catch (error) {
       console.log(error);
+      setDataQuery({ data: undefined, loading: false, error });
     }
   };
 
@@ -55,6 +56,11 @@ export default function ConsultarPrecio() {
 
   const handleClickOpen = () => {
     setOpen(!open);
+    setDataQuery({
+      data: undefined,
+      loading: false,
+      error: undefined,
+    });
   };
 
   const keyUpEvent = async (event) => {
@@ -102,11 +108,11 @@ export default function ConsultarPrecio() {
         </Box>
       </Button>
       <Dialog
-        maxWidth="sm"
-        fullWidth
         open={open}
+        fullWidth
         onClose={handleClickOpen}
         TransitionComponent={Transition}
+        PaperProps={{ style: { minWidth: "650px" } }}
       >
         <DialogTitle>
           <Box
@@ -153,7 +159,10 @@ export default function ConsultarPrecio() {
           </Box>
         </DialogTitle>
         <DialogContent>
-          <ProductosViewComponent dataQuery={dataQuery} />
+          <ProductosViewComponent
+            dataQuery={dataQuery}
+            handleClickOpen={handleClickOpen}
+          />
         </DialogContent>
       </Dialog>
     </Fragment>

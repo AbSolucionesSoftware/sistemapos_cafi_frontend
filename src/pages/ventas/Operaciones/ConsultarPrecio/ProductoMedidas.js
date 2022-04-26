@@ -16,6 +16,7 @@ import PhotoLibraryIcon from "@material-ui/icons/PhotoLibrary";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import { formatoMexico } from "../../../../config/reuserFunctions";
+import { Add } from "@material-ui/icons";
 
 const useStyles = makeStyles({
   colorContainer: {
@@ -29,7 +30,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function VistaProductoMedidas({ productos }) {
+export default function VistaProductoMedidas({ productos, agregarProductos }) {
   const classes = useStyles();
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const chevronWidth = 40;
@@ -125,6 +126,7 @@ export default function VistaProductoMedidas({ productos }) {
           <Table size="small" aria-label="simple table">
             <TableHead>
               <TableRow>
+                <TableCell padding="checkbox"></TableCell>
                 <TableCell>Código</TableCell>
                 <TableCell padding="checkbox">Cantidad</TableCell>
                 <TableCell padding="checkbox">Color/Talla</TableCell>
@@ -134,7 +136,11 @@ export default function VistaProductoMedidas({ productos }) {
             </TableHead>
             <TableBody>
               {productos.map((producto, index) => (
-                <MappingProductos key={index} producto={producto} />
+                <MappingProductos
+                  key={index}
+                  producto={producto}
+                  agregarProductos={agregarProductos}
+                />
               ))}
             </TableBody>
           </Table>
@@ -144,7 +150,7 @@ export default function VistaProductoMedidas({ productos }) {
   );
 }
 
-const MappingProductos = ({ producto }) => {
+const MappingProductos = ({ producto, agregarProductos }) => {
   const classes = useStyles();
   const theme = useTheme();
 
@@ -193,6 +199,15 @@ const MappingProductos = ({ producto }) => {
 
   return (
     <TableRow>
+      <TableCell padding="checkbox">
+        <IconButton
+          size="small"
+          onClick={() => agregarProductos(producto)}
+          color="primary"
+        >
+          <Add />
+        </IconButton>
+      </TableCell>
       <TableCell>{producto.codigo_barras}</TableCell>
       <TableCell>{producto.cantidad}</TableCell>
       <TableCellMedidaColor />

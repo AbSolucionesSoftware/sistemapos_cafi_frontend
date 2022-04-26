@@ -4,6 +4,7 @@ import CuentasEmpresaSucursales from './CuentasEmpresaSucursales/CuentasEmpresaS
 import Egresos from './Egresos/Egresos';
 import AbonosProveedores from './Abonos/Provedores/AbonosProovedores';
 import AbonosClientes from './Abonos/Clientes/AbonosClientes';
+import {AbonosProvider} from "../../../context/Tesoreria/abonosCtx";
 // import Transferencias from './Transferencias/Transferencias';
 
 import SnackBarMessages from '../../../components/SnackBarMessages';
@@ -40,11 +41,13 @@ export default function Tesoreria() {
 					</Grid>
 				)}
 				{permisosUsuario.accesos.tesoreria.abonos_clientes.ver === false ? (null):(
-					<Grid item lg={2}>
-						<Box display="flex" justifyContent="center" alignItems="center">
-							<AbonosClientes />
-						</Box>
-					</Grid>
+					<AbonosProvider>
+						<Grid item lg={2}>
+							<Box display="flex" justifyContent="center" alignItems="center">
+								<AbonosClientes />
+							</Box>
+						</Grid>
+					</AbonosProvider>
 				)}
                 {/* <Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">

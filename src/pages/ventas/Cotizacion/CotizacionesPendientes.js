@@ -163,7 +163,8 @@ const CotizacionRow = ({cotizacion, index, handleModalCotizacion, setSelected, s
 			productos: cotizacion.productos,
 			subTotal: cotizacion.subTotal,
 			total: cotizacion.total,
-			venta_cliente: false
+			venta_cliente: false,
+			tipo_emision: cotizacion.tipo_emision ? cotizacion.tipo_emision : "TICKET"
 		});
 	
 		//Veriricar si hay una 
@@ -175,7 +176,6 @@ const CotizacionRow = ({cotizacion, index, handleModalCotizacion, setSelected, s
 				return;
 			}
 			localStorage.setItem("DatosVentas", objectToSave);
-			localStorage.setItem("VentaOriginal", objectToSave);
 			handleModalCotizacion();
 			updateDataStorage();	
 		}else{

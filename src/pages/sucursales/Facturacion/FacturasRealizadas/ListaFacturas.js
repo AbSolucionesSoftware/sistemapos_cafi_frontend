@@ -143,7 +143,7 @@ const DetallesCompra = ({ compra }) => {
             startIcon={<Done />}
             onClick={() => handleOpen()}
           >
-            Acpetar
+            Aceptar
           </Button>
         </DialogActions>
       </Dialog>

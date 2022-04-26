@@ -252,6 +252,9 @@ export default function PreciosProductos() {
                 ? venta_actual.venta_cliente
                 : false,
             productos: productosVentasTemp,
+            tipo_emision: venta_actual.tipo_emision
+              ? venta_actual.tipo_emision
+              : "TICKET",
           })
         );
         // newProductoPrecio = {...newProductoPrecio};

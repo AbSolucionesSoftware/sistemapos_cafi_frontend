@@ -1,6 +1,6 @@
-import React, { useState, useEffect, Fragment } from "react";
-import { Box, Button, Grid, TextField, Typography } from "@material-ui/core";
-import { Edit } from "@material-ui/icons";
+import React, { useEffect, Fragment } from "react";
+import { Grid, TextField, Typography } from "@material-ui/core";
+/* import { Edit } from "@material-ui/icons"; */
 import moment from "moment";
 
 export default function CreditoVenta({
@@ -85,7 +85,8 @@ export default function CreditoVenta({
                   dias_credito: e.target.value,
                 })
               }
-              disabled={editarCliente}
+              /* disabled={!editarCliente} */
+              disabled
             />
           </Grid>
           <Grid item md={2} xs={12}>
@@ -103,7 +104,8 @@ export default function CreditoVenta({
                   ? 0
                   : datosCliente.limite_credito
               }
-              disabled={editarCliente}
+              /* disabled={!editarCliente} */
+              disabled
             />
           </Grid>
           <Grid item md={2} xs={12}>
@@ -121,10 +123,10 @@ export default function CreditoVenta({
                   ? 0
                   : datosCliente.credito_disponible
               }
-              disabled={true}
+              disabled
             />
           </Grid>
-          <Grid item md={2} xs={12}>
+          <Grid item md={3} xs={12}>
             <Typography variant="caption">
               <b>Total a Crédito:</b>
             </Typography>
@@ -134,7 +136,8 @@ export default function CreditoVenta({
               name="codigo_barras"
               id="form-producto-codigo-barras"
               variant="outlined"
-              disabled={editarCliente}
+              /* disabled={!editarCliente} */
+              disabled
               value={total_venta}
             />
           </Grid>
@@ -160,21 +163,22 @@ export default function CreditoVenta({
                   dias_credito: diasDiff,
                 });
               }}
-              disabled={editarCliente}
+              /* disabled={!editarCliente} */
+              disabled
             />
           </Grid>
-          <Grid item md={1} xs={12}>
+          {/* <Grid item md={1} xs={12}>
             <Box display="flex" alignItems="flex-end" height="100%">
               <Button
                 color="primary"
                 variant="outlined"
                 size="large"
-                onClick={() => setEditarCliente(!editarCliente)}
+                onClick={() => setEditarCliente(true)}
               >
                 <Edit />
               </Button>
             </Box>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Grid>
     </Fragment>

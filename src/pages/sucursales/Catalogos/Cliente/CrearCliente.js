@@ -101,6 +101,15 @@ export default function CrearCliente({
       setError(true);
       return;
     }
+    let credito_usado = datos.limite_credito - datos.credito_disponible;
+    if (credito_usado > copy_cliente.limite_credito) {
+      setAlert({
+        message: "Crédito utilizado es mayor al límite de crédito",
+        status: "error",
+        open: true,
+      });
+      return;
+    }
     setLoading(true);
     try {
       if (accion === "registrar") {
@@ -148,6 +157,9 @@ export default function CrearCliente({
                 venta_actual.productos?.length > 0
                   ? venta_actual.productos
                   : [],
+              tipo_emision: venta_actual.tipo_emision
+                ? venta_actual.tipo_emision
+                : "TICKET",
             })
           );
           setUpdateClientVenta(!updateClientVenta);
@@ -198,7 +210,7 @@ export default function CrearCliente({
           <IconButton color="primary" onClick={toggleModal}>
             <Add />
           </IconButton>
-        ) : ( 
+        ) : (
           <Button
             color="primary"
             variant="contained"
@@ -256,7 +268,11 @@ export default function CrearCliente({
                 <b>Información de credito</b>
               </Typography>
               <Divider />
-              <RegistrarInfoCredito tipo={tipo} accion={accion} />
+              <RegistrarInfoCredito
+                tipo={tipo}
+                accion={accion}
+                cliente_base={datos}
+              />
             </form>
           </Container>
         </DialogContent>

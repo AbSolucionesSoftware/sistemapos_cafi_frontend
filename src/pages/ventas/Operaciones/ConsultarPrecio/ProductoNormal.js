@@ -9,8 +9,13 @@ import useStyles from "../../styles";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import { formatoMexico } from "../../../../config/reuserFunctions";
+import { Button } from "@material-ui/core";
+import { Add } from "@material-ui/icons";
 
-export default function VistaProductoNormal({ productoBase }) {
+export default function VistaProductoNormal({
+  productoBase,
+  agregarProductos,
+}) {
   const classes = useStyles();
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const chevronWidth = 40;
@@ -124,10 +129,19 @@ export default function VistaProductoNormal({ productoBase }) {
                   )}
                 </Typography>
               </Box>
+              <Box mx={2} />
+              <Button
+                size="large"
+                onClick={() => agregarProductos(productoBase)}
+                color="primary"
+                startIcon={<Add />}
+              >
+                Agregar
+              </Button>
             </Box>
           </Box>
         </Box>
       </Grid>
     </Grid>
   );
-};
+}

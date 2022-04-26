@@ -20,7 +20,7 @@ export const ClienteProvider = ({ children }) => {
 	const [ toUpdate, setToUpdate ] = useState(false);
 	const [ error, setError ] = useState(false);
 	const [ update, setUpdate ] = useState(false);
-
+	const [ clientes, setClientes ] = useState([]);
 	const [updateClientVenta, setUpdateClientVenta] = useState(false);
 
 
@@ -36,7 +36,9 @@ export const ClienteProvider = ({ children }) => {
 				update,
 				setUpdate,
 				setUpdateClientVenta,
-				updateClientVenta
+				updateClientVenta,
+				clientes,
+				setClientes
 			}}
 		>
 			{children}

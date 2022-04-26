@@ -47,6 +47,7 @@ export const OBTENER_DATOS_EMPRESA = gql`
         sucursal
         clave_banco
       }
+      vender_sin_inventario
     }
   }
 `;

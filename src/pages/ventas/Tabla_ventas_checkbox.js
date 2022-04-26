@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     },
     [theme.breakpoints.up("xl")]: {
       maxHeight: "64vh",
-    }
+    },
   },
 }));
 
@@ -111,24 +111,36 @@ export default function EnhancedTable({ setDatosVentasActual }) {
             <TableHead>
               <TableRow>
                 <TableCell padding="checkbox"></TableCell>
-                <TableCell style={{ textAlign: "center" }}>Cantidad</TableCell>
+                <TableCell style={{ textAlign: "center", width: 120 }}>
+                  Valor Granel
+                </TableCell>
+                <TableCell style={{ textAlign: "center" }} padding="checkbox">
+                  Cantidad
+                </TableCell>
                 <TableCell>Descripcion</TableCell>
-                <TableCell style={{ textAlign: "center" }}>
+                <TableCell style={{ textAlign: "center" }} padding="checkbox">
                   Existencia
                 </TableCell>
-                <TableCell style={{ textAlign: "center" }}>
+                <TableCell style={{ textAlign: "center" }} padding="checkbox">
                   <b>Descuento</b>
                 </TableCell>
-                <TableCell style={{ textAlign: "center" }}>Receta</TableCell>
-                <TableCell style={{ textAlign: "center" }}>Unidad</TableCell>
+                <TableCell style={{ textAlign: "center" }} padding="checkbox">
+                  Receta
+                </TableCell>
+                <TableCell style={{ textAlign: "center" }} padding="checkbox">
+                  Unidad
+                </TableCell>
                 <TableCell style={{ width: 140, textAlign: "center" }}>
                   Precio Unitario
+                </TableCell>
+                <TableCell style={{ width: 140, textAlign: "center" }}>
+                  Precio a vender
                 </TableCell>
                 <TableCell padding="checkbox" />
               </TableRow>
             </TableHead>
             <TableBody>
-              {datosTabla?.map((producto, index) => {
+              {datosTabla.map((producto, index) => {
                 const isItemSelected = isSelected(producto);
                 const labelId = `enhanced-table-checkbox-${index}`;
                 return (
@@ -186,10 +198,10 @@ const RenderTableRows = ({
   }, [value]);
 
   const calculateNewPricingAmount = (cantidad) => {
-    if(producto.concepto === "medidas"){
-      if(cantidad > producto.cantidad)return
-    }else{
-      if(cantidad > producto.inventario_general[0].cantidad_existente) return;
+    if (producto.concepto === "medidas") {
+      if (cantidad > producto.cantidad) return;
+    } else {
+      if (cantidad > producto.inventario_general[0].cantidad_existente) return;
     }
     try {
       setTempAmount(cantidad);
@@ -200,7 +212,7 @@ const RenderTableRows = ({
   };
 
   const CalculeDataPricing = async (new_cant) => {
-    if (new_cant === "" || new_cant == 0) {
+    if (new_cant === "" || new_cant === 0) {
       setTempAmount(producto.cantidad_venta);
     } else {
       let venta = JSON.parse(localStorage.getItem("DatosVentas"));
@@ -357,6 +369,9 @@ const RenderTableRows = ({
               ? venta_actual.venta_cliente
               : false,
           productos: productosVentasTemp,
+          tipo_emision: venta_actual.tipo_emision
+            ? venta_actual.tipo_emision
+            : "TICKET",
         })
       );
       setDatosVentasActual(CalculosData);
@@ -377,7 +392,7 @@ const RenderTableRows = ({
         hover
         onClick={(e) => TwoClickInRowTableBuy(e, producto)}
       >
-        <TableCell>
+        <TableCell padding="checkbox">
           <Checkbox
             onClick={(event) => {
               if (selected.length > 0) setSelected([]);
@@ -386,6 +401,11 @@ const RenderTableRows = ({
             checked={isItemSelected}
             inputProps={{ "aria-labelledby": labelId }}
           />
+        </TableCell>
+        <TableCell style={{ textAlign: "center" }} padding="checkbox">
+          {producto.granel_producto.granel
+            ? `${producto.granel_producto.valor} ${producto.unidad}`
+            : "N/A"}
         </TableCell>
         <TableCell>
           <Input
@@ -432,6 +452,12 @@ const RenderTableRows = ({
           ${" "}
           {producto.precio_actual_object.precio_neto
             ? formatoMexico(producto.precio_actual_object.precio_neto)
+            : 0}
+        </TableCell>
+        <TableCell style={{ textAlign: "center" }}>
+          ${" "}
+          {producto.precio_a_vender
+            ? formatoMexico(producto.precio_a_vender)
             : 0}
         </TableCell>
         <TableCell>

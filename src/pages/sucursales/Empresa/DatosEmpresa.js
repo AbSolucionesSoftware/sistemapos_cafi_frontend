@@ -66,6 +66,16 @@ export default function MiEmpresa() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const RenderViews = () => {
+    switch (value) {
+      case 1:
+        return(<InformacionFiscal setOpen={setOpen} />);
+      default:
+        return(<MisDatos setOpen={setOpen} />);
+    }
+  }
+  
 	return (
 		<div>
     <Button fullWidth onClick={handleClickOpen}>
@@ -106,18 +116,14 @@ export default function MiEmpresa() {
               value={value}
               onChange={handleChange}
               aria-label="simple tabs example"
+              centered
             >
-              <Tab label="Datos empresa" />
-              <Tab label="Datos fiscales" />
+              <Tab label="Datos empresa" value={0} />
+              <Tab label="Datos fiscales" value={1} />
             </Tabs>
           </Box>
           <DialogContent>  
-            {
-              (value === 0 ) ? 
-                <MisDatos setOpen={setOpen} />
-                :
-                <InformacionFiscal setOpen={setOpen} />
-            }
+            <RenderViews />
           </DialogContent>
       </Dialog>  
       

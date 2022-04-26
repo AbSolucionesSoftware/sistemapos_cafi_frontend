@@ -128,7 +128,6 @@ const RowsVentas = ({ venta, index, handleModalEspera }) => {
     if (datosVenta === null) {
       let nueva_venta_espera = [...listaEnEspera];
       localStorage.setItem("DatosVentas", JSON.stringify(venta.datosVenta));
-      localStorage.setItem("VentaOriginal", JSON.stringify(venta.datosVenta));
       nueva_venta_espera.splice(index, 1);
       if (nueva_venta_espera.length === 0) {
         localStorage.removeItem("ListaEnEspera");

@@ -5,13 +5,13 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import { TextField } from "@material-ui/core";
 // import { BlurLinear } from "@material-ui/icons";
 // import { VentasContext } from "../../context/Ventas/ventasContext";
-import { ClienteCtx } from "../../context/Catalogos/crearClienteCtx";
+import { ClienteCtx } from "../../context/Catalogos/crearClienteCtx"; 
 import { VentasContext } from "../../context/Ventas/ventasContext";
 
 export default function ClientesVentas() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const datosVentas = JSON.parse(localStorage.getItem("DatosVentas"));
-  const { setUpdateClientVenta, updateClientVenta } = useContext(ClienteCtx);
+  const { setUpdateClientVenta, updateClientVenta, setClientes } = useContext(ClienteCtx);
   const { setClientesVentas, clear } = useContext(VentasContext);
 
   const [selectClient, setSelectClient] = useState({});
@@ -33,6 +33,15 @@ export default function ClientesVentas() {
   if (data) obtenerClientes = data.obtenerClientesVentas;
   // console.log(obtenerClientes);
 
+
+  useEffect(() => {
+    try {
+      setClientes(data.obtenerClientesVentas);
+    } catch (error) {
+      
+    }
+  }, [data])
+  
   useEffect(() => {
     if (datosVentas && datosVentas.cliente) {
       if (datosVentas.cliente.nombre_cliente) {
@@ -78,6 +87,9 @@ export default function ClientesVentas() {
         venta_cliente: value === null ? false : true,
         productos:
           venta_actual.productos?.length > 0 ? venta_actual.productos : [],
+        tipo_emision: venta_actual.tipo_emision
+          ? venta_actual.tipo_emision
+          : "TICKET",
       };
       dataCliente = { ...dataCliente, cliente: value ? value : {} };
       localStorage.setItem("DatosVentas", JSON.stringify(dataCliente));
