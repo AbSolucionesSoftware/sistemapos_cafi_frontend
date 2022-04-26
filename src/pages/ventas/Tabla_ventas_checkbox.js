@@ -369,6 +369,9 @@ const RenderTableRows = ({
               ? venta_actual.venta_cliente
               : false,
           productos: productosVentasTemp,
+          tipo_emision: venta_actual.tipo_emision
+            ? venta_actual.tipo_emision
+            : "TICKET",
         })
       );
       setDatosVentasActual(CalculosData);
@@ -400,7 +403,9 @@ const RenderTableRows = ({
           />
         </TableCell>
         <TableCell style={{ textAlign: "center" }} padding="checkbox">
-          {producto.granel_producto.granel ? `${producto.granel_producto.valor} ${producto.unidad}` : "N/A"}
+          {producto.granel_producto.granel
+            ? `${producto.granel_producto.valor} ${producto.unidad}`
+            : "N/A"}
         </TableCell>
         <TableCell>
           <Input

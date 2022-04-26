@@ -807,6 +807,7 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtros: filtrosObte
         }
       }
       status
+      tipo_emision
 		}
 	}
 `;

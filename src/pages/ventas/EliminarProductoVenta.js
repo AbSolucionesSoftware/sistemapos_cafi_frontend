@@ -96,6 +96,9 @@ export default function EliminarProducto({ producto, setDatosVentasActual }) {
                 ? venta_actual.venta_cliente
                 : false,
             productos: productosVentasTemp,
+            tipo_emision: venta_actual.tipo_emision
+              ? venta_actual.tipo_emision
+              : "TICKET",
           })
         );
       }

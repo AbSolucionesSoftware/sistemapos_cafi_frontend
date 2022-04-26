@@ -1,4 +1,4 @@
-import React, { Fragment, useContext } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import Box from "@material-ui/core/Box";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import ErrorPage from "../../../../components/ErrorPage";
@@ -10,9 +10,12 @@ import {
   findProductArray,
   verifiPrising,
 } from "../../../../config/reuserFunctions";
+import { Snackbar } from "@material-ui/core";
 
 export default function ProductosViewComponent({ dataQuery, handleClickOpen }) {
   let productoBase = null;
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  const [open_message, setOpenMessage] = useState(false);
   const { data, loading, error } = dataQuery;
   const {
     updateTablaVentas,
@@ -77,7 +80,25 @@ export default function ProductosViewComponent({ dataQuery, handleClickOpen }) {
     );
   }
 
+  const without_inventary = sesion.empresa.vender_sin_inventario;
+
   const agregarProductos = async (producto) => {
+    if (producto.concepto === "medidas") {
+      //cantidad
+      if (!without_inventary && producto.cantidad === 0) {
+        setOpenMessage(true);
+        return;
+      }
+    } else {
+      //inventario_general
+      if (
+        !without_inventary &&
+        producto.inventario_general[0].cantidad_existente === 0
+      ) {
+        setOpenMessage(true);
+        return;
+      }
+    }
     let venta = JSON.parse(localStorage.getItem("DatosVentas"));
     let productosVentas = venta === null ? [] : venta.productos;
     let venta_actual = venta === null ? [] : venta;
@@ -354,19 +375,9 @@ export default function ProductosViewComponent({ dataQuery, handleClickOpen }) {
             ? venta_actual.venta_cliente
             : false,
         productos: productosVentasTemp,
-      })
-    );
-    localStorage.setItem(
-      "VentaOriginal",
-      JSON.stringify({
-        ...CalculosData,
-        cliente:
-          venta_actual.venta_cliente === true ? venta_actual.cliente : {},
-        venta_cliente:
-          venta_actual.venta_cliente === true
-            ? venta_actual.venta_cliente
-            : false,
-        productos: productosVentasTemp,
+        tipo_emision: venta_actual.tipo_emision
+          ? venta_actual.tipo_emision
+          : "TICKET",
       })
     );
     setDatosVentasActual({
@@ -378,6 +389,13 @@ export default function ProductosViewComponent({ dataQuery, handleClickOpen }) {
 
   return (
     <Fragment>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={open_message}
+        onClose={() => setOpenMessage(false)}
+        message="Producto sin existencias"
+        autoHideDuration={3000}
+      />
       {productoBase.length === 1 ? (
         <VistaProductoNormal
           productoBase={productoBase[0]}

@@ -47,6 +47,7 @@ export default function ConsultarPrecio() {
       setDataQuery({ data, loading, error });
     } catch (error) {
       console.log(error);
+      setDataQuery({ data: undefined, loading: false, error });
     }
   };
 

@@ -76,7 +76,7 @@ export default function CerrarVenta() {
   const [monederoTotal, setMonederoTotal] = useState(0);
   const [montoEnCaja, setMontoEnCaja] = useState(0);
   const [venta_base, setVentaBase] = useState(0);
-  const [editarCliente, setEditarCliente] = useState(true);
+  const [editarCliente, setEditarCliente] = useState(false);
   const [datosCliente, setDatosCliente] = useState({});
   const [monedero, setMonedero] = useState(0);
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
@@ -259,7 +259,7 @@ export default function CerrarVenta() {
           : monederoTotal;
       //Enviar los datos
 
-      console.log(ventaFinal);
+      /* console.log(ventaFinal); */
       await createVenta({
         variables: {
           input: ventaFinal,
@@ -413,7 +413,7 @@ export default function CerrarVenta() {
                   color="secondary"
                   onClick={() => {
                     setVentaCredito(false);
-                    setEditarCliente(!editarCliente);
+                    setEditarCliente(false);
                   }}
                   startIcon={<ClearIcon style={{ fontSize: "28px" }} />}
                 >

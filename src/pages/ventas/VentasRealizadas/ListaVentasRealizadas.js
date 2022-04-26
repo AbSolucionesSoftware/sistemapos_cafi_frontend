@@ -269,11 +269,11 @@ const RenderLista = ({
           subTotal: data.subTotal,
           total: data.total,
           venta_cliente: data.venta_cliente,
+          tipo_emision: data.tipo_emision,
         };
 
         //se agregan la venta a localStorage
         localStorage.setItem("DatosVentas", JSON.stringify(datosVenta));
-        localStorage.setItem("VentaOriginal", JSON.stringify(datosVenta));
         setVentaRetomada(datosVenta);
         updateDataStorage();
         handleClose();

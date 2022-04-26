@@ -50,6 +50,7 @@ export const OBTENER_CLIENTES = gql`
 			email
 			numero_descuento
 			limite_credito
+			credito_disponible
 			dias_credito
 			razon_social
 			direccion {

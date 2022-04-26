@@ -11,6 +11,7 @@ import {
   DialogTitle,
   TextField,
   InputAdornment,
+  Snackbar,
 } from "@material-ui/core";
 import useStyles from "../styles";
 import { useDebounce } from "use-debounce/lib";
@@ -43,6 +44,7 @@ export default function BuscarProducto() {
   } = useContext(VentasContext);
 
   const [open, setOpen] = useState(false);
+  const [open_message, setOpenMessage] = useState(false);
   const [searchProducto, setSearchProducto] = useState({ producto: "" });
   const [productoSeleccionado, setProductoSeleccionado] = useState([]);
   const [granelBase, setGranelBase] = useState({
@@ -72,7 +74,7 @@ export default function BuscarProducto() {
 
   const handleClickOpen = () => {
     setProductoSeleccionado([]);
-    //refetch();
+    if (!open) refetch();
     //productosBusqueda = [];
     setOpen(!open);
   };
@@ -91,7 +93,26 @@ export default function BuscarProducto() {
     });
   }, []);
 
+  const without_inventary = sesion.empresa.vender_sin_inventario;
+
   const agregarProductos = async (producto) => {
+    if (producto.concepto === "medidas") {
+      //cantidad
+      if (!without_inventary && producto.cantidad === 0) {
+        setOpenMessage(true);
+        return;
+      }
+    } else {
+      //inventario_general
+      if (
+        !without_inventary &&
+        producto.inventario_general[0].cantidad_existente === 0
+      ) {
+        setOpenMessage(true);
+        return;
+      }
+    }
+
     let venta = JSON.parse(localStorage.getItem("DatosVentas"));
     let productosVentas = venta === null ? [] : venta.productos;
     let venta_actual = venta === null ? [] : venta;
@@ -362,19 +383,9 @@ export default function BuscarProducto() {
             ? venta_actual.venta_cliente
             : false,
         productos: productosVentasTemp,
-      })
-    );
-    localStorage.setItem(
-      "VentaOriginal",
-      JSON.stringify({
-        ...CalculosData,
-        cliente:
-          venta_actual.venta_cliente === true ? venta_actual.cliente : {},
-        venta_cliente:
-          venta_actual.venta_cliente === true
-            ? venta_actual.venta_cliente
-            : false,
-        productos: productosVentasTemp,
+        tipo_emision: venta_actual.tipo_emision
+          ? venta_actual.tipo_emision
+          : "TICKET",
       })
     );
     setDatosVentasActual({
@@ -414,6 +425,13 @@ export default function BuscarProducto() {
         onClose={handleClickOpen}
         TransitionComponent={Transition}
       >
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          open={open_message}
+          onClose={() => setOpenMessage(false)}
+          message="Producto sin existencias"
+          autoHideDuration={3000}
+        />
         <DialogTitle>
           <Box
             display="flex"

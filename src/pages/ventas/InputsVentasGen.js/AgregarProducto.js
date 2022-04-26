@@ -17,22 +17,18 @@ import {
   calculatePrices2,
 } from "../../../config/reuserFunctions";
 import ProductoConMedidas from "./ProductoConMedidas";
+import { Snackbar } from "@material-ui/core";
 
 export default function AgregarProductoVenta({ loading, setLoading }) {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const classes = useStyles();
-  /* const [granelBase, setGranelBase] = useState({
-    granel: false,
-    valor: 0,
-  }); */
-
   const {
     updateTablaVentas,
     setUpdateTablaVentas,
-    /* setOpen, */
     setDatosVentasActual,
   } = useContext(VentasContext);
 
+  const [open_message, setOpenMessage] = useState(false);
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
   const [clave, setClave] = useState("");
   const client = useApolloClient();
@@ -164,7 +160,25 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
     }
   };
 
+  const without_inventary = sesion.empresa.vender_sin_inventario;
+
   const agregarProductos = async (producto, granel) => {
+    if (producto.concepto === "medidas") {
+      //cantidad
+      if (!without_inventary && producto.cantidad === 0) {
+        setOpenMessage(true);
+        return;
+      }
+    } else {
+      //inventario_general
+      if (
+        !without_inventary &&
+        producto.inventario_general[0].cantidad_existente === 0
+      ) {
+        setOpenMessage(true);
+        return;
+      }
+    }
     let granel_base = granel
       ? granel
       : {
@@ -441,19 +455,9 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
             ? venta_actual.venta_cliente
             : false,
         productos: productosVentasTemp,
-      })
-    );
-    localStorage.setItem(
-      "VentaOriginal",
-      JSON.stringify({
-        ...CalculosData,
-        cliente:
-          venta_actual.venta_cliente === true ? venta_actual.cliente : {},
-        venta_cliente:
-          venta_actual.venta_cliente === true
-            ? venta_actual.venta_cliente
-            : false,
-        productos: productosVentasTemp,
+        tipo_emision: venta_actual.tipo_emision
+          ? venta_actual.tipo_emision
+          : "TICKET",
       })
     );
     setDatosVentasActual({
@@ -471,6 +475,13 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
   return (
     <Fragment>
       <SnackBarMessages alert={alert} setAlert={setAlert} />
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={open_message}
+        onClose={() => setOpenMessage(false)}
+        message="Producto sin existencias"
+        autoHideDuration={3000}
+      />
       <ProductoConMedidas
         agregarProductos={agregarProductos}
         open={openMedidas}

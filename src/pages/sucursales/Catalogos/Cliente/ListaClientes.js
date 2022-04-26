@@ -106,6 +106,9 @@ export default function ListaClientes({
           venta_cliente: true,
           productos:
             venta_actual.productos?.length > 0 ? venta_actual.productos : [],
+          tipo_emision: venta_actual.tipo_emision
+            ? venta_actual.tipo_emision
+            : "TICKET",
         })
       );
       setUpdateClientVenta(!updateClientVenta);

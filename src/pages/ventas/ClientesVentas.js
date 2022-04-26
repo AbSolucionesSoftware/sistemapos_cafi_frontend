@@ -76,8 +76,14 @@ export default function ClientesVentas() {
           venta_actual.monedero === undefined ? 0 : venta_actual.monedero,
         // tipo_cambio: venta_actual.tipo_cambio ? venta_actual.tipo_cambio : {},
         venta_cliente: value === null ? false : true,
+        tipo_emision: venta_actual.tipo_emision
+          ? venta_actual.tipo_emision
+          : "TICKET",
         productos:
           venta_actual.productos?.length > 0 ? venta_actual.productos : [],
+        tipo_emision: venta_actual.tipo_emision
+          ? venta_actual.tipo_emision
+          : "TICKET",
       };
       dataCliente = { ...dataCliente, cliente: value ? value : {} };
       localStorage.setItem("DatosVentas", JSON.stringify(dataCliente));
