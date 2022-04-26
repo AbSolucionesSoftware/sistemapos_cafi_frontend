@@ -79,7 +79,7 @@ export default function AbonosProveedores() {
 	};
 
 	return (
-		<div> 
+		<div>
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">

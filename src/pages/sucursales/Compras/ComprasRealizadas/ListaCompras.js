@@ -135,7 +135,7 @@ const DetallesCompra = ({ compra }) => {
         <DialogTitle>
           <Box display="flex">
             <Typography variant="h6" style={{ flexGrow: 1 }}>
-              Datos de compra
+              Datos de venta
             </Typography>
             <Button
               variant="text"
@@ -158,7 +158,7 @@ const DetallesCompra = ({ compra }) => {
             startIcon={<Done />}
             onClick={() => handleOpen()}
           >
-            Acpetar
+            Aceptar
           </Button>
         </DialogActions>
       </Dialog>

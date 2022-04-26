@@ -8,10 +8,17 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, TextField, Grid, IconButton, InputAdornment } from '@material-ui/core';
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import SearchOutlined from '@material-ui/icons/SearchOutlined';
-import TablaAbonos from './Components/TablaAbonos';
+import {AbonosCtx} from "../../../../../context/Tesoreria/abonosCtx";
+import { ClienteCtx } from "../../../../../context/Catalogos/crearClienteCtx"; 
+import TablaVentasCredito from './Components/TablaVentasCredito';
 import ButtonLiquidar from './Components/Liquidar';
 import ButtonAbonar from './Components/Abonar';
+import { useQuery } from '@apollo/client';
+import {  OBTENER_HISTORIAL_ABONOS_CLIENTE } from "../../../../../gql/Tesoreria/abonos";
+
+//import DetallesCuenta from './Components/DetalleCuenta/DetallesCuenta';
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {	
@@ -20,6 +27,11 @@ const useStyles = makeStyles((theme) => ({
 	title: {
 		marginLeft: theme.spacing(2),
 		flex: 1
+	},
+	titleSelect:{
+		marginLeft: theme.spacing(1),
+		flex: 1,
+		fontSize:18
 	},
     icon: {
 		width: 100
@@ -33,6 +45,9 @@ const useStyles = makeStyles((theme) => ({
 	formInput: {
 		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
 	},
+	iconSize: {
+		width: 32,
+	},
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -42,17 +57,43 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function AbonosClientes() {
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
+	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	const context = useContext(AbonosCtx);
+	const {clientes} = useContext(ClienteCtx);
 	const [filtro, setFiltro] = useState("");
+
+	const [ventasCredito, setVentasCredito] = useState([]);
 	const searchfilter = useRef(null);
 	const handleClickOpen = () => setOpen(!open);
 	
-	const obtenerBusqueda = (e, value) => {
-		e.preventDefault();
-		//refetch({ filtro: value, fecha: '' });
-		setFiltro(value);
-	};
+
+	const obtenerVentasCredito = useQuery(OBTENER_HISTORIAL_ABONOS_CLIENTE, {
+		variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id, idCliente: context.selectedClient._id },
+	  });
+
+	const ChangeClientAutocomplate = (value) => {
+		try {
+			console.log(value)
+		  let setVal  = (value !== null) ? value: ""; 
+		  context.setSelectedClient(setVal);
+		} catch (error) {
+		  console.log(error);
+		}
+	  };
+
+	useEffect(() => {
+		
+
+		if(obtenerVentasCredito.data){
+			setVentasCredito(obtenerVentasCredito.data.historialVentasACredito)
+		}
+		
+	}, [obtenerVentasCredito.data])
+	
+
 	return (
 		<div>
+			
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
@@ -77,40 +118,49 @@ export default function AbonosClientes() {
 				</AppBar>
 				<Grid container>
 					<Grid item lg={5} >
-						<Box p={2}>
-							<Box minWidth="70%">
-							<form onSubmit={(e) => obtenerBusqueda(e, e.target[0].value)}>
-								<TextField
-									inputRef={searchfilter}
-									fullWidth
-									size="small"
-									variant="outlined"
-									placeholder="Buscar cliente..."
-									InputProps={{
-									endAdornment: (
-										<InputAdornment position="end">
-										<IconButton type="submit" color="primary" size="medium">
-											<SearchOutlined />
-										</IconButton>
-										</InputAdornment>
-									),
-									}}
-								/>
-							</form>
+						<Box ml={2} mt={1}>
+							<Typography className={classes.titleSelect} color="textPrimary" gutterBottom>
+								<b>Seleccionar cliente </b>
+							</Typography>
 						</Box>
-					</Box>			
-					</Grid>
-					<Grid item lg={7}>
-						<Box  mt={1} mr={2} display="flex" justifyContent="flex-end" alignContent="space-between">
-							<ButtonLiquidar />
-							<ButtonAbonar />
+						<Box ml={3} style={{width:'80%'}} >
+
+							<Autocomplete
+								id="combo-box-producto-codigo"
+								size="small"
+								fullWidth
+								options={clientes}
+								getOptionLabel={(option) =>
+								option.nombre_cliente ? option.nombre_cliente : "N/A"
+								}
+								renderInput={(params) => <TextField {...params} variant="outlined" />}
+								onChange={(_, value) => ChangeClientAutocomplate(value)}
+								getOptionSelected={(option, value) =>
+								option.nombre_cliente === value.nombre_cliente
+								}
+								value={context.selectedClient ? context.selectedClient : null}
+							/>
 						</Box>
+						
 					</Grid>
+					{
+						(context.ventas.length > 0) ? 
+						<Grid item lg={7}>
+							<Box  mt={1} mr={2} display="flex" justifyContent="flex-end" alignContent="space-between">
+								<ButtonAbonar />
+								<ButtonLiquidar />
+							</Box>
+						</Grid>
+						:
+						<div/>
+					}
+					
 				</Grid> 		
 				<Box p={2}>
-					<TablaAbonos />
+					<TablaVentasCredito rows={ventasCredito} />
 				</Box>
 			</Dialog>
+			{/* <DetallesCuenta /> */}
 		</div>
 	);
 }
