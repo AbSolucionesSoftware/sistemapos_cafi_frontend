@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -10,26 +10,27 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
-
-import DetallesCuenta from './DetalleCuenta/DetallesCuenta';
+import {AbonosCtx} from "../../../../../../context/Tesoreria/abonosCtx";
+import {
+	formatoFechaCorta
+  } from "../../../../../../config/reuserFunctions";
+//import DetallesCuenta from './DetalleCuenta/DetallesCuenta';
 import LiquidarCuenta from './LiquidarCuenta';
 
 function createData(folio, fecha, cantidadProductos, totalVenta, totalAbonado, faltaPagar) {
 	return { folio, fecha, cantidadProductos, totalVenta, totalAbonado, faltaPagar };
 }
 
-const rows = [
-	createData('2343243', 45555, 5, 2589.65, 1000, 1589.65),
-	
-];
+const rows = [];
 
 const headCells = [
 	{ id: 'folio', numeric: false, disablePadding: true, label: 'Folio' },
-	{ id: 'fecha', numeric: true, disablePadding: false, label: 'Fecha' },
-	{ id: 'cantidadProductos', numeric: true, disablePadding: false, label: 'Cantidad de productos' },
-	{ id: 'totalVenta', numeric: true, disablePadding: false, label: 'Total venta' },
-	{ id: 'totalAbonado', numeric: true, disablePadding: false, label: 'Pagado' },
-	{ id: 'faltaPagar', numeric: true, disablePadding: false, label: 'Falta por pagar' },
+	{ id: 'fecha', numeric: false, disablePadding: true, label: 'Fecha' },
+	{ id: 'fechaVencimiento', numeric: false, disablePadding: true, label: 'Fecha de vencimiento' },
+	{ id: 'cantidadProductos', numeric: false, disablePadding: true, label: 'Cantidad de productos' },
+	{ id: 'totalVenta', numeric: true, disablePadding: true, label: 'Total venta' },
+	// { id: 'totalAbonado', numeric: true, disablePadding: false, label: 'Pagado' },
+	{ id: 'faltaPagar', numeric: true, disablePadding: true, label: 'Falta por pagar' },
 	
 ];
 
@@ -51,10 +52,7 @@ function EnhancedTableHead(props) {
 					<TableCell
 						key={headCell.id}
 						align={headCell.numeric ? 'right' : 'left'}
-						padding={headCell.disablePadding ? 'none' : 'default'}
-					>
-						{headCell.label}
-					</TableCell>
+					>{headCell.label}</TableCell>
 				))}
 			</TableRow>
 		</TableHead>
@@ -95,11 +93,13 @@ const useStyles = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaAbonos() {
+export default function TablaVentasCredito(props) {
 	const classes = useStyles();
 	const [ selected, setSelected ] = useState([]);
+	const [ cliente, setCliente ] = useState([]);
 	const [ page ] = useState(0);
 	const [ rowsPerPage ] = useState(10);
+	const { setVentas} = useContext(AbonosCtx);
 
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {
@@ -110,21 +110,29 @@ export default function TablaAbonos() {
 		setSelected([]);
 	};
 
-	const handleClick = (event, name) => {
-		const selectedIndex = selected.indexOf(name);
-		let newSelected = [];
-
-		if (selectedIndex === -1) {
-			newSelected = newSelected.concat(selected, name);
-		} else if (selectedIndex === 0) {
-			newSelected = newSelected.concat(selected.slice(1));
-		} else if (selectedIndex === selected.length - 1) {
-			newSelected = newSelected.concat(selected.slice(0, -1));
-		} else if (selectedIndex > 0) {
-			newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-		}
-
-		setSelected(newSelected);
+	const handleClick = (event, item) => {
+         try {
+			let newSelected = [];
+			const selectedIndex = selected.indexOf(item);
+			console.log(selected,selectedIndex);
+			
+			if (selectedIndex === -1) {
+				newSelected = newSelected.concat(selected, item);
+			} else if (selectedIndex === 0) {
+				newSelected = newSelected.concat(selected.slice(1));
+			} else if (selectedIndex === selected.length - 1) {
+				newSelected = newSelected.concat(selected.slice(0, -1));
+			} else if (selectedIndex > 0) {
+				newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+			}
+			
+			setSelected(newSelected);
+			setVentas(newSelected); 
+		 } catch (error) {
+			 
+		 }
+	
+		
 	};
 
 /* 	const handleChangePage = (event, newPage) => {
@@ -136,13 +144,14 @@ export default function TablaAbonos() {
 		setPage(0);
 	}; */
 
-	const isSelected = (name) => selected.indexOf(name) !== -1;
+	const isSelected = (item) => selected.indexOf(item) !== -1;
 
 	const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
 	return (
 		<div className={classes.root}>
 			<Paper className={classes.paper}>
+				
 				<TableContainer>
 					<Table
 						className={classes.table}
@@ -158,14 +167,14 @@ export default function TablaAbonos() {
 							rowCount={rows.length}
 						/>
 						<TableBody>
-							{rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-								const isItemSelected = isSelected(row.name);
+							{props.rows.map((row, index) => {
+								const isItemSelected = isSelected(row);
 								const labelId = `enhanced-table-checkbox-${index}`;
 								return (
 									<TableRow
 										hover
 										key={index}
-										onClick={(event) => handleClick(event, row.name)}
+										onClick={(event) => handleClick(event, row)}
 										role="checkbox"
 										aria-checked={isItemSelected}
 										tabIndex={-1}
@@ -177,27 +186,20 @@ export default function TablaAbonos() {
 												inputProps={{ 'aria-labelledby': labelId }}
 											/>
 										</TableCell>
-										<TableCell component="th" id={labelId} scope="row" padding="none">
-											{row.folio}
-										</TableCell>
-										<TableCell align="right">{row.fecha}</TableCell>
-										<TableCell align="right">{row.cantidadProductos}</TableCell>
-										<TableCell align="right">{row.totalVenta}</TableCell>
-										<TableCell align="right">
-											{/* <DetallesCuenta /> */}
-											{row.totalAbonado}
-										</TableCell>
-										<TableCell align="right">
-											{row.faltaPagar}
-										</TableCell>
+										<TableCell id={labelId}>{row.folio}</TableCell>
+										<TableCell >{` ${formatoFechaCorta(row.fecha_registro)}`}</TableCell>
+										<TableCell >{row.fecha_de_vencimiento_credito}</TableCell>
+										<TableCell align='center'>{row.productos.length}</TableCell>
+										<TableCell align='right'>{row.total}</TableCell>
+										<TableCell align='right'>{row.saldo_credito_pendiente}</TableCell>
 									</TableRow>
 								);
 							})}
-							{emptyRows > 0 && (
+							{/* {emptyRows > 0 && (
 								<TableRow style={{ height: 53 * emptyRows }}>
 									<TableCell colSpan={6} />
 								</TableRow>
-							)}
+							)} */}
 						</TableBody>
 					</Table>
 				</TableContainer>

@@ -1,33 +1,111 @@
-import React, { useState } from 'react';
+import React, { useState, useContext} from 'react';
 
 import CloseIcon from '@material-ui/icons/Close';
 import { Alert } from '@material-ui/lab';
-import { Box, Button, Dialog,  DialogContent,  DialogTitle, Slide, TextField, Typography } from '@material-ui/core'
-
+import { Box, Button, Dialog, DialogContent, makeStyles,  DialogTitle, Slide, TextField, AppBar, Toolbar, Typography, Grid } from '@material-ui/core'
+import {AbonosCtx} from "../../../../../../context/Tesoreria/abonosCtx";
+import CardVentaAbono from "./AbonarSeleccion/CardVentaAbono";
+const useStyles = makeStyles((theme) => ({
+    appBar: {	
+		position: 'relative'
+	},
+	title: {
+		marginLeft: theme.spacing(2),
+		flex: 1
+	},
+    icon: {
+		width: 100
+	},
+	formInputFlex: {
+		display: 'flex',
+		'& > *': {
+			margin: `${theme.spacing(6)}px ${theme.spacing(4)}px`
+		}
+	},
+	formInput: {
+		margin: `${theme.spacing(1)}px ${theme.spacing(2)}px`
+	},
+}));
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
 export default function Abonar() {
     //listo
-    const [open, setOpen] = useState(false);
-
+    
+    const {openAbonar, setOpenAbonar, ventas, selectedClient }= useContext(AbonosCtx);
+    const classes = useStyles();
     const handleClick = () => { 
-        setOpen(!open);
-    } 
+        setOpenAbonar(!openAbonar);
+    }
 
     return (
         <Box m={1}>
-                <Button
-                    size="large"
-                    variant="contained" 
-                    color="primary"
-                    onClick={handleClick}
-                >
-                   Abonar
-                </Button>
-            <Dialog
-                open={open}
+            <Button
+                size="large"
+                variant="contained" 
+                color="primary"
+                onClick={handleClick}
+            >
+                Abonar
+            </Button>
+            <Dialog fullScreen open={openAbonar} onClose={handleClick} TransitionComponent={Transition}>
+				<AppBar className={classes.appBar}>
+					<Toolbar>
+						<Typography variant="h6" className={classes.title}>
+                        	Detalle de cuenta
+						</Typography>
+						
+                        <Box m={1}>
+							<Button variant="contained" color="secondary" onClick={handleClick} size="large">
+								<CloseIcon style={{fontSize: 30}} />
+							</Button>
+						</Box>
+					</Toolbar>
+				</AppBar>
+                <div className={classes.formInputFlex}>
+                <Box width="40%">
+                        <Typography><b>Número de Cliente</b></Typography>
+                        <Box mt={1}>
+                            <Typography>
+                                {selectedClient.numero_cliente}
+                            </Typography>
+                        </Box>
+                    </Box>
+                    <Box width="55%">
+                        <Typography><b>Nombre de Cliente</b></Typography>
+                        <Box mt={1}>
+                            <Typography>
+                                {selectedClient.nombre_cliente}
+                            </Typography>
+                        </Box>
+                    </Box>
+                    
+                    <Box width="100%">
+                        <Typography><b>Domicilio</b></Typography>
+                        <Box mt={1}>
+                            <Typography>
+                                {selectedClient.direccion.calle}  {selectedClient.direccion.no_ext}
+                            </Typography>
+                        </Box>
+                    </Box>
+                </div>
+                <Grid container >
+                    {
+                        ventas.map((venta) =>{
+                            return(
+                                <CardVentaAbono datos={venta} />   
+                            )
+                        })
+                    } 
+                </Grid>
+			</Dialog>
+            
+        </Box>
+    )
+}
+{/* <Dialog
+                open={openAbonar}
                 TransitionComponent={Transition}
                 keepMounted
                 onClose={handleClick}
@@ -53,13 +131,12 @@ export default function Abonar() {
                         <TextField
                             fullWidth
                             size="small"
-                            /* error */
+                            
                             name="nombre_comercial"
                             id="form-producto-nombre-comercial"
                             variant="outlined"
                             value="$150,000.00 Mx" 
-                            /* helperText="Incorrect entry." */
-                            /* onChange={obtenerCampos} */
+                           
                         />
                     </Box>
                     <Box width="100%">
@@ -67,13 +144,12 @@ export default function Abonar() {
                         <TextField
                             fullWidth
                             size="small"
-                            /* error */
+                           
                             name="nombre_comercial"
                             id="form-producto-nombre-comercial"
                             variant="outlined"
                             value="$150,000.00 Mx" 
-                            /* helperText="Incorrect entry." */
-                            /* onChange={obtenerCampos} */
+                           
                         />
                     </Box>
                     <Box width="100%" p={1} mt={1}>
@@ -98,7 +174,4 @@ export default function Abonar() {
                         Registrar Abono
                     </Button>
                 </Box>
-            </Dialog>
-        </Box>
-    )
-}
+            </Dialog> */}

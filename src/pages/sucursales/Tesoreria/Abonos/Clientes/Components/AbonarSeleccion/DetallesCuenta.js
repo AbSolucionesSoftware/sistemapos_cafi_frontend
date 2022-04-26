@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 
-import { Box, Grid, makeStyles, Typography, Button, Dialog, Slide, AppBar, Toolbar } from '@material-ui/core'
+import { Box, Grid, makeStyles, Typography, Button, Dialog, Slide, AppBar, Toolbar } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import TablaCompras from './TablaCompras';
 import TablaAbonos from './TablaDeAbonos';
+import {AbonosCtx} from "../../../../../../../context/Tesoreria/abonosCtx";
 
 const useStyles = makeStyles((theme) => ({
     appBar: {	
@@ -33,24 +34,25 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function DetallesCuenta() {
     
-    const [open, setOpen] = useState(false);
+
+    const {openAbonar, setOpenAbonar, ventas} = useContext(AbonosCtx);
     const classes = useStyles();
 
     const handleClick =()=>{
-        setOpen(!open);
+        setOpenAbonar(!openAbonar);
     }
 
     return (
         <div>
-            <Button
+          {/*   <Button
                 size="medium"
                 variant="contained" 
                 color="primary"
                 onClick={handleClick}
             >
                 Detalles
-            </Button>
-            <Dialog fullScreen open={open} onClose={handleClick} TransitionComponent={Transition}>
+            </Button> */}
+            <Dialog fullScreen open={openAbonar} onClose={handleClick} TransitionComponent={Transition}>
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
