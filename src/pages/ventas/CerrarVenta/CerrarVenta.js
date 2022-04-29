@@ -65,7 +65,6 @@ export default function CerrarVenta() {
     setVentaRetomada,
   } = useContext(VentasContext);
   const { updateClientVenta, setUpdateClientVenta } = useContext(ClienteCtx);
-  const [creditoActivo, setCreditoActivo] = useState(false);
 
   //States de los montos a pagar
   const [montos, setMontos] = useState(initial_state_montos);
@@ -91,9 +90,9 @@ export default function CerrarVenta() {
 
       const datos_cliente = venta && cliente ? cliente : {};
       if (datosCliente.credito_disponible) {
-        setCreditoActivo(true);
+        setVentaCredito(true);
       } else {
-        setCreditoActivo(false);
+        setVentaCredito(false);
       }
       setDatosCliente(datos_cliente);
       setMontoEnCaja(venta === null ? 0 : parseFloat(total.toFixed(2)));
@@ -158,7 +157,6 @@ export default function CerrarVenta() {
     setVentaBase(0);
     setEditarCliente(false);
     setVentaCredito(false);
-    setCreditoActivo(false);
 
     //States de los montos a pagar
     setMontoEnCaja(0);
@@ -257,8 +255,21 @@ export default function CerrarVenta() {
         parseFloat(montos.puntos) > 0
           ? monederoTotal - monedero
           : monederoTotal;
-      //Enviar los datos
+      //poner metodo y forma de pago
+      ventaFinal.metodo_pago = venta_credito ? "PPD" : "PUE";
+      let numero_mayor = 0;
+      let forma_pago;
 
+      Object.keys(montosEnCaja).forEach((key) => {
+        if (montosEnCaja[key].monto > numero_mayor) {
+          numero_mayor = montosEnCaja[key].monto;
+          forma_pago = montosEnCaja[key].metodo_pago;
+        }
+      });
+
+      ventaFinal.forma_pago = forma_pago;
+
+      //Enviar los datos
       /* console.log(ventaFinal); */
       await createVenta({
         variables: {
@@ -428,7 +439,7 @@ export default function CerrarVenta() {
                     setVentaCredito(true);
                   }}
                   startIcon={<CreditCardIcon style={{ fontSize: "28px" }} />}
-                  disabled={creditoActivo || !venta_base}
+                  disabled={!venta_credito || !venta_base}
                 >
                   Credito
                 </Button>
