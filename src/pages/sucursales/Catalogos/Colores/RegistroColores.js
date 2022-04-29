@@ -31,7 +31,7 @@ export default function RegistroColores() {
 
   /* Queries */
   const { loading, data, error, refetch } = useQuery(OBTENER_COLORES, {
-    variables: { sucursal: sesion.sucursal._id },
+    variables: { empresa: sesion.empresa._id },
   });
 
   /* Mutations */

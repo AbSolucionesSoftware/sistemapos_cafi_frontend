@@ -36,8 +36,8 @@ export const CREAR_CLIENTE = gql`
 `;
 
 export const OBTENER_CLIENTES = gql`
-	query obtenerClientes($tipo: String!, $filtro: String) {
-		obtenerClientes(tipo: $tipo, filtro: $filtro) {
+	query obtenerClientes($tipo: String!, $filtro: String, $empresa: ID!) {
+		obtenerClientes(tipo: $tipo, filtro: $filtro, empresa: $empresa) {
 			_id
 			numero_cliente
 			clave_cliente

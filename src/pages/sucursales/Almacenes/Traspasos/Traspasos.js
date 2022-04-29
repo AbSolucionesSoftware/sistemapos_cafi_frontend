@@ -588,24 +588,20 @@ export default function Traspasos(props) {
         <Box sx={{ width: '100%',  }}>
             <Button fullWidth onClick={handleClickOpen}>
                 <Box display="flex" flexDirection="column">
-                    <Box display="flex" justifyContent="center" alignItems="center">
-                        <FcAdvance className={classes.icon} />
-					</Box>
-                    <Grid container spacing={10} justifyContent="center" >
-                        <Grid item lg={2} >
+                    <Grid container justifyContent="center">
+                        <Grid item xs={12} >
                             <Box display="flex" justifyContent="center" alignItems="center">
-                                    <Box display="flex" justifyContent="center" alignItems="center">
-                                        <img src={almacenIcon} alt="icono almacen" className={classes.imagen}/>
-                                    </Box>
+                                <FcAdvance className={classes.icon} />  
                             </Box>
                         </Grid>
-                        <Grid item lg={2} >
+                        <Grid item md={6} >
                             <Box display="flex" justifyContent="center" alignItems="center">
-                                <Box display="flex" flexDirection="column">
-                                    <Box display="flex" justifyContent="center" alignItems="center">
-                                        <img src={almacenIcon} alt="icono almacen" className={classes.imagen} />
-                                    </Box>
-                                </Box>
+                                <img src={almacenIcon} alt="icono almacen" className={classes.imagen}/>
+                            </Box>
+                        </Grid>
+                        <Grid item md={6} >
+                            <Box display="flex" justifyContent="center" alignItems="center">
+                                <img src={almacenIcon} alt="icono almacen" className={classes.imagen} />
                             </Box>
                         </Grid>
                     </Grid>

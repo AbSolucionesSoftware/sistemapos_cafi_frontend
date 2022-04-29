@@ -28,7 +28,7 @@ export default function RegistroTallas({ tipo }) {
 
   /* Queries */
   const { loading, data, error, refetch } = useQuery(OBTENER_TALLAS, {
-    variables: { sucursal: sesion.sucursal._id, tipo },
+    variables: { empresa: sesion.empresa._id, tipo },
   });
   /* Mutations */
   const [crearTalla] = useMutation(CREAR_TALLAS);

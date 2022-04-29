@@ -20,8 +20,8 @@ export const CREAR_COLOR = gql`
 `;
 
 export const OBTENER_COLORES = gql`
-	query obtenerColores($sucursal: String!) {
-		obtenerColores(sucursal: $sucursal) {
+	query obtenerColores($empresa: ID!) {
+		obtenerColores(empresa: $empresa) {
 			_id
 			nombre
 			hex
