@@ -44,8 +44,8 @@ export const ACTUALIZAR_SUBCUENTA = gql`
 `;
 
 export const OBTENER_CUENTAS = gql`
-	query obtenerCuentas($empresa: ID!, $sucursal: ID!) {
-		obtenerCuentas(empresa: $empresa, sucursal: $sucursal) {
+	query obtenerCuentas($empresa: ID!) {
+		obtenerCuentas(empresa: $empresa) {
 			_id
 			cuenta
 			subcuentas {

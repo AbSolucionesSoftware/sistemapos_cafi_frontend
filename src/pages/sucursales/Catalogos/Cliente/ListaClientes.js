@@ -67,6 +67,7 @@ export default function ListaClientes({
       tipo,
       filtro: value,
       empresa: sesion.empresa._id,
+      eliminado: false,
     },
     fetchPolicy: "network-only",
   });

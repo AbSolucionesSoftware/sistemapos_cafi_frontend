@@ -120,6 +120,7 @@ const ProveedoresComponent = () => {
       tipo: "PROVEEDOR",
       filtro,
       empresa: sesion.empresa._id,
+      eliminado: false
     },
     fetchPolicy: "network-only",
   });

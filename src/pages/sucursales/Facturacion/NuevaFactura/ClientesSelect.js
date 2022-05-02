@@ -98,6 +98,7 @@ const BuscadorClienteComponent = ({ handleClose }) => {
       tipo: "CLIENTE",
       filtro: value,
       empresa: sesion.empresa._id,
+      eliminado: false,
     },
     fetchPolicy: "network-only",
   });
