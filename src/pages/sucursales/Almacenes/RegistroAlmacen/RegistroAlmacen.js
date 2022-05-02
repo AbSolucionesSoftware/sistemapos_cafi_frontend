@@ -53,7 +53,7 @@ export default function RegistroAlmacen() {
             <Box display="flex" justifyContent="center" alignItems="center">
               <FcPlus className={classes.icon} />
             </Box>
-            Agregar almacen
+            Almacenes
           </Box>
         </Button>
         <Dialog

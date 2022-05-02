@@ -89,12 +89,17 @@ export default function ListaClientesFacturas() {
 const BuscadorClienteComponent = ({ handleClose }) => {
   const [filtro, setFiltro] = useState("");
   const [openAlertRfc, setOpenAlertRfc] = useState(false);
-
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const [value] = useDebounce(filtro, 500);
 
   /* Queries */
   const resultado_clientes = useQuery(OBTENER_CLIENTES, {
-    variables: { tipo: "CLIENTE", filtro: value },
+    variables: {
+      tipo: "CLIENTE",
+      filtro: value,
+      empresa: sesion.empresa._id,
+      eliminado: false,
+    },
     fetchPolicy: "network-only",
   });
 

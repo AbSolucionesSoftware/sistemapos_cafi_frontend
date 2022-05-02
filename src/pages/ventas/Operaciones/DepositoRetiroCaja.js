@@ -53,7 +53,6 @@ export default function DepositoRetiroCaja() {
   const { loading, data, error } = useQuery(OBTENER_CONTABILIDAD, {
     variables: {
       empresa: sesion.empresa._id,
-      sucursal: sesion.sucursal._id,
     },
   });
 

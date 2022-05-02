@@ -9,8 +9,8 @@ export const CREAR_TALLAS = gql`
 `;
 
 export const OBTENER_TALLAS = gql`
-	query obtenerTallas($sucursal: String!, $tipo: String! ) {
-		obtenerTallas(sucursal: $sucursal, tipo: $tipo) {
+	query obtenerTallas($empresa: ID!, $tipo: String! ) {
+		obtenerTallas(empresa: $empresa, tipo: $tipo) {
 			_id
 			talla
 			tipo

@@ -11,15 +11,14 @@ import {
   CircularProgress,
   Box,
   Typography,
-  IconButton,
 } from "@material-ui/core/";
-import { Delete } from "@material-ui/icons";
 import ErrorPage from "../../../../components/ErrorPage";
 
 import { useQuery } from "@apollo/client";
 import { OBTENER_ALMACENES } from "../../../../gql/Almacenes/Almacen";
 import ContainerRegistroAlmacen from "./ContainerRegistroAlmacen";
 import { CrearAlmacenContext } from "../../../../context/Almacenes/crearAlmacen";
+import EliminarAlmacen from "./EliminarAlmacen";
 
 const useStyles = makeStyles({
   table: {
@@ -92,7 +91,7 @@ export default function ListaAlmacen() {
           </TableHead>
           <TableBody>
             {obtenerAlmacenes.map((row, index) => {
-                return <RowsRender key={index} datos={row} />;
+                return <RowsRender key={index} datos={row} refetch={refetch}  />;
               })}
           </TableBody>
         </Table>
@@ -101,7 +100,7 @@ export default function ListaAlmacen() {
   );
 }
 
-const RowsRender = ({ datos }) => {
+const RowsRender = ({ datos, refetch }) => {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
   return (
@@ -126,9 +125,7 @@ const RowsRender = ({ datos }) => {
       </TableCell>
       <TableCell width={50}>
         {sesion.accesos.almacenes.almacen.eliminar === false ? null : (
-          <IconButton color="secondary">
-            <Delete />
-          </IconButton>
+          <EliminarAlmacen datos={datos} refetch={refetch} />
         )}
       </TableCell>
     </TableRow>

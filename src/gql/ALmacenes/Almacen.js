@@ -57,6 +57,14 @@ export const ACTUALIZAR_ALMACEN = gql`
   }
 `;
 
+export const ELIMINAR_ALMACEN = gql`
+  mutation eliminarAlmacen($id: ID!) {
+    eliminarAlmacen(id: $id) {
+      message
+    }
+  }
+`;
+
 export const OBTENER_PRODUCTOS_ALMACEN = gql`
   query obtenerProductosAlmacenes(
     $empresa: ID!

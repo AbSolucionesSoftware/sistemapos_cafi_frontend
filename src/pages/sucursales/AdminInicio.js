@@ -85,7 +85,7 @@ function AdminInicio(props) {
             onChange={handleChange}
             indicatorColor="primary"
             textColor="primary"
-            /* centered */ variant="scrollable"
+            centered /* variant="scrollable" */
             scrollButtons="on"
           >
             <Tab
@@ -116,7 +116,7 @@ function AdminInicio(props) {
               icon={<FcPaid className={classes.icon} />}
               {...a11yProps(3)}
             />
-            <Tab
+            {/*  <Tab
               label="Ventas"
               icon={
                 <img
@@ -127,11 +127,11 @@ function AdminInicio(props) {
               }
               {...a11yProps(4)}
               onClick={() => props.history.push("/ventas/venta-general")}
-            />
+            /> */}
             <Tab
               label="Reportes"
               icon={<FcSurvey className={classes.icon} />}
-              {...a11yProps(5)}
+              {...a11yProps(4)}
             />
             <Tab
               label="Tesoreria"
@@ -142,7 +142,7 @@ function AdminInicio(props) {
                   className={classes.iconSvg}
                 />
               }
-              {...a11yProps(6)}
+              {...a11yProps(5)}
             />
             <Tab
               label="Facturación"
@@ -153,7 +153,7 @@ function AdminInicio(props) {
                   className={classes.iconSvg}
                 />
               }
-              {...a11yProps(7)}
+              {...a11yProps(6)}
             />
           </Tabs>
         </AppBar>
@@ -174,16 +174,16 @@ function AdminInicio(props) {
           <TabPanel value={value} index={3}>
             <Compras />
           </TabPanel>
+          {/* <TabPanel value={value} index={4}>
+            ventas
+          </TabPanel> */}
           <TabPanel value={value} index={4}>
-            {/* ventas */}
-          </TabPanel>
-          <TabPanel value={value} index={5}>
             <Reportes />
           </TabPanel>
-          <TabPanel value={value} index={6}>
+          <TabPanel value={value} index={5}>
             <IndexTesoreria />
           </TabPanel>
-          <TabPanel value={value} index={7}>
+          <TabPanel value={value} index={6}>
             <Facturacion />
           </TabPanel>
         </SwipeableViews>

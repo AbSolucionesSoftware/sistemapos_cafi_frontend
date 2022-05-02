@@ -53,7 +53,6 @@ export default function TablaServicios({
   const { loading, data, error, refetch } = useQuery(OBTENER_CONTABILIDAD, {
     variables: {
       empresa: sesion.empresa._id,
-      sucursal: sesion.sucursal._id,
     },
   });
   const [EliminarContabilidad] = useMutation(ELIMINAR_CONTABILIDAD);

@@ -16,8 +16,8 @@ export default function RegistrarInfoCredito({ tipo, cliente_base }) {
   const classes = useStyles();
   const { cliente, setCliente } = useContext(ClienteCtx);
 
-  const credito_disponible = cliente_base.credito_disponible;
-  const limite_credito = cliente_base.limite_credito;
+  const credito_disponible = cliente_base ? cliente_base.credito_disponible : 0;
+  const limite_credito = cliente_base ? cliente_base.limite_credito : 0;
   const credito_usado = limite_credito - credito_disponible;
 
   const obtenerCampos = (e) => {

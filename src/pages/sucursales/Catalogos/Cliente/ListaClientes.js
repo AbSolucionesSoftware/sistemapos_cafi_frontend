@@ -60,9 +60,15 @@ export default function ListaClientes({
   );
   const [value] = useDebounce(filtro, 1000);
   const [selectDataClient, setSelectDataClient] = useState(false);
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   /* Queries */
   const { loading, data, error, refetch } = useQuery(OBTENER_CLIENTES, {
-    variables: { tipo, filtro: value },
+    variables: {
+      tipo,
+      filtro: value,
+      empresa: sesion.empresa._id,
+      eliminado: false,
+    },
     fetchPolicy: "network-only",
   });
 

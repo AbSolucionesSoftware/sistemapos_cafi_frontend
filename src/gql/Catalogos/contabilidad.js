@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const OBTENER_CONTABILIDAD = gql`
-    query obtenerContabilidad($empresa: ID!, $sucursal: ID!){
-        obtenerContabilidad(empresa: $empresa, sucursal: $sucursal){
+    query obtenerContabilidad($empresa: ID!){
+        obtenerContabilidad(empresa: $empresa){
                 _id
             nombre_servicio
             empresa{

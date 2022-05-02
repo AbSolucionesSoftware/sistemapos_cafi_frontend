@@ -110,7 +110,14 @@ export default function ContainerRegistroAlmacen({
     limpiarCampos();
   };
 
-  const obtenerCampos = (e) => {
+  const obtenerCampos = (e, child) => {
+    if (e.target.name === "id_usuario_encargado") {
+      setDatosAlmacen({
+        ...datosAlmacen,
+        [e.target.name]: child.props.user._id,
+      });
+      return;
+    }
     setDatosAlmacen({
       ...datosAlmacen,
       [e.target.name]: e.target.value.toUpperCase(),
@@ -261,15 +268,16 @@ export default function ContainerRegistroAlmacen({
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     name="id_usuario_encargado"
-                    value={
+                    /* value={
                       datosAlmacen.id_usuario_encargado
                         ? datosAlmacen.id_usuario_encargado
                         : ""
-                    }
+                    } */
+                    renderValue={(value) => value}
                     onChange={obtenerCampos}
                   >
                     {obtenerUsuarios?.map((user, index) => (
-                      <MenuItem key={index} value={user._id}>
+                      <MenuItem key={index} value={user.nombre} user={user}>
                         {user.nombre}
                       </MenuItem>
                     ))}

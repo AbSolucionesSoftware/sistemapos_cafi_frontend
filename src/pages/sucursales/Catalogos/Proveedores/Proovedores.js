@@ -109,13 +109,19 @@ const ProveedoresComponent = () => {
   const permisosUsuario = JSON.parse(localStorage.getItem("sesionCafi"));
   const [filtro, setFiltro] = useState("");
   const [values, setValues] = useState("");
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
   const pressEnter = (e) => {
     if (e.key === "Enter") setFiltro(e.target.defaultValue);
   };
 
   const { loading, data, error, refetch } = useQuery(OBTENER_CLIENTES, {
-    variables: { tipo: "PROVEEDOR", filtro },
+    variables: {
+      tipo: "PROVEEDOR",
+      filtro,
+      empresa: sesion.empresa._id,
+      eliminado: false
+    },
     fetchPolicy: "network-only",
   });
 
