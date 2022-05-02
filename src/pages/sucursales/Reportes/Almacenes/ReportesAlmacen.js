@@ -96,7 +96,8 @@ export default function ReportesAlmacen() {
     
     const queryObtenerUsuarios =  useQuery(OBTENER_USUARIOS,{
         variables: {
-            sucursal: `${sesion.sucursal._id}`
+            sucursal: `${sesion.sucursal._id}`,
+            eliminado: false,
         },
         
          fetchPolicy: "network-only"

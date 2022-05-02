@@ -53,6 +53,7 @@ export default function ContainerRegistroAlmacen({
   const { data, refetch } = useQuery(OBTENER_USUARIOS, {
     variables: {
       sucursal: `${sesion.sucursal._id}`,
+      eliminado: false,
     },
   });
   let obtenerUsuarios = [];

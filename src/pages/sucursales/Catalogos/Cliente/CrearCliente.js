@@ -101,14 +101,16 @@ export default function CrearCliente({
       setError(true);
       return;
     }
-    let credito_usado = datos.limite_credito - datos.credito_disponible;
-    if (credito_usado > copy_cliente.limite_credito) {
-      setAlert({
-        message: "Crédito utilizado es mayor al límite de crédito",
-        status: "error",
-        open: true,
-      });
-      return;
+    if (accion !== "registrar" && datos.limite_credito && datos.credito_disponible) {
+      let credito_usado = datos.limite_credito - datos.credito_disponible;
+      if (credito_usado > copy_cliente.limite_credito) {
+        setAlert({
+          message: "Crédito utilizado es mayor al límite de crédito",
+          status: "error",
+          open: true,
+        });
+        return;
+      }
     }
     setLoading(true);
     try {
