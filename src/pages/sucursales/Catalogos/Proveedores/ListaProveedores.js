@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -24,6 +24,7 @@ import { DialogTitle, IconButton, Typography } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
 import { formatoFechaCorta } from "../../../../config/reuserFunctions";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
+import { ClienteCtx } from "../../../../context/Catalogos/crearClienteCtx";
 
 const columns = [
   { id: 1, label: "No. Cliente", minWidth: 100 },
@@ -150,6 +151,7 @@ const EliminarCliente = ({ datos, setAlert, refetch }) => {
   const [open, setOpen] = useState(false);
   const [eliminarCliente] = useMutation(ELIMINAR_CLIENTE);
   const [loading, setLoading] = useState(false);
+  const { setUpdate, update } = useContext(ClienteCtx);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -173,6 +175,7 @@ const EliminarCliente = ({ datos, setAlert, refetch }) => {
         refetch();
       }
       setLoading(false);
+      setUpdate(!update);
       handleClose();
     } catch (error) {
       console.log(error);

@@ -25,21 +25,17 @@ import ErrorPage from "../../../../components/ErrorPage";
 import { useMutation, useQuery } from "@apollo/client";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 import {
-  ACTUALIZAR_CLIENTE,
-  OBTENER_CLIENTES,
-} from "../../../../gql/Catalogos/clientes";
-import moment from "moment";
-import { ClienteCtx } from "../../../../context/Catalogos/crearClienteCtx";
+  ACTUALIZAR_USUARIO,
+  OBTENER_USUARIOS,
+} from "../../../../gql/Catalogos/usuarios";
+import { UsuarioContext } from "../../../../context/Catalogos/usuarioContext";
 import { useDebounce } from "use-debounce/lib";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function ClientesInactivosComponent({
-  tipo,
-  refetchProveedores,
-}) {
+export default function UsuariosInactivosComponent() {
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState("");
 
@@ -53,7 +49,7 @@ export default function ClientesInactivosComponent({
         onClick={handleModalToggle}
         startIcon={<RestoreFromTrash />}
       >
-        {tipo === "CLIENTE" ? "Clientes" : "Proveedores "} inactivos
+        Usuarios inactivos
       </Button>
       <Dialog
         open={open}
@@ -64,13 +60,13 @@ export default function ClientesInactivosComponent({
             handleModalToggle();
           }
         }}
-        aria-labelledby="dialog-clientes-eliminados"
+        aria-labelledby="dialog-usuarios-eliminados"
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle id="dialog-clientes-eliminados">
+        <DialogTitle id="dialog-usuarios-eliminados">
           <Box display="flex" justifyContent="space-between">
-            <Typography variant="h6">{tipo === "CLIENTE" ? "Clientes" : "Proveedores "} inactivos</Typography>
+            <Typography variant="h6">Usuarios inactivos</Typography>
             <Button
               variant="contained"
               onClick={handleModalToggle}
@@ -86,7 +82,7 @@ export default function ClientesInactivosComponent({
               variant="outlined"
               size="small"
               fullWidth
-              placeholder="Buscar cliente: No. cliente, clave o nombre..."
+              placeholder="Buscar usuario: No. usuario, email o nombre..."
               onChange={(e) => setFilter(e.target.value)}
               value={filter}
               InputProps={{
@@ -98,27 +94,22 @@ export default function ClientesInactivosComponent({
               }}
             />
           </Box>
-          <ClientesInactivos
-            tipo={tipo}
-            filter={filter}
-            refetchProveedores={refetchProveedores}
-          />
+          <UsuariosInactivos filter={filter} />
         </DialogContent>
       </Dialog>
     </div>
   );
 }
 
-const ClientesInactivos = ({ tipo, filter, refetchProveedores }) => {
+const UsuariosInactivos = ({ filter }) => {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-  const { update } = useContext(ClienteCtx);
+  const { update } = useContext(UsuarioContext);
 
   const [value] = useDebounce(filter, 800);
 
   /* Queries */
-  const { loading, data, error, refetch } = useQuery(OBTENER_CLIENTES, {
+  const { loading, data, error, refetch } = useQuery(OBTENER_USUARIOS, {
     variables: {
-      tipo,
       filtro: value ? value : "",
       empresa: sesion.empresa._id,
       eliminado: true,
@@ -162,12 +153,12 @@ const ClientesInactivos = ({ tipo, filter, refetchProveedores }) => {
         alignItems="center"
         height="60vh"
       >
-        <Typography variant="h6">No hay clientes inactivos</Typography>
+        <Typography variant="h6">No hay usuarios inactivos</Typography>
       </Box>
     );
   }
 
-  const { obtenerClientes } = data;
+  const { obtenerUsuarios } = data;
 
   return (
     <Box height="60vh">
@@ -175,21 +166,15 @@ const ClientesInactivos = ({ tipo, filter, refetchProveedores }) => {
         <Table aria-label="simple table" size="small">
           <TableHead>
             <TableRow>
-              <TableCell>No. Cliente</TableCell>
-              <TableCell>Clave</TableCell>
+              <TableCell>No. Usuario</TableCell>
               <TableCell>Nombre</TableCell>
               <TableCell>Correo</TableCell>
-              <TableCell>Fecha Registro</TableCell>
               <TableCell align="right">Reactivar</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {obtenerClientes.map((row, index) => (
-              <RenderClientes
-                key={index}
-                datos={row}
-                refetchProveedores={refetchProveedores}
-              />
+            {obtenerUsuarios.map((row, index) => (
+              <RenderClientes key={index} datos={row} />
             ))}
           </TableBody>
         </Table>
@@ -198,18 +183,18 @@ const ClientesInactivos = ({ tipo, filter, refetchProveedores }) => {
   );
 };
 
-const RenderClientes = ({ datos, refetchProveedores }) => {
+const RenderClientes = ({ datos }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
-  const { setUpdate, update } = useContext(ClienteCtx);
+  const { setUpdate, update } = useContext(UsuarioContext);
 
-  const [actualizarCliente] = useMutation(ACTUALIZAR_CLIENTE);
+  const [actualizarUsuario] = useMutation(ACTUALIZAR_USUARIO);
 
   const cambiarEstado = async (e) => {
     setLoading(true);
     try {
-      await actualizarCliente({
+      await actualizarUsuario({
         variables: {
           input: {
             eliminado: false,
@@ -219,7 +204,6 @@ const RenderClientes = ({ datos, refetchProveedores }) => {
       });
       setLoading(false);
       setUpdate(!update);
-      if (refetchProveedores) refetchProveedores();
     } catch (error) {
       setLoading(false);
     }
@@ -231,49 +215,47 @@ const RenderClientes = ({ datos, refetchProveedores }) => {
     <Fragment>
       <TableRow>
         <TableCell>
-          <Typography>{datos.numero_cliente}</Typography>
+          <Typography>{datos.numero_usuario}</Typography>
         </TableCell>
         <TableCell>
-          <Typography>{datos.clave_cliente}</Typography>
-        </TableCell>
-        <TableCell>
-          <Typography>{datos.nombre_cliente}</Typography>
+          <Typography>{datos.nombre}</Typography>
         </TableCell>
         <TableCell>
           <Typography>{datos.email}</Typography>
         </TableCell>
-        <TableCell>
-          <Typography>
-            {moment(datos.fecha_registro).format("DD/MM/YYYY")}
-          </Typography>
-        </TableCell>
         <TableCell align="right">
-          {loading ? (
-            <IconButton color="primary" disabled onClick={handleDeleteToggle}>
-              <CircularProgress size={26} />
-            </IconButton>
-          ) : (
-            <IconButton color="primary" onClick={handleDeleteToggle}>
-              <RestoreFromTrash style={{ fontSize: 30 }} />
-            </IconButton>
-          )}
+          <IconButton color="primary" onClick={handleDeleteToggle}>
+            <RestoreFromTrash style={{ fontSize: 30 }} />
+          </IconButton>
         </TableCell>
       </TableRow>
       <Dialog
         open={open}
         onClose={handleDeleteToggle}
-        aria-labelledby="reactivar-cliente-dialog"
+        aria-labelledby="reactivar-usuario-dialog"
       >
-        <DialogTitle id="reactivar-cliente-dialog">
-          {"Se reactivará este cliente"}
+        <DialogTitle id="reactivar-usuario-dialog">
+          {"Se reactivará este usuario"}
         </DialogTitle>
         <SnackBarMessages alert={alert} setAlert={setAlert} />
         <DialogActions>
-          <Button onClick={handleDeleteToggle} color="inherit">
+          <Button
+            onClick={handleDeleteToggle}
+            color="inherit"
+            disabled={loading}
+          >
             Cancelar
           </Button>
-          <Button onClick={() => cambiarEstado()} color="primary" autoFocus>
-            Aceptar
+          <Button
+            onClick={() => cambiarEstado()}
+            color="primary"
+            autoFocus
+            disabled={loading}
+            startIcon={
+              loading ? <CircularProgress color="inherit" size={20} /> : null
+            }
+          >
+            Eliminar
           </Button>
         </DialogActions>
       </Dialog>

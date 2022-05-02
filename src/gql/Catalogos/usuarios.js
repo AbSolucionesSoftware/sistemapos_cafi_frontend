@@ -316,8 +316,8 @@ export const CREAR_USUARIO = gql`
 `;
 
 export const OBTENER_USUARIOS = gql`
-	query obtenerUsuarios($sucursal: String!, $filtro: String) {
-		obtenerUsuarios(sucursal: $sucursal, filtro: $filtro) {
+	query obtenerUsuarios($empresa: String!, $filtro: String, $eliminado: Boolean) {
+		obtenerUsuarios(empresa: $empresa, filtro: $filtro, eliminado: $eliminado) {
 			_id
 			numero_usuario
 			nombre

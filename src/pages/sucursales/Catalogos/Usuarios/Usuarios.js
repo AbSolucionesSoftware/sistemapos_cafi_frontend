@@ -19,6 +19,7 @@ import {
 import ListaUsuarios from "./ListaUsuario";
 import CrearUsuario from "./CrearUsuario";
 import { UsuarioProvider } from "../../../../context/Catalogos/usuarioContext";
+import UsuariosInactivosComponent from "./UsuariosInactivos";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -120,6 +121,11 @@ export default function Usuarios() {
                 </Grid>
                 <Grid item xs={4} md={6}>
                   <Box display="flex" justifyContent="flex-end">
+                  {permisosUsuario.accesos.catalogos.usuarios.agregar ===
+                    false ? null : (
+                      <UsuariosInactivosComponent />
+                    )}
+                    <Box mx={1} />
                     {permisosUsuario.accesos.catalogos.usuarios.agregar ===
                     false ? null : (
                       <CrearUsuario accion="registrar" datos={undefined} />
@@ -128,7 +134,7 @@ export default function Usuarios() {
                 </Grid>
               </Grid>
               <Box my={3}>
-                <ListaUsuarios sucursal={sesion.sucursal._id} filtro={filtro} />
+                <ListaUsuarios empresa={sesion.empresa._id} filtro={filtro} />
               </Box>
             </Container>
           </Box>

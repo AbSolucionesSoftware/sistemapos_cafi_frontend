@@ -24,6 +24,7 @@ import DescripcionCatalogo from "../../../../components/DescripcionCatalogo";
 import { useQuery } from "@apollo/client";
 import { OBTENER_CLIENTES } from "../../../../gql/Catalogos/clientes";
 import ClientesInactivosComponent from "../Cliente/ClientesInactivos";
+import { FcInTransit } from "react-icons/fc";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -35,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
   },
   icon: {
     width: 100,
+    fontSize: 100
   },
   root: {
     display: "flex",
@@ -64,11 +66,12 @@ export default function Proveedores() {
       <Button fullWidth onClick={handleClickOpen}>
         <Box display="flex" flexDirection="column">
           <Box display="flex" justifyContent="center" alignItems="center">
-            <img
+            {/* <img
               src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/distribution.svg"
               alt="icono numero calzado"
               className={classes.icon}
-            />
+            /> */}
+            <FcInTransit className={classes.icon} />
           </Box>
           Proveedores
         </Box>
@@ -172,7 +175,7 @@ const ProveedoresComponent = () => {
         >
           {permisosUsuario.accesos.catalogos.clientes.agregar ===
           false ? null : (
-            <ClientesInactivosComponent tipo="PROVEEDOR" />
+            <ClientesInactivosComponent tipo="PROVEEDOR" refetchProveedores={refetch} />
           )}
           <Box mx={1} />
           {permisosUsuario.accesos.catalogos.provedores.ver === false ? null : (
