@@ -214,7 +214,6 @@ export default function CrearCliente({
           <Button
             color="primary"
             variant="contained"
-            size="large"
             onClick={toggleModal}
             startIcon={<Add />}
           >

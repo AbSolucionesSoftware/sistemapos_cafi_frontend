@@ -12,6 +12,7 @@ import { Box, Grid, IconButton, InputBase, Paper } from "@material-ui/core";
 import { Search } from "@material-ui/icons";
 import ListaClientes from "./ListaClientes";
 import CrearCliente from "./CrearCliente";
+import ClientesInactivosComponent from "./ClientesInactivos";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -107,8 +108,13 @@ export default function Cliente() {
               item
               md={6}
               xs={4}
-              style={{ display: "flex", justifyContent: "flex-end" }}
+              style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}
             >
+              {permisosUsuario.accesos.catalogos.clientes.agregar ===
+              false ? null : (
+                <ClientesInactivosComponent tipo="CLIENTE" />
+              )}
+              <Box mx={1} />
               {permisosUsuario.accesos.catalogos.clientes.agregar ===
               false ? null : (
                 <CrearCliente tipo="CLIENTE" accion="registrar" />

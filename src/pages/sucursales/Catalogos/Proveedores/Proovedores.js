@@ -23,6 +23,7 @@ import ErrorPage from "../../../../components/ErrorPage";
 import DescripcionCatalogo from "../../../../components/DescripcionCatalogo";
 import { useQuery } from "@apollo/client";
 import { OBTENER_CLIENTES } from "../../../../gql/Catalogos/clientes";
+import ClientesInactivosComponent from "../Cliente/ClientesInactivos";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -120,7 +121,7 @@ const ProveedoresComponent = () => {
       tipo: "PROVEEDOR",
       filtro,
       empresa: sesion.empresa._id,
-      eliminado: false
+      eliminado: false,
     },
     fetchPolicy: "network-only",
   });
@@ -163,8 +164,17 @@ const ProveedoresComponent = () => {
           item
           md={6}
           xs={4}
-          style={{ display: "flex", justifyContent: "flex-end" }}
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
         >
+          {permisosUsuario.accesos.catalogos.clientes.agregar ===
+          false ? null : (
+            <ClientesInactivosComponent tipo="PROVEEDOR" />
+          )}
+          <Box mx={1} />
           {permisosUsuario.accesos.catalogos.provedores.ver === false ? null : (
             <CrearCliente
               tipo="PROVEEDOR"
