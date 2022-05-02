@@ -22,9 +22,9 @@ export default function DescripcionCatalogo({texto, width}) {
             </Box>
         </Box> */
     
-            <Box>
+            <Box mx={1}>
                 <Button
-                    variant="outline"
+                    variant="text"
                     color="secondary"
                     onClick={() => setActive(true)}
                     size="large"

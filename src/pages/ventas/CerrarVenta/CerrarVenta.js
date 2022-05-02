@@ -70,6 +70,7 @@ export default function CerrarVenta() {
   const [montos, setMontos] = useState(initial_state_montos);
   const [totales, setTotales] = useState(initial_state_totales);
   const [venta_credito, setVentaCredito] = useState(false);
+  const [credito_disponible, setCreditoDisponible] = useState(false);
   const [fechaVencimientoDate, setfechaVencimientoDate] = useState("");
   const [limite_superado, setLimiteSuperado] = useState(false);
   const [monederoTotal, setMonederoTotal] = useState(0);
@@ -89,10 +90,10 @@ export default function CerrarVenta() {
       const { cliente, subTotal, impuestos, total } = venta;
 
       const datos_cliente = venta && cliente ? cliente : {};
-      if (datosCliente.credito_disponible) {
-        setVentaCredito(true);
+      if (datos_cliente.credito_disponible) {
+        setCreditoDisponible(true);
       } else {
-        setVentaCredito(false);
+        setCreditoDisponible(false);
       }
       setDatosCliente(datos_cliente);
       setMontoEnCaja(venta === null ? 0 : parseFloat(total.toFixed(2)));
@@ -302,7 +303,7 @@ export default function CerrarVenta() {
     <Fragment>
       <Button
         className={classes.borderBotonChico}
-        onClick={handleClickOpen}
+        onClick={() => handleClickOpen()}
         disabled={!turnoEnCurso || !datosVenta}
       >
         <Box>
@@ -329,7 +330,7 @@ export default function CerrarVenta() {
         fullWidth
         maxWidth="md"
         open={open}
-        onClose={handleClickOpen}
+        onClose={() => handleClickOpen()}
         TransitionComponent={Transition}
       >
         <SnackBarMessages alert={alert} setAlert={setAlert} />
@@ -368,7 +369,7 @@ export default function CerrarVenta() {
             <Button
               variant="contained"
               color="secondary"
-              onClick={handleClickOpen}
+              onClick={() => handleClickOpen()}
               size="large"
             >
               <CloseIcon />
@@ -439,7 +440,7 @@ export default function CerrarVenta() {
                     setVentaCredito(true);
                   }}
                   startIcon={<CreditCardIcon style={{ fontSize: "28px" }} />}
-                  disabled={!venta_credito || !venta_base}
+                  disabled={!credito_disponible || !venta_base}
                 >
                   Credito
                 </Button>
