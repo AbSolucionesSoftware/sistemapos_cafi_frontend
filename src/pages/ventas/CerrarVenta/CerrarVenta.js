@@ -80,6 +80,7 @@ export default function CerrarVenta() {
   const [datosCliente, setDatosCliente] = useState({});
   const [monedero, setMonedero] = useState(0);
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
+  const [abono_minimo, setAbonoMinimo] = useState(0);
 
   const [createVenta] = useMutation(CREAR_VENTA);
 
@@ -164,6 +165,7 @@ export default function CerrarVenta() {
     setTotales(initial_state_totales);
     setMontos(initial_state_montos);
     setVentaRetomada(null);
+    setAbonoMinimo(0);
   };
 
   function funcion_tecla(event) {
@@ -235,9 +237,12 @@ export default function CerrarVenta() {
           metodo_pago: formaPago[6].Value,
         },
       };
+
+      const abonoMinimo = parseFloat(abono_minimo);
       ventaFinal.montos_en_caja = montosEnCaja;
       //Colocamos si es venta a credito
       ventaFinal.credito = venta_credito;
+      ventaFinal.abono_minimo = venta_credito && abonoMinimo ? abonoMinimo : 0;
       //Agregar descuentos de ventas
       ventaFinal.descuento_general_activo = false;
       ventaFinal.descuento_general = null;
@@ -409,6 +414,8 @@ export default function CerrarVenta() {
                   setEditarCliente={setEditarCliente}
                   fechaVencimientoDate={fechaVencimientoDate}
                   setfechaVencimientoDate={setfechaVencimientoDate}
+                  setAbonoMinimo={setAbonoMinimo}
+                  abono_minimo={abono_minimo}
                 />
               ) : null}
             </Grid>

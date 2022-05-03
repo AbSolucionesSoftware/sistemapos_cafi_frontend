@@ -95,7 +95,7 @@ const RenderTableRows = ({ producto, productosRefetch }) => {
           />
         </TableCell>
         <TableCell align="center" padding="checkbox">
-          {sesion.accesos.catalogos.productos.agregar === false ? (null):(
+          {sesion.accesos.catalogos.productos.eliminar === false ? (null):(
             <EliminarProducto
               datos={producto}
               productosRefetch={productosRefetch}

@@ -310,7 +310,7 @@ const RowsRender = ({
           )}
         </TableCell>
         <TableCell width={50}>
-          {permisosUsuario.accesos.catalogos.clientes.editar ===
+          {permisosUsuario.accesos.catalogos.clientes.eliminar ===
           false ? null : (
             <EliminarCliente
               datos={datos}

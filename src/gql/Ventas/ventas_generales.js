@@ -810,6 +810,7 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtros: filtrosObte
       tipo_emision
       forma_pago
       metodo_pago
+      abono_minimo
 		}
 	}
 `;

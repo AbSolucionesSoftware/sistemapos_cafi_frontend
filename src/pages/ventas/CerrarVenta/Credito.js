@@ -11,10 +11,12 @@ export default function CreditoVenta({
   setMontoEnCaja,
   datosCliente,
   setDatosCliente,
-  editarCliente,
-  setEditarCliente,
+  /* editarCliente,
+  setEditarCliente, */
   fechaVencimientoDate,
   setfechaVencimientoDate,
+  setAbonoMinimo,
+  abono_minimo
 }) {
   let venta_original = JSON.parse(localStorage.getItem("DatosVentas"));
   const total_venta = venta_original
@@ -126,7 +128,7 @@ export default function CreditoVenta({
               disabled
             />
           </Grid>
-          <Grid item md={3} xs={12}>
+          <Grid item md={2} xs={12}>
             <Typography variant="caption">
               <b>Total a Crédito:</b>
             </Typography>
@@ -141,7 +143,21 @@ export default function CreditoVenta({
               value={total_venta}
             />
           </Grid>
-          <Grid item md={3} xs={12}>
+          <Grid item md={2} xs={12}>
+            <Typography variant="caption">
+              <b>Abono mínimo:</b>
+            </Typography>
+            <TextField
+              fullWidth
+              size="small"
+              name="abono_minimo"
+              id="form-abono_minim"
+              variant="outlined"
+              onChange={(e) => setAbonoMinimo(e.target.value)}
+              value={abono_minimo}
+            />
+          </Grid>
+          <Grid item md={2} xs={12}>
             <Typography variant="caption">
               <b>Fecha de Vencimiento:</b>
             </Typography>
@@ -167,7 +183,7 @@ export default function CreditoVenta({
               disabled
             />
           </Grid>
-          {/* <Grid item md={1} xs={12}>
+          {/* <Grid item md={2} xs={12}>
             <Box display="flex" alignItems="flex-end" height="100%">
               <Button
                 color="primary"
