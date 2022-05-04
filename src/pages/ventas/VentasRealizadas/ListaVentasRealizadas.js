@@ -59,9 +59,9 @@ export default function ListaVentasRealizadas({ handleClose }) {
     variables: {
       empresa: sesion.empresa._id,
       sucursal: sesion.sucursal._id,
-      filtro: value,
+/*       filtro: value,
       params: params,
-      realizadas: false,
+      realizadas: false, */
       filtros: {
         busqueda: value,
         filtro: params,

@@ -84,6 +84,8 @@ export default function DescuentoVenta({
       const val =
         value < 10
           ? parseFloat(`0.0${value.replace(".", "")}`)
+          : parseFloat(value) === 100
+          ? 1
           : parseFloat(`0.${value.replace(".", "")}`);
       const porsent = ventaSubtotal * val;
       setDescuentoAplicarVenta(porsent.toFixed(2));

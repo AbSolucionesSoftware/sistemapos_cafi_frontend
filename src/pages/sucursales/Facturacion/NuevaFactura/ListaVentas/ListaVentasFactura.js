@@ -104,7 +104,16 @@ const ComponentBusquedaVenta = ({ handleClose }) => {
     variables: {
       empresa: sesion.empresa._id,
       sucursal: sesion.sucursal._id,
-      filtro: value,
+      filtros: {
+        busqueda: value ? value : "",
+        filtro: "",
+        vista: "FACTURACION",
+        /* turno: {
+          id_caja: turnoEnCurso.id_caja,
+          fecha_entrada,
+        }, */
+       /*  admin, */
+      },
     },
     fetchPolicy: "network-only",
   });
