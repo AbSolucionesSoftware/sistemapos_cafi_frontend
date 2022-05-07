@@ -465,14 +465,14 @@ const UnidadesVentaSecundaria = () => {
             onBlur={calcularUnidad}
             onChange={obtenerCantidad}
             value={unidadVentaSecundaria.cantidad}
-            onBlur={(e) => {
+            /* onBlur={(e) => {
               if (e.target.value === "") {
                 setUnidadVentaSecundaria({
                   ...unidadVentaSecundaria,
                   cantidad: precios.unidad_de_compra.cantidad,
                 });
               }
-            }}
+            }} */
           />
         </Tooltip>
       </TableCell>

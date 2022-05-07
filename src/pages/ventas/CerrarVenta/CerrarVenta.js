@@ -266,12 +266,16 @@ export default function CerrarVenta() {
       let numero_mayor = 0;
       let forma_pago;
 
-      Object.keys(montosEnCaja).forEach((key) => {
-        if (montosEnCaja[key].monto > numero_mayor) {
-          numero_mayor = montosEnCaja[key].monto;
-          forma_pago = montosEnCaja[key].metodo_pago;
-        }
-      });
+      if(venta_credito){
+        forma_pago = "99";
+      }else{
+        Object.keys(montosEnCaja).forEach((key) => {
+          if (montosEnCaja[key].monto > numero_mayor) {
+            numero_mayor = montosEnCaja[key].monto;
+            forma_pago = montosEnCaja[key].metodo_pago;
+          }
+        });
+      }
 
       ventaFinal.forma_pago = forma_pago;
 

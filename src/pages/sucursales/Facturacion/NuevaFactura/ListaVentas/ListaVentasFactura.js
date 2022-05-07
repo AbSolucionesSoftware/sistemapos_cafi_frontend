@@ -29,6 +29,7 @@ import { OBTENER_VENTAS_SUCURSAL } from "../../../../../gql/Ventas/ventas_genera
 import { formatoMexico } from "../../../../../config/reuserFunctions";
 import { Alert } from "@material-ui/lab";
 import { useDebounce } from "use-debounce/lib";
+import { metodoPago } from "../../catalogos";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -171,7 +172,7 @@ const RenderLista = ({
 }) => {
   const classes = useStyles();
   const [selected, setSelected] = useState("");
-  const { setVentaFactura, setProductos } = useContext(FacturacionCtx);
+  const { setVentaFactura, setProductos, setDatosFactura, datosFactura } = useContext(FacturacionCtx);
   const { loading, data, error } = resultado_ventas;
 
   if (loading)
@@ -207,6 +208,11 @@ const RenderLista = ({
 
       const { productos, ...venta } = {...data}
       const productos_base = [...data.productos]
+      setDatosFactura({
+        ...datosFactura,
+        payment_form: venta.forma_pago,
+        payment_method: venta.metodo_pago,
+      })
       setVentaFactura(venta);
       setProductos(productos_base);
       handleClose();

@@ -16,8 +16,6 @@ export const verificarDatosFactura = (datos) => {
     sucursal,
   } = datos;
 
-  console.log(datos);
-
   //verificar datos factura
   if (
     !cfdi_type ||

@@ -60,6 +60,7 @@ export const VentasProvider = ({ children }) => {
 
     const [updateTablaVentas, setUpdateTablaVentas] = useState(false);
     const [openBackDrop, setOpenBackDrop] = useState(false);
+    const [openBuscarProducto, setOpenBuscarProducto] = useState(false);
 
 	return (
 		<VentasContext.Provider value={
@@ -100,7 +101,9 @@ export const VentasProvider = ({ children }) => {
                 setOpenBackDrop,
                 openBackDrop,
                 venta_retomada, 
-                setVentaRetomada
+                setVentaRetomada,
+                openBuscarProducto,
+                setOpenBuscarProducto
             }
         }>
 			{children}

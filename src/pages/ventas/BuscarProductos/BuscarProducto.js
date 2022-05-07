@@ -41,9 +41,10 @@ export default function BuscarProducto() {
     updateTablaVentas,
     setUpdateTablaVentas,
     setDatosVentasActual,
+    openBuscarProducto, 
+    setOpenBuscarProducto
   } = useContext(VentasContext);
 
-  const [open, setOpen] = useState(false);
   const [open_message, setOpenMessage] = useState(false);
   const [searchProducto, setSearchProducto] = useState({ producto: "" });
   const [productoSeleccionado, setProductoSeleccionado] = useState([]);
@@ -74,9 +75,9 @@ export default function BuscarProducto() {
 
   const handleClickOpen = () => {
     setProductoSeleccionado([]);
-    if (!open) refetch();
+    if (!openBuscarProducto) refetch();
     //productosBusqueda = [];
-    setOpen(!open);
+    setOpenBuscarProducto(!openBuscarProducto);
   };
 
   window.addEventListener("keydown", Mi_función);
@@ -421,7 +422,7 @@ export default function BuscarProducto() {
       <Dialog
         maxWidth="md"
         fullWidth
-        open={open}
+        open={openBuscarProducto}
         onClose={handleClickOpen}
         TransitionComponent={Transition}
       >

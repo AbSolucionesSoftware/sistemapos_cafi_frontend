@@ -133,7 +133,7 @@ export default function TablaPreciosDescuentos(
     } = useContext(RegProductoContext);
 
 	const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
-	var porcentaje  =  parseFloat((100 - value).toFixed(6));
+	var porcentaje  =  parseFloat((100 - value).toFixed(2));
 	const [ selected, setSelected ] = useState([]);
 	const [ page, setPage ] = useState(0);
 	const [ rowsPerPage, setRowsPerPage ] = useState(5);

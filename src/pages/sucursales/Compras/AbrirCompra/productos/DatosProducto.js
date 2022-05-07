@@ -238,7 +238,7 @@ export default function DatosProducto({ status }) {
       descuento_porcentaje: 0,
       descuento_precio: 0,
       subtotal: precio_sin_impuesto,
-      impuestos: parseFloat(impuestos.toFixed(6)),
+      impuestos: parseFloat(impuestos.toFixed(2)),
       total: precio_con_impuesto,
       subtotal_descuento: precio_sin_impuesto,
       total_descuento: precio_con_impuesto,

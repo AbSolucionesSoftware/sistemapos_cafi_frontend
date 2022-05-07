@@ -9,7 +9,6 @@ import {
     TableHead, 
     TableRow,
 	IconButton,
-	TablePagination,
 	Dialog,
 	DialogTitle,
 	DialogActions,
@@ -48,7 +47,6 @@ export default function ListaMarcas({updateData, toUpdate, setToUpdate, setData}
     const { data, refetch } = useQuery(OBTENER_MARCAS,{
 		variables: {
 			empresa: sesion.empresa._id,
-			sucursal: sesion.sucursal._id
 		}
 	});	
 

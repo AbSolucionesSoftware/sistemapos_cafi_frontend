@@ -708,6 +708,7 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtros: filtrosObte
           cantidad_unidad
           unidad_maxima
         }
+        subtotal_antes_de_impuestos
         precio_actual_object{
           cantidad_unidad
           numero_precio
