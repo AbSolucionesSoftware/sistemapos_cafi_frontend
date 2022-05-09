@@ -16,7 +16,7 @@ export default function CreditoVenta({
   fechaVencimientoDate,
   setfechaVencimientoDate,
   setAbonoMinimo,
-  abono_minimo
+  abono_minimo,
 }) {
   let venta_original = JSON.parse(localStorage.getItem("DatosVentas"));
   const total_venta = venta_original

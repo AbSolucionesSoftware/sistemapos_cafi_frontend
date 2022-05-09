@@ -380,7 +380,7 @@ export default function CerrarVenta() {
       const porsentajeNewDescuento = parseFloat(descuentoPorsentajeVenta);
       /* const dineroDescontadoDescuento = parseFloat(
         product.precio_actual_object.precio_venta *
-          parseFloat(`0.${porsentajeNewDescuento}`).toFixed(2)
+          parseFloat((`0.${porsentajeNewDescuento}`).toFixed(2))
       );
  */
       const dineroDescontadoDescuento =
@@ -393,11 +393,10 @@ export default function CerrarVenta() {
                 ).toFixed(2)
               )
             : parseFloat(
-                (
-                  product.precio_actual_object.precio_venta *
-                  parseFloat(`0.${porsentajeNewDescuento}`)
-                ).toFixed(2) / 10
-              )
+                (product.precio_actual_object.precio_venta *
+                  parseFloat(`0.${porsentajeNewDescuento}`)) /
+                  10
+              ).toFixed(2)
           : parseFloat(
               (product.precio_actual_object.precio_venta *
                 porsentajeNewDescuento) /
@@ -520,10 +519,13 @@ export default function CerrarVenta() {
           product.cantidad_venta
         ).toFixed(2)
       );
-      const descuentoProducto =
-        parseFloat(precio_actual_object.dinero_descontado.toFixed(2)) *
-        valorGranel *
-        product.cantidad_venta;
+      const descuentoProducto = parseFloat(
+        (
+          parseFloat(precio_actual_object.dinero_descontado) *
+          valorGranel *
+          product.cantidad_venta
+        ).toFixed(2)
+      );
 
       productosFinal.push({
         ...product,
@@ -597,7 +599,7 @@ export default function CerrarVenta() {
     setSubtotalVenta(subtotal);
     setImpuestosVenta(impuestos);
     setEfectivo(total.toFixed(2));
-    setEfectivoConstante(total.toFixed(2));
+    setEfectivoConstante(ttotal.toFixed(2));
     setMontoEfectivo(total.toFixed(2));
     setDatosCliente(cliente);
 

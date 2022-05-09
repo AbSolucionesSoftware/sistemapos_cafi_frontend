@@ -90,7 +90,9 @@ export default function DescuentosInputs() {
       return;
     }
     let cantidad_descontada = parseFloat(value);
-    let porcentaje = Math.round((cantidad_descontada / PCSI_ACTUAL_TOTAL) * 100);
+    let porcentaje = Math.round(
+      (cantidad_descontada / PCSI_ACTUAL_TOTAL) * 100
+    );
     let subtotal_con_descuento = PCSI_ACTUAL_TOTAL - cantidad_descontada;
     const iva_precio =
       parseFloat(subtotal_con_descuento) *

@@ -52,7 +52,7 @@ export default function DatosDeCompra({
   /* let compra_temp = {...compra} */
   const [compra_temp, setCompraTemp] = useState({ ...compra });
   const { productos } = compra_temp;
-	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
+  const permisosUsuario = JSON.parse(localStorage.getItem("sesionCafi"));
 
   const [busqueda, setBusqueda] = useState("");
   const [productosFiltrados, setProductosFiltrados] = useState([]);
@@ -90,13 +90,15 @@ export default function DatosDeCompra({
           {compra_temp.almacen.nombre_almacen}
         </Typography>
         <Typography style={{ marginRight: 16 }}>
-          <b>Subtotal: ${parseFloat(compra_temp.subtotal).toFixed(2)}</b>
+          <b>Subtotal: ${parseFloat(compra_temp.subtotal.toFixed(2))}</b>
         </Typography>
         <Typography style={{ marginRight: 16 }}>
-          <b>Impuestos: ${parseFloat(compra_temp.impuestos).toFixed(2)}</b>
+          <b>Impuestos: ${parseFloat(compra_temp.impuestos.toFixed(2))}</b>
         </Typography>
         <Typography style={{ marginRight: 16 }}>
-          <b>Total: ${formatoMexico(parseFloat(compra_temp.total).toFixed(2))}</b>
+          <b>
+            Total: ${formatoMexico(parseFloat(compra_temp.total.toFixed(2)))}
+          </b>
         </Typography>
       </Box>
       <Box mb={2} display="flex">
@@ -119,7 +121,8 @@ export default function DatosDeCompra({
           </Grid>
           <Grid item sm={6} xs={12}>
             <Box display="flex" justifyContent="flex-end">
-              {permisosUsuario.accesos.compras.compras_espera.eliminar === false ? (null) : (
+              {permisosUsuario.accesos.compras.compras_espera.eliminar ===
+              false ? null : (
                 <ModalEliminarCompra
                   compra={compra_temp}
                   setAlert={setAlert}
@@ -129,22 +132,21 @@ export default function DatosDeCompra({
               )}
               <Box mx={1} />
 
-              {permisosUsuario.accesos.compras.compras_espera.editar === false ? (null) : (
-                verificado ? (
-                  <AbrirCompra
-                    compra={compra_temp}
-                    status="enEspera"
-                    handleOpenDetalles={handleOpenDetalles}
-                    refetchEspera={refetch}
-                  />
-                ) : (
-                  <VerificarProductosCompras
-                    compra={compra_temp}
-                    nuevoArray={nuevoArray}
-                    setNuevoArray={setNuevoArray}
-                    setVerificado={setVerificado}
-                  />
-                )
+              {permisosUsuario.accesos.compras.compras_espera.editar ===
+              false ? null : verificado ? (
+                <AbrirCompra
+                  compra={compra_temp}
+                  status="enEspera"
+                  handleOpenDetalles={handleOpenDetalles}
+                  refetchEspera={refetch}
+                />
+              ) : (
+                <VerificarProductosCompras
+                  compra={compra_temp}
+                  nuevoArray={nuevoArray}
+                  setNuevoArray={setNuevoArray}
+                  setVerificado={setVerificado}
+                />
               )}
             </Box>
           </Grid>

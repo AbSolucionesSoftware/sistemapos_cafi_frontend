@@ -48,9 +48,12 @@ export default function PreciosDeVentaCompras() {
 }
 
 const RenderPrecios = ({ data, tipo, index }) => {
-  const { preciosVenta, setPreciosVenta, datosProducto, productoOriginal } = useContext(
-    ComprasContext
-  );
+  const {
+    preciosVenta,
+    setPreciosVenta,
+    datosProducto,
+    productoOriginal,
+  } = useContext(ComprasContext);
   const { precios } = productoOriginal;
 
   const [precio_neto, setPrecioNeto] = useState(data.precio_neto);
@@ -84,6 +87,7 @@ const RenderPrecios = ({ data, tipo, index }) => {
           precio_unitario_sin_impuesto
         ).toFixed(2)
       );
+
       copy_preciosVenta.precio_venta = parseFloat(precio_venta.toFixed(2));
       if (precios.iva_activo || precios.ieps_activo) {
         const precio_neto =
@@ -97,7 +101,7 @@ const RenderPrecios = ({ data, tipo, index }) => {
         setPrecioNeto(parseFloat(precio_venta.toFixed(2)));
       }
       preciosVenta_base.splice(index, 1, copy_preciosVenta);
-      setPreciosVenta(preciosVenta_base)
+      setPreciosVenta(preciosVenta_base);
     }
   }, [datosProducto.costo, datosProducto.cantidad]);
 
@@ -115,7 +119,7 @@ const RenderPrecios = ({ data, tipo, index }) => {
     case "Precio de venta":
       return (
         <TableCell style={{ border: 0 }}>
-          ${parseFloat(precio_neto).toFixed(2)}
+          ${parseFloat(precio_neto.toFixed(2))}
         </TableCell>
       );
     default:

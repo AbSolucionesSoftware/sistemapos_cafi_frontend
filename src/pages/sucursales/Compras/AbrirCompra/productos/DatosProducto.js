@@ -378,7 +378,7 @@ export default function DatosProducto({ status }) {
 
       impuestos_descuento: parseFloat(result.impuestos.toFixed(2)),
       descuento_porcentaje: result.porcentaje
-        ? parseFloat(result.porcentaje)
+        ? parseFloat(result.porcentaje.toFixed(2))
         : 0,
       descuento_precio: result.cantidad_descontada
         ? parseFloat(result.cantidad_descontada.toFixed(2))
@@ -427,7 +427,7 @@ export default function DatosProducto({ status }) {
         return;
       }
     }
-    
+
     let copy_unidadesVenta = [
       { ...unidadVentaXDefecto },
       { ...unidadVentaSecundaria },
@@ -538,9 +538,15 @@ export default function DatosProducto({ status }) {
       copy_datosProducto.total =
         copy_datosProducto.total_descuento * copy_datosProducto.cantidad_total; */
 
-      let subtotal = parseFloat((copy_datosCompra.subtotal += copy_datosProducto.subtotal).toFixed(2));
-      let impuestos = parseFloat((copy_datosCompra.impuestos += copy_datosProducto.impuestos).toFixed(2));
-      let total = parseFloat((copy_datosCompra.total += copy_datosProducto.total).toFixed(2));
+      let subtotal = parseFloat(
+        (copy_datosCompra.subtotal += copy_datosProducto.subtotal).toFixed(2)
+      );
+      let impuestos = parseFloat(
+        (copy_datosCompra.impuestos += copy_datosProducto.impuestos)
+      );
+      let total = parseFloat(
+        (copy_datosCompra.total += copy_datosProducto.total).toFixed(2)
+      );
 
       productosCompra_ordenados.splice(isEditing.index, 1, copy_datosProducto);
 
@@ -578,9 +584,9 @@ export default function DatosProducto({ status }) {
           ieps,
         } = copy_datosProducto.producto.precios.precio_de_compra; */
 
-        copy_datosCompra.subtotal -= prod_exist.subtotal
-        copy_datosCompra.impuestos -= prod_exist.impuestos
-        copy_datosCompra.total -= prod_exist.total
+        copy_datosCompra.subtotal -= prod_exist.subtotal;
+        copy_datosCompra.impuestos -= prod_exist.impuestos;
+        copy_datosCompra.total -= prod_exist.total;
 
         /* copy_datosProducto.iva_total = iva * copy_datosProducto.cantidad_total;
         copy_datosProducto.ieps_total =
@@ -592,9 +598,17 @@ export default function DatosProducto({ status }) {
         copy_datosProducto.total =
           copy_datosProducto.total * copy_datosProducto.cantidad_total; */
 
-        let subtotal = parseFloat((copy_datosCompra.subtotal += copy_datosProducto.subtotal).toFixed(2));
-        let impuestos = parseFloat((copy_datosCompra.impuestos += copy_datosProducto.impuestos).toFixed(2));
-        let total = parseFloat((copy_datosCompra.total += copy_datosProducto.total).toFixed(2));
+        let subtotal = parseFloat(
+          (copy_datosCompra.subtotal += copy_datosProducto.subtotal).toFixed(2)
+        );
+        let impuestos = parseFloat(
+          (copy_datosCompra.impuestos += copy_datosProducto.impuestos).toFixed(
+            2
+          )
+        );
+        let total = parseFloat(
+          (copy_datosCompra.total += copy_datosProducto.total).toFixed(2)
+        );
 
         productosCompra_ordenados.splice(index, 1, copy_datosProducto);
         setProductosCompra(productosCompra_ordenados);
@@ -621,9 +635,17 @@ export default function DatosProducto({ status }) {
         copy_datosProducto.total =
           copy_datosProducto.total * copy_datosProducto.cantidad_total; */
 
-          let subtotal = parseFloat((copy_datosCompra.subtotal += copy_datosProducto.subtotal).toFixed(2));
-          let impuestos = parseFloat((copy_datosCompra.impuestos += copy_datosProducto.impuestos).toFixed(2));
-          let total = parseFloat((copy_datosCompra.total += copy_datosProducto.total).toFixed(2));
+        let subtotal = parseFloat(
+          (copy_datosCompra.subtotal += copy_datosProducto.subtotal).toFixed(2)
+        );
+        let impuestos = parseFloat(
+          (copy_datosCompra.impuestos += copy_datosProducto.impuestos).toFixed(
+            2
+          )
+        );
+        let total = parseFloat(
+          (copy_datosCompra.total += copy_datosProducto.total).toFixed(2)
+        );
 
         array_ordenado.splice(0, 0, copy_datosProducto);
         setProductosCompra(array_ordenado);

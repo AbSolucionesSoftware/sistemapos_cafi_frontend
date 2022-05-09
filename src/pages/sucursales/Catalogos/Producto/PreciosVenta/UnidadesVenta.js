@@ -14,7 +14,9 @@ import { Box, TextField, Typography, Table, Checkbox } from "@material-ui/core";
 import { Cached, LocalOffer } from "@material-ui/icons";
 import { FormControl } from "@material-ui/core";
 import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
-import { formatoMexico } from "../../../../../config/reuserFunctions";
+import {
+  formatoMexico,
+} from "../../../../../config/reuserFunctions";
 import { useState } from "react";
 
 export default function PreciosDeCompra() {
@@ -156,7 +158,7 @@ const UnidadesVentaSecundaria = () => {
         ? unidadVentaSecundaria.descuento.precio_neto
         : unidadVentaSecundaria.precio;
 
-      setPrecio(price);
+    setPrecio(price);
   }, [unidadVentaSecundaria]);
 
   const GenCodigoBarras = () => {
@@ -187,13 +189,12 @@ const UnidadesVentaSecundaria = () => {
     if (value) {
       value = parseFloat(value);
     }
-    console.log(unidadVentaSecundaria.descuento_activo ,
-      unidadVentaSecundaria.descuento_activo)
+
     if (
       unidadVentaSecundaria.descuento_activo &&
       unidadVentaSecundaria.descuento_activo === true
     ) {
-      console.log("a")
+      console.log("a");
       setPrecio(value);
       calcularUnidadDesucuento(value);
     } else {
@@ -214,19 +215,23 @@ const UnidadesVentaSecundaria = () => {
       parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
       parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
     let PVSI = parseFloat((precio_unit / (suma_impuestos + 1)).toFixed(2));
-    let porcentaje = parseFloat(((PVSI / precio_venta_unit) * 100).toFixed(2));
-    let descuento = parseFloat((100 - porcentaje).toFixed(2));
+    let porcentaje = parseFloat(
+      ((PVSI / precio_venta_unit) * 100).toFixed(2)
+    );
+    let descuento = parseFloat((100 - porcentaje));
 
     let PVCDSI = parseFloat(
       ((precio_venta_unit * porcentaje) / 100).toFixed(2)
     );
-    let dineroDescontado = parseFloat((precio_venta_unit - PVCDSI).toFixed(2));
+    let dineroDescontado = parseFloat(
+      (precio_venta_unit - PVCDSI).toFixed(2)
+    );
 
     let iva_precio = parseFloat(
-      PVCDSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)
+      (PVCDSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)).toFixed(2)
     );
     let ieps_precio = parseFloat(
-      PVCDSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)
+      (PVCDSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)).toFixed(2)
     );
     let PCSI = unidad_de_compra.precio_unitario_sin_impuesto;
     let utilidad = parseFloat((((PVCDSI - PCSI) / PCSI) * 100).toFixed(2));
@@ -269,17 +274,19 @@ const UnidadesVentaSecundaria = () => {
     let PVSI = parseFloat(
       (precio_venta_unit / (suma_impuestos + 1)).toFixed(2)
     );
-    /* let porcentaje = parseFloat(((PVSI / precio_venta_unit) * 100).toFixed(2));
-    let descuento = parseFloat((100 - porcentaje).toFixed(2)); */
+    /* let porcentaje = parseFloat(((PVSI / precio_venta_unit) * 100)));
+    let descuento = parseFloat(((100 - porcentaje))); */
 
-    let PVCDSI = parseFloat(((PVSI * descuento.porciento) / 100).toFixed(2));
+    let PVCDSI = parseFloat(
+      ((PVSI * descuento.porciento) / 100).toFixed(2)
+    );
     let dineroDescontado = parseFloat((PVSI - PVCDSI).toFixed(2));
 
     let iva_precio = parseFloat(
-      PVCDSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)
+      PVCDSI * parseFloat((`0.${iva < 10 ? `0${iva}` : iva}`)).toFixed(2)
     );
     let ieps_precio = parseFloat(
-      PVCDSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)
+      (PVCDSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)).toFixed(2)
     );
     let PCSI = unidad_de_compra.precio_unitario_sin_impuesto;
     let utilidad = parseFloat((((PVCDSI - PCSI) / PCSI) * 100).toFixed(2));
@@ -337,10 +344,10 @@ const UnidadesVentaSecundaria = () => {
 
     let PCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
     let iva_precio = parseFloat(
-      PVSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)
+      (PVSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`))
     );
     let ieps_precio = parseFloat(
-      PVSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)
+      (PVSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`))
     );
     let utilidad = parseFloat((((PVSI - PCSI) / PCSI) * 100).toFixed(2));
     let precio_venta = PVSI * cantidad;
@@ -355,8 +362,8 @@ const UnidadesVentaSecundaria = () => {
         precio_venta: precio_venta,
         precio_neto: precio_neto,
         unidad_mayoreo: 0,
-        iva_precio,
-        ieps_precio,
+        iva_precio: parseFloat((cantidad * iva_precio).toFixed(2)),
+        ieps_precio: parseFloat((cantidad * ieps_precio).toFixed(2)),
         utilidad,
         unidad_maxima: true,
         precio_general: precio,

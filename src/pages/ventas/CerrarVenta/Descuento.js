@@ -124,7 +124,7 @@ export default function DescuentoVenta({
       const porsentajeNewDescuento = parseFloat(descuentoPorsentajeVenta);
       /* const dineroDescontadoDescuento = parseFloat(
         product.precio_actual_object.precio_venta *
-          parseFloat(`0.${porsentajeNewDescuento}`).toFixed(2)
+          parseFloat((`0.${porsentajeNewDescuento}`).toFixed(2))
       );
  */
       const dineroDescontadoDescuento =
@@ -138,9 +138,10 @@ export default function DescuentoVenta({
               )
             : parseFloat(
                 (
-                  product.precio_actual_object.precio_venta *
-                  parseFloat(`0.${porsentajeNewDescuento}`)
-                ).toFixed(2) / 10
+                  (product.precio_actual_object.precio_venta *
+                    parseFloat(`0.${porsentajeNewDescuento}`)) /
+                  10
+                ).toFixed(2)
               )
           : parseFloat(
               (product.precio_actual_object.precio_venta *
@@ -261,10 +262,13 @@ export default function DescuentoVenta({
           product.cantidad_venta
         ).toFixed(2)
       );
-      const descuentoProducto =
-        parseFloat(precio_actual_object.dinero_descontado.toFixed(2)) *
-        valorGranel *
-        product.cantidad_venta;
+      const descuentoProducto = parseFloat(
+        (
+          parseFloat(precio_actual_object.dinero_descontad) *
+          valorGranel *
+          product.cantidad_venta
+        ).toFixed(2)
+      );
 
       productosFinal.push({
         ...product,
