@@ -86,6 +86,7 @@ export default function AbonosClientes() {
 		  console.log(error);
 		}
 	};
+	
 	useEffect(() => {
 		console.log(obtenerVentasCredito.loading)
 	 setLoading(obtenerVentasCredito.loading)
