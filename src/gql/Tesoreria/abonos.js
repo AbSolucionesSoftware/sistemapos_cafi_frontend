@@ -570,3 +570,11 @@ export const CREAR_ABONO = gql `
     }
   }
 `;
+
+export const CREAR_ABONO_CLIENTE = gql `
+  mutation crearAbonoVentaCredito($empresa: ID!, $sucursal: ID!, $input: AbonoVentasCreditoInput) {
+    crearAbonoVentaCredito(empresa: $empresa, sucursal: $sucursal, input: $input) {
+      message
+    }
+  }
+`;

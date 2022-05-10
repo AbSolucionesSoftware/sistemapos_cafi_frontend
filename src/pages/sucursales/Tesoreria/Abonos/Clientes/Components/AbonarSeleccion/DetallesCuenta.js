@@ -56,7 +56,7 @@ export default function DetallesCuenta() {
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-                        	Detalle de cuenta
+                        	Ventas selecionadas para abonar
 						</Typography>
 						
                         <Box m={1}>
@@ -107,6 +107,8 @@ export default function DetallesCuenta() {
                             </Typography>
                         </Box>
                     </Box>
+                 
+                   
                 </div>
                 <Grid container>
                     <Grid item lg={6} xs={12}>

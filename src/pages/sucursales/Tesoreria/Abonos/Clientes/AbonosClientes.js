@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -9,15 +9,17 @@ import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import { Box, TextField, Grid, IconButton, InputAdornment } from '@material-ui/core';
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import SearchOutlined from '@material-ui/icons/SearchOutlined';
+import SnackBarMessages from '../../../../../components/SnackBarMessages';
+import BackdropComponent from "../../../../../components/Layouts/BackDrop";
 import {AbonosCtx} from "../../../../../context/Tesoreria/abonosCtx";
 import { ClienteCtx } from "../../../../../context/Catalogos/crearClienteCtx"; 
 import TablaVentasCredito from './Components/TablaVentasCredito';
 import ButtonLiquidar from './Components/Liquidar';
 import ButtonAbonar from './Components/Abonar';
+
 import { useQuery } from '@apollo/client';
 import {  OBTENER_HISTORIAL_ABONOS_CLIENTE } from "../../../../../gql/Tesoreria/abonos";
-
+import CardVentaAbono from "./Components/AbonarSeleccion/CardVentaAbono";
 //import DetallesCuenta from './Components/DetalleCuenta/DetallesCuenta';
 
 const useStyles = makeStyles((theme) => ({
@@ -60,40 +62,78 @@ export default function AbonosClientes() {
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	const context = useContext(AbonosCtx);
 	const {clientes} = useContext(ClienteCtx);
-	const [filtro, setFiltro] = useState("");
-
+	const [loading, setLoading] = useState(false);
+	const [alert,setAlert] = useState({message:'', status:'', open: false});
+	const [selectedClient, setSelectedClient] = useState("");
 	const [ventasCredito, setVentasCredito] = useState([]);
 	const searchfilter = useRef(null);
+	const [totalVentas, setTotalVentas] = useState([]);
+	let historialVentasACredito = [];
+	
 	const handleClickOpen = () => setOpen(!open);
 	
 
 	const obtenerVentasCredito = useQuery(OBTENER_HISTORIAL_ABONOS_CLIENTE, {
-		variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id, idCliente: context.selectedClient._id },
+		variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id, idCliente: selectedClient._id },
+		fetchPolicy: "network-only"
 	  });
 
 	const ChangeClientAutocomplate = (value) => {
 		try {
-			console.log(value)
 		  let setVal  = (value !== null) ? value: ""; 
-		  context.setSelectedClient(setVal);
+		   setSelectedClient(setVal);
 		} catch (error) {
 		  console.log(error);
 		}
-	  };
-
+	};
 	useEffect(() => {
-		
-
-		if(obtenerVentasCredito.data){
-			setVentasCredito(obtenerVentasCredito.data.historialVentasACredito)
-		}
-		
-	}, [obtenerVentasCredito.data])
+		console.log(obtenerVentasCredito.loading)
+	 setLoading(obtenerVentasCredito.loading)
+	}, [obtenerVentasCredito.loading])
 	
+	useEffect(() => {
+		try {
+			if(obtenerVentasCredito.data){
+				let arrayToset = [];
+				let total_ventas = 0;
+				if(obtenerVentasCredito.data.historialVentasACredito.length > 0){	
+					console.log(obtenerVentasCredito.data.historialVentasACredito);
+					obtenerVentasCredito.data.historialVentasACredito.forEach(element => {
+						total_ventas += element.saldo_credito_pendiente;
+						arrayToset.push({id_venta:element._id, monto_total_abonado:0, saldo_credito_pendiente: parseFloat(element.saldo_credito_pendiente)});
+					});
+					setTotalVentas(total_ventas);
+					context.setAbonos(arrayToset);
+				}
+			}
+		} catch (error) {
+			console.log(error)
+		}
+	}, [obtenerVentasCredito.data]);
+
+	
+	if(obtenerVentasCredito.data){
+		historialVentasACredito = obtenerVentasCredito.data.historialVentasACredito;
+	
+	}
+
+	const enviarCantidad = (cantidad, index, _id) =>{
+		let copyArray = [...context.abonos];
+		
+		if(cantidad > 0){
+			copyArray.splice(index, 1, {id_venta: _id, monto_total_abonado: cantidad});
+			
+		
+		}else{
+			copyArray.splice(index, 1);
+		}
+		context.setAbonos(copyArray);
+    };
 
 	return (
-		<div>
-			
+		<Fragment>
+			<BackdropComponent loading={loading} setLoading={setLoading} />
+			<SnackBarMessages alert={alert} setAlert={setAlert} />
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
@@ -124,7 +164,6 @@ export default function AbonosClientes() {
 							</Typography>
 						</Box>
 						<Box ml={3} style={{width:'80%'}} >
-
 							<Autocomplete
 								id="combo-box-producto-codigo"
 								size="small"
@@ -138,29 +177,47 @@ export default function AbonosClientes() {
 								getOptionSelected={(option, value) =>
 								option.nombre_cliente === value.nombre_cliente
 								}
-								value={context.selectedClient ? context.selectedClient : null}
+								value={selectedClient ? selectedClient : null}
 							/>
 						</Box>
 						
 					</Grid>
-					{
-						(context.ventas.length > 0) ? 
-						<Grid item lg={7}>
-							<Box  mt={1} mr={2} display="flex" justifyContent="flex-end" alignContent="space-between">
-								<ButtonAbonar />
-								<ButtonLiquidar />
-							</Box>
-						</Grid>
-						:
-						<div/>
-					}
 					
-				</Grid> 		
+						<Grid item lg={7}>
+							<Box  mt={3} mr={2} display="flex" justifyContent="flex-end" alignContent="space-between">
+						 	{/*
+								context.abonos.length > 0  ?( 
+									<ButtonAbonar setOpenAbonar={context.setOpenAbonar}  openAbonar={context.openAbonar}  setSelectedClient={setSelectedClient} selectedClient={selectedClient} ventas={context.ventas} abonos={context.abonos} setAbonos={context.setAbonos} />)
+								:
+								<div/>
+							*/} 
+							{	
+								(historialVentasACredito.length > 0 ) ? 
+									<ButtonLiquidar cliente={selectedClient} total_ventas={totalVentas} setAlert={setAlert} liquidarTodas={true}  recargar= {obtenerVentasCredito.refetch} setLoading={setLoading} />
+								:
+								<div/>
+							}	
+							</Box>
+						</Grid>)
+						
+						
+				</Grid>
+			{/* 	<Grid container >
+                    {
+                        historialVentasACredito.map((venta, index) =>{
+							
+                            return(
+                                <CardVentaAbono datos={venta} index={index}  setSelectedClient={setSelectedClient} selectedClient={selectedClient}  setOpen={setOpen} enviarCantidad={enviarCantidad}  empresa={sesion.empresa._id} sucursal={sesion.sucursal._id} setAlert={setAlert} />   
+                            )
+                        })
+						
+                    } 
+                </Grid>  */}		
 				<Box p={2}>
-					<TablaVentasCredito rows={ventasCredito} />
+					<TablaVentasCredito rows={historialVentasACredito} setSelectedClient={setSelectedClient} selectedClient={selectedClient}  setOpen={setOpen} enviarCantidad={enviarCantidad}   setAlert={setAlert} setLoading={setLoading} recargar= {obtenerVentasCredito.refetch} />
 				</Box>
 			</Dialog>
 			{/* <DetallesCuenta /> */}
-		</div>
+		</Fragment>
 	);
 }

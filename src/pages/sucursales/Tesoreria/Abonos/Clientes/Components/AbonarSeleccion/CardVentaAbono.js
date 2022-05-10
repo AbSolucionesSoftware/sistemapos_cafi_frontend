@@ -1,15 +1,19 @@
-import React,{useState, useContext} from 'react';
+import React,{useState, useContext, useEffect} from 'react';
 import { Box, Grid, makeStyles, Typography, TextField, IconButton } from '@material-ui/core';
 import HistoryIcon from '@material-ui/icons/History';
-import BallotIcon from '@material-ui/icons/Ballot';
+import DetailsIcon from '@material-ui/icons/Details';
+
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import Tooltip from '@material-ui/core/Tooltip';
 import {
 	formatoFechaCorta,
     formatoMexico
   } from "../../../../../../../config/reuserFunctions";
 import DetalleVentaCredito from './DetalleVentaCredito';
+import HistorialAbonos from './HistorialAbonos';
+import IconLiquidar from '../Liquidar';
 import {AbonosCtx} from "../../../../../../../context/Tesoreria/abonosCtx";
 
 const useStyles = makeStyles({
@@ -20,7 +24,7 @@ const useStyles = makeStyles({
       maxHeight: 260,  
     },
     content:{
-      height: 210,
+      height: 200,
       
     },
     bullet: {
@@ -37,32 +41,45 @@ const useStyles = makeStyles({
   });
 
 export default function CardVenta(props){
-    const {abonos, setAbonos }= useContext(AbonosCtx);
+    
     const classes = useStyles();
     const datos = props.datos;
+    const abonos = props.datos.abonos;
     const [openDetalle, setOpenDetalle] = useState(false);
-    const [cantidad, setCantidad] = useState(0);
-
-    const enviarDatos = (e) =>{
-        setCantidad( e.target.value);
+    const [openHistorial, setOpenHistorial] = useState(false);
+ 
+    const[cantidad, setCantidad] = useState(0)
+   
+   /*  const enviarDatos = (e) =>{
         let abonosHere = abonos;
-        let exist = false;
-       
-        abonosHere.forEach(abono => {
-            if (abono.idVenta === datos._id) {
-                abono.cantidad_abonar = e.target.value;
-                exist = true;
-            }      
-        });
-
-        if(!exist){
-            abonosHere.push({idVenta: datos._id, cantidad_abonar:e.target.value});
-        }
-       
+        if(e.target.value <= datos.saldo_credito_pendiente && e.target.value >= 0){
+            setCantidad( e.target.value);
+           
+            let exist = false;
+        
+            abonosHere.forEach((abono, index) => {
+                if (abono.idVenta === datos._id) {
+                    if(e.target.value === '0'){
+                        abonosHere.splice(index,1)
+                    }else{
+                        abono.cantidad_abonar = e.target.value;
+                    }
+                    exist = true;
+                }      
+            });
+            if(!exist){
+                abonosHere.push({idVenta: datos._id, cantidad_abonar:e.target.value});
+            }
+        }    
         setAbonos(abonosHere);
-     
-    };
-
+    }; */
+    const toSetCantidad =  (cantidad) =>{
+        if(cantidad >= 0 && cantidad <= datos.saldo_credito_pendiente ){
+            setCantidad(cantidad);
+            props.enviarCantidad(cantidad, props.index, datos._id);
+        }
+        
+    }
     return(
     <Box
         sx={{
@@ -128,29 +145,37 @@ export default function CardVenta(props){
             </Box>
             <Box display='flex' flexDirection="row" m={1} justifyContent="space-between">
                 <Typography style={{marginTop:5, marginRight:10}}>
-                    <b>Abonar </b>
+                    <b>Abono </b>
                 </Typography>
                 <TextField
                     style={{width:'45%', marginLeft:15}}
                     type="number"
                     size="small"
                     variant="outlined"
-                    onChange={(enviarDatos)} 
+                    onChange={ (e) => toSetCantidad(e.target.value)} 
                     value={cantidad}
                 />
             </Box>
         </CardContent>
         <CardActions style={{justifyContent: 'flex-end'}}>
-            <IconButton aria-label="delete" onClick={() =>console.log(abonos)} >
-                <HistoryIcon />
+            <Tooltip title="Liquidar venta">
+               <IconLiquidar isIcon={true}  cliente={props.selectedClient} total_ventas={datos.saldo_credito_pendiente} empresa={props.empresa._id} sucursal={props.sucursal._id} setAlert={props.setAlert}/>
+            </Tooltip>    
+            <Tooltip title="Historial abonos">
+            <IconButton aria-label="historial" onClick={() =>setOpenHistorial(true)} >
+                <HistoryIcon />   
             </IconButton>
-            <IconButton aria-label="delete" onClick={() => setOpenDetalle(true)} >
-                <BallotIcon />
+            </Tooltip>    
+            <Tooltip title="Detalles de venta">
+            <IconButton aria-label="detalle" onClick={() => setOpenDetalle(true)} >
+                <DetailsIcon />   
             </IconButton>
+            </Tooltip>    
             
         </CardActions>
         </Card>
         <DetalleVentaCredito openDetalle ={openDetalle} setOpenDetalle={setOpenDetalle} datos={datos} />
+        <HistorialAbonos openHistorial ={openHistorial} setOpenHistorial={setOpenHistorial} historialAbonos={abonos} />
     </Box>
     )
 }

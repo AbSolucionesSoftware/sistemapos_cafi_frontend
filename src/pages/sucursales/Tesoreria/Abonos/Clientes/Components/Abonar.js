@@ -1,10 +1,20 @@
-import React, { useState, useContext} from 'react';
+import React, { Fragment,useState, useContext, useEffect} from 'react';
 
 import CloseIcon from '@material-ui/icons/Close';
 import { Alert } from '@material-ui/lab';
-import { Box, Button, Dialog, DialogContent, makeStyles,  DialogTitle, Slide, TextField, AppBar, Toolbar, Typography, Grid } from '@material-ui/core'
+import { Box, Button, Dialog, DialogContent, makeStyles,  
+    DialogTitle, Slide, TextField, FormControl, MenuItem, 
+    Select,Typography, Grid, IconButton } from '@material-ui/core';
+import BackdropComponent from '../../../../../../components/Layouts/BackDrop';    
 import {AbonosCtx} from "../../../../../../context/Tesoreria/abonosCtx";
+import {  CREAR_ABONO_CLIENTE } from "../../../../../../gql/Tesoreria/abonos";
 import CardVentaAbono from "./AbonarSeleccion/CardVentaAbono";
+import AbonarButton from "./AbonarSeleccion/AbonarButton";
+import { formatoMexico } from "../../../../../../config/reuserFunctions";
+import { formaPago } from '../../../../Facturacion/catalogos';
+import { useMutation } from '@apollo/client';
+import moment from 'moment';
+import ControlPointIcon from '@material-ui/icons/ControlPoint';
 const useStyles = makeStyles((theme) => ({
     appBar: {	
 		position: 'relative'
@@ -30,78 +40,239 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
-export default function Abonar() {
+export default function Abonar(props) {
     //listo
-    
-    const {openAbonar, setOpenAbonar, ventas, selectedClient }= useContext(AbonosCtx);
     const classes = useStyles();
-    const handleClick = () => { 
-        setOpenAbonar(!openAbonar);
+    const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+    const [open, setOpen] = useState(false);
+    const [abono, setAbono] = useState(''); 
+    const {abonos} = useContext(AbonosCtx);
+    const [metodoPago, setMetodoPago] = useState({});
+    const [nameMetodo, setNameMetodo] = useState('');
+    const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
+    const [ crearAbonoVentaCredito ] = useMutation(CREAR_ABONO_CLIENTE);
+    
+    const handleClick = () =>{
+        setOpen(false);
+    }
+    const hacerAbono = async() => { 
+
+        try {
+            props.setLoading(true);
+            let ObjectMetodoPago = formaPago.filter((val) => {
+                console.log(metodoPago, val.Value)
+                return(metodoPago === val.Value)
+            });
+
+            const input = {
+                tipo_movimiento: "ABONO",
+                rol_movimiento: "CLIENTE",
+                numero_caja: parseInt(turnoEnCurso.numero_caja),
+                id_Caja: turnoEnCurso.id_caja,
+                fecha_movimiento: {
+                    year: moment().format('YYYY'),
+                    mes: moment().format('MM'),
+                    dia: moment().format('DD'),
+                    no_semana_year: moment().week().toString(),
+                    no_dia_year: moment().dayOfYear().toString(),
+                    completa: moment().locale('es-mx').format()
+                },
+                monto_total: props.total_ventas,
+              
+                horario_turno: '',
+
+                metodo_de_pago:{
+                    clave: ObjectMetodoPago.Value,
+                    metodo:  ObjectMetodoPago.Name,
+                },
+              
+                id_usuario: sesion._id,
+                numero_usuario_creador: sesion.numero_usuario,
+                nombre_usuario_creador: sesion.nombre,
+                id_cliente: props.cliente._id,
+                credito_disponible: props.cliente.credito_disponible,
+                numero_cliente: props.cliente.numero_cliente,
+                nombre_cliente: props.cliente.nombre_cliente ,
+                telefono_cliente: props.cliente.telefono_cliente  ,
+                email_cliente: props.cliente.email_cliente,
+               
+
+                ventas: [{ monto_total_abonado: parseFloat(abono), 
+                    id_venta:abonos[props.index].id_venta,
+                    saldo_credito_pendiente:abonos[props.index].saldo_credito_pendiente}],
+                liquidar: false
+            }
+            if(metodoPago && abono !== '' && abono > 0){
+                await crearAbonoVentaCredito({
+                    variables: {
+                        empresa: sesion.empresa._id,
+                        sucursal: sesion.sucursal._id,
+                        input
+                    },
+                }); 
+
+                props.recargar();
+                setOpen(false);
+                props.setLoading(false);
+                props.setAlert({ 
+                    message: 'Abono registrado con éxito.', 
+                    status: 'success', 
+                    open: true 
+                });
+            }
+           
+
+        } catch (error) {
+            console.log(error);
+            if (error.networkError) {
+                console.log(error.networkError.result);
+            } else if (error.graphQLErrors) {
+                console.log(error.graphQLErrors);
+            }
+        }
     }
 
+    const enviarCantidad = (e) =>{
+        try {
+            let cantidad = e.target.value;
+            if(cantidad >= 0 && cantidad <= props.venta.saldo_credito_pendiente){
+                setAbono(cantidad);
+            }
+           
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+    
+        if(metodoPago){
+          
+            setNameMetodo(metodoPago.name)
+          
+        }
+    }, [metodoPago])
+     
     return (
         <Box m={1}>
-            <Button
-                size="large"
-                variant="contained" 
-                color="primary"
-                onClick={handleClick}
+            <Box display="flex">
+                <IconButton aria-label="detalle" onClick={() =>{ setOpen(true);}} >
+                    <ControlPointIcon />
+                </IconButton>
+                </Box>
+            <Fragment>
+           
+            <Dialog
+                open={open}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleClick}
+                fullWidth
+                maxWidth='sm'
             >
-                Abonar
-            </Button>
-            <Dialog fullScreen open={openAbonar} onClose={handleClick} TransitionComponent={Transition}>
-				<AppBar className={classes.appBar}>
-					<Toolbar>
-						<Typography variant="h6" className={classes.title}>
-                        	Detalle de cuenta
-						</Typography>
-						
-                        <Box m={1}>
-							<Button variant="contained" color="secondary" onClick={handleClick} size="large">
-								<CloseIcon style={{fontSize: 30}} />
-							</Button>
-						</Box>
-					</Toolbar>
-				</AppBar>
-                <div className={classes.formInputFlex}>
-                <Box width="40%">
-                        <Typography><b>Número de Cliente</b></Typography>
-                        <Box mt={1}>
-                            <Typography>
-                                {selectedClient.numero_cliente}
-                            </Typography>
-                        </Box>
+                <DialogTitle id="alert-dialog-slide-title">
+                <Box display="flex">
+                 
+                    <Box width='100%' display="flex" justifyContent="flex-end">
+                        <Button variant="contained" color="secondary" onClick={() => setOpen(false)} size="large">
+                            <CloseIcon />
+                        </Button>
                     </Box>
-                    <Box width="55%">
-                        <Typography><b>Nombre de Cliente</b></Typography>
-                        <Box mt={1}>
-                            <Typography>
-                                {selectedClient.nombre_cliente}
-                            </Typography>
-                        </Box>
-                    </Box>
-                    
-                    <Box width="100%">
-                        <Typography><b>Domicilio</b></Typography>
-                        <Box mt={1}>
-                            <Typography>
-                                {selectedClient.direccion.calle}  {selectedClient.direccion.no_ext}
-                            </Typography>
-                        </Box>
-                    </Box>
-                </div>
-                <Grid container >
-                    {
-                        ventas.map((venta) =>{
-                            return(
-                                <CardVentaAbono datos={venta} />   
-                            )
-                        })
-                    } 
-                </Grid>
-			</Dialog>
+                </Box>
+                
+            </DialogTitle>
+                <BackdropComponent loading={props.loading} setLoading={props.setLoading} />
             
-        </Box>
+                <DialogContent>
+                    <Box  display="flex"sx={{ justifyContent: 'space-between' }}>
+                        <Box width="40%" >
+                            <Typography><b>Cantidad a abonar:</b></Typography>
+                            <TextField
+                                fullWidth
+                                className={classes.input}
+                                onChange={(e) => enviarCantidad(e)}
+                                value={abono}
+                                size="small"
+                                name="abono_recibir"
+                                variant="outlined"
+                                type='number'
+                            />
+                        </Box >
+                   
+                        <Box width="58%"  >
+                            <Typography><b>Método de pago:</b></Typography>
+                            <FormControl 
+                                variant="outlined"
+                                fullWidth
+                                size="small"
+                            >
+                                <Select
+                                    width="100%"
+                                    name="metodo_pago"
+                                    variant='outlined'
+                                    value={metodoPago ? metodoPago : ''}
+                                    onChange={(e) => setMetodoPago(e.target.value)}
+                                >
+                                    <MenuItem value="">
+                                        <em>Selecciona uno</em>
+                                    </MenuItem>
+                                    {formaPago.map((metodo, index) => {
+                                        return(
+                                            <MenuItem key={index} value={ metodo.Value}>{metodo.Name}</MenuItem>
+                                        )
+                                    })}
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </Box>
+                    <Box mt={5} width= "100%" display='flex' alignItems="flex-end" flexDirection='column'>
+                        <Box width="55%" display='flex'  >
+                            <Box flexGrow={1}>
+                                <Typography variant='h6'>
+                                    <b>Total cuenta</b>
+                                </Typography>
+                            </Box>
+                            <Typography style={{color: '#9B9B9B'}} variant='h6'>
+                                <b>${formatoMexico(props.venta.total)}</b>
+                            </Typography>
+                        </Box>
+                        <Box width="55%" display='flex'>
+                            <Box flexGrow={1}>
+                                <Typography  variant='h6'>
+                                    <b>Total abonado</b>
+                                </Typography>
+                            </Box>
+                            <Typography style={{color: 'green'}} variant='h6'>
+                                <b>${formatoMexico(props.venta.total - props.venta.saldo_credito_pendiente)}</b>
+                            </Typography>
+                        </Box>
+                        <Box width="55%" display='flex'>
+                            <Box flexGrow={1} >
+                                <Typography  variant='h6'>
+                                    <b>Total restante</b>
+                                </Typography>
+                            </Box>
+                            <Typography  variant='h6'>
+                                <b>${formatoMexico(props.venta.saldo_credito_pendiente)}</b>
+                            </Typography>
+                        </Box>
+                    </Box>
+                </DialogContent>
+                <Box display="flex" justifyContent="flex-end" alignContent="center" p={2} mt={2}>
+                    <Button
+                        size="large"
+                        variant="contained" 
+                        color="primary"
+                        style={{fontSize: 15}}
+                        onClick={hacerAbono}
+                    >
+                        Registrar Abono
+                    </Button>
+                </Box>
+            </Dialog>
+            </Fragment> 
+        </Box> 
     )
 }
 {/* <Dialog

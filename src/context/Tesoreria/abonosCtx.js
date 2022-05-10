@@ -8,12 +8,8 @@ export const AbonosProvider= ({ children }) => {
     const [ventas, setVentas] = useState([]);
     const [reload, setReload] = useState(false);
     const [openAbonar, setOpenAbonar] = useState(false);
-    const [selectedClient, setSelectedClient] = useState("");
     const [abonos, setAbonos] = useState([]);
-    useEffect(() => {
-      console.log(abonos);
-    }, [abonos])
-    
+
     return (
         <AbonosCtx.Provider
             value={{
@@ -25,10 +21,9 @@ export const AbonosProvider= ({ children }) => {
                 setReload,
                 openAbonar, 
                 setOpenAbonar,
-                selectedClient,
-                setSelectedClient,
                 abonos,
-                setAbonos
+                setAbonos,
+            
             }}
         >
             {children}

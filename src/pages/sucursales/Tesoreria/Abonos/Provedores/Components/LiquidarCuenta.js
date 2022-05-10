@@ -161,7 +161,7 @@ export default function LiquidarCuenta({cuenta, refetch}) {
             setReload(true);
             setMetodoPago('');
             setAlert({ 
-                message: 'Cuenta liquidada con exito', 
+                message: 'Cuenta liquidada con éxito', 
                 status: 'success', 
                 open: true 
             });
