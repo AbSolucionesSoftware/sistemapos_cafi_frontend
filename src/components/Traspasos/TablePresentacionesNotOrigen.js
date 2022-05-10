@@ -243,11 +243,11 @@ const RenderPresentacionesRows = ({
         copy_element_presentacion.medida.precio = parseFloat(value);
       }
 
-      copy_element_presentacion.medida.precio_unidad.precio_venta = parseFloat(precio_venta).toFixed(2);
-      copy_element_presentacion.medida.precio_unidad.precio_neto = parseFloat(precio_neto).toFixed(2);
-      copy_element_presentacion.medida.precio_unidad.utilidad = parseFloat(utilidad).toFixed(2);
-      copy_element_presentacion.medida.precio_unidad.iva_precio = parseFloat(iva_precio).toFixed(2);
-      copy_element_presentacion.medida.precio_unidad.ieps_precio = parseFloat(ieps_precio).toFixed(2);
+      copy_element_presentacion.medida.precio_unidad.precio_venta = parseFloat(precio_venta.toFixed(2));
+      copy_element_presentacion.medida.precio_unidad.precio_neto = parseFloat(precio_neto.toFixed(2));
+      copy_element_presentacion.medida.precio_unidad.utilidad = parseFloat(utilidad.toFixed(2));
+      copy_element_presentacion.medida.precio_unidad.iva_precio = parseFloat(iva_precio.toFixed(2));
+      copy_element_presentacion.medida.precio_unidad.ieps_precio = parseFloat(ieps_precio.toFixed(2));
     } else if (name === "descuento") {
       /* if (!value) {
         copy_element_presentacion.medida.precio = 0;
