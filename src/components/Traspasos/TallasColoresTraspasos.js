@@ -292,16 +292,12 @@ const RenderTallas = ({
       for (let i = 0; i < medidas_seleccionadas_temp.length; i++) {
         const producto_medida = medidas_seleccionadas_temp[i];
         let iva_precio = parseFloat(
-          (
-            producto.precios.precios_producto[0].precio_venta *
+          producto.precios.precios_producto[0].precio_venta *
             parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
-          )
         );
         let ieps_precio = parseFloat(
-          (
-            producto.precios.precios_producto[0].precio_venta *
+          producto.precios.precios_producto[0].precio_venta *
             parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
-          )
         );
         presentacion_temp.push({
           medida: {
@@ -340,16 +336,12 @@ const RenderTallas = ({
           (res) => res.medida.medida._id === producto_medida._id
         );
         let iva_precio = parseFloat(
-          (
-            producto.precios.precios_producto[0].precio_venta *
+          producto.precios.precios_producto[0].precio_venta *
             parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
-          )
         );
         let ieps_precio = parseFloat(
-          (
-            producto.precios.precios_producto[0].precio_venta *
+          producto.precios.precios_producto[0].precio_venta *
             parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
-          )
         );
         if (result.length) {
           presentacion_temp.push(result[0]);
@@ -423,16 +415,12 @@ const RenderTallas = ({
               producto_color._id === producto_array_final.medida.color._id
           );
           let iva_precio = parseFloat(
-            (
-              producto.precios.precios_producto[0].precio_venta *
+            producto.precios.precios_producto[0].precio_venta *
               parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
-            )
           );
           let ieps_precio = parseFloat(
-            (
-              producto.precios.precios_producto[0].precio_venta *
+            producto.precios.precios_producto[0].precio_venta *
               parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
-            )
           );
           if (!presentacion_existente.length) {
             //console.log('YA HAY COLORES Y MEDIDAS EN LAS PRESENTACIONES, SE AGREGAN NORMAL' , array_medidad_finales, producto_medida, producto_color)
@@ -586,16 +574,12 @@ const Colores = ({
       for (let i = 0; i < coloresSeleccionados.length; i++) {
         const producto_color = coloresSeleccionados[i];
         let iva_precio = parseFloat(
-          (
-            producto.precios.precios_producto[0].precio_venta *
+          producto.precios.precios_producto[0].precio_venta *
             parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
-          )
         );
         let ieps_precio = parseFloat(
-          (
-            producto.precios.precios_producto[0].precio_venta *
+          producto.precios.precios_producto[0].precio_venta *
             parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
-          )
         );
         presentacion_temp.push({
           medida: {
@@ -634,16 +618,12 @@ const Colores = ({
           (res) => res.medida.color._id === producto_color._id
         );
         let iva_precio = parseFloat(
-          (
-            producto.precios.precios_producto[0].precio_venta *
+          producto.precios.precios_producto[0].precio_venta *
             parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
-          )
         );
         let ieps_precio = parseFloat(
-          (
-            producto.precios.precios_producto[0].precio_venta *
+          producto.precios.precios_producto[0].precio_venta *
             parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
-          )
         );
         if (result.length) {
           presentacion_temp.push(result[0]);
@@ -717,16 +697,12 @@ const Colores = ({
               producto_color._id === producto_array_final.medida.color._id
           );
           let iva_precio = parseFloat(
-            (
-              producto.precios.precios_producto[0].precio_venta *
+            producto.precios.precios_producto[0].precio_venta *
               parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
-            )
           );
           let ieps_precio = parseFloat(
-            (
-              producto.precios.precios_producto[0].precio_venta *
+            producto.precios.precios_producto[0].precio_venta *
               parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
-            )
           );
           if (!presentacion_existente.length) {
             presentacion_temp.push({

@@ -247,8 +247,8 @@ export default function CerrarVenta() {
       ventaFinal.credito = venta_credito;
       ventaFinal.abono_minimo = venta_credito && abonoMinimo ? abonoMinimo : 0;
       //Agregar descuentos de ventas
-      ventaFinal.descuento_general_activo = false;
-      ventaFinal.descuento_general = null;
+      ventaFinal.descuento_general_activo = ventaFinal.descuento_general_activo ? ventaFinal.descuento_general_activo : false;
+      ventaFinal.descuento_general = ventaFinal.descuento_general ? ventaFinal.descuento_general : null;
       //Declarar dias de credito como false
       ventaFinal.dias_de_credito_venta = datosCliente
         ? datosCliente.dias_credito
@@ -283,8 +283,8 @@ export default function CerrarVenta() {
       ventaFinal.forma_pago = forma_pago;
 
       //Enviar los datos
-      /* console.log(ventaFinal); */
-      await createVenta({
+      console.log(ventaFinal);
+      /* await createVenta({
         variables: {
           input: ventaFinal,
           empresa: sesion.empresa,
@@ -292,11 +292,11 @@ export default function CerrarVenta() {
           usuario: usuario._id,
           caja: sesion.id_caja,
         },
-      });
+      }); */
       //Quitar loading
       setOpenBackDrop(false);
-      setOpen(false);
-      hancleClickCerrarVentaCambio();
+      /* setOpen(false);
+      hancleClickCerrarVentaCambio(); */
     } catch (error) {
       setOpenBackDrop(false);
       setAlert({ message: "Hubo un error", status: "error", open: true });

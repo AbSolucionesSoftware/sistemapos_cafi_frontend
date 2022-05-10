@@ -118,32 +118,22 @@ export default function DescuentoProductos({ datos, productosRefetch }) {
       let cantidad_unidad = preciosProductos[i].precio_unidad.cantidad_unidad;
 
       PVCDSI = parseFloat(
-        (
-          (preciosProductos[i].precio_unidad.precio_venta * porcentaje) / 100
-        ).toFixed(2)
+        (preciosProductos[i].precio_unidad.precio_venta * porcentaje) / 100
       );
       dineroDescontado = parseFloat(
-        (preciosProductos[i].precio_unidad.precio_venta - PVCDSI).toFixed(2)
+        preciosProductos[i].precio_unidad.precio_venta - PVCDSI
       );
 
       let iva_precio = parseFloat(
-        (PVCDSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)).toFixed(2)
+        PVCDSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
       );
 
       let ieps_precio = parseFloat(
-        (
-          PVCDSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
-        ).toFixed(2)
+        PVCDSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
       );
-      let utilidad = parseFloat(
-        (((PVCDSI - PCSI) / PCSI) * 100).toFixed(2)
-      );
-      let precio_neto = parseFloat(
-        (PVCDSI + iva_precio + ieps_precio).toFixed(2)
-      );
-      let precio_general = parseFloat(
-        (precio_neto * cantidad_unidad).toFixed(2)
-      );
+      let utilidad = parseFloat(((PVCDSI - PCSI) / PCSI) * 100);
+      let precio_neto = parseFloat(PVCDSI + iva_precio + ieps_precio);
+      let precio_general = parseFloat(precio_neto * cantidad_unidad);
 
       arrayDescuento = {
         _id: preciosProductos[i]._id,
@@ -152,14 +142,14 @@ export default function DescuentoProductos({ datos, productosRefetch }) {
           cantidad_unidad: cantidad_unidad,
           numero_precio: preciosProductos[i].precio_unidad.numero_precio,
           unidad_maxima: preciosProductos[i].precio_unidad.unidad_maxima,
-          precio_general: precio_general,
-          precio_neto: precio_neto,
-          precio_venta: PVCDSI,
-          iva_precio: iva_precio,
-          ieps_precio: ieps_precio,
-          utilidad: utilidad,
+          precio_general: parseFloat(precio_general.toFixed(2)),
+          precio_neto: parseFloat(precio_neto.toFixed(2)),
+          precio_venta: parseFloat(PVCDSI.toFixed(2)),
+          iva_precio: parseFloat(iva_precio.toFixed(2)),
+          ieps_precio: parseFloat(ieps_precio.toFixed(2)),
+          utilidad: parseFloat(utilidad.toFixed(2)),
           porciento: newValue,
-          dinero_descontado: dineroDescontado,
+          dinero_descontado: parseFloat(dineroDescontado.toFixed(2)),
         },
       };
 
@@ -180,44 +170,34 @@ export default function DescuentoProductos({ datos, productosRefetch }) {
       let suma_impuestos =
         parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
         parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
-      let PVSI = parseFloat((valorText / (suma_impuestos + 1)).toFixed(2));
+      let PVSI = parseFloat(valorText / (suma_impuestos + 1));
 
       let cantidad_unidad = preciosProductos[0].precio_unidad.cantidad_unidad;
       let dineroDescontado = 0;
       let PVCDSI = 0; // Precio venta con descuento sin impuestos
       let porcentaje = parseFloat(
-        (
-          (PVSI / preciosProductos[0].precio_unidad.precio_venta) * 100
-        ).toFixed(2)
+        ((PVSI / preciosProductos[0].precio_unidad.precio_venta) * 100).toFixed(
+          2
+        )
       );
       let descuento = parseFloat((100 - porcentaje).toFixed(2));
 
       PVCDSI = parseFloat(
-        (
-          (preciosProductos[0].precio_unidad.precio_venta * porcentaje) / 100
-        ).toFixed(2)
+        (preciosProductos[0].precio_unidad.precio_venta * porcentaje) / 100
       );
       dineroDescontado = parseFloat(
-        (preciosProductos[0].precio_unidad.precio_venta - PVCDSI).toFixed(2)
+        preciosProductos[0].precio_unidad.precio_venta - PVCDSI
       );
 
       let iva_precio = parseFloat(
-        (PVCDSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)).toFixed(2)
+        PVCDSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
       );
       let ieps_precio = parseFloat(
-        (
-          PVCDSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
-        ).toFixed(2)
+        PVCDSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
       );
-      let utilidad = parseFloat(
-        (((PVCDSI - PCSI) / PCSI) * 100).toFixed(2)
-      );
-      let precio_neto = parseFloat(
-        (PVCDSI + iva_precio + ieps_precio).toFixed(2)
-      );
-      let precio_general = parseFloat(
-        (precio_neto * cantidad_unidad).toFixed(2)
-      );
+      let utilidad = parseFloat(((PVCDSI - PCSI) / PCSI) * 100);
+      let precio_neto = parseFloat(PVCDSI + iva_precio + ieps_precio);
+      let precio_general = parseFloat(precio_neto * cantidad_unidad);
 
       arrayDescuento = {
         _id: preciosProductos[0]._id,
@@ -226,14 +206,14 @@ export default function DescuentoProductos({ datos, productosRefetch }) {
           cantidad_unidad: cantidad_unidad,
           numero_precio: preciosProductos[0].precio_unidad.numero_precio,
           unidad_maxima: preciosProductos[0].precio_unidad.unidad_maxima,
-          precio_general: precio_general,
-          precio_neto: precio_neto,
-          precio_venta: PVCDSI,
-          iva_precio: iva_precio,
-          ieps_precio: ieps_precio,
-          utilidad: utilidad,
-          porciento: descuento,
-          dinero_descontado: dineroDescontado,
+          precio_general: parseFloat(precio_general.toFixed(2)),
+          precio_neto: parseFloat(precio_neto.toFixed(2)),
+          precio_venta: parseFloat(PVCDSI.toFixed(2)),
+          iva_precio: parseFloat(iva_precio.toFixed(2)),
+          ieps_precio: parseFloat(ieps_precio.toFixed(2)),
+          utilidad: parseFloat(utilidad.toFixed(2)),
+          porciento: parseFloat(descuento.toFixed(2)),
+          dinero_descontado: parseFloat(dineroDescontado.toFixed(2)),
         },
       };
 

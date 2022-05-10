@@ -303,11 +303,11 @@ const RenderTallas = ({
         const producto_medida = medidas_seleccionadas_temp[i];
         let iva_precio = parseFloat(
           preciosP[0].precio_venta *
-            parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`.toFixed(2))
+            parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
         );
         let ieps_precio = parseFloat(
           preciosP[0].precio_venta *
-            parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`.toFixed(2))
+            parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
         );
         presentacion_temp.push({
           _id: "",
@@ -327,8 +327,8 @@ const RenderTallas = ({
             precio_venta: preciosP[0].precio_venta,
             precio_neto: preciosP[0].precio_neto,
             unidad_mayoreo: 0,
-            iva_precio: iva_precio,
-            ieps_precio: ieps_precio,
+            iva_precio: parseFloat(iva_precio.toFixed(2)),
+            ieps_precio: parseFloat(ieps_precio.toFixed(2)),
             utilidad: preciosP[0].utilidad,
             unidad_maxima: false,
           },
@@ -346,11 +346,11 @@ const RenderTallas = ({
         );
         let iva_precio = parseFloat(
           preciosP[0].precio_venta *
-            parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`.toFixed(2))
+            parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
         );
         let ieps_precio = parseFloat(
           preciosP[0].precio_venta *
-            parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`.toFixed(2))
+            parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
         );
         if (result.length) {
           presentacion_temp.push(result[0]);
@@ -373,8 +373,8 @@ const RenderTallas = ({
               precio_venta: preciosP[0].precio_venta,
               precio_neto: preciosP[0].precio_neto,
               unidad_mayoreo: 0,
-              iva_precio: iva_precio,
-              ieps_precio: ieps_precio,
+              iva_precio: parseFloat(iva_precio.toFixed(2)),
+              ieps_precio: parseFloat(ieps_precio.toFixed(2)),
               utilidad: preciosP[0].utilidad,
               unidad_maxima: false,
             },
@@ -422,11 +422,11 @@ const RenderTallas = ({
           );
           let iva_precio = parseFloat(
             preciosP[0].precio_venta *
-              parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`.toFixed(2))
+              parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
           );
           let ieps_precio = parseFloat(
             preciosP[0].precio_venta *
-              parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`.toFixed(2))
+              parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
           );
           if (!presentacion_existente.length) {
             presentacion_temp.push({
@@ -447,8 +447,8 @@ const RenderTallas = ({
                 precio_venta: preciosP[0].precio_venta,
                 precio_neto: preciosP[0].precio_neto,
                 unidad_mayoreo: 0,
-                iva_precio: iva_precio,
-                ieps_precio: ieps_precio,
+                iva_precio: parseFloat(iva_precio.toFixed(2)),
+                ieps_precio: parseFloat(ieps_precio.toFixed(2)),
                 utilidad: preciosP[0].utilidad,
                 unidad_maxima: false,
               },
@@ -586,11 +586,11 @@ const Colores = ({
         const producto_color = coloresSeleccionados[i];
         let iva_precio = parseFloat(
           preciosP[0].precio_venta *
-            parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`.toFixed(2))
+            parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
         );
         let ieps_precio = parseFloat(
           preciosP[0].precio_venta *
-            parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`.toFixed(2))
+            parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
         );
 
         presentacion_temp.push({
@@ -611,8 +611,8 @@ const Colores = ({
             precio_venta: preciosP[0].precio_venta,
             precio_neto: preciosP[0].precio_neto,
             unidad_mayoreo: 0,
-            iva_precio: iva_precio,
-            ieps_precio: ieps_precio,
+            iva_precio: parseFloat(iva_precio.toFixed(2)),
+            ieps_precio: parseFloat(ieps_precio.toFixed(2)),
             utilidad: preciosP[0].utilidad,
             unidad_maxima: false,
           },
@@ -630,11 +630,11 @@ const Colores = ({
         );
         let iva_precio = parseFloat(
           preciosP[0].precio_venta *
-            parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)
+            parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
         );
         let ieps_precio = parseFloat(
           preciosP[0].precio_venta *
-            parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)
+            parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
         );
         if (result.length) {
           presentacion_temp.push(result[0]);
@@ -657,8 +657,8 @@ const Colores = ({
               precio_venta: preciosP[0].precio_venta,
               precio_neto: preciosP[0].precio_neto,
               unidad_mayoreo: 0,
-              iva_precio: iva_precio,
-              ieps_precio: ieps_precio,
+              iva_precio: parseFloat(iva_precio.toFixed(2)),
+              ieps_precio: parseFloat(ieps_precio.toFixed(2)),
               utilidad: preciosP[0].utilidad,
               unidad_maxima: false,
             },
@@ -706,11 +706,11 @@ const Colores = ({
           );
           let iva_precio = parseFloat(
             preciosP[0].precio_venta *
-              parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)
+              parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
           );
           let ieps_precio = parseFloat(
             preciosP[0].precio_venta *
-              parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)
+              parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
           );
           if (!presentacion_existente.length) {
             presentacion_temp.push({
@@ -731,8 +731,8 @@ const Colores = ({
                 precio_venta: preciosP[0].precio_venta,
                 precio_neto: preciosP[0].precio_neto,
                 unidad_mayoreo: 0,
-                iva_precio: iva_precio,
-                ieps_precio: ieps_precio,
+                iva_precio: parseFloat(iva_precio.toFixed(2)),
+                ieps_precio: parseFloat(ieps_precio.toFixed(2)),
                 utilidad: preciosP[0].utilidad,
                 unidad_maxima: false,
               },

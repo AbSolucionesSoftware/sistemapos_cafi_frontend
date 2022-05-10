@@ -176,24 +176,26 @@ const RenderPresentacionesRows = ({
 
       let suma_impuestos =
         parseFloat(`0.${varIVA}`) + parseFloat(`0.${varIEPS}`);
-      let precio_venta = parseFloat(
-        (precio_neto / (suma_impuestos + 1)).toFixed(2)
-      );
-      let iva_precio = parseFloat(
-        (precio_venta * parseFloat(`0.${varIVA}`)).toFixed(2)
-      );
-      let ieps_precio = parseFloat(
-        (precio_venta * parseFloat(`0.${varIEPS}`)).toFixed(2)
-      );
+      let precio_venta = parseFloat(precio_neto / (suma_impuestos + 1));
+      let iva_precio = parseFloat(precio_venta * parseFloat(`0.${varIVA}`));
+      let ieps_precio = parseFloat(precio_venta * parseFloat(`0.${varIEPS}`));
       let PUCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
-      let utilidad = parseFloat(
-        (((precio_venta - PUCSI) / PUCSI) * 100).toFixed(2)
+      let utilidad = parseFloat(((precio_venta - PUCSI) / PUCSI) * 100);
+      copy_element_presentacion.precio_unidad.precio_venta = parseFloat(
+        precio_venta.toFixed(2)
       );
-      copy_element_presentacion.precio_unidad.precio_venta = precio_venta;
-      copy_element_presentacion.precio_unidad.precio_neto = precio_neto;
-      copy_element_presentacion.precio_unidad.utilidad = utilidad;
-      copy_element_presentacion.precio_unidad.iva_precio = iva_precio;
-      copy_element_presentacion.precio_unidad.ieps_precio = ieps_precio;
+      copy_element_presentacion.precio_unidad.precio_neto = parseFloat(
+        precio_neto.toFixed(2)
+      );
+      copy_element_presentacion.precio_unidad.utilidad = parseFloat(
+        utilidad.toFixed(2)
+      );
+      copy_element_presentacion.precio_unidad.iva_precio = parseFloat(
+        iva_precio.toFixed(2)
+      );
+      copy_element_presentacion.precio_unidad.ieps_precio = parseFloat(
+        ieps_precio.toFixed(2)
+      );
 
       copy_element_presentacion.precio = parseFloat(value);
     } else {
