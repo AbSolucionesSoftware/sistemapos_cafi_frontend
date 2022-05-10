@@ -27,6 +27,7 @@ export default function LiquidarCuenta() {
         setOpen(!open);
     } 
     const classes = useStyles();
+    console.log("hola")
 
     return (
         <div>
