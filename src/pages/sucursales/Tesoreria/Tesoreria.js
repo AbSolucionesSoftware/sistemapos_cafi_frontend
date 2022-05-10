@@ -44,7 +44,7 @@ export default function Tesoreria() {
 					<AbonosProvider>
 						<Grid item lg={2}>
 							<Box display="flex" justifyContent="center" alignItems="center">
-								<AbonosClientes />
+								<AbonosClientes fromVentas={false} />
 							</Box>
 						</Grid>
 					</AbonosProvider>

@@ -1,7 +1,13 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
+import HistoryIcon from '@material-ui/icons/History';
+import Ballot from '@material-ui/icons/Ballot';
 import Table from '@material-ui/core/Table';
+import IconButton from '@material-ui/core/IconButton';
+import {Box, Typography} from '@material-ui/core';
+
+
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -11,11 +17,15 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import {AbonosCtx} from "../../../../../../context/Tesoreria/abonosCtx";
+import DetalleVentaCredito from './AbonarSeleccion/DetalleVentaCredito';
+import HistorialAbonos from './AbonarSeleccion/HistorialAbonos';
+import IconLiquidar from './Liquidar';
+import Abonar from './Abonar';
 import {
 	formatoFechaCorta
   } from "../../../../../../config/reuserFunctions";
 //import DetallesCuenta from './DetalleCuenta/DetallesCuenta';
-import LiquidarCuenta from './LiquidarCuenta';
+
 
 function createData(folio, fecha, cantidadProductos, totalVenta, totalAbonado, faltaPagar) {
 	return { folio, fecha, cantidadProductos, totalVenta, totalAbonado, faltaPagar };
@@ -27,11 +37,14 @@ const headCells = [
 	{ id: 'folio', numeric: false, disablePadding: true, label: 'Folio' },
 	{ id: 'fecha', numeric: false, disablePadding: true, label: 'Fecha' },
 	{ id: 'fechaVencimiento', numeric: false, disablePadding: true, label: 'Fecha de vencimiento' },
-	{ id: 'cantidadProductos', numeric: false, disablePadding: true, label: 'Cantidad de productos' },
 	{ id: 'totalVenta', numeric: true, disablePadding: true, label: 'Total venta' },
 	// { id: 'totalAbonado', numeric: true, disablePadding: false, label: 'Pagado' },
 	{ id: 'faltaPagar', numeric: true, disablePadding: true, label: 'Falta por pagar' },
 	
+	{ id: 'detalle', numeric: false, disablePadding: true, label: 'Detalle venta' },
+	{ id: 'historialAbonos', numeric: false, disablePadding: true, label: 'Historial Abonos' },
+	{ id: 'abonar', numeric: false, disablePadding: true, label: 'Abonar' },
+	{ id: 'liquidar', numeric: false, disablePadding: true, label: 'Liquidar' },
 ];
 
 function EnhancedTableHead(props) {
@@ -40,14 +53,14 @@ function EnhancedTableHead(props) {
 	return (
 		<TableHead>
 			<TableRow>
-				<TableCell padding="checkbox">
+				{/* <TableCell padding="checkbox">
 					<Checkbox
 						indeterminate={numSelected > 0 && numSelected < rowCount}
 						checked={rowCount > 0 && numSelected === rowCount}
 						onChange={onSelectAllClick}
 						inputProps={{ 'aria-label': 'select all desserts' }}
 					/>
-				</TableCell>
+				</TableCell> */}
 				{headCells.map((headCell) => (
 					<TableCell
 						key={headCell.id}
@@ -90,7 +103,25 @@ const useStyles = makeStyles((theme) => ({
 		position: 'absolute',
 		top: 20,
 		width: 1
-	}
+	},
+	pagada: {
+		backgroundColor: "#EDFFF3",
+		"&:hover": {
+		  backgroundColor: "#D8FFE5",
+		},
+	  },
+	vencidas: {
+		backgroundColor: "#FFF4F4",
+		"&:hover": {
+		  backgroundColor: "#F5F5F5",
+		},
+	  },
+	vencer: {
+		backgroundColor: "#FFF",
+		"&:hover": {
+		  backgroundColor: "#F5F5F5",
+		},
+	  },  
 }));
 
 export default function TablaVentasCredito(props) {
@@ -100,7 +131,9 @@ export default function TablaVentasCredito(props) {
 	const [ page ] = useState(0);
 	const [ rowsPerPage ] = useState(10);
 	const { setVentas} = useContext(AbonosCtx);
-
+	const [openDetalle, setOpenDetalle] = useState(false);
+    const [openHistorial, setOpenHistorial] = useState(false);
+    const [rowSelected, setRowSelected] = useState({});
 	const handleSelectAllClick = (event) => {
 		if (event.target.checked) {
 			const newSelecteds = rows.map((n) => n.name);
@@ -114,7 +147,7 @@ export default function TablaVentasCredito(props) {
          try {
 			let newSelected = [];
 			const selectedIndex = selected.indexOf(item);
-			console.log(selected,selectedIndex);
+			//console.log(selected,selectedIndex);
 			
 			if (selectedIndex === -1) {
 				newSelected = newSelected.concat(selected, item);
@@ -134,7 +167,15 @@ export default function TablaVentasCredito(props) {
 	
 		
 	};
+	const detalle =(row) =>{
+		setOpenDetalle(true);
+		setRowSelected(row);
+	}
 
+	const historial =(row) =>{
+		setOpenHistorial(true);
+		setRowSelected(row);
+	}
 /* 	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
 	};
@@ -151,14 +192,54 @@ export default function TablaVentasCredito(props) {
 	return (
 		<div className={classes.root}>
 			<Paper className={classes.paper}>
-				
-				<TableContainer>
+		<Box my={1} m={2} display="flex">
+      
+        <Fragment>
+            <Box
+              border={1}
+              borderColor="#58ff8f"
+              bgcolor="#EDFFF3"
+              height="24px"
+              width="24px"
+            />
+            <Box mx={1} />
+            <Typography>
+              <b>- Pagadas </b>
+            </Typography>
+            <Box mx={2} />
+        </Fragment>
+        
+			<Box
+				border={1}
+				borderColor="#FF8A8A"
+				bgcolor="#FFF4F4"
+				height="24px"
+				width="24px"
+			/>
+			<Box mx={1} />
+			<Typography>
+			<b>- Ventas vencidas </b>
+			</Typography>
+			{/* <Box
+				border={1}
+				borderColor="#FF8A8A"
+				bgcolor="#FFF4F4"
+				height="24px"
+				width="24px"
+			/>
+			<Box mx={1} />
+				<Typography>
+				<b>- Ventas por vencer</b>
+			</Typography> */}
+		</Box>
+		
+				<TableContainer style={{height:'65vh'}}>
 					<Table
 						className={classes.table}
 						aria-labelledby="tableTitle"
 						stickyHeader
 						size="small" 
-						aria-label="a dense table"
+						aria-label="enhanced table"
 					>
 						<EnhancedTableHead
 							classes={classes}
@@ -168,30 +249,49 @@ export default function TablaVentasCredito(props) {
 						/>
 						<TableBody>
 							{props.rows.map((row, index) => {
+								
 								const isItemSelected = isSelected(row);
 								const labelId = `enhanced-table-checkbox-${index}`;
+								
 								return (
 									<TableRow
 										hover
 										key={index}
-										onClick={(event) => handleClick(event, row)}
+										// onClick={(event) => handleClick(event, row)}
 										role="checkbox"
 										aria-checked={isItemSelected}
 										tabIndex={-1}
 										selected={isItemSelected}
+										className={(row.estatus_credito === 'PAGADA') ? classes.pagada : (row.estatus_credito === 'VENCIDA') ?  classes.vencidas : classes.vencer}
 									>
-										<TableCell padding="checkbox">
+										{/* <TableCell padding="checkbox">
 											<Checkbox
 												checked={isItemSelected}
 												inputProps={{ 'aria-labelledby': labelId }}
-											/>
-										</TableCell>
+											/> 
+										</TableCell>*/}
 										<TableCell id={labelId}>{row.folio}</TableCell>
 										<TableCell >{` ${formatoFechaCorta(row.fecha_registro)}`}</TableCell>
 										<TableCell >{row.fecha_de_vencimiento_credito}</TableCell>
-										<TableCell align='center'>{row.productos.length}</TableCell>
-										<TableCell align='right'>{row.total}</TableCell>
-										<TableCell align='right'>{row.saldo_credito_pendiente}</TableCell>
+										<TableCell align='left'>{row.total}</TableCell>
+										<TableCell align='left'>{row.saldo_credito_pendiente}</TableCell>
+										<TableCell align='center'>
+											<IconButton aria-label="detalle" onClick={() =>{ detalle(row)}} >
+												<Ballot />
+											</IconButton>
+										</TableCell>	
+										<TableCell align='center'>
+											<IconButton aria-label="historial" onClick={() => {historial(row)}} >
+												<HistoryIcon />
+											</IconButton>
+										</TableCell>
+										<TableCell align='center'>
+											<Abonar cliente={props.selectedClient} total_ventas={row.saldo_credito_pendiente}setLoading={props.setLoading}  venta={row}  setAlert={props.setAlert} index={index} recargar={props.recargar} estatus_credito={row.estatus_credito} />
+										</TableCell>
+										<TableCell align='center'>
+											<IconLiquidar isIcon={true}  cliente={props.selectedClient} total_ventas={row.saldo_credito_pendiente}  setAlert={props.setAlert} index={index}  setLoading={props.setLoading} recargar={props.recargar} estatus_credito={row.estatus_credito}/>	
+										</TableCell>	
+        		
 									</TableRow>
 								);
 							})}
@@ -212,6 +312,8 @@ export default function TablaVentasCredito(props) {
 					onChangePage={handleChangePage}
 					onChangeRowsPerPage={handleChangeRowsPerPage}
 				/> */}
+				<DetalleVentaCredito openDetalle ={openDetalle} setOpenDetalle={setOpenDetalle} datos={rowSelected} />
+				<HistorialAbonos openHistorial ={openHistorial} setOpenHistorial={setOpenHistorial} historialAbonos={rowSelected.abonos} />
 			</Paper>
 		</div>
 	);

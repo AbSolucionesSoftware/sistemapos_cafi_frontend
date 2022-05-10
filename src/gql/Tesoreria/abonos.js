@@ -69,6 +69,7 @@ export const OBTENER_HISTORIAL_ABONOS_CLIENTE = gql `
     ) {
       _id
       folio
+      estatus_credito
       cliente {
         _id
         numero_cliente
@@ -558,6 +559,7 @@ export const OBTENER_HISTORIAL_ABONOS_CLIENTE = gql `
             monto
           }
         }
+        
       }
     }
   }
@@ -566,6 +568,14 @@ export const OBTENER_HISTORIAL_ABONOS_CLIENTE = gql `
 export const CREAR_ABONO = gql `
   mutation CrearAbono($empresa: ID!, $sucursal: ID!, $input: CrearAbonoInput) {
     crearAbono(empresa: $empresa, sucursal: $sucursal, input: $input) {
+      message
+    }
+  }
+`;
+
+export const CREAR_ABONO_CLIENTE = gql `
+  mutation crearAbonoVentaCredito($empresa: ID!, $sucursal: ID!, $input: AbonoVentasCreditoInput) {
+    crearAbonoVentaCredito(empresa: $empresa, sucursal: $sucursal, input: $input) {
       message
     }
   }
