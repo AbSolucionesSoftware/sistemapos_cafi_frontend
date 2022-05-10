@@ -53,13 +53,6 @@ export default function RealizarFactura({ setAlert }) {
     setCodigoPostal("");
   };
 
-  const truncteDecimals = (number, digits) => {
-    var multiplier = Math.pow(10, digits),
-      adjustedNum = number * multiplier,
-      truncatedNum = Math[adjustedNum < 0 ? "ceil" : "floor"](adjustedNum);
-    return truncatedNum / multiplier;
-  };
-
   const crearFactura = async () => {
     try {
       /* setLoading(true); */
@@ -158,7 +151,7 @@ export default function RealizarFactura({ setAlert }) {
 
       /* console.log(nuevo_obj); */
 
-      let result = await CrearFactura({
+      /* let result = await CrearFactura({
         variables: {
           input: nuevo_obj,
         },
@@ -169,7 +162,7 @@ export default function RealizarFactura({ setAlert }) {
         message: `¡Listo! ${result.data.crearFactura.message}`,
         status: "success",
         open: true,
-      });
+      }); */
       /* limpiarCampos(); */
     } catch (error) {
       console.log(error);

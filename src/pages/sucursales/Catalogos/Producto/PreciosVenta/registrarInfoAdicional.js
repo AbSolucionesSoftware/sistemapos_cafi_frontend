@@ -72,6 +72,8 @@ export default function RegistroInfoAdidional() {
     const result = await calcular_iva(name, value, precios);
     setPrecioConImpuesto(result.precio_de_compra.precio_con_impuesto);
     setPrecioSinImpuesto(result.precio_de_compra.precio_sin_impuesto);
+    setPrecioConImpuestoVariable(result.precio_de_compra.precio_con_impuesto);
+    setPrecioSinImpuestoVariable(result.precio_de_compra.precio_sin_impuesto);
     setPrecios(result);
   };
 
@@ -89,6 +91,8 @@ export default function RegistroInfoAdidional() {
     const result = await calcular_ieps(name, value, precios);
     setPrecioConImpuesto(result.precio_de_compra.precio_con_impuesto);
     setPrecioSinImpuesto(result.precio_de_compra.precio_sin_impuesto);
+    setPrecioConImpuestoVariable(result.precio_de_compra.precio_con_impuesto);
+    setPrecioSinImpuestoVariable(result.precio_de_compra.precio_sin_impuesto);
     setPrecios(result);
   };
 
@@ -99,8 +103,15 @@ export default function RegistroInfoAdidional() {
     precios.precio_de_compra.precio_sin_impuesto
   );
 
-  const [PCI] = useDebounce(precioConImpuesto, 800);
-  const [PSI] = useDebounce(precioSinImpuesto, 800);
+  const [precioConImpuestoVariable, setPrecioConImpuestoVariable] = useState(
+    precios.precio_de_compra.precio_con_impuesto
+  );
+  const [precioSinImpuestoVariable, setPrecioSinImpuestoVariable] = useState(
+    precios.precio_de_compra.precio_sin_impuesto
+  );
+
+  const [PCI] = useDebounce(precioConImpuestoVariable, 800);
+  const [PSI] = useDebounce(precioSinImpuestoVariable, 800);
 
   /* ARMAR OBJETO DE PRECIOS DE COMPRA */
   const obtenerPrecioConImpuesto = (value) => {
@@ -170,11 +181,11 @@ export default function RegistroInfoAdidional() {
     /* Precio sin impuesto */
     precio_sin_impuesto = parseFloat(value);
     iva =
-      parseFloat(value) *
-      parseFloat(precios.iva < 10 ? ".0" + precios.iva : "." + precios.iva);
+      parseFloat((parseFloat(value) *
+      parseFloat(precios.iva < 10 ? ".0" + precios.iva : "." + precios.iva)).toFixed(2));
     ieps =
-      parseFloat(value) *
-      parseFloat(precios.ieps < 10 ? ".0" + precios.ieps : "." + precios.ieps);
+      parseFloat((parseFloat(value) *
+      parseFloat(precios.ieps < 10 ? ".0" + precios.ieps : "." + precios.ieps)).toFixed(2));
     precio_con_impuesto = precio_sin_impuesto + iva + ieps;
     precio_unitario_sin_impuesto =
       precio_sin_impuesto / precios.unidad_de_compra.cantidad;
@@ -254,8 +265,9 @@ export default function RegistroInfoAdidional() {
       } else {
         setUnidadVentaXDefecto({
           ...unidadVentaXDefecto,
-          unidad: unidad === "Pz" ? "Pz" : unidad === "Lt" ? "Lt ": "kg",
-          codigo_unidad: unidad === "Pz" ? "H87" : unidad === "Lt" ? "LTR" : "KGM",
+          unidad: unidad === "Pz" ? "Pz" : unidad === "Lt" ? "Lt " : "kg",
+          codigo_unidad:
+            unidad === "Pz" ? "H87" : unidad === "Lt" ? "LTR" : "KGM",
           cantidad: 1,
           precio: unidadVentaXDefecto.precio,
           unidad_principal: true,
@@ -263,8 +275,10 @@ export default function RegistroInfoAdidional() {
         setUnidadVentaSecundaria({
           ...unidadVentaSecundaria,
           precio: parseFloat(precio.toFixed(2)),
-          codigo_unidad: unidad === "Pz" ? "XBX" : unidad === "Lt" ? "LTR" : "KGM",
-          unidad: unidad === "Pz" ? "Caja" : unidad === "Caja" ? "LTR" : "Costal",
+          codigo_unidad:
+            unidad === "Pz" ? "XBX" : unidad === "Lt" ? "LTR" : "KGM",
+          unidad:
+            unidad === "Pz" ? "Caja" : unidad === "Caja" ? "LTR" : "Costal",
           unidad_activa: false,
           unidad_principal: false,
         });
@@ -593,17 +607,22 @@ export default function RegistroInfoAdidional() {
                 variant="outlined"
                 value={precioSinImpuesto}
                 helperText={validacion.message}
-                onChange={(e) => setPrecioSinImpuesto(e.target.value)}
+                onChange={(e) => {
+                  setPrecioSinImpuesto(e.target.value);
+                  setPrecioSinImpuestoVariable(e.target.value);
+                }}
                 onFocus={(e) => {
                   const { value } = e.target;
                   if (parseFloat(value) === 0) {
                     setPrecioSinImpuesto("");
+                    setPrecioSinImpuestoVariable("");
                   }
                 }}
                 onBlur={(e) => {
                   const { value } = e.target;
                   if (!value) {
                     setPrecioSinImpuesto(0);
+                    setPrecioSinImpuestoVariable("");
                   }
                 }}
               />
@@ -631,17 +650,22 @@ export default function RegistroInfoAdidional() {
                 variant="outlined"
                 value={precioConImpuesto}
                 helperText={validacion.message}
-                onChange={(e) => setPrecioConImpuesto(e.target.value)}
+                onChange={(e) => {
+                  setPrecioConImpuesto(e.target.value);
+                  setPrecioConImpuestoVariable(e.target.value);
+                }}
                 onFocus={(e) => {
                   const { value } = e.target;
                   if (parseFloat(value) === 0) {
                     setPrecioConImpuesto("");
+                    setPrecioConImpuestoVariable("");
                   }
                 }}
                 onBlur={(e) => {
                   const { value } = e.target;
                   if (!value) {
                     setPrecioConImpuesto(0);
+                    setPrecioConImpuestoVariable(0);
                   }
                 }}
               />
@@ -656,7 +680,9 @@ export default function RegistroInfoAdidional() {
                 IVA
               </Typography>
               <Typography align="center" variant="h6">
-                <b>$ {parseFloat(precios.precio_de_compra.iva).toFixed(2)}</b>
+                <b>
+                  $ {parseFloat(precios.precio_de_compra.iva.toFixed(2))}
+                </b>
               </Typography>
             </Box>
           </Grid>
@@ -666,7 +692,9 @@ export default function RegistroInfoAdidional() {
                 IEPS
               </Typography>
               <Typography align="center" variant="h6">
-                <b>$ {parseFloat(precios.precio_de_compra.ieps).toFixed(2)}</b>
+                <b>
+                  $ {parseFloat(precios.precio_de_compra.ieps.toFixed(2))}
+                </b>
               </Typography>
             </Box>
           </Grid>
@@ -679,8 +707,8 @@ export default function RegistroInfoAdidional() {
                 <b>
                   ${" "}
                   {parseFloat(
-                    precios.unidad_de_compra.precio_unitario_sin_impuesto
-                  ).toFixed(2)}
+                      precios.unidad_de_compra.precio_unitario_sin_impuesto.toFixed(2)
+                  )}
                 </b>
               </Typography>
             </Box>
@@ -694,8 +722,8 @@ export default function RegistroInfoAdidional() {
                 <b>
                   ${" "}
                   {parseFloat(
-                    precios.unidad_de_compra.precio_unitario_con_impuesto
-                  ).toFixed(2)}
+                      precios.unidad_de_compra.precio_unitario_con_impuesto.toFixed(2)
+                  )}
                 </b>
               </Typography>
             </Box>

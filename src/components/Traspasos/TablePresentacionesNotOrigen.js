@@ -1,8 +1,4 @@
-import React, {
-  Fragment,
-  useRef,
-  useState,
-} from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Input from "@material-ui/core/Input";
 import Table from "@material-ui/core/Table";
@@ -14,18 +10,8 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
 //import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProducto";
-import {
-  Box,
-  Chip,
-  IconButton,
-  Tooltip,
-  Zoom,
-} from "@material-ui/core";
-import {
-  Cached,
-  Close,
-  Edit
-} from "@material-ui/icons";
+import { Box, Chip, IconButton, Tooltip, Zoom } from "@material-ui/core";
+import { Cached, Close, Edit } from "@material-ui/icons";
 import { fade } from "@material-ui/core/styles/colorManipulator";
 
 const compareFunction = (a, b) => {
@@ -45,9 +31,7 @@ const useStyles = makeStyles((theme) => ({
   table: {
     minWidth: 750,
   },
-  container: {
-    
-  },
+  container: {},
   tableRow: {
     "&.Mui-selected, &.Mui-selected:hover": {
       backgroundColor: fade(theme.palette.primary.main, 0.1),
@@ -77,17 +61,13 @@ export default function TablaPresentaciones({
   datos,
   setOnUpdate,
   onUpdate,
-  setNew_medidas
+  setNew_medidas,
 }) {
- 
   const classes = useStyles();
   //const { presentaciones, setPresentaciones } = useContext([]);
- //let mostrar_presentaciones = [];
+  //let mostrar_presentaciones = [];
 
- 
-   let mostrar_presentaciones = [...datos].sort((a, b) =>
-    compareFunction(a, b)
-  ); 
+  let mostrar_presentaciones = [...datos].sort((a, b) => compareFunction(a, b));
 
   return (
     <div className={classes.root}>
@@ -129,7 +109,7 @@ export default function TablaPresentaciones({
                     producto={producto}
                     index={index}
                     datos={datos}
-                    setNew_medidas={setNew_medidas} 
+                    setNew_medidas={setNew_medidas}
                     setOnUpdate={setOnUpdate}
                     onUpdate={onUpdate}
                   />
@@ -162,13 +142,11 @@ const RenderPresentacionesRows = ({
   const classes = useStyles();
   const textfield = useRef(null);
 
-  const copy_presentaciones = [...datos].sort((a, b) =>
-    compareFunction(a, b)
-  ); 
+  const copy_presentaciones = [...datos].sort((a, b) => compareFunction(a, b));
   const copy_element_presentacion = { ...copy_presentaciones[index] };
   //const copy_element_presentacion = {  };
   //const copy_element_presentacion_descuento = { ...copy_presentaciones[index].descuento };
-  const copy_element_presentacion_descuento = { };
+  const copy_element_presentacion_descuento = {};
   const copy_producto = { ...producto };
 
   /* if(from && from === 'compra'){
@@ -186,8 +164,8 @@ const RenderPresentacionesRows = ({
       copy_element_presentacion.precio = copy_producto.precio;
       //copy_element_presentacion.medida.precio = 0;
     }
-     copy_presentaciones.splice(index, 1, copy_element_presentacion);
-    setNew_medidas(copy_presentaciones); 
+    copy_presentaciones.splice(index, 1, copy_element_presentacion);
+    setNew_medidas(copy_presentaciones);
     setDisabledInput(true);
   };
 
@@ -198,7 +176,7 @@ const RenderPresentacionesRows = ({
         copy_element_presentacion.medida.cantidad = "";
         copy_element_presentacion.medida.existencia = false;
         copy_presentaciones.splice(index, 1, copy_element_presentacion);
-        setNew_medidas(setNew_medidas); 
+        setNew_medidas(setNew_medidas);
         return;
       }
       copy_element_presentacion.medida.cantidad = parseFloat(value);
@@ -206,61 +184,73 @@ const RenderPresentacionesRows = ({
     } else if (name === "nuevaCantidad") {
       if (!value) {
         copy_element_presentacion.nuevaCantidad = "";
-        copy_element_presentacion.medida.existencia = copy_producto.medida.existencia;
+        copy_element_presentacion.medida.existencia =
+          copy_producto.medida.existencia;
         copy_presentaciones.splice(index, 1, copy_element_presentacion);
-        setNew_medidas(copy_presentaciones); 
+        setNew_medidas(copy_presentaciones);
         return;
       }
       copy_element_presentacion.nuevaCantidad = parseFloat(value);
       copy_element_presentacion.medida.existencia = true;
     } else if (name === "precio") {
-      
-        if (!value) {
+      if (!value) {
         copy_element_presentacion.medida.precio = 0;
         copy_presentaciones.splice(index, 1, copy_element_presentacion);
         setNew_medidas(copy_presentaciones);
         return;
       }
-    
-    let precio_neto = parseFloat(value);
-      let { iva, ieps } = productoData.precios;
-    
-      let suma_impuestos = parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) + parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
-      let precio_venta = parseFloat((precio_neto / (suma_impuestos+1)).toFixed(2));
-      let iva_precio = parseFloat((precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)).toFixed(2));
-      let ieps_precio = parseFloat((precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)).toFixed(2));
-      let PUCSI = productoData.precios.unidad_de_compra.precio_unitario_sin_impuesto;
-      let utilidad = parseFloat((((precio_venta - PUCSI) / PUCSI) * 100).toFixed(2));
-      
 
-      let {descuento_activo, descuento} = copy_element_presentacion;
+      let precio_neto = parseFloat(value);
+      let { iva, ieps } = productoData.precios;
+
+      let suma_impuestos =
+        parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
+        parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+      let precio_venta = parseFloat(
+        (precio_neto / (suma_impuestos + 1)).toFixed(2)
+      );
+      let iva_precio = parseFloat(
+        (precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)).toFixed(
+          2
+        )
+      );
+      let ieps_precio = parseFloat(
+        (
+          precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
+        ).toFixed(2)
+      );
+      let PUCSI =
+        productoData.precios.unidad_de_compra.precio_unitario_sin_impuesto;
+      let utilidad = parseFloat(
+        (((precio_venta - PUCSI) / PUCSI) * 100).toFixed(2)
+      );
+
+      let { descuento_activo, descuento } = copy_element_presentacion;
       if (descuento_activo && descuento_activo === true) {
         let new_precio_venta_desc = (precio_venta * descuento.porciento) / 100;
         let new_iva_precio =
           new_precio_venta_desc * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
         let new_ieps_precio =
-          new_precio_venta_desc * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+          new_precio_venta_desc *
+          parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
         let new_impuestos = new_iva_precio + new_ieps_precio;
         let precio_con_descuento = new_precio_venta_desc + new_impuestos;
 
         copy_element_presentacion_descuento.precio_neto = parseFloat(
-          (precio_con_descuento).toFixed(2)
+          precio_con_descuento.toFixed(2)
         );
         copy_element_presentacion.medida.precio = parseFloat(value);
         copy_element_presentacion.medida.descuento = copy_element_presentacion_descuento;
       } else {
         copy_element_presentacion.medida.precio = parseFloat(value);
       }
-  
+
       copy_element_presentacion.medida.precio_unidad.precio_venta = precio_venta;
       copy_element_presentacion.medida.precio_unidad.precio_neto = precio_neto;
       copy_element_presentacion.medida.precio_unidad.utilidad = utilidad;
       copy_element_presentacion.medida.precio_unidad.iva_precio = iva_precio;
       copy_element_presentacion.medida.precio_unidad.ieps_precio = ieps_precio;
-       
-    } 
-  
-      else if (name === "descuento") {
+    } else if (name === "descuento") {
       /* if (!value) {
         copy_element_presentacion.medida.precio = 0;
         copy_presentaciones.splice(index, 1, copy_element_presentacion);
@@ -277,21 +267,19 @@ const RenderPresentacionesRows = ({
       }else{
         copy_element_presentacion.medida.precio = parseFloat(value);
       } */
-       copy_element_presentacion.medida.descuento = value;
-         
-    }
-    else {
+      copy_element_presentacion.medida.descuento = value;
+    } else {
       if (!value) {
         copy_element_presentacion.medida.codigo_barras = "";
         copy_presentaciones.splice(index, 1, copy_element_presentacion);
-        setNew_medidas(copy_presentaciones); 
+        setNew_medidas(copy_presentaciones);
         return;
       }
       copy_element_presentacion.medida.codigo_barras = value;
     }
-     copy_presentaciones.splice(index, 1, copy_element_presentacion);
-   
-    setNew_medidas(copy_presentaciones); 
+    copy_presentaciones.splice(index, 1, copy_element_presentacion);
+
+    setNew_medidas(copy_presentaciones);
     //console.log(copy_presentaciones)
   };
 
@@ -302,7 +290,7 @@ const RenderPresentacionesRows = ({
       Math.random() * (max - min + 1) + min
     ).toString();
     copy_element_presentacion.medida.codigo_barras = codigo_barras;
-/*     copy_presentaciones.splice(index, 1, copy_element_presentacion);
+    /*     copy_presentaciones.splice(index, 1, copy_element_presentacion);
     setPresentaciones(copy_presentaciones); */
   };
 
@@ -319,7 +307,7 @@ const RenderPresentacionesRows = ({
     }
   };
 
- /*  const aplicarDescuento = (value) => {
+  /*  const aplicarDescuento = (value) => {
     copy_element_presentacion.medida.descuento_activo = value;
 /*     copy_presentaciones.splice(index, 1, copy_element_presentacion);
     setPresentaciones(copy_presentaciones); 
@@ -389,23 +377,20 @@ const RenderPresentacionesRows = ({
           </Tooltip>
         ) : null}
       </TableCell>
-     
 
-         <Fragment>
-            <TableCell width={110}>
-              <Input
-                inputRef={textfield}
-                inputMode="numeric"
-                type="number"
-                onChange={(e) => obtenerDatos(e)}
-                disabled={disabledInput}
-                value={copy_producto.medida.precio}
-               
-                name="precio"
-              />
-              
-            </TableCell>
-           {/*  <TableCell>
+      <Fragment>
+        <TableCell width={110}>
+          <Input
+            inputRef={textfield}
+            inputMode="numeric"
+            type="number"
+            onChange={(e) => obtenerDatos(e)}
+            disabled={disabledInput}
+            value={copy_producto.medida.precio}
+            name="precio"
+          />
+        </TableCell>
+        {/*  <TableCell>
               <Input
                 inputRef={textfield}
                 onChange={(e) => obtenerDatos(e)}
@@ -415,18 +400,18 @@ const RenderPresentacionesRows = ({
                 name="descuento"
               />
             </TableCell> */}
-            <TableCell padding="checkbox">
-              <Input
-                inputRef={textfield}
-                onChange={(e) => obtenerDatos(e)}
-                disabled={disabledInput}
-                value={copy_producto.nuevaCantidad}
-                type="tel"
-                name="nuevaCantidad"
-              />
-            </TableCell>
-          </Fragment>
-     
+        <TableCell padding="checkbox">
+          <Input
+            inputRef={textfield}
+            onChange={(e) => obtenerDatos(e)}
+            disabled={disabledInput}
+            value={copy_producto.nuevaCantidad}
+            type="tel"
+            name="nuevaCantidad"
+          />
+        </TableCell>
+      </Fragment>
+
       <TableCell padding="checkbox">
         <IconButton size="small" onClick={() => actionButton()}>
           {!disabledInput ? <Close /> : <Edit />}

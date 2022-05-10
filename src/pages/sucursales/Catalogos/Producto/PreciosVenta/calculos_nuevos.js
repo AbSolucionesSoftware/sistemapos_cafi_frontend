@@ -1,3 +1,5 @@
+
+
 const calculos = () => {
   let { iva, ieps } = precios.precio_de_compra;
   let { unidad, cantidad, descuento, descuento_activo } = unidadVentaXDefecto;
@@ -13,7 +15,7 @@ const calculos = () => {
 
   //precio venta y neto con utilidad
   const precio_venta = parseFloat((PUCSI * utilidad + PUCSI).toFixed(2));
-  const precio_neto = parseFloat(PUCSI * utilidad + I + PUCSI).toFixed(2);
+  const precio_neto = parseFloat((PUCSI * utilidad + I + PUCSI).toFixed(2));
 
   //meter los valores a preciosVenta
   preciosVenta.precio_venta = precio_venta;

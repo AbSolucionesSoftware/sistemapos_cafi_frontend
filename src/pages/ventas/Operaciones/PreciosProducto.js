@@ -28,7 +28,6 @@ import {
   formatoMexico,
 } from "../../../config/reuserFunctions";
 import { AccesosContext } from "../../../context/Accesos/accesosCtx";
-import { ControlCameraOutlined } from "@material-ui/icons";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;

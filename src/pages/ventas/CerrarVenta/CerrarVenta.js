@@ -15,7 +15,10 @@ import CloseIcon from "@material-ui/icons/Close";
 import CreditCardIcon from "@material-ui/icons/CreditCard";
 import ClearIcon from "@material-ui/icons/Clear";
 import { Close } from "@material-ui/icons";
-import { formatoMexico, numerosRandom } from "../../../config/reuserFunctions";
+import {
+  formatoMexico,
+  numerosRandom,
+} from "../../../config/reuserFunctions";
 import { formaPago } from "../../sucursales/Facturacion/catalogos";
 import { calcularMonedero } from "./calcularMonedero";
 import { CREAR_VENTA } from "../../../gql/Ventas/ventas_generales";
@@ -266,9 +269,9 @@ export default function CerrarVenta() {
       let numero_mayor = 0;
       let forma_pago;
 
-      if(venta_credito){
+      if (venta_credito) {
         forma_pago = "99";
-      }else{
+      } else {
         Object.keys(montosEnCaja).forEach((key) => {
           if (montosEnCaja[key].monto > numero_mayor) {
             numero_mayor = montosEnCaja[key].monto;
