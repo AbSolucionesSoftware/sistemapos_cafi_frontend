@@ -69,6 +69,7 @@ export const OBTENER_HISTORIAL_ABONOS_CLIENTE = gql `
     ) {
       _id
       folio
+      estatus_credito
       cliente {
         _id
         numero_cliente
@@ -558,6 +559,7 @@ export const OBTENER_HISTORIAL_ABONOS_CLIENTE = gql `
             monto
           }
         }
+        
       }
     }
   }

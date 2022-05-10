@@ -7,7 +7,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { Box, TextField, Grid, IconButton, InputAdornment } from '@material-ui/core';
+import { FcDonate } from "react-icons/fc";
+import { Box, TextField, Grid, CircularProgress } from '@material-ui/core';
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import SnackBarMessages from '../../../../../components/SnackBarMessages';
 import BackdropComponent from "../../../../../components/Layouts/BackDrop";
@@ -15,12 +16,10 @@ import {AbonosCtx} from "../../../../../context/Tesoreria/abonosCtx";
 import { ClienteCtx } from "../../../../../context/Catalogos/crearClienteCtx"; 
 import TablaVentasCredito from './Components/TablaVentasCredito';
 import ButtonLiquidar from './Components/Liquidar';
-import ButtonAbonar from './Components/Abonar';
 
 import { useQuery } from '@apollo/client';
 import {  OBTENER_HISTORIAL_ABONOS_CLIENTE } from "../../../../../gql/Tesoreria/abonos";
-import CardVentaAbono from "./Components/AbonarSeleccion/CardVentaAbono";
-//import DetallesCuenta from './Components/DetalleCuenta/DetallesCuenta';
+
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {	
@@ -50,13 +49,18 @@ const useStyles = makeStyles((theme) => ({
 	iconSize: {
 		width: 32,
 	},
+	borderBotonChico:{
+		minWidth: '100%',
+		minHeight: '100%',
+        border: '.6px solid #DBDBDB'
+    }
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AbonosClientes() {
+export default function AbonosClientes(props) {
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
@@ -65,14 +69,22 @@ export default function AbonosClientes() {
 	const [loading, setLoading] = useState(false);
 	const [alert,setAlert] = useState({message:'', status:'', open: false});
 	const [selectedClient, setSelectedClient] = useState("");
-	const [ventasCredito, setVentasCredito] = useState([]);
-	const searchfilter = useRef(null);
+	const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
+	//const searchfilter = useRef(null);
 	const [totalVentas, setTotalVentas] = useState([]);
 	let historialVentasACredito = [];
 	
 	const handleClickOpen = () => setOpen(!open);
 	
-
+  
+	window.addEventListener("keydown", Mi_función);
+	function Mi_función(e) {
+	  if (e.keyCode === 117 && props.fromVentas) {
+		  
+		handleClickOpen();
+	  }
+	}
+  
 	const obtenerVentasCredito = useQuery(OBTENER_HISTORIAL_ABONOS_CLIENTE, {
 		variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id, idCliente: selectedClient._id },
 		fetchPolicy: "network-only"
@@ -86,7 +98,7 @@ export default function AbonosClientes() {
 		  console.log(error);
 		}
 	};
-	
+
 	useEffect(() => {
 		console.log(obtenerVentasCredito.loading)
 	 setLoading(obtenerVentasCredito.loading)
@@ -130,12 +142,36 @@ export default function AbonosClientes() {
 		}
 		context.setAbonos(copyArray);
     };
-
+	
 	return (
 		<Fragment>
 			<BackdropComponent loading={loading} setLoading={setLoading} />
 			<SnackBarMessages alert={alert} setAlert={setAlert} />
-			<Button fullWidth onClick={handleClickOpen}>
+			{
+				(props.fromVentas) ? 
+				<Button
+					className={classes.borderBotonChico}
+					onClick={handleClickOpen}
+					disabled={!turnoEnCurso}
+				>
+					<Box>
+					<Box>
+						<FcDonate style={{ fontSize: 35 }} />
+					</Box>
+					<Box>
+						<Typography variant="body2">
+						<b>Abonos</b>
+						</Typography>
+					</Box>
+					<Box>
+						<Typography variant="caption" style={{ color: "#808080" }}>
+						<b>F6</b>
+						</Typography>
+					</Box>
+					</Box>
+				</Button>
+				:
+				<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
                         <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/salary.svg' alt="icono abono" className={classes.icon} />
@@ -143,6 +179,7 @@ export default function AbonosClientes() {
 					Abonos de Clientes
 				</Box>
 			</Button>
+			}
 			<Dialog fullScreen open={open} onClose={handleClickOpen} TransitionComponent={Transition}>
 				<AppBar className={classes.appBar}>
 					<Toolbar>
@@ -199,7 +236,7 @@ export default function AbonosClientes() {
 								<div/>
 							}	
 							</Box>
-						</Grid>)
+						</Grid>
 						
 						
 				</Grid>
@@ -213,12 +250,31 @@ export default function AbonosClientes() {
                         })
 						
                     } 
-                </Grid>  */}		
-				<Box p={2}>
-					<TablaVentasCredito rows={historialVentasACredito} setSelectedClient={setSelectedClient} selectedClient={selectedClient}  setOpen={setOpen} enviarCantidad={enviarCantidad}   setAlert={setAlert} setLoading={setLoading} recargar= {obtenerVentasCredito.refetch} />
-				</Box>
+                </Grid>  */}
+				{
+					(historialVentasACredito.length) ? 
+						<Box p={2}>
+							<TablaVentasCredito rows={historialVentasACredito} setSelectedClient={setSelectedClient} selectedClient={selectedClient}  setOpen={setOpen} enviarCantidad={enviarCantidad}   setAlert={setAlert} setLoading={setLoading} recargar= {obtenerVentasCredito.refetch} />
+						</Box>
+					:
+					<Box/>	
+				}		
+				{
+					(loading) ?
+						<Box
+						display="flex"
+						flexDirection="column"
+						justifyContent="center"
+						alignItems="center"
+						height="50vh"
+						>
+							<CircularProgress/>
+						</Box>
+					:
+					<div/>
+				}
 			</Dialog>
-			{/* <DetallesCuenta /> */}
+
 		</Fragment>
 	);
 }

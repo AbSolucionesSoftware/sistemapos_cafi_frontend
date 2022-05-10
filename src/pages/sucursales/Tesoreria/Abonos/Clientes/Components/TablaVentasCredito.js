@@ -1,11 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import HistoryIcon from '@material-ui/icons/History';
 import Ballot from '@material-ui/icons/Ballot';
 import Table from '@material-ui/core/Table';
 import IconButton from '@material-ui/core/IconButton';
-
+import {Box, Typography} from '@material-ui/core';
 
 
 import TableBody from '@material-ui/core/TableBody';
@@ -25,7 +25,7 @@ import {
 	formatoFechaCorta
   } from "../../../../../../config/reuserFunctions";
 //import DetallesCuenta from './DetalleCuenta/DetallesCuenta';
-import LiquidarCuenta from './LiquidarCuenta';
+
 
 function createData(folio, fecha, cantidadProductos, totalVenta, totalAbonado, faltaPagar) {
 	return { folio, fecha, cantidadProductos, totalVenta, totalAbonado, faltaPagar };
@@ -103,7 +103,25 @@ const useStyles = makeStyles((theme) => ({
 		position: 'absolute',
 		top: 20,
 		width: 1
-	}
+	},
+	pagada: {
+		backgroundColor: "#EDFFF3",
+		"&:hover": {
+		  backgroundColor: "#D8FFE5",
+		},
+	  },
+	vencidas: {
+		backgroundColor: "#FFF4F4",
+		"&:hover": {
+		  backgroundColor: "#F5F5F5",
+		},
+	  },
+	vencer: {
+		backgroundColor: "#FFF",
+		"&:hover": {
+		  backgroundColor: "#F5F5F5",
+		},
+	  },  
 }));
 
 export default function TablaVentasCredito(props) {
@@ -174,14 +192,54 @@ export default function TablaVentasCredito(props) {
 	return (
 		<div className={classes.root}>
 			<Paper className={classes.paper}>
-				
-				<TableContainer>
+		<Box my={1} m={2} display="flex">
+      
+        <Fragment>
+            <Box
+              border={1}
+              borderColor="#58ff8f"
+              bgcolor="#EDFFF3"
+              height="24px"
+              width="24px"
+            />
+            <Box mx={1} />
+            <Typography>
+              <b>- Pagadas </b>
+            </Typography>
+            <Box mx={2} />
+        </Fragment>
+        
+			<Box
+				border={1}
+				borderColor="#FF8A8A"
+				bgcolor="#FFF4F4"
+				height="24px"
+				width="24px"
+			/>
+			<Box mx={1} />
+			<Typography>
+			<b>- Ventas vencidas </b>
+			</Typography>
+			{/* <Box
+				border={1}
+				borderColor="#FF8A8A"
+				bgcolor="#FFF4F4"
+				height="24px"
+				width="24px"
+			/>
+			<Box mx={1} />
+				<Typography>
+				<b>- Ventas por vencer</b>
+			</Typography> */}
+		</Box>
+		
+				<TableContainer style={{height:'65vh'}}>
 					<Table
 						className={classes.table}
 						aria-labelledby="tableTitle"
 						stickyHeader
 						size="small" 
-						aria-label="a dense table"
+						aria-label="enhanced table"
 					>
 						<EnhancedTableHead
 							classes={classes}
@@ -191,8 +249,10 @@ export default function TablaVentasCredito(props) {
 						/>
 						<TableBody>
 							{props.rows.map((row, index) => {
+								
 								const isItemSelected = isSelected(row);
 								const labelId = `enhanced-table-checkbox-${index}`;
+								
 								return (
 									<TableRow
 										hover
@@ -202,6 +262,7 @@ export default function TablaVentasCredito(props) {
 										aria-checked={isItemSelected}
 										tabIndex={-1}
 										selected={isItemSelected}
+										className={(row.estatus_credito === 'PAGADA') ? classes.pagada : (row.estatus_credito === 'VENCIDA') ?  classes.vencidas : classes.vencer}
 									>
 										{/* <TableCell padding="checkbox">
 											<Checkbox
@@ -225,10 +286,10 @@ export default function TablaVentasCredito(props) {
 											</IconButton>
 										</TableCell>
 										<TableCell align='center'>
-											<Abonar cliente={props.selectedClient} total_ventas={row.saldo_credito_pendiente}setLoading={props.setLoading}  venta={row}  setAlert={props.setAlert} index={index} recargar={props.recargar} />
+											<Abonar cliente={props.selectedClient} total_ventas={row.saldo_credito_pendiente}setLoading={props.setLoading}  venta={row}  setAlert={props.setAlert} index={index} recargar={props.recargar} estatus_credito={row.estatus_credito} />
 										</TableCell>
 										<TableCell align='center'>
-											<IconLiquidar isIcon={true}  cliente={props.selectedClient} total_ventas={row.saldo_credito_pendiente}  setAlert={props.setAlert} index={index}  setLoading={props.setLoading} recargar={props.recargar}/>	
+											<IconLiquidar isIcon={true}  cliente={props.selectedClient} total_ventas={row.saldo_credito_pendiente}  setAlert={props.setAlert} index={index}  setLoading={props.setLoading} recargar={props.recargar} estatus_credito={row.estatus_credito}/>	
 										</TableCell>	
         		
 									</TableRow>

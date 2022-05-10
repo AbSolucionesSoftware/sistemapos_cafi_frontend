@@ -1,15 +1,12 @@
 import React, { Fragment,useState, useContext, useEffect} from 'react';
 
 import CloseIcon from '@material-ui/icons/Close';
-import { Alert } from '@material-ui/lab';
 import { Box, Button, Dialog, DialogContent, makeStyles,  
     DialogTitle, Slide, TextField, FormControl, MenuItem, 
-    Select,Typography, Grid, IconButton } from '@material-ui/core';
+    Select,Typography, IconButton } from '@material-ui/core';
 import BackdropComponent from '../../../../../../components/Layouts/BackDrop';    
 import {AbonosCtx} from "../../../../../../context/Tesoreria/abonosCtx";
 import {  CREAR_ABONO_CLIENTE } from "../../../../../../gql/Tesoreria/abonos";
-import CardVentaAbono from "./AbonarSeleccion/CardVentaAbono";
-import AbonarButton from "./AbonarSeleccion/AbonarButton";
 import { formatoMexico } from "../../../../../../config/reuserFunctions";
 import { formaPago } from '../../../../Facturacion/catalogos';
 import { useMutation } from '@apollo/client';
@@ -157,7 +154,7 @@ export default function Abonar(props) {
     return (
         <Box m={1}>
             <Box display="flex">
-                <IconButton aria-label="detalle" onClick={() =>{ setOpen(true);}} >
+                <IconButton aria-label="detalle" onClick={() =>{ setOpen(true);}} disabled={props.estatus_credito === "PAGADA"} >
                     <ControlPointIcon />
                 </IconButton>
                 </Box>

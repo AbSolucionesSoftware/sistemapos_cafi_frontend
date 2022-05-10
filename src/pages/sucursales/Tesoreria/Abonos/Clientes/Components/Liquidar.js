@@ -4,9 +4,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import { Alert } from '@material-ui/lab';
 import DoneAll from '@material-ui/icons/DoneAll';
 import { Box, Button, Dialog,  DialogContent,  InputAdornment, Grid,
-    DialogTitle, Slide, TextField, Typography,MenuItem, Paper,
-     makeStyles, IconButton, Select, FormControl, Slider } from '@material-ui/core'
-import { useQuery, useMutation } from '@apollo/client';
+    DialogTitle, Slide, TextField, Typography,MenuItem,
+     makeStyles, IconButton, Select, FormControl} from '@material-ui/core'
+import { useMutation } from '@apollo/client';
 import {  CREAR_ABONO_CLIENTE } from "../../../../../../gql/Tesoreria/abonos";
 import {AbonosCtx} from "../../../../../../context/Tesoreria/abonosCtx";
 import { formaPago } from '../../../../Facturacion/catalogos';
@@ -41,9 +41,7 @@ export default function Liquidar(props) {
     const handleClick = () => { 
         setOpen(!open);
     } 
-    function valuetext(e) {
-        return `${e}`;
-    };
+   
     const obtenerPrecioText = (e) => {
         console.log(props.liquidarTodas,props.total_ventas)
         let valorText = parseFloat(e.target.value);
@@ -162,7 +160,7 @@ export default function Liquidar(props) {
         <Box m={1}>
             {
                 (props.isIcon) ? 
-                <IconButton aria-label="liquidar" onClick={handleClick} >
+                <IconButton aria-label="liquidar" onClick={handleClick} disabled={props.estatus_credito === "PAGADA"}  >
                     <DoneAll />
                    
                 </IconButton>
