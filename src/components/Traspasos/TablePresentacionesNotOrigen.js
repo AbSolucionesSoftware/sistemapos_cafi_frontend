@@ -207,22 +207,20 @@ const RenderPresentacionesRows = ({
         parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
         parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
       let precio_venta = parseFloat(
-        (precio_neto / (suma_impuestos + 1)).toFixed(2)
+        (precio_neto / (suma_impuestos + 1))
       );
       let iva_precio = parseFloat(
-        (precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)).toFixed(
-          2
-        )
+        (precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`))
       );
       let ieps_precio = parseFloat(
         (
           precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
-        ).toFixed(2)
+        )
       );
       let PUCSI =
         productoData.precios.unidad_de_compra.precio_unitario_sin_impuesto;
       let utilidad = parseFloat(
-        (((precio_venta - PUCSI) / PUCSI) * 100).toFixed(2)
+        (((precio_venta - PUCSI) / PUCSI) * 100)
       );
 
       let { descuento_activo, descuento } = copy_element_presentacion;
@@ -245,11 +243,11 @@ const RenderPresentacionesRows = ({
         copy_element_presentacion.medida.precio = parseFloat(value);
       }
 
-      copy_element_presentacion.medida.precio_unidad.precio_venta = precio_venta;
-      copy_element_presentacion.medida.precio_unidad.precio_neto = precio_neto;
-      copy_element_presentacion.medida.precio_unidad.utilidad = utilidad;
-      copy_element_presentacion.medida.precio_unidad.iva_precio = iva_precio;
-      copy_element_presentacion.medida.precio_unidad.ieps_precio = ieps_precio;
+      copy_element_presentacion.medida.precio_unidad.precio_venta = parseFloat(precio_venta).toFixed(2);
+      copy_element_presentacion.medida.precio_unidad.precio_neto = parseFloat(precio_neto).toFixed(2);
+      copy_element_presentacion.medida.precio_unidad.utilidad = parseFloat(utilidad).toFixed(2);
+      copy_element_presentacion.medida.precio_unidad.iva_precio = parseFloat(iva_precio).toFixed(2);
+      copy_element_presentacion.medida.precio_unidad.ieps_precio = parseFloat(ieps_precio).toFixed(2);
     } else if (name === "descuento") {
       /* if (!value) {
         copy_element_presentacion.medida.precio = 0;
