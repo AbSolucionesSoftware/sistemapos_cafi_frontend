@@ -38,6 +38,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+console.log("hola de new")
+
 export default function LiquidarCuenta({ cuenta, refetch }) {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const { setAlert, setReload } = useContext(TesoreriaCtx);
