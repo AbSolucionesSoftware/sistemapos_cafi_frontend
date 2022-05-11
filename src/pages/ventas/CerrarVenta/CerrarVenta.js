@@ -283,8 +283,7 @@ export default function CerrarVenta() {
       ventaFinal.forma_pago = forma_pago;
 
       //Enviar los datos
-      console.log(ventaFinal);
-      /* await createVenta({
+      await createVenta({
         variables: {
           input: ventaFinal,
           empresa: sesion.empresa,
@@ -292,11 +291,11 @@ export default function CerrarVenta() {
           usuario: usuario._id,
           caja: sesion.id_caja,
         },
-      }); */
+      });
       //Quitar loading
       setOpenBackDrop(false);
-      /* setOpen(false);
-      hancleClickCerrarVentaCambio(); */
+      setOpen(false);
+      hancleClickCerrarVentaCambio();
     } catch (error) {
       setOpenBackDrop(false);
       setAlert({ message: "Hubo un error", status: "error", open: true });

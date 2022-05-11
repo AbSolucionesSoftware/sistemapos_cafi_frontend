@@ -709,6 +709,20 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtros: filtrosObte
           unidad_maxima
         }
         subtotal_antes_de_impuestos
+        descuento_activo
+        descuento_producto{
+          cantidad_unidad
+          numero_precio
+          unidad_maxima
+          precio_general
+          precio_neto
+          precio_venta
+          iva_precio
+          ieps_precio
+          utilidad
+          porciento
+          dinero_descontado
+        }
         precio_actual_object{
           cantidad_unidad
           numero_precio

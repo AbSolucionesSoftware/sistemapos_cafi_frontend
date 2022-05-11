@@ -33,7 +33,9 @@ export default function RealizarFactura({ setAlert }) {
     codigo_postal,
     setCodigoPostal,
     productos,
-    setProductosFactura,
+    setProductos,
+    venta_factura,
+    setVentaFactura,
     setError,
   } = useContext(FacturacionCtx);
 
@@ -49,13 +51,14 @@ export default function RealizarFactura({ setAlert }) {
 
   const limpiarCampos = () => {
     setDatosFactura(factura_initial_state);
-    setProductosFactura([]);
+    setVentaFactura(null);
+    setProductos([]);
     setCodigoPostal("");
   };
 
   const crearFactura = async () => {
     try {
-      /* setLoading(true); */
+      setLoading(true);
       let nuevo_obj = { ...datosFactura };
 
       /* 
@@ -115,8 +118,8 @@ export default function RealizarFactura({ setAlert }) {
           UnitPrice: producto.precio_unidad.precio_venta.toFixed(2),
           Quantity: producto.cantidad_venta.toString(),
           Subtotal: producto.subtotal_antes_de_impuestos.toFixed(2),
-          Discount: producto.precio_actual_object.dinero_descontado
-            ? producto.precio_actual_object.dinero_descontado.toFixed(2)
+          Discount: producto.descuento_activo
+            ? producto.descuento_producto.dinero_descontado.toFixed(2)
             : "0.00",
           Taxes,
           Total: producto.total.toFixed(2),
@@ -139,6 +142,8 @@ export default function RealizarFactura({ setAlert }) {
 
       nuevo_obj.items = items;
       nuevo_obj.expedition_place = codigo_postal;
+      nuevo_obj.id_venta = venta_factura._id;
+      nuevo_obj.folio_venta = venta_factura.folio;
 
       /* validar todos los datos */
       const validate = verificarDatosFactura(nuevo_obj);
@@ -149,9 +154,9 @@ export default function RealizarFactura({ setAlert }) {
       }
       setError({ status: false, message: "" });
 
-      console.log(nuevo_obj);
+      /* console.log(nuevo_obj); */
 
-      /* let result = await CrearFactura({
+      let result = await CrearFactura({
         variables: {
           input: nuevo_obj,
         },
@@ -162,8 +167,9 @@ export default function RealizarFactura({ setAlert }) {
         message: `¡Listo! ${result.data.crearFactura.message}`,
         status: "success",
         open: true,
-      }); */
-      /* limpiarCampos(); */
+      });
+      limpiarCampos();
+      handleClose();
     } catch (error) {
       console.log(error);
       console.log(error.response);

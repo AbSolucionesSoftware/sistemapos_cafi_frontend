@@ -29,7 +29,7 @@ import { OBTENER_VENTAS_SUCURSAL } from "../../../../../gql/Ventas/ventas_genera
 import { formatoMexico } from "../../../../../config/reuserFunctions";
 import { Alert } from "@material-ui/lab";
 import { useDebounce } from "use-debounce/lib";
-import { metodoPago } from "../../catalogos";
+import moment from "moment";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -100,20 +100,18 @@ const ComponentBusquedaVenta = ({ handleClose }) => {
 
   const [value] = useDebounce(filtro, 500);
 
+  const isDate = moment(value).isValid();
+
   /* Queries */
   const resultado_ventas = useQuery(OBTENER_VENTAS_SUCURSAL, {
     variables: {
       empresa: sesion.empresa._id,
       sucursal: sesion.sucursal._id,
       filtros: {
+        isDate,
         busqueda: value ? value : "",
         filtro: "",
         vista: "FACTURACION",
-        /* turno: {
-          id_caja: turnoEnCurso.id_caja,
-          fecha_entrada,
-        }, */
-       /*  admin, */
       },
     },
     fetchPolicy: "network-only",
