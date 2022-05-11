@@ -13,13 +13,13 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import SnackBarMessages from '../../../../../components/SnackBarMessages';
 import BackdropComponent from "../../../../../components/Layouts/BackDrop";
 import {AbonosCtx} from "../../../../../context/Tesoreria/abonosCtx";
-import { ClienteCtx } from "../../../../../context/Catalogos/crearClienteCtx"; 
+
 import TablaVentasCredito from './Components/TablaVentasCredito';
 import ButtonLiquidar from './Components/Liquidar';
 
 import { useQuery } from '@apollo/client';
 import {  OBTENER_HISTORIAL_ABONOS_CLIENTE } from "../../../../../gql/Tesoreria/abonos";
-
+import { OBTENER_CLIENTES_VENTAS } from "../../../../../gql/Ventas/ventas_generales";
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {	
@@ -64,8 +64,9 @@ export default function AbonosClientes(props) {
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	
 	const context = useContext(AbonosCtx);
-	const {clientes} = useContext(ClienteCtx);
+
 	const [loading, setLoading] = useState(false);
 	const [alert,setAlert] = useState({message:'', status:'', open: false});
 	const [selectedClient, setSelectedClient] = useState("");
@@ -73,7 +74,7 @@ export default function AbonosClientes(props) {
 	//const searchfilter = useRef(null);
 	const [totalVentas, setTotalVentas] = useState([]);
 	let historialVentasACredito = [];
-	
+	let clientes = [];
 	const handleClickOpen = () => setOpen(!open);
 	
   
@@ -89,6 +90,15 @@ export default function AbonosClientes(props) {
 		variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id, idCliente: selectedClient._id },
 		fetchPolicy: "network-only"
 	  });
+	
+	
+	const obtenerClientes= useQuery(OBTENER_CLIENTES_VENTAS, {
+		variables: {
+		  empresa: sesion.empresa._id,
+		  sucursal: sesion.sucursal._id,
+		},
+		fetchPolicy: "network-only",
+	});  
 
 	const ChangeClientAutocomplate = (value) => {
 		try {
@@ -100,7 +110,7 @@ export default function AbonosClientes(props) {
 	};
 
 	useEffect(() => {
-		console.log(obtenerVentasCredito.loading)
+		
 	 setLoading(obtenerVentasCredito.loading)
 	}, [obtenerVentasCredito.loading])
 	
@@ -110,12 +120,12 @@ export default function AbonosClientes(props) {
 				let arrayToset = [];
 				let total_ventas = 0;
 				if(obtenerVentasCredito.data.historialVentasACredito.length > 0){	
-					console.log(obtenerVentasCredito.data.historialVentasACredito);
 					obtenerVentasCredito.data.historialVentasACredito.forEach(element => {
 						total_ventas += element.saldo_credito_pendiente;
+					
 						arrayToset.push({id_venta:element._id, monto_total_abonado:0, saldo_credito_pendiente: parseFloat(element.saldo_credito_pendiente)});
 					});
-					setTotalVentas(total_ventas);
+					setTotalVentas(parseFloat(total_ventas.toFixed(2)));
 					context.setAbonos(arrayToset);
 				}
 			}
@@ -127,9 +137,12 @@ export default function AbonosClientes(props) {
 	
 	if(obtenerVentasCredito.data){
 		historialVentasACredito = obtenerVentasCredito.data.historialVentasACredito;
-	
 	}
 
+	if(obtenerClientes.data){
+		clientes = obtenerClientes.data.obtenerClientesVentas;
+	}
+	
 	const enviarCantidad = (cantidad, index, _id) =>{
 		let copyArray = [...context.abonos];
 		
@@ -230,7 +243,7 @@ export default function AbonosClientes(props) {
 								<div/>
 							*/} 
 							{	
-								(historialVentasACredito.length > 0 ) ? 
+								(historialVentasACredito.length > 0 && totalVentas > 0) ? 
 									<ButtonLiquidar cliente={selectedClient} total_ventas={totalVentas} setAlert={setAlert} liquidarTodas={true}  recargar= {obtenerVentasCredito.refetch} setLoading={setLoading} />
 								:
 								<div/>

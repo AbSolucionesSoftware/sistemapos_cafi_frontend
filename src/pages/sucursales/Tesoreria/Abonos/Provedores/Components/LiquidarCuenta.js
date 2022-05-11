@@ -312,7 +312,7 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
           </Box>
           <Box width="100%" textAlign="center">
             <Typography id="discrete-slider-always" gutterBottom>
-              <b>Dinero a liquidar con descuento</b>
+              <b>Cantidad a pagar con descuento</b>
             </Typography>
             <TextField
               fullWidth
