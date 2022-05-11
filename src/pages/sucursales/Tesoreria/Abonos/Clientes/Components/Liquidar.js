@@ -7,6 +7,7 @@ import { Box, Button, Dialog,  DialogContent,  InputAdornment, Grid,
     DialogTitle, Slide, TextField, Typography,MenuItem,
      makeStyles, IconButton, Select, FormControl} from '@material-ui/core'
 import { useMutation } from '@apollo/client';
+import { withRouter } from "react-router";
 import {  CREAR_ABONO_CLIENTE } from "../../../../../../gql/Tesoreria/abonos";
 import {AbonosCtx} from "../../../../../../context/Tesoreria/abonosCtx";
 import { formaPago } from '../../../../Facturacion/catalogos';
@@ -23,7 +24,7 @@ title: {
 },
 
 });
-export default function Liquidar(props) {
+function Liquidar(props) {
     //listo
     const classes = useStyles();
     
@@ -31,7 +32,7 @@ export default function Liquidar(props) {
     const {abonos} = useContext(AbonosCtx);
     const [metodoPago, setMetodoPago] = useState('');
     const [value, setValue] = useState(0);
-    const [total, setTotal] = useState(props.total_ventas);
+    const [total, setTotal] = useState(0);
     const [cuentaTotalDescuento, setCuentaTotalDescuento] = useState(0);
     const [dineroDescontado, setDineroDescontado] = useState(0);
     const [ crearAbonoVentaCredito ] = useMutation(CREAR_ABONO_CLIENTE);
@@ -39,11 +40,15 @@ export default function Liquidar(props) {
     const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
 
     const handleClick = () => { 
-        setOpen(!open);
+        if(turnoEnCurso){
+            setOpen(!open);
+        }else{
+            props.history.push('/ventas/venta-general');
+        }
     } 
    
     const obtenerPrecioText = (e) => {
-        console.log(props.liquidarTodas,props.total_ventas)
+        
         let valorText = parseFloat(e.target.value);
         if(valorText >= 0 && valorText <= props.total_ventas){
             let porcentaje  = parseFloat((((valorText * 100) / props.total_ventas ).toFixed(2)));
@@ -56,7 +61,7 @@ export default function Liquidar(props) {
     };
     
     const obtenerPorcientoSlide = (e) => {
-       console.log(e.target.value);
+       
         let porcentaje = parseFloat(e.target.value);
         if(porcentaje >= 0 && porcentaje <= 100 ){
             setValue(porcentaje);
@@ -78,10 +83,10 @@ export default function Liquidar(props) {
     }
     const liquidarVentas = async() =>{
         try {
-            console.log(props.cliente);
+            
             props.setLoading(true);
             let ObjectMetodoPago = formaPago.filter((val) => {
-                console.log(metodoPago, val.Value)
+               
                 return(metodoPago === val.Value)
             });
             const input = {
@@ -156,6 +161,7 @@ export default function Liquidar(props) {
             }
         }
     }
+  
     return (
         <Box m={1}>
             {
@@ -292,7 +298,7 @@ export default function Liquidar(props) {
                         <Typography><b>Nombre de Cliente:</b> {props.cliente.nombre_cliente}</Typography>
                     </Box>
                     <Box width="100%" p={1}>
-                        <Typography><b>Total:</b>  {total}</Typography>
+                        <Typography><b>Total:</b>  {(total > 0) ? total : props.total_ventas}</Typography>
                     </Box>
                     {/* <Box p={1}>
                         <Alert severity="info">Si desea editar el abono del cliente, <br/>
@@ -316,7 +322,7 @@ export default function Liquidar(props) {
         </Box>
     )
 }
-
+export default withRouter(Liquidar);
 /* 
 <Box width="100%">
 <Typography>Cuenta No. 2501265</Typography>

@@ -9,6 +9,7 @@ import {AbonosCtx} from "../../../../../../context/Tesoreria/abonosCtx";
 import {  CREAR_ABONO_CLIENTE } from "../../../../../../gql/Tesoreria/abonos";
 import { formatoMexico } from "../../../../../../config/reuserFunctions";
 import { formaPago } from '../../../../Facturacion/catalogos';
+import { withRouter } from "react-router";
 import { useMutation } from '@apollo/client';
 import moment from 'moment';
 import ControlPointIcon from '@material-ui/icons/ControlPoint';
@@ -37,7 +38,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
-export default function Abonar(props) {
+  function Abonar(props) {
     //listo
     const classes = useStyles();
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
@@ -53,11 +54,10 @@ export default function Abonar(props) {
         setOpen(false);
     }
     const hacerAbono = async() => { 
-
         try {
             props.setLoading(true);
             let ObjectMetodoPago = formaPago.filter((val) => {
-                console.log(metodoPago, val.Value)
+                
                 return(metodoPago === val.Value)
             });
 
@@ -75,14 +75,14 @@ export default function Abonar(props) {
                     completa: moment().locale('es-mx').format()
                 },
                 monto_total: props.total_ventas,
-              
+            
                 horario_turno: '',
 
                 metodo_de_pago:{
                     clave: ObjectMetodoPago.Value,
                     metodo:  ObjectMetodoPago.Name,
                 },
-              
+            
                 id_usuario: sesion._id,
                 numero_usuario_creador: sesion.numero_usuario,
                 nombre_usuario_creador: sesion.nombre,
@@ -92,7 +92,7 @@ export default function Abonar(props) {
                 nombre_cliente: props.cliente.nombre_cliente ,
                 telefono_cliente: props.cliente.telefono_cliente  ,
                 email_cliente: props.cliente.email_cliente,
-               
+            
 
                 ventas: [{ monto_total_abonado: parseFloat(abono), 
                     id_venta:abonos[props.index].id_venta,
@@ -117,8 +117,6 @@ export default function Abonar(props) {
                     open: true 
                 });
             }
-           
-
         } catch (error) {
             console.log(error);
             if (error.networkError) {
@@ -141,7 +139,21 @@ export default function Abonar(props) {
             console.log(error)
         }
     }
-
+    const openDialog = () =>{
+     
+        try {
+            if(turnoEnCurso){
+                setOpen(true);
+            }else{
+                props.history.push('/ventas/venta-general');
+               
+               
+            }
+           
+        } catch (error) {
+            
+        }
+    }
     useEffect(() => {
     
         if(metodoPago){
@@ -154,7 +166,7 @@ export default function Abonar(props) {
     return (
         <Box m={1}>
             <Box display="flex">
-                <IconButton aria-label="detalle" onClick={() =>{ setOpen(true);}} disabled={props.estatus_credito === "PAGADA"} >
+                <IconButton aria-label="detalle" onClick={() =>{ openDialog();}} disabled={props.estatus_credito === "PAGADA"} >
                     <ControlPointIcon />
                 </IconButton>
                 </Box>
@@ -272,6 +284,11 @@ export default function Abonar(props) {
         </Box> 
     )
 }
+
+export default withRouter(Abonar);
+
+
+
 {/* <Dialog
                 open={openAbonar}
                 TransitionComponent={Transition}

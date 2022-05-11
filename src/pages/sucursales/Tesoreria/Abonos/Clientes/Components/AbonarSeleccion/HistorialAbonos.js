@@ -75,7 +75,7 @@ export default function HistorialAbonos(props){
                           </TableHead>
                           <TableBody>
                           {props.historialAbonos?.map((abono, index) => {
-                             console.log(abono);
+                             
                               return (
                               <TableRow hover tabIndex={-1} key={index}>
                                    <TableCell>
