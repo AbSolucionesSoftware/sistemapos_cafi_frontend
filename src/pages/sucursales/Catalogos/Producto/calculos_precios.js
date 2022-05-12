@@ -1,3 +1,4 @@
+
 export const calcular_iva = (name, value, precios) => {
   let precio_con_impuesto = 0;
   let precio_sin_impuesto = 0;
@@ -160,4 +161,3 @@ export const calcular_ieps = (name, value, precios) => {
     },
   };
 };
-

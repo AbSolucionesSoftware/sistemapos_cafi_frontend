@@ -422,3 +422,11 @@ export const findProductArrayRefactor = async (producto) => {
     return false;
   }
 };
+
+export const truncteDecimals = (number, digits) => {
+  number = parseFloat(number)
+  var multiplier = Math.pow(10, 2),
+    adjustedNum = number * multiplier,
+    truncatedNum = Math[adjustedNum < 0 ? "ceil" : "floor"](adjustedNum);
+  return truncatedNum / multiplier;
+};

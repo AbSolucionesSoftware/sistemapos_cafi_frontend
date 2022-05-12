@@ -51,7 +51,11 @@ function a11yProps(index) {
   };
 }
 
-export default function AlertDialogSlide({ agregarCompra, handleClose, cargando }) {
+export default function AlertDialogSlide({
+  agregarCompra,
+  handleClose,
+  cargando,
+}) {
   const [open, setOpen] = useState(false);
   const [onUpdate, setOnUpdate] = useState([]);
   const { datosProducto, productoOriginal /* setDatosProducto */ } = useContext(
@@ -63,7 +67,7 @@ export default function AlertDialogSlide({ agregarCompra, handleClose, cargando 
     setUnidadesVenta,
     setPreciosP,
     setUnidadVentaXDefecto,
-    setUnidadVentaSecundaria
+    setUnidadVentaSecundaria,
   } = useContext(RegProductoContext);
 
   const toggleDrawer = () => setOpen(!open);
@@ -107,10 +111,10 @@ export default function AlertDialogSlide({ agregarCompra, handleClose, cargando 
       unidad_de_compra: {
         ...precios.unidad_de_compra,
         precio_unitario_con_impuesto: parseFloat(
-          precio_unitario_con_impuesto.toFixed(6)
+          precio_unitario_con_impuesto.toFixed(2)
         ),
         precio_unitario_sin_impuesto: parseFloat(
-          precio_unitario_sin_impuesto.toFixed(6)
+          precio_unitario_sin_impuesto.toFixed(2)
         ),
       },
     });
@@ -202,7 +206,13 @@ export default function AlertDialogSlide({ agregarCompra, handleClose, cargando 
               handleClose();
               toggleDrawer();
             }}
-            startIcon={cargando ? <CircularProgress color="inherit" size={20} /> : <Done />}
+            startIcon={
+              cargando ? (
+                <CircularProgress color="inherit" size={20} />
+              ) : (
+                <Done />
+              )
+            }
             color="primary"
             variant="contained"
             disabled={!precios.precio_de_compra.precio_con_impuesto}

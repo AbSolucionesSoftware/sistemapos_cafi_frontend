@@ -182,9 +182,11 @@ export default function NuevaCotizacion({ setOpen }) {
   const eliminarDescuento = () => {
     try {
       descuento_general = {
-        subTotal: 0,
-        iva: 0,
-        ieps: 0,
+        subTotal: datosVentas?.subTotal,
+        impuestos: datosVentas?.impuestos,
+        iva: datosVentas?.iva,
+        ieps: datosVentas?.ieps,
+        total: datosVentas?.total,
       };
       setPorcentaje(0);
       setTotalDescount("");
@@ -226,9 +228,10 @@ export default function NuevaCotizacion({ setOpen }) {
               )
             : parseFloat(
                 (
-                  product.precio_actual_object.precio_venta *
-                  parseFloat(`0.${porsentajeNewDescuento}`)
-                ).toFixed(2) / 10
+                  (product.precio_actual_object.precio_venta *
+                    parseFloat(`0.${porsentajeNewDescuento}`)) /
+                  10
+                ).toFixed(2)
               )
           : parseFloat(
               (product.precio_actual_object.precio_venta *
@@ -344,15 +347,19 @@ export default function NuevaCotizacion({ setOpen }) {
       );
       const total_total_producto = parseFloat(
         (
-          precio_actual_object.precio_neto *
+          parseFloat(precio_actual_object.dinero_descontado) *
+          (precio_actual_object.precio_neto *
+            valorGranel *
+            product.cantidad_venta)
+        ).toFixed(2)
+      );
+      const descuentoProducto = parseFloat(
+        (
+          parseFloat(precio_actual_object.dinero_descontado) *
           valorGranel *
           product.cantidad_venta
         ).toFixed(2)
       );
-      const descuentoProducto =
-        parseFloat(precio_actual_object.dinero_descontado.toFixed(2)) *
-        valorGranel *
-        product.cantidad_venta;
 
       productosFinal.push({
         ...product,

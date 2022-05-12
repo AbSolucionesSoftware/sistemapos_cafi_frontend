@@ -17,6 +17,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import Snackbar from "@material-ui/core/Snackbar";
 import { makeStyles } from "@material-ui/core";
 import { Close, Error, Search } from "@material-ui/icons";
 import ErrorPage from "../../../../components/ErrorPage";
@@ -112,27 +113,13 @@ const BuscadorClienteComponent = ({ handleClose }) => {
 
   return (
     <Fragment>
-      <Dialog
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={openAlertRfc}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={(_, reason) => {
-          if (reason !== "backdropClick") {
-            handleCloseAlertRFC();
-          }
-        }}
-      >
-        <DialogContent>
-          <Alert severity="info">
-            Deber registrar un RFC y RAZON SOCIAL a este cliente.
-          </Alert>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => handleCloseAlertRFC()} color="primary">
-            Aceptar
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onClose={handleCloseAlertRFC}
+        message="Debes registrar un RFC y RAZÓN SOCIAL a este cliente."
+        autoHideDuration={2000}
+      />
       <Box mb={2} display="flex" alignItems="center">
         <TextField
           fullWidth

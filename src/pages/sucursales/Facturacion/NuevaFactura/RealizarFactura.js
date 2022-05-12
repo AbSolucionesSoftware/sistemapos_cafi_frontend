@@ -17,8 +17,9 @@ import { factura_initial_state } from "./initial_factura_states";
 import { FacturacionCtx } from "../../../../context/Facturacion/facturacionCtx";
 import { CREAR_FACTURA } from "../../../../gql/Facturacion/Facturacion";
 import { useMutation } from "@apollo/client";
-import { formaPago, metodoPago, tiposCfdi, usosCfdi } from "../catalogos";
+import { formaPago, metodoPago, usosCfdi } from "../catalogos";
 import { Close, Done } from "@material-ui/icons";
+import { CircularProgress } from "@material-ui/core";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -33,7 +34,9 @@ export default function RealizarFactura({ setAlert }) {
     codigo_postal,
     setCodigoPostal,
     productos,
-    setProductosFactura,
+    setProductos,
+    venta_factura,
+    setVentaFactura,
     setError,
   } = useContext(FacturacionCtx);
 
@@ -49,82 +52,56 @@ export default function RealizarFactura({ setAlert }) {
 
   const limpiarCampos = () => {
     setDatosFactura(factura_initial_state);
-    setProductosFactura([]);
+    setVentaFactura(null);
+    setProductos([]);
     setCodigoPostal("");
   };
 
   const crearFactura = async () => {
     try {
-      /* setLoading(true); */
+      setLoading(true);
       let nuevo_obj = { ...datosFactura };
-
-      /* 
-      {
-          ProductCode: "50202306",
-          IdentificationNumber: "61b7bf6e3454b727a0c2e357",
-          Description: "COCACOLA",
-          //Unit: "Unidad de Servicio",
-          UnitCode: "XBX",
-          UnitPrice: "36",
-          Quantity: "1",
-          Subtotal: "36",
-          Discount: "5.4",
-          Taxes: [
-            {
-              Total: "4.89",
-              Name: "IVA",
-              Base: "30.6",
-              Rate: "0.16",
-              IsRetention: "false",
-            },
-          ],
-          Total: "35.49",
-        }, */
-
       const items = [];
 
-      productos.forEach(producto => {
+      productos.forEach((producto) => {
         console.log(producto);
-        let {iva, ieps} = producto.id_producto.precios;
+        let { iva, ieps } = producto.id_producto.precios;
         let Taxes = [];
 
-        if(producto.iva_total){
+        if (producto.iva_total) {
           Taxes.push({
-            Total: producto.iva_total,
+            Total: producto.iva_total.toFixed(2),
             Name: "IVA",
-            Base: producto.precio_a_vender,
+            Base: producto.subtotal.toFixed(2),
             Rate: `0.${iva < 10 ? `0${iva}` : iva}`,
-            IsRetention: "true",
-          })
+            IsRetention: "false",
+          });
         }
-        if(producto.ieps_total){
+        if (producto.ieps_total) {
           Taxes.push({
-            Total: producto.ieps_total,
+            Total: producto.ieps_total.toFixed(2),
             Name: "IEPS",
-            Base: producto.precio_a_vender,
+            Base: producto.subtotal.toFixed(2),
             Rate: `0.${ieps < 10 ? `0${ieps}` : ieps}`,
             IsRetention: "true",
-          })
+          });
         }
-        items.push(
-          {
-            ProductCode: producto.id_producto.datos_generales.clave_producto_sat.Value,
-            IdentificationNumber: producto.id_producto._id,
-            Description: producto.id_producto.datos_generales.nombre_comercial,
-            UnitCode: producto.codigo_unidad,
-            UnitPrice: producto.precio_actual_object.precio_venta,
-            Quantity: producto.cantidad_venta,
-            Subtotal: producto.subtotal,
-            Discount: producto.precio_actual_object.dinero_descontado ? producto.precio_actual_object.dinero_descontado : 0,
-            Taxes,
-            Total: producto.total
-          },
-        )
+        items.push({
+          ProductCode:
+            producto.id_producto.datos_generales.clave_producto_sat.Value,
+          IdentificationNumber: producto.id_producto._id,
+          Description: producto.id_producto.datos_generales.nombre_comercial,
+          UnitCode: producto.codigo_unidad,
+          UnitPrice: producto.precio_unidad.precio_venta.toFixed(2),
+          Quantity: producto.cantidad_venta.toString(),
+          Subtotal: producto.subtotal_antes_de_impuestos.toFixed(2),
+          Discount: producto.descuento_activo
+            ? producto.descuento_producto.dinero_descontado.toFixed(2)
+            : "0.00",
+          Taxes,
+          Total: producto.total.toFixed(2),
+        });
       });
-      
-console.log(items);
-      return
-
       //poner la fecha de facturacion
       if (datosFactura.date === "1") {
         nuevo_obj.date = moment()
@@ -138,19 +115,21 @@ console.log(items);
         nuevo_obj.date = moment().format("YYYY-MM-DDTHH:mm:ss");
       }
 
-      nuevo_obj.items = productos;
+      nuevo_obj.items = items;
       nuevo_obj.expedition_place = codigo_postal;
+      nuevo_obj.id_venta = venta_factura._id;
+      nuevo_obj.folio_venta = venta_factura.folio;
 
       /* validar todos los datos */
       const validate = verificarDatosFactura(nuevo_obj);
-
-      console.log(nuevo_obj);
       if (validate.length) {
         setError({ status: true, message: validate[0].message });
         setLoading(false);
         return;
       }
       setError({ status: false, message: "" });
+
+      console.log(nuevo_obj);
 
       let result = await CrearFactura({
         variables: {
@@ -164,7 +143,8 @@ console.log(items);
         status: "success",
         open: true,
       });
-      /* limpiarCampos(); */
+      limpiarCampos();
+      handleClose();
     } catch (error) {
       console.log(error);
       console.log(error.response);
@@ -212,6 +192,7 @@ console.log(items);
             size="large"
             color="secondary"
             variant="contained"
+            disabled={loading}
           >
             <Close />
           </Button>
@@ -219,12 +200,13 @@ console.log(items);
         <DialogContent>
           <InputsFacturaModal />
         </DialogContent>
-        <DialogActions style={{justifyContent: "center"}}>
+        <DialogActions style={{ justifyContent: "center" }}>
           <Button
-            startIcon={<Done />}
+            startIcon={loading ? <CircularProgress color="inherit" size={20} /> : <Done />}
             onClick={() => crearFactura()}
             variant="contained"
             color="primary"
+            disabled={loading}
           >
             Guardar
           </Button>
@@ -357,7 +339,6 @@ const InputsFacturaModal = () => {
           fullWidth
           size="small"
           variant="outlined"
-          fullWidth
           error={error_validation.status && !datosFactura.receiver.CfdiUse}
         >
           <Select

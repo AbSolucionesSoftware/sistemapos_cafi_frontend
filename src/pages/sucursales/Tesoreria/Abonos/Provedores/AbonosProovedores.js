@@ -52,7 +52,8 @@ export default function AbonosProveedores() {
 		  variables: {
 			empresa: sesion.empresa._id,
 			sucursal: sesion.sucursal._id,
-			fecha: ""
+			fecha: "",
+			filtro: filtro
 		  },
 		  fetchPolicy: "network-only",
 		}
@@ -69,13 +70,20 @@ export default function AbonosProveedores() {
 		setReload(false);
 
 	}, [reload, refetch]);
+	
+	useEffect(() => {
+		try {
+			refetch({ filtro: filtro, fecha: '' });	
+		} catch (error) {		
+		}
+	}, [filtro]);
 
 	const handleClickOpen = () => setOpen(!open);
-
+	
 	const obtenerBusqueda = (e, value) => {
 		e.preventDefault();
-		refetch({ filtro: value, fecha: '' });
 		setFiltro(value);
+		console.log('amors')
 	};
 
 	return (
@@ -102,7 +110,7 @@ export default function AbonosProveedores() {
 					</Toolbar>
 				</AppBar>
 				<Box display='flex' p={2}>
-					<Box minWidth="70%">
+					<Box minWidth="40%">
 						<form onSubmit={(e) => obtenerBusqueda(e, e.target[0].value)}>
 							<TextField
 								inputRef={searchfilter}

@@ -82,7 +82,7 @@ export default function DetalleVentaCredito(props){
                                 </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                {props.datos.productos.map((producto, index) => {
+                                {props.datos?.productos?.map((producto, index) => {
                                    
                                     return (
                                     <TableRow hover tabIndex={-1} key={index}>

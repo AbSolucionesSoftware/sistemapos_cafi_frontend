@@ -43,6 +43,12 @@ export default function DescuentoVenta({
     iva: venta_base.iva,
     ieps: venta_base.ieps,
     descuento: totales.descuento,
+    descuento_general_activo: false,
+    descuento_general: {
+      cantidad_descontado: 0,
+      porciento: 0,
+      precio_con_descuento: 0,
+    },
   });
 
   let venta_original = JSON.parse(localStorage.getItem("DatosVentas"));
@@ -74,6 +80,12 @@ export default function DescuentoVenta({
       iva: venta_original.iva,
       ieps: venta_original.ieps,
       descuento: venta_original.descuento,
+      descuento_general_activo: false,
+      descuento_general: {
+        cantidad_descontado: 0,
+        porciento: 0,
+        precio_con_descuento: 0,
+      },
     });
   };
 
@@ -84,6 +96,8 @@ export default function DescuentoVenta({
       const val =
         value < 10
           ? parseFloat(`0.0${value.replace(".", "")}`)
+          : parseFloat(value) === 100
+          ? 1
           : parseFloat(`0.${value.replace(".", "")}`);
       const porsent = ventaSubtotal * val;
       setDescuentoAplicarVenta(porsent.toFixed(2));
@@ -98,6 +112,12 @@ export default function DescuentoVenta({
       iva: venta_original.iva,
       ieps: venta_original.ieps,
       descuento: venta_original.descuento,
+      descuento_general_activo: false,
+      descuento_general: {
+        cantidad_descontado: 0,
+        porciento: 0,
+        precio_con_descuento: 0,
+      },
     });
   };
 
@@ -122,7 +142,7 @@ export default function DescuentoVenta({
       const porsentajeNewDescuento = parseFloat(descuentoPorsentajeVenta);
       /* const dineroDescontadoDescuento = parseFloat(
         product.precio_actual_object.precio_venta *
-          parseFloat(`0.${porsentajeNewDescuento}`).toFixed(2)
+          parseFloat((`0.${porsentajeNewDescuento}`).toFixed(2))
       );
  */
       const dineroDescontadoDescuento =
@@ -136,9 +156,10 @@ export default function DescuentoVenta({
               )
             : parseFloat(
                 (
-                  product.precio_actual_object.precio_venta *
-                  parseFloat(`0.${porsentajeNewDescuento}`)
-                ).toFixed(2) / 10
+                  (product.precio_actual_object.precio_venta *
+                    parseFloat(`0.${porsentajeNewDescuento}`)) /
+                  10
+                ).toFixed(2)
               )
           : parseFloat(
               (product.precio_actual_object.precio_venta *
@@ -259,10 +280,13 @@ export default function DescuentoVenta({
           product.cantidad_venta
         ).toFixed(2)
       );
-      const descuentoProducto =
-        parseFloat(precio_actual_object.dinero_descontado.toFixed(2)) *
-        valorGranel *
-        product.cantidad_venta;
+      const descuentoProducto = parseFloat(
+        (
+          parseFloat(precio_actual_object.dinero_descontado) *
+          valorGranel *
+          product.cantidad_venta
+        ).toFixed(2)
+      );
 
       productosFinal.push({
         ...product,
@@ -272,7 +296,29 @@ export default function DescuentoVenta({
         iva_total_producto,
         subtotal_total_producto,
         total_total_producto,
+        descuento_activo: true,
+        descuento: {
+          cantidad_unidad: product.precio_actual_object.cantidad_unidad,
+          numero_precio: product.precio_actual_object.numero_precio,
+          unidad_maxima: product.precio_actual_object.unidad_maxima,
+          precio_general: product.precio_actual_object.precio_general,
+          precio_neto: newPrecioNetoProduct,
+          precio_venta: newPrecioVentaProduct,
+          iva_precio: newIvaProduct,
+          ieps_precio: newIepsProduct,
+          utilidad: newUtilidadProduct,
+          dinero_descontado: descuentoProducto,
+          porciento: product.precio_actual_object.porciento
+            ? parseFloat(
+                (
+                  parseFloat(product.precio_actual_object.porciento) +
+                  parseFloat(porsentajeNewDescuento)
+                ).toFixed(2)
+              )
+            : parseFloat(porsentajeNewDescuento),
+        },
       });
+
       //Sumar los valores
       total += total_total_producto;
       subTotal += subtotal_total_producto;
@@ -289,6 +335,12 @@ export default function DescuentoVenta({
       iva,
       ieps,
       descuento,
+      descuento_general_activo: true,
+      descuento_general: {
+        cantidad_descontado: descuento,
+        porciento: descuentoPorsentajeVenta,
+        precio_con_descuento: total,
+      },
     });
   };
 
@@ -302,6 +354,8 @@ export default function DescuentoVenta({
       iva,
       ieps,
       descuento,
+      descuento_general_activo,
+      descuento_general,
     } = variables;
     /* localStorage.setItem(
       "DatosVentas",
@@ -325,6 +379,8 @@ export default function DescuentoVenta({
       iva,
       ieps,
       descuento,
+      descuento_general_activo,
+      descuento_general,
     });
     setTotales({ ...totales, total, subtotal: subTotal, impuestos, descuento });
     setMontos({ ...montos, efectivo: total });
@@ -342,6 +398,12 @@ export default function DescuentoVenta({
         iva: venta_original.iva,
         ieps: venta_original.ieps,
         descuento: venta_original.descuento,
+        descuento_general_activo: false,
+        descuento_general: {
+          cantidad_descontado: 0,
+          porciento: 0,
+          precio_con_descuento: 0,
+        },
       });
       setDescuentoAplicarVenta(0);
       setDescuentoPorsentajeVenta(0);

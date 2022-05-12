@@ -708,6 +708,21 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtros: filtrosObte
           cantidad_unidad
           unidad_maxima
         }
+        subtotal_antes_de_impuestos
+        descuento_activo
+        descuento_producto{
+          cantidad_unidad
+          numero_precio
+          unidad_maxima
+          precio_general
+          precio_neto
+          precio_venta
+          iva_precio
+          ieps_precio
+          utilidad
+          porciento
+          dinero_descontado
+        }
         precio_actual_object{
           cantidad_unidad
           numero_precio
@@ -810,6 +825,7 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtros: filtrosObte
       tipo_emision
       forma_pago
       metodo_pago
+      abono_minimo
 		}
 	}
 `;

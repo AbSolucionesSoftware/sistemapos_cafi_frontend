@@ -146,7 +146,6 @@ export default function RegistroFactura({ serie_default }) {
       <Grid container spacing={2}>
         <Grid item xs={12} sm={4} md={3}>
           <TextField
-            value={datosFactura.cliente}
             placeholder="Selecciona venta a facturar"
             fullWidth
             size="small"

@@ -116,28 +116,28 @@ export default function ModificarProductoFactura({ venta, producto, index }) {
         parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
 
       //sacar precio_venta
-      let PVCI = parseFloat((precio_neto / cantidad_venta).toFixed(2));
-      let PVSI = parseFloat((PVCI / (suma_impuestos + 1)).toFixed(2));
+      let PVCI = parseFloat(precio_neto / cantidad_venta);
+      let PVSI = parseFloat(PVCI / (suma_impuestos + 1));
 
       //sacar iva e ieps
       let iva_precio = parseFloat(
-        PVSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`).toFixed(2)
+        PVSI * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
       );
       let ieps_precio = parseFloat(
-        PVSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`).toFixed(2)
+        PVSI * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
       );
       //sacar utilidad
       let PCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
-      let utilidad = parseFloat((((PVSI - PCSI) / PCSI) * 100).toFixed(2));
+      let utilidad = parseFloat(((PVSI - PCSI) / PCSI) * 100);
       let precios_nuevos = { ...precio_actual_object };
 
       let impuestos_precio = ieps_precio + iva_precio;
 
-      precios_nuevos.ieps_precio = ieps_precio;
-      precios_nuevos.iva_precio = iva_precio;
-      precios_nuevos.precio_venta = PVSI;
-      precios_nuevos.precio_neto = PVCI;
-      precios_nuevos.utilidad = utilidad;
+      precios_nuevos.ieps_precio = parseFloat(ieps_precio.toFixed(2));
+      precios_nuevos.iva_precio = parseFloat(iva_precio.toFixed(2));
+      precios_nuevos.precio_venta = parseFloat(PVSI.toFixed(2));
+      precios_nuevos.precio_neto = parseFloat(PVCI.toFixed(2));
+      precios_nuevos.utilidad = parseFloat(utilidad.toFixed(2));
       if (precio_actual_object.unidad_maxima) {
         precio_actual_object.precio_general = precio_neto;
       }

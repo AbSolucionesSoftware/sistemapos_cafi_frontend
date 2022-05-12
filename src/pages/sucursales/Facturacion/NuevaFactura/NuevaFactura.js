@@ -114,7 +114,6 @@ const DialogFacturaPrincipal = ({ handleClose }) => {
           <Box m={1}>
             <Button
               variant="contained"
-              color="inherit"
               onClick={() => cancelarCFDI()}
               color="secondary"
               size="large"

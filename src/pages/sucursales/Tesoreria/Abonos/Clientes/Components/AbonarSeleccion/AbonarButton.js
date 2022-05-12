@@ -3,15 +3,17 @@ import CloseIcon from '@material-ui/icons/Close';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { Box, Button, Dialog, 
         DialogContent,  DialogTitle, FormControl, makeStyles, 
-        MenuItem, Select, Slide, TextField, Typography 
-} from '@material-ui/core';
-import { formaPago } from '../../../../Facturacion/catalogos';
-import { formatoMexico } from '../../../../../../config/reuserFunctions';
+        MenuItem, 
+        Select, 
+        Slide, TextField, Typography 
+} from '@material-ui/core'
+import { formaPago } from '../../../../../Facturacion/catalogos';
+import { formatoMexico } from '../../../../../../../config/reuserFunctions';
 import { useMutation } from '@apollo/client';
-import { CREAR_ABONO } from '../../../../../../gql/Tesoreria/abonos';
+import { CREAR_ABONO } from '../../../../../../../gql/Tesoreria/abonos';
 import moment from 'moment';
-import BackdropComponent from '../../../../../../components/Layouts/BackDrop';
-import { TesoreriaCtx } from '../../../../../../context/Tesoreria/tesoreriaCtx';
+import BackdropComponent from '../../../../../../../components/Layouts/BackDrop';
+import { TesoreriaCtx } from '../../../../../../../context/Tesoreria/tesoreriaCtx';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -63,7 +65,7 @@ export default function AbonoaRecibir({cuenta}) {
     const input = {
         tipo_movimiento: "ABONO",
         rol_movimiento: "PROVEEDOR",
-        fecha_movimiento: {
+        /* fecha_movimiento: {
             year: moment().format('YYYY'),
             mes: moment().format('MM'),
             dia: moment().format('DD'),
@@ -118,7 +120,7 @@ export default function AbonoaRecibir({cuenta}) {
         nombre_cliente: cuenta.proveedor.nombre_cliente, 
         telefono_cliente: cuenta.proveedor.id_proveedor.telefono, 
         email_cliente: cuenta.proveedor.id_proveedor.email,
-        id_compra: cuenta._id
+        id_compra: cuenta._id */
     };
 
     
@@ -182,7 +184,7 @@ export default function AbonoaRecibir({cuenta}) {
                     Abonar    
                 </Typography>
             </Button>
-            <Dialog
+            {/* <Dialog
                 open={open}
                 TransitionComponent={Transition}
                 keepMounted
@@ -287,7 +289,7 @@ export default function AbonoaRecibir({cuenta}) {
                         Registrar Abono
                     </Button>
                 </Box>
-            </Dialog>
+            </Dialog> */}
         </div>
     )
 }

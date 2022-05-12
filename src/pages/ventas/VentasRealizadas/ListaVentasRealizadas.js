@@ -54,15 +54,15 @@ export default function ListaVentasRealizadas({ handleClose }) {
     token_turno_user: turnoEnCurso ? turnoEnCurso.token_turno_user : "",
   };
 
+  const isDate = moment(value).isValid();
+
   /* Queries */
   const resultado_ventas = useQuery(OBTENER_VENTAS_SUCURSAL, {
     variables: {
       empresa: sesion.empresa._id,
       sucursal: sesion.sucursal._id,
-      filtro: value,
-      params: params,
-      realizadas: false,
       filtros: {
+        isDate, 
         busqueda: value,
         filtro: params,
         vista: "VENTAS",

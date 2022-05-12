@@ -1,10 +1,4 @@
-import React, {
-  Fragment,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { Fragment, useContext, useRef, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Input from "@material-ui/core/Input";
 import Table from "@material-ui/core/Table";
@@ -267,37 +261,48 @@ const RenderPresentacionesRows = ({
       }
       let precio_neto = parseFloat(value);
       let { iva, ieps } = precios;
-      let suma_impuestos = parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) + parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
-      let precio_venta = parseFloat((precio_neto / (suma_impuestos+1)).toFixed(2));
-      let iva_precio = parseFloat((precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)).toFixed(2));
-      let ieps_precio = parseFloat((precio_venta * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)).toFixed(2));
+      let suma_impuestos =
+        parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
+        parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+      let precio_venta = parseFloat(
+        precio_neto / (suma_impuestos + 1)
+      );
+      let iva_precio = parseFloat(
+        precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`)
+      );
+      let ieps_precio = parseFloat(
+        precio_venta *
+          parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`)
+      );
       let PUCSI = precios.unidad_de_compra.precio_unitario_sin_impuesto;
-      let utilidad = parseFloat((((precio_venta - PUCSI) / PUCSI) * 100).toFixed(2));
-      
+      let utilidad = parseFloat(
+        (((precio_venta - PUCSI) / PUCSI) * 100)
+      );
 
-      let {descuento_activo, descuento} = copy_element_presentacion;
+      let { descuento_activo, descuento } = copy_element_presentacion;
       if (descuento_activo && descuento_activo === true) {
         let new_precio_venta_desc = (precio_venta * descuento.porciento) / 100;
         let new_iva_precio =
           new_precio_venta_desc * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
         let new_ieps_precio =
-          new_precio_venta_desc * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+          new_precio_venta_desc *
+          parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
         let new_impuestos = new_iva_precio + new_ieps_precio;
         let precio_con_descuento = new_precio_venta_desc + new_impuestos;
 
         copy_element_presentacion_descuento.precio_neto = parseFloat(
-          (precio_con_descuento).toFixed(2)
+          precio_con_descuento.toFixed(2)
         );
         copy_element_presentacion.precio = parseFloat(value);
         copy_element_presentacion.descuento = copy_element_presentacion_descuento;
       } else {
         copy_element_presentacion.precio = parseFloat(value);
       }
-      copy_element_presentacion.precio_unidad.precio_venta = precio_venta;
-      copy_element_presentacion.precio_unidad.precio_neto = precio_neto;
-      copy_element_presentacion.precio_unidad.utilidad = utilidad;
-      copy_element_presentacion.precio_unidad.iva_precio = iva_precio;
-      copy_element_presentacion.precio_unidad.ieps_precio = ieps_precio;
+      copy_element_presentacion.precio_unidad.precio_venta = parseFloat(precio_venta.toFixed(2));
+      copy_element_presentacion.precio_unidad.precio_neto = parseFloat(precio_neto.toFixed(2));
+      copy_element_presentacion.precio_unidad.utilidad = parseFloat(utilidad.toFixed(2));
+      copy_element_presentacion.precio_unidad.iva_precio = parseFloat(iva_precio.toFixed(2));
+      copy_element_presentacion.precio_unidad.ieps_precio = parseFloat(ieps_precio.toFixed(2));
     } else {
       if (!value) {
         copy_element_presentacion.codigo_barras = "";
@@ -340,30 +345,31 @@ const RenderPresentacionesRows = ({
 
     let precio_con_descuento = 0;
     let { iva, ieps } = precios;
-    let {descuento, precio} = copy_element_presentacion;
+    let { descuento, precio } = copy_element_presentacion;
     let suma =
       parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
       parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
     let precio_venta = parseFloat((precio / (suma + 1)).toFixed(2));
 
-    if(value){
+    if (value) {
       let new_precio_venta_desc = (precio_venta * descuento.porciento) / 100;
-        let new_iva_precio =
-          new_precio_venta_desc * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
-        let new_ieps_precio =
-          new_precio_venta_desc * parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
-        let new_impuestos = new_iva_precio + new_ieps_precio;
-        precio_con_descuento = new_precio_venta_desc + new_impuestos;
-    }else{
-      precio_con_descuento = precio
+      let new_iva_precio =
+        new_precio_venta_desc * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
+      let new_ieps_precio =
+        new_precio_venta_desc *
+        parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
+      let new_impuestos = new_iva_precio + new_ieps_precio;
+      precio_con_descuento = new_precio_venta_desc + new_impuestos;
+    } else {
+      precio_con_descuento = precio;
     }
-    
+
     copy_element_presentacion_descuento.precio_neto = parseFloat(
-      (precio_con_descuento).toFixed(2)
+      precio_con_descuento.toFixed(2)
     );
     /* copy_element_presentacion.precio = parseFloat(value); */
     copy_element_presentacion.descuento = copy_element_presentacion_descuento;
-  
+
     copy_presentaciones.splice(index, 1, copy_element_presentacion);
     setPresentaciones(copy_presentaciones);
   };

@@ -15,7 +15,10 @@ import CloseIcon from "@material-ui/icons/Close";
 import CreditCardIcon from "@material-ui/icons/CreditCard";
 import ClearIcon from "@material-ui/icons/Clear";
 import { Close } from "@material-ui/icons";
-import { formatoMexico, numerosRandom } from "../../../config/reuserFunctions";
+import {
+  formatoMexico,
+  numerosRandom,
+} from "../../../config/reuserFunctions";
 import { formaPago } from "../../sucursales/Facturacion/catalogos";
 import { calcularMonedero } from "./calcularMonedero";
 import { CREAR_VENTA } from "../../../gql/Ventas/ventas_generales";
@@ -80,6 +83,7 @@ export default function CerrarVenta() {
   const [datosCliente, setDatosCliente] = useState({});
   const [monedero, setMonedero] = useState(0);
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
+  const [abono_minimo, setAbonoMinimo] = useState(0);
 
   const [createVenta] = useMutation(CREAR_VENTA);
 
@@ -164,6 +168,7 @@ export default function CerrarVenta() {
     setTotales(initial_state_totales);
     setMontos(initial_state_montos);
     setVentaRetomada(null);
+    setAbonoMinimo(0);
   };
 
   function funcion_tecla(event) {
@@ -235,12 +240,15 @@ export default function CerrarVenta() {
           metodo_pago: formaPago[6].Value,
         },
       };
+
+      const abonoMinimo = parseFloat(abono_minimo);
       ventaFinal.montos_en_caja = montosEnCaja;
       //Colocamos si es venta a credito
       ventaFinal.credito = venta_credito;
+      ventaFinal.abono_minimo = venta_credito && abonoMinimo ? abonoMinimo : 0;
       //Agregar descuentos de ventas
-      ventaFinal.descuento_general_activo = false;
-      ventaFinal.descuento_general = null;
+      ventaFinal.descuento_general_activo = ventaFinal.descuento_general_activo ? ventaFinal.descuento_general_activo : false;
+      ventaFinal.descuento_general = ventaFinal.descuento_general ? ventaFinal.descuento_general : null;
       //Declarar dias de credito como false
       ventaFinal.dias_de_credito_venta = datosCliente
         ? datosCliente.dias_credito
@@ -261,17 +269,20 @@ export default function CerrarVenta() {
       let numero_mayor = 0;
       let forma_pago;
 
-      Object.keys(montosEnCaja).forEach((key) => {
-        if (montosEnCaja[key].monto > numero_mayor) {
-          numero_mayor = montosEnCaja[key].monto;
-          forma_pago = montosEnCaja[key].metodo_pago;
-        }
-      });
+      if (venta_credito) {
+        forma_pago = "99";
+      } else {
+        Object.keys(montosEnCaja).forEach((key) => {
+          if (montosEnCaja[key].monto > numero_mayor) {
+            numero_mayor = montosEnCaja[key].monto;
+            forma_pago = montosEnCaja[key].metodo_pago;
+          }
+        });
+      }
 
       ventaFinal.forma_pago = forma_pago;
 
       //Enviar los datos
-      /* console.log(ventaFinal); */
       await createVenta({
         variables: {
           input: ventaFinal,
@@ -409,6 +420,8 @@ export default function CerrarVenta() {
                   setEditarCliente={setEditarCliente}
                   fechaVencimientoDate={fechaVencimientoDate}
                   setfechaVencimientoDate={setfechaVencimientoDate}
+                  setAbonoMinimo={setAbonoMinimo}
+                  abono_minimo={abono_minimo}
                 />
               ) : null}
             </Grid>

@@ -5,7 +5,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import TextField from "@material-ui/core/TextField";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import useStyles from "../styles";
-import { Search } from "@material-ui/icons";
+import { Add, Search } from "@material-ui/icons";
 import { CONSULTA_PRODUCTO_UNITARIO } from "../../../gql/Ventas/ventas_generales";
 import { useApolloClient } from "@apollo/client";
 import { VentasContext } from "../../../context/Ventas/ventasContext";
@@ -26,6 +26,8 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
     updateTablaVentas,
     setUpdateTablaVentas,
     setDatosVentasActual,
+    openBuscarProducto,
+    setOpenBuscarProducto,
   } = useContext(VentasContext);
 
   const [open_message, setOpenMessage] = useState(false);
@@ -505,7 +507,7 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
         </Box>
         <TextField
           fullWidth
-          placeholder="Buscar producto..."
+          placeholder="Producto..."
           variant="outlined"
           size="small"
           onKeyUp={(e) => keyUpEvent(e)}
@@ -513,21 +515,33 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
           disabled={loading}
           InputProps={{
             endAdornment: (
-              <InputAdornment position="start">
+              <InputAdornment position="end">
                 {loading ? (
                   <IconButton disabled={loading}>
                     <CircularProgress size={20} color="primary" />
                   </IconButton>
                 ) : (
-                  <IconButton onClick={(e) => keyUpEvent(e)} disabled={loading}>
-                    <Search />
-                  </IconButton>
+                  <Fragment>
+                    <IconButton
+                      onClick={(e) => keyUpEvent(e)}
+                      disabled={loading}
+                      color="primary"
+                    >
+                      <Add />
+                    </IconButton>
+                  </Fragment>
                 )}
               </InputAdornment>
             ),
           }}
           inputProps={{ style: { textTransform: "uppercase" } }}
         />
+        <IconButton
+          onClick={() => setOpenBuscarProducto(!openBuscarProducto)}
+          disabled={loading}
+        >
+          <Search />
+        </IconButton>
       </Box>
     </Fragment>
   );

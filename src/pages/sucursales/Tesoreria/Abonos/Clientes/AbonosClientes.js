@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -7,18 +7,19 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import { Box, TextField, Grid, IconButton, InputAdornment } from '@material-ui/core';
+import { FcDonate } from "react-icons/fc";
+import { Box, TextField, Grid, CircularProgress } from '@material-ui/core';
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import SearchOutlined from '@material-ui/icons/SearchOutlined';
+import SnackBarMessages from '../../../../../components/SnackBarMessages';
+import BackdropComponent from "../../../../../components/Layouts/BackDrop";
 import {AbonosCtx} from "../../../../../context/Tesoreria/abonosCtx";
-import { ClienteCtx } from "../../../../../context/Catalogos/crearClienteCtx"; 
+
 import TablaVentasCredito from './Components/TablaVentasCredito';
 import ButtonLiquidar from './Components/Liquidar';
-import ButtonAbonar from './Components/Abonar';
+
 import { useQuery } from '@apollo/client';
 import {  OBTENER_HISTORIAL_ABONOS_CLIENTE } from "../../../../../gql/Tesoreria/abonos";
-
-//import DetallesCuenta from './Components/DetalleCuenta/DetallesCuenta';
+import { OBTENER_CLIENTES_VENTAS } from "../../../../../gql/Ventas/ventas_generales";
 
 const useStyles = makeStyles((theme) => ({
 	appBar: {	
@@ -48,53 +49,142 @@ const useStyles = makeStyles((theme) => ({
 	iconSize: {
 		width: 32,
 	},
+	borderBotonChico:{
+		minWidth: '100%',
+		minHeight: '100%',
+        border: '.6px solid #DBDBDB'
+    }
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AbonosClientes() {
+export default function AbonosClientes(props) {
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	
 	const context = useContext(AbonosCtx);
-	const {clientes} = useContext(ClienteCtx);
-	const [filtro, setFiltro] = useState("");
 
-	const [ventasCredito, setVentasCredito] = useState([]);
-	const searchfilter = useRef(null);
+	const [loading, setLoading] = useState(false);
+	const [alert,setAlert] = useState({message:'', status:'', open: false});
+	const [selectedClient, setSelectedClient] = useState("");
+	const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
+	//const searchfilter = useRef(null);
+	const [totalVentas, setTotalVentas] = useState([]);
+	let historialVentasACredito = [];
+	let clientes = [];
 	const handleClickOpen = () => setOpen(!open);
 	
-
+  
+	window.addEventListener("keydown", Mi_función);
+	function Mi_función(e) {
+	  if (e.keyCode === 117 && props.fromVentas) {
+		  
+		handleClickOpen();
+	  }
+	}
+  
 	const obtenerVentasCredito = useQuery(OBTENER_HISTORIAL_ABONOS_CLIENTE, {
-		variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id, idCliente: context.selectedClient._id },
+		variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id, idCliente: selectedClient._id },
+		fetchPolicy: "network-only"
 	  });
+	
+	
+	const obtenerClientes= useQuery(OBTENER_CLIENTES_VENTAS, {
+		variables: {
+		  empresa: sesion.empresa._id,
+		  sucursal: sesion.sucursal._id,
+		},
+		fetchPolicy: "network-only",
+	});  
 
 	const ChangeClientAutocomplate = (value) => {
 		try {
-			console.log(value)
 		  let setVal  = (value !== null) ? value: ""; 
-		  context.setSelectedClient(setVal);
+		   setSelectedClient(setVal);
 		} catch (error) {
 		  console.log(error);
 		}
-	  };
+	};
 
 	useEffect(() => {
 		
-
-		if(obtenerVentasCredito.data){
-			setVentasCredito(obtenerVentasCredito.data.historialVentasACredito)
-		}
-		
-	}, [obtenerVentasCredito.data])
+	 setLoading(obtenerVentasCredito.loading)
+	}, [obtenerVentasCredito.loading])
 	
+	useEffect(() => {
+		try {
+			if(obtenerVentasCredito.data){
+				let arrayToset = [];
+				let total_ventas = 0;
+				if(obtenerVentasCredito.data.historialVentasACredito.length > 0){	
+					obtenerVentasCredito.data.historialVentasACredito.forEach(element => {
+						total_ventas += element.saldo_credito_pendiente;
+					
+						arrayToset.push({id_venta:element._id, monto_total_abonado:0, saldo_credito_pendiente: parseFloat(element.saldo_credito_pendiente)});
+					});
+					setTotalVentas(parseFloat(total_ventas.toFixed(2)));
+					context.setAbonos(arrayToset);
+				}
+			}
+		} catch (error) {
+			console.log(error)
+		}
+	}, [obtenerVentasCredito.data]);
 
-	return (
-		<div>
+	
+	if(obtenerVentasCredito.data){
+		historialVentasACredito = obtenerVentasCredito.data.historialVentasACredito;
+	}
+
+	if(obtenerClientes.data){
+		clientes = obtenerClientes.data.obtenerClientesVentas;
+	}
+	
+	const enviarCantidad = (cantidad, index, _id) =>{
+		let copyArray = [...context.abonos];
+		
+		if(cantidad > 0){
+			copyArray.splice(index, 1, {id_venta: _id, monto_total_abonado: cantidad});
 			
-			<Button fullWidth onClick={handleClickOpen}>
+		
+		}else{
+			copyArray.splice(index, 1);
+		}
+		context.setAbonos(copyArray);
+    };
+	
+	return (
+		<Fragment>
+			<BackdropComponent loading={loading} setLoading={setLoading} />
+			<SnackBarMessages alert={alert} setAlert={setAlert} />
+			{
+				(props.fromVentas) ? 
+				<Button
+					className={classes.borderBotonChico}
+					onClick={handleClickOpen}
+					disabled={!turnoEnCurso}
+				>
+					<Box>
+					<Box>
+						<FcDonate style={{ fontSize: 35 }} />
+					</Box>
+					<Box>
+						<Typography variant="body2">
+						<b>Abonos</b>
+						</Typography>
+					</Box>
+					<Box>
+						<Typography variant="caption" style={{ color: "#808080" }}>
+						<b>F6</b>
+						</Typography>
+					</Box>
+					</Box>
+				</Button>
+				:
+				<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
                         <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/salary.svg' alt="icono abono" className={classes.icon} />
@@ -102,6 +192,7 @@ export default function AbonosClientes() {
 					Abonos de Clientes
 				</Box>
 			</Button>
+			}
 			<Dialog fullScreen open={open} onClose={handleClickOpen} TransitionComponent={Transition}>
 				<AppBar className={classes.appBar}>
 					<Toolbar>
@@ -124,7 +215,6 @@ export default function AbonosClientes() {
 							</Typography>
 						</Box>
 						<Box ml={3} style={{width:'80%'}} >
-
 							<Autocomplete
 								id="combo-box-producto-codigo"
 								size="small"
@@ -138,29 +228,66 @@ export default function AbonosClientes() {
 								getOptionSelected={(option, value) =>
 								option.nombre_cliente === value.nombre_cliente
 								}
-								value={context.selectedClient ? context.selectedClient : null}
+								value={selectedClient ? selectedClient : null}
 							/>
 						</Box>
 						
 					</Grid>
-					{
-						(context.ventas.length > 0) ? 
+					
 						<Grid item lg={7}>
-							<Box  mt={1} mr={2} display="flex" justifyContent="flex-end" alignContent="space-between">
-								<ButtonAbonar />
-								<ButtonLiquidar />
+							<Box  mt={3} mr={2} display="flex" justifyContent="flex-end" alignContent="space-between">
+						 	{/*
+								context.abonos.length > 0  ?( 
+									<ButtonAbonar setOpenAbonar={context.setOpenAbonar}  openAbonar={context.openAbonar}  setSelectedClient={setSelectedClient} selectedClient={selectedClient} ventas={context.ventas} abonos={context.abonos} setAbonos={context.setAbonos} />)
+								:
+								<div/>
+							*/} 
+							{	
+								(historialVentasACredito.length > 0 && totalVentas > 0) ? 
+									<ButtonLiquidar cliente={selectedClient} total_ventas={totalVentas} setAlert={setAlert} liquidarTodas={true}  recargar= {obtenerVentasCredito.refetch} setLoading={setLoading} />
+								:
+								<div/>
+							}	
 							</Box>
 						</Grid>
-						:
-						<div/>
-					}
-					
-				</Grid> 		
-				<Box p={2}>
-					<TablaVentasCredito rows={ventasCredito} />
-				</Box>
+						
+						
+				</Grid>
+			{/* 	<Grid container >
+                    {
+                        historialVentasACredito.map((venta, index) =>{
+							
+                            return(
+                                <CardVentaAbono datos={venta} index={index}  setSelectedClient={setSelectedClient} selectedClient={selectedClient}  setOpen={setOpen} enviarCantidad={enviarCantidad}  empresa={sesion.empresa._id} sucursal={sesion.sucursal._id} setAlert={setAlert} />   
+                            )
+                        })
+						
+                    } 
+                </Grid>  */}
+				{
+					(historialVentasACredito.length) ? 
+						<Box p={2}>
+							<TablaVentasCredito rows={historialVentasACredito} setSelectedClient={setSelectedClient} selectedClient={selectedClient}  setOpen={setOpen} enviarCantidad={enviarCantidad}   setAlert={setAlert} setLoading={setLoading} recargar= {obtenerVentasCredito.refetch} />
+						</Box>
+					:
+					<Box/>	
+				}		
+				{
+					(loading) ?
+						<Box
+						display="flex"
+						flexDirection="column"
+						justifyContent="center"
+						alignItems="center"
+						height="50vh"
+						>
+							<CircularProgress/>
+						</Box>
+					:
+					<div/>
+				}
 			</Dialog>
-			{/* <DetallesCuenta /> */}
-		</div>
+
+		</Fragment>
 	);
 }
