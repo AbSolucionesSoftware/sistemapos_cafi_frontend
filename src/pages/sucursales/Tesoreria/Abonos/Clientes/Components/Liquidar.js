@@ -298,7 +298,7 @@ function Liquidar(props) {
                         <Typography><b>Nombre de Cliente:</b> {props.cliente.nombre_cliente}</Typography>
                     </Box>
                     <Box width="100%" p={1}>
-                        <Typography><b>Total:</b>  {(total > 0) ? total : props.total_ventas}</Typography>
+                        <Typography><b>Total:</b>  {(total >= 0) ? total : props.total_ventas}</Typography>
                     </Box>
                     {/* <Box p={1}>
                         <Alert severity="info">Si desea editar el abono del cliente, <br/>
