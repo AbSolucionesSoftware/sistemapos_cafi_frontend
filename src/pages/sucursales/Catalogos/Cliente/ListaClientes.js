@@ -90,6 +90,18 @@ export default function ListaClientes({
   };
 
   const handleClickSelectClient = () => {
+    //clear object
+    const {
+      representante,
+      estado_cliente,
+      tipo_cliente,
+      empresa,
+      sucursal,
+      fecha_nacimiento,
+      fecha_registro,
+      eliminado,
+      ...clean_cliente
+    } = dataSelectRowClient;
     try {
       const venta = JSON.parse(localStorage.getItem("DatosVentas"));
       let venta_actual = venta === null ? {} : venta;
@@ -108,7 +120,7 @@ export default function ListaClientes({
           monedero:
             venta_actual.monedero === undefined ? 0 : venta_actual.monedero,
           // tipo_cambio: venta_actual.tipo_cambio ? venta_actual.tipo_cambio : {},
-          cliente: dataSelectRowClient,
+          cliente: clean_cliente ? clean_cliente : {},
           venta_cliente: true,
           productos:
             venta_actual.productos?.length > 0 ? venta_actual.productos : [],

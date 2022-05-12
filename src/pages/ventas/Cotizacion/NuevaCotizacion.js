@@ -182,9 +182,11 @@ export default function NuevaCotizacion({ setOpen }) {
   const eliminarDescuento = () => {
     try {
       descuento_general = {
-        subTotal: 0,
-        iva: 0,
-        ieps: 0,
+        subTotal: datosVentas?.subTotal,
+        impuestos: datosVentas?.impuestos,
+        iva: datosVentas?.iva,
+        ieps: datosVentas?.ieps,
+        total: datosVentas?.total,
       };
       setPorcentaje(0);
       setTotalDescount("");

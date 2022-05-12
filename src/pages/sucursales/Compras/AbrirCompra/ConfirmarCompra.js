@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -21,6 +21,7 @@ import { ComprasContext } from "../../../../context/Compras/comprasContext";
 import { formatoMexico } from "../../../../config/reuserFunctions";
 import { formaPago } from "../../Facturacion/catalogos";
 import { Done, Close } from "@material-ui/icons";
+import { useDebounce } from "use-debounce";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -46,6 +47,9 @@ export default function ConfirmarCompra({ realizarCompraBD }) {
   const [descuento_base, setDescuentoBase] = useState(initial_state_descuento);
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const [descuento_debounce, setDescuentoDebounce] = useState(0);
+  const [porcentaje_debounce, setPorcentajeDebounce] = useState(0);
 
   const cleanStates = () => {
     setCredito(false);
@@ -122,6 +126,9 @@ export default function ConfirmarCompra({ realizarCompraBD }) {
     });
   };
 
+  const [DESCUENTO] = useDebounce(descuento_debounce, 700);
+  const [PORCENTAJE] = useDebounce(porcentaje_debounce, 700);
+
   const recalcularPrecios = () => {
     //aplicar descuento a los productos y actualizar precios
     const productos = [...productosCompra];
@@ -179,6 +186,10 @@ export default function ConfirmarCompra({ realizarCompraBD }) {
     datos_descuento.descuento_aplicado = descuento_aplicado;
     setDescuentoBase(datos_descuento);
   };
+
+  useEffect(() => {
+    recalcularPrecios();
+  }, [DESCUENTO, PORCENTAJE]);
 
   return (
     <div>
@@ -285,12 +296,15 @@ export default function ConfirmarCompra({ realizarCompraBD }) {
                   label="Aplicar descuento"
                 />
               </Grid>
-              <Grid item md={4}>
+              <Grid item md={6}>
                 <TextField
                   variant="outlined"
                   size="small"
                   fullWidth
-                  onChange={(e) => obtenerPrecio(e.target.value)}
+                  onChange={(e) => {
+                    obtenerPrecio(e.target.value);
+                    setDescuentoDebounce(e.target.value);
+                  }}
                   disabled={!descuento_base.descuento_aplicado}
                   value={descuento_base.cantidad_descontada}
                   InputProps={{
@@ -300,13 +314,16 @@ export default function ConfirmarCompra({ realizarCompraBD }) {
                   }}
                 />
               </Grid>
-              <Grid item md={4}>
+              <Grid item md={6}>
                 <TextField
                   variant="outlined"
                   type="number"
                   size="small"
                   fullWidth
-                  onChange={(e) => obtenerPorcentaje(e.target.value)}
+                  onChange={(e) => {
+                    obtenerPorcentaje(e.target.value);
+                    setPorcentajeDebounce(e.target.value);
+                  }}
                   disabled={!descuento_base.descuento_aplicado}
                   value={descuento_base.porcentaje}
                   InputProps={{
@@ -315,15 +332,6 @@ export default function ConfirmarCompra({ realizarCompraBD }) {
                     ),
                   }}
                 />
-              </Grid>
-              <Grid item md={4}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => recalcularPrecios()}
-                >
-                  Recalcular
-                </Button>
               </Grid>
               <Grid item md={4}>
                 <Typography>

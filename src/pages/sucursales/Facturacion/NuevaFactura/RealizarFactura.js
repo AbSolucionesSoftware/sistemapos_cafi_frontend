@@ -17,8 +17,9 @@ import { factura_initial_state } from "./initial_factura_states";
 import { FacturacionCtx } from "../../../../context/Facturacion/facturacionCtx";
 import { CREAR_FACTURA } from "../../../../gql/Facturacion/Facturacion";
 import { useMutation } from "@apollo/client";
-import { formaPago, metodoPago, tiposCfdi, usosCfdi } from "../catalogos";
+import { formaPago, metodoPago, usosCfdi } from "../catalogos";
 import { Close, Done } from "@material-ui/icons";
+import { CircularProgress } from "@material-ui/core";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -60,30 +61,6 @@ export default function RealizarFactura({ setAlert }) {
     try {
       setLoading(true);
       let nuevo_obj = { ...datosFactura };
-
-      /* 
-      {
-          ProductCode: "50202306",
-          IdentificationNumber: "61b7bf6e3454b727a0c2e357",
-          Description: "COCACOLA",
-          //Unit: "Unidad de Servicio",
-          UnitCode: "XBX",
-          UnitPrice: "36",
-          Quantity: "1",
-          Subtotal: "36",
-          Discount: "5.4",
-          Taxes: [
-            {
-              Total: "4.89",
-              Name: "IVA",
-              Base: "30.6",
-              Rate: "0.16",
-              IsRetention: "false",
-            },
-          ],
-          Total: "35.49",
-        }, */
-
       const items = [];
 
       productos.forEach((producto) => {
@@ -125,8 +102,6 @@ export default function RealizarFactura({ setAlert }) {
           Total: producto.total.toFixed(2),
         });
       });
-
-      console.log(items);
       //poner la fecha de facturacion
       if (datosFactura.date === "1") {
         nuevo_obj.date = moment()
@@ -154,7 +129,7 @@ export default function RealizarFactura({ setAlert }) {
       }
       setError({ status: false, message: "" });
 
-      /* console.log(nuevo_obj); */
+      console.log(nuevo_obj);
 
       let result = await CrearFactura({
         variables: {
@@ -217,6 +192,7 @@ export default function RealizarFactura({ setAlert }) {
             size="large"
             color="secondary"
             variant="contained"
+            disabled={loading}
           >
             <Close />
           </Button>
@@ -226,10 +202,11 @@ export default function RealizarFactura({ setAlert }) {
         </DialogContent>
         <DialogActions style={{ justifyContent: "center" }}>
           <Button
-            startIcon={<Done />}
+            startIcon={loading ? <CircularProgress color="inherit" size={20} /> : <Done />}
             onClick={() => crearFactura()}
             variant="contained"
             color="primary"
+            disabled={loading}
           >
             Guardar
           </Button>

@@ -17,10 +17,10 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Grid from "@material-ui/core/Grid";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Snackbar } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 
-import { Close, Search } from "@material-ui/icons";
+import { Close, Description, Search } from "@material-ui/icons";
 import ErrorPage from "../../../../../components/ErrorPage";
 import { useQuery } from "@apollo/client";
 import { FacturacionCtx } from "../../../../../context/Facturacion/facturacionCtx";
@@ -53,7 +53,7 @@ export default function ListaVentasFactura() {
         <Search />
       </IconButton>
       <Dialog
-        maxWidth="md"
+        maxWidth="lg"
         fullWidth
         open={open}
         onClose={(_, reason) => {
@@ -170,8 +170,14 @@ const RenderLista = ({
 }) => {
   const classes = useStyles();
   const [selected, setSelected] = useState("");
-  const { setVentaFactura, setProductos, setDatosFactura, datosFactura } = useContext(FacturacionCtx);
+  const {
+    setVentaFactura,
+    setProductos,
+    setDatosFactura,
+    datosFactura,
+  } = useContext(FacturacionCtx);
   const { loading, data, error } = resultado_ventas;
+  const [open, setOpen] = useState(false);
 
   if (loading)
     return (
@@ -190,10 +196,14 @@ const RenderLista = ({
 
   const { obtenerVentasSucursal } = data;
 
-  const obtenerVenta = (click, data) => {
+  const obtenerVenta = (click, data, facturada) => {
+    /* console.log(data); */
     setSelected(data.folio);
     if (click === 2) {
-      console.log(data);
+      if (facturada) {
+        setOpen(true);
+        return;
+      }
       const without_sat_code = data.productos.filter(
         (res) => !res.id_producto.datos_generales.clave_producto_sat.Value
       );
@@ -204,13 +214,28 @@ const RenderLista = ({
         return;
       }
 
-      const { productos, ...venta } = {...data}
-      const productos_base = [...data.productos]
-      setDatosFactura({
+      const { productos, ...venta } = { ...data };
+      const productos_base = [...data.productos];
+
+      let datos_factura = {
         ...datosFactura,
         payment_form: venta.forma_pago,
         payment_method: venta.metodo_pago,
-      })
+      };
+
+      if (data.cliente && data.cliente.rfc) {
+        datos_factura = {
+          ...datos_factura,
+          receiver: {
+            ...datosFactura.receiver,
+            Name: data.cliente.nombre_cliente,
+            Rfc: data.cliente.rfc,
+          },
+        };
+      }
+
+      console.log(datos_factura)
+      setDatosFactura(datos_factura);
       setVentaFactura(venta);
       setProductos(productos_base);
       handleClose();
@@ -219,11 +244,20 @@ const RenderLista = ({
 
   return (
     <Paper variant="outlined">
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={open}
+        onClose={() => setOpen(false)}
+        message="Esta venta ya fue facturada"
+        autoHideDuration={3000}
+      />
       <TableContainer className={classes.container}>
         <Table stickyHeader size="small" aria-label="a dense table">
           <TableHead>
             <TableRow>
+              <TableCell padding="checkbox"></TableCell>
               <TableCell>Folio</TableCell>
+              <TableCell>Fecha</TableCell>
               <TableCell>Cliente</TableCell>
               <TableCell>Usuario</TableCell>
               <TableCell>Caja</TableCell>
@@ -235,6 +269,7 @@ const RenderLista = ({
           </TableHead>
           <TableBody>
             {obtenerVentasSucursal.map((data, index) => {
+              const facturada = data.factura.length > 0;
               return (
                 <TableRow
                   key={index}
@@ -242,9 +277,15 @@ const RenderLista = ({
                   role="checkbox"
                   tabIndex={-1}
                   selected={data.folio === selected}
-                  onClick={(e) => obtenerVenta(e.detail, data)}
+                  onClick={(e) => obtenerVenta(e.detail, data, facturada)}
                 >
+                  <TableCell>
+                    {facturada ? <Description color="primary" /> : null}
+                  </TableCell>
                   <TableCell>{data.folio}</TableCell>
+                  <TableCell>
+                    {moment(data.fecha_registro).format("DD/MM/YYYY")}
+                  </TableCell>
                   <TableCell>
                     {data.cliente !== null ? data.cliente.nombre_cliente : "-"}
                   </TableCell>

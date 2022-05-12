@@ -94,7 +94,6 @@ const NavDataCajaUsers = ({ props }) => {
   window.onkeydown = Mi_función;
 
   function Administrador() {
-    console.log(sesion);
     if (sesion.accesos.ventas.administrador.ver === true) {
       props.history.push("/admin");
     } else {
