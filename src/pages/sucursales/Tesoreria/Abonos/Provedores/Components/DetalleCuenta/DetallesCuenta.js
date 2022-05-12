@@ -86,6 +86,7 @@ export default function DetallesCuenta({handleClick, cuenta}) {
                 )}
             </div>
             <Grid container>
+                
                 <Grid item lg={6} xs={12}>
                     <Box p={2}>
                         <Typography variant="h6">
@@ -95,10 +96,10 @@ export default function DetallesCuenta({handleClick, cuenta}) {
                     <Box p={2}>
                         <TablaAbonos cuenta={cuenta} />
                     </Box>
-                    <Box p={1} mr={3} display="flex" justifyContent="flex-end">
+                    <Box p={0} mr={3} display="flex" justifyContent="flex-end">
                         <Typography variant='h6'>Total abonado: <b style={{color: "#9B9B9B"}}>${cuenta.total - cuenta.saldo_credito_pendiente}</b></Typography>
                     </Box> 
-                    <Box p={1} mr={3} display="flex" justifyContent="flex-end">
+                    <Box p={0} mr={3} display="flex" justifyContent="flex-end">
                         <Typography variant='h6'>Restante: <b  style={{color: "green"}}>${formatoMexico(cuenta.saldo_credito_pendiente)}</b></Typography>
                     </Box>
                 </Grid>

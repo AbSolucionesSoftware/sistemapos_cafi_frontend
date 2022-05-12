@@ -7,17 +7,23 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Box from '@material-ui/core/Box';
 import { useQuery } from '@apollo/client';
 import { OBTENER_HISTORIAL_ABONOS } from "../../../../../../../gql/Tesoreria/abonos";
 import moment from 'moment';
 import { TesoreriaCtx } from '../../../../../../../context/Tesoreria/tesoreriaCtx';
-
+import ExportarExcel from '../../../../../../../components/ExportExcel';
+import { formatoMexico,formatoFecha } from "../../../../../../../config/reuserFunctions";
 const columns = [
 	{ id: 'fecha', label: 'Fecha de abono', minWidth: 170, align: 'center' },
 	{ id: 'cliente', label: 'Nombre', minWidth: 170, align: 'center' },
 	{ id: 'abono', label: 'Cantidad abonada', minWidth: 170, align: 'right' },
 ];
-
+const columnsEffect = [
+    { id: 'fecha_movimiento', label: 'Fecha', minWidth: 60 , widthPx: 160, },
+    { id: 'monto_total_abonado', label: 'Cantidad abono', minWidth: 170, widthPx: 160, },
+    
+];
 const useStyles  = makeStyles((theme) => ({
 	root: {
 		width: '100%',
@@ -42,7 +48,9 @@ export default function TablaAbonos({cuenta}) {
 	const { reload } = useContext(TesoreriaCtx);
 
 	const classes = useStyles();
-
+	 let dataExcel = [];
+    
+   
 	const { loading, data, error, refetch } = useQuery(
 		OBTENER_HISTORIAL_ABONOS, {
 			variables: {
@@ -65,6 +73,14 @@ export default function TablaAbonos({cuenta}) {
 	let abonos = []
 	if(data){
 		abonos = data.obtenerHistorialAbonos;
+		abonos.forEach(element => {
+            dataExcel.push({
+                fecha_movimiento : formatoFecha(element.fecha_movimiento.completa),
+                monto_total_abonado :   element.monto_total_abonado
+                
+        
+            })
+        });
 	}
 
 	useEffect(() => {
@@ -72,6 +88,7 @@ export default function TablaAbonos({cuenta}) {
 	}, [reload])
 
 	return (
+		<div>
 		<Paper className={classes.root}>
 			<TableContainer className={classes.container}>
 				<Table stickyHeader size="small" aria-label="a dense table">
@@ -97,6 +114,19 @@ export default function TablaAbonos({cuenta}) {
 					</TableBody>
 				</Table>
 			</TableContainer>
+		
+			
+             
 		</Paper>
+		{(abonos?.length > 0) ?
+				<Box m={1} mb={1} mrstyle={{ backgroundColor:'red', alignContent:'flex-end'}}  justifyContent="flex-end"  >
+					<Box  >
+						<ExportarExcel fileName="Historial Abonos" data={dataExcel} columnName={columnsEffect} />
+					</Box>
+				</Box>
+				:
+				<div/>
+			}
+		</div>
 	);
 }

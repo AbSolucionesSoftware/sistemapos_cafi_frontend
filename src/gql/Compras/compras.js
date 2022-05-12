@@ -50,6 +50,7 @@ export const OBTENER_COMPRAS_REALIZADAS = gql`
       fecha: $fecha
     ) {
       _id
+      estatus_credito 
       usuario {
         _id
         numero_usuario

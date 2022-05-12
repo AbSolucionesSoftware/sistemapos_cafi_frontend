@@ -170,18 +170,24 @@ export default function AbonoaRecibir({cuenta}) {
 
     return (
         <div>
-            <Button
-                size="large"
-                variant="outlined" 
-                fullWidth
-                color="primary"
-                startIcon={<AddCircleOutlineIcon style={{fontSize: 35}} />}
-                onClick={handleClick}
-            >
-                <Typography variant="h6">
-                    Abonar    
-                </Typography>
-            </Button>
+            {
+                (cuenta.credito_pagado ) ?
+                    <div/>
+                :
+                    <Button
+                    size="large"
+                    variant="outlined" 
+                    fullWidth
+                    color="primary"
+                    startIcon={<AddCircleOutlineIcon style={{fontSize: 35}} />}
+                    onClick={handleClick}
+                >
+                    <Typography variant="h6">
+                        Abonar    
+                    </Typography>
+                </Button>
+            }
+          
             <Dialog
                 open={open}
                 TransitionComponent={Transition}

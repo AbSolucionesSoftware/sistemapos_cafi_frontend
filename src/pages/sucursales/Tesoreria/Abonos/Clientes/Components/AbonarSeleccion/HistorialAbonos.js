@@ -17,13 +17,13 @@ import {
   DialogContent,
   DialogActions,
   Slide,
-  Chip,
 } from "@material-ui/core";
-import { useTheme } from "@material-ui/core";
+
 
 import {  Done } from "@material-ui/icons";
 import { formatoMexico,formatoFecha } from "../../../../../../../config/reuserFunctions";
 
+import ExportarExcel from '../../../../../../../components/ExportExcel'
 const useStyles = makeStyles({
     
 });
@@ -31,14 +31,30 @@ const useStyles = makeStyles({
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
-
+const columnsEffect = [
+    { id: 'fecha_movimiento_credito', label: 'Fecha', minWidth: 60 , widthPx: 160, },
+    { id: 'monto_total_abonado', label: 'Cantidad abono', minWidth: 170, widthPx: 160, },
+    
+];
 export default function HistorialAbonos(props){
     const classes = useStyles();
-   
-    const theme = useTheme();
+
     const handleOpen = () =>{
         props.setOpenHistorial(!props.openHistorial)
     }
+    let dataExcel = [];
+    if(props.historialAbonos){
+        props.historialAbonos.forEach(element => {
+            dataExcel.push({
+                fecha_movimiento_credito : formatoFecha(element.fecha_movimiento.completa),
+                monto_total_abonado :   formatoMexico(element.monto_total_abonado)
+                
+        
+            })
+        });
+    }
+   
+
     return(
       <Fragment>
       <Dialog
@@ -62,6 +78,15 @@ export default function HistorialAbonos(props){
               <CloseIcon style={{ fontSize: 30 }} />
               </Button>
           </Box>
+          {(props.historialAbonos?.length > 0) ?
+                <Box mr={4} mrstyle={{ backgroundColor:'red', alignContent:'flex-end'}}  justifyContent="flex-end"  >
+                    <Box  >
+                        <ExportarExcel fileName="Historial Abonos" data={dataExcel} columnName={columnsEffect} />
+                    </Box>
+                </Box>
+                :
+                <div/>
+            }
           </DialogTitle>
           <DialogContent>
               <Paper className={classes.root}>
