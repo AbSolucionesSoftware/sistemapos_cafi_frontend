@@ -3,7 +3,8 @@ import {
   AppBar,
   Box,
   Button,
-  Dialog, 
+  Dialog,
+  DialogContent,
   Slide,
   Typography,
 } from "@material-ui/core";
@@ -12,7 +13,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import CotizacionesPendientes from "./CotizacionesPendientes";
 
 import { FcCurrencyExchange } from "react-icons/fc";
-
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -72,7 +72,7 @@ export default function ListaCotizaciones() {
                 <Typography variant="h6">Cotizaciones pendientes</Typography>
               </Box>
             </Box>
-           {/*  <Box mt={2} textAlign="right">
+            {/*  <Box mt={2} textAlign="right">
               <Box textAlign="right">
                 <Typography variant="caption">
                   {moment().format("L")}
@@ -104,7 +104,9 @@ export default function ListaCotizaciones() {
             </Box>
           </Box>
         </AppBar>
-        <CotizacionesPendientes setOpen={setOpen} />
+        <DialogContent style={{ padding: 0 }}>
+          <CotizacionesPendientes setOpen={setOpen} />
+        </DialogContent>
       </Dialog>
     </>
   );

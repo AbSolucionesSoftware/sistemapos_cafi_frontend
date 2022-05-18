@@ -13,6 +13,7 @@ export const OBTENER_DATOS_EMPRESA = gql`
       sello_sat
       nombre_cer
       nombre_key
+      fecha_registro_sello_sat
       imagen
       nombre_fiscal
       rfc

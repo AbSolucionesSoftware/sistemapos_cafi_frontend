@@ -64,7 +64,6 @@ export default function RealizarFactura({ setAlert }) {
       const items = [];
 
       productos.forEach((producto) => {
-        console.log(producto);
         let { iva, ieps } = producto.id_producto.precios;
         let Taxes = [];
 
@@ -136,7 +135,6 @@ export default function RealizarFactura({ setAlert }) {
           input: nuevo_obj,
         },
       });
-      console.log("result", result);
       setLoading(false);
       setAlert({
         message: `¡Listo! ${result.data.crearFactura.message}`,
@@ -147,11 +145,10 @@ export default function RealizarFactura({ setAlert }) {
       handleClose();
     } catch (error) {
       console.log(error);
-      console.log(error.response);
       setLoading(false);
-      if (error.response) {
+      if (error.message) {
         setAlert({
-          message: error.response,
+          message: error.message,
           status: "error",
           open: true,
         });
@@ -202,7 +199,13 @@ export default function RealizarFactura({ setAlert }) {
         </DialogContent>
         <DialogActions style={{ justifyContent: "center" }}>
           <Button
-            startIcon={loading ? <CircularProgress color="inherit" size={20} /> : <Done />}
+            startIcon={
+              loading ? (
+                <CircularProgress color="inherit" size={20} />
+              ) : (
+                <Done />
+              )
+            }
             onClick={() => crearFactura()}
             variant="contained"
             color="primary"
@@ -223,7 +226,6 @@ const InputsFacturaModal = () => {
 
   const obtenerDatos = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setDatosFactura({
       ...datosFactura,
       [name]: value,
