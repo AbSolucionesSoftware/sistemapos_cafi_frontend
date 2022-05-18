@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Slide from "@material-ui/core/Slide";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -14,6 +17,10 @@ import DetallesFacturaModal from "./DetallesFacturaModal";
 import { OBTENER_DOCUMENTO_FACTURA } from "../../../../gql/Facturacion/Facturacion";
 import { useApolloClient } from "@apollo/client";
 import Snackbar from "@material-ui/core/Snackbar";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const columns = [
   { label: "Serie", padding: "checkbox" },
@@ -60,7 +67,7 @@ export default function TablaVentasFiltradas({ data }) {
       const response = await client.query({
         query: OBTENER_DOCUMENTO_FACTURA,
         variables: {
-          id
+          id,
         },
         fetchPolicy: "network-only",
       });
@@ -74,13 +81,26 @@ export default function TablaVentasFiltradas({ data }) {
 
   return (
     <Box my={2}>
-      <DetallesFacturaModal
-        factura={factura}
-        facturaBase64={facturaBase64}
+      <Dialog
         open={open}
-        setOpen={setOpen}
-        loading={loading}
-      />
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={() => setOpen(false)}
+        aria-labelledby="detalles-factura-modal-title"
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle id="detalles-factura-modal-title">
+          Detalles factura
+        </DialogTitle>
+        <DetallesFacturaModal
+          factura={factura}
+          facturaBase64={facturaBase64}
+          setOpen={setOpen}
+          loading={loading}
+        />
+      </Dialog>
+
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
         open={alert}
