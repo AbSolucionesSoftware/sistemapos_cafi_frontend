@@ -119,7 +119,7 @@ const RowCajasRender = ({ row, permisos, setAlert, refetch }) => {
             }}
             variant="dot" />
             <Box mx={1} />
-          <Box>CAJA {row.numero_caja}</Box>
+          <Box>CAJA {row.numero_caja} {row.principal ? "PRINCIPAL" : ""}</Box>
         </Box>
       </TableCell>
       {permisos.accesos.catalogos.cajas.eliminar === false ? null : (
@@ -169,7 +169,7 @@ const EliminarCajasModal = ({ data, setAlert, refetch }) => {
 
   return (
     <div>
-      <IconButton onClick={() => handleClickOpen()} disabled={data.activa}>
+      <IconButton onClick={() => handleClickOpen()} disabled={data.activa || data.principal}>
         <Delete />
       </IconButton>
       <Dialog open={open} onClose={handleClose}>

@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function TablaVentasFiltradas({ data }) {
+export default function TablaFacturasFiltradas({ data }) {
   const classes = useStyles();
   const [factura, setFactura] = useState();
   const [facturaBase64, setFacturaBase64] = useState();

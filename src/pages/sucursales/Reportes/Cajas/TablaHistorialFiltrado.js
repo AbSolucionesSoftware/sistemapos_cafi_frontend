@@ -90,7 +90,6 @@ function RowsRender({datos}) {
 	const handleClickOpen =()=> setOpen(!open);
 
 	const classes = useStyles();
-	console.log(datos)
 
 	return(
 		<>

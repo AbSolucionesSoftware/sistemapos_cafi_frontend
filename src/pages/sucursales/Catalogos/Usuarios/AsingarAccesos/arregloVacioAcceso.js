@@ -58,7 +58,13 @@ let arregloVacio = {
             agregar: false,
             editar: false,
             eliminar: false
-        }
+        },
+        caja_principal: {
+            ver: false,
+            agregar: false,
+            editar: false,
+            eliminar: false
+        },
     },
     reportes:{
         reporte_historial_cajas:{

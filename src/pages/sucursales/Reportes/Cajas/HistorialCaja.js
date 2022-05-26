@@ -47,7 +47,8 @@ const tipos = [
     'VENTA',
     'DEPOSITO',
     'RETIRO',
-    'TRANSFERENCIA'
+    'TRANSFERENCIA',
+    'COMPRA'
 ];
 
 export default function HistorialCaja(props) {

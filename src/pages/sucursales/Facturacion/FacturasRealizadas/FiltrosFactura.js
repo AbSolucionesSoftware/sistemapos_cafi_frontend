@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import React, { Fragment, useEffect, useState } from "react";
-import TablaVentasFiltradas from "./TablaVentasFiltradas";
+import TablaFacturasFiltradas from "./TablaFacturasFiltradas";
 import { formaPago } from "../catalogos";
 import { useDebounce } from "use-debounce/lib";
 import { useQuery } from "@apollo/client";
@@ -64,7 +64,7 @@ export default function FiltrosFactura() {
     <Fragment>
       <DialogContent>
         <CapturaDeDatos refetch={refetch} data={obtenerFacturas} />
-        <TablaVentasFiltradas data={obtenerFacturas} />
+        <TablaFacturasFiltradas data={obtenerFacturas} />
       </DialogContent>
     </Fragment>
   );

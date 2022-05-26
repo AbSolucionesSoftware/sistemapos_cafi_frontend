@@ -19,7 +19,8 @@ export const OBTENER_SUCURSALES = gql`
                 pais
             }
             cuenta_sucursal {
-                dinero_actual
+                efectivo
+                bancario
             }         
         }
     }
@@ -43,7 +44,8 @@ export const OBTENER_DATOS_SUCURSAL = gql`
                 pais
             }
             cuenta_sucursal {
-                dinero_actual
+                efectivo
+                bancario
             }         
         }
     }
@@ -67,7 +69,7 @@ export const ACTUALIZAR_SUCURSAL = gql`
                 pais
             }
             cuenta_sucursal {
-                dinero_actual
+                efectivo
             }         
         }
     }

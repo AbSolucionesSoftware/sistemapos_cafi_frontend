@@ -124,11 +124,14 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
   } = useContext(ComprasContext);
   const [openDelete, setOpenDelete] = useState(false);
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
   const [loading, setLoading] = useState(false);
 
   const [crearCompra] = useMutation(CREAR_COMPRA);
   const [crearCompraEnEspera] = useMutation(CREAR_COMPRA_ESPERA);
+
+  const isAdmin = sesion ? sesion.accesos.tesoreria.caja_principal.ver : false;
 
   const limpiarCampos = () => {
     setDatosProducto(initial_state_datosProducto);
@@ -154,7 +157,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     productos_con_descuento
   ) => {
     let datos = { ...datosCompra };
-    let copy_datosProducto = [ ...productosCompra ];
+    let copy_datosProducto = [...productosCompra];
     let productos = copy_datosProducto;
     if (status === "enEspera") {
       productos = copy_datosProducto.map((res) => {
@@ -167,7 +170,7 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
     }
 
     setLoading(true);
-    if (credito) setLoadingModal(true);
+    setLoadingModal(true);
     try {
       datos.productos = productos;
 
@@ -206,6 +209,33 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
           datos.total = descuento_compra.total;
           datos.descuento = descuento;
         }
+
+        //mandar datos extras para realizar los retiros a cajas o cuentas
+        //turno
+        let turno = null;
+        if (turnoEnCurso) {
+          turno = {
+            horario_en_turno: turnoEnCurso.horario_en_turno,
+            numero_caja: turnoEnCurso
+              ? parseInt(turnoEnCurso.numero_caja)
+              : null,
+            id_caja: turnoEnCurso.id_caja,
+            id_usuario: sesion._id,
+            token_turno_user: turnoEnCurso.token_turno_user,
+            numero_usuario_creador: turnoEnCurso
+              ? parseFloat(turnoEnCurso.usuario_en_turno.numero_usuario)
+              : null,
+            nombre_usuario_creador: turnoEnCurso.usuario_en_turno.nombre,
+          };
+        }
+        datos.turnoEnCurso = turno;
+        datos.admin = isAdmin;
+        datos.sesion = {
+          id_usuario: sesion._id,
+          nombre_usuario: sesion.nombre,
+          numero_usuario: sesion.numero_usuario,
+        };
+
         const result = await crearCompra({
           variables: {
             input: datos,
@@ -228,21 +258,29 @@ const ModalCompra = ({ open, handleClose, compra, status }) => {
       }
     } catch (error) {
       setLoading(false);
-      setAlert({
-        message: `Error de servidor`,
-        status: "error",
-        open: true,
-      });
       if (handleClose) {
         handleClose();
         setLoadingModal(false);
       }
       console.log(error);
-      if (error.networkError) {
+      if (error.message) {
+        setAlert({
+          message: error.message,
+          status: "error",
+          open: true,
+        });
+        return;
+      }
+      setAlert({
+        message: `Error de servidor`,
+        status: "error",
+        open: true,
+      });
+      /* if (error.networkError) {
         console.log(error.networkError.result);
       } else if (error.graphQLErrors) {
         console.log(error.graphQLErrors);
-      }
+      } */
     }
   };
 

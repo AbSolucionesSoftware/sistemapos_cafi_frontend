@@ -14,7 +14,7 @@ export default function Parametros({
           <Checkbox
             checked={
               arregloAccesos
-                ? arregloAccesos[departamento][subDepartamento].ver
+                ? arregloAccesos[departamento][subDepartamento]?.ver
                 : false
             }
             name="ver"
@@ -42,19 +42,20 @@ export default function Parametros({
       subDepartamento === "cdfi_realizados" ||
       departamento === "reportes" ||
       departamento === "ventas" ||
+      subDepartamento === "caja_principal" ||
       subDepartamento === "egresos" ? null : (
         <FormControlLabel
           control={
             <Checkbox
               checked={
                 arregloAccesos
-                  ? arregloAccesos[departamento][subDepartamento].agregar
+                  ? arregloAccesos[departamento][subDepartamento]?.agregar
                   : false
               }
               name="agregar"
               disabled={
                 arregloAccesos
-                  ? arregloAccesos[departamento][subDepartamento].ver === false
+                  ? arregloAccesos[departamento][subDepartamento]?.ver === false
                   : true
               }
               color="primary"
@@ -76,6 +77,7 @@ export default function Parametros({
       subDepartamento === "abonos_proveedores" ||
       subDepartamento === "abonos_clientes" ||
       subDepartamento === "egresos" ||
+      subDepartamento === "caja_principal" ||
       subDepartamento === "generar_cdfi" ||
       subDepartamento === "cdfi_realizados" ||
       subDepartamento === "registro_series_cdfi" ||
@@ -86,13 +88,13 @@ export default function Parametros({
             <Checkbox
               checked={
                 arregloAccesos
-                  ? arregloAccesos[departamento][subDepartamento].editar
+                  ? arregloAccesos[departamento][subDepartamento]?.editar
                   : false
               }
               name="editar"
               disabled={
                 arregloAccesos
-                  ? arregloAccesos[departamento][subDepartamento].ver === false
+                  ? arregloAccesos[departamento][subDepartamento]?.ver === false
                   : true
               }
               color="primary"
@@ -118,6 +120,7 @@ export default function Parametros({
       subDepartamento === "cdfi_realizados" ||
       subDepartamento === "abonos_clientes" ||
       subDepartamento === "egresos" ||
+      subDepartamento === "caja_principal" ||
       departamento === "reportes" ||
       departamento === "ventas" ? null : (
         <FormControlLabel
@@ -125,14 +128,14 @@ export default function Parametros({
             <Checkbox
               checked={
                 arregloAccesos
-                  ? arregloAccesos[departamento][subDepartamento].eliminar
+                  ? arregloAccesos[departamento][subDepartamento]?.eliminar
                   : false
               }
               name="eliminar"
               color="primary"
               disabled={
                 arregloAccesos
-                  ? arregloAccesos[departamento][subDepartamento].ver === false
+                  ? arregloAccesos[departamento][subDepartamento]?.ver === false
                   : true
               }
               onChange={(e) => obtenerAccesos(e, departamento, subDepartamento)}

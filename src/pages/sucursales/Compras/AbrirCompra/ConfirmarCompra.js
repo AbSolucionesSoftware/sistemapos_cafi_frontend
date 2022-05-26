@@ -19,7 +19,6 @@ import Slide from "@material-ui/core/Slide";
 import TextField from "@material-ui/core/TextField";
 import { ComprasContext } from "../../../../context/Compras/comprasContext";
 import { formatoMexico } from "../../../../config/reuserFunctions";
-import { formaPago } from "../../Facturacion/catalogos";
 import { Done, Close } from "@material-ui/icons";
 import { useDebounce } from "use-debounce";
 
@@ -279,7 +278,7 @@ export default function ConfirmarCompra({ realizarCompraBD }) {
                       <MenuItem
                         key={index}
                         value={res.Value}
-                      >{`${res.Value} - ${res.Name}`}</MenuItem>
+                      >{res.Name}</MenuItem>
                     ))}
                   </Select>
                 </FormControl>
@@ -400,3 +399,39 @@ export default function ConfirmarCompra({ realizarCompraBD }) {
     </div>
   );
 }
+
+
+export const formaPago = [
+  {
+    Name: "Efectivo",
+    Value: "01",
+  },
+  {
+    Name: "Cheque nominativo",
+    Value: "02",
+  },
+  {
+    Name: "Transferencia electrónica de fondos",
+    Value: "03",
+  },
+  {
+    Name: "Tarjeta de crédito",
+    Value: "04",
+  },
+  {
+    Name: "Monedero electrónico",
+    Value: "05",
+  },
+  {
+    Name: "Vales de despensa",
+    Value: "08",
+  },
+  {
+    Name: "Tarjeta de débito",
+    Value: "28",
+  },
+  {
+    Name: "Por definir",
+    Value: "99",
+  },
+];
