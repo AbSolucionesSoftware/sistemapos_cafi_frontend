@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Box, Container, Grid } from '@material-ui/core';
-import CuentasEmpresaSucursales from './CuentasEmpresaSucursales/CuentasEmpresaSucursales';
+import CajaPrincipal from './CajaPrincipal/CajaPrincipal';
 import Egresos from './Egresos/Egresos';
 import AbonosProveedores from './Abonos/Provedores/AbonosProovedores';
 import AbonosClientes from './Abonos/Clientes/AbonosClientes';
@@ -11,10 +11,10 @@ import SnackBarMessages from '../../../components/SnackBarMessages';
 import { TesoreriaCtx } from '../../../context/Tesoreria/tesoreriaCtx';
 
 export default function Tesoreria() {
-
+  
 	const { alert, setAlert } = useContext(TesoreriaCtx);
 	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
-
+	console.log(permisosUsuario.accesos.tesoreria)
 	return (
 		<Container>
             <SnackBarMessages alert={alert} setAlert={setAlert} />
@@ -22,7 +22,7 @@ export default function Tesoreria() {
 				{permisosUsuario.accesos.tesoreria.cuentas_empresa.ver === false ? (null):(
 					<Grid item lg={2}>
 						<Box display="flex" justifyContent="center" alignItems="center">
-							<CuentasEmpresaSucursales />
+							<CajaPrincipal />
 						</Box>
 					</Grid>
 				)}

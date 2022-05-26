@@ -26,7 +26,7 @@ export const OBTENER_CAJAS = gql`
             nombre
             email
             }
-             
+            principal 
         }
     }
 `;
