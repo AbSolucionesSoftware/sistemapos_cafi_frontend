@@ -21,6 +21,7 @@ import "moment/locale/es";
 import { VentasContext } from "../../../context/Ventas/ventasContext";
 import { useMutation } from "@apollo/client";
 import { withRouter } from "react-router-dom";
+import { formatoMexico } from "../../../config/reuserFunctions";
 moment.locale("es");
 
 function CerrarTurno(props) {
@@ -37,13 +38,50 @@ function CerrarTurno(props) {
   const classes = useStyles();
   const [montoTurno, setMontoTurno] = useState([]);
   const [cerrarTurno, setCerrarTurno] = useState([]);
+  const [montoResguardo, setMontoResguardo] = useState(0);
+  const [montoRetiro, setMontoRetiro] = useState(0);
+  const [montosTotales, setMontosTotales] = useState(0);
 
   const obtenerCamposMontos = (e) => {
-    setMontoTurno({ ...montoTurno, [e.target.name]: e.target.value });
+    const montos = { ...montoTurno, [e.target.name]: e.target.value };
+    setMontoTurno(montos);
+
+    let sum = 0;
+    for (const property in montos) {
+      sum += parseFloat(montos[property]);
+    }
+    setMontosTotales(sum);
   };
 
   const obtenerCampos = (e) => {
     setCerrarTurno({ ...cerrarTurno, [e.target.name]: e.target.value });
+  };
+
+  const obtenerMontoResguardo = (e) => {
+    const montoEfectivo = parseFloat(montoTurno.monto_efectivo);
+    const montoResguardo = parseFloat(e.target.value);
+    const montoTranferir = montoEfectivo - montoResguardo;
+
+    if (Math.sign(montoTranferir) === -1) {
+      return;
+    }
+
+    /* if(montoResguardo > ) */
+    setMontoResguardo(montoResguardo);
+    setMontoRetiro(montoTranferir);
+  };
+
+  const obtenerMontoTransfer = (e) => {
+    const montoEfectivo = parseFloat(montoTurno.monto_efectivo);
+    const montoTranferir = parseFloat(e.target.value);
+    const montoResguardo = montoEfectivo - montoTranferir;
+
+    if (Math.sign(montoResguardo) === -1) {
+      return;
+    }
+
+    setMontoResguardo(montoResguardo);
+    setMontoRetiro(montoTranferir);
   };
 
   const input = {
@@ -91,11 +129,10 @@ function CerrarTurno(props) {
       completa: moment().format("YYYY-MM-DD"),
     },
     fecha_movimiento: moment().locale("es-mx").format(),
+    montoRetiro,
     montos_en_caja: {
       monto_efectivo: {
-        monto: parseFloat(
-          montoTurno.monto_efectivo ? montoTurno.monto_efectivo : 0
-        ),
+        monto: parseFloat(montoResguardo),
         metodo_pago: "01",
       },
       monto_tarjeta_debito: {
@@ -206,7 +243,7 @@ function CerrarTurno(props) {
 
         actualizarTurnoSesion(ubicacionTurno);
         /* setLoading(false); */
-       /*  setTurnoActivo(true); */
+        /*  setTurnoActivo(true); */
         window.location.reload();
       }
     } catch (error) {
@@ -219,6 +256,8 @@ function CerrarTurno(props) {
       handleClickOpen();
     }
   };
+
+  console.log(montoTurno);
 
   return (
     <Fragment>
@@ -244,10 +283,15 @@ function CerrarTurno(props) {
               /* defaultValue={0} */
               placeholder="0.00"
               InputProps={{
-                startAdornment: <InputAdornment position="start">$</InputAdornment>
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
               }}
               color="primary"
-              onChange={obtenerCamposMontos}
+              onChange={(e) => {
+                obtenerCamposMontos(e);
+                setMontoResguardo(parseFloat(e.target.value));
+              }}
             />
           </Grid>
           <Grid item md={6} xs={12}>
@@ -262,7 +306,9 @@ function CerrarTurno(props) {
               /* defaultValue={0} */
               placeholder="0.00"
               InputProps={{
-                startAdornment: <InputAdornment position="start">$</InputAdornment>
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
               }}
               color="primary"
               onChange={obtenerCamposMontos}
@@ -283,7 +329,9 @@ function CerrarTurno(props) {
               /* defaultValue={0} */
               placeholder="0.00"
               InputProps={{
-                startAdornment: <InputAdornment position="start">$</InputAdornment>
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
               }}
               color="primary"
               onChange={obtenerCamposMontos}
@@ -304,7 +352,9 @@ function CerrarTurno(props) {
               /* defaultValue={0} */
               placeholder="0.00"
               InputProps={{
-                startAdornment: <InputAdornment position="start">$</InputAdornment>
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
               }}
               color="primary"
               onChange={obtenerCamposMontos}
@@ -322,7 +372,9 @@ function CerrarTurno(props) {
               /* defaultValue={0} */
               placeholder="0.00"
               InputProps={{
-                startAdornment: <InputAdornment position="start">$</InputAdornment>
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
               }}
               color="primary"
               onChange={obtenerCamposMontos}
@@ -340,7 +392,9 @@ function CerrarTurno(props) {
               /* defaultValue={0} */
               placeholder="0.00"
               InputProps={{
-                startAdornment: <InputAdornment position="start">$</InputAdornment>
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
               }}
               color="primary"
               onChange={obtenerCamposMontos}
@@ -358,7 +412,9 @@ function CerrarTurno(props) {
               /* defaultValue={0} */
               placeholder="0.00"
               InputProps={{
-                startAdornment: <InputAdornment position="start">$</InputAdornment>
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
               }}
               color="primary"
               onChange={obtenerCamposMontos}
@@ -378,19 +434,28 @@ function CerrarTurno(props) {
               /* defaultValue={0} */
               placeholder="0.00"
               InputProps={{
-                startAdornment: <InputAdornment position="start">$</InputAdornment>
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
               }}
               color="primary"
               onChange={obtenerCamposMontos}
             />
           </Grid>
         </Grid>
-        <Box my={2} display="flex">
+        <Box mt={2} display="flex">
           <Typography>
             <b>Monto total efectivo: </b>
           </Typography>
           <Box mx={1} />
-          <Typography>${montoTurno.monto_efectivo} Mx.</Typography>
+          <Typography>${formatoMexico(montoTurno.monto_efectivo)}</Typography>
+        </Box>
+        <Box mb={2} display="flex">
+          <Typography>
+            <b>Montos totales: </b>
+          </Typography>
+          <Box mx={1} />
+          <Typography>${formatoMexico(montosTotales)}</Typography>
         </Box>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -407,6 +472,11 @@ function CerrarTurno(props) {
                 onChange={obtenerCampos}
                 id="form-producto-tipo"
                 name="horario_en_turno"
+                value={
+                  cerrarTurno.horario_en_turno
+                    ? cerrarTurno.horario_en_turno
+                    : ""
+                }
               >
                 <MenuItem value="">
                   <em>Selecciona uno</em>
@@ -415,6 +485,50 @@ function CerrarTurno(props) {
                 <MenuItem value="MATUTINO">Matutino</MenuItem>
               </Select>
             </FormControl>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography className={classes.titulos}>
+              Mantener en caja:
+            </Typography>
+            <TextField
+              fullWidth
+              name="monto_reguardo"
+              variant="outlined"
+              size="small"
+              inputProps={{ min: 0 }}
+              type="number"
+              value={montoResguardo}
+              placeholder="0.00"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
+              color="primary"
+              onChange={obtenerMontoResguardo}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <Typography className={classes.titulos}>
+              Retirar de caja:
+            </Typography>
+            <TextField
+              fullWidth
+              name="monto_transferencia"
+              variant="outlined"
+              size="small"
+              inputProps={{ min: 0 }}
+              type="number"
+              value={montoRetiro}
+              placeholder="0.00"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">$</InputAdornment>
+                ),
+              }}
+              color="primary"
+              onChange={obtenerMontoTransfer}
+            />
           </Grid>
           <Grid item xs={12}>
             <Typography className={classes.titulos}>Comentarios:</Typography>
