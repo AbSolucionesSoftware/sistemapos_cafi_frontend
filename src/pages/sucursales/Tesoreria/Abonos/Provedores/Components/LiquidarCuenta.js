@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, Fragment } from "react";
 import {
   Box,
   Button,
@@ -15,6 +15,7 @@ import {
 } from "@material-ui/core";
 import DoneIcon from "@material-ui/icons/Done";
 import CloseIcon from "@material-ui/icons/Close";
+import { withRouter } from "react-router";
 import { formatoMexico } from "../../../../../../config/reuserFunctions";
 import BackdropComponent from "../../../../../../components/Layouts/BackDrop";
 import { formaPago } from "../../../../Facturacion/catalogos";
@@ -39,10 +40,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function LiquidarCuenta({ cuenta, refetch }) {
+ function LiquidarCuenta(props) {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const { setAlert, setReload } = useContext(TesoreriaCtx);
-
+  const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
   const [CrearAbono] = useMutation(CREAR_ABONO);
 
   const [open, setOpen] = useState(false);
@@ -53,12 +54,22 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
   const [loading, setLoading] = useState(false);
   const [metodoPago, setMetodoPago] = useState("");
 
-  const handleClick = () => {
-    setOpen(!open);
-    setCuentaTotalDescuento(0);
-    setDineroDescontado(0);
-    setValue(0);
-  };
+
+   
+
+
+    const handleClick = () => { 
+      if(turnoEnCurso){
+        setOpen(!open);
+        setCuentaTotalDescuento(0);
+        setDineroDescontado(0);
+        setValue(0);
+      }else{
+        console.log(props)
+        props.history.push('/ventas/venta-general');
+      }
+  } 
+
 
   const classes = useStyles();
 
@@ -66,10 +77,10 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
     setValue(newValue);
     let porcentaje = parseFloat((100 - newValue).toFixed(2)); //Porcentaje para calculos de descuento
     let cuenta_con_descuento = parseFloat(
-      ((cuenta.saldo_credito_pendiente * porcentaje) / 100).toFixed(2)
+      ((props.cuenta.saldo_credito_pendiente * porcentaje) / 100).toFixed(2)
     );
     let dineroDescontado = parseFloat(
-      (cuenta.saldo_credito_pendiente - cuenta_con_descuento).toFixed(2)
+      (props.cuenta.saldo_credito_pendiente - cuenta_con_descuento).toFixed(2)
     );
     setCuentaTotalDescuento(cuenta_con_descuento);
     setDineroDescontado(dineroDescontado);
@@ -79,10 +90,10 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
     let valorText = parseFloat(e.target.value);
 
     let porcentaje = parseFloat(
-      ((valorText * 100) / cuenta.saldo_credito_pendiente).toFixed(2)
+      ((valorText * 100) / props.cuenta.saldo_credito_pendiente).toFixed(2)
     );
     let dineroDescontado = parseFloat(
-      (cuenta.saldo_credito_pendiente - valorText).toFixed(2)
+      (props.cuenta.saldo_credito_pendiente - valorText).toFixed(2)
     );
 
     setCuentaTotalDescuento(valorText);
@@ -95,8 +106,8 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
   }
 
   const input = {
-    tipo_movimiento: "ABONO",
-    rol_movimiento: "PROVEEDOR",
+    tipo_movimiento: "ABONO_PROVEEDOR",
+    rol_movimiento: "CAJA",
     fecha_movimiento: {
       year: moment().format("YYYY"),
       mes: moment().format("MM"),
@@ -105,7 +116,7 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
       no_dia_year: moment().dayOfYear().toString(),
       completa: moment().locale("es-mx").format(),
     },
-    monto_total_abonado: parseFloat(cuenta.saldo_credito_pendiente),
+    monto_total_abonado: parseFloat(props.cuenta.saldo_credito_pendiente),
     descuento: {
       porciento_descuento: value,
       dinero_descontado: dineroDescontado,
@@ -117,8 +128,8 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
           metodoPago === "01"
             ? parseFloat(
                 cuentaTotalDescuento === 0
-                  ? cuenta.saldo_credito_pendiente
-                  : cuentaTotalDescuento
+                  ? props.cuenta.saldo_credito_pendiente
+                  : props.cuentaTotalDescuento
               )
             : 0,
         metodo_pago: "01",
@@ -128,8 +139,8 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
           metodoPago === "28"
             ? parseFloat(
                 cuentaTotalDescuento === 0
-                  ? cuenta.saldo_credito_pendiente
-                  : cuentaTotalDescuento
+                  ? props.cuenta.saldo_credito_pendiente
+                  : props.cuentaTotalDescuento
               )
             : 0,
         metodo_pago: "28",
@@ -139,8 +150,8 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
           metodoPago === "04"
             ? parseFloat(
                 cuentaTotalDescuento === 0
-                  ? cuenta.saldo_credito_pendiente
-                  : cuentaTotalDescuento
+                  ? props.cuenta.saldo_credito_pendiente
+                  : props.cuentaTotalDescuento
               )
             : 0,
         metodo_pago: "04",
@@ -150,7 +161,7 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
           metodoPago === "99"
             ? parseFloat(
                 cuentaTotalDescuento === 0
-                  ? cuenta.saldo_credito_pendiente
+                  ? props.cuenta.saldo_credito_pendiente
                   : cuentaTotalDescuento
               )
             : 0,
@@ -161,7 +172,7 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
           metodoPago === "05"
             ? parseFloat(
                 cuentaTotalDescuento === 0
-                  ? cuenta.saldo_credito_pendiente
+                  ? props.cuenta.saldo_credito_pendiente
                   : cuentaTotalDescuento
               )
             : 0,
@@ -172,8 +183,8 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
           metodoPago === "03"
             ? parseFloat(
                 cuentaTotalDescuento === 0
-                  ? cuenta.saldo_credito_pendiente
-                  : cuentaTotalDescuento
+                  ? props.cuenta.saldo_credito_pendiente
+                  : props.cuentaTotalDescuento
               )
             : 0,
         metodo_pago: "03",
@@ -183,8 +194,8 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
           metodoPago === "02"
             ? parseFloat(
                 cuentaTotalDescuento === 0
-                  ? cuenta.saldo_credito_pendiente
-                  : cuentaTotalDescuento
+                  ? props.cuenta.saldo_credito_pendiente
+                  : props.cuentaTotalDescuento
               )
             : 0,
         metodo_pago: "02",
@@ -194,8 +205,8 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
           metodoPago === "08"
             ? parseFloat(
                 cuentaTotalDescuento === 0
-                  ? cuenta.saldo_credito_pendiente
-                  : cuentaTotalDescuento
+                  ? props.cuenta.saldo_credito_pendiente
+                  : props.cuentaTotalDescuento
               )
             : 0,
         metodo_pago: "08",
@@ -207,12 +218,12 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
     },
     numero_usuario_creador: sesion.numero_usuario,
     nombre_usuario_creador: sesion.nombre,
-    id_cliente: cuenta.proveedor.id_proveedor._id,
-    numero_cliente: cuenta.proveedor.numero_cliente,
-    nombre_cliente: cuenta.proveedor.nombre_cliente,
-    telefono_cliente: cuenta.proveedor.id_proveedor.telefono,
-    email_cliente: cuenta.proveedor.id_proveedor.email,
-    id_compra: cuenta._id,
+    id_cliente: props.cuenta.proveedor.id_proveedor._id,
+    numero_cliente: props.cuenta.proveedor.numero_cliente,
+    nombre_cliente: props.cuenta.proveedor.nombre_cliente,
+    telefono_cliente: props.cuenta.proveedor.id_proveedor.telefono,
+    email_cliente: props.cuenta.proveedor.id_proveedor.email,
+    id_compra: props.cuenta._id,
   };
 
   const enviarDatos = async () => {
@@ -255,7 +266,7 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
   };
 
   return (
-    <div>
+    <Fragment>
       <Button
         size="medium"
         variant="outlined"
@@ -352,7 +363,7 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
             </Box>
             <Box>
               <Typography>
-                <b>${formatoMexico(cuenta.total)}</b>
+                <b>${formatoMexico(props.cuenta.total)}</b>
               </Typography>
             </Box>
           </Box>
@@ -362,7 +373,7 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
             </Box>
             <Box>
               <Typography>
-                <b>${formatoMexico(cuenta.saldo_credito_pendiente)}</b>
+                <b>${formatoMexico(props.cuenta.saldo_credito_pendiente)}</b>
               </Typography>
             </Box>
           </Box>
@@ -396,8 +407,8 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
                   $
                   {formatoMexico(
                     cuentaTotalDescuento === 0
-                      ? cuenta.saldo_credito_pendiente
-                      : cuentaTotalDescuento
+                      ? props.cuenta.saldo_credito_pendiente
+                      : props.cuentaTotalDescuento
                   )}
                 </b>
               </Typography>
@@ -415,6 +426,8 @@ export default function LiquidarCuenta({ cuenta, refetch }) {
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </Fragment>
   );
 }
+
+export default withRouter(LiquidarCuenta);

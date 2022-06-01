@@ -97,11 +97,19 @@ export const OBTENER_HISTORIAL_ABONOS_CLIENTE = gql `
           pais
         }
         imagen
+        estado_cliente
+        tipo_cliente
         eliminado
         banco
         numero_cuenta
         monedero_electronico
         credito_disponible
+        empresa {
+          _id
+        }
+        sucursal {
+          _id
+        }
       }
       descuento
       ieps
@@ -448,7 +456,7 @@ export const OBTENER_HISTORIAL_ABONOS_CLIENTE = gql `
         issuer {
           FiscalRegime
           Rfc
-          Name
+          TaxName
         }
         receiver {
           Rfc

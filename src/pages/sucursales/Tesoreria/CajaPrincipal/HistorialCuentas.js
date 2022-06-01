@@ -66,7 +66,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function HistorialCuentas({cuenta, tipo}) {
+export default function HistorialCuentas({cuenta, tipo, reload}) {
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     moment.locale('es');
     const classes = useStyles();
@@ -107,8 +107,14 @@ export default function HistorialCuentas({cuenta, tipo}) {
 
     useEffect(() => {
         refetch()
-    }, [refetch])
+    }, [refetch]);
 
+    useEffect(() => {
+        if(reload){
+            refetch()
+        }
+      
+    }, [reload]);
 	return (
         <Fragment>
             <Box>
@@ -156,8 +162,8 @@ export default function HistorialCuentas({cuenta, tipo}) {
                             fullWidth
                         >
                             <MenuItem value='TODOS'>Ninguno</MenuItem>
-                            <MenuItem value='CUENTA-DEPOSITO'>Deposito</MenuItem>
-                            <MenuItem value='CUENTA-RETIRO'>Retiro</MenuItem>
+                            <MenuItem value='CUENTA_DEPOSITO'>Deposito</MenuItem>
+                            <MenuItem value='CUENTA_RETIRO'>Retiro</MenuItem>
                         </Select>
                     </Box>
                 </div>
@@ -227,7 +233,7 @@ function RowsHistorial ({ row, loading }) {
             </TableCell>
             <TableCell>{row?.concepto}</TableCell>
             <TableCell>{
-                row?.tipo_movimiento === "CUENTA-DEPOSITO" ? 'DEPOSITO' : 'RETIRO'    
+                row?.tipo_movimiento === "CUENTA_DEPOSITO" ? 'DEPOSITO' : 'RETIRO'    
             }</TableCell>
 
         </TableRow>

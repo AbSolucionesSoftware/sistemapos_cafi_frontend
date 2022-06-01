@@ -48,6 +48,7 @@ export default function CajaPrincipal() {
 
 	const handleClickOpen = () => setOpen(!open);
 	const [cuenta, setCuenta ] = useState({});
+	const [reload, setReload ] = useState(false);
 	return (
 		<div>
 			<Button fullWidth onClick={handleClickOpen}>
@@ -93,12 +94,12 @@ export default function CajaPrincipal() {
 							</Box>
 						</Box>
 						<Box >
-							<RetiroDeposito cuenta={cuenta} tipo={false} open={false} setOpen={setOpen} /> 
+							<RetiroDeposito cuenta={cuenta} tipo={false}  setReload={setReload} /> 
 						</Box>
 					</Box>
 
 					<Box>
-						<HistorialCuentas cuenta={cuenta} tipo={false}/>
+						<HistorialCuentas cuenta={cuenta} tipo={false} reload ={reload} />
 					</Box>
 				</DialogContent>
 			</Dialog>

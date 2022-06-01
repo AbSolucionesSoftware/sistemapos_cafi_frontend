@@ -1,9 +1,9 @@
 import { Box, Button, Dialog, DialogActions,
-        DialogContent, IconButton, makeStyles, 
+        DialogContent, makeStyles, 
         MenuItem, Select, Slide, TextField, Typography,
         Input, FormControl, InputLabel
 } from '@material-ui/core';
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState } from 'react';
 import moment from 'moment';
 
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
@@ -34,19 +34,7 @@ const useStyles = makeStyles((theme) => ({
         minWidth: '96%',
         maxWidth: '96%',
     },
-    input: {
-        "& input[type=number]": {
-          "-moz-appearance": "textfield",
-        },
-        "& input[type=number]::-webkit-outer-spin-button": {
-          "-webkit-appearance": "none",
-          margin: 0,
-        },
-        "& input[type=number]::-webkit-inner-spin-button": {
-          "-webkit-appearance": "none",
-          margin: 0,
-        },
-    },
+  
     icon: {
 		width: 40
 	},
@@ -70,7 +58,7 @@ const MenuProps = {
 
 const conceptos = ['CORTE DE CAJA','TRANSFERENCIA DE EFECTIVO','APORTACION SOCIOS'];
 
-export default function RetiroDeposito({cuenta, refetch, tipo}) {
+export default function RetiroDeposito({cuenta, setReload, tipo }) {
 
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const turnoEnCurso = JSON.parse(localStorage.getItem('turnoEnCurso'));
@@ -114,11 +102,14 @@ export default function RetiroDeposito({cuenta, refetch, tipo}) {
     };
 
     const onChangeDatos = (e) => {
-        setDatosMovimiento({...datosMovimiento, [e.target.name]: e.target.value })
+    
+            setDatosMovimiento({...datosMovimiento, [e.target.name]: e.target.value })
+        
+       
     };
 
     const input ={
-        tipo_movimiento: datosMovimiento.tipo_movimiento === 'RETIRO' ? 'CUENTA-RETIRO' : 'CUENTA-DEPOSITO',
+        tipo_movimiento: datosMovimiento.tipo_movimiento === 'RETIRO' ? 'CUENTA_RETIRO' : 'CUENTA_DEPOSITO',
         id_usuario: sesion._id,
         //rol_movimiento: tipo === true ? "CUENTA-EMPRESA" : "CUENTA",
         rol_movimiento:  "CAJA_PRINCIPAL",
@@ -126,13 +117,13 @@ export default function RetiroDeposito({cuenta, refetch, tipo}) {
         //id_Caja: turnoEnCurso ? turnoEnCurso.id_caja : null,
         numero_usuario_creador: sesion.numero_usuario.toString(),
         nombre_usuario_creador: sesion.nombre,
-        horario_turno: turnoEnCurso ? turnoEnCurso.horario_turno : null,
+        horario_turno: turnoEnCurso ? turnoEnCurso.horario_turno : '',
         concepto: concepto,
         usuario_entrega: usuarioEntrega._id,
         origen_entrega: origen._id,
         fecha_movimiento_entrega: fechaMovimientoEntrega,
         
-        hora_movimiento: {
+        hora_moviento: {
             hora: moment().format('hh'),
             minutos: moment().format('mm'),
             segundos: moment().format('ss'),
@@ -148,7 +139,7 @@ export default function RetiroDeposito({cuenta, refetch, tipo}) {
         },
         montos_en_caja: {
             monto_efectivo: {
-                monto: parseFloat(datosMovimiento.cantidad),
+                monto: (datosMovimiento.tipo_movimiento === 'RETIRO') ? parseFloat(datosMovimiento.cantidad * -1) : parseFloat(datosMovimiento.cantidad),
                 metodo_pago: "01"
             },
             monto_tarjeta_debito: {
@@ -219,6 +210,7 @@ export default function RetiroDeposito({cuenta, refetch, tipo}) {
                 }
             });
             //refetch();
+            
             setDatosMovimiento({}); 
             handleClickOpen();
             setAlert({
@@ -226,6 +218,7 @@ export default function RetiroDeposito({cuenta, refetch, tipo}) {
                 status: "success",
                 open: true,
             });
+            setReload(true);
         } catch (error) {
             console.log(error)
             setAlert({
@@ -379,13 +372,12 @@ export default function RetiroDeposito({cuenta, refetch, tipo}) {
                         <Box width="50%">
                             <Typography>Cantidad</Typography>
                             <TextField
-                                className={classes.input}
+                              
                                 fullWidth
-                             
-                                value= {(datosMovimiento.cantidad) ? '$'  + formatoMexico(datosMovimiento.cantidad) : ''}
                                 onChange={onChangeDatos}
                                 size="small"
-                                type='number'
+                                
+                                InputProps={{type:'number'}}
                                 name="cantidad"
                                 variant="outlined"
                             />
@@ -551,7 +543,6 @@ export default function RetiroDeposito({cuenta, refetch, tipo}) {
                                 size="small"
                                 multiline
                                 rows={2}
-                                type='number'
                                 name="monto_movimiento"
                                 variant="outlined"
                             />

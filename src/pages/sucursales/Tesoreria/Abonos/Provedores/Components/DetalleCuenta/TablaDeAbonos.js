@@ -41,12 +41,12 @@ const useStyles  = makeStyles((theme) => ({
 	}
 }));
 
-export default function TablaAbonos({cuenta}) {
+export default function TablaAbonos(props) {
 	
 	const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
 	const { reload } = useContext(TesoreriaCtx);
-
+	  const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
 	const classes = useStyles();
 	 let dataExcel = [];
     
@@ -60,10 +60,10 @@ export default function TablaAbonos({cuenta}) {
 					fecha_inicio: "",
 					fecha_fin: "",
 					usuario: "",
-					id_cliente: cuenta.proveedor.id_proveedor._id,
+					id_cliente: props.cuenta.proveedor.id_proveedor._id,
 					id_egreso: "",
-					rol_movimiento: "PROVEEDOR",
-					id_compra: cuenta._id
+					rol_movimiento: "ABONO_PROVEEDOR",
+					id_compra: props.cuenta._id
 				}
 			},
 		  	fetchPolicy: "network-only",

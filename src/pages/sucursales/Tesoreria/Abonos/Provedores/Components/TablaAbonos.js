@@ -65,13 +65,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function TablaAbonos({loading}) {
+export default function TablaAbonos(props) {
 
 	const { cuentas} = useContext(TesoreriaCtx);
 
 	const classes = useStyles();
 
-	if (loading) 
+	if (props.loading) 
 		return (
 			<Box
 			display="flex"
@@ -143,7 +143,7 @@ export default function TablaAbonos({loading}) {
 							
 									return (
 										<RowsCuentas 
-											loading={loading}
+											loading={props.loading}
 											cuentaSelect={row}
 											key={index}
 										/>
@@ -159,7 +159,7 @@ export default function TablaAbonos({loading}) {
 	);
 };
 
-function RowsCuentas ({cuentaSelect, loading}){
+function RowsCuentas (props){
 	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
 	const [open, setOpen] = useState(false);
     const classes = useStyles();
@@ -184,13 +184,13 @@ function RowsCuentas ({cuentaSelect, loading}){
 				hover
 				tabIndex={-1}
 				onClick={(e) => TwoClickInRowTableBuy(e)}
-				className={(cuentaSelect.estatus_credito === 'PAGADA') ? classes.pagada : (cuentaSelect.estatus_credito === 'VENCIDA') ?  classes.vencidas : classes.vencer}
+				className={(props.cuentaSelect.estatus_credito === 'PAGADA') ? classes.pagada : (props.cuentaSelect.estatus_credito === 'VENCIDA') ?  classes.vencidas : classes.vencer}
 			>
-				<TableCell align="center">{moment(cuentaSelect.fecha_registro).format('D MMMM YYYY')}</TableCell>
-				<TableCell align="center">{cuentaSelect.proveedor.id_proveedor.nombre_cliente}</TableCell>
-				<TableCell align="center">${formatoMexico(cuentaSelect.total)}</TableCell>
-				<TableCell align="center">${formatoMexico(cuentaSelect.total - cuentaSelect.saldo_credito_pendiente)}</TableCell>
-				<TableCell align="center">${formatoMexico(cuentaSelect.saldo_credito_pendiente)}</TableCell>
+				<TableCell align="center">{moment(props.cuentaSelect.fecha_registro).format('D MMMM YYYY')}</TableCell>
+				<TableCell align="center">{props.cuentaSelect.proveedor.id_proveedor.nombre_cliente}</TableCell>
+				<TableCell align="center">${formatoMexico(props.cuentaSelect.total)}</TableCell>
+				<TableCell align="center">${formatoMexico(props.cuentaSelect.total - props.cuentaSelect.saldo_credito_pendiente)}</TableCell>
+				<TableCell align="center">${formatoMexico(props.cuentaSelect.saldo_credito_pendiente)}</TableCell>
 				
 				{permisosUsuario.accesos.tesoreria.abonos_proveedores.editar === false ? (
 					<TableCell align="center">
@@ -198,10 +198,10 @@ function RowsCuentas ({cuentaSelect, loading}){
 				) : (
 					<TableCell align="center">
 						{
-							( cuentaSelect.credito_pagado) ?
+							( props.cuentaSelect.credito_pagado) ?
 							<div/>
 							:
-							<LiquidarCuenta cuenta={cuentaSelect}/>
+							<LiquidarCuenta cuenta={props.cuentaSelect}/>
 						}
 						
 					</TableCell>
@@ -215,8 +215,8 @@ function RowsCuentas ({cuentaSelect, loading}){
 				TransitionComponent={Transition}
 			>
 				<DetallesCuenta
-					cuenta={cuentaSelect}
-					loading={loading}
+					cuenta={props.cuentaSelect}
+					loading={props.loading}
 					handleClick={handleClick}
 				/>
 			</Dialog>

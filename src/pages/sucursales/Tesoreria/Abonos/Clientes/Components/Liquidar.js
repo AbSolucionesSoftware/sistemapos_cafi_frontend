@@ -30,6 +30,7 @@ function Liquidar(props) {
     
     const [open, setOpen] = useState(false);
     const {abonos} = useContext(AbonosCtx);
+    console.log(AbonosCtx)
     const [metodoPago, setMetodoPago] = useState('');
     const [value, setValue] = useState(0);
     const [total, setTotal] = useState(0);
@@ -84,14 +85,16 @@ function Liquidar(props) {
     const liquidarVentas = async() =>{
         try {
             
-            props.setLoading(true);
-            let ObjectMetodoPago = formaPago.filter((val) => {
-               
-                return(metodoPago === val.Value)
+            let ObjectMetodoPago = {};
+            formaPago.forEach((val) => {
+                if (metodoPago === val.Value) { 
+                    ObjectMetodoPago = val;
+                }
             });
+
             const input = {
-                tipo_movimiento: "ABONO",
-                rol_movimiento: "CLIENTE",
+                tipo_movimiento: "ABONO_CLIENTE",
+                rol_movimiento: "CAJA",
                 numero_caja: parseInt(turnoEnCurso.numero_caja),
                 id_Caja: turnoEnCurso.id_caja,
                 fecha_movimiento: {
@@ -108,12 +111,13 @@ function Liquidar(props) {
                     dinero_descontado: dineroDescontado,
                     total_con_descuento: cuentaTotalDescuento
                 },
-                horario_turno: '',
+                horario_turno: turnoEnCurso.horario_en_turno,
 
                 metodo_de_pago:{
                     clave: ObjectMetodoPago.Value,
                     metodo:  ObjectMetodoPago.Name,
                 },
+                
                 id_usuario: sesion._id,
                 numero_usuario_creador: sesion.numero_usuario,
                 nombre_usuario_creador: sesion.nombre,
@@ -298,7 +302,7 @@ function Liquidar(props) {
                         <Typography><b>Nombre de Cliente:</b> {props.cliente.nombre_cliente}</Typography>
                     </Box>
                     <Box width="100%" p={1}>
-                        <Typography><b>Total:</b>  {(total >= 0) ? total : props.total_ventas}</Typography>
+                        <Typography><b>Total:</b>  {(total > 0) ? total : props.total_ventas}</Typography>
                     </Box>
                     {/* <Box p={1}>
                         <Alert severity="info">Si desea editar el abono del cliente, <br/>

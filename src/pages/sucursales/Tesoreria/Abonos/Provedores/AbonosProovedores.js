@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -37,7 +37,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AbonosProveedores() {
+export default function AbonosProveedores(props) {
 	const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 	const { reload, setReload, setCuentas } = useContext(TesoreriaCtx);
 	
@@ -87,7 +87,7 @@ export default function AbonosProveedores() {
 	};
 
 	return (
-		<div>
+		<Fragment>
 			<Button fullWidth onClick={handleClickOpen}>
 				<Box display="flex" flexDirection="column">
 					<Box display="flex" justifyContent="center" alignItems="center">
@@ -132,12 +132,13 @@ export default function AbonosProveedores() {
 					</Box>
 				</Box>
 				<Box p={2}>
-					<TablaAbonos 	
+					<TablaAbonos
+
 						loading={loading}
 						refetch={refetch}
 					/>
 				</Box>
 			</Dialog>
-		</div>
+		</Fragment>
 	);
 }

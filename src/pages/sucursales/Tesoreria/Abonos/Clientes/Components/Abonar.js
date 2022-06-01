@@ -56,14 +56,18 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     const hacerAbono = async() => { 
         try {
             props.setLoading(true);
-            let ObjectMetodoPago = formaPago.filter((val) => {
-                
-                return(metodoPago === val.Value)
+         
+            let ObjectMetodoPago = {};
+            formaPago.forEach((val) => {
+                if (metodoPago === val.Value) { 
+                    ObjectMetodoPago = val;
+                }
             });
 
+           
             const input = {
-                tipo_movimiento: "ABONO",
-                rol_movimiento: "CLIENTE",
+                tipo_movimiento: "ABONO_CLIENTE",
+                rol_movimiento: "CAJA",
                 numero_caja: parseInt(turnoEnCurso.numero_caja),
                 id_Caja: turnoEnCurso.id_caja,
                 fecha_movimiento: {
@@ -75,8 +79,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                     completa: moment().locale('es-mx').format()
                 },
                 monto_total: props.total_ventas,
-            
-                horario_turno: '',
+               
+                horario_turno: turnoEnCurso.horario_en_turno,
 
                 metodo_de_pago:{
                     clave: ObjectMetodoPago.Value,
