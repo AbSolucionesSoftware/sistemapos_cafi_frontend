@@ -9,6 +9,7 @@ import {
   Divider,
   FormControl,
   FormControlLabel,
+  ListSubheader,
   MenuItem,
   Radio,
   RadioGroup,
@@ -18,17 +19,19 @@ import {
   Typography,
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
-import { OBTENER_CONTABILIDAD } from "../../../gql/Catalogos/contabilidad";
+import { OBTENER_CUENTAS } from "../../../../gql/Catalogos/centroCostos";
 import {
   CREAR_HISTORIAL_CAJA,
   OBTENER_PRE_CORTE_CAJA,
-} from "../../../gql/Cajas/cajas";
-import useStyles from "../styles";
+} from "../../../../gql/Cajas/cajas";
+import useStyles from "../../styles";
 import moment from "moment";
 import "moment/locale/es";
 import { useMutation, useQuery } from "@apollo/client";
-import { VentasContext } from "../../../context/Ventas/ventasContext";
+import { VentasContext } from "../../../../context/Ventas/ventasContext";
 import { Done } from "@material-ui/icons";
+import CrearNuevaCuenta from "./crearNuevaCuenta";
+import CrearNuevaSubcuenta from "./CrearSubcuenta";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -50,7 +53,7 @@ export default function DepositoRetiroCaja() {
     tipo_movimiento: "DEPOSITO",
   });
 
-  const { loading, data, error } = useQuery(OBTENER_CONTABILIDAD, {
+  const { loading, data, error, refetch } = useQuery(OBTENER_CUENTAS, {
     variables: {
       empresa: sesion.empresa._id,
     },
@@ -360,29 +363,47 @@ export default function DepositoRetiroCaja() {
                 </Box>
                 <Box width="100%">
                   <Typography>Concepto de Movimiento:</Typography>
-                  <FormControl
-                    variant="outlined"
-                    fullWidth
-                    size="small"
-                    error={error_data && !datosMovimiento.concepto}
-                  >
-                    <Select
-                      id="form-producto-tipo"
-                      onChange={obtenerDatos}
-                      name="concepto"
+                  <Box display="flex" alignItems="center">
+                    <FormControl
+                      variant="outlined"
+                      fullWidth
+                      size="small"
+                      error={error_data && !datosMovimiento.concepto}
                     >
-                      <MenuItem value="">
-                        <em>Selecciona uno</em>
-                      </MenuItem>
-                      {data?.obtenerContabilidad.map((concepto, index) => {
-                        return (
-                          <MenuItem key={index} value={concepto.nombre_servicio}>
-                            {concepto.nombre_servicio}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  </FormControl>
+                      <Select
+                        id="form-producto-tipo"
+                        onChange={obtenerDatos}
+                        name="concepto"
+                      >
+                        <MenuItem value="">
+                          <em>Selecciona uno</em>
+                        </MenuItem>
+                        {data?.obtenerCuentas.map((cuenta, index) => {
+                          return [
+                            <ListSubheader>
+                              {cuenta.cuenta}
+                            </ListSubheader>,
+                            cuenta.subcuentas.map((subcuenta, index) => {
+                              return (
+                                <MenuItem
+                                  key={index}
+                                  value={subcuenta.subcuenta}
+                                  style={{ marginLeft: "10px" }}
+                                >
+                                  {subcuenta.subcuenta}
+                                </MenuItem>
+                              );
+                            }),
+                            <CrearNuevaSubcuenta
+                              cuenta={cuenta}
+                              refetch={refetch}
+                            />,
+                          ];
+                        })}
+                      </Select>
+                    </FormControl>
+                    <CrearNuevaCuenta refetch={refetch} />
+                  </Box>
                 </Box>
               </Fragment>
             ) : (

@@ -317,7 +317,7 @@ function CerrarTurno(props) {
           <Grid item md={6} xs={12}>
             <Typography className={classes.titulos}>
               {" "}
-              Tarjeta Debito:
+              Tarjetas y Transferencias:
             </Typography>
             <TextField
               fullWidth
@@ -326,7 +326,6 @@ function CerrarTurno(props) {
               size="small"
               inputProps={{ min: 0 }}
               type="number"
-              /* defaultValue={0} */
               placeholder="0.00"
               InputProps={{
                 startAdornment: (
@@ -337,7 +336,7 @@ function CerrarTurno(props) {
               onChange={obtenerCamposMontos}
             />
           </Grid>
-          <Grid item md={6} xs={12}>
+          {/* <Grid item md={6} xs={12}>
             <Typography className={classes.titulos}>
               {" "}
               Tarjeta Credito:
@@ -349,7 +348,6 @@ function CerrarTurno(props) {
               size="small"
               inputProps={{ min: 0 }}
               type="number"
-              /* defaultValue={0} */
               placeholder="0.00"
               InputProps={{
                 startAdornment: (
@@ -359,7 +357,7 @@ function CerrarTurno(props) {
               color="primary"
               onChange={obtenerCamposMontos}
             />
-          </Grid>
+          </Grid> */}
           <Grid item md={6} xs={12}>
             <Typography className={classes.titulos}>Monedero:</Typography>
             <TextField
@@ -369,7 +367,6 @@ function CerrarTurno(props) {
               size="small"
               inputProps={{ min: 0 }}
               type="number"
-              /* defaultValue={0} */
               placeholder="0.00"
               InputProps={{
                 startAdornment: (
@@ -380,7 +377,7 @@ function CerrarTurno(props) {
               onChange={obtenerCamposMontos}
             />
           </Grid>
-          <Grid item md={6} xs={12}>
+         {/*  <Grid item md={6} xs={12}>
             <Typography className={classes.titulos}>Transferencias:</Typography>
             <TextField
               fullWidth
@@ -389,7 +386,6 @@ function CerrarTurno(props) {
               size="small"
               inputProps={{ min: 0 }}
               type="number"
-              /* defaultValue={0} */
               placeholder="0.00"
               InputProps={{
                 startAdornment: (
@@ -399,7 +395,7 @@ function CerrarTurno(props) {
               color="primary"
               onChange={obtenerCamposMontos}
             />
-          </Grid>
+          </Grid> */}
           <Grid item md={6} xs={12}>
             <Typography className={classes.titulos}>Cheques:</Typography>
             <TextField
@@ -481,8 +477,8 @@ function CerrarTurno(props) {
                 <MenuItem value="">
                   <em>Selecciona uno</em>
                 </MenuItem>
-                <MenuItem value="VESPERTINO">Vespertino</MenuItem>
                 <MenuItem value="MATUTINO">Matutino</MenuItem>
+                <MenuItem value="VESPERTINO">Vespertino</MenuItem>
               </Select>
             </FormControl>
           </Grid>

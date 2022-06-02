@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, CssBaseline, ThemeProvider } from "@material-ui/core";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { HashRouter as Router, Switch, Route } from "react-router-dom";
 import routes from "./config/routes";
 import theme from "./config/colors";
 
