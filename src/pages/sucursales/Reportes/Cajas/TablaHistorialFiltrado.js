@@ -14,7 +14,7 @@ import moment from 'moment';
 const columns = [
 	{ id: 'fecha', label: 'Fecha', minWidth: 100 },
 	{ id: 'hora', label: 'Hora', minWidth: 100 },
-	{ id: 'movimiento', label: 'Movimieto', minWidth: 100 },
+	{ id: 'movimiento', label: 'Movimiento', minWidth: 100 },
 	{ id: 'usuario', label: 'Usuario', minWidth: 100 },
 	{ id: 'hTurno', label: 'Horario Turno', minWidth: 100 },	
 	{ id: 'concepto', label: 'Concepto', minWidth: 100 },
@@ -174,36 +174,36 @@ function RowsRender({datos}) {
 										<TableBody>
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center"><b>Monto Total Efectivo:</b></TableCell>
-												<TableCell align="center"><b>${datos.montos_en_caja.monto_efectivo.monto}</b></TableCell>
+												<TableCell align="center"><b>${Math.abs(datos.montos_en_caja.monto_efectivo.monto) }</b></TableCell>
 											</TableRow>
-											<TableRow hover tabIndex={-1} >
+											{/* <TableRow hover tabIndex={-1} >
 												<TableCell align="center">Creditos</TableCell>
-												<TableCell align="center">${datos.montos_en_caja.monto_creditos.monto}</TableCell>
+												<TableCell align="center">${Math.abs(datos.montos_en_caja.monto_creditos.monto)}</TableCell>
 											</TableRow>
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center">Tarjeta Debito</TableCell>
-												<TableCell align="center">${datos.montos_en_caja.monto_tarjeta_debito.monto}</TableCell>
+												<TableCell align="center">${Math.abs(datos.montos_en_caja.monto_tarjeta_debito.monto)}</TableCell>
 											</TableRow>
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center">Tarjeta Credito</TableCell>
-												<TableCell align="center">${datos.montos_en_caja.monto_tarjeta_credito.monto}</TableCell>
+												<TableCell align="center">${Math.abs(datos.montos_en_caja.monto_tarjeta_credito.monto)}</TableCell>
 											</TableRow>
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center">Monedero</TableCell>
-												<TableCell align="center">${datos.montos_en_caja.monto_monedero.monto}</TableCell>
+												<TableCell align="center">${Math.abs(datos.montos_en_caja.monto_monedero.monto)}</TableCell>
 											</TableRow>
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center">Cheques</TableCell>
-												<TableCell align="center">${datos.montos_en_caja.monto_cheques.monto}</TableCell>
+												<TableCell align="center">${Math.abs(datos.montos_en_caja.monto_cheques.monto)}</TableCell>
 											</TableRow>
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center">Transferencias</TableCell>
-												<TableCell align="center">${datos.montos_en_caja.monto_transferencia.monto}</TableCell>
+												<TableCell align="center">${Math.abs(datos.montos_en_caja.monto_transferencia.monto)}</TableCell>
 											</TableRow>
 											<TableRow hover tabIndex={-1} >
 												<TableCell align="center">Vales de despensa</TableCell>
-												<TableCell align="center">${datos.montos_en_caja.monto_vales_despensa.monto}</TableCell>
-											</TableRow>
+												<TableCell align="center">${Math.abs(datos.montos_en_caja.monto_vales_despensa.monto)}</TableCell>
+											</TableRow> */}
 										</TableBody>
 									</Table>
 								</TableContainer>

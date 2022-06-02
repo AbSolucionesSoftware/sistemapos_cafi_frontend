@@ -56,13 +56,13 @@ export default function Reportes() {
 						</Box>
 					</Grid>
 				)}
-				{permisosUsuario.accesos.reportes.reporte_tesoreria.ver === false ? (null) : (
+				{/* {permisosUsuario.accesos.reportes.reporte_tesoreria.ver === false ? (null) : (
 					<Grid item lg={2} >
 						<Box display="flex" justifyContent="center" alignItems="center">
 							<ReportesTesoreria />
 						</Box>
 					</Grid>
-				)}
+				)} */}
 			</Grid>
 		</Container>
 	);

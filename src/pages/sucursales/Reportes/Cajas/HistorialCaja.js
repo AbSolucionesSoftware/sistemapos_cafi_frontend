@@ -44,11 +44,17 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const tipos = [
     'TODOS',
+    'COMPRA',
     'VENTA',
     'DEPOSITO',
     'RETIRO',
+    'CUENTA_RETIRO',
+    'CUENTA_DEPOSITO',
+    'ABONO_CLIENTE',
+    'ABONO_PROVEEDOR',
     'TRANSFERENCIA',
-    'COMPRA'
+    
+
 ];
 
 export default function HistorialCaja(props) {

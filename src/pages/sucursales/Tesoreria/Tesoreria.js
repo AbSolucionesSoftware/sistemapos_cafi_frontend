@@ -26,13 +26,13 @@ export default function Tesoreria() {
 						</Box>
 					</Grid>
 				)}
-				{permisosUsuario.accesos.tesoreria.egresos.ver === false ? (null):(
+				{/* {permisosUsuario.accesos.tesoreria.egresos.ver === false ? (null):(
 					<Grid item lg={2}>
 						<Box display="flex" justifyContent="center" alignItems="center">
 							<Egresos />
 						</Box>
 					</Grid>
-				)}
+				)} */}
 				{permisosUsuario.accesos.tesoreria.abonos_proveedores.ver === false ? (null):(
 					<Grid item lg={2}>
 						<Box display="flex" justifyContent="center" alignItems="center">

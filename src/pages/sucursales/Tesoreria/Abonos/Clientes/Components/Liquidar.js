@@ -112,7 +112,12 @@ function Liquidar(props) {
                     total_con_descuento: cuentaTotalDescuento
                 },
                 horario_turno: turnoEnCurso.horario_en_turno,
-
+                hora_moviento: {
+                    hora: moment().format('hh'),
+                    minutos: moment().format('mm'),
+                    segundos: moment().format('ss'),
+                    completa: moment().format('HH:mm:ss')
+                },
                 metodo_de_pago:{
                     clave: ObjectMetodoPago.Value,
                     metodo:  ObjectMetodoPago.Name,

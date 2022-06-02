@@ -64,6 +64,12 @@ function AbonoaRecibir(props) {
     const input = {
         tipo_movimiento: "ABONO_PROVEEDOR",
         rol_movimiento: "CAJA",
+        hora_moviento: {
+            hora: moment().format('hh'),
+            minutos: moment().format('mm'),
+            segundos: moment().format('ss'),
+            completa: moment().format('HH:mm:ss')
+        },
         fecha_movimiento: {
             year: moment().format('YYYY'),
             mes: moment().format('MM'),
