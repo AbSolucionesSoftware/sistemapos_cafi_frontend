@@ -21,6 +21,7 @@ import { useMutation } from "@apollo/client";
 import { CANCELAR_VENTA_SUCURSAL } from "../../../gql/Ventas/ventas_generales";
 import SnackBarMessages from "../../../components/SnackBarMessages";
 import { AccesosContext } from "../../../context/Accesos/accesosCtx";
+import { Alert } from "@material-ui/lab";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -209,6 +210,9 @@ export default function CancelarFolio({
           </Box>
         </DialogTitle>
         <DialogContent>
+          {venta.factura.length ? (
+            <Alert severity="info">Una venta facturada no se puede hacer devolucion de dinero</Alert>
+          ) : null}
           <Box>
             <FormControlLabel
               control={
@@ -216,7 +220,7 @@ export default function CancelarFolio({
                   checked={values.devolucion_credito}
                   onChange={handleChangeChecks}
                   name="devolucion_credito"
-                  disabled={!venta.credito}
+                  disabled={!venta.credito || venta.factura.length}
                 />
               }
               label="Realizar devolucion de crédito"
@@ -229,7 +233,7 @@ export default function CancelarFolio({
                   name="devolucion_efectivo"
                   disabled={
                     venta.montos_en_caja.monto_efectivo.monto >
-                    dinero_disponible
+                    dinero_disponible || venta.factura.length
                   }
                 />
               }
