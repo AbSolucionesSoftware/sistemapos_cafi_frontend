@@ -313,7 +313,7 @@ export default function TablaVentasCredito(props) {
 					onChangeRowsPerPage={handleChangeRowsPerPage}
 				/> */}
 				<DetalleVentaCredito openDetalle ={openDetalle} setOpenDetalle={setOpenDetalle} datos={rowSelected} />
-				<HistorialAbonos openHistorial ={openHistorial} setOpenHistorial={setOpenHistorial} historialAbonos={rowSelected.abonos} />
+				<HistorialAbonos openHistorial ={openHistorial} setOpenHistorial={setOpenHistorial} rowSelected={rowSelected} recargar={props.recargar} setAlert={props.setAlert} />
 			</Paper>
 		</div>
 	);

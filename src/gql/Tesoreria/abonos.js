@@ -69,6 +69,7 @@ export const OBTENER_HISTORIAL_ABONOS_CLIENTE = gql `
     ) {
       _id
       folio
+      
       estatus_credito
       cliente {
         _id
@@ -526,7 +527,9 @@ export const OBTENER_HISTORIAL_ABONOS_CLIENTE = gql `
       }
       status
       abonos {
+        _id
         numero_caja
+        status
         id_Caja
         horario_turno
         tipo_movimiento
@@ -584,6 +587,14 @@ export const CREAR_ABONO = gql `
 export const CREAR_ABONO_CLIENTE = gql `
   mutation crearAbonoVentaCredito($empresa: ID!, $sucursal: ID!, $input: AbonoVentasCreditoInput) {
     crearAbonoVentaCredito(empresa: $empresa, sucursal: $sucursal, input: $input) {
+      message
+    }
+  }
+`;
+
+export const CANCELAR_ABONO_CLIENTE = gql `
+  mutation cancelarAbonoCliente($empresa: ID!, $sucursal: ID!, $input: CancelarAbonoInput) {
+    cancelarAbonoCliente(empresa: $empresa, sucursal: $sucursal, input: $input) {
       message
     }
   }

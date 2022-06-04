@@ -30,7 +30,7 @@ function Liquidar(props) {
     
     const [open, setOpen] = useState(false);
     const {abonos} = useContext(AbonosCtx);
-    console.log(AbonosCtx)
+  
     const [metodoPago, setMetodoPago] = useState('');
     const [value, setValue] = useState(0);
     const [total, setTotal] = useState(0);
@@ -162,7 +162,7 @@ function Liquidar(props) {
             }
             
         } catch (error) {
-            console.log(error);
+          
             if (error.networkError) {
                 console.log(error.networkError.result);
             } else if (error.graphQLErrors) {
