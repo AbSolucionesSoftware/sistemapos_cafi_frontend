@@ -140,7 +140,10 @@ export default function TablaAbonos(props) {
 						</TableHead>
 						<TableBody>
 							{cuentas?.map((row, index) => {
-							
+								console.log(row)
+								if(row.status === 'CANCELADO'){
+									return(<div/>)
+								}else{
 									return (
 										<RowsCuentas 
 											loading={props.loading}
@@ -148,6 +151,7 @@ export default function TablaAbonos(props) {
 											key={index}
 										/>
 									);
+								}
 								
 							})} 
 						</TableBody>

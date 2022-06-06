@@ -21,7 +21,7 @@ import {
 } from "@material-ui/core";
 import { useMutation } from '@apollo/client';
 import moment from 'moment';
-
+import { withRouter } from "react-router";
 import {  Done } from "@material-ui/icons";
 import {  CANCELAR_ABONO_CLIENTE } from "../../../../../../../gql/Tesoreria/abonos";
 import { formatoMexico,formatoFecha } from "../../../../../../../config/reuserFunctions";
@@ -39,7 +39,7 @@ const columnsEffect = [
     { id: 'monto_total_abonado', label: 'Cantidad abono', minWidth: 170, widthPx: 160, },
     { id: 'cancelar', label: 'Cancelar abono', minWidth: 170, widthPx: 160, },
 ];
-export default function HistorialAbonos(props){
+function HistorialAbonos(props){
     const classes = useStyles();
     const [openCancelar, setOpenCancelar] = useState(false);
     const [loadingCancelar, setLoadingCancelar] = useState(false);
@@ -50,6 +50,7 @@ export default function HistorialAbonos(props){
  
     const handleOpen = () =>{
         props.setOpenHistorial(!props.openHistorial)
+      
     }
     let dataExcel = [];
     if(props.rowSelected.abonos){
@@ -64,9 +65,13 @@ export default function HistorialAbonos(props){
     }
     const affirmCancelar = (abono) =>{
         try {
+            if(turnoEnCurso){
+                setOpenCancelar(true);
+                setAbonoSelected(abono)
+            }else{
+                props.history.push('/ventas/venta-general');
+            }
             
-            setOpenCancelar(true);
-            setAbonoSelected(abono)
         } catch (error) {
             console.log(error)
         }
@@ -161,35 +166,35 @@ export default function HistorialAbonos(props){
           maxWidth="sm"
           TransitionComponent={Transition}
       >
-           <Dialog
-        open={openCancelar}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={() => setOpenCancelar(false)}
-        aria-labelledby="alert-eliminar-abono"
-      >
-        <DialogTitle id="alert-eliminar-abono">
-          {"¿Está seguro de eliminar este abono?"}
-        </DialogTitle>
-        <DialogActions>
-          <Button
-            onClick={() => setOpenCancelar(false)}
-            color="inherit"
-            disabled={loadingCancelar}
-          >
-            Cancelar
-          </Button>
-          <Button
-            onClick={() => cancelAbono()}
-            color="secondary"
-            disabled={loadingCancelar}
-            startIcon={
-                loadingCancelar ? <CircularProgress size={20} color="inherit" /> : null
-            }
-          >
-            Eliminar
-          </Button>
-        </DialogActions>
+        <Dialog
+            open={openCancelar}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={() => setOpenCancelar(false)}
+            aria-labelledby="alert-eliminar-abono"
+        >
+            <DialogTitle id="alert-eliminar-abono">
+            {"¿Está seguro de eliminar este abono?"}
+            </DialogTitle>
+            <DialogActions>
+            <Button
+                onClick={() => setOpenCancelar(false)}
+                color="inherit"
+                disabled={loadingCancelar}
+            >
+                Cancelar
+            </Button>
+            <Button
+                onClick={() => cancelAbono()}
+                color="secondary"
+                disabled={loadingCancelar}
+                startIcon={
+                    loadingCancelar ? <CircularProgress size={20} color="inherit" /> : null
+                }
+            >
+                Eliminar
+            </Button>
+            </DialogActions>
       </Dialog> 
       <DialogTitle>
           <Box display="flex">
@@ -279,3 +284,5 @@ export default function HistorialAbonos(props){
  </Fragment>
     )
 };
+
+export default withRouter(HistorialAbonos);
