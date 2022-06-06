@@ -67,15 +67,32 @@ export default function DatosDeCompra({ compra }) {
         <Typography style={{ marginRight: 16 }}>
           <b>Total: ${compra.total}</b>
         </Typography>
-        {compra.compra_credito === true ? (
+        {compra.status && compra.status === "CANCELADO" ? (
+          <Chip label="Compra Cancelada" color="secondary" variant="outlined" />
+        ) : compra.compra_credito === true ? (
           <Chip
-          label={
-            compra.credito_pagado === true ? 'Credito pagado' : `Saldo pendiente: $${formatoMexico(compra.saldo_credito_pendiente)}`
-          }
-          color={compra.credito_pagado === true ? "primary" : "secondary"}
-          variant="outlined"
-        />
-        ) : null}
+            label={
+              compra.credito_pagado === true
+                ? "Credito pagado"
+                : `Saldo pendiente: $${formatoMexico(
+                    compra.saldo_credito_pendiente
+                  )}`
+            }
+            style={{
+              color:
+                compra.compra_credito === true
+                  ? theme.palette.primary.main
+                  : theme.palette.warning.main,
+              borderColor:
+                compra.compra_credito === true
+                  ? theme.palette.primary.main
+                  : theme.palette.warning.main,
+            }}
+            variant="outlined"
+          />
+        ) : (
+          <Chip label="CONTADO" color="inherit" variant="outlined" />
+        )}
       </Box>
       <Box mb={2} display="flex">
         <Grid container>
@@ -84,7 +101,7 @@ export default function DatosDeCompra({ compra }) {
               fullWidth
               size="small"
               variant="outlined"
-              placeholder="Buscar una compra..."
+              placeholder="Buscar un producto en esta compra..."
               onChange={(e) => obtenerBusqueda(e.target.value)}
               InputProps={{
                 startAdornment: (
@@ -96,7 +113,9 @@ export default function DatosDeCompra({ compra }) {
             />
           </Grid>
           <Grid item sm={6} xs={12}>
-            <ExportarProductosComprasExcel compra={compra} />
+            <Box display="flex" justifyContent="flex-end">
+              <ExportarProductosComprasExcel compra={compra} />
+            </Box>
           </Grid>
         </Grid>
       </Box>
@@ -126,7 +145,9 @@ export default function DatosDeCompra({ compra }) {
                       {datos.producto.datos_generales.nombre_comercial}
                     </TableCell>
                     <TableCell padding="checkbox">
-                      {datos.medida && datos.medida.medida ? datos.medida.medida : "N/A"}
+                      {datos.medida && datos.medida.medida
+                        ? datos.medida.medida
+                        : "N/A"}
                     </TableCell>
                     <TableCell padding="checkbox">
                       {datos.color && datos.color.hex ? (

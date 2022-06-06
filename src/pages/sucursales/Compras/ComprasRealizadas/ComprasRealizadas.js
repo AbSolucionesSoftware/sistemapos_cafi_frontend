@@ -304,7 +304,10 @@ const ContentDialogCompras = () => {
         </Box>
       ) : null}
 
-      <ListaCompras obtenerComprasRealizadas={obtenerComprasRealizadas} />
+      <ListaCompras
+        obtenerComprasRealizadas={obtenerComprasRealizadas}
+        refetch={refetch}
+      />
     </Fragment>
   );
 };

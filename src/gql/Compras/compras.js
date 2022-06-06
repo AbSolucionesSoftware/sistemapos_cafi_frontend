@@ -36,6 +36,14 @@ export const CREAR_COMPRA_ESPERA = gql`
   }
 `;
 
+export const CANCELAR_COMPRA = gql`
+  mutation cancelarCompra($empresa: ID!, $sucursal:ID!, $id_compra: ID!, $data_sesion: cancelarCompraInput){
+    cancelarCompra(empresa:$empresa, sucursal:$sucursal, id_compra: $id_compra, data_sesion: $data_sesion){
+      message
+    }
+  }
+`;
+
 export const OBTENER_COMPRAS_REALIZADAS = gql`
   query obtenerComprasRealizadas(
     $empresa: ID!
@@ -185,6 +193,7 @@ export const OBTENER_COMPRAS_REALIZADAS = gql`
         numero_mes_year
         fecha_registro
       }
+      status
       almacen {
         id_almacen {
           _id

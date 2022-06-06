@@ -50,33 +50,29 @@ export default function ExportarComprasExcel({
 
   return (
     <Fragment>
-      <Grid>
-        <Grid item>
-          <ExcelFile
-            element={
-              <Box display="flex" justifyContent="flex-end">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<CloudDownloadOutlined />}
-                >
-                  Exportar a Excel
-                </Button>
-              </Box>
-            }
-            filename={nombre_documento}
-          >
-            <ExcelSheet data={compras} name={nombre_documento}>
-              <ExcelColumn label="Almacen" value="almacen" />
-              <ExcelColumn label="Proveedor" value="proveedor" />
-              <ExcelColumn label="Fecha de compra" value="fecha_registro" />
-              <ExcelColumn label="Subtotal" value="subtotal" />
-              <ExcelColumn label="Impuestos" value="impuestos" />
-              <ExcelColumn label="Total" value="total" />
-            </ExcelSheet>
-          </ExcelFile>
-        </Grid>
-      </Grid>
+      <Box display="flex" justifyContent="flex-end">
+        <ExcelFile
+          element={
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<CloudDownloadOutlined />}
+            >
+              Exportar a Excel
+            </Button>
+          }
+          filename={nombre_documento}
+        >
+          <ExcelSheet data={compras} name={nombre_documento}>
+            <ExcelColumn label="Almacen" value="almacen" />
+            <ExcelColumn label="Proveedor" value="proveedor" />
+            <ExcelColumn label="Fecha de compra" value="fecha_registro" />
+            <ExcelColumn label="Subtotal" value="subtotal" />
+            <ExcelColumn label="Impuestos" value="impuestos" />
+            <ExcelColumn label="Total" value="total" />
+          </ExcelSheet>
+        </ExcelFile>
+      </Box>
     </Fragment>
   );
 }

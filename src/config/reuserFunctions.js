@@ -38,7 +38,7 @@ export const formatoFecha = (fecha) => {
   } else {
     var newdate = new Date(fecha);
     return newdate.toLocaleDateString("es-MX", {
-      weekday: "long",
+      weekday: "short",
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -52,9 +52,8 @@ export const formatoFechaCorta = (fecha) => {
   } else {
     var newdate = new Date(fecha);
     return newdate.toLocaleDateString("es-MX", {
-      weekday: "short",
       year: "numeric",
-      month: "short",
+      month: "long",
       day: "numeric",
     });
   }

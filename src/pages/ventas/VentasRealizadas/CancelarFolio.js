@@ -169,7 +169,7 @@ export default function CancelarFolio({
           color="secondary"
           onClick={() => verificarPermisos()}
           startIcon={<Delete />}
-          disabled={venta.status === "CANCELADA"}
+          disabled={venta.status === "CANCELADO"}
         >
           Cancelar venta
         </Button>
@@ -178,7 +178,7 @@ export default function CancelarFolio({
           size="small"
           color="secondary"
           onClick={() => verificarPermisos()}
-          disabled={venta.status === "CANCELADA"}
+          disabled={venta.status === "CANCELADO"}
         >
           <Delete />
         </IconButton>
