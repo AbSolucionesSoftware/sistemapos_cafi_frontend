@@ -140,7 +140,7 @@ export default function TablaAbonos(props) {
 						</TableHead>
 						<TableBody>
 							{cuentas?.map((row, index) => {
-								console.log(row)
+						
 								if(row.status === 'CANCELADO'){
 									return(<div/>)
 								}else{
@@ -188,7 +188,7 @@ function RowsCuentas (props){
 				hover
 				tabIndex={-1}
 				onClick={(e) => TwoClickInRowTableBuy(e)}
-				className={(props.cuentaSelect.estatus_credito === 'PAGADA') ? classes.pagada : (props.cuentaSelect.estatus_credito === 'VENCIDA') ?  classes.vencidas : classes.vencer}
+				className={(props.cuentaSelect.estatus_credito === 'PAGADA'  ) ? classes.pagada : (props.cuentaSelect.estatus_credito === 'VENCIDA') ?  classes.vencidas : classes.vencer}
 			>
 				<TableCell align="center">{moment(props.cuentaSelect.fecha_registro).format('D MMMM YYYY')}</TableCell>
 				<TableCell align="center">{props.cuentaSelect.proveedor.id_proveedor.nombre_cliente}</TableCell>

@@ -263,10 +263,7 @@ function TablaAbonos(props) {
 					</TableHead>
 					<TableBody>
 						{abonos?.map((row, index) => {
-							console.log(row)
-							if(row.status !== 'CANCELADO'){
-								return(<div/>)
-							}else{
+							
 								return (
 									<TableRow hover tabIndex={-1} key={index}>
 										<TableCell align='center'>{moment(row.fecha_movimiento.completa).format('D MMMM YYYY')}</TableCell>
@@ -291,7 +288,7 @@ function TablaAbonos(props) {
 										}
 									</TableRow>
 								);
-							}
+					
 							
 						})}
 					</TableBody>
