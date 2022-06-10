@@ -222,6 +222,7 @@ function RowsCuentas (props){
 					cuenta={props.cuentaSelect}
 					loading={props.loading}
 					handleClick={handleClick}
+					recargar={props.refetch}
 				/>
 			</Dialog>
 		</Fragment>

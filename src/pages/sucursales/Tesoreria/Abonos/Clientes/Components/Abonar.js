@@ -108,17 +108,18 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                 ventas: [{ monto_total_abonado: parseFloat(abono), 
                     id_venta:abonos[props.index].id_venta,
                     saldo_credito_pendiente:abonos[props.index].saldo_credito_pendiente}],
-                liquidar: false
+                liquidar: false,
+                facturacion: props.venta.facturacion
             }
             if(metodoPago && abono !== '' && abono > 0){
-                await crearAbonoVentaCredito({
+                const doAbono = await crearAbonoVentaCredito({
                     variables: {
                         empresa: sesion.empresa._id,
                         sucursal: sesion.sucursal._id,
                         input
                     },
                 }); 
-
+                console.log(doAbono);
                 props.recargar();
                 setOpen(false);
                 props.setLoading(false);

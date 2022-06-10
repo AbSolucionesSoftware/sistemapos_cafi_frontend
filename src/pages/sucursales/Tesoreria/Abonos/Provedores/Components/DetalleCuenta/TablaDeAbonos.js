@@ -19,7 +19,7 @@ import {
 import { useMutation } from '@apollo/client';
 import TableRow from '@material-ui/core/TableRow';
 import CloseIcon from "@material-ui/icons/Close";
-import {  CANCELAR_ABONO_CLIENTE } from "../../../../../../../gql/Tesoreria/abonos";
+import {  CANCELAR_ABONO_PROVEEDOR } from "../../../../../../../gql/Tesoreria/abonos";
 import { useQuery } from '@apollo/client';
 import { OBTENER_HISTORIAL_ABONOS } from "../../../../../../../gql/Tesoreria/abonos";
 import moment from 'moment';
@@ -67,15 +67,15 @@ function TablaAbonos(props) {
 	const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
 	const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 
-	const { reload } = useContext(TesoreriaCtx);
-
+	const { reload, setReload, setAlert } = useContext(TesoreriaCtx);
+	
 	const classes = useStyles();
 	
 	const [abonoSelected, setAbonoSelected] = useState({});
 	const [openCancelar, setOpenCancelar] = useState(false);
 	const [loadingCancelar, setLoadingCancelar] = useState(false);
 
-	const [ cancelarAbonoCliente ] = useMutation(CANCELAR_ABONO_CLIENTE);
+	const [ cancelarAbonoProveedor ] = useMutation(CANCELAR_ABONO_PROVEEDOR);
 
 	let dataExcel = [];
     
@@ -117,7 +117,7 @@ function TablaAbonos(props) {
 	}, [reload])
 
 	const handleOpen = () =>{
-        setOpenCancelar(!props.setOpenCancelar)
+        setOpenCancelar(!setOpenCancelar)
       
     }
 	const affirmCancelar = (abono) =>{
@@ -140,7 +140,7 @@ function TablaAbonos(props) {
 	const cancelAbono = async() =>{
         try {
          setLoadingCancelar(true);
-       
+         console.log(abonoSelected)
          const input = {
             tipo_movimiento: "ABONO_PROVEEDOR",
             rol_movimiento: "CAJA",
@@ -168,32 +168,32 @@ function TablaAbonos(props) {
             id_usuario: sesion._id,
             numero_usuario_creador: sesion.numero_usuario,
             nombre_usuario_creador: sesion.nombre,
-            id_cliente: props.rowSelected.cliente._id,
-            credito_disponible: props.rowSelected.cliente.credito_disponible,
-            numero_cliente: props.rowSelected.cliente.numero_cliente,
-            nombre_cliente: props.rowSelected.cliente.nombre_cliente ,
-            telefono_cliente: props.rowSelected.cliente.telefono_cliente  ,
-            email_cliente: props.rowSelected.cliente.email_cliente,
+            id_proveedor: props.proveedor.id_proveedor._id,
+            
+            clave_proveedor: props.proveedor.id_proveedor.clave_cliente,
+            nombre_proveedor: props.proveedor.id_proveedor.nombre_cliente,
+            telefono_proveedor:  props.proveedor.id_proveedor.telefono_cliente,
+            email_proveedor: props.proveedor.id_proveedor.email_cliente,
             id_abono: abonoSelected._id,
-            id_venta: props.rowSelected._id,
+            id_compra: props.cuenta._id,
             metodo_de_pago: '01'
         }
 
 
 
-          await cancelarAbonoCliente({
+          await cancelarAbonoProveedor({
             variables: {
                 empresa: sesion.empresa._id,
                 sucursal: sesion.sucursal._id,
                 input:input
             },
         });
-        props.recargar();
+        setReload(true);
         setOpenCancelar(false);
         setLoadingCancelar(false);
         handleOpen();
-        props.setAlert({ 
-            message: 'Venta liquidada con éxito.', 
+        setAlert({ 
+            message: 'Venta cancelada con éxito.', 
             status: 'success', 
             open: true 
         });
@@ -207,8 +207,8 @@ function TablaAbonos(props) {
             }
             setLoadingCancelar(false);
             handleOpen();
-            props.setAlert({ 
-                message: 'LA cancelación ha fallado.', 
+            setAlert({ 
+                message: 'La cancelación ha fallado.', 
                 status: 'success', 
                 open: true 
             });
@@ -263,7 +263,7 @@ function TablaAbonos(props) {
 					</TableHead>
 					<TableBody>
 						{abonos?.map((row, index) => {
-							
+							console.log(row)
 								return (
 									<TableRow hover tabIndex={-1} key={index}>
 										<TableCell align='center'>{moment(row.fecha_movimiento.completa).format('D MMMM YYYY')}</TableCell>

@@ -94,7 +94,7 @@ export default function DetallesCuenta(props) {
                         </Typography>
                     </Box>
                     <Box p={2}>
-                        <TablaAbonos cuenta={props.cuenta} />
+                        <TablaAbonos cuenta={props.cuenta} proveedor={props.cuenta.proveedor} recargar={props.recargar} />
                     </Box>
                     <Box p={0} mr={3} display="flex" justifyContent="flex-end">
                         <Typography variant='h6'>Total abonado: <b style={{color: "#9B9B9B"}}>${props.cuenta.total - props.cuenta.saldo_credito_pendiente}</b></Typography>

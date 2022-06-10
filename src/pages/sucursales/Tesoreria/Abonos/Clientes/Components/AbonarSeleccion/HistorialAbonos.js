@@ -52,6 +52,7 @@ function HistorialAbonos(props){
         props.setOpenHistorial(!props.openHistorial)
       
     }
+
     let dataExcel = [];
     if(props.rowSelected.abonos){
         props.rowSelected.abonos.forEach(element => {
@@ -65,12 +66,21 @@ function HistorialAbonos(props){
     }
     const affirmCancelar = (abono) =>{
         try {
-            if(turnoEnCurso){
-                setOpenCancelar(true);
-                setAbonoSelected(abono)
+            if(props.rowSelected.facturacion){
+                props.setAlert({ 
+                    message: 'No se puede cancelar un abono facturado.', 
+                    status: 'error', 
+                    open: true 
+                });
             }else{
-                props.history.push('/ventas/venta-general');
+                if(turnoEnCurso){
+                    setOpenCancelar(true);
+                    setAbonoSelected(abono)
+                }else{
+                    props.history.push('/ventas/venta-general');
+                }
             }
+           
             
         } catch (error) {
             console.log(error)
@@ -112,11 +122,12 @@ function HistorialAbonos(props){
             credito_disponible: props.rowSelected.cliente.credito_disponible,
             numero_cliente: props.rowSelected.cliente.numero_cliente,
             nombre_cliente: props.rowSelected.cliente.nombre_cliente ,
-            telefono_cliente: props.rowSelected.cliente.telefono_cliente  ,
-            email_cliente: props.rowSelected.cliente.email_cliente,
+            telefono_cliente: props.rowSelected.cliente.telefono,
+            email_cliente: props.rowSelected.cliente.email,
             id_abono: abonoSelected._id,
             id_venta: props.rowSelected._id,
             metodo_de_pago: '01'
+           
         }
 
 
@@ -133,7 +144,7 @@ function HistorialAbonos(props){
         setLoadingCancelar(false);
         handleOpen();
         props.setAlert({ 
-            message: 'Venta liquidada con éxito.', 
+            message: 'Venta cancelada con éxito.', 
             status: 'success', 
             open: true 
         });
@@ -145,11 +156,12 @@ function HistorialAbonos(props){
             } else if (error.graphQLErrors) {
                 console.log(error.graphQLErrors);
             }
+            setOpenCancelar(false);
             setLoadingCancelar(false);
             handleOpen();
             props.setAlert({ 
-                message: 'LA cancelación ha fallado.', 
-                status: 'success', 
+                message: 'La cancelación ha fallado.', 
+                status: 'error', 
                 open: true 
             });
     

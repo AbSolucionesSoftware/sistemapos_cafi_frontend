@@ -222,6 +222,8 @@ const useStyles = makeStyles((theme) => ({
       clave: "",
       metodo: "",
     },
+    numero_caja: parseInt(turnoEnCurso.numero_caja),
+    id_Caja: turnoEnCurso.id_caja,
     numero_usuario_creador: sesion.numero_usuario,
     nombre_usuario_creador: sesion.nombre,
     id_cliente: props.cuenta.proveedor.id_proveedor._id,

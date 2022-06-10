@@ -114,9 +114,11 @@ function AbonoaRecibir(props) {
             },
         },
         metodo_de_pago:{
-            clave: "",
-            metodo:  "",
+            clave: metodoPago.Value,
+            metodo:  metodoPago.Name,
         },
+        numero_caja: parseInt(turnoEnCurso.numero_caja),
+        id_Caja: turnoEnCurso.id_caja,
         id_usuario: sesion._id,
         numero_usuario_creador: sesion.numero_usuario,
         nombre_usuario_creador: sesion.nombre,
@@ -125,6 +127,7 @@ function AbonoaRecibir(props) {
         nombre_cliente: props.cuenta.proveedor.nombre_cliente, 
         telefono_cliente: props.cuenta.proveedor.id_proveedor.telefono, 
         email_cliente: props.cuenta.proveedor.id_proveedor.email,
+
         id_compra: props.cuenta._id
     };
 
@@ -152,7 +155,7 @@ function AbonoaRecibir(props) {
             setAbono('');
             setMetodoPago('');
             setAlert({ 
-                message: 'Abono registrado con exito', 
+                message: 'Abono registrado con éxito', 
                 status: 'success', 
                 open: true 
             });
@@ -160,7 +163,12 @@ function AbonoaRecibir(props) {
             setLoading(false);
         } catch (error) {
             handleClick();
-            setLoading(false);
+            setLoading(false); 
+            if (error.networkError) {
+                console.log(error.networkError.result);
+              } else if (error.graphQLErrors) {
+                console.log(error.graphQLErrors);
+              }
             setAlert({ 
                 message: 'Ocurrio un problema en el servidor', 
                 status: 'error', 

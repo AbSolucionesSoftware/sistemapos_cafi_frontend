@@ -145,7 +145,7 @@ export default function AbonosClientes(props) {
 	}
 	
 	if(obtenerVentasCredito.error){
-		
+		console.log(obtenerVentasCredito.error)
 		if (obtenerVentasCredito.error.networkError.result) {
 			console.log(obtenerVentasCredito.error.networkError.result.errors);
 		  } else if (obtenerVentasCredito.error.graphQLErrors) {
