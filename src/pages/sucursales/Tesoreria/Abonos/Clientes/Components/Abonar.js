@@ -45,6 +45,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     const classes = useStyles();
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [abono, setAbono] = useState(''); 
     const {abonos} = useContext(AbonosCtx);
     const [metodoPago, setMetodoPago] = useState({});
@@ -57,7 +58,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     }
     const hacerAbono = async() => { 
         try {
-            props.setLoading(true);
+            setLoading(true);
          
             let ObjectMetodoPago = {};
             formaPago.forEach((val) => {
@@ -122,7 +123,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                 console.log(doAbono);
                 props.recargar();
                 setOpen(false);
-                props.setLoading(false);
+                setLoading(false);
                 props.setAlert({ 
                     message: 'Abono registrado con éxito.', 
                     status: 'success', 
@@ -131,11 +132,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
             }
         } catch (error) {
             console.log(error);
+            let message = error;
             if (error.networkError) {
                 console.log(error.networkError.result);
+                message = error.networkError.result;
             } else if (error.graphQLErrors) {
-                console.log(error.graphQLErrors);
+                console.log(error.graphQLErrors[0].message);
+                message = error.graphQLErrors[0].message;
             }
+            props.setAlert({ 
+                message: message, 
+                status: 'error', 
+                open: true 
+            });
         }
     }
 
@@ -174,7 +183,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
           
         }
     }, [metodoPago])
-     
+ 
     return (
         <Box m={1}>
             <Box display="flex">
@@ -183,7 +192,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                 </IconButton>
                 </Box>
             <Fragment>
-           
+       
             <Dialog
                 open={open}
                 TransitionComponent={Transition}
@@ -203,7 +212,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                 </Box>
                 
             </DialogTitle>
-                <BackdropComponent loading={props.loading} setLoading={props.setLoading} />
+                
+                <BackdropComponent loading={loading} setLoading={setLoading} />
             
                 <DialogContent>
                     <Box  display="flex"sx={{ justifyContent: 'space-between' }}>
@@ -286,7 +296,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                         variant="contained" 
                         color="primary"
                         style={{fontSize: 15}}
-                        onClick={hacerAbono}
+                        onClick={() => hacerAbono()}
                     >
                         Registrar Abono
                     </Button>

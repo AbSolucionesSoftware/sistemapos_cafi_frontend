@@ -11,6 +11,7 @@ import { withRouter } from "react-router";
 import {  CREAR_ABONO_CLIENTE } from "../../../../../../gql/Tesoreria/abonos";
 import {AbonosCtx} from "../../../../../../context/Tesoreria/abonosCtx";
 import { formaPago } from '../../../../Facturacion/catalogos';
+import BackdropComponent from '../../../../../../components/Layouts/BackDrop';   
 import RemoveCircleTwoToneIcon from "@material-ui/icons/RemoveCircleTwoTone";
 import moment from 'moment';
 
@@ -34,6 +35,7 @@ function Liquidar(props) {
     const [metodoPago, setMetodoPago] = useState('');
     const [value, setValue] = useState(0);
     const [total, setTotal] = useState(0);
+    const [loading, setLoading] = useState(false);
     const [cuentaTotalDescuento, setCuentaTotalDescuento] = useState(0);
     const [dineroDescontado, setDineroDescontado] = useState(0);
     const [ crearAbonoVentaCredito ] = useMutation(CREAR_ABONO_CLIENTE);
@@ -84,7 +86,7 @@ function Liquidar(props) {
     }
     const liquidarVentas = async() =>{
         try {
-            
+         setLoading(true);
             let ObjectMetodoPago = {};
             formaPago.forEach((val) => {
                 if (metodoPago === val.Value) { 
@@ -141,7 +143,8 @@ function Liquidar(props) {
                     ]
                     :
                     abonos, 
-                liquidar: true
+                liquidar: true,
+                
             }
             if(metodoPago){
                 await crearAbonoVentaCredito({
@@ -153,7 +156,7 @@ function Liquidar(props) {
                 });
                 props.recargar();
                 setOpen(false);
-                props.setLoading(false);
+                setLoading(false);
                 props.setAlert({ 
                     message: 'Venta liquidada con éxito.', 
                     status: 'success', 
@@ -198,6 +201,7 @@ function Liquidar(props) {
                 aria-labelledby="alert-dialog-slide-title"
                 aria-describedby="alert-dialog-slide-description"
             >
+                <BackdropComponent loading={loading} setLoading={setLoading} />
                 <DialogTitle id="alert-dialog-slide-title">
                     <Box display="flex">
                         <Box width='100%' display="flex" justifyContent="flex-start">
