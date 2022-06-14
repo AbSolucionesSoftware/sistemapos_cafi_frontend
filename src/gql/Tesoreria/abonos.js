@@ -11,6 +11,7 @@ export const OBTENER_HISTORIAL_ABONOS = gql `
       sucursal: $sucursal
       input: $input
     ) {
+      _id
       numero_caja
       id_Caja
       horario_turno
@@ -20,6 +21,7 @@ export const OBTENER_HISTORIAL_ABONOS = gql `
         completa
       }
       numero_usuario_creador
+      status
       nombre_usuario_creador
       monto_total_abonado
       numero_cliente
@@ -69,6 +71,7 @@ export const OBTENER_HISTORIAL_ABONOS_CLIENTE = gql `
     ) {
       _id
       folio
+      facturacion
       estatus_credito
       cliente {
         _id
@@ -97,11 +100,19 @@ export const OBTENER_HISTORIAL_ABONOS_CLIENTE = gql `
           pais
         }
         imagen
+        estado_cliente
+        tipo_cliente
         eliminado
         banco
         numero_cuenta
         monedero_electronico
         credito_disponible
+        empresa {
+          _id
+        }
+        sucursal {
+          _id
+        }
       }
       descuento
       ieps
@@ -448,7 +459,7 @@ export const OBTENER_HISTORIAL_ABONOS_CLIENTE = gql `
         issuer {
           FiscalRegime
           Rfc
-          Name
+          TaxName
         }
         receiver {
           Rfc
@@ -518,7 +529,9 @@ export const OBTENER_HISTORIAL_ABONOS_CLIENTE = gql `
       }
       status
       abonos {
+        _id
         numero_caja
+        status
         id_Caja
         horario_turno
         tipo_movimiento
@@ -577,6 +590,26 @@ export const CREAR_ABONO_CLIENTE = gql `
   mutation crearAbonoVentaCredito($empresa: ID!, $sucursal: ID!, $input: AbonoVentasCreditoInput) {
     crearAbonoVentaCredito(empresa: $empresa, sucursal: $sucursal, input: $input) {
       message
+      pdf
+      xml
+      success
     }
   }
 `;
+
+export const CANCELAR_ABONO_CLIENTE = gql `
+  mutation cancelarAbonoCliente($empresa: ID!, $sucursal: ID!, $input: CancelarAbonoInput) {
+    cancelarAbonoCliente(empresa: $empresa, sucursal: $sucursal, input: $input) {
+      message
+    }
+  }
+`;
+
+export const CANCELAR_ABONO_PROVEEDOR = gql `
+  mutation cancelarAbonoProveedor($empresa: ID!, $sucursal: ID!, $input: CancelarAbonoProveedorInput) {
+    cancelarAbonoProveedor(empresa: $empresa, sucursal: $sucursal, input: $input) {
+      message
+    }
+  }
+`;
+

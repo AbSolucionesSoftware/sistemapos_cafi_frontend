@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function DetallesCuenta({handleClick, cuenta}) {
+export default function DetallesCuenta(props) {
 	const permisosUsuario = JSON.parse(localStorage.getItem('sesionCafi'));
     const classes = useStyles();
 
@@ -42,7 +42,7 @@ export default function DetallesCuenta({handleClick, cuenta}) {
                         Detalles de cuenta
                     </Typography>
                     <Box m={1}>
-                        <Button variant="contained" color="secondary" onClick={handleClick} size="large">
+                        <Button variant="contained" color="secondary" onClick={props.handleClick} size="large">
                             <CloseIcon style={{fontSize: 30}} />
                         </Button>
                     </Box>
@@ -52,40 +52,41 @@ export default function DetallesCuenta({handleClick, cuenta}) {
                 <Box width="100%" p={1}>
                     <Box width="100%" display="flex" p={.5}>
                         <Typography><b>Nombre de proveedor: </b> </Typography>
-                        <Typography style={{paddingLeft: 5}}>{cuenta.proveedor.id_proveedor.nombre_cliente}</Typography>
+                        <Typography style={{paddingLeft: 5}}>{props.cuenta.proveedor.id_proveedor.nombre_cliente}</Typography>
                     </Box>
                     <Box width="100%" display="flex"  p={.5}>
                         <Typography><b>Clave proveedor: </b> </Typography>
-                        <Typography style={{paddingLeft: 5}}>{cuenta.proveedor.id_proveedor.clave_cliente}</Typography>
+                        <Typography style={{paddingLeft: 5}}>{props.cuenta.proveedor.id_proveedor.clave_cliente}</Typography>
                     </Box>
                 </Box>
                 <Box width="100%" p={1}>
                     <Box width="100%" display="flex" p={.5}>
                         <Typography><b>Nombre de usuario: </b> </Typography>
-                        <Typography style={{paddingLeft: 5}}>{cuenta.usuario.nombre}</Typography>
+                        <Typography style={{paddingLeft: 5}}>{props.cuenta.usuario.nombre}</Typography>
                     </Box>
                     <Box width="100%" display="flex"  p={.5}>
                         <Typography><b>Numero usuario: </b> </Typography>
-                        <Typography style={{paddingLeft: 5}}>{cuenta.usuario.numero_usuario}</Typography>
+                        <Typography style={{paddingLeft: 5}}>{props.cuenta.usuario.numero_usuario}</Typography>
                     </Box>
                 </Box>
                 <Box width="100%" p={1}>
                     <Box width="100%" display="flex" p={.5}>
                         <Typography><b>Fecha compra: </b> </Typography>
-                        <Typography style={{paddingLeft: 5}}>{moment(cuenta.fecha_registro).format('D MMMM YYYY')}</Typography>
+                        <Typography style={{paddingLeft: 5}}>{moment(props.cuenta.fecha_registro).format('D MMMM YYYY')}</Typography>
                     </Box>
                     <Box width="100%" display="flex"  p={.5}>
                         <Typography><b>Fecha vencimiento: </b> </Typography>
-                        <Typography style={{paddingLeft: 5}}>{moment(cuenta.fecha_vencimiento_credito).format('D MMMM YYYY')}</Typography>
+                        <Typography style={{paddingLeft: 5}}>{moment(props.cuenta.fecha_vencimiento_credito).format('D MMMM YYYY')}</Typography>
                     </Box>
                 </Box>
                 {permisosUsuario.accesos.tesoreria.abonos_proveedores.editar === false ? (null) : (
                     <Box width="60%" p={1} display='flex' alignItems={'center'} >
-                        <AbonoaRecibir cuenta={cuenta} />
+                        <AbonoaRecibir cuenta={props.cuenta} />
                     </Box>
                 )}
             </div>
             <Grid container>
+                
                 <Grid item lg={6} xs={12}>
                     <Box p={2}>
                         <Typography variant="h6">
@@ -93,13 +94,13 @@ export default function DetallesCuenta({handleClick, cuenta}) {
                         </Typography>
                     </Box>
                     <Box p={2}>
-                        <TablaAbonos cuenta={cuenta} />
+                        <TablaAbonos cuenta={props.cuenta} proveedor={props.cuenta.proveedor} recargar={props.recargar} />
                     </Box>
-                    <Box p={1} mr={3} display="flex" justifyContent="flex-end">
-                        <Typography variant='h6'>Total abonado: <b style={{color: "#9B9B9B"}}>${cuenta.total - cuenta.saldo_credito_pendiente}</b></Typography>
+                    <Box p={0} mr={3} display="flex" justifyContent="flex-end">
+                        <Typography variant='h6'>Total abonado: <b style={{color: "#9B9B9B"}}>${props.cuenta.total - props.cuenta.saldo_credito_pendiente}</b></Typography>
                     </Box> 
-                    <Box p={1} mr={3} display="flex" justifyContent="flex-end">
-                        <Typography variant='h6'>Restante: <b  style={{color: "green"}}>${formatoMexico(cuenta.saldo_credito_pendiente)}</b></Typography>
+                    <Box p={0} mr={3} display="flex" justifyContent="flex-end">
+                        <Typography variant='h6'>Restante: <b  style={{color: "green"}}>${formatoMexico(props.cuenta.saldo_credito_pendiente)}</b></Typography>
                     </Box>
                 </Grid>
                 <Grid item lg={6} xs={12}>
@@ -109,10 +110,10 @@ export default function DetallesCuenta({handleClick, cuenta}) {
                         </Typography>
                     </Box>
                     <Box p={2}>
-                        <TablaCompras productos={cuenta.productos}/>
+                        <TablaCompras productos={props.cuenta.productos}/>
                     </Box>
                     <Box p={1} mr={3} display="flex" justifyContent="flex-end">
-                        <Typography variant='h6'>Total a liquidar: <b  style={{color: "red"}}>${formatoMexico(cuenta.total)}</b></Typography>
+                        <Typography variant='h6'>Total a liquidar: <b  style={{color: "red"}}>${formatoMexico(props.cuenta.total)}</b></Typography>
                     </Box>
                 </Grid>
             </Grid>

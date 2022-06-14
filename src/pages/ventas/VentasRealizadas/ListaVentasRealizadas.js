@@ -409,7 +409,7 @@ const RowComprasRealizadas = ({
       onClick={(e) => obtenerVenta(e.detail, data)}
       classes={{
         selected: classes.selected,
-        root: data.status === "CANCELADA" ? classes.root : null,
+        root: data.status === "CANCELADO" ? classes.root : null,
       }}
       className={today && admin ? classes.today_color : classes.normal_color}
     >

@@ -144,3 +144,155 @@ export const CONSULTA_CFDIU_USES_SAT_API = gql`
     }
   }
 `;
+
+export const OBTENER_FACTURAS_REALIZADAS = gql`
+  query obtenerFacturas(
+    $empresa: ID!
+    $sucursal: ID!
+    $filtros: filtrosFactura
+  ) {
+    obtenerFacturas(empresa: $empresa, sucursal: $sucursal, filtros: $filtros) {
+      id_cfdi
+      serie
+      currency
+      expedition_place
+      folio
+      cfdi_type
+      payment_form
+      payment_method
+      logo_url
+      date
+      issuer {
+        FiscalRegime
+        Rfc
+        TaxName
+      }
+      receiver {
+        Rfc
+        Name
+        CfdiUse
+      }
+      items {
+        ProductCode
+        IdentificationNumber
+        Description
+        Unit
+        UnitCode
+        UnitPrice
+        Quantity
+        Subtotal
+        Discount
+        Total
+      }
+      taxes {
+        Total
+        Name
+        Rate
+        Type
+      }
+      complement {
+        TaxStamp {
+          Uuid
+          Date
+          CdfiSign
+          SatCertNumber
+          SatSign
+          RfcProvCertif
+        }
+      }
+      original_string
+      sub_total
+      total
+      discount
+      fecha_registro
+      id_venta
+      folio_venta
+      complementos{
+        id_cfdi
+      serie
+      currency
+      expedition_place
+      folio
+      cfdi_type
+      payment_form
+      payment_method
+      logo_url
+      date
+      issuer {
+        FiscalRegime
+        Rfc
+        TaxName
+      }
+      receiver {
+        Rfc
+        Name
+        CfdiUse
+      }
+      items {
+        ProductCode
+        IdentificationNumber
+        Description
+        Unit
+        UnitCode
+        UnitPrice
+        Quantity
+        Subtotal
+        Discount
+        Total
+      }
+      taxes {
+        Total
+        Name
+        Rate
+        Type
+      }
+      complement {
+        TaxStamp {
+          Uuid
+          Date
+          CdfiSign
+          SatCertNumber
+          SatSign
+          RfcProvCertif
+        }
+        Payments{
+          _id
+          RelatedDocuments{
+            _id
+            Uuid
+            Folio
+            Currency
+            PaymentMethod
+            PartialityNumber
+            PreviousBalanceAmount
+            AmountPaid
+            ImpSaldoInsoluto
+          }
+          Date
+          PaymentForm
+          Currency
+          Amount
+          ExpectedPaid
+        }
+      }
+      original_string
+      sub_total
+      total
+      discount
+      fecha_registro
+      id_venta
+      folio_venta
+      }
+    }
+  }
+`;
+
+export const OBTENER_DOCUMENTO_FACTURA = gql`
+  query obtenerDocumentCfdi($id:String!){
+    obtenerDocumentCfdi(id:$id){
+      htmlBase64
+      pdfBase64
+      xmlBase64
+    }
+  }
+`;

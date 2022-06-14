@@ -1,10 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, Fragment } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import { Box, Button, Dialog, 
         DialogContent,  DialogTitle, FormControl, makeStyles, 
         MenuItem, Select, Slide, TextField, Typography 
 } from '@material-ui/core';
+import { withRouter } from "react-router";
 import { formaPago } from '../../../../Facturacion/catalogos';
 import { formatoMexico } from '../../../../../../config/reuserFunctions';
 import { useMutation } from '@apollo/client';
@@ -45,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function AbonoaRecibir({cuenta}) {
+function AbonoaRecibir(props) {
     const [ CrearAbono ] = useMutation(CREAR_ABONO);
     
 	const { setReload, setAlert } = useContext(TesoreriaCtx);
@@ -58,11 +59,17 @@ export default function AbonoaRecibir({cuenta}) {
     const [loading, setLoading] = useState(false);
     const [abono, setAbono] = useState(''); 
     const [metodoPago, setMetodoPago] = useState('');
-
+    const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
     
     const input = {
-        tipo_movimiento: "ABONO",
-        rol_movimiento: "PROVEEDOR",
+        tipo_movimiento: "ABONO_PROVEEDOR",
+        rol_movimiento: "CAJA",
+        hora_moviento: {
+            hora: moment().format('hh'),
+            minutos: moment().format('mm'),
+            segundos: moment().format('ss'),
+            completa: moment().format('HH:mm:ss')
+        },
         fecha_movimiento: {
             year: moment().format('YYYY'),
             mes: moment().format('MM'),
@@ -107,18 +114,21 @@ export default function AbonoaRecibir({cuenta}) {
             },
         },
         metodo_de_pago:{
-            clave: "",
-            metodo:  "",
+            clave: metodoPago.Value,
+            metodo:  metodoPago.Name,
         },
+        numero_caja: parseInt(turnoEnCurso.numero_caja),
+        id_Caja: turnoEnCurso.id_caja,
         id_usuario: sesion._id,
         numero_usuario_creador: sesion.numero_usuario,
         nombre_usuario_creador: sesion.nombre,
-        id_cliente: cuenta.proveedor.id_proveedor._id,
-        numero_cliente: cuenta.proveedor.numero_cliente,
-        nombre_cliente: cuenta.proveedor.nombre_cliente, 
-        telefono_cliente: cuenta.proveedor.id_proveedor.telefono, 
-        email_cliente: cuenta.proveedor.id_proveedor.email,
-        id_compra: cuenta._id
+        id_cliente: props.cuenta.proveedor.id_proveedor._id,
+        numero_cliente: props.cuenta.proveedor.numero_cliente,
+        nombre_cliente: props.cuenta.proveedor.nombre_cliente, 
+        telefono_cliente: props.cuenta.proveedor.id_proveedor.telefono, 
+        email_cliente: props.cuenta.proveedor.id_proveedor.email,
+
+        id_compra: props.cuenta._id
     };
 
     
@@ -145,7 +155,7 @@ export default function AbonoaRecibir({cuenta}) {
             setAbono('');
             setMetodoPago('');
             setAlert({ 
-                message: 'Abono registrado con exito', 
+                message: 'Abono registrado con éxito', 
                 status: 'success', 
                 open: true 
             });
@@ -153,7 +163,12 @@ export default function AbonoaRecibir({cuenta}) {
             setLoading(false);
         } catch (error) {
             handleClick();
-            setLoading(false);
+            setLoading(false); 
+            if (error.networkError) {
+                console.log(error.networkError.result);
+              } else if (error.graphQLErrors) {
+                console.log(error.graphQLErrors);
+              }
             setAlert({ 
                 message: 'Ocurrio un problema en el servidor', 
                 status: 'error', 
@@ -163,25 +178,39 @@ export default function AbonoaRecibir({cuenta}) {
         }
     };
 
-    const handleClick = () => {
-        setReload(true);
-        setOpen(!open);
-    };
+    
+       
+
+        const handleClick = () => { 
+            if(turnoEnCurso){
+                setReload(true);
+                setOpen(!open);
+            }else{
+                props.history.push('/ventas/venta-general');
+            }
+        } 
+
 
     return (
-        <div>
-            <Button
-                size="large"
-                variant="outlined" 
-                fullWidth
-                color="primary"
-                startIcon={<AddCircleOutlineIcon style={{fontSize: 35}} />}
-                onClick={handleClick}
-            >
-                <Typography variant="h6">
-                    Abonar    
-                </Typography>
-            </Button>
+        <Fragment>
+            {
+                (props.cuenta.credito_pagado ) ?
+                    <div/>
+                :
+                    <Button
+                    size="large"
+                    variant="outlined" 
+                    fullWidth
+                    color="primary"
+                    startIcon={<AddCircleOutlineIcon style={{fontSize: 35}} />}
+                    onClick={handleClick}
+                >
+                    <Typography variant="h6">
+                        Abonar    
+                    </Typography>
+                </Button>
+            }
+          
             <Dialog
                 open={open}
                 TransitionComponent={Transition}
@@ -251,7 +280,7 @@ export default function AbonoaRecibir({cuenta}) {
                             </Typography>
                         </Box>
                         <Typography style={{color: '#9B9B9B'}} variant='h6'>
-                            <b>${formatoMexico(cuenta.total)}</b>
+                            <b>${formatoMexico(props.cuenta.total)}</b>
                         </Typography>
                     </Box>
                     <Box width="100%" display='flex'>
@@ -261,7 +290,7 @@ export default function AbonoaRecibir({cuenta}) {
                             </Typography>
                         </Box>
                         <Typography style={{color: 'green'}} variant='h6'>
-                            <b>${formatoMexico(cuenta.total - cuenta.saldo_credito_pendiente)}</b>
+                            <b>${formatoMexico(props.cuenta.total - props.cuenta.saldo_credito_pendiente)}</b>
                         </Typography>
                     </Box>
                     <Box width="100%" display='flex'>
@@ -271,7 +300,7 @@ export default function AbonoaRecibir({cuenta}) {
                             </Typography>
                         </Box>
                         <Typography  variant='h6'>
-                            <b>${formatoMexico(cuenta.saldo_credito_pendiente)}</b>
+                            <b>${formatoMexico(props.cuenta.saldo_credito_pendiente)}</b>
                         </Typography>
                     </Box>
                     
@@ -288,6 +317,8 @@ export default function AbonoaRecibir({cuenta}) {
                     </Button>
                 </Box>
             </Dialog>
-        </div>
+        </Fragment>
     )
 }
+
+export default withRouter(AbonoaRecibir);

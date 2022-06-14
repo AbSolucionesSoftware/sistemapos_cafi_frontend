@@ -6,7 +6,7 @@ import useStyles from "./styles";
 import moment from "moment";
 import "moment/locale/es";
 
-import DepositoRetiroCaja from "../../pages/ventas/Operaciones/DepositoRetiroCaja";
+import DepositoRetiroCaja from "../../pages/ventas/Operaciones/DepositoRetiros/DepositoRetiroCaja";
 import Turnos from "../../pages/ventas/AbrirCerrarTurno/Turnos";
 import PreCorteCaja from "../../pages/ventas/Operaciones/PreCorteCaja";
 import VentaEnEspera from "../../pages/ventas/Operaciones/VentaEnEspera";

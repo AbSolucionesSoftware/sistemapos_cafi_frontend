@@ -15,8 +15,7 @@ export const generateCode = (length) => {
 
 export const generateCodeNumerico = (length) => {
   var result = "";
-  var characters =
-    "0123456789";
+  var characters = "0123456789";
   var charactersLength = characters.length;
   for (var i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -39,7 +38,7 @@ export const formatoFecha = (fecha) => {
   } else {
     var newdate = new Date(fecha);
     return newdate.toLocaleDateString("es-MX", {
-      weekday: "long",
+      weekday: "short",
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -53,9 +52,8 @@ export const formatoFechaCorta = (fecha) => {
   } else {
     var newdate = new Date(fecha);
     return newdate.toLocaleDateString("es-MX", {
-      weekday: "short",
       year: "numeric",
-      month: "short",
+      month: "long",
       day: "numeric",
     });
   }
@@ -63,7 +61,7 @@ export const formatoFechaCorta = (fecha) => {
 
 export const formatoMexico = (number) => {
   if (!number) {
-    return 0.00;
+    return 0.0;
   } else {
     let nueva;
     if (number % 1 === 0) {
@@ -239,7 +237,14 @@ export const calculatePrices = async (
   };
 };
 
-export const calculatePrices2 = async ({ newP, cantidad, granel, origen, precio_boolean = false, precio}) => {
+export const calculatePrices2 = async ({
+  newP,
+  cantidad,
+  granel,
+  origen,
+  precio_boolean = false,
+  precio,
+}) => {
   try {
     let subtotalCalculo = 0,
       totalCalculo = 0,
@@ -251,11 +256,13 @@ export const calculatePrices2 = async ({ newP, cantidad, granel, origen, precio_
     // const descuento = newP.descuento_activo === null ? false : true;
     const cantidadNueva = cantidad > 0 ? cantidad : 1;
     const valor_granel = granel.granel ? parseFloat(granel.valor) : 1;
-    const precio_actual = precio_boolean ? precio : newP.descuento_activo ? newP.descuento : newP.precio_unidad;
+    const precio_actual = precio_boolean
+      ? precio
+      : newP.descuento_activo
+      ? newP.descuento
+      : newP.precio_unidad;
     const cantidadCaja =
-    precio_actual.unidad_maxima === true
-      ? precio_actual.cantidad_unidads
-      : 1;
+      precio_actual.unidad_maxima === true ? precio_actual.cantidad_unidads : 1;
     ivaCalculo = precio_actual.iva_precio * cantidadCaja;
     iepsCalculo = precio_actual.ieps_precio * cantidadCaja;
     impuestoCalculo = ivaCalculo + iepsCalculo;
@@ -266,41 +273,74 @@ export const calculatePrices2 = async ({ newP, cantidad, granel, origen, precio_
       : 0;
     descuentoCalculo = totalCalculo - newP.precio_unidad.precio_neto;
     const ob = {
-      ivaCalculo: parseFloat((ivaCalculo * valor_granel * cantidadNueva).toFixed(2)),
-      iepsCalculo: parseFloat((iepsCalculo * valor_granel * cantidadNueva).toFixed(2)) ,
-      impuestoCalculo: parseFloat((impuestoCalculo * valor_granel * cantidadNueva).toFixed(2)) ,
-      subtotalCalculo: parseFloat((subtotalCalculo * valor_granel * cantidadNueva).toFixed(2)) ,
-      totalCalculo: parseFloat((totalCalculo * valor_granel * cantidadNueva).toFixed(2)) ,
-      monederoCalculo: parseFloat((monederoCalculo * valor_granel * cantidadNueva).toFixed(2)) ,
-      descuentoCalculo: parseFloat((descuentoCalculo * valor_granel * cantidadNueva).toFixed(2)) ,
-      newP
+      ivaCalculo: parseFloat(
+        (ivaCalculo * valor_granel * cantidadNueva).toFixed(2)
+      ),
+      iepsCalculo: parseFloat(
+        (iepsCalculo * valor_granel * cantidadNueva).toFixed(2)
+      ),
+      impuestoCalculo: parseFloat(
+        (impuestoCalculo * valor_granel * cantidadNueva).toFixed(2)
+      ),
+      subtotalCalculo: parseFloat(
+        (subtotalCalculo * valor_granel * cantidadNueva).toFixed(2)
+      ),
+      totalCalculo: parseFloat(
+        (totalCalculo * valor_granel * cantidadNueva).toFixed(2)
+      ),
+      monederoCalculo: parseFloat(
+        (monederoCalculo * valor_granel * cantidadNueva).toFixed(2)
+      ),
+      descuentoCalculo: parseFloat(
+        (descuentoCalculo * valor_granel * cantidadNueva).toFixed(2)
+      ),
+      newP,
     };
-    if(origen === "Ventas1"){
+    if (origen === "Ventas1") {
       newP.cantidad_venta = 1;
-      newP.granel_producto  = granel;
+      newP.granel_producto = granel;
       newP.precio_a_vender = ob.totalCalculo;
-      newP.precio_actual_producto = parseFloat((precio_actual.precio_neto).toFixed(2));
+      newP.precio_actual_producto = parseFloat(
+        precio_actual.precio_neto.toFixed(2)
+      );
       newP.precio_actual_object = {
-        cantidad_unidad: precio_actual.cantidad_unidad ? precio_actual.cantidad_unidad : 1,
-        numero_precio: precio_actual.numero_precio ? precio_actual.numero_precio : 1,
-        unidad_maxima: precio_actual.unidad_maxima ? precio_actual.unidad_maxima : false,
-        precio_general: precio_actual.precio_general ? precio_actual.precio_general : 0,
-        precio_neto: precio_actual.precio_neto ? precio_actual.precio_neto : 0,
-        precio_venta: precio_actual.precio_venta ? precio_actual.precio_venta : 0,
-        iva_precio: precio_actual.iva_precio ? precio_actual.iva_precio : 0,
-        ieps_precio: precio_actual.ieps_precio ? precio_actual.ieps_precio : 0,
+        cantidad_unidad: precio_actual.cantidad_unidad
+          ? precio_actual.cantidad_unidad
+          : 1,
+        numero_precio: precio_actual.numero_precio
+          ? precio_actual.numero_precio
+          : 1,
+        unidad_maxima: precio_actual.unidad_maxima
+          ? precio_actual.unidad_maxima
+          : false,
+        precio_general: precio_actual.precio_general
+          ? parseFloat(precio_actual.precio_general.toFixed(2))
+          : 0,
+        precio_neto: precio_actual.precio_neto
+          ? parseFloat(precio_actual.precio_neto.toFixed(2))
+          : 0,
+        precio_venta: precio_actual.precio_venta
+          ? parseFloat(precio_actual.precio_venta.toFixed(2))
+          : 0,
+        iva_precio: precio_actual.iva_precio
+          ? parseFloat(precio_actual.iva_precio.toFixed(2))
+          : 0,
+        ieps_precio: precio_actual.ieps_precio
+          ? parseFloat(precio_actual.ieps_precio.toFixed(2))
+          : 0,
         utilidad: precio_actual.utilidad ? precio_actual.utilidad : 0,
         porciento: precio_actual.porciento ? precio_actual.porciento : 0,
-        dinero_descontado: precio_actual.dinero_descontado ? precio_actual.dinero_descontado : 0,
+        dinero_descontado: precio_actual.dinero_descontado
+          ? parseFloat(precio_actual.dinero_descontado.toFixed(2))
+          : 0,
       };
-    }else if(origen === "Ventas2") {
+    } else if (origen === "Ventas2") {
       newP.granel_producto = granel;
       newP.precio_a_vender = ob.totalCalculo;
       newP.precio_anterior = newP.precio_actual_producto;
     }
 
     return ob;
-
   } catch (error) {
     console.log(error);
     return false;
@@ -319,7 +359,7 @@ export const verifiPrising = async (newP) => {
       found: false,
       pricing: 0,
       number_pricing: 0,
-      object_prising: {}
+      object_prising: {},
     };
     const datoFinal = pricings.length;
     if (newP.precio_seleccionado) return finalPrising;
@@ -332,7 +372,9 @@ export const verifiPrising = async (newP) => {
           : newP.id_producto.precios.precios_producto[0].precio_neto,
         number_pricing:
           newP.id_producto.precios.precios_producto[0].numero_precio,
-        object_prising: newP.descuento_activo ? newP.descuento : newP.id_producto.precios.precios_producto[0]
+        object_prising: newP.descuento_activo
+          ? newP.descuento
+          : newP.id_producto.precios.precios_producto[0],
       });
 
     for (let i = 0; i < pricings.length; i++) {
@@ -341,7 +383,7 @@ export const verifiPrising = async (newP) => {
           found: true,
           pricing: pricings[i].precio_neto,
           number_pricing: pricings[i].numero_precio,
-          object_prising: pricings[i]
+          object_prising: pricings[i],
         });
 
       if (
@@ -353,7 +395,7 @@ export const verifiPrising = async (newP) => {
           found: true,
           pricing: pricings[i].precio_neto,
           number_pricing: pricings[i].numero_precio,
-          object_prising: pricings[i]
+          object_prising: pricings[i],
         };
       }
     }
@@ -424,7 +466,7 @@ export const findProductArrayRefactor = async (producto) => {
 };
 
 export const truncteDecimals = (number, digits) => {
-  number = parseFloat(number)
+  number = parseFloat(number);
   var multiplier = Math.pow(10, 2),
     adjustedNum = number * multiplier,
     truncatedNum = Math[adjustedNum < 0 ? "ceil" : "floor"](adjustedNum);

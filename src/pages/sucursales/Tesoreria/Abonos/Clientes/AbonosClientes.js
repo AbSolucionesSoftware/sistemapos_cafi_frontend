@@ -103,6 +103,7 @@ export default function AbonosClientes(props) {
 	const ChangeClientAutocomplate = (value) => {
 		try {
 		  let setVal  = (value !== null) ? value: ""; 
+		 
 		   setSelectedClient(setVal);
 		} catch (error) {
 		  console.log(error);
@@ -143,6 +144,15 @@ export default function AbonosClientes(props) {
 		clientes = obtenerClientes.data.obtenerClientesVentas;
 	}
 	
+	if(obtenerVentasCredito.error){
+		console.log(obtenerVentasCredito.error)
+		if (obtenerVentasCredito.error.networkError.result) {
+			console.log(obtenerVentasCredito.error.networkError.result.errors);
+		  } else if (obtenerVentasCredito.error.graphQLErrors) {
+			console.log(obtenerVentasCredito.error.graphQLErrors.message);
+		  }
+	}
+
 	const enviarCantidad = (cantidad, index, _id) =>{
 		let copyArray = [...context.abonos];
 		
@@ -285,7 +295,7 @@ export default function AbonosClientes(props) {
 						</Box>
 					:
 					<div/>
-				}
+				} 
 			</Dialog>
 
 		</Fragment>

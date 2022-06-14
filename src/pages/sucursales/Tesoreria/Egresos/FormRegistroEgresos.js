@@ -152,7 +152,7 @@ export default function FormRegistroEgresos({ tipo, handleClickOpen }) {
 
   const input = {
     folio_egreso: datosEgreso.folio_egreso,
-    folio_factura: datosEgreso.folio_factura,
+    folio_factura: datosEgreso.id_factura,
     empresa_distribuidora: datosEgreso.empresa_distribuidora,
     provedor: datosEgreso.provedor,
     productos: datosEgreso.productos ? datosEgreso.productos : [],
@@ -465,11 +465,11 @@ export default function FormRegistroEgresos({ tipo, handleClickOpen }) {
             Guardar Egreso
           </Button>
         </Box>
-        <Box p={1}>
+        {/* <Box p={1}>
           <Button size="large" variant="contained" color="secondary">
             Cancelar
           </Button>
-        </Box>
+        </Box> */}
       </Box>
     </Fragment>
   );

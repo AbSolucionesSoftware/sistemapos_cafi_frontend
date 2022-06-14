@@ -68,53 +68,46 @@ export default function ExportarProductosComprasExcel({ compra }) {
 
   return (
     <Fragment>
-      <Grid>
-        <Grid item>
-          <ExcelFile
-            element={
-              <Box display="flex" justifyContent="flex-end">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<CloudDownloadOutlined />}
-                >
-                  Exportar a Excel
-                </Button>
-              </Box>
-            }
-            filename={"Detalle de compra"}
-          >
-            <ExcelSheet data={compra_realizada} name="Detalle compra">
-              <ExcelColumn label="Almacen" value="almacen" />
-              <ExcelColumn label="Proveedor" value="proveedor" />
-              <ExcelColumn label="Fecha de compra" value="fecha_registro" />
-              <ExcelColumn label="Subtotal" value="subtotal" />
-              <ExcelColumn label="Impuestos" value="impuestos" />
-              <ExcelColumn label="Total" value="total" />
-            </ExcelSheet>
-            <ExcelSheet data={productos_detalles} name="Productos de la compra">
-              <ExcelColumn label="Producto" value="producto" />
-              <ExcelColumn label="Medida" value="medida" />
-              <ExcelColumn label="Color" value="color" />
-              <ExcelColumn label="Unidad" value="unidad" />
-              <ExcelColumn label="Cantidad" value="cantidad" />
-              <ExcelColumn label="Cantidad de regalo" value="cantidad_regalo" />
-              <ExcelColumn label="Cantidad total" value="cantidad_total" />
-              <ExcelColumn
-                label="Precio de descuento"
-                value="descuento_precio"
-              />
-              <ExcelColumn
-                label="Porcentaje de descuento"
-                value="descuento_porcentaje"
-              />
-              <ExcelColumn label="Subtotal" value="subtotal" />
-              <ExcelColumn label="Impuestos" value="impuestos" />
-              <ExcelColumn label="Total" value="total" />
-            </ExcelSheet>
-          </ExcelFile>
-        </Grid>
-      </Grid>
+      <ExcelFile
+        element={
+          <Box display="flex" justifyContent="flex-end">
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<CloudDownloadOutlined />}
+            >
+              Exportar a Excel
+            </Button>
+          </Box>
+        }
+        filename={"Detalle de compra"}
+      >
+        <ExcelSheet data={compra_realizada} name="Detalle compra">
+          <ExcelColumn label="Almacen" value="almacen" />
+          <ExcelColumn label="Proveedor" value="proveedor" />
+          <ExcelColumn label="Fecha de compra" value="fecha_registro" />
+          <ExcelColumn label="Subtotal" value="subtotal" />
+          <ExcelColumn label="Impuestos" value="impuestos" />
+          <ExcelColumn label="Total" value="total" />
+        </ExcelSheet>
+        <ExcelSheet data={productos_detalles} name="Productos de la compra">
+          <ExcelColumn label="Producto" value="producto" />
+          <ExcelColumn label="Medida" value="medida" />
+          <ExcelColumn label="Color" value="color" />
+          <ExcelColumn label="Unidad" value="unidad" />
+          <ExcelColumn label="Cantidad" value="cantidad" />
+          <ExcelColumn label="Cantidad de regalo" value="cantidad_regalo" />
+          <ExcelColumn label="Cantidad total" value="cantidad_total" />
+          <ExcelColumn label="Precio de descuento" value="descuento_precio" />
+          <ExcelColumn
+            label="Porcentaje de descuento"
+            value="descuento_porcentaje"
+          />
+          <ExcelColumn label="Subtotal" value="subtotal" />
+          <ExcelColumn label="Impuestos" value="impuestos" />
+          <ExcelColumn label="Total" value="total" />
+        </ExcelSheet>
+      </ExcelFile>
     </Fragment>
   );
 }

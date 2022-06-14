@@ -461,11 +461,11 @@ export default function CrearProducto({
   );
 
   const ButtonActions = () => {
-    if (!accion && value === 4) {
+    if (!accion && value === 3) {
       return saveButton;
-    } else if (accion && tipo === "OTROS" && value === 4) {
+    } else if (accion && tipo === "OTROS" && value === 3) {
       return saveButton;
-    } else if (accion && tipo !== "OTROS" && value === 5) {
+    } else if (accion && tipo !== "OTROS" && value === 4) {
       return saveButton;
     } else {
       return (
@@ -606,7 +606,7 @@ export default function CrearProducto({
               }
               {...a11yProps(2)}
             />
-            <Tab
+            {/* <Tab
               style={{ minWidth: "200px" }}
               label="Centro de costos"
               icon={
@@ -617,7 +617,7 @@ export default function CrearProducto({
                 />
               }
               {...a11yProps(3)}
-            />
+            /> */}
             {/* <Tab
               style={{ minWidth: "200px" }}
               label="Precios a plazos"
@@ -640,7 +640,7 @@ export default function CrearProducto({
                   className={classes.iconSvg}
                 />
               }
-              {...a11yProps(4)}
+              {...a11yProps(3)}
             />
             {accion ? (
               datos_generales.tipo_producto !== "OTROS" ? (
@@ -666,7 +666,7 @@ export default function CrearProducto({
                       />
                     </Badge>
                   }
-                  {...a11yProps(5)}
+                  {...a11yProps(4)}
                 />
               ) : null
             ) : null}
@@ -761,19 +761,19 @@ const ContenidoModal = ({ value }) => {
           refetch={refetch}
         />
       </TabPanel>
-      <TabPanel value={value} index={3}>
+      {/* <TabPanel value={value} index={3}>
         <CentroCostos
           obtenerConsultasProducto={obtenerConsultasProducto}
           refetch={refetch}
         />
-      </TabPanel>
+      </TabPanel> */}
       {/* <TabPanel value={value} index={4}>
         <PrecioPlazos />
       </TabPanel> */}
-      <TabPanel value={value} index={4}>
+      <TabPanel value={value} index={3}>
         <CargarImagenesProducto />
       </TabPanel>
-      <TabPanel value={value} index={5}>
+      <TabPanel value={value} index={4}>
         <ColoresTallas
           obtenerConsultasProducto={obtenerConsultasProducto}
           refetch={refetch}

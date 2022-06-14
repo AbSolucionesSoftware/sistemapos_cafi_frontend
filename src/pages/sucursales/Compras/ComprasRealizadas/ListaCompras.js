@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -22,10 +22,11 @@ import {
 } from "@material-ui/core";
 import DatosDeCompra from "./DatosDeCompra";
 import {
-  formatoFecha,
+  formatoFechaCorta,
   formatoMexico,
 } from "../../../../config/reuserFunctions";
 import { AssignmentOutlined, Done } from "@material-ui/icons";
+import CancelCompraConfirm from "./CancelarCompra";
 
 const useStyles = makeStyles({
   root: {
@@ -36,8 +37,9 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ListaProductos({ obtenerComprasRealizadas }) {
+export default function ListaProductos({ obtenerComprasRealizadas, refetch }) {
   const classes = useStyles();
+  const theme = useTheme();
 
   return (
     <Paper className={classes.root} variant="outlined">
@@ -52,12 +54,18 @@ export default function ListaProductos({ obtenerComprasRealizadas }) {
               <TableCell>Subtotal</TableCell>
               <TableCell>Impuestos</TableCell>
               <TableCell>Total</TableCell>
-              <TableCell>Productos</TableCell>
+              <TableCell padding="checkbox">Detalles</TableCell>
+              <TableCell padding="checkbox">Cancelar</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {obtenerComprasRealizadas.map((compra, index) => (
-              <RenderRowsCompras key={index} compra={compra} />
+              <RenderRowsCompras
+                key={index}
+                compra={compra}
+                refetch={refetch}
+                theme={theme}
+              />
             ))}
           </TableBody>
         </Table>
@@ -66,7 +74,7 @@ export default function ListaProductos({ obtenerComprasRealizadas }) {
   );
 }
 
-const RenderRowsCompras = ({ compra }) => {
+const RenderRowsCompras = ({ compra, refetch, theme }) => {
   const {
     almacen,
     proveedor,
@@ -82,17 +90,28 @@ const RenderRowsCompras = ({ compra }) => {
     <TableRow hover tabIndex={-1}>
       <TableCell>{almacen.nombre_almacen}</TableCell>
       <TableCell>{proveedor.nombre_cliente}</TableCell>
-      <TableCell>{formatoFecha(fecha_registro)}</TableCell>
+      <TableCell>{formatoFechaCorta(fecha_registro)}</TableCell>
       <TableCell>
-        {compra_credito === true ? (
+        {compra.status && compra.status === "CANCELADO" ? (
+          <Chip label="CANCELADO" color="secondary" variant="outlined" />
+        ) : compra_credito === true ? (
           <Chip
-          label={
-            credito_pagado === true ? 'Credito: Pagado' : "Credito: Pendiente"
-          }
-          color={credito_pagado === true ? "primary" : "secondary"}
-          variant="outlined"
-        />
-        ) : null}
+            label={credito_pagado === true ? "PAGADO" : "PENDIENTE"}
+            style={{
+              color:
+                credito_pagado === true
+                  ? theme.palette.primary.main
+                  : theme.palette.warning.main,
+              borderColor:
+                credito_pagado === true
+                  ? theme.palette.primary.main
+                  : theme.palette.warning.main,
+            }}
+            variant="outlined"
+          />
+        ) : (
+          <Chip label="CONTADO" color="inherit" variant="outlined" />
+        )}
       </TableCell>
       <TableCell>
         <b>${formatoMexico(subtotal)}</b>
@@ -105,6 +124,9 @@ const RenderRowsCompras = ({ compra }) => {
       </TableCell>
       <TableCell>
         <DetallesCompra compra={compra} />
+      </TableCell>
+      <TableCell>
+        <CancelCompraConfirm compra={compra} refetch={refetch} />
       </TableCell>
     </TableRow>
   );

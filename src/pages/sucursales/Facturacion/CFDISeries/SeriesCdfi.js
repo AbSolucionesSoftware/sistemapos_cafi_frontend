@@ -60,7 +60,7 @@ export default function SeriesCDFI() {
               style={{ width: 100 }}
             />
           </Box>
-          Registrar Series CFDI
+          Series CFDI
         </Box>
       </Button>
       <Dialog
@@ -72,7 +72,7 @@ export default function SeriesCDFI() {
         <AppBar className={classes.appBar}>
           <Toolbar>
             <Typography variant="h6" className={classes.title}>
-              Seleccion de Series para CFDI
+              Series para CFDI
             </Typography>
             <Box m={1}>
               <Button color="secondary" variant="contained" onClick={handleClickOpen} size="large">

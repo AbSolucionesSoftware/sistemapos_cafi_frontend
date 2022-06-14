@@ -8,7 +8,7 @@ export const factura_initial_state = {
     cfdi_type: "I",
     payment_form: "",
     payment_method: "",
-    logo_url: sesion ? sesion.imagen : '',
+    logo_url: sesion && sesion.empresa.imagen ? sesion.empresa.imagen : '',
     date: "0",
     issuer: {
       FiscalRegime: sesion ? sesion.empresa.regimen_fiscal : "",

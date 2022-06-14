@@ -162,7 +162,6 @@ export default function CrearUsuario({ accion, datos, fromEmergent, refetch }) {
         return;
       }
     } else {
-      console.log(usuario);
       if (!usuario.nombre || !usuario.telefono || !usuario.email) {
         setError({ error: true, message: "Este campo es requerido" });
         return;

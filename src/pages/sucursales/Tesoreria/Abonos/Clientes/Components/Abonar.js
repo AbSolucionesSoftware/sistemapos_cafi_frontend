@@ -7,6 +7,8 @@ import { Box, Button, Dialog, DialogContent, makeStyles,
 import BackdropComponent from '../../../../../../components/Layouts/BackDrop';    
 import {AbonosCtx} from "../../../../../../context/Tesoreria/abonosCtx";
 import {  CREAR_ABONO_CLIENTE } from "../../../../../../gql/Tesoreria/abonos";
+
+
 import { formatoMexico } from "../../../../../../config/reuserFunctions";
 import { formaPago } from '../../../../Facturacion/catalogos';
 import { withRouter } from "react-router";
@@ -43,6 +45,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     const classes = useStyles();
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [abono, setAbono] = useState(''); 
     const {abonos} = useContext(AbonosCtx);
     const [metodoPago, setMetodoPago] = useState({});
@@ -55,15 +58,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     }
     const hacerAbono = async() => { 
         try {
-            props.setLoading(true);
-            let ObjectMetodoPago = formaPago.filter((val) => {
-                
-                return(metodoPago === val.Value)
+            setLoading(true);
+         
+            let ObjectMetodoPago = {};
+            formaPago.forEach((val) => {
+                if (metodoPago === val.Value) { 
+                    ObjectMetodoPago = val;
+                }
             });
 
+           
             const input = {
-                tipo_movimiento: "ABONO",
-                rol_movimiento: "CLIENTE",
+                tipo_movimiento: "ABONO_CLIENTE",
+                rol_movimiento: "CAJA",
                 numero_caja: parseInt(turnoEnCurso.numero_caja),
                 id_Caja: turnoEnCurso.id_caja,
                 fecha_movimiento: {
@@ -75,9 +82,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                     completa: moment().locale('es-mx').format()
                 },
                 monto_total: props.total_ventas,
-            
-                horario_turno: '',
-
+               
+                horario_turno: turnoEnCurso.horario_en_turno,
+                hora_moviento: {
+                    hora: moment().format('hh'),
+                    minutos: moment().format('mm'),
+                    segundos: moment().format('ss'),
+                    completa: moment().format('HH:mm:ss')
+                },
                 metodo_de_pago:{
                     clave: ObjectMetodoPago.Value,
                     metodo:  ObjectMetodoPago.Name,
@@ -97,20 +109,21 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                 ventas: [{ monto_total_abonado: parseFloat(abono), 
                     id_venta:abonos[props.index].id_venta,
                     saldo_credito_pendiente:abonos[props.index].saldo_credito_pendiente}],
-                liquidar: false
+                liquidar: false,
+                facturacion: props.venta.facturacion
             }
             if(metodoPago && abono !== '' && abono > 0){
-                await crearAbonoVentaCredito({
+                const doAbono = await crearAbonoVentaCredito({
                     variables: {
                         empresa: sesion.empresa._id,
                         sucursal: sesion.sucursal._id,
                         input
                     },
                 }); 
-
+                console.log(doAbono);
                 props.recargar();
                 setOpen(false);
-                props.setLoading(false);
+                setLoading(false);
                 props.setAlert({ 
                     message: 'Abono registrado con éxito.', 
                     status: 'success', 
@@ -119,11 +132,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
             }
         } catch (error) {
             console.log(error);
+            let message = error;
             if (error.networkError) {
                 console.log(error.networkError.result);
+                message = error.networkError.result;
             } else if (error.graphQLErrors) {
-                console.log(error.graphQLErrors);
+                console.log(error.graphQLErrors[0].message);
+                message = error.graphQLErrors[0].message;
             }
+            props.setAlert({ 
+                message: message, 
+                status: 'error', 
+                open: true 
+            });
         }
     }
 
@@ -162,7 +183,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
           
         }
     }, [metodoPago])
-     
+ 
     return (
         <Box m={1}>
             <Box display="flex">
@@ -171,7 +192,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                 </IconButton>
                 </Box>
             <Fragment>
-           
+       
             <Dialog
                 open={open}
                 TransitionComponent={Transition}
@@ -191,7 +212,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                 </Box>
                 
             </DialogTitle>
-                <BackdropComponent loading={props.loading} setLoading={props.setLoading} />
+                
+                <BackdropComponent loading={loading} setLoading={setLoading} />
             
                 <DialogContent>
                     <Box  display="flex"sx={{ justifyContent: 'space-between' }}>
@@ -274,7 +296,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                         variant="contained" 
                         color="primary"
                         style={{fontSize: 15}}
-                        onClick={hacerAbono}
+                        onClick={() => hacerAbono()}
                     >
                         Registrar Abono
                     </Button>

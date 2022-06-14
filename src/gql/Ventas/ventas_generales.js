@@ -753,7 +753,7 @@ query obtenerVentasSucursal($empresa: ID!, $sucursal: ID!, $filtros: filtrosObte
         issuer{
           FiscalRegime
           Rfc
-          Name
+          TaxName
         }
         receiver{
           Rfc

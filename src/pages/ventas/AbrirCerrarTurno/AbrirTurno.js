@@ -266,8 +266,8 @@ export default function AbrirTurno({
                 <MenuItem value="">
                   <em>Selecciona uno</em>
                 </MenuItem>
-                <MenuItem value="VESPERTINO">Vespertino</MenuItem>
                 <MenuItem value="MATUTINO">Matutino</MenuItem>
+                <MenuItem value="VESPERTINO">Vespertino</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -291,7 +291,7 @@ export default function AbrirTurno({
                   <em>Selecciona uno</em>
                 </MenuItem>
                 {obtenerCajasSucursal.map((caja) => {
-                  return caja.activa === true ? null : (
+                  return caja.activa === true || caja.principal === true ? null : (
                     <MenuItem
                       key={caja.numero_caja}
                       value={caja._id}

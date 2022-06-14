@@ -11,6 +11,7 @@ import { withRouter } from "react-router";
 import {  CREAR_ABONO_CLIENTE } from "../../../../../../gql/Tesoreria/abonos";
 import {AbonosCtx} from "../../../../../../context/Tesoreria/abonosCtx";
 import { formaPago } from '../../../../Facturacion/catalogos';
+import BackdropComponent from '../../../../../../components/Layouts/BackDrop';   
 import RemoveCircleTwoToneIcon from "@material-ui/icons/RemoveCircleTwoTone";
 import moment from 'moment';
 
@@ -30,9 +31,11 @@ function Liquidar(props) {
     
     const [open, setOpen] = useState(false);
     const {abonos} = useContext(AbonosCtx);
+  
     const [metodoPago, setMetodoPago] = useState('');
     const [value, setValue] = useState(0);
     const [total, setTotal] = useState(0);
+    const [loading, setLoading] = useState(false);
     const [cuentaTotalDescuento, setCuentaTotalDescuento] = useState(0);
     const [dineroDescontado, setDineroDescontado] = useState(0);
     const [ crearAbonoVentaCredito ] = useMutation(CREAR_ABONO_CLIENTE);
@@ -83,15 +86,17 @@ function Liquidar(props) {
     }
     const liquidarVentas = async() =>{
         try {
-            
-            props.setLoading(true);
-            let ObjectMetodoPago = formaPago.filter((val) => {
-               
-                return(metodoPago === val.Value)
+         setLoading(true);
+            let ObjectMetodoPago = {};
+            formaPago.forEach((val) => {
+                if (metodoPago === val.Value) { 
+                    ObjectMetodoPago = val;
+                }
             });
+
             const input = {
-                tipo_movimiento: "ABONO",
-                rol_movimiento: "CLIENTE",
+                tipo_movimiento: "ABONO_CLIENTE",
+                rol_movimiento: "CAJA",
                 numero_caja: parseInt(turnoEnCurso.numero_caja),
                 id_Caja: turnoEnCurso.id_caja,
                 fecha_movimiento: {
@@ -108,12 +113,18 @@ function Liquidar(props) {
                     dinero_descontado: dineroDescontado,
                     total_con_descuento: cuentaTotalDescuento
                 },
-                horario_turno: '',
-
+                horario_turno: turnoEnCurso.horario_en_turno,
+                hora_moviento: {
+                    hora: moment().format('hh'),
+                    minutos: moment().format('mm'),
+                    segundos: moment().format('ss'),
+                    completa: moment().format('HH:mm:ss')
+                },
                 metodo_de_pago:{
                     clave: ObjectMetodoPago.Value,
                     metodo:  ObjectMetodoPago.Name,
                 },
+                
                 id_usuario: sesion._id,
                 numero_usuario_creador: sesion.numero_usuario,
                 nombre_usuario_creador: sesion.nombre,
@@ -132,7 +143,8 @@ function Liquidar(props) {
                     ]
                     :
                     abonos, 
-                liquidar: true
+                liquidar: true,
+                
             }
             if(metodoPago){
                 await crearAbonoVentaCredito({
@@ -144,7 +156,7 @@ function Liquidar(props) {
                 });
                 props.recargar();
                 setOpen(false);
-                props.setLoading(false);
+                setLoading(false);
                 props.setAlert({ 
                     message: 'Venta liquidada con éxito.', 
                     status: 'success', 
@@ -153,7 +165,7 @@ function Liquidar(props) {
             }
             
         } catch (error) {
-            console.log(error);
+          
             if (error.networkError) {
                 console.log(error.networkError.result);
             } else if (error.graphQLErrors) {
@@ -189,6 +201,7 @@ function Liquidar(props) {
                 aria-labelledby="alert-dialog-slide-title"
                 aria-describedby="alert-dialog-slide-description"
             >
+                <BackdropComponent loading={loading} setLoading={setLoading} />
                 <DialogTitle id="alert-dialog-slide-title">
                     <Box display="flex">
                         <Box width='100%' display="flex" justifyContent="flex-start">

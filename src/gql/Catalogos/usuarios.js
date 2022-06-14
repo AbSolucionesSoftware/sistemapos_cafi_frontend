@@ -95,6 +95,12 @@ export const CREAR_USUARIO = gql`
 						editar
 						eliminar
 					}
+					caja_principal {
+						ver
+						agregar
+						editar
+						eliminar
+					}
 				}
 				reportes {
 					reporte_historial_cajas {
@@ -405,6 +411,12 @@ export const OBTENER_USUARIOS = gql`
 						eliminar
 					}
 					abonos_clientes {
+						ver
+						agregar
+						editar
+						eliminar
+					}
+					caja_principal {
 						ver
 						agregar
 						editar

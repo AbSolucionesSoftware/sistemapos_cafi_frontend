@@ -26,7 +26,7 @@ export const OBTENER_CAJAS = gql`
             nombre
             email
             }
-             
+            principal 
         }
     }
 `;
@@ -111,8 +111,8 @@ export const ACTUALIZAR_CAJA = gql`
 `; 
 
 export const OBTENER_PRE_CORTE_CAJA = gql`
-    query ObtenerPreCorteCaja($empresa: ID!, $sucursal: ID!, $input: PreCortesDeCajaInput){
-        obtenerPreCorteCaja(empresa: $empresa, sucursal: $sucursal, input: $input){
+    query ObtenerPreCorteCaja($empresa: ID!, $sucursal: ID!, $input: PreCortesDeCajaInput, $cajaPrincipal: Boolean){
+        obtenerPreCorteCaja(empresa: $empresa, sucursal: $sucursal, input: $input, cajaPrincipal: $cajaPrincipal){
             monto_efectivo_precorte         
         }
     }
