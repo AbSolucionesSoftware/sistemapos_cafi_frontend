@@ -207,6 +207,82 @@ export const OBTENER_FACTURAS_REALIZADAS = gql`
       fecha_registro
       id_venta
       folio_venta
+      complementos{
+        id_cfdi
+      serie
+      currency
+      expedition_place
+      folio
+      cfdi_type
+      payment_form
+      payment_method
+      logo_url
+      date
+      issuer {
+        FiscalRegime
+        Rfc
+        TaxName
+      }
+      receiver {
+        Rfc
+        Name
+        CfdiUse
+      }
+      items {
+        ProductCode
+        IdentificationNumber
+        Description
+        Unit
+        UnitCode
+        UnitPrice
+        Quantity
+        Subtotal
+        Discount
+        Total
+      }
+      taxes {
+        Total
+        Name
+        Rate
+        Type
+      }
+      complement {
+        TaxStamp {
+          Uuid
+          Date
+          CdfiSign
+          SatCertNumber
+          SatSign
+          RfcProvCertif
+        }
+        Payments{
+          _id
+          RelatedDocuments{
+            _id
+            Uuid
+            Folio
+            Currency
+            PaymentMethod
+            PartialityNumber
+            PreviousBalanceAmount
+            AmountPaid
+            ImpSaldoInsoluto
+          }
+          Date
+          PaymentForm
+          Currency
+          Amount
+          ExpectedPaid
+        }
+      }
+      original_string
+      sub_total
+      total
+      discount
+      fecha_registro
+      id_venta
+      folio_venta
+      }
     }
   }
 `;

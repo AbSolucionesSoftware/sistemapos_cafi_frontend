@@ -20,7 +20,6 @@ export const OBTENER_SUCURSALES = gql`
             }
             cuenta_sucursal {
                 efectivo
-                bancario
             }         
         }
     }
@@ -45,7 +44,6 @@ export const OBTENER_DATOS_SUCURSAL = gql`
             }
             cuenta_sucursal {
                 efectivo
-                bancario
             }         
         }
     }

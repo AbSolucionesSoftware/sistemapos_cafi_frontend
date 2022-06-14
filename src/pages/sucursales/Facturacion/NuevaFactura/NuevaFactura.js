@@ -68,7 +68,7 @@ export default function NuevaFactura() {
               style={{ width: 100 }}
             />
           </Box>
-          Generar nuevo CFDI
+          Nuevo CFDI
         </Box>
       </Button>
       <Dialog
@@ -109,7 +109,7 @@ const DialogFacturaPrincipal = ({ handleClose }) => {
       <AppBar className={classes.appBar}>
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            Generar nuevo CFDI
+            Nuevo CFDI
           </Typography>
           <Box m={1}>
             <Button
@@ -172,7 +172,6 @@ const FacturaModalContent = () => {
   serie_default = seriesCfdi.filter((serie) => serie.default === true);
   if (!serie_default.length) {
     serie_default = [{ folio: "", serie: "" }];
-    console.log(serie_default);
   }
 
   return (

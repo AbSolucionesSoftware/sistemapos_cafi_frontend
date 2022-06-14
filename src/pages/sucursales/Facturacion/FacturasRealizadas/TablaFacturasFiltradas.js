@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Dialog from "@material-ui/core/Dialog";
@@ -10,26 +10,30 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { Box } from "@material-ui/core";
+import { Box, IconButton } from "@material-ui/core";
 import { formatoMexico } from "../../../../config/reuserFunctions";
 import moment from "moment";
 import DetallesFacturaModal from "./DetallesFacturaModal";
 import { OBTENER_DOCUMENTO_FACTURA } from "../../../../gql/Facturacion/Facturacion";
 import { useApolloClient } from "@apollo/client";
 import Snackbar from "@material-ui/core/Snackbar";
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
+import ComplementosFactura from "./TablaComplementosFactura";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 const columns = [
+  { label: "expand", padding: "checkbox" },
   { label: "Serie", padding: "checkbox" },
   { label: "Folio", padding: "checkbox" },
   { label: "Folio venta", minWidth: 90 },
   { label: "Fecha", minWidth: 90 },
   { label: "Tipo CDFI", minWidth: 110 },
-  { label: "F. de pago", minWidth: 90 },
-  { label: "M. de pago", minWidth: 110 },
+  { label: "M. de pago", minWidth: 90 },
+  { label: "F. de pago", minWidth: 110 },
   { label: "Cliente", minWidth: 100 },
   { label: "Descuento", minWidth: 90 },
   { label: "Subtotal", minWidth: 90 },
@@ -39,6 +43,11 @@ const columns = [
 const useStyles = makeStyles((theme) => ({
   container: {
     height: "72vh",
+  },
+  root: {
+    "& > *": {
+      borderBottom: "unset",
+    },
   },
 }));
 
@@ -128,27 +137,11 @@ export default function TablaFacturasFiltradas({ data }) {
             <TableBody>
               {data.map((data, index) => {
                 return (
-                  <TableRow
-                    hover
+                  <RenderListFacturas
                     key={index}
-                    role="checkbox"
-                    tabIndex={-1}
-                    onClick={(e) => handleSelectFactura(e, data)}
-                  >
-                    <TableCell>{data.serie}</TableCell>
-                    <TableCell>{data.folio}</TableCell>
-                    <TableCell>{data.folio_venta}</TableCell>
-                    <TableCell>
-                      {moment(data.fecha_registro).format("DD/MM/YYYY")}
-                    </TableCell>
-                    <TableCell>{data.cfdi_type}</TableCell>
-                    <TableCell>{data.payment_method}</TableCell>
-                    <TableCell>{data.payment_form}</TableCell>
-                    <TableCell>{data.receiver.Name}</TableCell>
-                    <TableCell>${formatoMexico(data.discount)}</TableCell>
-                    <TableCell>${formatoMexico(data.sub_total)}</TableCell>
-                    <TableCell>${formatoMexico(data.total)}</TableCell>
-                  </TableRow>
+                    data={data}
+                    handleSelectFactura={handleSelectFactura}
+                  />
                 );
               })}
             </TableBody>
@@ -158,3 +151,54 @@ export default function TablaFacturasFiltradas({ data }) {
     </Box>
   );
 }
+
+const RenderListFacturas = ({ data, handleSelectFactura }) => {
+  const [desplegar, setDesplegar] = useState(false);
+  const complement = data.complementos.length > 0 ? true : false;
+  const classes = useStyles();
+
+  return (
+    <Fragment>
+      <TableRow
+        hover
+        role="checkbox"
+        tabIndex={-1}
+        onClick={(e) => handleSelectFactura(e, data)}
+        className={classes.root}
+      >
+        <TableCell>
+          {complement ? (
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                setDesplegar(!desplegar);
+              }}
+            >
+              {desplegar ? (
+                <KeyboardArrowUpIcon style={{ fontSize: 18 }} />
+              ) : (
+                <KeyboardArrowDownIcon style={{ fontSize: 18 }} />
+              )}
+            </IconButton>
+          ) : null}
+        </TableCell>
+        <TableCell>{data.serie}</TableCell>
+        <TableCell>{data.folio}</TableCell>
+        <TableCell>{data.folio_venta}</TableCell>
+        <TableCell>
+          {moment(data.fecha_registro).format("DD/MM/YYYY")}
+        </TableCell>
+        <TableCell>{data.cfdi_type}</TableCell>
+        <TableCell>{data.payment_method.split("-")[0]}</TableCell>
+        <TableCell>{data.payment_form.split("-")[0]}</TableCell>
+        <TableCell>{data.receiver.Name}</TableCell>
+        <TableCell>${formatoMexico(data.discount)}</TableCell>
+        <TableCell>${formatoMexico(data.sub_total)}</TableCell>
+        <TableCell>${formatoMexico(data.total)}</TableCell>
+      </TableRow>
+      <ComplementosFactura data={data} open={desplegar} handleSelectFactura={handleSelectFactura} />
+    </Fragment>
+  );
+};
