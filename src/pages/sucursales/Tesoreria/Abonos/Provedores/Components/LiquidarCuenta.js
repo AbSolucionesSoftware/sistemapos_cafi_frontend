@@ -105,138 +105,140 @@ const useStyles = makeStyles((theme) => ({
     return `${e}`;
   }
 
-  const input = {
-    tipo_movimiento: "ABONO_PROVEEDOR",
-    rol_movimiento: "CAJA",
-    hora_moviento: {
-      hora: moment().format('hh'),
-      minutos: moment().format('mm'),
-      segundos: moment().format('ss'),
-      completa: moment().format('HH:mm:ss')
-  },
-    fecha_movimiento: {
-      year: moment().format("YYYY"),
-      mes: moment().format("MM"),
-      dia: moment().format("DD"),
-      no_semana_year: moment().week().toString(),
-      no_dia_year: moment().dayOfYear().toString(),
-      completa: moment().locale("es-mx").format(),
-    },
-    monto_total_abonado: parseFloat(props.cuenta.saldo_credito_pendiente),
-    descuento: {
-      porciento_descuento: value,
-      dinero_descontado: dineroDescontado,
-      total_con_descuento: cuentaTotalDescuento,
-    },
-    montos_en_caja: {
-      monto_efectivo: {
-        monto:
-          metodoPago === "01"
-            ? parseFloat(
-                cuentaTotalDescuento === 0
-                  ? props.cuenta.saldo_credito_pendiente
-                  : props.cuentaTotalDescuento
-              )
-            : 0,
-        metodo_pago: "01",
-      },
-      monto_tarjeta_debito: {
-        monto:
-          metodoPago === "28"
-            ? parseFloat(
-                cuentaTotalDescuento === 0
-                  ? props.cuenta.saldo_credito_pendiente
-                  : props.cuentaTotalDescuento
-              )
-            : 0,
-        metodo_pago: "28",
-      },
-      monto_tarjeta_credito: {
-        monto:
-          metodoPago === "04"
-            ? parseFloat(
-                cuentaTotalDescuento === 0
-                  ? props.cuenta.saldo_credito_pendiente
-                  : props.cuentaTotalDescuento
-              )
-            : 0,
-        metodo_pago: "04",
-      },
-      monto_creditos: {
-        monto:
-          metodoPago === "99"
-            ? parseFloat(
-                cuentaTotalDescuento === 0
-                  ? props.cuenta.saldo_credito_pendiente
-                  : cuentaTotalDescuento
-              )
-            : 0,
-        metodo_pago: "99",
-      },
-      monto_monedero: {
-        monto:
-          metodoPago === "05"
-            ? parseFloat(
-                cuentaTotalDescuento === 0
-                  ? props.cuenta.saldo_credito_pendiente
-                  : cuentaTotalDescuento
-              )
-            : 0,
-        metodo_pago: "05",
-      },
-      monto_transferencia: {
-        monto:
-          metodoPago === "03"
-            ? parseFloat(
-                cuentaTotalDescuento === 0
-                  ? props.cuenta.saldo_credito_pendiente
-                  : props.cuentaTotalDescuento
-              )
-            : 0,
-        metodo_pago: "03",
-      },
-      monto_cheques: {
-        monto:
-          metodoPago === "02"
-            ? parseFloat(
-                cuentaTotalDescuento === 0
-                  ? props.cuenta.saldo_credito_pendiente
-                  : props.cuentaTotalDescuento
-              )
-            : 0,
-        metodo_pago: "02",
-      },
-      monto_vales_despensa: {
-        monto:
-          metodoPago === "08"
-            ? parseFloat(
-                cuentaTotalDescuento === 0
-                  ? props.cuenta.saldo_credito_pendiente
-                  : props.cuentaTotalDescuento
-              )
-            : 0,
-        metodo_pago: "08",
-      },
-    },
-    metodo_de_pago: {
-      clave: "",
-      metodo: "",
-    },
-    numero_caja: parseInt(turnoEnCurso.numero_caja),
-    id_Caja: turnoEnCurso.id_caja,
-    numero_usuario_creador: sesion.numero_usuario,
-    nombre_usuario_creador: sesion.nombre,
-    id_cliente: props.cuenta.proveedor.id_proveedor._id,
-    numero_cliente: props.cuenta.proveedor.numero_cliente,
-    nombre_cliente: props.cuenta.proveedor.nombre_cliente,
-    telefono_cliente: props.cuenta.proveedor.id_proveedor.telefono,
-    email_cliente: props.cuenta.proveedor.id_proveedor.email,
-    id_compra: props.cuenta._id,
-  };
+  
 
   const enviarDatos = async () => {
     setLoading(true);
     try {
+      const input = {
+        tipo_movimiento: "ABONO_PROVEEDOR",
+        rol_movimiento: "CAJA",
+        hora_moviento: {
+          hora: moment().format('hh'),
+          minutos: moment().format('mm'),
+          segundos: moment().format('ss'),
+          completa: moment().format('HH:mm:ss')
+      },
+        fecha_movimiento: {
+          year: moment().format("YYYY"),
+          mes: moment().format("MM"),
+          dia: moment().format("DD"),
+          no_semana_year: moment().week().toString(),
+          no_dia_year: moment().dayOfYear().toString(),
+          completa: moment().locale("es-mx").format(),
+        },
+        monto_total_abonado: parseFloat(props.cuenta.saldo_credito_pendiente),
+        descuento: {
+          porciento_descuento: value,
+          dinero_descontado: dineroDescontado,
+          total_con_descuento: cuentaTotalDescuento,
+        },
+        montos_en_caja: {
+          monto_efectivo: {
+            monto:
+              metodoPago === "01"
+                ? parseFloat(
+                    cuentaTotalDescuento === 0
+                      ? props.cuenta.saldo_credito_pendiente
+                      : props.cuentaTotalDescuento
+                  )
+                : 0,
+            metodo_pago: "01",
+          },
+          monto_tarjeta_debito: {
+            monto:
+              metodoPago === "28"
+                ? parseFloat(
+                    cuentaTotalDescuento === 0
+                      ? props.cuenta.saldo_credito_pendiente
+                      : props.cuentaTotalDescuento
+                  )
+                : 0,
+            metodo_pago: "28",
+          },
+          monto_tarjeta_credito: {
+            monto:
+              metodoPago === "04"
+                ? parseFloat(
+                    cuentaTotalDescuento === 0
+                      ? props.cuenta.saldo_credito_pendiente
+                      : props.cuentaTotalDescuento
+                  )
+                : 0,
+            metodo_pago: "04",
+          },
+          monto_creditos: {
+            monto:
+              metodoPago === "99"
+                ? parseFloat(
+                    cuentaTotalDescuento === 0
+                      ? props.cuenta.saldo_credito_pendiente
+                      : cuentaTotalDescuento
+                  )
+                : 0,
+            metodo_pago: "99",
+          },
+          monto_monedero: {
+            monto:
+              metodoPago === "05"
+                ? parseFloat(
+                    cuentaTotalDescuento === 0
+                      ? props.cuenta.saldo_credito_pendiente
+                      : cuentaTotalDescuento
+                  )
+                : 0,
+            metodo_pago: "05",
+          },
+          monto_transferencia: {
+            monto:
+              metodoPago === "03"
+                ? parseFloat(
+                    cuentaTotalDescuento === 0
+                      ? props.cuenta.saldo_credito_pendiente
+                      : props.cuentaTotalDescuento
+                  )
+                : 0,
+            metodo_pago: "03",
+          },
+          monto_cheques: {
+            monto:
+              metodoPago === "02"
+                ? parseFloat(
+                    cuentaTotalDescuento === 0
+                      ? props.cuenta.saldo_credito_pendiente
+                      : props.cuentaTotalDescuento
+                  )
+                : 0,
+            metodo_pago: "02",
+          },
+          monto_vales_despensa: {
+            monto:
+              metodoPago === "08"
+                ? parseFloat(
+                    cuentaTotalDescuento === 0
+                      ? props.cuenta.saldo_credito_pendiente
+                      : props.cuentaTotalDescuento
+                  )
+                : 0,
+            metodo_pago: "08",
+          },
+        },
+        metodo_de_pago: {
+          clave: "",
+          metodo: "",
+        },
+        numero_caja: parseInt(turnoEnCurso.numero_caja),
+        id_Caja: turnoEnCurso.id_caja,
+        numero_usuario_creador: sesion.numero_usuario,
+        nombre_usuario_creador: sesion.nombre,
+        id_cliente: props.cuenta.proveedor.id_proveedor._id,
+        numero_cliente: props.cuenta.proveedor.numero_cliente,
+        nombre_cliente: props.cuenta.proveedor.nombre_cliente,
+        telefono_cliente: props.cuenta.proveedor.id_proveedor.telefono,
+        email_cliente: props.cuenta.proveedor.id_proveedor.email,
+        id_compra: props.cuenta._id,
+      };
+      
       if (metodoPago === "") {
         setAlert({
           message: "Por favor complete el metodo de pago",
