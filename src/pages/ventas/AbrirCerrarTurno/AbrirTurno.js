@@ -40,6 +40,8 @@ export default function AbrirTurno({
   const [abrirTurno, setAbrirTurno] = useState([]);
   const [numeroCaja, setNumeroCaja] = useState("");
 
+  const principal = sesion.accesos.tesoreria.caja_principal.ver;
+
   const classes = useStyles();
   let obtenerCajasSucursal = [];
 
@@ -291,7 +293,7 @@ export default function AbrirTurno({
                   <em>Selecciona uno</em>
                 </MenuItem>
                 {obtenerCajasSucursal.map((caja) => {
-                  return caja.activa === true || caja.principal === true ? null : (
+                  return caja.activa === true || (caja.principal === true && !principal) ? null : (
                     <MenuItem
                       key={caja.numero_caja}
                       value={caja._id}

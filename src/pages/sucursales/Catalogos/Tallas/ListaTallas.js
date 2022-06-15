@@ -84,11 +84,11 @@ export default function TablaTallas({
                 <TableCell>{tipo === "ROPA" ? "Talla" : "Número"}</TableCell>
                 {sesion.accesos.catalogos.tallas_numeros.editar ===
                 false ? null : (
-                  <TableCell padding="default">Editar</TableCell>
+                  <TableCell padding="normal">Editar</TableCell>
                 )}
                 {sesion.accesos.catalogos.tallas_numeros.eliminar ===
                 false ? null : (
-                  <TableCell padding="default">Eliminar</TableCell>
+                  <TableCell padding="normal">Eliminar</TableCell>
                 )}
               </TableRow>
             </TableHead>
