@@ -167,6 +167,7 @@ export default function RegistroTallas({ tipo }) {
               size="large"
               disableElevation
               type="submit"
+              onClick={guardarDatosBD}
               form="form-talla"
               disabled={loading_bd.loading && loading_bd.tipo === tipo}
               startIcon={
