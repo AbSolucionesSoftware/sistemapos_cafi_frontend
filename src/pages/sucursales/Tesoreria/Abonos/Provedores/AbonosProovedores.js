@@ -83,7 +83,6 @@ export default function AbonosProveedores(props) {
 	const obtenerBusqueda = (e, value) => {
 		e.preventDefault();
 		setFiltro(value);
-		console.log('amors')
 	};
 
 	return (
