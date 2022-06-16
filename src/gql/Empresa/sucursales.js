@@ -84,25 +84,29 @@ export const CREAR_MOVIMIENTO_CUENTA = gql`
 export const OBTENER_HISTORIAL_CUENTAS = gql`
     query ObtenerHistorialCuenta($empresa: ID!, $sucursal: ID!, $input: ObtenerHistorialCuenta, $tipo: Boolean){
         obtenerHistorialCuenta(empresa: $empresa, sucursal: $sucursal, input: $input, tipo: $tipo){
-            tipo_movimiento
-            id_usuario
-            numero_caja
-            id_Caja
-            numero_usuario_creador
-            nombre_usuario_creador
-            horario_turno
-            concepto
-            comentarios
-            montos_en_caja { 
-                monto_efectivo{
-                    monto 
+            saldo_en_caja
+            movimientos {
+                tipo_movimiento
+                id_usuario
+                numero_caja
+                id_Caja
+                numero_usuario_creador
+                nombre_usuario_creador
+                horario_turno
+                concepto
+                comentarios
+                montos_en_caja { 
+                    monto_efectivo{
+                        monto 
+                    }
                 }
-            }
-            fecha_movimiento{
-                completa
-            }
-            empresa
-            sucursal             
+                fecha_movimiento{
+                    completa
+                }
+               
+                empresa
+                sucursal 
+            }            
         }
     }
 `;

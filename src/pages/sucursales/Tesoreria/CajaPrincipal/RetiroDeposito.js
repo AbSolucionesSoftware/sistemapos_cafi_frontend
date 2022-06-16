@@ -180,7 +180,7 @@ export default function RetiroDeposito({cuenta, setReload, tipo }) {
             if(datosMovimiento.tipo_movimiento !== 'RETIRO'){
                 if (concepto  === ''|| !usuarioEntrega || fechaMovimientoEntrega === '' || !origen || !datosMovimiento.tipo_movimiento || !datosMovimiento.cantidad ) {
                 
-                    console.log('omg')
+                   
                     setAlert({
                         message: 'Por favor complete los datos',
                         status: "error",
@@ -226,11 +226,13 @@ export default function RetiroDeposito({cuenta, setReload, tipo }) {
                 status: "error",
                 open: true,
             });
-              if (error.networkError.result) {
+            setDatosMovimiento({}); 
+            handleClickOpen();
+             /*  if (error.networkError.result) {
                 console.log(error.networkError.result.errors);
               } else if (error.graphQLErrors) {
                 console.log(error.graphQLErrors.message);
-              }
+              } */
         }
     }
 

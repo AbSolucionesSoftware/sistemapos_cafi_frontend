@@ -9,7 +9,6 @@ import { Box, DialogContent } from '@material-ui/core';
 import RetiroDeposito from './RetiroDeposito';
 import HistorialCuentas from './HistorialCuentas';
 import ListaCuentas from './ListaCuentas';
-
 const useStyles = makeStyles((theme) => ({
 	appBar: {
 		position: 'relative'
@@ -45,10 +44,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function CajaPrincipal() {
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
-
+	const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
 	const handleClickOpen = () => setOpen(!open);
 	const [cuenta, setCuenta ] = useState({});
 	const [reload, setReload ] = useState(false);
+	const [saldoCaja, setSaldoCaja ] = useState(0);
+	
 	return (
 		<div>
 			<Button fullWidth onClick={handleClickOpen}>
@@ -89,7 +90,7 @@ export default function CajaPrincipal() {
 							</Typography>
 							<Box ml={2}>
 								<Typography variant='h5' >
-									$
+									${saldoCaja}
 								</Typography>
 							</Box>
 						</Box>
@@ -99,7 +100,7 @@ export default function CajaPrincipal() {
 					</Box>
 
 					<Box>
-						<HistorialCuentas cuenta={cuenta} tipo={false} reload ={reload} />
+						<HistorialCuentas cuenta={cuenta} tipo={false} reload ={reload} setSaldoCaja={setSaldoCaja} />
 					</Box>
 				</DialogContent>
 			</Dialog>
