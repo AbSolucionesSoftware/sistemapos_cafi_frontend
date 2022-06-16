@@ -45,7 +45,11 @@ export default function CategoriasProducto({ categorias, refetch }) {
           fullWidth
           options={categorias}
           getOptionLabel={(option) => option.categoria}
-          renderInput={(params) => <TextField {...params} variant="outlined" />}
+          renderInput={(param) => {
+            let params = {...param}
+            params.inputProps.style = { textTransform: "uppercase" };
+            return(<TextField {...params} variant="outlined" />)
+          }}
           onChange={(_, value) => obtenerDatos(_, value)}
           getOptionSelected={(option, value) =>
             option.categoria === value.categoria

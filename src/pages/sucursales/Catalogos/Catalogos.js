@@ -4,7 +4,7 @@ import Cliente from './Cliente/Cliente';
 import Productos from './Producto/';
 import Tallas from './Tallas/Tallas';
 /* import UnidadMedida from './UnidadMedida/UnidadMedida'; */
-import Contabilidad from './Contabilidad/Contabilidad';
+/* import Contabilidad from './Contabilidad/Contabilidad'; */
 import Proveedores from './Proveedores/Proovedores';
 import Cajas from './Cajas/Cajas'; 
 import Usuarios from './Usuarios/Usuarios';
@@ -48,13 +48,13 @@ export default function Catalogos() {
 						<UnidadMedida />
 					</Box>
 				</Grid> */}
-				{permisosUsuario.accesos.catalogos.contabilidad.ver === false ? (null):(
+				{/* {permisosUsuario.accesos.catalogos.contabilidad.ver === false ? (null):(
 					<Grid item lg={2}>
 						<Box display="flex" justifyContent="center" alignItems="center">
 							<Contabilidad />
 						</Box>
 					</Grid>
-				)}
+				)} */}
 				{permisosUsuario.accesos.catalogos.provedores.ver === false ? (null):(
 					<Grid item lg={2}>
 						<Box display="flex" justifyContent="center" alignItems="center">

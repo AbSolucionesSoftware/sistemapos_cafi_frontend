@@ -169,7 +169,7 @@ const UsuariosInactivos = ({ filter }) => {
               <TableCell>No. Usuario</TableCell>
               <TableCell>Nombre</TableCell>
               <TableCell>Correo</TableCell>
-              <TableCell align="right">Reactivar</TableCell>
+              <TableCell align="right">Restaurar</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -255,7 +255,7 @@ const RenderClientes = ({ datos }) => {
               loading ? <CircularProgress color="inherit" size={20} /> : null
             }
           >
-            Eliminar
+            Restaurar
           </Button>
         </DialogActions>
       </Dialog>

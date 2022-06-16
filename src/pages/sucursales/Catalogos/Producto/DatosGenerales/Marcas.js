@@ -43,7 +43,11 @@ export default function MarcasProducto({ marcas, refetch }) {
           getOptionLabel={(option) =>
             option.nombre_marca ? option.nombre_marca : option.marca
           }
-          renderInput={(params) => <TextField {...params} variant="outlined" />}
+          renderInput={(param) => {
+            let params = {...param}
+            params.inputProps.style = { textTransform: "uppercase" };
+            return(<TextField {...params} variant="outlined" />)
+          }}
           onChange={(_, value) => obtenerDatos(_, value)}
           getOptionSelected={(option, value) =>
             option.nombre_marca === value.marca

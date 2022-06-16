@@ -85,14 +85,9 @@ export default function CrearCliente({
     e.preventDefault();
     let copy_cliente = { ...cliente };
     if (
-      !copy_cliente.clave_cliente ||
       !copy_cliente.nombre_cliente ||
       !copy_cliente.telefono ||
-      !copy_cliente.email ||
-      !copy_cliente.direccion.calle ||
-      !copy_cliente.direccion.municipio ||
-      !copy_cliente.direccion.estado ||
-      !copy_cliente.direccion.pais
+      !copy_cliente.email
     ) {
       if (tipo !== "CLIENTE" && !copy_cliente.representante) {
         setError(true);
@@ -101,7 +96,23 @@ export default function CrearCliente({
       setError(true);
       return;
     }
-    if (accion !== "registrar" && datos.limite_credito && datos.credito_disponible) {
+    if (tipo === "CLIENTE") {
+      if (
+        !copy_cliente.clave_cliente ||
+        !copy_cliente.direccion.calle ||
+        !copy_cliente.direccion.municipio ||
+        !copy_cliente.direccion.estado ||
+        !copy_cliente.direccion.pais
+      ) {
+        setError(true);
+        return;
+      }
+    }
+    if (
+      accion !== "registrar" &&
+      datos.limite_credito &&
+      datos.credito_disponible
+    ) {
       let credito_usado = datos.limite_credito - datos.credito_disponible;
       if (credito_usado > copy_cliente.limite_credito) {
         setAlert({
