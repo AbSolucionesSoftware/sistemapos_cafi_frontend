@@ -17,7 +17,6 @@ import {
   Divider,
   DialogActions,
 } from "@material-ui/core";
-import { useDropzone } from "react-dropzone";
 import CloseIcon from "@material-ui/icons/Close";
 import { FcNook } from "react-icons/fc";
 import { useMutation, useQuery } from "@apollo/client";
@@ -49,22 +48,6 @@ const useStyles = makeStyles((theme) => ({
       color: "red",
     },
   },
-  avatarContainer: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    height: "100%",
-    border: "dashed 2px black",
-    borderRadius: "100%",
-  },
-  avatar: {
-    width: "90%",
-    height: "90%",
-    "& > .icon": {
-      fontSize: 100,
-    },
-  },
 }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -78,7 +61,6 @@ export default function DatosSucursal() {
   const [bloqueo] = useState(
     sesion.accesos.mi_empresa.datos_empresa.editar === false ? true : false
   );
-  const [preview, setPreview] = useState("");
   const [open, setOpen] = React.useState(false);
   const [errorPage, setErrorPage] = React.useState(false);
   const [errorForm, setErrorForm] = React.useState(
@@ -145,11 +127,11 @@ export default function DatosSucursal() {
   const actEmp = async () => {
     try {
       setLoadingPage(true);
-      /* const input = cleanTypenames(empresaDatos); */
+      const {_id, usuario_sucursal, cuenta_sucursal, ...input} = sucursalDatos;
       await actualizarSucursal({
         variables: {
-          id: sesion.empresa._id,
-          input: sucursalDatos,
+          id: sesion.sucursal._id,
+          input,
         },
       });
 
@@ -179,6 +161,7 @@ export default function DatosSucursal() {
     setOpen(false);
   };
   const obtenerCampos = (e) => {
+    console.log(e.target.value)
     setSucursalDatos({
       ...sucursalDatos,
       [e.target.name]: e.target.value,
@@ -193,28 +176,6 @@ export default function DatosSucursal() {
       },
     });
   };
-
-  //dropzone
-  const onDrop = useCallback(
-    (acceptedFiles) => {
-      let reader = new FileReader();
-      reader.readAsDataURL(acceptedFiles[0]);
-      reader.onload = function () {
-        let image = reader.result;
-        setPreview(image);
-      };
-      setSucursalDatos({
-        ...sucursalDatos,
-        imagen: acceptedFiles[0],
-      });
-    },
-    [sucursalDatos, setSucursalDatos]
-  );
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: "image/jpeg, image/png",
-    noKeyboard: true,
-    onDrop,
-  });
 
   return (
     <div>
@@ -262,7 +223,7 @@ export default function DatosSucursal() {
                   <Box>
                     <Typography>
                       <b>
-                        <span>* </span>Nombre de empresa
+                        <span>* </span>Nombre de sucursal
                       </b>
                     </Typography>
                     <TextField
@@ -271,7 +232,7 @@ export default function DatosSucursal() {
                       type="text"
                       size="small"
                       error={errorForm.error && !sucursalDatos.nombre_sucursal}
-                      name="nombre_empresa"
+                      name="nombre_sucursal"
                       variant="outlined"
                       value={
                         sucursalDatos.nombre_sucursal
@@ -297,7 +258,7 @@ export default function DatosSucursal() {
                       type="text"
                       size="small"
                       error={errorForm.error && !sucursalDatos.descripcion}
-                      name="nombre_dueno"
+                      name="descripcion"
                       variant="outlined"
                       value={
                         sucursalDatos.descripcion

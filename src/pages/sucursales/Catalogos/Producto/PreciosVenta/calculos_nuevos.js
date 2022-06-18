@@ -14,12 +14,12 @@ const calculos = () => {
   if (utilidad_base % 100 === 0) utilidad = utilidad_base / 100;
 
   //precio venta y neto con utilidad
-  const precio_venta = parseFloat((PUCSI * utilidad + PUCSI).toFixed(2));
-  const precio_neto = parseFloat((PUCSI * utilidad + I + PUCSI).toFixed(2));
+  const precio_venta = parseFloat((PUCSI * utilidad + PUCSI));
+  const precio_neto = parseFloat((PUCSI * utilidad + I + PUCSI));
 
   //meter los valores a preciosVenta
-  preciosVenta.precio_venta = precio_venta;
-  preciosVenta.precio_neto = precio_neto;
+  preciosVenta.precio_venta = parseFloat(precio_venta.toFixed(2));
+  preciosVenta.precio_neto = parseFloat(precio_neto.toFixed(2));
   preciosVenta.iva_precio = iva;
   preciosVenta.ieps_precio = ieps;
 
@@ -28,8 +28,8 @@ const calculos = () => {
     ...unidadVentaXDefecto,
     precio_unidad: {
       numero_precio: preciosVenta.numero_precio,
-      precio_neto: precio_neto,
-      precio_venta: precio_venta,
+      precio_neto: parseFloat(precio_neto.toFixed(2)),
+      precio_venta: parseFloat(precio_venta.toFixed(2)),
       unidad_mayoreo: preciosVenta.unidad_mayoreo,
       iva_precio: iva,
       ieps_precio: ieps,
@@ -46,19 +46,19 @@ const calculos = () => {
     } else {
       unidadXDefecto = {
         ...unidadXDefecto,
-        precio: precio_neto,
+        precio: parseFloat(precio_neto.toFixed(2)),
       };
     }
     if (descuento_activo === true) {
       //calcular nuevo precio entre %
-      let precio_neto = Math.round(
+      let new_precio_neto = Math.round(
         precio_neto - precio_neto * parseFloat("." + descuento.porciento)
       );
 
       unidadXDefecto = {
         ...unidadXDefecto,
         precio: parseFloat(precio_neto.toFixed(2)),
-        descuento: { ...unidadVentaXDefecto.descuento, precio_neto },
+        descuento: { ...unidadVentaXDefecto.descuento, precio_neto: parseFloat(new_precio_neto.toFixed(2)) },
       };
     }
   }
