@@ -9,6 +9,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import { formatoMexico } from "../../../../config/reuserFunctions";
 //import ErrorPage from '../../../../components/ErrorPage';
 import DialogMedidasAlmacenes from "./DialogMedidasAlmacenes";
 //import { useQuery } from '@apollo/client';
@@ -114,15 +115,15 @@ const Rowrow = (rowProps) => {
   const costoProducto = () =>{
     try {
       let costoProd = 0;
-      costoProd = rowProps.producto.precios.unidad_de_compra.precio_unitario_con_impuesto.toFixed(2);
+      costoProd = rowProps.producto.precios.unidad_de_compra.precio_unitario_con_impuesto;
   
       if(rowProps.producto.existencia_almacenes[0].unidad_maxima !== null){
         if(rowProps.producto.existencia_almacenes[0].unidad_maxima === rowProps.producto.precios.inventario.unidad_de_inventario){
-          costoProd = rowProps.producto.precios.precio_de_compra.precio_con_impuesto.toFixed(2);
+          costoProd = rowProps.producto.precios.precio_de_compra.precio_con_impuesto;
         }
       }
 
-      return costoProd;
+      return formatoMexico(costoProd);
     } catch (error) {
       console.log(error)
     }
@@ -140,7 +141,7 @@ const Rowrow = (rowProps) => {
         }
       }
 
-      return tot;
+      return formatoMexico(tot);
     } catch (error) {
       console.log(error)
     }
@@ -162,15 +163,15 @@ const Rowrow = (rowProps) => {
       </TableCell>
       <TableCell style={{ textAlign: "center", minWidth: 60 }}>
         $
-        {parseFloat(
+        {
           costoProducto()
-        )}
+        }
       </TableCell>
       <TableCell style={{ textAlign: "center", minWidth: 80 }}>
         $
-        {parseFloat(
-          totalProductos().toFixed(2)
-        )}
+        {
+          totalProductos()
+        }
       </TableCell>
       {/* <TableCell style={{textAlign: 'center',}} >{(producto.datos_generales.receta_farmacia) ? "SI" : "NO"}</TableCell> */}
       {arrayCantidades.map((cantidad, index) => {
@@ -283,7 +284,7 @@ export default function ListaAlmacenes(props) {
             <TableBody>
               {props.productos.map((row, index) => {
                 let key = index;
-                console.log(row);
+               
                 return (
                   <Rowrow
                     producto={row}
