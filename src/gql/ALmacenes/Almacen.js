@@ -111,6 +111,12 @@ export const OBTENER_PRODUCTOS_ALMACEN = gql`
           precio_con_impuesto
           precio_sin_impuesto
         }
+        unidad_de_compra{
+          cantidad
+          precio_unitario_con_impuesto
+          precio_unitario_sin_impuesto
+          unidad
+        }
       }
       medidas_producto {
         _id
@@ -167,6 +173,8 @@ export const OBTENER_PRODUCTOS_ALMACEN = gql`
         }
         unidad_inventario
         cantidad_existente
+        unidad_maxima
+        cantidad_existente_maxima
       }
       empresa
       sucursal
