@@ -884,7 +884,7 @@ export default function Traspasos(props) {
                    <DialogActions style={{justifyContent:'center'}}>
                     <Box sx={{ flexDirection: 'row',alignSelf: 'center',  width: '15%',display: 'flex', pt: 2 }} >
                             <Button
-                          
+                            color="primary"
                             variant="contained"
                             disabled={activeStep === 0}
                             onClick={handleBack}
@@ -899,7 +899,7 @@ export default function Traspasos(props) {
                                 </Button>
                                 )} */}
                             
-                                <Button variant="contained" disabled={!haveConcepto} onClick={() => (activeStep < steps.length -1) ? handleNext() : handleModal()}>
+                                <Button color="primary" variant="contained" disabled={!haveConcepto} onClick={() => (activeStep < steps.length -1) ? handleNext() : handleModal()}>
                                     {activeStep < steps.length -1   ? 'Siguiente' : 'Terminar'}
                                 </Button>
                         
