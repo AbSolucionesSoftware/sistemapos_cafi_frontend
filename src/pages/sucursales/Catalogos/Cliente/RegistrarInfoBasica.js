@@ -153,7 +153,8 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
             )}
             <Grid item md={accion === "registrar" ? 12 : 9} xs={12}>
               <Typography className={classes.title}>
-                <span>* </span>Nombre Cliente
+                <span>* </span>Nombre{" "}
+                {tipo === "CLIENTE" ? "cliente" : "proveedor"}
               </Typography>
               <TextField
                 fullWidth
@@ -161,11 +162,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 error={error && !cliente.nombre_cliente}
                 name="nombre_cliente"
                 variant="outlined"
-                value={
-                  cliente.nombre_cliente
-                    ? cliente.nombre_cliente
-                    : ""
-                }
+                value={cliente.nombre_cliente ? cliente.nombre_cliente : ""}
                 helperText={error ? "Campo Requerido" : ""}
                 onChange={obtenerCampos}
                 inputProps={{ style: { textTransform: "uppercase" } }}
@@ -182,61 +179,62 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                   error={error && !cliente.representante}
                   name="representante"
                   variant="outlined"
-                  value={
-                    cliente.representante
-                      ? cliente.representante
-                      : ""
-                  }
+                  value={cliente.representante ? cliente.representante : ""}
                   helperText={error ? "Campo Requerido" : ""}
                   onChange={obtenerCampos}
                   inputProps={{ style: { textTransform: "uppercase" } }}
                 />
               </Grid>
             )}
-            <Grid item md={tipo === "CLIENTE" ? 6 : 4} xs={12}>
-              <Typography className={classes.title}>
-                <span>* </span>Clave(Tarjeta de puntos)
-              </Typography>
-              <TextField
-                fullWidth
-                size="small"
-                error={error && !cliente.clave_cliente}
-                name="clave_cliente"
-                variant="outlined"
-                value={cliente.clave_cliente ? cliente.clave_cliente : ""}
-                helperText={error ? "Campo Requerido" : ""}
-                onChange={obtenerCampos}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        color="primary"
-                        size="small"
-                        onClick={() => GenCodigoBarras()}
-                      >
-                        <Cached />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                  disabled: true,
-                }}
-                type="number"
-              />
-            </Grid>
-            <Grid item md={tipo === "CLIENTE" ? 6 : 4} xs={12}>
-              <Typography className={classes.title}>
-                Fecha nacimiento
-              </Typography>
-              <TextField
-                fullWidth
-                size="small"
-                name="fecha_nacimiento"
-                variant="outlined"
-                type="date"
-                onChange={obtenerCampos}
-                value={cliente.fecha_nacimiento ? cliente.fecha_nacimiento : ""}
-              />
-            </Grid>
+            {tipo !== "CLIENTE" ? null : (
+              <Fragment>
+                <Grid item md={tipo === "CLIENTE" ? 6 : 4} xs={12}>
+                  <Typography className={classes.title}>
+                    <span>* </span>Clave(Tarjeta de puntos)
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    error={error && !cliente.clave_cliente}
+                    name="clave_cliente"
+                    variant="outlined"
+                    value={cliente.clave_cliente ? cliente.clave_cliente : ""}
+                    helperText={error ? "Campo Requerido" : ""}
+                    onChange={obtenerCampos}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            color="primary"
+                            size="small"
+                            onClick={() => GenCodigoBarras()}
+                          >
+                            <Cached />
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                    type="number"
+                  />
+                </Grid>
+                <Grid item md={tipo === "CLIENTE" ? 6 : 4} xs={12}>
+                  <Typography className={classes.title}>
+                    Fecha nacimiento
+                  </Typography>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    name="fecha_nacimiento"
+                    variant="outlined"
+                    type="date"
+                    onChange={obtenerCampos}
+                    value={
+                      cliente.fecha_nacimiento ? cliente.fecha_nacimiento : ""
+                    }
+                  />
+                </Grid>
+              </Fragment>
+            )}
           </Grid>
         </Grid>
         <Grid item md={12}>
@@ -309,19 +307,16 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
           <Grid container spacing={2}>
             <Grid item md={3} xs={12}>
               <Typography className={classes.title}>
-                <span>* </span>Calle
+                {tipo === "CLIENTE" ? <span>* </span> : null}Calle
               </Typography>
+
               <TextField
                 size="small"
                 fullWidth
                 error={error && !cliente.direccion.calle}
                 name="calle"
                 variant="outlined"
-                value={
-                  cliente.direccion.calle
-                    ? cliente.direccion.calle
-                    : ""
-                }
+                value={cliente.direccion.calle ? cliente.direccion.calle : ""}
                 helperText={error ? "Campo Requerido" : ""}
                 onChange={obtenerCamposDireccion}
                 inputProps={{ style: { textTransform: "uppercase" } }}
@@ -329,7 +324,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
             </Grid>
             <Grid item md={2} xs={12}>
               <Typography className={classes.title}>
-                <span>* </span>Num. Ext
+                {tipo === "CLIENTE" ? <span>* </span> : null}Num. Ext
               </Typography>
               <TextField
                 fullWidth
@@ -357,7 +352,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
             </Grid>
             <Grid item md={2} xs={12}>
               <Typography className={classes.title}>
-                <span>* </span>Código postal
+                {tipo === "CLIENTE" ? <span>* </span> : null}Código postal
               </Typography>
               <TextField
                 size="small"
@@ -376,7 +371,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
             </Grid>
             <Grid item md={3} xs={12}>
               <Typography className={classes.title}>
-                <span>* </span>Colonia
+                {tipo === "CLIENTE" ? <span>* </span> : null}Colonia
               </Typography>
               <TextField
                 fullWidth
@@ -385,9 +380,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 name="colonia"
                 variant="outlined"
                 value={
-                  cliente.direccion.colonia
-                    ? cliente.direccion.colonia
-                    : ""
+                  cliente.direccion.colonia ? cliente.direccion.colonia : ""
                 }
                 helperText={error ? "Campo Requerido" : ""}
                 onChange={obtenerCamposDireccion}
@@ -396,7 +389,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
             </Grid>
             <Grid item md={3} xs={12}>
               <Typography className={classes.title}>
-                <span>* </span>Municipio
+                {tipo === "CLIENTE" ? <span>* </span> : null}Municipio
               </Typography>
               <TextField
                 fullWidth
@@ -405,9 +398,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 name="municipio"
                 variant="outlined"
                 value={
-                  cliente.direccion.municipio
-                    ? cliente.direccion.municipio
-                    : ""
+                  cliente.direccion.municipio ? cliente.direccion.municipio : ""
                 }
                 helperText={error ? "Campo Requerido" : ""}
                 onChange={obtenerCamposDireccion}
@@ -421,9 +412,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 name="localidad"
                 variant="outlined"
                 value={
-                  cliente.direccion.localidad
-                    ? cliente.direccion.localidad
-                    : ""
+                  cliente.direccion.localidad ? cliente.direccion.localidad : ""
                 }
                 onChange={obtenerCamposDireccion}
                 inputProps={{ style: { textTransform: "uppercase" } }}
@@ -431,7 +420,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
             </Grid>
             <Grid item md={3} xs={12}>
               <Typography className={classes.title}>
-                <span>* </span>Estado
+                {tipo === "CLIENTE" ? <span>* </span> : null}Estado
               </Typography>
               <TextField
                 fullWidth
@@ -439,11 +428,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 error={error && !cliente.direccion.estado}
                 name="estado"
                 variant="outlined"
-                value={
-                  cliente.direccion.estado
-                    ? cliente.direccion.estado
-                    : ""
-                }
+                value={cliente.direccion.estado ? cliente.direccion.estado : ""}
                 helperText={error ? "Campo Requerido" : ""}
                 onChange={obtenerCamposDireccion}
                 inputProps={{ style: { textTransform: "uppercase" } }}
@@ -451,7 +436,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
             </Grid>
             <Grid item md={3} xs={12}>
               <Typography className={classes.title}>
-                <span>* </span>Pais
+                {tipo === "CLIENTE" ? <span>* </span> : null}Pais
               </Typography>
               <TextField
                 fullWidth
@@ -459,11 +444,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 error={error && !cliente.direccion.pais}
                 name="pais"
                 variant="outlined"
-                value={
-                  cliente.direccion.pais
-                    ? cliente.direccion.pais
-                    : ""
-                }
+                value={cliente.direccion.pais ? cliente.direccion.pais : ""}
                 helperText={error ? "Campo Requerido" : ""}
                 onChange={obtenerCamposDireccion}
                 inputProps={{ style: { textTransform: "uppercase" } }}

@@ -4,6 +4,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
+import Tooltip from "@material-ui/core/Tooltip";
 import { CircularProgress, IconButton } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
 /* import SnackBarMessages from '../../../../components/SnackBarMessages'; */
@@ -59,26 +60,30 @@ export default function EliminarProducto({ datos, productosRefetch }) {
   return (
     <Fragment>
       {/* <SnackBarMessages alert={alert} setAlert={setAlert} /> */}
-      <IconButton
-        onClick={() => handleToggleModal()}
-        disabled={
+      <Tooltip title="Solo se puede eliminar un producto si este tiene 0 en inventarios" arrow>
+        <IconButton
+          onClick={() => handleToggleModal()}
+          /* disabled={
             datos.inventario_general && datos.inventario_general.length === 0
               ? true
               : datos.inventario_general[0].eliminado === true
               ? true
               : false
-          }
-      >
-        <Delete
-          color={
-            datos.inventario_general && datos.inventario_general.length === 0
-              ? "disabled"
-              : datos.inventario_general[0].eliminado === true
-              ? "disabled"
-              : "error"
-          }
-        />
-      </IconButton>
+          } */
+        >
+          <Delete
+            /* color={
+              datos.inventario_general && datos.inventario_general.length === 0
+                ? "disabled"
+                : datos.inventario_general[0].eliminado === true
+                ? "disabled"
+                : "error"
+            } */
+            color="error"
+          />
+        </IconButton>
+      </Tooltip>
+
       <Dialog
         open={open}
         TransitionComponent={Transition}

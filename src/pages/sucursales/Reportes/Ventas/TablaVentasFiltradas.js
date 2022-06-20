@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function TablaVentasFiltradas({ data }) {
   const classes = useStyles();
+  console.log(data)
   return (
     <Box my={2}>
       <Paper variant="outlined">

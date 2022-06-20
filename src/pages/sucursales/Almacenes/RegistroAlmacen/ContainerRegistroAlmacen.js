@@ -47,21 +47,6 @@ export default function ContainerRegistroAlmacen({
   datos,
   fromEmergent,
 }) {
-  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
-  const [CrearAlmacen] = useMutation(REGISTRO_ALMACEN);
-  const [ActualizarAlmacen] = useMutation(ACTUALIZAR_ALMACEN);
-  const { data, refetch } = useQuery(OBTENER_USUARIOS, {
-    variables: {
-      sucursal: `${sesion.sucursal._id}`,
-      eliminado: false,
-    },
-  });
-  let obtenerUsuarios = [];
-
-  const classes = useStyles();
-  const [alert, setAlert] = useState({ message: "", status: "", open: false });
-  // const empresa = '609eb3b4b995884dc49bbffa';
-  const [open, setOpen] = useState(false);
   const {
     datosAlmacen,
     setDatosAlmacen,
@@ -70,10 +55,32 @@ export default function ContainerRegistroAlmacen({
     update,
     setUpdate,
   } = useContext(CrearAlmacenContext);
+  const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  const [CrearAlmacen] = useMutation(REGISTRO_ALMACEN);
+  const [ActualizarAlmacen] = useMutation(ACTUALIZAR_ALMACEN);
+  
+ 
+
+  let obtenerUsuarios = [];
+
+  const classes = useStyles();
+  const [alert, setAlert] = useState({ message: "", status: "", open: false });
+  // const empresa = '609eb3b4b995884dc49bbffa';
+  const [open, setOpen] = useState(false);
+
+ 
+
   const { almacen_inicial, setAlmacenInicial } = useContext(RegProductoContext);
   const [loading, setLoading] = useState(false);
 
   // const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+  const  { data, refetch } = useQuery(OBTENER_USUARIOS, {
+    variables: {
+      sucursal: `${sesion.sucursal._id}`,
+      empresa: `${sesion.empresa._id}`,
+      eliminado: false,
+    },
+  });
 
   const limpiarCampos = useCallback(() => {
     setDatosAlmacen({
@@ -92,6 +99,7 @@ export default function ContainerRegistroAlmacen({
       },
     });
   }, [setDatosAlmacen]);
+
   const toggleModal = () => {
     setOpen(true);
     if (datos) {
@@ -175,9 +183,15 @@ export default function ContainerRegistroAlmacen({
           }
         } else {
           const { id_sucursal, _id, ...input } = datosAlmacen;
+         
           await ActualizarAlmacen({
             variables: {
-              input,
+             
+              input:{
+                nombre_almacen: input.nombre_almacen,
+                id_usuario_encargado: input.id_usuario_encargado,
+                direccion: input.direccion,
+              },
               id: datosAlmacen._id,
             },
           });
@@ -189,10 +203,12 @@ export default function ContainerRegistroAlmacen({
         onCloseModal();
       }
     } catch (error) {
+      console.log(error)
       setAlert({ message: "Hubo un error", status: "error", open: true });
       setLoading(false);
     }
   };
+
 
   if (data) {
     obtenerUsuarios = data.obtenerUsuarios;

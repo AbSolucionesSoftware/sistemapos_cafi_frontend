@@ -9,6 +9,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import { formatoMexico } from "../../../../config/reuserFunctions";
 //import ErrorPage from '../../../../components/ErrorPage';
 import DialogMedidasAlmacenes from "./DialogMedidasAlmacenes";
 //import { useQuery } from '@apollo/client';
@@ -41,33 +42,55 @@ const Rowrow = (rowProps) => {
 
   //console.log(rowProps)
   useEffect(() => {
-    let tot = 0;
+    try {
+      let tot = 0;
     let r = row;
     let datExc = dataExcel;
+    let uniMin = 'pz';
+    
     rowProps.obtenerAlmacenes.forEach((almacenColumna) => {
+      
       const existencias = rowProps.producto.existencia_almacenes.filter(
         (existencia) => existencia._id.almacen._id === almacenColumna._id
       );
 
+    
       if (existencias.length > 0) {
-        arrayCantidades.push(existencias[0].cantidad_existente);
+      
+        if(existencias[0].unidad_maxima !== null){
+          
+          if(existencias[0].unidad_maxima === rowProps.producto.precios.inventario.unidad_de_inventario){
+           
+            arrayCantidades.push(existencias[0].cantidad_existente_maxima);
+            tot += existencias[0].cantidad_existente_maxima;
+            uniMin = rowProps.producto.existencia_almacenes[0].unidad_maxima;
+          }else{
+            tot += existencias[0].cantidad_existente;
+            arrayCantidades.push(existencias[0].cantidad_existente);
+            uniMin = 'pz';
+          }
+        }else{
+          tot += existencias[0].cantidad_existente;
+          arrayCantidades.push(existencias[0].cantidad_existente);
+        }
+        
         setUnidad_Minima(
-          existencias[0].unidad_inventario !== null
-            ? existencias[0].unidad_inventario
-            : "pz"
+            uniMin
         );
+
         r = {
           ...r,
           [almacenColumna._id]:
-            existencias[0].cantidad_existente + " " + unidad_minima,
+            existencias[0].cantidad_existente + " " + uniMin,
         };
-        tot += existencias[0].cantidad_existente;
+       
       } else {
         arrayCantidades.push(0);
         r = { ...r, [almacenColumna._id]: 0 };
       }
     });
-    r = { ...r, total: tot + " " + unidad_minima };
+
+    r = { ...r, total: tot + " " + uniMin };
 
     setTotal(tot);
     setRow(r);
@@ -77,6 +100,10 @@ const Rowrow = (rowProps) => {
     if (rowProps.index === rowProps.productosLength - 1) {
       setDataExcelHere(datExc);
     }
+    } catch (error) {
+      console.log(error)
+    }
+    
   }, []);
 
   useEffect(() => {
@@ -85,6 +112,40 @@ const Rowrow = (rowProps) => {
     }
   }, [dataExcelHere]);
 
+  const costoProducto = () =>{
+    try {
+      let costoProd = 0;
+      costoProd = rowProps.producto.precios.unidad_de_compra.precio_unitario_con_impuesto;
+  
+      if(rowProps.producto.existencia_almacenes[0].unidad_maxima !== null){
+        if(rowProps.producto.existencia_almacenes[0].unidad_maxima === rowProps.producto.precios.inventario.unidad_de_inventario){
+          costoProd = rowProps.producto.precios.precio_de_compra.precio_con_impuesto;
+        }
+      }
+
+      return formatoMexico(costoProd);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const totalProductos = () =>{
+    try {
+      let tot =  0;
+    
+     
+      tot = rowProps.producto.precios.unidad_de_compra.precio_unitario_con_impuesto *  total;
+  
+      if(rowProps.producto.existencia_almacenes[0].unidad_maxima !== null){
+        if(rowProps.producto.existencia_almacenes[0].unidad_maxima === rowProps.producto.precios.inventario.unidad_de_inventario){
+          tot = rowProps.producto.precios.precio_de_compra.precio_con_impuesto *  total;
+        }
+      }
+
+      return formatoMexico(tot);
+    } catch (error) {
+      console.log(error)
+    }
+  }
   return (
     <TableRow
       hover
@@ -102,20 +163,15 @@ const Rowrow = (rowProps) => {
       </TableCell>
       <TableCell style={{ textAlign: "center", minWidth: 60 }}>
         $
-        {parseFloat(
-          rowProps.producto.precios.precio_de_compra.precio_con_impuesto.toFixed(
-            2
-          )
-        )}
+        {
+          costoProducto()
+        }
       </TableCell>
       <TableCell style={{ textAlign: "center", minWidth: 80 }}>
         $
-        {parseFloat(
-          (
-            rowProps.producto.precios.precio_de_compra.precio_con_impuesto *
-            total
-          ).toFixed(2)
-        )}
+        {
+          totalProductos()
+        }
       </TableCell>
       {/* <TableCell style={{textAlign: 'center',}} >{(producto.datos_generales.receta_farmacia) ? "SI" : "NO"}</TableCell> */}
       {arrayCantidades.map((cantidad, index) => {
@@ -228,6 +284,7 @@ export default function ListaAlmacenes(props) {
             <TableBody>
               {props.productos.map((row, index) => {
                 let key = index;
+               
                 return (
                   <Rowrow
                     producto={row}

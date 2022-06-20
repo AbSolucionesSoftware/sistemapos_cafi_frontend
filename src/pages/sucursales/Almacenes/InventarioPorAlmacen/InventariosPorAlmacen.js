@@ -136,6 +136,9 @@ const InventarioPorAlmacen = (props) =>{
 		[ queryObtenerAlmacenes.update, queryObtenerAlmacenes ]
 	);
 
+	useEffect(() => {
+		console.log(props.productosAlmacenQuery.error)
+	}, [props.productosAlmacenQuery.error])
 	
 	useEffect(
 		() => {
@@ -160,6 +163,7 @@ const InventarioPorAlmacen = (props) =>{
 			try {
 				if(props.productosAlmacenQuery.data){
 				//setDataExcel([]);
+				console.log('props.productosAlmacenQuery.data',props.productosAlmacenQuery.data.obtenerProductosAlmacenes)
 				setProductos(props.productosAlmacenQuery.data.obtenerProductosAlmacenes);
 				setLoading(false);
 			}

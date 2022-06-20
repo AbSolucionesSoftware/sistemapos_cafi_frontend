@@ -523,7 +523,7 @@ export default function RegistroInfoGenerales({
                   />
                   <TextField
                     type="number"
-                    InputProps={{ inputProps: { min: 0 } }}
+                    InputProps={{ inputProps: { min: 0 }, startAdornment: <InputAdornment>$</InputAdornment> }}
                     size="small"
                     label="Valor por punto"
                     name="monedero_electronico"

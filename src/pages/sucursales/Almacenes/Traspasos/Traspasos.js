@@ -367,7 +367,7 @@ export default function Traspasos(props) {
 	};
 
      const handleChange = (event) => {
-         console.log(event.target.value)
+       
         setAlmacenOrigen(event.target.value);
        /*   productosQuery.refetch({
             variables: { 
@@ -884,7 +884,8 @@ export default function Traspasos(props) {
                    <DialogActions style={{justifyContent:'center'}}>
                     <Box sx={{ flexDirection: 'row',alignSelf: 'center',  width: '15%',display: 'flex', pt: 2 }} >
                             <Button
-                            color="inherit"
+                            color="primary"
+                            variant="contained"
                             disabled={activeStep === 0}
                             onClick={handleBack}
                             sx={{ mr: 1 }}
@@ -898,7 +899,7 @@ export default function Traspasos(props) {
                                 </Button>
                                 )} */}
                             
-                                <Button disabled={!haveConcepto} onClick={() => (activeStep < steps.length -1) ? handleNext() : handleModal()}>
+                                <Button color="primary" variant="contained" disabled={!haveConcepto} onClick={() => (activeStep < steps.length -1) ? handleNext() : handleModal()}>
                                     {activeStep < steps.length -1   ? 'Siguiente' : 'Terminar'}
                                 </Button>
                         

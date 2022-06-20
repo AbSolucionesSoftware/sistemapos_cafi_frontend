@@ -221,7 +221,7 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
     let suma =
       parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`) +
       parseFloat(`0.${ieps < 10 ? `0${ieps}` : ieps}`);
-    let precio_venta = parseFloat((precio_neto / (suma + 1)).toFixed(2));
+    let precio_venta = parseFloat((precio_neto / (suma + 1)));
     let iva_precio =
       precio_venta * parseFloat(`0.${iva < 10 ? `0${iva}` : iva}`);
     let ieps_precio =

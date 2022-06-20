@@ -112,7 +112,7 @@ export default function DescuentoProductos({ datos, productosRefetch }) {
     preciosDescuentos.splice(0, preciosDescuentos.length);
 
     for (let i = 0; i < preciosProductos.length; i++) {
-      let porcentaje = parseFloat((100 - newValue).toFixed(2)); //Porcentaje para calculos de descuento
+      let porcentaje = parseFloat((100 - newValue)/* .toFixed(2) */); //Porcentaje para calculos de descuento
       let PVCDSI = 0; // Precio venta con descuento sin impuestos
       let dineroDescontado = 0;
       let cantidad_unidad = preciosProductos[i].precio_unidad.cantidad_unidad;
@@ -153,7 +153,7 @@ export default function DescuentoProductos({ datos, productosRefetch }) {
         },
       };
 
-      setPrecioPrueba(precio_neto);
+      setPrecioPrueba(parseFloat(precio_neto.toFixed(2)));
       if (preciosProductos.length !== 1) {
         preciosDescuentos.push(arrayDescuento);
       } else {
@@ -176,12 +176,9 @@ export default function DescuentoProductos({ datos, productosRefetch }) {
       let dineroDescontado = 0;
       let PVCDSI = 0; // Precio venta con descuento sin impuestos
       let porcentaje = parseFloat(
-        ((PVSI / preciosProductos[0].precio_unidad.precio_venta) * 100).toFixed(
-          2
-        )
-      );
-      let descuento = parseFloat((100 - porcentaje).toFixed(2));
-
+        ((PVSI / preciosProductos[0].precio_unidad.precio_venta) * 100));
+      let descuento = parseFloat((100 - porcentaje));
+      
       PVCDSI = parseFloat(
         (preciosProductos[0].precio_unidad.precio_venta * porcentaje) / 100
       );
@@ -217,7 +214,7 @@ export default function DescuentoProductos({ datos, productosRefetch }) {
         },
       };
 
-      setValue(descuento);
+      setValue(parseFloat(descuento.toFixed(2)));
       setPreciosDescuentos([arrayDescuento]);
     }
   };

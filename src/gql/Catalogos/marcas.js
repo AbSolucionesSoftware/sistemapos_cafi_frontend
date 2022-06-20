@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const OBTENER_MARCAS = gql`
-    query ObtenerMarcas($empresa: ID!, $sucursal: ID!){
+    query ObtenerMarcas($empresa: ID!, $sucursal: ID){
         obtenerMarcas(empresa: $empresa, sucursal: $sucursal){
             _id
             nombre_marca

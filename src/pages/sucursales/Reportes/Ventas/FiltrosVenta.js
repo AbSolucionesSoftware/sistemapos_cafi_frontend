@@ -188,7 +188,7 @@ const CapturaDeDatos = ({ refetch, data }) => {
           />
         </Grid>
       </Grid>
-      <Box mt={1} display="flex">
+      <Box mt={1} display="flex" alignItems="center">
         <Button
           color="primary"
           startIcon={<ClearOutlined />}
@@ -198,6 +198,18 @@ const CapturaDeDatos = ({ refetch, data }) => {
         </Button>
         <Box mx={1} />
         <ExportarVentas data={data} />
+        <Box mx={1} />
+        <Box
+          border={1}
+          borderColor="#FF8A8A"
+          bgcolor="#FFF4F4"
+          height="20px"
+          width="20px"
+        />
+        <Box mx={0.5} />
+        <Typography>
+          <b>- Ventas canceladas</b>
+        </Typography>
       </Box>
     </Fragment>
   );

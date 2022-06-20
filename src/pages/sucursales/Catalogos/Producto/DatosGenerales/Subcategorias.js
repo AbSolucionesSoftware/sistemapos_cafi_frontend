@@ -41,7 +41,11 @@ export default function SubcategoriasProducto({ refetch }) {
           fullWidth
           options={subcategorias}
           getOptionLabel={(option) => option.subcategoria}
-          renderInput={(params) => <TextField {...params} variant="outlined" />}
+          renderInput={(param) => {
+            let params = {...param}
+            params.inputProps.style = { textTransform: "uppercase" };
+            return(<TextField {...params} variant="outlined" />)
+          }}
           onChange={(_, value) => obtenerDatos(_, value)}
           getOptionSelected={(option, value) =>
             option.subcategoria === value.subcategoria

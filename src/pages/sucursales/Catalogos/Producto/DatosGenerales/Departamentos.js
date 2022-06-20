@@ -45,7 +45,11 @@ export default function DepartamentosProducto({ departamentos, refetch }) {
               ? option.nombre_departamentos
               : option.departamento
           }
-          renderInput={(params) => <TextField {...params} variant="outlined" />}
+          renderInput={(param) => {
+            let params = {...param}
+            params.inputProps.style = { textTransform: "uppercase" };
+            return(<TextField {...params} variant="outlined" />)
+          }}
           onChange={(_, value) => obtenerDatos(_, value)}
           getOptionSelected={(option, value) =>
             option.nombre_departamentos === value.departamento

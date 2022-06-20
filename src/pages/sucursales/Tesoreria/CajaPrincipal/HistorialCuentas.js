@@ -66,7 +66,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function HistorialCuentas({cuenta, tipo, reload}) {
+export default function HistorialCuentas({cuenta, tipo, reload, setSaldoCaja}) {
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     moment.locale('es');
     const classes = useStyles();
@@ -98,9 +98,11 @@ export default function HistorialCuentas({cuenta, tipo, reload}) {
     
     let historialCuenta = [];
     if(data){
+     
+        setSaldoCaja(data.obtenerHistorialCuenta.saldo_en_caja);
         historialCuenta = data.obtenerHistorialCuenta;
     };
-
+    
     const obtenerDatos = (e) => {
         setDatosFiltro({...datosFiltro, [e.target.name]: e.target.value})
     };
@@ -183,7 +185,7 @@ export default function HistorialCuentas({cuenta, tipo, reload}) {
                             </TableHead>
                             <TableBody> 
                                 {
-                                    historialCuenta?.map((row, index) => {
+                                    historialCuenta?.movimientos?.map((row, index) => {
                                         return(
                                             <RowsHistorial 
                                                 key={index}

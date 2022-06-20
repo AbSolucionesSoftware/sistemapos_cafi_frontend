@@ -1,10 +1,11 @@
 import React, { Fragment, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { Box, Divider, Grid } from "@material-ui/core";
+import { Box, Divider, Grid, InputAdornment } from "@material-ui/core";
 import { TextField, Typography } from "@material-ui/core";
 import { ClienteCtx } from "../../../../context/Catalogos/crearClienteCtx";
 import { Alert } from "@material-ui/lab";
 import { formatoMexico } from "../../../../config/reuserFunctions";
+import { DateRange } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -47,12 +48,15 @@ export default function RegistrarInfoCredito({ tipo, cliente_base }) {
 
   return (
     <Fragment>
-      <Box my={3}>
-        <Alert severity="info">
-          Si deseas hacer facturas a este cliente el <b>RFC</b> y la{" "}
-          <b>Razon social</b> son obligatorios.
-        </Alert>
-      </Box>
+      {tipo === "CLIENTE" ? (
+        <Box my={3}>
+          <Alert severity="info">
+            Si deseas hacer facturas a este cliente el <b>RFC</b> y la{" "}
+            <b>Razon social</b> son obligatorios.
+          </Alert>
+        </Box>
+      ) : null}
+
       <Grid container spacing={2}>
         <Grid item>
           <Typography>
@@ -94,7 +98,7 @@ export default function RegistrarInfoCredito({ tipo, cliente_base }) {
             inputProps={{ style: { textTransform: "uppercase" } }}
           />
         </Grid>
-        <Grid item md={4} xs={12}>
+        {/* <Grid item md={4} xs={12}>
           <Typography className={classes.title}>Descuento</Typography>
           <TextField
             fullWidth
@@ -104,7 +108,7 @@ export default function RegistrarInfoCredito({ tipo, cliente_base }) {
             value={cliente.numero_descuento ? cliente.numero_descuento : ""}
             onChange={obtenerCampos}
           />
-        </Grid>
+        </Grid> */}
         <Grid item md={4} xs={12}>
           <Typography className={classes.title}>Limite de crédito</Typography>
           <TextField
@@ -115,6 +119,9 @@ export default function RegistrarInfoCredito({ tipo, cliente_base }) {
             value={cliente.limite_credito ? cliente.limite_credito : ""}
             onChange={obtenerCampos}
             error={credito_usado > cliente.limite_credito}
+            InputProps={{
+              startAdornment: <InputAdornment>$</InputAdornment>
+            }}
           />
         </Grid>
         <Grid item md={4} xs={12}>
@@ -124,9 +131,13 @@ export default function RegistrarInfoCredito({ tipo, cliente_base }) {
             size="small"
             name="dias_credito"
             variant="outlined"
+            placeholder="30"
             value={cliente.dias_credito ? cliente.dias_credito : ""}
             onChange={obtenerCampos}
             inputProps={{ style: { textTransform: "uppercase" } }}
+            InputProps={{
+              startAdornment: <InputAdornment><DateRange color="action" /></InputAdornment>
+            }}
           />
         </Grid>
       </Grid>

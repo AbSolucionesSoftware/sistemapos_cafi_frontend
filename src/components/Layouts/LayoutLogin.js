@@ -26,7 +26,20 @@ const useStyles = makeStyles((theme) => ({
 	imagen:{
 		width: '100%',
 		height: '100%'
-	}
+	},
+	input: {
+		"& input[type=number]": {
+		  "-moz-appearance": "textfield",
+		},
+		"& input[type=number]::-webkit-outer-spin-button": {
+		  "-webkit-appearance": "none",
+		  margin: 0,
+		},
+		"& input[type=number]::-webkit-inner-spin-button": {
+		  "-webkit-appearance": "none",
+		  margin: 0,
+		},
+	  },
 }));
 
 export default function LayoutLogin(props) {
@@ -52,7 +65,10 @@ export default function LayoutLogin(props) {
 		try {
 			const result = await logearUsuario({
 				variables: {
-					input: datos
+					input: {
+						numero_usuario: parseInt(datos.numero_usuario),
+						password: datos.password
+					}
 				}
 			});
 			const { token } = result.data.logearUsuario;
@@ -68,17 +84,10 @@ export default function LayoutLogin(props) {
 	};
 
 	const obtenerCampos = (e) => {
-		if (e.target.name === 'numero_usuario') {
-			setDatos({
-				...datos,
-				[e.target.name]: parseInt(e.target.value)
-			});
-		} else {
-			setDatos({
-				...datos,
-				[e.target.name]: e.target.value
-			});
-		}
+		setDatos({
+			...datos,
+			[e.target.name]: e.target.value
+		});
 	};
 
 	const handleClickShowPassword = () => {
@@ -104,11 +113,12 @@ export default function LayoutLogin(props) {
 							<b>Inicia sesión</b>
 						</Typography>
 					</Box>
-					<form autoComplete="off" onSubmit={signin} >
+					<form autocomplete="on" onSubmit={signin} className={classes.input}>
 						<TextField
 							label="Numero de usuario"
 							variant="outlined"
 							name="numero_usuario"
+							type="number"
 							fullWidth
 							className={classes.margin}
 							onChange={obtenerCampos}

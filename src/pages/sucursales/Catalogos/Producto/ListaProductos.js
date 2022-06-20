@@ -9,6 +9,7 @@ import TableRow from "@material-ui/core/TableRow";
 import CrearProducto from "./crearProducto";
 import DescuentoProductos from "./Descuentos/Descuento";
 import EliminarProducto from "./EliminarProducto";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles({
   root: {
@@ -96,10 +97,12 @@ const RenderTableRows = ({ producto, productosRefetch }) => {
         </TableCell>
         <TableCell align="center" padding="checkbox">
           {sesion.accesos.catalogos.productos.eliminar === false ? (null):(
-            <EliminarProducto
+            <Tooltip title="Solo se puede eliminar un producto si este tiene 0 en inventarios" arrow>
+              <EliminarProducto
               datos={producto}
               productosRefetch={productosRefetch}
             />
+            </Tooltip>
           )}
         </TableCell>
       </TableRow>
