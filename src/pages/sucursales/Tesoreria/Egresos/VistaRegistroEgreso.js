@@ -75,7 +75,6 @@ const useStyles = makeStyles((theme) => ({
 export default function VistaRegistroEgreso({handleClickOpen}) {
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
     const classes = useStyles();
-	const { setAlert } = useContext(TesoreriaCtx);
     const [ value, setValue ] = useState(0);
 
     const handleChange = (event, newValue) => {
@@ -104,7 +103,7 @@ export default function VistaRegistroEgreso({handleClickOpen}) {
 							<Box mt={4}>
 								<Typography>Usuario: <b>{sesion.nombre}</b></Typography> 
 								<Box>
-									<b>{moment().format('D MMMM YYYY')}</b>
+									<b>{moment().locale("es-mx").format('D MMMM YYYY')}</b>
 								</Box>
 							</Box>
 							

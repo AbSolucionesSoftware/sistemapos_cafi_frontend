@@ -12,14 +12,14 @@ export default function ClientesVentas() {
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
   const datosVentas = JSON.parse(localStorage.getItem("DatosVentas"));
   const { setUpdateClientVenta, updateClientVenta, setClientes } = useContext(ClienteCtx);
-  const { setClientesVentas, clear } = useContext(VentasContext);
+  const { setClientesVentas } = useContext(VentasContext);
 
   const [selectClient, setSelectClient] = useState({});
 
   // console.log(sesion.empresa._id);
   // console.log(sesion.sucursal._id);
 
-  const { loading, data, error, refetch } = useQuery(OBTENER_CLIENTES_VENTAS, {
+  const { loading, data, refetch } = useQuery(OBTENER_CLIENTES_VENTAS, {
     variables: {
       empresa: sesion.empresa._id,
       sucursal: sesion.sucursal._id,

@@ -36,13 +36,13 @@ export default function VentaEnEspera() {
       if (datos === null) {
         localStorage.setItem(
           "ListaEnEspera",
-          JSON.stringify([{ datosVenta, fecha: moment().format("MM/DD/YYYY") }])
+          JSON.stringify([{ datosVenta, fecha: moment().locale("es-mx").format("MM/DD/YYYY") }])
         );
         cleanData();
         handleClickOpen();
       } else {
         let data = JSON.parse(datos);
-        data.push({ datosVenta, fecha: moment().format("MM/DD/YYYY") });
+        data.push({ datosVenta, fecha: moment().locale("es-mx").format("MM/DD/YYYY") });
         localStorage.setItem("ListaEnEspera", JSON.stringify(data));
         cleanData();
         handleClickOpen();

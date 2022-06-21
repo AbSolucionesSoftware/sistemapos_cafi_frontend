@@ -1,11 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { jsPDF } from 'jspdf';
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import html2canvas from 'html2canvas';
 import { Box, Button, Container, Typography } from '@material-ui/core';
 import GetAppIcon from '@material-ui/icons/GetApp';
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
 import Avatar from "@material-ui/core/Avatar";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
@@ -16,7 +14,6 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { Tooltip } from "@material-ui/core";
 import Paper from "@material-ui/core/Paper";
 import {
 	formatoFechaCorta,
@@ -67,12 +64,12 @@ export default function CotizacionPdf(props) {
 	const [ cotizacion, setCotizacion ] = useState(props.cotizacion);
 	const [ show, setShow ] = useState(false);
 	const classes = useStyles();
-	const [ loading, setLoading ] = useState(false);
+/* 	const [ loading, setLoading ] = useState(false);
 	const [ snackbar, setSnackbar ] = useState({
 		open: false,
 		mensaje: '',
 		status: ''
-	});
+	}); */
 
 	useEffect(() => {
 	  if(show){
@@ -84,8 +81,8 @@ export default function CotizacionPdf(props) {
 	const printDocument = () => {
 
 		const divInformation = document.getElementById('divInformation');
-		const divTitleProductos = document.getElementById('divTitleProductos');
-		console.log(divInformation)
+		/* const divTitleProductos = document.getElementById('divTitleProductos'); */
+		/* console.log(divInformation) */
 		setShow(false);
 		const pdf = new jsPDF('p', 'mm', 'letter');
 		//Information
@@ -357,19 +354,19 @@ const CotizacionInformation = ({ cotizacion, classes}) => {
 	
 };
 
-const EncabezadoTablaProductos = (cotizacion, classes) => {
+/* const EncabezadoTablaProductos = (cotizacion, classes) => {
 	return(
 		<div id="divTitleProductos" className={classes.root} >
 		
 		  </div>
 	)
-}
+} */
 
-const CotizacionRowProducto = (cotizacion) =>{
+/* const CotizacionRowProducto = (cotizacion) =>{
 	
 }
-
-const ComponenteMedidaColor = ({ producto }) => {
+ */
+/* const ComponenteMedidaColor = ({ producto }) => {
 	const classes = useStyles();
 	const theme = useTheme();
   
@@ -392,7 +389,7 @@ const ComponenteMedidaColor = ({ producto }) => {
 	} else {
 	  return <TableCell align="center">{"N/A"}</TableCell>;
 	}
-  };
+  }; */
   
   const ComponenteDescuento = ({ producto }) => {
 	if (producto.descuento_general_activo === true) {

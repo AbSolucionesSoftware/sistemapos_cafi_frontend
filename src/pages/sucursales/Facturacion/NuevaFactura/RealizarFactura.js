@@ -111,7 +111,7 @@ export default function RealizarFactura({ setAlert }) {
           .subtract(2, "d")
           .format("YYYY-MM-DDTHH:mm:ss");
       } else {
-        nuevo_obj.date = moment().format("YYYY-MM-DDTHH:mm:ss");
+        nuevo_obj.date = moment().locale("es-mx").format("YYYY-MM-DDTHH:mm:ss");
       }
 
       nuevo_obj.items = items;
@@ -258,7 +258,7 @@ const InputsFacturaModal = () => {
             <MenuItem value="">
               <em>Selecciona una fecha</em>
             </MenuItem>
-            <MenuItem value="0">{moment().format("LL")}</MenuItem>
+            <MenuItem value="0">{moment().locale("es-mx").format("LL")}</MenuItem>
             <MenuItem value="1">
               {moment().subtract(1, "d").format("LL")}
             </MenuItem>

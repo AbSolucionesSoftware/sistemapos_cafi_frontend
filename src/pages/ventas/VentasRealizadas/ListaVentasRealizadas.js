@@ -399,7 +399,7 @@ const RowComprasRealizadas = ({
   const classes = tableStyles();
   let today =
     moment(data.fecha_registro).format("YYYY-MM-DD") ===
-    moment().format("YYYY-MM-DD");
+    moment().locale("es-mx").format("YYYY-MM-DD");
 
   return (
     <TableRow

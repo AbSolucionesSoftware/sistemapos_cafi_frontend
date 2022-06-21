@@ -48,7 +48,7 @@ const useStyles  = makeStyles((theme) => ({
 export default function ListaCuentas() {
     const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 
-    const {  data, error, loading, refetch } = useQuery(OBTENER_SUCURSALES, {
+    const {  data, loading, refetch } = useQuery(OBTENER_SUCURSALES, {
 		variables: {
             id: sesion.empresa._id
 		}

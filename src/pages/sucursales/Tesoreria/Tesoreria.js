@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { Box, Container, Grid } from '@material-ui/core';
 import CajaPrincipal from './CajaPrincipal/CajaPrincipal';
-import Egresos from './Egresos/Egresos';
 import AbonosProveedores from './Abonos/Provedores/AbonosProovedores';
 import AbonosClientes from './Abonos/Clientes/AbonosClientes';
 import {AbonosProvider} from "../../../context/Tesoreria/abonosCtx";

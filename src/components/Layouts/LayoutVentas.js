@@ -132,11 +132,11 @@ const NavDataCajaUsers = ({ props }) => {
           className={classes.avatar}
         />
         <Typography color="textSecondary">
-          {moment().format("MM/DD/YYYY")}
+          {moment().locale("es-mx").format("MM/DD/YYYY")}
         </Typography>
         <Box mx={1} />
         <Typography color="textSecondary">
-          <b>{moment().format("h:mm")} hrs.</b>
+          <b>{moment().locale("es-mx").format("h:mm")} hrs.</b>
         </Typography>
       </Grid>
       <Grid

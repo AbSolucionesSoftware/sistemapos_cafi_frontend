@@ -109,10 +109,10 @@ export default function AbrirTurno({
             email: sesion.email,
           },
           hora_entrada: {
-            hora: moment().format("hh"),
-            minutos: moment().format("mm"),
-            segundos: moment().format("ss"),
-            completa: moment().format("HH:mm:ss"),
+            hora: moment().locale("es-mx").format("hh"),
+            minutos: moment().locale("es-mx").format("mm"),
+            segundos: moment().locale("es-mx").format("ss"),
+            completa: moment().locale("es-mx").format("HH:mm:ss"),
           },
           hora_salida: {
             hora: "",
@@ -121,12 +121,12 @@ export default function AbrirTurno({
             completa: "",
           },
           fecha_entrada: {
-            year: moment().format("YYYY"),
-            mes: moment().format("MM"),
-            dia: moment().format("DD"),
-            no_semana_year: moment().week().toString(),
-            no_dia_year: moment().dayOfYear().toString(),
-            completa: moment().format("YYYY-MM-DD"),
+            year: moment().locale("es-mx").format("YYYY"),
+            mes: moment().locale("es-mx").locale("es-mx").format("MM"),
+            dia: moment().locale("es-mx").format("DD"),
+            no_semana_year: moment().locale("es-mx").week().toString(),
+            no_dia_year: moment().locale("es-mx").dayOfYear().toString(),
+            completa: moment().locale("es-mx").format("YYYY-MM-DD"),
           },
           fecha_salida: {
             year: "",

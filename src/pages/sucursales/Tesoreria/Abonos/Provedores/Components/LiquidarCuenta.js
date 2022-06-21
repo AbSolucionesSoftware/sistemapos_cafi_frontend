@@ -114,17 +114,17 @@ const useStyles = makeStyles((theme) => ({
         tipo_movimiento: "ABONO_PROVEEDOR",
         rol_movimiento: "CAJA",
         hora_moviento: {
-          hora: moment().format('hh'),
-          minutos: moment().format('mm'),
-          segundos: moment().format('ss'),
-          completa: moment().format('HH:mm:ss')
+          hora: moment().locale("es-mx").format('hh'),
+          minutos: moment().locale("es-mx").format('mm'),
+          segundos: moment().locale("es-mx").format('ss'),
+          completa: moment().locale("es-mx").format('HH:mm:ss')
       },
         fecha_movimiento: {
-          year: moment().format("YYYY"),
-          mes: moment().format("MM"),
-          dia: moment().format("DD"),
-          no_semana_year: moment().week().toString(),
-          no_dia_year: moment().dayOfYear().toString(),
+          year: moment().locale("es-mx").format("YYYY"),
+          mes: moment().locale("es-mx").format("MM"),
+          dia: moment().locale("es-mx").format("DD"),
+          no_semana_year: moment().locale("es-mx").week().toString(),
+          no_dia_year: moment().locale("es-mx").dayOfYear().toString(),
           completa: moment().locale("es-mx").format(),
         },
         monto_total_abonado: parseFloat(props.cuenta.saldo_credito_pendiente),

@@ -74,21 +74,21 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                 numero_caja: parseInt(turnoEnCurso.numero_caja),
                 id_Caja: turnoEnCurso.id_caja,
                 fecha_movimiento: {
-                    year: moment().format('YYYY'),
-                    mes: moment().format('MM'),
-                    dia: moment().format('DD'),
-                    no_semana_year: moment().week().toString(),
-                    no_dia_year: moment().dayOfYear().toString(),
+                    year: moment().locale("es-mx").format('YYYY'),
+                    mes: moment().locale("es-mx").format('MM'),
+                    dia: moment().locale("es-mx").format('DD'),
+                    no_semana_year: moment().locale("es-mx").week().toString(),
+                    no_dia_year: moment().locale("es-mx").dayOfYear().toString(),
                     completa: moment().locale('es-mx').format()
                 },
                 monto_total: props.total_ventas,
                
                 horario_turno: turnoEnCurso.horario_en_turno,
                 hora_moviento: {
-                    hora: moment().format('hh'),
-                    minutos: moment().format('mm'),
-                    segundos: moment().format('ss'),
-                    completa: moment().format('HH:mm:ss')
+                    hora: moment().locale("es-mx").format('hh'),
+                    minutos: moment().locale("es-mx").format('mm'),
+                    segundos: moment().locale("es-mx").format('ss'),
+                    completa: moment().locale("es-mx").format('HH:mm:ss')
                 },
                 metodo_de_pago:{
                     clave: ObjectMetodoPago.Value,
@@ -308,77 +308,3 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 }
 
 export default withRouter(Abonar);
-
-
-
-{/* <Dialog
-                open={openAbonar}
-                TransitionComponent={Transition}
-                keepMounted
-                onClose={handleClick}
-                aria-labelledby="alert-dialog-slide-title"
-                aria-describedby="alert-dialog-slide-description"
-            >
-                <DialogTitle id="alert-dialog-slide-title">
-                    <Box display="flex">
-                        <Box display="flex" justifyContent="flex-start">
-                            Abono a recibir por cuenta
-                        </Box>
-                        <Box ml={3} display="flex" justifyContent="flex-end">
-                            <Button variant="contained" color="secondary" onClick={handleClick} size="large">
-								<CloseIcon />
-							</Button>
-                        </Box>
-                    </Box>
-                    
-                </DialogTitle>
-                <DialogContent>
-                    <Box width="100%">
-                        <Typography>Cuenta No. 2501265</Typography>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            
-                            name="nombre_comercial"
-                            id="form-producto-nombre-comercial"
-                            variant="outlined"
-                            value="$150,000.00 Mx" 
-                           
-                        />
-                    </Box>
-                    <Box width="100%">
-                        <Typography>Cuenta No. 2501265</Typography>
-                        <TextField
-                            fullWidth
-                            size="small"
-                           
-                            name="nombre_comercial"
-                            id="form-producto-nombre-comercial"
-                            variant="outlined"
-                            value="$150,000.00 Mx" 
-                           
-                        />
-                    </Box>
-                    <Box width="100%" p={1} mt={1}>
-                        <Typography>Nombre de Cliente: SUTANO</Typography>
-                    </Box>
-                    <Box width="100%" p={1}>
-                        <Typography>Total a abonar:  $15,100</Typography>
-                    </Box>
-                    <Box p={1}>
-                        <Alert severity="info">Si desea editar el abono del cliente, <br/>
-                        procure este sea mayor al establecido</Alert>
-                    </Box>
-                </DialogContent>
-                <Box display="flex" justifyContent="center" alignContent="center" p={2}>
-                    <Button
-                        size="large"
-                        variant="contained" 
-                        color="primary"
-                        style={{fontSize: 16}}
-                        onClick={handleClick}
-                    >
-                        Registrar Abono
-                    </Button>
-                </Box>
-            </Dialog> */}

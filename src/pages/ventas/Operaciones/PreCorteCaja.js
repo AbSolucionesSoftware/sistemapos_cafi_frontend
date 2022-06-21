@@ -140,12 +140,12 @@ export default function PreCorteCaja() {
                   <Box display="flex">
                     <Box textAlign="right">
                       <Typography variant="caption">
-                        {moment().format("MM/DD/YYYY")}
+                        {moment().locale("es-mx").format("MM/DD/YYYY")}
                       </Typography>
                     </Box>
                     <Box textAlign="right" ml={2}>
                       <Typography variant="caption">
-                        <b>{moment().format("h:mm")} hrs.</b>
+                        <b>{moment().locale("es-mx").format("h:mm")} hrs.</b>
                       </Typography>
                     </Box>
                   </Box>
@@ -190,7 +190,7 @@ export default function PreCorteCaja() {
                       <b>Fecha y hora al precorte: </b>
                     </Typography>
                     <Typography variant="subtitle1">
-                      {moment().format("MMMM D YYYY, h:mm:ss a")}
+                      {moment().locale("es-mx").format("MMMM D YYYY, h:mm:ss a")}
                     </Typography>
                   </Box>
                   <Box textAlign="center" p={2}>

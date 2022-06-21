@@ -670,7 +670,7 @@ export default function Traspasos(props) {
                                         </Box>
                                         <Box m={3}>
                                             <Typography><b>Fecha</b></Typography>
-                                            <Typography> 	{moment().format('MM/DD/YYYY')} </Typography>
+                                            <Typography> 	{moment().locale("es-mx").format('MM/DD/YYYY')} </Typography>
                                         </Box>
                                     
                                     </Box>

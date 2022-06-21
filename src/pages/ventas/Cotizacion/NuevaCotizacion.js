@@ -464,7 +464,7 @@ export default function NuevaCotizacion({ setOpen }) {
                 disabled={true}
                 onChange={obtenerDatos}
                 variant="outlined"
-                value={moment().format("L")}
+                value={moment().locale("es-mx").format("L")}
               />
             </Box>
           </Grid>

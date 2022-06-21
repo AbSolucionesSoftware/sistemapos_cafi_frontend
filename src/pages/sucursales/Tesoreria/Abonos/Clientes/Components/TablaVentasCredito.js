@@ -1,4 +1,4 @@
-import React, { useState, useContext, Fragment } from 'react';
+import React, { useState, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import HistoryIcon from '@material-ui/icons/History';
@@ -12,11 +12,8 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import {AbonosCtx} from "../../../../../../context/Tesoreria/abonosCtx";
 import DetalleVentaCredito from './AbonarSeleccion/DetalleVentaCredito';
 import HistorialAbonos from './AbonarSeleccion/HistorialAbonos';
 import IconLiquidar from './Liquidar';
@@ -26,10 +23,6 @@ import {
   } from "../../../../../../config/reuserFunctions";
 //import DetallesCuenta from './DetalleCuenta/DetallesCuenta';
 
-
-function createData(folio, fecha, cantidadProductos, totalVenta, totalAbonado, faltaPagar) {
-	return { folio, fecha, cantidadProductos, totalVenta, totalAbonado, faltaPagar };
-}
 
 const rows = [];
 
@@ -48,19 +41,9 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
-	const { onSelectAllClick, numSelected, rowCount } = props;
-
 	return (
 		<TableHead>
 			<TableRow>
-				{/* <TableCell padding="checkbox">
-					<Checkbox
-						indeterminate={numSelected > 0 && numSelected < rowCount}
-						checked={rowCount > 0 && numSelected === rowCount}
-						onChange={onSelectAllClick}
-						inputProps={{ 'aria-label': 'select all desserts' }}
-					/>
-				</TableCell> */}
 				{headCells.map((headCell) => (
 					<TableCell
 						key={headCell.id}
@@ -127,10 +110,7 @@ const useStyles = makeStyles((theme) => ({
 export default function TablaVentasCredito(props) {
 	const classes = useStyles();
 	const [ selected, setSelected ] = useState([]);
-	const [ cliente, setCliente ] = useState([]);
-	const [ page ] = useState(0);
-	const [ rowsPerPage ] = useState(10);
-	const { setVentas} = useContext(AbonosCtx);
+	/* const { setVentas} = useContext(AbonosCtx); */
 	const [openDetalle, setOpenDetalle] = useState(false);
     const [openHistorial, setOpenHistorial] = useState(false);
     const [rowSelected, setRowSelected] = useState({});
@@ -143,7 +123,7 @@ export default function TablaVentasCredito(props) {
 		setSelected([]);
 	};
 
-	const handleClick = (event, item) => {
+	/* const handleClick = (event, item) => {
          try {
 			let newSelected = [];
 			const selectedIndex = selected.indexOf(item);
@@ -166,7 +146,7 @@ export default function TablaVentasCredito(props) {
 		 }
 	
 		
-	};
+	}; */
 	const detalle =(row) =>{
 		setOpenDetalle(true);
 		setRowSelected(row);
@@ -176,18 +156,8 @@ export default function TablaVentasCredito(props) {
 		setOpenHistorial(true);
 		setRowSelected(row);
 	}
-/* 	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
-
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(parseInt(event.target.value, 10));
-		setPage(0);
-	}; */
 
 	const isSelected = (item) => selected.indexOf(item) !== -1;
-
-	const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
 	return (
 		<div className={classes.root}>
