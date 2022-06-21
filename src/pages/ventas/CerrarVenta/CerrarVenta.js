@@ -15,10 +15,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import CreditCardIcon from "@material-ui/icons/CreditCard";
 import ClearIcon from "@material-ui/icons/Clear";
 import { Close } from "@material-ui/icons";
-import {
-  formatoMexico,
-  numerosRandom,
-} from "../../../config/reuserFunctions";
+import { formatoMexico, numerosRandom } from "../../../config/reuserFunctions";
 import { formaPago } from "../../sucursales/Facturacion/catalogos";
 import { calcularMonedero } from "./calcularMonedero";
 import { CREAR_VENTA } from "../../../gql/Ventas/ventas_generales";
@@ -247,8 +244,12 @@ export default function CerrarVenta() {
       ventaFinal.credito = venta_credito;
       ventaFinal.abono_minimo = venta_credito && abonoMinimo ? abonoMinimo : 0;
       //Agregar descuentos de ventas
-      ventaFinal.descuento_general_activo = ventaFinal.descuento_general_activo ? ventaFinal.descuento_general_activo : false;
-      ventaFinal.descuento_general = ventaFinal.descuento_general ? ventaFinal.descuento_general : null;
+      ventaFinal.descuento_general_activo = ventaFinal.descuento_general_activo
+        ? ventaFinal.descuento_general_activo
+        : false;
+      ventaFinal.descuento_general = ventaFinal.descuento_general
+        ? ventaFinal.descuento_general
+        : null;
       //Declarar dias de credito como false
       ventaFinal.dias_de_credito_venta = datosCliente
         ? datosCliente.dias_credito
@@ -407,23 +408,26 @@ export default function CerrarVenta() {
                 monedero={monedero}
                 monederoTotal={monederoTotal}
               />
-              {venta_credito ? (
-                <CreditoVenta
-                  montos={montos}
-                  setMontos={setMontos}
-                  setTotales={setTotales}
-                  venta_credito={venta_credito}
-                  setMontoEnCaja={setMontoEnCaja}
-                  datosCliente={datosCliente}
-                  setDatosCliente={setDatosCliente}
-                  editarCliente={editarCliente}
-                  setEditarCliente={setEditarCliente}
-                  fechaVencimientoDate={fechaVencimientoDate}
-                  setfechaVencimientoDate={setfechaVencimientoDate}
-                  setAbonoMinimo={setAbonoMinimo}
-                  abono_minimo={abono_minimo}
-                />
-              ) : null}
+
+              <Box display={venta_credito ? "flex" : "none"}>
+              <CreditoVenta
+                montos={montos}
+                setMontos={setMontos}
+                totales={totales}
+                setTotales={setTotales}
+                venta_credito={venta_credito}
+                venta_base={venta_base}
+                setMontoEnCaja={setMontoEnCaja}
+                datosCliente={datosCliente}
+                setDatosCliente={setDatosCliente}
+                editarCliente={editarCliente}
+                setEditarCliente={setEditarCliente}
+                fechaVencimientoDate={fechaVencimientoDate}
+                setfechaVencimientoDate={setfechaVencimientoDate}
+                setAbonoMinimo={setAbonoMinimo}
+                abono_minimo={abono_minimo}
+              />
+              </Box>
             </Grid>
           </Box>
         </DialogContent>

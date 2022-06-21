@@ -6,11 +6,13 @@ import moment from "moment";
 export default function CreditoVenta({
   montos,
   setMontos,
+  totales,
   setTotales,
   venta_credito,
   setMontoEnCaja,
   datosCliente,
   setDatosCliente,
+  venta_base,
   /* editarCliente,
   setEditarCliente, */
   fechaVencimientoDate,
@@ -44,10 +46,8 @@ export default function CreditoVenta({
         cheque: 0,
       });
       setTotales({
-        subtotal: 0,
-        impuestos: 0,
-        total: 0,
-        descuento: 0,
+        ...totales,
+
         cambio: 0,
         monto_pagado: total_venta,
       });

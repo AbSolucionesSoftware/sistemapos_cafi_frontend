@@ -149,17 +149,17 @@ export default function DepositoRetiroCaja() {
             horario_turno: turnoEnCurso.horario_en_turno,
             rol_movimiento: "CAJA",
             hora_moviento: {
-              hora: moment().format("hh"),
-              minutos: moment().format("mm"),
-              segundos: moment().format("ss"),
-              completa: moment().format("HH:mm:ss"),
+              hora: moment().locale("es-mx").format("hh"),
+              minutos: moment().locale("es-mx").format("mm"),
+              segundos: moment().locale("es-mx").format("ss"),
+              completa: moment().locale("es-mx").format("HH:mm:ss"),
             },
             fecha_movimiento: {
-              year: moment().format("YYYY"),
-              mes: moment().format("DD"),
-              dia: moment().format("MM"),
-              no_semana_year: moment().week().toString(),
-              no_dia_year: moment().dayOfYear().toString(),
+              year: moment().locale("es-mx").format("YYYY"),
+              mes: moment().locale("es-mx").format("DD"),
+              dia: moment().locale("es-mx").format("MM"),
+              no_semana_year: moment().locale("es-mx").week().toString(),
+              no_dia_year: moment().locale("es-mx").dayOfYear().toString(),
               completa: moment().locale("es-mx").format(),
             },
             id_User: sesion._id,
@@ -292,12 +292,12 @@ export default function DepositoRetiroCaja() {
                 <Box display="flex" textAlign="right">
                   <Box textAlign="right">
                     <Typography variant="caption">
-                      {moment().format("MM/DD/YYYY")}
+                      {moment().locale("es-mx").format("MM/DD/YYYY")}
                     </Typography>
                   </Box>
                   <Box textAlign="right" ml={2}>
                     <Typography variant="caption">
-                      <b>{moment().format("h:mm")} hrs.</b>
+                      <b>{moment().locale("es-mx").format("h:mm")} hrs.</b>
                     </Typography>
                   </Box>
                   <Box textAlign="right" ml={2}>

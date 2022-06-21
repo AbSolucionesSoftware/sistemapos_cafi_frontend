@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-
-import DoneIcon from '@material-ui/icons/Done';
-
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import Slide from '@material-ui/core/Slide';
-import { Box, DialogActions,Paper} from '@material-ui/core';
+import { Box } from '@material-ui/core';
 import VistaRegistroEgreso from './VistaRegistroEgreso';
 
 const useStyles = makeStyles((theme) => ({

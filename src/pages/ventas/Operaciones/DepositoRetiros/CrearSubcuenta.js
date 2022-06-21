@@ -6,7 +6,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
 import { Add } from "@material-ui/icons";
-import { TextField, CircularProgress, MenuItem } from "@material-ui/core";
+import { TextField, CircularProgress } from "@material-ui/core";
 import Done from "@material-ui/icons/Done";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 import { CREAR_SUBCUENTA } from "../../../../gql/Catalogos/centroCostos";

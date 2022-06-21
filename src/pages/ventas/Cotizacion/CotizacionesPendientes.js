@@ -198,7 +198,7 @@ const CotizacionRow = ({
 
         if (
           moment(cotizacion.fecha_vencimiento_cotizacion).isBefore(
-            moment().format("YYYY MM DD")
+            moment().locale("es-mx").format("YYYY MM DD")
           )
         ) {
           setOpenMessage({

@@ -75,12 +75,12 @@ export default function ListaCotizaciones() {
             {/*  <Box mt={2} textAlign="right">
               <Box textAlign="right">
                 <Typography variant="caption">
-                  {moment().format("L")}
+                  {moment().locale("es-mx").format("L")}
                 </Typography>
               </Box>
               <Box textAlign="right">
                 <Typography variant="caption">
-                  {moment().format("LT")} hrs.
+                  {moment().locale("es-mx").format("LT")} hrs.
                 </Typography>
               </Box>
               <Box textAlign="right">

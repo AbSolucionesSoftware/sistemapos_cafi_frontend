@@ -46,7 +46,7 @@ export default function AbonosProveedores(props) {
 	const [filtro, setFiltro] = useState("");
 	const searchfilter = useRef(null);
 
-	const { loading, data, error, refetch } = useQuery(
+	const { loading, data, refetch } = useQuery(
 		OBTENER_COMPRAS_REALIZADAS,
 		{
 		  variables: {

@@ -5,9 +5,6 @@ import { Box, Button, Dialog, DialogActions,
 } from '@material-ui/core';
 import React, { Fragment, useState } from 'react';
 import moment from 'moment';
-
-import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
-import { formatoMexico } from "../../../../config/reuserFunctions";
 import SnackBarMessages from '../../../../components/SnackBarMessages';
 import { CREAR_MOVIMIENTO_CUENTA } from '../../../../gql/Empresa/sucursales';
 import {
@@ -124,17 +121,17 @@ export default function RetiroDeposito({cuenta, setReload, tipo }) {
         fecha_movimiento_entrega: fechaMovimientoEntrega,
         
         hora_moviento: {
-            hora: moment().format('hh'),
-            minutos: moment().format('mm'),
-            segundos: moment().format('ss'),
-            completa: moment().format('HH:mm:ss')
+            hora: moment().locale("es-mx").format('hh'),
+            minutos: moment().locale("es-mx").format('mm'),
+            segundos: moment().locale("es-mx").format('ss'),
+            completa: moment().locale("es-mx").format('HH:mm:ss')
         },
         fecha_movimiento: {
-            year: moment().format('YYYY'),
-            mes: moment().format('MM'),
-            dia: moment().format('DD'),
-            no_semana_year: moment().week().toString(),
-            no_dia_year: moment().dayOfYear().toString(),
+            year: moment().locale("es-mx").format('YYYY'),
+            mes: moment().locale("es-mx").format('MM'),
+            dia: moment().locale("es-mx").format('DD'),
+            no_semana_year: moment().locale("es-mx").week().toString(),
+            no_dia_year: moment().locale("es-mx").dayOfYear().toString(),
             completa: moment().locale('es-mx').format()
         },
         montos_en_caja: {
@@ -349,7 +346,7 @@ export default function RetiroDeposito({cuenta, setReload, tipo }) {
                                 fullWidth
                                 disabled={true}
                                 size="small"
-                                value={moment().format('D MMMM YYYY, h:mm:ss')}
+                                value={moment().locale("es-mx").format('D MMMM YYYY, h:mm:ss')}
                                 name="fecha_movimiento"
                                 variant="outlined"
 

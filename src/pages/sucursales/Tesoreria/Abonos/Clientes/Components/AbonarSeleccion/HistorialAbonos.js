@@ -97,21 +97,21 @@ function HistorialAbonos(props){
             numero_caja: parseInt(turnoEnCurso.numero_caja),
             id_Caja: turnoEnCurso.id_caja,
             fecha_movimiento: {
-                year: moment().format('YYYY'),
-                mes: moment().format('MM'),
-                dia: moment().format('DD'),
-                no_semana_year: moment().week().toString(),
-                no_dia_year: moment().dayOfYear().toString(),
+                year: moment().locale("es-mx").format('YYYY'),
+                mes: moment().locale("es-mx").format('MM'),
+                dia: moment().locale("es-mx").format('DD'),
+                no_semana_year: moment().locale("es-mx").week().toString(),
+                no_dia_year: moment().locale("es-mx").dayOfYear().toString(),
                 completa: moment().locale('es-mx').format()
             },
             monto_abono: abonoSelected.monto_total_abonado,
            
             horario_turno: turnoEnCurso.horario_en_turno,
             hora_moviento: {
-                hora: moment().format('hh'),
-                minutos: moment().format('mm'),
-                segundos: moment().format('ss'),
-                completa: moment().format('HH:mm:ss')
+                hora: moment().locale("es-mx").format('hh'),
+                minutos: moment().locale("es-mx").format('mm'),
+                segundos: moment().locale("es-mx").format('ss'),
+                completa: moment().locale("es-mx").format('HH:mm:ss')
             },
            
             

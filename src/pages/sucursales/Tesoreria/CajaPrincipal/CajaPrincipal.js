@@ -8,7 +8,6 @@ import Slide from '@material-ui/core/Slide';
 import { Box, DialogContent } from '@material-ui/core';
 import RetiroDeposito from './RetiroDeposito';
 import HistorialCuentas from './HistorialCuentas';
-import ListaCuentas from './ListaCuentas';
 const useStyles = makeStyles((theme) => ({
 	appBar: {
 		position: 'relative'
@@ -44,9 +43,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function CajaPrincipal() {
 	const classes = useStyles();
 	const [ open, setOpen ] = React.useState(false);
-	const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+	/* const sesion = JSON.parse(localStorage.getItem("sesionCafi")); */
 	const handleClickOpen = () => setOpen(!open);
-	const [cuenta, setCuenta ] = useState({});
 	const [reload, setReload ] = useState(false);
 	const [saldoCaja, setSaldoCaja ] = useState(0);
 	
@@ -95,12 +93,12 @@ export default function CajaPrincipal() {
 							</Box>
 						</Box>
 						<Box >
-							<RetiroDeposito cuenta={cuenta} tipo={false}  setReload={setReload} /> 
+							<RetiroDeposito tipo={false}  setReload={setReload} /> 
 						</Box>
 					</Box>
 
 					<Box>
-						<HistorialCuentas cuenta={cuenta} tipo={false} reload ={reload} setSaldoCaja={setSaldoCaja} />
+						<HistorialCuentas tipo={false} reload={reload} setSaldoCaja={setSaldoCaja} />
 					</Box>
 				</DialogContent>
 			</Dialog>
@@ -108,36 +106,3 @@ export default function CajaPrincipal() {
 		</div>
 	);
 }
-{/* 
-	
-	<Button fullWidth onClick={handleClickOpen}>
-				<Box display="flex" flexDirection="column">
-					<Box display="flex" justifyContent="center" alignItems="center">
-                        <img src='https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/retiro-de-dinero.svg' alt="icono retiro" className={classes.icon} />
-					</Box>
-					Cuentas de Empresa
-				</Box>
-			</Button>
-
-			<Dialog 
-				open={open} 
-				TransitionComponent={Transition} 
-				maxWidth="lg"
-				fullWidth
-			>
-				<Box m={1} display="flex" justifyContent="flex-end">
-					<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
-						<CloseIcon />
-					</Button>
-				</Box>
-				<DialogContent>
-					<Box textAlign="center">
-						<Typography variant="h6">
-							Cuentas de empresa
-						</Typography>
-					</Box>
-					<Box>
-						<ListaCuentas />
-					</Box>
-				</DialogContent>
-			</Dialog> */}
