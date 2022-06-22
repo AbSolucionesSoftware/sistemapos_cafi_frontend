@@ -329,7 +329,7 @@ export default function Traspasos(props) {
     useEffect(
 		() => {
 			 if(productosEmpresaQuery.data){
-             
+                console.log('productosEmpresaQuery.data')
                 //setProductos(productosEmpresaQuery.data.obtenerProductosPorEmpresa);
                 //console.log(productosEmpresaQuery.data)
                 setProductosEmpTo(productosEmpresaQuery.data.obtenerProductosPorEmpresa);
@@ -340,6 +340,7 @@ export default function Traspasos(props) {
     useEffect(
 		() => {
             if(productosQuery.data ){
+             
                 setProductos(productosQuery.data.obtenerProductos);
                 setProductosTo(productosQuery.data.obtenerProductos)
                 return;
@@ -358,12 +359,24 @@ export default function Traspasos(props) {
 	); 
   
 
+   
+    
 	const handleClickOpen = () => {
 		setOpen(true);
 	};
 
 	const handleClose = () => {
 		setOpen(false);
+        setProductosTras([]);
+        setAlmacenOrigen(null);
+        setAlmacenDestino(null);
+        setConceptoTraspaso(null);
+        
+        productosEmpresaQuery.refetch();  
+        productosQuery.refetch();   
+        dataConceptos.refetch();   
+        queryObtenerAlmacenes.refetch(); 
+        handleBack();
 	};
 
      const handleChange = (event) => {
@@ -867,13 +880,13 @@ export default function Traspasos(props) {
                                     {
                                         (isAlmacenOrigen) ? 
                                     
-                                        <TableSelectProducts title='Productos' add={true} almacenOrigen={almacenOrigen} />
+                                        <TableSelectProducts title='Productos' add={true} almacenOrigen={almacenOrigen} refetch ={productosQuery.refetch} />
                                         :
-                                        <TableSelectProducts title='Productos' add={true} almacenOrigen={null} />   
+                                        <TableSelectProducts title='Productos' add={true} almacenOrigen={null} refetch ={productosQuery.refetch}/>   
                                     }
                                     </Grid>
                                     <Grid item md={6}>
-                                        <TableSelectProducts title='Productos a traspasar' add={false} almacenOrigen={almacenOrigen}  />
+                                        <TableSelectProducts title='Productos a traspasar' add={false} almacenOrigen={almacenOrigen} refetch ={productosQuery.refetch} />
                                     </Grid>
                                 </Grid>
                             </Box>
@@ -882,12 +895,13 @@ export default function Traspasos(props) {
                 }
                 
                    <DialogActions style={{justifyContent:'center'}}>
-                    <Box sx={{ flexDirection: 'row',alignSelf: 'center',  width: '15%',display: 'flex', pt: 2 }} >
+                    <Box sx={{ flexDirection: 'row',alignSelf: 'center',  width: '30%',display: 'flex', pt: 2 }} >
                             <Button
                             color="primary"
                             variant="contained"
                             disabled={activeStep === 0}
                             onClick={handleBack}
+                            style={{width:'43%'}}
                             sx={{ mr: 1 }}
                             >
                             Atrás
@@ -899,7 +913,7 @@ export default function Traspasos(props) {
                                 </Button>
                                 )} */}
                             
-                                <Button color="primary" variant="contained" disabled={!haveConcepto} onClick={() => (activeStep < steps.length -1) ? handleNext() : handleModal()}>
+                                <Button color="primary" variant="contained"    style={{width:'43%'}} disabled={!haveConcepto} onClick={() => (activeStep < steps.length -1) ? handleNext() : handleModal()}>
                                     {activeStep < steps.length -1   ? 'Siguiente' : 'Terminar'}
                                 </Button>
                         

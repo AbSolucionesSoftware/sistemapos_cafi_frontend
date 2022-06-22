@@ -37,6 +37,8 @@ export default function ColoresTallas({
   obtenerConsultasProducto,
   refetch,
 }) {
+
+  console.log('ColoresTALLAS',obtenerConsultasProducto);
   const [medidasSeleccionadas, setMedidasSeleccionadas] = useState([]);
   const [coloresSeleccionados, setColoresSeleccionados] = useState([]);
   /* const medidas =
@@ -131,6 +133,7 @@ export default function ColoresTallas({
                 </Typography>
                 <Box mx={1} />
                 <CrearTallasProducto
+                  tipo_producto={producto.datos_generales.tipo_producto}
                   setMedidasSeleccionadas={setMedidasSeleccionadas}
                   refetch={refetch}
                 />

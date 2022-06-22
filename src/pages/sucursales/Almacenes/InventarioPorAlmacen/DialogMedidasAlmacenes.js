@@ -54,11 +54,16 @@ export default function DialogMedidasAlmacenes(props) {
 		return (
 			<Dialog open={props.medidasAlmacen.open} TransitionComponent={Transition} fullWidth maxWidth={"sm"} >
 				<DialogTitle>
-				<Box display='flex' justifyContent="flex-end" width="98%">
-					
-					<Button variant="contained" color="secondary" onClick={() => {props.setMedidasAlmacen({open:false, producto:{}}); setAlmacen({});}} size="large">
-						<Close style={{ fontSize: 30}}/>
-					</Button>
+				
+				<Box display='flex' >
+					<Box width="88%">
+					Tallas y medidas
+					</Box>
+					<Box  display='flex' justifyContent="flex-end" >
+						<Button variant="contained" color="secondary" onClick={() => {props.setMedidasAlmacen({open:false, producto:{}}); setAlmacen({});}} size="large">
+							<Close style={{ fontSize: 30}}/>
+						</Button>
+					</Box>
 				</Box>
 				</DialogTitle>
 				<Box mx={3}>

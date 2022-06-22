@@ -17,6 +17,7 @@ import { RegProductoContext } from "../../../../../context/Catalogos/CtxRegProdu
 export default function CrearTallasProducto({
   setMedidasSeleccionadas,
   refetch,
+  tipo_producto
 }) {
   const [value, setValue] = useState("");
   const [open, setOpen] = useState(false);
@@ -31,7 +32,7 @@ export default function CrearTallasProducto({
   const GuardarDatosBD = async (e) => {
     e.preventDefault();
     if (!value) {
-      return;
+      return; 
     }
     try {
       const nueva_talla = value;
@@ -39,7 +40,7 @@ export default function CrearTallasProducto({
         variables: {
           input: {
             talla: nueva_talla,
-            tipo: datos_generales.tipo_producto,
+            tipo: (datos_generales.tipo_producto) ? datos_generales.tipo_producto : tipo_producto,
             empresa: sesion.empresa._id,
             sucursal: sesion.sucursal._id,
           },
