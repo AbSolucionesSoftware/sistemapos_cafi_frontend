@@ -42,7 +42,7 @@ export default function DialogMedidasAlmacenes(props) {
 		try {
 		
 			setAlmacen(e.target.value);
-			console.log(e)
+		
 		} catch (error) {
 			
 		}

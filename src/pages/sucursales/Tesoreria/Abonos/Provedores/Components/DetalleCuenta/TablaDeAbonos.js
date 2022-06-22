@@ -140,12 +140,12 @@ function TablaAbonos(props) {
 	const cancelAbono = async() =>{
         try {
          setLoadingCancelar(true);
-         console.log(abonoSelected)
+       
          const input = {
             tipo_movimiento: "ABONO_PROVEEDOR",
-            rol_movimiento: "CAJA",
-            numero_caja: parseInt(turnoEnCurso.numero_caja),
-            id_Caja: turnoEnCurso.id_caja,
+            rol_movimiento: ( turnoEnCurso) ? "CAJA" : "CAJA_PRINCIPAL",
+            numero_caja: (turnoEnCurso) ? parseInt(turnoEnCurso.numero_caja) : 0,
+            id_Caja: (turnoEnCurso) ? turnoEnCurso.id_caja : '',
             fecha_movimiento: {
                 year: moment().locale("es-mx").format('YYYY'),
                 mes: moment().locale("es-mx").format('MM'),
@@ -156,7 +156,7 @@ function TablaAbonos(props) {
             },
             monto_abono: abonoSelected.monto_total_abonado,
            
-            horario_turno: turnoEnCurso.horario_en_turno,
+            horario_turno: (turnoEnCurso) ? turnoEnCurso.horario_en_turno : '',
             hora_moviento: {
                 hora: moment().locale("es-mx").format('hh'),
                 minutos: moment().locale("es-mx").format('mm'),
@@ -263,7 +263,7 @@ function TablaAbonos(props) {
 					</TableHead>
 					<TableBody>
 						{abonos?.map((row, index) => {
-							console.log(row)
+						
 								return (
 									<TableRow hover tabIndex={-1} key={index}>
 										<TableCell align='center'>{moment(row.fecha_movimiento.completa).format('D MMMM YYYY')}</TableCell>

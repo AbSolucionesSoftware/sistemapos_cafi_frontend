@@ -59,13 +59,13 @@ const useStyles = makeStyles((theme) => ({
 
 
     const handleClick = () => { 
-      if(turnoEnCurso){
+      if(turnoEnCurso || sesion.accesos.tesoreria.caja_principal.ver){
         setOpen(!open);
         setCuentaTotalDescuento(0);
         setDineroDescontado(0);
         setValue(0);
       }else{
-        console.log(props)
+      
         props.history.push('/ventas/venta-general');
       }
   } 
@@ -112,7 +112,8 @@ const useStyles = makeStyles((theme) => ({
     try {
       const input = {
         tipo_movimiento: "ABONO_PROVEEDOR",
-        rol_movimiento: "CAJA",
+        rol_movimiento: ( turnoEnCurso) ? "CAJA" : "CAJA_PRINCIPAL",
+        horario_turno: (turnoEnCurso) ? turnoEnCurso.horario_en_turno : '',
         hora_moviento: {
           hora: moment().locale("es-mx").format('hh'),
           minutos: moment().locale("es-mx").format('mm'),
@@ -127,6 +128,7 @@ const useStyles = makeStyles((theme) => ({
           no_dia_year: moment().locale("es-mx").dayOfYear().toString(),
           completa: moment().locale("es-mx").format(),
         },
+        concepto: 'ABONO_PROVEEDOR',
         monto_total_abonado: parseFloat(props.cuenta.saldo_credito_pendiente),
         descuento: {
           porciento_descuento: value,
@@ -139,8 +141,8 @@ const useStyles = makeStyles((theme) => ({
               metodoPago === "01"
                 ? parseFloat(
                     cuentaTotalDescuento === 0
-                      ? props.cuenta.saldo_credito_pendiente
-                      : props.cuentaTotalDescuento
+                      ? props.cuenta.saldo_credito_pendiente * -1
+                      : props.cuentaTotalDescuento * -1
                   )
                 : 0,
             metodo_pago: "01",
@@ -150,8 +152,8 @@ const useStyles = makeStyles((theme) => ({
               metodoPago === "28"
                 ? parseFloat(
                     cuentaTotalDescuento === 0
-                      ? props.cuenta.saldo_credito_pendiente
-                      : props.cuentaTotalDescuento
+                      ? props.cuenta.saldo_credito_pendiente * -1
+                      : props.cuentaTotalDescuento *-1
                   )
                 : 0,
             metodo_pago: "28",
@@ -161,8 +163,8 @@ const useStyles = makeStyles((theme) => ({
               metodoPago === "04"
                 ? parseFloat(
                     cuentaTotalDescuento === 0
-                      ? props.cuenta.saldo_credito_pendiente
-                      : props.cuentaTotalDescuento
+                      ? props.cuenta.saldo_credito_pendiente * -1
+                      : props.cuentaTotalDescuento * -1
                   )
                 : 0,
             metodo_pago: "04",
@@ -172,8 +174,8 @@ const useStyles = makeStyles((theme) => ({
               metodoPago === "99"
                 ? parseFloat(
                     cuentaTotalDescuento === 0
-                      ? props.cuenta.saldo_credito_pendiente
-                      : cuentaTotalDescuento
+                      ? props.cuenta.saldo_credito_pendiente *-1
+                      : cuentaTotalDescuento *-1
                   )
                 : 0,
             metodo_pago: "99",
@@ -183,8 +185,8 @@ const useStyles = makeStyles((theme) => ({
               metodoPago === "05"
                 ? parseFloat(
                     cuentaTotalDescuento === 0
-                      ? props.cuenta.saldo_credito_pendiente
-                      : cuentaTotalDescuento
+                      ? props.cuenta.saldo_credito_pendiente *-1
+                      : cuentaTotalDescuento *-1
                   )
                 : 0,
             metodo_pago: "05",
@@ -194,8 +196,8 @@ const useStyles = makeStyles((theme) => ({
               metodoPago === "03"
                 ? parseFloat(
                     cuentaTotalDescuento === 0
-                      ? props.cuenta.saldo_credito_pendiente
-                      : props.cuentaTotalDescuento
+                      ? props.cuenta.saldo_credito_pendiente *-1
+                      : props.cuentaTotalDescuento *-14
                   )
                 : 0,
             metodo_pago: "03",
@@ -205,8 +207,8 @@ const useStyles = makeStyles((theme) => ({
               metodoPago === "02"
                 ? parseFloat(
                     cuentaTotalDescuento === 0
-                      ? props.cuenta.saldo_credito_pendiente
-                      : props.cuentaTotalDescuento
+                      ? props.cuenta.saldo_credito_pendiente * -1
+                      : props.cuentaTotalDescuento * -1
                   )
                 : 0,
             metodo_pago: "02",
@@ -216,8 +218,8 @@ const useStyles = makeStyles((theme) => ({
               metodoPago === "08"
                 ? parseFloat(
                     cuentaTotalDescuento === 0
-                      ? props.cuenta.saldo_credito_pendiente
-                      : props.cuentaTotalDescuento
+                      ? props.cuenta.saldo_credito_pendiente * -1
+                      : props.cuentaTotalDescuento * -1
                   )
                 : 0,
             metodo_pago: "08",
@@ -227,8 +229,8 @@ const useStyles = makeStyles((theme) => ({
           clave: "",
           metodo: "",
         },
-        numero_caja: parseInt(turnoEnCurso.numero_caja),
-        id_Caja: turnoEnCurso.id_caja,
+        numero_caja: (turnoEnCurso) ? parseInt(turnoEnCurso.numero_caja) : 0,
+        id_Caja: (turnoEnCurso) ? turnoEnCurso.id_caja : '',
         numero_usuario_creador: sesion.numero_usuario,
         nombre_usuario_creador: sesion.nombre,
         id_cliente: props.cuenta.proveedor.id_proveedor._id,
@@ -237,6 +239,7 @@ const useStyles = makeStyles((theme) => ({
         telefono_cliente: props.cuenta.proveedor.id_proveedor.telefono,
         email_cliente: props.cuenta.proveedor.id_proveedor.email,
         id_compra: props.cuenta._id,
+        caja_principal: sesion.accesos.tesoreria.caja_principal.ver,
       };
       
       if (metodoPago === "") {

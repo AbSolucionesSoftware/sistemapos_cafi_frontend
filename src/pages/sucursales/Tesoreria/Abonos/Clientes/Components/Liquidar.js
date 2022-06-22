@@ -43,7 +43,7 @@ function Liquidar(props) {
     const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
 
     const handleClick = () => { 
-        if(turnoEnCurso){
+        if(turnoEnCurso || sesion.accesos.tesoreria.caja_principal.ver){
             setOpen(!open);
         }else{
             props.history.push('/ventas/venta-general');
@@ -96,9 +96,9 @@ function Liquidar(props) {
 
             const input = {
                 tipo_movimiento: "ABONO_CLIENTE",
-                rol_movimiento: "CAJA",
-                numero_caja: parseInt(turnoEnCurso.numero_caja),
-                id_Caja: turnoEnCurso.id_caja,
+                rol_movimiento: ( turnoEnCurso) ? "CAJA" : "CAJA_PRINCIPAL",
+                numero_caja: (turnoEnCurso) ? parseInt(turnoEnCurso.numero_caja) : 0,
+                id_Caja: (turnoEnCurso) ? turnoEnCurso.id_caja : '',
                 fecha_movimiento: {
                     year: moment().locale("es-mx").format('YYYY'),
                     mes: moment().locale("es-mx").format('MM'),
@@ -107,13 +107,14 @@ function Liquidar(props) {
                     no_dia_year: moment().dayOfYear().toString(),
                     completa: moment().locale('es-mx').format()
                 },
+                concepto: 'ABONO_CLIENTE',
                 monto_total: props.total_ventas,
                 descuento: {
                     porciento_descuento: value,
                     dinero_descontado: dineroDescontado,
                     total_con_descuento: cuentaTotalDescuento
                 },
-                horario_turno: turnoEnCurso.horario_en_turno,
+                horario_turno: (turnoEnCurso) ? turnoEnCurso.horario_en_turno : '',
                 hora_moviento: {
                     hora: moment().locale("es-mx").format('hh'),
                     minutos: moment().locale("es-mx").format('mm'),
@@ -144,6 +145,7 @@ function Liquidar(props) {
                     :
                     abonos, 
                 liquidar: true,
+                caja_principal: sesion.accesos.tesoreria.caja_principal.ver
                 
             }
             if(metodoPago){

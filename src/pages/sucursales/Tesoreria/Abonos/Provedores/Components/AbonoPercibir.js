@@ -69,7 +69,8 @@ function AbonoaRecibir(props) {
         try {
             const input = {
                 tipo_movimiento: "ABONO_PROVEEDOR",
-                rol_movimiento: "CAJA",
+                rol_movimiento: ( turnoEnCurso) ? "CAJA" : "CAJA_PRINCIPAL",
+                horario_turno: (turnoEnCurso) ? turnoEnCurso.horario_en_turno : '',
                 hora_moviento: {
                     hora: moment().locale("es-mx").format('hh'),
                     minutos: moment().locale("es-mx").format('mm'),
@@ -87,35 +88,35 @@ function AbonoaRecibir(props) {
                 monto_total_abonado: parseFloat(abono),
                 montos_en_caja: {   
                     monto_efectivo: {
-                        monto: metodoPago === '01' ? parseFloat(abono) : 0,
+                        monto: metodoPago === '01' ? parseFloat(abono * -1) : 0,
                         metodo_pago: "01"
                     },
                     monto_tarjeta_debito: {
-                        monto: metodoPago === '28' ? parseFloat(abono) : 0,
+                        monto: metodoPago === '28' ? parseFloat(abono * -1) : 0,
                         metodo_pago: "28"
                     },
                     monto_tarjeta_credito: {
-                        monto: metodoPago === '04' ? parseFloat(abono) : 0,
+                        monto: metodoPago === '04' ? parseFloat(abono * -1) : 0,
                         metodo_pago: "04"
                     },
                     monto_creditos: {
-                        monto: metodoPago === '99' ? parseFloat(abono) : 0,
+                        monto: metodoPago === '99' ? parseFloat(abono * -1) : 0,
                         metodo_pago: "99"
                     },
                     monto_monedero: {
-                        monto: metodoPago === '05' ? parseFloat(abono) : 0,
+                        monto: metodoPago === '05' ? parseFloat(abono * -1 ) : 0,
                         metodo_pago: "05"
                     },
                     monto_transferencia: {
-                        monto: metodoPago === '03' ? parseFloat(abono) : 0,
+                        monto: metodoPago === '03' ? parseFloat(abono* -1) : 0,
                         metodo_pago: "03"
                     },
                     monto_cheques: {
-                        monto: metodoPago === '02' ? parseFloat(abono) : 0,
+                        monto: metodoPago === '02' ? parseFloat(abono * -1) : 0,
                         metodo_pago: "02"
                     },
                     monto_vales_despensa: {
-                        monto: metodoPago === '08' ? parseFloat(abono) : 0,
+                        monto: metodoPago === '08' ? parseFloat(abono * -1) : 0,
                         metodo_pago: "08"
                     },
                 },
@@ -123,9 +124,10 @@ function AbonoaRecibir(props) {
                     clave: metodoPago.Value,
                     metodo:  metodoPago.Name,
                 },
-                numero_caja: parseInt(turnoEnCurso.numero_caja),
-                id_Caja: turnoEnCurso.id_caja,
+                numero_caja: (turnoEnCurso) ? parseInt(turnoEnCurso.numero_caja) : 0,
+                id_Caja: (turnoEnCurso) ? turnoEnCurso.id_caja : '',
                 id_usuario: sesion._id,
+                concepto: 'ABONO_PROVEEDOR',
                 numero_usuario_creador: sesion.numero_usuario,
                 nombre_usuario_creador: sesion.nombre,
                 id_cliente: props.cuenta.proveedor.id_proveedor._id,
@@ -133,7 +135,7 @@ function AbonoaRecibir(props) {
                 nombre_cliente: props.cuenta.proveedor.nombre_cliente, 
                 telefono_cliente: props.cuenta.proveedor.id_proveedor.telefono, 
                 email_cliente: props.cuenta.proveedor.id_proveedor.email,
-        
+                caja_principal: sesion.accesos.tesoreria.caja_principal.ver,
                 id_compra: props.cuenta._id
             };
             
@@ -146,7 +148,7 @@ function AbonoaRecibir(props) {
                 setLoading(false);
                 return 
             }; 
-            await CrearAbono({
+            await CrearAbono({ 
                 variables: {
                     empresa: sesion.empresa._id,
                     sucursal: sesion.sucursal._id,
@@ -171,6 +173,7 @@ function AbonoaRecibir(props) {
               } else if (error.graphQLErrors) {
                 console.log(error.graphQLErrors);
               }
+              console.log(error)
             setAlert({ 
                 message: 'Ocurrio un problema en el servidor', 
                 status: 'error', 
@@ -184,7 +187,7 @@ function AbonoaRecibir(props) {
        
 
         const handleClick = () => { 
-            if(turnoEnCurso){
+            if(turnoEnCurso || sesion.accesos.tesoreria.caja_principal.ver){
                 setReload(true);
                 setOpen(!open);
             }else{

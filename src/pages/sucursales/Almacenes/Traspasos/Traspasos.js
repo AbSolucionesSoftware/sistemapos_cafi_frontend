@@ -329,7 +329,7 @@ export default function Traspasos(props) {
     useEffect(
 		() => {
 			 if(productosEmpresaQuery.data){
-                console.log('productosEmpresaQuery.data')
+               
                 //setProductos(productosEmpresaQuery.data.obtenerProductosPorEmpresa);
                 //console.log(productosEmpresaQuery.data)
                 setProductosEmpTo(productosEmpresaQuery.data.obtenerProductosPorEmpresa);
@@ -581,7 +581,7 @@ export default function Traspasos(props) {
         } catch (error) {
              setLoading(false);
              setOpenEnd(false)
-             console.log(error)
+           
            if(error.networkError !== undefined){
 			  console.log('traspaso networkError', error.networkError.result)
             }else if(error.graphQLErrors!== undefined){
