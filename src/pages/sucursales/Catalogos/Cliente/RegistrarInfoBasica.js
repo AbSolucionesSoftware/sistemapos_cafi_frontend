@@ -6,11 +6,12 @@ import {
   Avatar,
   InputAdornment,
   IconButton,
+  Button,
 } from "@material-ui/core";
 import { TextField, Typography, Grid } from "@material-ui/core";
 import { useDropzone } from "react-dropzone";
 import { ClienteCtx } from "../../../../context/Catalogos/crearClienteCtx";
-import { Cached } from "@material-ui/icons";
+import { Cached, DeleteOutline } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   avatarContainer: {
@@ -71,6 +72,14 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
     [cliente, setCliente]
   );
 
+  const removerImagen = () => {
+    setCliente({
+      ...cliente,
+      imagen: "",
+    });
+    setPreview("");
+  };
+
   const { getRootProps, getInputProps } = useDropzone({
     accept: "image/jpeg, image/png",
     noKeyboard: true,
@@ -115,6 +124,7 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
             display: "flex",
             justifyContent: "center",
             marginTop: "8px",
+            flexDirection: "column",
           }}
         >
           <Box className={classes.avatarContainer} {...getRootProps()}>
@@ -132,6 +142,16 @@ export default function RegistrarInfoBasica({ tipo, accion }) {
                 src={`${cliente.imagen}`}
               />
             )}
+          </Box>
+          <Box>
+            <Button
+              color="secondary"
+              size="medium"
+              onClick={removerImagen}
+              startIcon={<DeleteOutline />}
+            >
+              Remover imagen
+            </Button>
           </Box>
         </Grid>
         <Grid item md={9} xs={12}>
