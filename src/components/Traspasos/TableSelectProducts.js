@@ -286,7 +286,7 @@ const DialogTallas = (props) => {
           <div>
             <TallasColoresTraspasos 
               obtenerConsultasProducto={props.obtenerConsultasProducto}
-              refetch={props.obtenerConsultasProducto.refetch}
+              refetch={props.refetch}
               producto={props.product_selected}
               new_medidas={new_medidas} 
               setNew_medidas={setNew_medidas}
@@ -315,7 +315,7 @@ const EnhancedTableToolbar = (props) => {
   const [cantidadTo, setCantidadTo] = useState('');
   const [openEnd, setOpenEnd] = useState(false);
  
-  
+ 
   const { product_selected, setproduct_selected, tipoPieza, update } = props;
    const {
         setProductosTras,
@@ -648,11 +648,11 @@ useEffect(() => {
                    
                   :    
                   <div>
-                    <DialogTallas openTallas={props.openTallas} setOpenTallas={props.setOpenTallas} setproduct_selected={setproduct_selected}  product_selected={product_selected} almacenOrigen={props.almacenOrigen} obtenerConsultasProducto={props.obtenerConsultasProducto}refetch={props.refetch}/> 
+                    <DialogTallas openTallas={props.openTallas} setOpenTallas={props.setOpenTallas} setproduct_selected={setproduct_selected}  product_selected={product_selected} almacenOrigen={props.almacenOrigen} obtenerConsultasProducto={props.obtenerConsultasProducto} refetch={props.refetch}/> 
                   </div> 
                 :
                 <div>
-                   <DialogTallas openTallas={props.openTallas} setOpenTallas={props.setOpenTallas} setproduct_selected={setproduct_selected}  product_selected={product_selected} almacenOrigen={props.almacenOrigen} obtenerConsultasProducto={props.obtenerConsultasProducto}refetch={props.refetch}/> 
+                   <DialogTallas openTallas={props.openTallas} setOpenTallas={props.setOpenTallas} setproduct_selected={setproduct_selected}  product_selected={product_selected} almacenOrigen={props.almacenOrigen} obtenerConsultasProducto={props.obtenerConsultasProducto} refetch={props.refetch}/> 
                 </div>
                 /* <Grid width={'100%'} container>
                   { (product_selected.datos_generales.tipo_producto === 'OTROS') ? 
@@ -782,7 +782,10 @@ export default function EnhancedTable(props) {
     } = useContext(TraspasosAlmacenContext);
 
   const obtenerConsultasProducto = useQuery(OBTENER_CONSULTAS, {
-    variables: { empresa: sesion.empresa._id, sucursal: sesion.sucursal._id },
+    variables: { 
+      empresa: sesion.empresa._id, 
+      sucursal: sesion.sucursal._id  },
+    fetchPolicy: "network-only"
   });
 
   
@@ -985,6 +988,7 @@ export default function EnhancedTable(props) {
   
     if(prod_sel.datos_generales.tipo_producto !== 'OTROS') {
       setOpenTallas(true);
+      obtenerConsultasProducto.refetch();
       //console.log(props)
     }
    
@@ -1005,7 +1009,15 @@ export default function EnhancedTable(props) {
           setOpenTallas={setOpenTallas}
           error={error}
           setError={setError}
-          title={props.title} add={props.add} almacenOrigen={props.almacenOrigen} productosTras ={productosTras} tipoPieza={tipoPieza} update={update} cant={cant} obtenerConsultasProducto={(obtenerConsultasProducto.data) ? obtenerConsultasProducto.data.obtenerConsultasProducto :[]}refetch={( obtenerConsultasProducto.refetch ) ? obtenerConsultasProducto.refetch : null}  />
+          title={props.title} 
+          add={props.add} 
+          almacenOrigen={props.almacenOrigen} 
+          productosTras ={productosTras} 
+          tipoPieza={tipoPieza} 
+          update={update} 
+          cant={cant} 
+          obtenerConsultasProducto={(obtenerConsultasProducto.data) ? obtenerConsultasProducto.data.obtenerConsultasProducto :[]}
+          refetch={( obtenerConsultasProducto.refetch ) ? obtenerConsultasProducto.refetch : null}  />
         <TableContainer style={{height:'50vh'}}>
           <Table
             className={classes.table}

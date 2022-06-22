@@ -128,7 +128,7 @@ export default function RealizarFactura({ setAlert }) {
       }
       setError({ status: false, message: "" });
 
-      console.log(nuevo_obj);
+      /* console.log(nuevo_obj); */
 
       let result = await CrearFactura({
         variables: {

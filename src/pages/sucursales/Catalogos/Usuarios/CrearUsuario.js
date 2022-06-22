@@ -19,7 +19,6 @@ import {
   ACTUALIZAR_USUARIO,
 } from "../../../../gql/Catalogos/usuarios";
 import {
-  cleanTypenames,
   numerosRandom,
 } from "../../../../config/reuserFunctions";
 import { AppBar } from "@material-ui/core";

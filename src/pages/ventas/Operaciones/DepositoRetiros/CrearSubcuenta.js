@@ -6,7 +6,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
 import { Add } from "@material-ui/icons";
-import { TextField, CircularProgress } from "@material-ui/core";
+import { TextField, CircularProgress, IconButton } from "@material-ui/core";
 import Done from "@material-ui/icons/Done";
 import SnackBarMessages from "../../../../components/SnackBarMessages";
 import { CREAR_SUBCUENTA } from "../../../../gql/Catalogos/centroCostos";
@@ -88,15 +88,13 @@ export default function CrearNuevaSubcuenta({ cuenta, refetch }) {
 
   return (
     <div>
-      <Button
-        style={{ marginLeft: "16px" }}
-        size="small"
+      <IconButton
         color="primary"
-        startIcon={<Add />}
         onClick={() => handleClickOpen()}
+        disabled={!cuenta.cuenta}
       >
-        nueva
-      </Button>
+        <Add />
+      </IconButton>
       <SnackBarMessages alert={alert} setAlert={setAlert} />
       <Dialog
         open={open}

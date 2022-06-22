@@ -1,28 +1,23 @@
 import React, { Fragment, useContext, useCallback, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  Box,
-  Divider,
-  Avatar,
-  IconButton,
-  OutlinedInput,
-  FormHelperText,
-  Button,
-} from "@material-ui/core";
-import {
-  TextField,
-  Typography,
-  Grid,
-  FormControl,
-  InputAdornment,
-} from "@material-ui/core";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  CircularProgress,
-} from "@material-ui/core";
+import Box from "@material-ui/core/Box";
+import Divider from "@material-ui/core/Divider";
+import Avatar from "@material-ui/core/Avatar";
+import IconButton from "@material-ui/core/IconButton";
+import OutlinedInput from "@material-ui/core/OutlinedInput";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+import Grid from "@material-ui/core/Grid";
+import FormControl from "@material-ui/core/FormControl";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import { useDropzone } from "react-dropzone";
@@ -85,6 +80,14 @@ export default function FormularioUsuario({ accion }) {
     onDrop,
   });
 
+  const removerImagen = () => {
+    setUsuario({
+      ...usuario,
+      imagen: "",
+    });
+    setPreview("");
+  };
+
   const obtenerCampos = (e) => {
     const name = e.target.name;
     if (name === "numero_usuario") {
@@ -118,21 +121,33 @@ export default function FormularioUsuario({ accion }) {
             marginTop: "8px",
           }}
         >
-          <Box className={classes.avatarContainer} {...getRootProps()}>
-            <input {...getInputProps()} />
-            {preview ? (
-              <Avatar
-                variant="square"
-                className={classes.avatar}
-                src={`${preview}`}
-              />
-            ) : (
-              <Avatar
-                variant="square"
-                className={classes.avatar}
-                src={`${usuario.imagen}`}
-              />
-            )}
+          <Box>
+            <Box className={classes.avatarContainer} {...getRootProps()}>
+              <input {...getInputProps()} />
+              {preview ? (
+                <Avatar
+                  variant="square"
+                  className={classes.avatar}
+                  src={`${preview}`}
+                />
+              ) : (
+                <Avatar
+                  variant="square"
+                  className={classes.avatar}
+                  src={`${usuario.imagen}`}
+                />
+              )}
+            </Box>
+            <Box>
+              <Button
+                color="secondary"
+                size="medium"
+                onClick={removerImagen}
+                startIcon={<DeleteOutlineIcon />}
+              >
+                Remover imagen
+              </Button>
+            </Box>
           </Box>
         </Grid>
         <Grid item md={9}>

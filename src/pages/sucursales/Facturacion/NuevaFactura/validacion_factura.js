@@ -8,7 +8,7 @@ export const verificarDatosFactura = (datos) => {
     folio,
     issuer,
     items,
-    logo_url,
+    /* logo_url, */
     payment_form,
     payment_method,
     receiver,
@@ -26,7 +26,7 @@ export const verificarDatosFactura = (datos) => {
     !folio ||
     !issuer ||
     !items ||
-    !logo_url ||
+    /* !logo_url || */
     !payment_form ||
     !payment_method ||
     !receiver ||

@@ -70,9 +70,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
            
             const input = {
                 tipo_movimiento: "ABONO_CLIENTE",
-                rol_movimiento: "CAJA",
-                numero_caja: parseInt(turnoEnCurso.numero_caja),
-                id_Caja: turnoEnCurso.id_caja,
+                rol_movimiento: ( turnoEnCurso) ? "CAJA" : "CAJA_PRINCIPAL",
+                numero_caja: (turnoEnCurso) ? parseInt(turnoEnCurso.numero_caja) : 0,
+                id_Caja: (turnoEnCurso) ? turnoEnCurso.id_caja : '',
                 fecha_movimiento: {
                     year: moment().locale("es-mx").format('YYYY'),
                     mes: moment().locale("es-mx").format('MM'),
@@ -82,8 +82,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                     completa: moment().locale('es-mx').format()
                 },
                 monto_total: props.total_ventas,
-               
-                horario_turno: turnoEnCurso.horario_en_turno,
+                concepto: 'ABONO_CLIENTE',
+                horario_turno: (turnoEnCurso) ? turnoEnCurso.horario_en_turno : '',
                 hora_moviento: {
                     hora: moment().locale("es-mx").format('hh'),
                     minutos: moment().locale("es-mx").format('mm'),
@@ -110,7 +110,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                     id_venta:abonos[props.index].id_venta,
                     saldo_credito_pendiente:abonos[props.index].saldo_credito_pendiente}],
                 liquidar: false,
-                facturacion: props.venta.facturacion
+                facturacion: props.venta.facturacion,
+                caja_principal: sesion.accesos.tesoreria.caja_principal.ver,
             }
             if(metodoPago && abono !== '' && abono > 0){
                 const doAbono = await crearAbonoVentaCredito({
@@ -120,7 +121,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                         input
                     },
                 }); 
-                console.log(doAbono);
+               
                 props.recargar();
                 setOpen(false);
                 setLoading(false);
@@ -163,7 +164,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     const openDialog = () =>{
      
         try {
-            if(turnoEnCurso){
+            if(turnoEnCurso || sesion.accesos.tesoreria.caja_principal.ver){
                 setOpen(true);
             }else{
                 props.history.push('/ventas/venta-general');

@@ -12,6 +12,7 @@ import {
 } from "@material-ui/core";
 import { Typography, Divider, DialogActions } from "@material-ui/core";
 import { useDropzone } from "react-dropzone";
+import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
 
 import { useMutation, useQuery } from "@apollo/client";
 import { EmpresaContext } from "../../../../context/Catalogos/empresaContext";
@@ -168,7 +169,7 @@ export default function MisDatos(props) {
         correo_empresa: empresa.correo_empresa,
         direccion: empresa.direccion,
         imagen: empresa.imagen,
-        vender_sin_inventario: empresa.vender_sin_inventario
+        vender_sin_inventario: empresa.vender_sin_inventario,
       });
     } catch (errorCatch) {
       // console.log(errorCatch)
@@ -185,10 +186,10 @@ export default function MisDatos(props) {
           input: empresaDatos,
         },
       });
-      const empresa = {...sesion.empresa, ...empresaDatos};
-      let nueva_sesion = {...sesion};
+      const empresa = { ...sesion.empresa, ...empresaDatos };
+      let nueva_sesion = { ...sesion };
       nueva_sesion.empresa = empresa;
-      localStorage.setItem('sesionCafi', JSON.stringify(nueva_sesion));
+      localStorage.setItem("sesionCafi", JSON.stringify(nueva_sesion));
 
       setUpdate(true);
       setLoadingPage(false);
@@ -253,12 +254,20 @@ export default function MisDatos(props) {
     onDrop,
   });
 
+  const removerImagen = () => {
+    setEmpresaDatos({
+      ...empresaDatos,
+      imagen: "",
+    });
+    setPreview("");
+  };
+
   const handleChangeVenderInventario = (e) => {
     setEmpresaDatos({
       ...empresaDatos,
       vender_sin_inventario: e.target.checked,
     });
-  }
+  };
 
   return (
     <div>
@@ -279,16 +288,28 @@ export default function MisDatos(props) {
                 justifyContent: "center",
               }}
             >
-              <Box className={classes.avatarContainer} {...getRootProps()}>
-                <input {...getInputProps()} />
-                {preview ? (
-                  <Avatar className={classes.avatar} src={`${preview}`} />
-                ) : (
-                  <Avatar
-                    className={classes.avatar}
-                    src={`${empresa.imagen}`}
-                  />
-                )}
+              <Box>
+                <Box className={classes.avatarContainer} {...getRootProps()}>
+                  <input {...getInputProps()} />
+                  {preview ? (
+                    <Avatar className={classes.avatar} src={`${preview}`} />
+                  ) : (
+                    <Avatar
+                      className={classes.avatar}
+                      src={`${empresaDatos.imagen}`}
+                    />
+                  )}
+                </Box>
+                <Box>
+                  <Button
+                    color="secondary"
+                    size="medium"
+                    onClick={removerImagen}
+                    startIcon={<DeleteOutlineIcon />}
+                  >
+                    Remover imagen
+                  </Button>
+                </Box>
               </Box>
             </Grid>
             <Grid item md={5} xs={12} className={classes.require}>
@@ -419,11 +440,15 @@ export default function MisDatos(props) {
                       onChange={obtenerCampos}
                     />
                   </Grid>
-                  <Grid item md={8} style={{display: "flex", alignItems: "center"}}>
+                  <Grid
+                    item
+                    md={8}
+                    style={{ display: "flex", alignItems: "center" }}
+                  >
                     <FormControlLabel
                       control={
                         <Checkbox
-                        disabled={bloqueo}
+                          disabled={bloqueo}
                           checked={empresaDatos.vender_sin_inventario}
                           onChange={handleChangeVenderInventario}
                           name="checkedA"
