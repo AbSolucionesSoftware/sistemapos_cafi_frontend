@@ -234,7 +234,7 @@ function RowsHistorial({ row, loading }) {
       </TableCell>
       <TableCell>{row?.concepto}</TableCell>
       <TableCell>
-        {(row?.tipo_movimiento === "CUENTA_DEPOSITO" || row?.tipo_movimiento === "ABONO_CLIENTE") ? "DEPOSITO" : "RETIRO"}
+        {(row?.tipo_movimiento === "CUENTA_DEPOSITO" || row?.tipo_movimiento === "ABONO_CLIENTE"  || row?.tipo_movimiento === "CANCELACION_ABONO_PROVEEDOR"  ) ? "DEPOSITO" : "RETIRO"}
       </TableCell>
     </TableRow>
   );

@@ -123,7 +123,7 @@ function TablaAbonos(props) {
 	const affirmCancelar = (abono) =>{
         try {
              
-        if(turnoEnCurso){
+        if(turnoEnCurso || sesion.accesos.tesoreria.caja_principal.ver){
             setOpenCancelar(true);
             setAbonoSelected(abono)
         }else{
@@ -142,7 +142,7 @@ function TablaAbonos(props) {
          setLoadingCancelar(true);
        
          const input = {
-            tipo_movimiento: "ABONO_PROVEEDOR",
+            tipo_movimiento: "CANCELACION_ABONO_PROVEEDOR",
             rol_movimiento: ( turnoEnCurso) ? "CAJA" : "CAJA_PRINCIPAL",
             numero_caja: (turnoEnCurso) ? parseInt(turnoEnCurso.numero_caja) : 0,
             id_Caja: (turnoEnCurso) ? turnoEnCurso.id_caja : '',
@@ -164,7 +164,7 @@ function TablaAbonos(props) {
                 completa: moment().locale("es-mx").format('HH:mm:ss')
             },
            
-            
+            concepto: 'CANCELACION_ABONO_PROVEEDOR',
             id_usuario: sesion._id,
             numero_usuario_creador: sesion.numero_usuario,
             nombre_usuario_creador: sesion.nombre,
@@ -176,7 +176,8 @@ function TablaAbonos(props) {
             email_proveedor: props.proveedor.id_proveedor.email_cliente,
             id_abono: abonoSelected._id,
             id_compra: props.cuenta._id,
-            metodo_de_pago: '01'
+            metodo_de_pago: '01',
+            caja_principal: sesion.accesos.tesoreria.caja_principal.ver
         }
 
 

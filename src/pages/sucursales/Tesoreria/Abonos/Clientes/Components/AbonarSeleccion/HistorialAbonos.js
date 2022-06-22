@@ -92,7 +92,7 @@ function HistorialAbonos(props){
          setLoadingCancelar(true);
        
          const input = {
-            tipo_movimiento: "ABONO_CLIENTE",
+            tipo_movimiento: "CANCELACION_ABONO_CLIENTE",
             rol_movimiento: ( turnoEnCurso) ? "CAJA" : "CAJA_PRINCIPAL",
             numero_caja: (turnoEnCurso) ? parseInt(turnoEnCurso.numero_caja) : 0,
             id_Caja: (turnoEnCurso) ? turnoEnCurso.id_caja : '',
@@ -113,7 +113,7 @@ function HistorialAbonos(props){
                 segundos: moment().locale("es-mx").format('ss'),
                 completa: moment().locale("es-mx").format('HH:mm:ss')
             },
-           
+            concepto: 'CANCELACION_ABONO_CLIENTE',
             
             id_usuario: sesion._id,
             numero_usuario_creador: sesion.numero_usuario,
@@ -126,8 +126,8 @@ function HistorialAbonos(props){
             email_cliente: props.rowSelected.cliente.email,
             id_abono: abonoSelected._id,
             id_venta: props.rowSelected._id,
-            metodo_de_pago: '01'
-           
+            metodo_de_pago: '01',
+            caja_principal: sesion.accesos.tesoreria.caja_principal.ver,
         }
 
 
