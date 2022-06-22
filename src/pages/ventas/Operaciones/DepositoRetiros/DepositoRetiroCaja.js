@@ -9,6 +9,7 @@ import {
   Divider,
   FormControl,
   FormControlLabel,
+  InputLabel,
   ListSubheader,
   MenuItem,
   Radio,
@@ -52,6 +53,7 @@ export default function DepositoRetiroCaja() {
   const [datosMovimiento, setDatosMovimiento] = useState({
     tipo_movimiento: "DEPOSITO",
   });
+  const [cuenta, setCuenta] = useState({ cuenta: "", subcuentas: [] });
 
   const { loading, data, error, refetch } = useQuery(OBTENER_CUENTAS, {
     variables: {
@@ -98,8 +100,14 @@ export default function DepositoRetiroCaja() {
     }
   }
 
+  const obtenerCuenta = (_, child) => {
+    const { cuenta } = child.props;
+    setCuenta({ cuenta: cuenta, subcuentas: cuenta.subcuentas });
+  };
+
   const obtenerDatos = (e) => {
-    setDatosMovimiento({ ...datosMovimiento, [e.target.name]: e.target.value });
+    const { value, name } = e.target;
+    setDatosMovimiento({ ...datosMovimiento, [name]: value });
   };
 
   const enviarDatos = async () => {
@@ -362,7 +370,43 @@ export default function DepositoRetiroCaja() {
                   </Box>
                 </Box>
                 <Box width="100%">
-                  <Typography>Concepto de Movimiento:</Typography>
+                  <Box my={1}>
+                    <Typography>Concepto de Movimiento:</Typography>
+                  </Box>
+                  <Box display="flex" alignItems="center" mb={2}>
+                    <FormControl
+                      variant="outlined"
+                      fullWidth
+                      size="small"
+                      error={error_data && !datosMovimiento.concepto}
+                    >
+                      <InputLabel id="label-select-cuenta">Cuenta</InputLabel>
+                      <Select
+                        id="concepto-deposito-cuenta"
+                        onChange={obtenerCuenta}
+                        name="cuenta"
+                        labelId="label-select-cuenta"
+                        label="Cuenta"
+                        value={cuenta.cuenta.cuenta ? cuenta.cuenta.cuenta : ""}
+                      >
+                        <MenuItem value="">
+                          <em>Selecciona uno</em>
+                        </MenuItem>
+                        {data?.obtenerCuentas.map((cuenta, index) => {
+                          return (
+                            <MenuItem
+                              key={index}
+                              value={cuenta.cuenta}
+                              cuenta={cuenta}
+                            >
+                              {cuenta.cuenta}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
+                    <CrearNuevaCuenta refetch={refetch} />
+                  </Box>
                   <Box display="flex" alignItems="center">
                     <FormControl
                       variant="outlined"
@@ -370,39 +414,34 @@ export default function DepositoRetiroCaja() {
                       size="small"
                       error={error_data && !datosMovimiento.concepto}
                     >
+                      <InputLabel id="label-select-subcuenta">
+                        Subcuenta
+                      </InputLabel>
                       <Select
-                        id="form-producto-tipo"
+                        id="concepto-deposito-subcuenta"
                         onChange={obtenerDatos}
                         name="concepto"
+                        labelId="label-select-subcuenta"
+                        label="Subcuenta"
+                        value={
+                          datosMovimiento.concepto
+                            ? datosMovimiento.concepto
+                            : ""
+                        }
                       >
                         <MenuItem value="">
                           <em>Selecciona uno</em>
                         </MenuItem>
-                        {data?.obtenerCuentas.map((cuenta, index) => {
-                          return [
-                            <ListSubheader>
-                              {cuenta.cuenta}
-                            </ListSubheader>,
-                            cuenta.subcuentas.map((subcuenta, index) => {
-                              return (
-                                <MenuItem
-                                  key={index}
-                                  value={subcuenta.subcuenta}
-                                  style={{ marginLeft: "10px" }}
-                                >
-                                  {subcuenta.subcuenta}
-                                </MenuItem>
-                              );
-                            }),
-                            <CrearNuevaSubcuenta
-                              cuenta={cuenta}
-                              refetch={refetch}
-                            />,
-                          ];
+                        {cuenta.subcuentas.map((subcuenta, index) => {
+                          return (
+                            <MenuItem key={index} value={subcuenta.subcuenta}>
+                              {subcuenta.subcuenta}
+                            </MenuItem>
+                          );
                         })}
                       </Select>
                     </FormControl>
-                    <CrearNuevaCuenta refetch={refetch} />
+                    <CrearNuevaSubcuenta cuenta={cuenta} refetch={refetch} />
                   </Box>
                 </Box>
               </Fragment>

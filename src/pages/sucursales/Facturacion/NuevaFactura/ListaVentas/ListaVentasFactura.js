@@ -234,7 +234,6 @@ const RenderLista = ({
         };
       }
 
-      console.log(datos_factura)
       setDatosFactura(datos_factura);
       setVentaFactura(venta);
       setProductos(productos_base);

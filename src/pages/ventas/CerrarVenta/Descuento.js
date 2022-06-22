@@ -338,7 +338,7 @@ export default function DescuentoVenta({
       descuento_general_activo: true,
       descuento_general: {
         cantidad_descontado: descuento,
-        porciento: descuentoPorsentajeVenta,
+        porciento: parseFloat(descuentoPorsentajeVenta),
         precio_con_descuento: total,
       },
     });

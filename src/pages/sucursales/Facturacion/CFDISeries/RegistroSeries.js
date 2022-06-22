@@ -128,6 +128,7 @@ export default function RegistroSeries({ refetch }) {
                 variant="outlined"
                 name="serie"
                 onChange={obtenerDatosSeries}
+                inputProps={{ style: { textTransform: "uppercase" } }}
               />
             </Box>
           </Box>
