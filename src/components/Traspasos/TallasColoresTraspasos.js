@@ -505,8 +505,15 @@ const RenderTallas = ({
             : null
         }
       >
+      <Tooltip
+        title={talla.talla}
+        placement="top"
+        arrow
+        TransitionComponent={Zoom}
+      >
         <Typography
           variant="button"
+          noWrap
           style={{
             color: theme.palette.getContrastText(
               selected ? theme.palette.primary.main : "#FFFFFF"
@@ -516,6 +523,7 @@ const RenderTallas = ({
         >
           {talla.talla}
         </Typography>
+      </Tooltip>  
       </div>
     </Grid>
   );

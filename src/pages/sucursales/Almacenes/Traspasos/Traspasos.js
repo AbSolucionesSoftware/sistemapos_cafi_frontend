@@ -376,7 +376,7 @@ export default function Traspasos(props) {
         productosQuery.refetch();   
         dataConceptos.refetch();   
         queryObtenerAlmacenes.refetch(); 
-        handleBack();
+       
 	};
 
      const handleChange = (event) => {
@@ -637,9 +637,7 @@ export default function Traspasos(props) {
                                 </Button>
                             </Box>
                         </Box>
-                        <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
-							
-						</IconButton>
+                    
 					</Toolbar>
 				</AppBar>
                 <Box style={{ width: '50%',alignSelf:'center', alignContent:'center', alignItems:'center' }}>
@@ -880,13 +878,13 @@ export default function Traspasos(props) {
                                     {
                                         (isAlmacenOrigen) ? 
                                     
-                                        <TableSelectProducts title='Productos' add={true} almacenOrigen={almacenOrigen} refetch ={productosQuery.refetch} />
+                                        <TableSelectProducts title='Productos' add={true} almacenOrigen={almacenOrigen} refetch ={productosQuery.refetch}setAlert={setAlert} />
                                         :
-                                        <TableSelectProducts title='Productos' add={true} almacenOrigen={null} refetch ={productosQuery.refetch}/>   
+                                        <TableSelectProducts title='Productos' add={true} almacenOrigen={null} refetch ={productosQuery.refetch}setAlert={setAlert}/>   
                                     }
                                     </Grid>
                                     <Grid item md={6}>
-                                        <TableSelectProducts title='Productos a traspasar' add={false} almacenOrigen={almacenOrigen} refetch ={productosQuery.refetch} />
+                                        <TableSelectProducts title='Productos a traspasar' add={false} almacenOrigen={almacenOrigen} refetch ={productosQuery.refetch} setAlert={setAlert}/>
                                     </Grid>
                                 </Grid>
                             </Box>
