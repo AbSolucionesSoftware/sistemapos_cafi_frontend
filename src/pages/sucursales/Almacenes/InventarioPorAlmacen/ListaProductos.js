@@ -104,7 +104,7 @@ const Rowrow = (rowProps) => {
       console.log(error)
     }
     
-  }, []);
+  }, [ rowProps.obtenerAlmacenes]);
 
   useEffect(() => {
     if (dataExcelHere) {
