@@ -150,7 +150,7 @@ const RowsRender = ({
       });
       if (resultado.data.eliminarMarca.message === "false") {
         setAlert({
-          message: "Marca eliminada con exito",
+          message: "Marca eliminada",
           status: "success",
           open: true,
         });

@@ -16,7 +16,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function CrearNuevaSubcuenta({ cuenta, refetch }) {
+export default function CrearNuevaSubcuenta({
+  cuenta,
+  refetch,
+  setCuenta,
+  datosMovimiento,
+  setDatosMovimiento,
+}) {
   const [open, setOpen] = React.useState(false);
   const [subcuenta, setSubcuenta] = React.useState("");
   const [loading, setLoading] = React.useState(false);
@@ -26,7 +32,7 @@ export default function CrearNuevaSubcuenta({ cuenta, refetch }) {
     open: false,
   });
 
-  const inputRef = React.useRef(null);
+  /* const inputRef = React.useRef(null); */
 
   const [crearSubcuenta] = useMutation(CREAR_SUBCUENTA);
 
@@ -36,11 +42,14 @@ export default function CrearNuevaSubcuenta({ cuenta, refetch }) {
 
   const handleClose = () => {
     setOpen(false);
+    setSubcuenta("");
   };
 
   const handleChangeSubcuenta = (value) => setSubcuenta(value);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("algo");
     if (!subcuenta) return;
     try {
       setLoading(true);
@@ -49,13 +58,24 @@ export default function CrearNuevaSubcuenta({ cuenta, refetch }) {
           input: {
             subcuenta,
           },
-          idCuenta: cuenta._id,
+          idCuenta: cuenta.cuenta._id,
         },
       });
       setAlert({
         message: "Guardado",
         status: "success",
         open: true,
+      });
+      setCuenta({
+        ...cuenta,
+        subcuentas: [
+          ...cuenta.subcuentas,
+          { _id: "", subcuenta: subcuenta.toUpperCase() },
+        ],
+      });
+      setDatosMovimiento({
+        ...datosMovimiento,
+        concepto: subcuenta.toUpperCase(),
       });
       setLoading(false);
       refetch();
@@ -77,14 +97,14 @@ export default function CrearNuevaSubcuenta({ cuenta, refetch }) {
     }
   };
 
-  window.addEventListener("keydown", Mi_función);
+  /*  window.addEventListener("keydown", Mi_función);
   function Mi_función(e) {
     if (open) {
       if (e.keyCode === 86 || e.keyCode === 67) {
         inputRef.current.focus();
       }
     }
-  }
+  } */
 
   return (
     <div>
@@ -106,16 +126,19 @@ export default function CrearNuevaSubcuenta({ cuenta, refetch }) {
       >
         <DialogTitle>Nueva Subcuenta</DialogTitle>
         <DialogContent>
-          <TextField
-            id="subcuenta-venta"
-            label="Subcuenta"
-            variant="outlined"
-            size="small"
-            fullWidth
-            onChange={(e) => handleChangeSubcuenta(e.target.value)}
-            value={subcuenta}
-            inputRef={inputRef}
-          />
+          <form id="crear-subcuenta-form" onSubmit={handleSubmit}>
+            <TextField
+              id="subcuenta-venta"
+              label="Subcuenta"
+              variant="outlined"
+              size="small"
+              fullWidth
+              onChange={(e) => handleChangeSubcuenta(e.target.value)}
+              value={subcuenta}
+              /* inputRef={inputRef} */
+              inputProps={{ style: { textTransform: "uppercase" } }}
+            />
+          </form>
         </DialogContent>
         <DialogActions>
           <Button
@@ -126,7 +149,8 @@ export default function CrearNuevaSubcuenta({ cuenta, refetch }) {
             Cancelar
           </Button>
           <Button
-            onClick={() => handleSubmit()}
+            form="crear-subcuenta-form"
+            type="submit"
             color="primary"
             startIcon={
               loading ? (

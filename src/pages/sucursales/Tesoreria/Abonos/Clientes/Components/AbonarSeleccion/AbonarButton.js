@@ -147,7 +147,7 @@ export default function AbonoaRecibir({cuenta}) {
             setAbono('');
             setMetodoPago('');
             setAlert({ 
-                message: 'Abono registrado con exito', 
+                message: 'Abono registrado', 
                 status: 'success', 
                 open: true 
             });

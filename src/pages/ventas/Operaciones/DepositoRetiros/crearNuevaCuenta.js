@@ -39,7 +39,8 @@ export default function CrearNuevaCuenta({ refetch }) {
 
   const handleChangeCuenta = (value) => setCuenta(value);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!cuenta) return;
     try {
       setLoading(true);
@@ -93,21 +94,24 @@ export default function CrearNuevaCuenta({ refetch }) {
       >
         <DialogTitle>Nueva cuenta</DialogTitle>
         <DialogContent>
-          <TextField
-            label="Cuenta"
-            variant="outlined"
-            size="small"
-            fullWidth
-            onChange={(e) => handleChangeCuenta(e.target.value)}
-            value={cuenta}
-          />
+          <form id="crear-cuenta-form" onSubmit={handleSubmit}>
+            <TextField
+              label="Cuenta"
+              variant="outlined"
+              size="small"
+              fullWidth
+              onChange={(e) => handleChangeCuenta(e.target.value)}
+              value={cuenta}
+            />
+          </form>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="inherit" disabled={loading}>
             Cancelar
           </Button>
           <Button
-            onClick={() => handleSubmit()}
+            form="crear-cuenta-form"
+            type="submit"
             color="primary"
             startIcon={
               loading ? (

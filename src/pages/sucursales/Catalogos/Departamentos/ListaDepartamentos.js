@@ -189,7 +189,7 @@ const DeleteDepartamento = ({ data, refetch }) => {
 
       if (resultado.data.eliminarDepartamento.message === "false") {
         setAlert({
-          message: "Departamento eliminado con exito",
+          message: "Departamento eliminado",
           status: "success",
           open: true,
         });

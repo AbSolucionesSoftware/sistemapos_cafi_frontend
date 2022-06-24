@@ -27,10 +27,11 @@ import {
   CREAR_SUBCUENTA,
   ACTUALIZAR_SUBCUENTA,
   ACTUALIZAR_CUENTA,
-  ELIMINAR_CUENTA,
   ELIMINAR_SUBCUENTA,
 } from "../../../../gql/Catalogos/centroCostos";
 import { cleanTypenames } from "../../../../config/reuserFunctions";
+import EliminarCuenta from "./eliminarCuenta";
+import EliminarSubcuenta from "./eliminarSubcuenta";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -200,7 +201,7 @@ const RenderCuentas = ({
   const [subcuenta, setSubcuenta] = useState("");
   const [loadingBackDrop, setLoadingBackDrop] = useState(false);
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
-  const [eliminarCuenta] = useMutation(ELIMINAR_CUENTA);
+
   /*  Subcategorias Mutations */
   const [crearSubcuenta] = useMutation(CREAR_SUBCUENTA);
   const [actualizarSubcuenta] = useMutation(ACTUALIZAR_SUBCUENTA);
@@ -291,25 +292,6 @@ const RenderCuentas = ({
     }
   };
 
-  const deleteCuenta = async (idCuenta) => {
-    setLoadingBackDrop(true);
-    try {
-      await eliminarCuenta({
-        variables: {
-          id: idCuenta,
-        },
-      });
-      refetch();
-      setAlert({ message: "¡Listo!", status: "success", open: true });
-      setLoadingBackDrop(false);
-      setCuenta("");
-      setToUpdateID("");
-    } catch (error) {
-      setAlert({ message: "Hubo un error", status: "error", open: true });
-      setLoadingBackDrop(false);
-    }
-  };
-
   const pressEnter = (e) => {
     try {
       if (e.key === "Enter") {
@@ -356,12 +338,11 @@ const RenderCuentas = ({
             )}
             {sesion.accesos.catalogos.centro_costos.eliminar ===
             false ? null : (
-              <IconButton
-                onClick={() => deleteCuenta(cuenta._id)}
-                onFocus={(event) => event.stopPropagation()}
-              >
-                <Delete />
-              </IconButton>
+              <EliminarCuenta
+                cuenta={cuenta}
+                refetch={refetch}
+                setAlert={setAlert}
+              />
             )}
           </Box>
         </AccordionSummary>
@@ -422,7 +403,6 @@ const RenderSubcuentas = ({
   const classes = useStyles();
   const [loadingBackDrop, setLoadingBackDrop] = useState(false);
   const [alert, setAlert] = useState({ message: "", status: "", open: false });
-  const [eliminarSubcuenta] = useMutation(ELIMINAR_SUBCUENTA);
 
   const obtenerCamposParaActualizar = (event) => {
     event.stopPropagation();
@@ -434,25 +414,6 @@ const RenderSubcuentas = ({
     event.stopPropagation();
     setToUpdateID("");
     setSubcuenta("");
-  };
-  const deleteSubCuenta = async (idSubCuenta) => {
-    setLoadingBackDrop(true);
-    try {
-      await eliminarSubcuenta({
-        variables: {
-          idCuenta: idCuenta,
-          idSubcuenta: idSubCuenta,
-        },
-      });
-      refetch();
-      setAlert({ message: "¡Listo!", status: "success", open: true });
-      setLoadingBackDrop(false);
-      setSubcuenta("");
-      setToUpdateID("");
-    } catch (error) {
-      setAlert({ message: "Hubo un error", status: "error", open: true });
-      setLoadingBackDrop(false);
-    }
   };
 
   return (
@@ -490,12 +451,12 @@ const RenderSubcuentas = ({
           </IconButton>
         )}
         {sesion.accesos.catalogos.centro_costos.eliminar === false ? null : (
-          <IconButton
-            onClick={() => deleteSubCuenta(subcuenta._id)}
-            onFocus={(event) => event.stopPropagation()}
-          >
-            <Delete />
-          </IconButton>
+          <EliminarSubcuenta
+            idCuenta={idCuenta}
+            subcuenta={subcuenta}
+            refetch={refetch}
+            setAlert={setAlert}
+          />
         )}
       </Box>
       <Divider />

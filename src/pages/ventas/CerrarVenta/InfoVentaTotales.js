@@ -35,7 +35,7 @@ export default function InfoTotalesVenta({
               <FcSalesPerformance style={{ fontSize: 19 }} />
             </Box>
             <Typography variant="subtitle1">
-              <b>Dinero electronico generado:</b>
+              <b>Dinero electrónico a generar:</b>
             </Typography>
           </Box>
           <Typography variant="subtitle1">
@@ -66,7 +66,7 @@ export default function InfoTotalesVenta({
               <FcSalesPerformance style={{ fontSize: 19 }} />
             </Box>
             <Typography variant="subtitle1">
-              <b>Total puntos:</b>
+              <b>Total puntos que tendrá:</b>
             </Typography>
           </Box>
           <Typography variant="subtitle1">
