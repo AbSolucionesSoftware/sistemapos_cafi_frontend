@@ -377,7 +377,13 @@ export default function Traspasos(props) {
         setAlmacenOrigen(null);
         setAlmacenDestino(null);
         setConceptoTraspaso(null);
- 
+        let newSkipped = skipped;
+       
+        if (isStepSkipped(activeStep)) {
+            newSkipped = new Set(newSkipped.values());
+            newSkipped.delete(activeStep);
+        }
+        setActiveStep((prevActiveStep) => 0);
 	};
 
      const handleChange = (event) => {
