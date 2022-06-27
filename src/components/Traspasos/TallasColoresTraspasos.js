@@ -85,7 +85,7 @@ export default function ColoresTallas({
 
   return (
     <div>
-      <Box alignContent="center" m={5}>
+      <Box alignContent="center" m={5} mt={1}>
         <Grid container spacing={4}>
           {/*  {!datos.medidas_registradas ? (
             <Grid item md={4}>

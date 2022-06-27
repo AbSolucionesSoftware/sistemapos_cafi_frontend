@@ -46,8 +46,11 @@ export default function DialogMedidasAlmacenes(props) {
 		} catch (error) {
 			
 		}
+		
 	}
 
+	
+	
 		return (
 			<Dialog open={props.medidasAlmacen.open} TransitionComponent={Transition} fullWidth maxWidth={"sm"} >
 				<DialogTitle>

@@ -301,12 +301,19 @@ const DialogTallas = (props) => {
 
   return(
     <Dialog open={props.openTallas} TransitionComponent={Transition} fullWidth maxWidth={"md"} >
-      
-        <Box m={1} display="flex" justifyContent="flex-end">
-                <Button variant="contained" color="secondary" onClick={() => close()} size="large">
-                  <CloseIcon />
-                </Button>
+      	
+      <DialogTitle>
+        <Box display='flex' >
+          <Box width="88%">
+            Tallas y medidas
           </Box>
+          <Box m={1} display="flex" justifyContent="flex-end">
+            <Button variant="contained" color="secondary" onClick={() => close()} size="large">
+              <CloseIcon />
+            </Button>
+          </Box>
+        </Box>
+      </DialogTitle>
       {
         (props.almacenOrigen === null) ? 
           <div>
@@ -1045,7 +1052,7 @@ export default function EnhancedTable(props) {
           cant={cant} 
           obtenerConsultasProducto={(obtenerConsultasProducto.data) ? obtenerConsultasProducto.data.obtenerConsultasProducto :[]}
           refetch={( obtenerConsultasProducto.refetch ) ? obtenerConsultasProducto.refetch : null}  />
-        <TableContainer style={{height:'50vh'}}>
+        <TableContainer style={{height:'45vh'}}>
           <Table
           
             aria-labelledby="tableTitle"

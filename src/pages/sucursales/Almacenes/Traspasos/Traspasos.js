@@ -118,6 +118,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 
 const ITEM_HEIGHT = 200;
 const ITEM_PADDING_TOP = 8;
+
 const MenuProps = {
   PaperProps: {
     style: {
@@ -851,7 +852,7 @@ export default function Traspasos(props) {
                             </Typography>
                             <Box  style={{ width: "35%" }}>
                                 
-                                    <FormControl variant="outlined" fullWidth size="small">
+                                <FormControl variant="outlined" fullWidth size="small">
                                     <OutlinedInput
                                         id="search-producto"
                                         type="text"
@@ -869,12 +870,12 @@ export default function Traspasos(props) {
                                         </InputAdornment>
                                         }
                                     />
-                                    </FormControl>
+                                </FormControl>
                                     
                                 
                             </Box>
                             </Box>
-                            <Box  mt={2}>
+                            <Box  mt={1}>
                                 <Grid container spacing={2} style={{width:'100%'}}>
                                     <Grid item md={6}>
                                     {
@@ -895,7 +896,7 @@ export default function Traspasos(props) {
                 }
                 
                    <DialogActions style={{justifyContent:'center'}}>
-                    <Box sx={{ flexDirection: 'row',alignSelf: 'center',  width: '30%',display: 'flex', pt: 2 }} >
+                    <Box sx={{ flexDirection: 'row',alignSelf: 'center',  width: '30%',display: 'flex', pt: 0 }} >
                             <Button
                             color="primary"
                             variant="contained"
