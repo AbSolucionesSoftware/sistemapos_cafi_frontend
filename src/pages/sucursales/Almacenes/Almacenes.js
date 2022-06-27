@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Container, Grid, Box } from '@material-ui/core';
 import RegistroAlmacen from './RegistroAlmacen/RegistroAlmacen';
 import Traspasos from './Traspasos/Traspasos';
@@ -8,7 +8,9 @@ import { TraspasosProvider } from "../../../context/Almacenes/traspasosAlmacen";
 import { OBTENER_PRODUCTOS_ALMACEN } from '../../../gql/Almacenes/Almacen';
 
 export default function Almacenes() {
+	const [productos, setProductos] = useState([]);
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+	
 	const productosAlmacenQuery = useQuery(OBTENER_PRODUCTOS_ALMACEN,{
 		variables: {
             empresa: sesion.empresa._id,
@@ -17,6 +19,18 @@ export default function Almacenes() {
 		},
 		fetchPolicy: "network-only"
 	});
+
+	useEffect(() => {
+		try {
+			if(productosAlmacenQuery.data){
+				setProductos(productosAlmacenQuery.data.obtenerProductosAlmacenes);
+			}
+		} catch (error) {
+			
+		}
+	},[ productosAlmacenQuery.data]); 
+
+
 
 	return (
 		<Container>
@@ -32,7 +46,7 @@ export default function Almacenes() {
 				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<TraspasosProvider>
-							<Traspasos productosAlmacenQuery={productosAlmacenQuery} />
+							<Traspasos productosAlmacenQuery={productosAlmacenQuery}  />
 						</TraspasosProvider>
 					</Box>
 				</Grid>
@@ -41,7 +55,7 @@ export default function Almacenes() {
 				<Grid item lg={2} >
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<TraspasosProvider>
-							<InventariosPorAlmacen productosAlmacenQuery={productosAlmacenQuery}  />
+							<InventariosPorAlmacen productos={productos} productosAlmacenQuery={productosAlmacenQuery} setProductos={setProductos} />
 						</TraspasosProvider>
 					</Box>
 				</Grid>

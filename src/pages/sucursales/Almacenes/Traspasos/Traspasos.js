@@ -363,6 +363,11 @@ export default function Traspasos(props) {
     
 	const handleClickOpen = () => {
 		setOpen(true);
+        productosEmpresaQuery.refetch();  
+        productosQuery.refetch();   
+        dataConceptos.refetch();   
+        queryObtenerAlmacenes.refetch(); 
+        props.productosAlmacenQuery.refetch();
 	};
 
 	const handleClose = () => {
@@ -371,13 +376,7 @@ export default function Traspasos(props) {
         setAlmacenOrigen(null);
         setAlmacenDestino(null);
         setConceptoTraspaso(null);
-        
-        productosEmpresaQuery.refetch();  
-        productosQuery.refetch();   
-        dataConceptos.refetch();   
-        queryObtenerAlmacenes.refetch(); 
-        props.productosAlmacenQuery.refetch();
-       
+ 
 	};
 
      const handleChange = (event) => {
@@ -561,8 +560,10 @@ export default function Traspasos(props) {
              const traspaso =    await CrearTraspaso(input) 
            
                 //console.log(traspaso)
-                setAlert({message: traspaso.data.crearTraspaso.message, status: traspaso.data.crearTraspaso.resp, open: true })
+               
                 if(traspaso.data.crearTraspaso.resp !== 'error'){
+                    props.productosAlmacenQuery.refetch();
+                    setAlert({message: traspaso.data.crearTraspaso.message, status: traspaso.data.crearTraspaso.resp, open: true })
                     setProductosTras([]);
                     setAlmacenOrigen(null);
                     setAlmacenDestino(null);
@@ -577,7 +578,7 @@ export default function Traspasos(props) {
             }
             
            
-            props.productosAlmacenQuery.refetch();
+           
             setLoading(false);
         } catch (error) {
              setLoading(false);

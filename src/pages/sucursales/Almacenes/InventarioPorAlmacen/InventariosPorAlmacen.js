@@ -51,6 +51,8 @@ export default function InventariosPorAlmacen(props) {
 	
 	const handleClickOpen = () => {
 		setOpen(true);
+		props.setProductos([]);
+		props.productosAlmacenQuery.refetch();
 	};
 
 	const handleClose = () => {
@@ -67,7 +69,7 @@ export default function InventariosPorAlmacen(props) {
 					Inventario por almacen
 				</Box>
 			</Button>
-			<InventarioPorAlmacen open={open} productosAlmacenQuery={props.productosAlmacenQuery}  handleClose={handleClose} />
+			<InventarioPorAlmacen open={open} productos={props.productos}  productosAlmacenQuery={props.productosAlmacenQuery } handleClose={handleClose} />
         </div>
     )
 }
@@ -80,7 +82,7 @@ const InventarioPorAlmacen = (props) =>{
 
 	const {dataExcel, setDataExcel } = useContext(TraspasosAlmacenContext);
 	
-	const [ productos, setProductos] = 	useState([]);
+	
 	const [ obtenerAlmacenes, setObtenerAlmacenes] = 	useState([]);
 	// const [ almacen, setAlmacen ] = React.useState('');
 
@@ -147,17 +149,17 @@ const InventarioPorAlmacen = (props) =>{
 		}
 	},[props.open]);
 	
-	 useEffect(() => {
+	 /* useEffect(() => {
 		try {
 			if(props.productosAlmacenQuery.data){
-				console.log('props.productosAlmacenQuery.data');
+				
 				setProductos(props.productosAlmacenQuery.data.obtenerProductosAlmacenes);
 				setLoading(false);
 			}
 		} catch (error) {
 			
 		}
-	},[ props.productosAlmacenQuery.data]); 
+	},[ props.productosAlmacenQuery.data]);  */
 	
 	useEffect(() => {
 		if(queryObtenerAlmacenes.data ){
@@ -229,7 +231,7 @@ const InventarioPorAlmacen = (props) =>{
                                     
                                 
                             </Box>
-							{(productos.length > 0) ?
+							{(props.productos.length > 0) ?
 								<Box ml={4} mrstyle={{ backgroundColor:'red', alignContent:'flex-end'}}  justifyContent="flex-end" alignItems="center" >
 									<Box  >
 										<ExportarExcel fileName="Inventarios almacen" data={dataExcel} columnName={columns} />
@@ -243,7 +245,7 @@ const InventarioPorAlmacen = (props) =>{
 					</Box>			
 
 				{
-					(loading && productos.length === 0) ?
+					(loading && props.productos.length === 0) ?
 		
 						<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
 							<CircularProgress />
@@ -253,7 +255,7 @@ const InventarioPorAlmacen = (props) =>{
 							<ErrorPage error={props.productosAlmacenQuery.error} />
 						:
 						<Box mx={5} mt={1} >
-							<ListaProductos productos={productos} obtenerAlmacenes={obtenerAlmacenes} columns={columns} />
+							<ListaProductos productos={props.productos} obtenerAlmacenes={obtenerAlmacenes} columns={columns} />
 						</Box>
 					
 				}

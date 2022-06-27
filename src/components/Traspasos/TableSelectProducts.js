@@ -209,7 +209,7 @@ const DialogTallas = (props) => {
     //Count all new_medidas from array
     
     if (newMedidasCopy.length > 0) {
-      console.log(newMedidasCopy)
+    
       const pres = newMedidasCopy.filter(
         (res) => res.medida.color._id && res.medida.medida._id
       );
