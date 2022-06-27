@@ -56,8 +56,6 @@ export default function InventariosPorAlmacen(props) {
 	const handleClose = () => {
 		setOpen(false);
 	};
-	
-	
 
     return (
         <div>
@@ -127,83 +125,59 @@ const InventarioPorAlmacen = (props) =>{
 		},
 		fetchPolicy: "network-only"
 	});	
-	
 
-	useEffect(
-		() => {
-			queryObtenerAlmacenes.refetch();
-		},
-		[ queryObtenerAlmacenes.update, queryObtenerAlmacenes ]
-	);
+ 	useEffect(() => {
+		queryObtenerAlmacenes.refetch();
+	},[ queryObtenerAlmacenes.update, queryObtenerAlmacenes ]); 
 
-	
-	
-	useEffect(
-		() => {
-			try {
-				if(props.open){
+	useEffect(() => {
+		try {
+			if(props.open){
 				
-					setDataExcel([])
-					queryObtenerAlmacenes.refetch();
-					props.productosAlmacenQuery.refetch({
-						empresa: sesion.empresa._id,
-						sucursal: sesion.sucursal._id,
-						filtro: value});
-				}
-			} catch (error) {
-				console.log(error)
+				setDataExcel([])
+				queryObtenerAlmacenes.refetch();
+			/* 	props.productosAlmacenQuery.refetch({
+					empresa: sesion.empresa._id,
+					sucursal: sesion.sucursal._id,
+					filtro: value
+				}); */
 			}
-		},
-		[props.open ]
-	);
+		} catch (error) {
+			console.log(error)
+		}
+	},[props.open]);
 	
-	useEffect(
-		() => {
-			try {
-				if(props.productosAlmacenQuery.data){
-				//setDataExcel([]);
-				
-				
+	 useEffect(() => {
+		try {
+			if(props.productosAlmacenQuery.data){
+				console.log('props.productosAlmacenQuery.data');
 				setProductos(props.productosAlmacenQuery.data.obtenerProductosAlmacenes);
 				setLoading(false);
 			}
-			} catch (error) {
-				
-			}
-		
-		},
-		[ props.productosAlmacenQuery.data]
-	);
-
-	useEffect(
-		() => {
-			if(queryObtenerAlmacenes.data){
-				const columnsEffect = [
-					{ id: 'codigo_barras', label: 'Código de barras', minWidth: 60 , widthPx: 160, },
-					{ id: 'nombre_comercial', label: 'Nombre comercial', minWidth: 170, widthPx: 160, },
-					{ id: 'costo_producto', label: 'Costo producto', minWidth: 60, widthPx: 100, },
-					{ id: 'costo_total_productos', label: 'Costo total productos', minWidth: 60, widthPx: 100, }
-				];
-				let almace = queryObtenerAlmacenes.data.obtenerAlmacenes;
-				almace.forEach(element => {
-							
-					columnsEffect.push({ id: element._id, label: element.nombre_almacen, minWidth: 60, widthPx: 160,})
-				}); 
-				columnsEffect.push({ id: 'total', label: 'Total existencias', minWidth: 60, widthPx: 160,})
-				setObtenerAlmacenes(almace);
-				setColumns(columnsEffect);
-			}
+		} catch (error) {
 			
-		},
-		[ queryObtenerAlmacenes.data]
-	);
+		}
+	},[ props.productosAlmacenQuery.data]); 
+	
+	useEffect(() => {
+		if(queryObtenerAlmacenes.data ){
+			const columnsEffect = [
+				{ id: 'codigo_barras', label: 'Código de barras', minWidth: 60 , widthPx: 160, },
+				{ id: 'nombre_comercial', label: 'Nombre comercial', minWidth: 170, widthPx: 160, },
+				{ id: 'costo_producto', label: 'Costo producto', minWidth: 60, widthPx: 100, },
+				{ id: 'costo_total_productos', label: 'Costo total productos', minWidth: 60, widthPx: 100, }
+			];
+			let almace = queryObtenerAlmacenes.data.obtenerAlmacenes;
+			almace.forEach(element => {
+						
+				columnsEffect.push({ id: element._id, label: element.nombre_almacen, minWidth: 60, widthPx: 160,})
+			}); 
+			columnsEffect.push({ id: 'total', label: 'Total existencias', minWidth: 60, widthPx: 160,})
+			setObtenerAlmacenes(almace);
+			setColumns(columnsEffect);
+		}	
+	},[queryObtenerAlmacenes.data]);
 
-	
-	
-	
-	
-
-	 
 	return(
 		<Dialog fullScreen open={props.open} onClose={props.handleClose} TransitionComponent={Transition}>
 				<AppBar className={classes.appBar}>
@@ -271,15 +245,14 @@ const InventarioPorAlmacen = (props) =>{
 				{
 					(loading && productos.length === 0) ?
 		
-					<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
-						<CircularProgress />
-					</Box>
+						<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
+							<CircularProgress />
+						</Box>
 					: 
 						(props.productosAlmacenQuery.error || categoriasQuery.error) ?
 							<ErrorPage error={props.productosAlmacenQuery.error} />
 						:
 						<Box mx={5} mt={1} >
-
 							<ListaProductos productos={productos} obtenerAlmacenes={obtenerAlmacenes} columns={columns} />
 						</Box>
 					

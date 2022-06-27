@@ -24,6 +24,129 @@ const useStyles = makeStyles({
   },
 });
 
+
+
+
+export default function ListaAlmacenes(props) {
+  const classes = useStyles();
+  const [medidasAlmacen, setMedidasAlmacen] = useState({
+    open: false,
+    producto: {},
+  });
+
+  //const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
+  // const almacenesColumnas = [];
+  // const productosRows = [];
+  /* Queries */
+  /* const { loading, error, refetch } = useQuery(OBTENER_ALMACENES,{
+		variables: {
+			id: sesion.sucursal._id
+		}
+	});	 */
+
+  /* useEffect(
+		() => {
+			refetch();
+		},
+		[ refetch ]
+	); */
+
+  /* 	const handleChangePage = (event, newPage) => {
+		setPage(newPage);
+	};
+
+	const handleChangeRowsPerPage = (event) => {
+		setRowsPerPage(+event.target.value);
+		setPage(0);
+	}; */
+
+  /* if (loading)
+	return (
+		<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
+			<CircularProgress />
+		</Box>
+	);
+	if (error) {
+		console.log(error)
+		return <ErrorPage error={error} />;
+	} */
+
+  const toShowMedidasAlmacen = (producto) => {
+    try {
+      let tipo_producto = producto.datos_generales.tipo_producto;
+      if (tipo_producto !== "OTROS") {
+        setMedidasAlmacen({ open: true, producto });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  return (
+    
+      <Paper className={classes.root}>
+        <TableContainer className={classes.container}>
+          <Table stickyHeader size={"small"} aria-label="a dense table">
+            <TableHead>
+              <TableRow>
+                {props.columns.map((column, index) => (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    style={{
+                      textAlign: index > 1 ? "center" : "left",
+                      minWidth: column.minWidth,
+                      width: column.minWidth,
+                    }}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {props.productos.map((row, index) => {
+                let key = index;
+              
+                return (
+                  <Rowrow
+                    producto={row}
+                    index={key}
+                    key={index}
+                    productosLength={props.productos.length}
+                    dataExcel={props.dataExcel}
+                    setDataExcel={props.setDataExcel}
+                    obtenerAlmacenes={props.obtenerAlmacenes}
+                    toShowMedidasAlmacen={toShowMedidasAlmacen}
+                  />
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        {/* <TablePagination
+				rowsPerPageOptions={[ 10, 25, 100 ]}
+				component="div"
+				count={props.productos.length}
+				rowsPerPage={rowsPerPage}
+				page={page}
+				onChangePage={handleChangePage}
+				onChangeRowsPerPage={handleChangeRowsPerPage}
+				labelRowsPerPage={"Renglones por página"}
+			/> */}
+      <DialogMedidasAlmacenes
+        medidasAlmacen={medidasAlmacen}
+        setMedidasAlmacen={setMedidasAlmacen}
+        obtenerAlmacenes={props.obtenerAlmacenes}
+      />
+      </Paper>
+      
+    
+  );
+}
+
+
+
 const Rowrow = (rowProps) => {
   const { dataExcel, setDataExcel } = useContext(TraspasosAlmacenContext);
   const [dataExcelHere, setDataExcelHere] = useState([]);
@@ -40,10 +163,11 @@ const Rowrow = (rowProps) => {
   const [total, setTotal] = useState(0);
   const [unidad_minima, setUnidad_Minima] = useState("");
 
-  //console.log(rowProps)
+ 
   useEffect(() => {
     try {
-      let tot = 0;
+     
+    let tot = 0;
     let r = row;
     let datExc = dataExcel;
     let uniMin = 'pz';
@@ -104,7 +228,7 @@ const Rowrow = (rowProps) => {
       console.log(error)
     }
     
-  }, [ rowProps.obtenerAlmacenes]);
+  }, [ rowProps.producto]);
 
   useEffect(() => {
     if (dataExcelHere) {
@@ -205,118 +329,3 @@ const Rowrow = (rowProps) => {
     </TableRow>
   );
 };
-export default function ListaAlmacenes(props) {
-  const classes = useStyles();
-  const [medidasAlmacen, setMedidasAlmacen] = useState({
-    open: false,
-    producto: {},
-  });
-
-  //const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
-  // const almacenesColumnas = [];
-  // const productosRows = [];
-  /* Queries */
-  /* const { loading, error, refetch } = useQuery(OBTENER_ALMACENES,{
-		variables: {
-			id: sesion.sucursal._id
-		}
-	});	 */
-
-  /* useEffect(
-		() => {
-			refetch();
-		},
-		[ refetch ]
-	); */
-
-  /* 	const handleChangePage = (event, newPage) => {
-		setPage(newPage);
-	};
-
-	const handleChangeRowsPerPage = (event) => {
-		setRowsPerPage(+event.target.value);
-		setPage(0);
-	}; */
-
-  /* if (loading)
-	return (
-		<Box display="flex" justifyContent="center" alignItems="center" height="30vh">
-			<CircularProgress />
-		</Box>
-	);
-	if (error) {
-		console.log(error)
-		return <ErrorPage error={error} />;
-	} */
-
-  const toShowMedidasAlmacen = (producto) => {
-    try {
-      let tipo_producto = producto.datos_generales.tipo_producto;
-      if (tipo_producto !== "OTROS") {
-        setMedidasAlmacen({ open: true, producto });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  return (
-    <div>
-      <Paper className={classes.root}>
-        <TableContainer className={classes.container}>
-          <Table stickyHeader size={"small"} aria-label="a dense table">
-            <TableHead>
-              <TableRow>
-                {props.columns.map((column, index) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    style={{
-                      textAlign: index > 1 ? "center" : "left",
-                      minWidth: column.minWidth,
-                      width: column.minWidth,
-                    }}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {props.productos.map((row, index) => {
-                let key = index;
-               
-                return (
-                  <Rowrow
-                    producto={row}
-                    index={key}
-                    key={index}
-                    productosLength={props.productos.length}
-                    dataExcel={props.dataExcel}
-                    setDataExcel={props.setDataExcel}
-                    obtenerAlmacenes={props.obtenerAlmacenes}
-                    toShowMedidasAlmacen={toShowMedidasAlmacen}
-                  />
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        {/* <TablePagination
-				rowsPerPageOptions={[ 10, 25, 100 ]}
-				component="div"
-				count={props.productos.length}
-				rowsPerPage={rowsPerPage}
-				page={page}
-				onChangePage={handleChangePage}
-				onChangeRowsPerPage={handleChangeRowsPerPage}
-				labelRowsPerPage={"Renglones por página"}
-			/> */}
-      </Paper>
-      <DialogMedidasAlmacenes
-        medidasAlmacen={medidasAlmacen}
-        setMedidasAlmacen={setMedidasAlmacen}
-        obtenerAlmacenes={props.obtenerAlmacenes}
-      />
-    </div>
-  );
-}

@@ -6,8 +6,8 @@ import { useQuery } from '@apollo/client';
 import InventariosPorAlmacen from './InventarioPorAlmacen/InventariosPorAlmacen';
 import { TraspasosProvider } from "../../../context/Almacenes/traspasosAlmacen";
 import { OBTENER_PRODUCTOS_ALMACEN } from '../../../gql/Almacenes/Almacen';
-export default function Almacenes() {
 
+export default function Almacenes() {
 	const sesion = JSON.parse(localStorage.getItem('sesionCafi'));
 	const productosAlmacenQuery = useQuery(OBTENER_PRODUCTOS_ALMACEN,{
 		variables: {
@@ -17,6 +17,7 @@ export default function Almacenes() {
 		},
 		fetchPolicy: "network-only"
 	});
+
 	return (
 		<Container>
 			<Grid container spacing={3} justifyContent="center" alignItems="center">
@@ -25,13 +26,13 @@ export default function Almacenes() {
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<RegistroAlmacen />
 					</Box>
-				</Grid>
+				</Grid> 
 			)}
 			{sesion.accesos.almacenes.traspasos.ver === false ? (null):(
 				<Grid item lg={2}>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<TraspasosProvider>
-							<Traspasos refetch={productosAlmacenQuery.refetch} />
+							<Traspasos productosAlmacenQuery={productosAlmacenQuery} />
 						</TraspasosProvider>
 					</Box>
 				</Grid>

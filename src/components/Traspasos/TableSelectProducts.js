@@ -129,7 +129,7 @@ const useToolbarStyles = makeStyles((theme) => ({
     
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
-    maxWidth:650
+   
   },
   input:{
     width:180
@@ -157,7 +157,7 @@ const useToolbarStyles = makeStyles((theme) => ({
   title: {
     fontSize:16,
     flex: '1',
-     display: 'flex',
+    display: 'flex',
     flexWrap: 'wrap',
   },
 }));
@@ -767,8 +767,8 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   table: {
-    minWidth: 600,
-    maxWidth:600
+  
+    
    
   },
   visuallyHidden: {
@@ -1047,7 +1047,7 @@ export default function EnhancedTable(props) {
           refetch={( obtenerConsultasProducto.refetch ) ? obtenerConsultasProducto.refetch : null}  />
         <TableContainer style={{height:'50vh'}}>
           <Table
-            className={classes.table}
+          
             aria-labelledby="tableTitle"
             size={'small'}
             aria-label="a dense table"

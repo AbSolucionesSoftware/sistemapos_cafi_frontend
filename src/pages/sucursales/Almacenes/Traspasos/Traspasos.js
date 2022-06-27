@@ -151,7 +151,7 @@ export default function Traspasos(props) {
         setProductosTras,
         setProductosTo,
         setProductosEmpTo,
-        productosTras
+        productosTras 
     } = useContext(TraspasosAlmacenContext);
     const [ alert, setAlert ] = useState({ message: '', status: '', open: false });
 	const [ open, setOpen ] = useState(false);
@@ -376,6 +376,7 @@ export default function Traspasos(props) {
         productosQuery.refetch();   
         dataConceptos.refetch();   
         queryObtenerAlmacenes.refetch(); 
+        props.productosAlmacenQuery.refetch();
        
 	};
 
@@ -576,12 +577,12 @@ export default function Traspasos(props) {
             }
             
            
-            props.refetch();
+            props.productosAlmacenQuery.refetch();
             setLoading(false);
         } catch (error) {
              setLoading(false);
              setOpenEnd(false)
-           
+          
            if(error.networkError !== undefined){
 			  console.log('traspaso networkError', error.networkError.result)
             }else if(error.graphQLErrors!== undefined){
