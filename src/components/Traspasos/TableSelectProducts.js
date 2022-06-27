@@ -79,7 +79,7 @@ const getUnidadMax  = (cantidad_existente_maxima,unidadMaxima) => {
   return UNIDAD_MAXIMA[unidadMaxima];
 }
 
-function EnhancedTableHead(props) {
+const  EnhancedTableHead = (props) => {
   const { classes,  order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);

@@ -50,9 +50,9 @@ export default function InventariosPorAlmacen(props) {
 	const [ open, setOpen ] = useState(false);
 	
 	const handleClickOpen = () => {
-		setOpen(true);
-		props.setProductos([]);
 		props.productosAlmacenQuery.refetch();
+		setOpen(true);
+		
 	};
 
 	const handleClose = () => {
@@ -128,9 +128,9 @@ const InventarioPorAlmacen = (props) =>{
 		fetchPolicy: "network-only"
 	});	
 
- 	useEffect(() => {
+ 	/* useEffect(() => {
 		queryObtenerAlmacenes.refetch();
-	},[ queryObtenerAlmacenes.update, queryObtenerAlmacenes ]); 
+	},[ queryObtenerAlmacenes.update, queryObtenerAlmacenes ]);  */
 
 	useEffect(() => {
 		try {

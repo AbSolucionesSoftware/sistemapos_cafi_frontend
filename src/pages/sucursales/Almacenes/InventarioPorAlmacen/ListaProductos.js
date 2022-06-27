@@ -81,7 +81,7 @@ export default function ListaAlmacenes(props) {
       console.log(error);
     }
   };
-  
+
   return (
     
       <Paper className={classes.root}>
@@ -162,7 +162,7 @@ const Rowrow = (rowProps) => {
   });
   const [total, setTotal] = useState(0);
   const [unidad_minima, setUnidad_Minima] = useState("");
-
+  
  
   useEffect(() => {
     try {
@@ -171,7 +171,7 @@ const Rowrow = (rowProps) => {
     let r = row;
     let datExc = dataExcel;
     let uniMin = 'pz';
-    
+    let arrayCantidadesInto = [];
     rowProps.obtenerAlmacenes.forEach((almacenColumna) => {
       
       const existencias = rowProps.producto.existencia_almacenes.filter(
@@ -185,17 +185,17 @@ const Rowrow = (rowProps) => {
           
           if(existencias[0].unidad_maxima === rowProps.producto.precios.inventario.unidad_de_inventario){
            
-            arrayCantidades.push(existencias[0].cantidad_existente_maxima);
+            arrayCantidadesInto.push(existencias[0].cantidad_existente_maxima);
             tot += existencias[0].cantidad_existente_maxima;
             uniMin = rowProps.producto.existencia_almacenes[0].unidad_maxima;
           }else{
             tot += existencias[0].cantidad_existente;
-            arrayCantidades.push(existencias[0].cantidad_existente);
+            arrayCantidadesInto.push(existencias[0].cantidad_existente);
             uniMin = 'pz';
           }
         }else{
           tot += existencias[0].cantidad_existente;
-          arrayCantidades.push(existencias[0].cantidad_existente);
+          arrayCantidadesInto.push(existencias[0].cantidad_existente);
         }
         
         setUnidad_Minima(
@@ -209,13 +209,13 @@ const Rowrow = (rowProps) => {
         };
        
       } else {
-        arrayCantidades.push(0);
+        arrayCantidadesInto.push(0);
         r = { ...r, [almacenColumna._id]: 0 };
       }
     });
 
     r = { ...r, total: tot + " " + uniMin };
-
+    setArrayCantidades(arrayCantidadesInto);
     setTotal(tot);
     setRow(r);
     datExc.push(r);
