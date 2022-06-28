@@ -19,19 +19,6 @@ const useStyles = makeStyles((theme) => ({
   titulos: {
     fontWeight: 500,
   },
-  /* input: {
-    "& input[type=number]": {
-      "-moz-appearance": "textfield",
-    },
-    "& input[type=number]::-webkit-outer-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    },
-    "& input[type=number]::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    },
-  }, */
 }));
 
 export default function PreciosDeVenta() {
@@ -360,9 +347,6 @@ const RenderPreciosP = ({ data, index, newPreciosP }) => {
 
 
     const precio_neto = parseFloat((precio_venta + impuestos));
-
-    console.log(iva_precio, cantidad_sec, iva_precio*cantidad_sec)
-    console.log(cantidad_sec * precio_neto)
 
     //meter los valores a preciosVenta
     preciosVenta.precio_venta = parseFloat(precio_venta.toFixed(2));

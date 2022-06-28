@@ -29,19 +29,6 @@ const useStyles = makeStyles((theme) => ({
   titulos: {
     fontWeight: 500,
   },
-  /* input: {
-    "& input[type=number]": {
-      "-moz-appearance": "textfield",
-    },
-    "& input[type=number]::-webkit-outer-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    },
-    "& input[type=number]::-webkit-inner-spin-button": {
-      "-webkit-appearance": "none",
-      margin: 0,
-    },
-  }, */
 }));
 
 export default function RegistroInfoAdidional() {
@@ -125,10 +112,11 @@ export default function RegistroInfoAdidional() {
 
     /* Precio con impuesto */
     precio_con_impuesto = parseFloat(value);
+    /* setPrecioConImpuesto(precio_con_impuesto); */
     total_impuesto =
       parseFloat(precios.iva < 10 ? ".0" + precios.iva : "." + precios.iva) +
       parseFloat(precios.ieps < 10 ? ".0" + precios.ieps : "." + precios.ieps);
-    precio_sin_impuesto = parseFloat(value) / parseFloat(total_impuesto + 1);
+    precio_sin_impuesto = precio_con_impuesto / parseFloat(total_impuesto + 1);
     iva =
       precio_sin_impuesto *
       parseFloat(precios.iva < 10 ? ".0" + precios.iva : "." + precios.iva);
@@ -147,6 +135,7 @@ export default function RegistroInfoAdidional() {
     /* if (isNaN(precio_con_impuesto)) precio_con_impuesto = 0;
 		if (isNaN(precio_sin_impuesto)) precio_sin_impuesto = 0; */
 
+    
     setPrecioSinImpuesto(parseFloat(precio_sin_impuesto.toFixed(2)));
     setPrecios({
       ...precios,
@@ -180,12 +169,13 @@ export default function RegistroInfoAdidional() {
 
     /* Precio sin impuesto */
     precio_sin_impuesto = parseFloat(value);
+    /* setPrecioSinImpuesto(precio_sin_impuesto); */
     iva =
-      parseFloat((parseFloat(value) *
-      parseFloat(precios.iva < 10 ? ".0" + precios.iva : "." + precios.iva)).toFixed(2));
+      parseFloat((precio_sin_impuesto *
+      parseFloat(precios.iva < 10 ? ".0" + precios.iva : "." + precios.iva)));
     ieps =
-      parseFloat((parseFloat(value) *
-      parseFloat(precios.ieps < 10 ? ".0" + precios.ieps : "." + precios.ieps)).toFixed(2));
+      parseFloat((precio_sin_impuesto *
+      parseFloat(precios.ieps < 10 ? ".0" + precios.ieps : "." + precios.ieps)));
     precio_con_impuesto = precio_sin_impuesto + iva + ieps;
     precio_unitario_sin_impuesto =
       precio_sin_impuesto / precios.unidad_de_compra.cantidad;
@@ -364,11 +354,15 @@ export default function RegistroInfoAdidional() {
     }
   };
 
+  const [count, setCount] = useState(0)
+
   useEffect(() => {
+    if(count === 0) return
     obtenerPrecioConImpuesto(PCI);
   }, [PCI]);
 
   useEffect(() => {
+    if(count === 0) return
     obtenerPrecioSinImpuesto(PSI);
   }, [PSI]);
 
@@ -608,9 +602,11 @@ export default function RegistroInfoAdidional() {
                 value={precioSinImpuesto}
                 helperText={validacion.message}
                 onChange={(e) => {
+                  setCount(1)
                   setPrecioSinImpuesto(e.target.value);
                   setPrecioSinImpuestoVariable(e.target.value);
                 }}
+                /* onChange={(e) => obtenerPrecioSinImpuesto(e.target.value)} */
                 onFocus={(e) => {
                   const { value } = e.target;
                   if (parseFloat(value) === 0) {
@@ -651,9 +647,11 @@ export default function RegistroInfoAdidional() {
                 value={precioConImpuesto}
                 helperText={validacion.message}
                 onChange={(e) => {
+                  setCount(1);
                   setPrecioConImpuesto(e.target.value);
                   setPrecioConImpuestoVariable(e.target.value);
                 }}
+                /* onChange={(e) => obtenerPrecioConImpuesto(e.target.value)} */
                 onFocus={(e) => {
                   const { value } = e.target;
                   if (parseFloat(value) === 0) {

@@ -5,9 +5,20 @@ export const calculos_precios = ({
   costo,
 }) => {
   const { iva, ieps, precio_de_compra } = productoOriginal.precios;
-  const { precio_sin_impuesto, precio_con_impuesto } = precio_de_compra;
-  const iva_precio_actual = precio_de_compra.iva;
-  const ieps_precio_actual = precio_de_compra.ieps;
+  const { /* precio_sin_impuesto, */ precio_con_impuesto } = precio_de_compra;
+
+  let total_impuesto = 0;
+  let precio_sin_impuesto = 0;
+
+  total_impuesto =
+    parseFloat(iva < 10 ? ".0" + iva : "." + iva) +
+    parseFloat(ieps < 10 ? ".0" + ieps : "." + ieps);
+  precio_sin_impuesto = precio_con_impuesto / parseFloat(total_impuesto + 1);
+  let iva_precio_actual =
+    precio_sin_impuesto * parseFloat(iva < 10 ? ".0" + iva : "." + iva);
+  let ieps_precio_actual =
+    precio_sin_impuesto * parseFloat(ieps < 10 ? ".0" + ieps : "." + ieps);
+
   const impuesto_actual = iva_precio_actual + ieps_precio_actual;
   const PCSI_actual = costo - impuesto_actual;
   const PCSI_ACTUAL_TOTAL = PCSI_actual * cantidad;
@@ -40,7 +51,7 @@ export const calculos_precios = ({
       precio_con_impuesto,
       cantidad,
       iva_precio_actual,
-      ieps_precio_actual
+      ieps_precio_actual,
     },
   };
 };
