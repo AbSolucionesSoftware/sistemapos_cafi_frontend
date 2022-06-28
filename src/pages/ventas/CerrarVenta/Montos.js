@@ -71,7 +71,7 @@ export default function ObtenerMontos({
     setTotales({
       ...totales,
       monto_pagado,
-      cambio: monto_pagado - totales.total,
+      cambio: (monto_pagado - totales.total) - montos.puntos,
     });
   }, [montos]);
 

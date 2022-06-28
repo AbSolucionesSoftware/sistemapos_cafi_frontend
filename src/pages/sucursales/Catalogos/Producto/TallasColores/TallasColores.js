@@ -507,6 +507,7 @@ const RenderTallas = ({
       >
         <Typography
           variant="button"
+          noWrap
           style={{
             color: theme.palette.getContrastText(
               selected ? theme.palette.primary.main : "#FFFFFF"

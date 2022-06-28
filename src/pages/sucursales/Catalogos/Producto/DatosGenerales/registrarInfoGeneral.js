@@ -297,7 +297,7 @@ export default function RegistroInfoGenerales({
                 Código de barras
               </Typography>
               <OutlinedInput
-                disabled={update && datos_generales.codigo_barras}
+                disabled={update && datos_generales.codigo_barras ? true : false}
                 style={{ padding: 0 }}
                 id="form-producto-codigo-barras"
                 name="codigo_barras"
@@ -311,7 +311,7 @@ export default function RegistroInfoGenerales({
                 endAdornment={
                   <InputAdornment position="start">
                     <IconButton
-                      disabled={update && datos_generales.codigo_barras}
+                      disabled={update && datos_generales.codigo_barras ? true : false}
                       onClick={() => GenCodigoBarras()}
                       /* edge="end" */
                       color="primary"
@@ -468,7 +468,7 @@ export default function RegistroInfoGenerales({
                           checked={precios.granel ? precios.granel : false}
                           onChange={obtenerChecks}
                           name="granel"
-                          disabled={datos_generales.tipo_producto !== "OTROS"}
+                          disabled={datos_generales.tipo_producto !== "OTROS" ? true : false}
                         />
                       }
                       label="Vender a granel"
@@ -523,7 +523,7 @@ export default function RegistroInfoGenerales({
                   />
                   <TextField
                     type="number"
-                    InputProps={{ inputProps: { min: 0 }, startAdornment: <InputAdornment>$</InputAdornment> }}
+                    InputProps={{ inputProps: { min: 0 }, startAdornment: <InputAdornment position="start">$</InputAdornment> }}
                     size="small"
                     label="Valor por punto"
                     name="monedero_electronico"
@@ -673,7 +673,7 @@ const RegistrarNuevoSelect = ({
       <Button
         color="primary"
         onClick={() => handleToggle()}
-        disabled={tipo === "subcategoria" && !datos_generales.id_categoria}
+        disabled={tipo === "subcategoria" && !datos_generales.id_categoria ? true : false}
       >
         <Add />
       </Button>

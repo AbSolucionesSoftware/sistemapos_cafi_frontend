@@ -9,12 +9,13 @@ import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import CloseIcon from '@material-ui/icons/Close';
+
 import { TraspasosAlmacenContext } from "../../context/Almacenes/traspasosAlmacen";
 import TallasColoresTraspasos from './TallasColoresTraspasos';
 import TableSelectMedidas from './TableSelectMedidas';
 import { useQuery } from '@apollo/client';
 import {  OBTENER_CONSULTAS } from "../../gql/Catalogos/productos";
-
+import SnackBarMessages from '../../components/SnackBarMessages';
 // function createData(name, cantidad, precio) {
 //   return { name, cantidad, precio };
 // }
@@ -78,7 +79,7 @@ const getUnidadMax  = (cantidad_existente_maxima,unidadMaxima) => {
   return UNIDAD_MAXIMA[unidadMaxima];
 }
 
-function EnhancedTableHead(props) {
+const  EnhancedTableHead = (props) => {
   const { classes,  order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -128,7 +129,7 @@ const useToolbarStyles = makeStyles((theme) => ({
     
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
-    maxWidth:650
+   
   },
   input:{
     width:180
@@ -156,13 +157,13 @@ const useToolbarStyles = makeStyles((theme) => ({
   title: {
     fontSize:16,
     flex: '1',
-     display: 'flex',
+    display: 'flex',
     flexWrap: 'wrap',
   },
 }));
 
 const DialogTallas = (props) => {
-
+ 
   const [new_medidas, setNew_medidas] = useState([]);
   const {setProductosTras, productosTras} = useContext(TraspasosAlmacenContext);
   
@@ -201,10 +202,28 @@ const DialogTallas = (props) => {
       sucursal:props.product_selected.sucursal,
       usuario: props.product_selected.usuario 
     }; 
+
     let existe = false;
     let copyProductosTras = productosTras;
     let medidasTo =[];
     //Count all new_medidas from array
+    
+    if (newMedidasCopy.length > 0) {
+    
+      const pres = newMedidasCopy.filter(
+        (res) => res.medida.color._id && res.medida.medida._id
+      );
+
+      if (pres.length !== newMedidasCopy.length) {
+        props.setError({
+           message: `Faltan medidas o colores en tus presentaciones`,
+          status: "error",
+          open: true
+        });
+        
+        return;
+      }
+    }
 
     for (let newMed in newMedidasCopy){ 
         cantidad_total +=  newMedidasCopy[newMed].nuevaCantidad;
@@ -239,9 +258,15 @@ const DialogTallas = (props) => {
       setProductosTras([...copyProductosTras])  
       setNew_medidas([]);
       close();
+    }else{
+      props.setError({
+        message: `La cantidad debe ser mayor a 0`,
+       status: "error",
+       open: true
+     });
     }  
      } catch (error) {
-       //console.log('MANDH',error)
+       console.log('MANDH',error)
      }
     
   }
@@ -276,11 +301,19 @@ const DialogTallas = (props) => {
 
   return(
     <Dialog open={props.openTallas} TransitionComponent={Transition} fullWidth maxWidth={"md"} >
-        <Box m={1} display="flex" justifyContent="flex-end">
-                <Button variant="contained" color="secondary" onClick={() => close()} size="large">
-                  <CloseIcon />
-                </Button>
+      	
+      <DialogTitle>
+        <Box display='flex' >
+          <Box width="88%">
+            Tallas y medidas
           </Box>
+          <Box m={1} display="flex" justifyContent="flex-end">
+            <Button variant="contained" color="secondary" onClick={() => close()} size="large">
+              <CloseIcon />
+            </Button>
+          </Box>
+        </Box>
+      </DialogTitle>
       {
         (props.almacenOrigen === null) ? 
           <div>
@@ -648,11 +681,11 @@ useEffect(() => {
                    
                   :    
                   <div>
-                    <DialogTallas openTallas={props.openTallas} setOpenTallas={props.setOpenTallas} setproduct_selected={setproduct_selected}  product_selected={product_selected} almacenOrigen={props.almacenOrigen} obtenerConsultasProducto={props.obtenerConsultasProducto} refetch={props.refetch}/> 
+                    <DialogTallas openTallas={props.openTallas} setOpenTallas={props.setOpenTallas} setproduct_selected={setproduct_selected}  product_selected={product_selected} almacenOrigen={props.almacenOrigen} obtenerConsultasProducto={props.obtenerConsultasProducto} refetch={props.refetch} setError={props.setError} /> 
                   </div> 
                 :
                 <div>
-                   <DialogTallas openTallas={props.openTallas} setOpenTallas={props.setOpenTallas} setproduct_selected={setproduct_selected}  product_selected={product_selected} almacenOrigen={props.almacenOrigen} obtenerConsultasProducto={props.obtenerConsultasProducto} refetch={props.refetch}/> 
+                   <DialogTallas openTallas={props.openTallas} setOpenTallas={props.setOpenTallas} setproduct_selected={setproduct_selected}  product_selected={product_selected} almacenOrigen={props.almacenOrigen} obtenerConsultasProducto={props.obtenerConsultasProducto} refetch={props.refetch} setError={props.setError}/> 
                 </div>
                 /* <Grid width={'100%'} container>
                   { (product_selected.datos_generales.tipo_producto === 'OTROS') ? 
@@ -707,6 +740,7 @@ useEffect(() => {
       ) : (
         <div/>
       )}
+       <SnackBarMessages alert={props.error} setAlert={props.setError} />  
       </Grid>
       <Dialog open={openEnd} onClose={() => setOpenEnd(false)}>
             <DialogTitle>{'¿Está seguro de realizar esta acción?'}</DialogTitle>
@@ -740,8 +774,8 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   table: {
-    minWidth: 600,
-    maxWidth:600
+  
+    
    
   },
   visuallyHidden: {
@@ -1018,9 +1052,9 @@ export default function EnhancedTable(props) {
           cant={cant} 
           obtenerConsultasProducto={(obtenerConsultasProducto.data) ? obtenerConsultasProducto.data.obtenerConsultasProducto :[]}
           refetch={( obtenerConsultasProducto.refetch ) ? obtenerConsultasProducto.refetch : null}  />
-        <TableContainer style={{height:'50vh'}}>
+        <TableContainer style={{height:'45vh'}}>
           <Table
-            className={classes.table}
+          
             aria-labelledby="tableTitle"
             size={'small'}
             aria-label="a dense table"

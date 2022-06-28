@@ -218,7 +218,7 @@ export default function DepositoRetiroCaja() {
             },
           });
           setAlert({
-            message: `Registro de movimiento exitoso.`,
+            message: `Nuevo movimiento registrado`,
             status: "success",
             open: true,
           });
@@ -441,7 +441,7 @@ export default function DepositoRetiroCaja() {
                         })}
                       </Select>
                     </FormControl>
-                    <CrearNuevaSubcuenta cuenta={cuenta} refetch={refetch} />
+                    <CrearNuevaSubcuenta cuenta={cuenta} refetch={refetch} setCuenta={setCuenta} datosMovimiento={datosMovimiento} setDatosMovimiento={setDatosMovimiento} />
                   </Box>
                 </Box>
               </Fragment>

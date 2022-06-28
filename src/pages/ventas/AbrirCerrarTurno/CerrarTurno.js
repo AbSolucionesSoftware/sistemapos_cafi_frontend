@@ -236,7 +236,7 @@ function CerrarTurno(props) {
           },
         });
         setAlert({
-          message: `Turno cerrado con exito`,
+          message: `Turno cerrado`,
           status: "success",
           open: true,
         });
@@ -256,8 +256,6 @@ function CerrarTurno(props) {
       handleClickOpen();
     }
   };
-
-  console.log(montoTurno);
 
   return (
     <Fragment>

@@ -205,7 +205,7 @@ export default function CerrarVenta() {
       //Agregar los montos en caja
       const montosEnCaja = {
         monto_efectivo: {
-          monto: parseFloat(montoEnCaja),
+          monto: parseFloat(montos.efectivo),
           metodo_pago: formaPago[0].Value,
         },
         monto_tarjeta_debito: {
@@ -217,8 +217,8 @@ export default function CerrarVenta() {
           metodo_pago: formaPago[3].Value,
         },
         monto_creditos: {
-          monto: 0,
-          metodo_pago: "",
+          monto: venta_credito ? ventaFinal.total : 0,
+          metodo_pago: "99",
         },
         monto_monedero: {
           monto: parseFloat(montos.puntos),

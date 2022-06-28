@@ -7,7 +7,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { Box, CircularProgress, IconButton, Tooltip } from "@material-ui/core";
+import { Box, CircularProgress, IconButton, Tooltip, Typography } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import { formatoMexico } from "../../../config/reuserFunctions";
 
@@ -136,7 +136,7 @@ function RowsProductos({ producto, handleTableSelect, productoSeleccionado }) {
               height: "56px",
             }}
           >
-            <Tooltip title={producto.color.nombre} placement="top" arrow>
+            <Tooltip title={`${producto.medida.talla} - ${producto.color.nombre}`} placement="top" arrow>
               <div
                 className={classes.colorContainer}
                 style={{
@@ -144,7 +144,7 @@ function RowsProductos({ producto, handleTableSelect, productoSeleccionado }) {
                   color: theme.palette.getContrastText(producto.color.hex),
                 }}
               >
-                {producto.medida.talla}
+                <Typography noWrap>{producto.medida.talla}</Typography>
               </div>
             </Tooltip>
           </TableCell>

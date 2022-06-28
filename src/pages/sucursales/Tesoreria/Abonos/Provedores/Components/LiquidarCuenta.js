@@ -261,7 +261,7 @@ const useStyles = makeStyles((theme) => ({
       setReload(true);
       setMetodoPago("");
       setAlert({
-        message: "Cuenta liquidada con exito",
+        message: "Cuenta liquidada",
         status: "success",
         open: true,
       });

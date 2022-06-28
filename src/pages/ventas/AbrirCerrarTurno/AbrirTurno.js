@@ -195,7 +195,7 @@ export default function AbrirTurno({
           localStorage.setItem("sesionCafi", JSON.stringify(arraySesion));
           /* setTurnoActivo(true); */
           setAlert({
-            message: `Turno abierto con exito`,
+            message: `Turno abierto`,
             status: "success",
             open: true,
           });
