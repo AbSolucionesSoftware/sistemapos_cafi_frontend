@@ -9,6 +9,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { Box, Grid, Dialog, DialogContent, Typography, CircularProgress} from '@material-ui/core';
+import {formatoFechaCorta,} from "../../../../config/reuserFunctions";
 import moment from 'moment';
 
 const columns = [
@@ -99,7 +100,7 @@ function RowsRender({datos}) {
 				onClick={handleClickOpen}
 				tabIndex={-1}
 			>
-				<TableCell align="center">{moment(datos.fecha_movimiento.completa).format('YYYY-MM-DD')}</TableCell>
+				<TableCell align="center">{formatoFechaCorta(datos.fecha_movimiento.completa)}</TableCell>
 				<TableCell align="center">{datos.hora_moviento.completa}</TableCell>
 				<TableCell align="center">{datos.tipo_movimiento}</TableCell>
 				<TableCell align="center">{datos.nombre_usuario_creador}</TableCell>

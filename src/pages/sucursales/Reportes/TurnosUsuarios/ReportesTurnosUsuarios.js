@@ -71,14 +71,14 @@ export default function ReportesTurnosUsuarios() {
                             style={{width: 100}}
                         />
                     </Box>
-					Turnos de Usuarios
+					Turnos de usuarios
 				</Box>
 			</Button>
 			<Dialog fullScreen open={open} onClose={handleClickOpen} TransitionComponent={Transition}>
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-                            Reportes Turnos de Usuarios
+                            Reportes turnos de usuarios
 						</Typography>
 						<Box m={1} display="flex">
                             <Box p={1}>

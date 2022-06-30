@@ -9,7 +9,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import {
   Box,
-  Button,
+  Button, 
   CircularProgress,
   Dialog,
   DialogActions,
@@ -19,6 +19,7 @@ import {
 import { OBTENER_CORTE_CAJA } from "../../../../gql/Cajas/cajas";
 import moment from "moment";
 import { useLazyQuery } from "@apollo/client";
+import {formatoFechaCorta,} from "../../../../config/reuserFunctions";
 
 const columns = [
   { label: "Fecha Corte", minWidth: 100 },
@@ -139,7 +140,7 @@ function RowsRender({ corte }) {
         tabIndex={-1}
         key={corte._id}
       >
-        <TableCell align="center">{corte.fecha_salida.completa}</TableCell>
+        <TableCell align="center">{formatoFechaCorta(corte.fecha_salida.completa)}</TableCell>
         <TableCell align="center">{corte.hora_salida.completa}</TableCell>
         <TableCell align="center">{corte.usuario_en_turno.nombre}</TableCell>
         <TableCell align="center">{corte.horario_en_turno}</TableCell>

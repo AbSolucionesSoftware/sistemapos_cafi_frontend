@@ -108,14 +108,14 @@ export default function ReportesCortes() {
                             style={{width: 100}}
                         />
 					</Box>
-					Reportes Cortes de caja
+					Reportes cortes de caja
 				</Box>
 			</Button>
 			<Dialog fullScreen open={open} onClose={handleClickOpen} TransitionComponent={Transition}>
 				<AppBar className={classes.appBar}>
 					<Toolbar>
 						<Typography variant="h6" className={classes.title}>
-							Reportes Cortes de caja
+							Reportes cortes de caja
 						</Typography>
 						<Box m={1}>
 							<Button variant="contained" color="secondary" onClick={handleClickOpen} size="large">
