@@ -191,9 +191,12 @@ const Rowrow = (rowProps) => {
           }else{
             tot += existencias[0].cantidad_existente;
             arrayCantidadesInto.push(existencias[0].cantidad_existente);
-            uniMin = 'pz';
+            uniMin = rowProps.producto.existencia_almacenes[0].unidad_inventario;
           }
+       
         }else{
+          
+          uniMin = rowProps.producto.existencia_almacenes[0].unidad_inventario;
           tot += existencias[0].cantidad_existente;
           arrayCantidadesInto.push(existencias[0].cantidad_existente);
         }
@@ -236,35 +239,38 @@ const Rowrow = (rowProps) => {
     }
   }, [dataExcelHere]);
 
-  const costoProducto = () =>{
+  const costoProducto = () => {
     try {
       let costoProd = 0;
       costoProd = rowProps.producto.precios.unidad_de_compra.precio_unitario_con_impuesto;
-  
-      if(rowProps.producto.existencia_almacenes[0].unidad_maxima !== null){
-        if(rowProps.producto.existencia_almacenes[0].unidad_maxima === rowProps.producto.precios.inventario.unidad_de_inventario){
-          costoProd = rowProps.producto.precios.precio_de_compra.precio_con_impuesto;
+      if(rowProps.producto.existencia_almacenes.length > 0){
+        if(rowProps.producto.existencia_almacenes[0].unidad_maxima !== null){
+          if(rowProps.producto.existencia_almacenes[0].unidad_maxima === rowProps.producto.precios.inventario.unidad_de_inventario){
+            costoProd = rowProps.producto.precios.precio_de_compra.precio_con_impuesto;
+          }
         }
       }
+      
 
       return formatoMexico(costoProd);
     } catch (error) {
       console.log(error)
     }
   }
+
   const totalProductos = () =>{
     try {
       let tot =  0;
     
      
       tot = rowProps.producto.precios.unidad_de_compra.precio_unitario_con_impuesto *  total;
-  
-      if(rowProps.producto.existencia_almacenes[0].unidad_maxima !== null){
-        if(rowProps.producto.existencia_almacenes[0].unidad_maxima === rowProps.producto.precios.inventario.unidad_de_inventario){
-          tot = rowProps.producto.precios.precio_de_compra.precio_con_impuesto *  total;
+      if(rowProps.producto.existencia_almacenes.length > 0){
+        if(rowProps.producto.existencia_almacenes[0].unidad_maxima !== null){
+          if(rowProps.producto.existencia_almacenes[0].unidad_maxima === rowProps.producto.precios.inventario.unidad_de_inventario){
+            tot = rowProps.producto.precios.precio_de_compra.precio_con_impuesto *  total;
+          }
         }
       }
-
       return formatoMexico(tot);
     } catch (error) {
       console.log(error)
