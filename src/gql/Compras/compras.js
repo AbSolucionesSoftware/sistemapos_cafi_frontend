@@ -217,6 +217,7 @@ export const OBTENER_COMPRAS_REALIZADAS = gql`
       numero_semana_year
       numero_mes_year
       fecha_registro
+      folio
     }
   }
 `;

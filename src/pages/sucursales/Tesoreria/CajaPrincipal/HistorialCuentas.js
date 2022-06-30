@@ -23,12 +23,16 @@ import { useDebounce } from "use-debounce/lib";
 import { formatoMexico } from "../../../../config/reuserFunctions";
 
 const columns = [
-  { id: "movimiento", label: "Origen Movimiento", minWidth: 100 },
   { id: "fecha", label: "Fecha", minWidth: 100 },
-  { id: "name", label: "Usuario", minWidth: 150 },
-  { id: "cantidad", label: "Cantidad", minWidth: 150 },
-  { id: "concepto", label: "Concepto", minWidth: 150 },
   { id: "tipo", label: "Tipo Movimiento", minWidth: 100 },
+  { id: "concepto", label: "Concepto", minWidth: 150 },
+  { id: "cantidad", label: "Cantidad", minWidth: 150 },
+  { id: "name", label: "Usuario", minWidth: 150 },
+  { id: "movimiento", label: "Origen Movimiento", minWidth: 100 },
+  
+ 
+  
+
 ];
 
 const useStyles = makeStyles((theme) => ({
@@ -221,21 +225,26 @@ function RowsHistorial({ row, loading }) {
   return (
     <TableRow hover role="checkbox" handleClickOpen tabIndex={-1}>
       <TableCell>
-        Caja {row.numero_caja !== "" ? row.numero_caja : ""}
-      </TableCell>
-      <TableCell>
         {moment(row?.fecha_movimiento.completa).format("D MMMM YYYY")}
       </TableCell>
-      <TableCell>{row?.nombre_usuario_creador}</TableCell>
+      <TableCell>
+        {(row?.tipo_movimiento === "CUENTA_DEPOSITO" || row?.tipo_movimiento === "ABONO_CLIENTE"  || row?.tipo_movimiento === "CANCELACION_ABONO_PROVEEDOR"  ) ? "DEPOSITO" : "RETIRO"}
+      </TableCell>
+      <TableCell>{row?.concepto}</TableCell>
       <TableCell>
         <b style={{ fontSize: 17 }}>
           ${formatoMexico(row.montos_en_caja.monto_efectivo.monto)}
         </b>
       </TableCell>
-      <TableCell>{row?.concepto}</TableCell>
+      <TableCell>{row?.nombre_usuario_creador}</TableCell>
       <TableCell>
-        {(row?.tipo_movimiento === "CUENTA_DEPOSITO" || row?.tipo_movimiento === "ABONO_CLIENTE"  || row?.tipo_movimiento === "CANCELACION_ABONO_PROVEEDOR"  ) ? "DEPOSITO" : "RETIRO"}
+        Caja {row.numero_caja !== "" ? row.numero_caja : ""}
       </TableCell>
+    
+     
+    
+     
+     
     </TableRow>
   );
 }

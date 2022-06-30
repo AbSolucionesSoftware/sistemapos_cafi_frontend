@@ -164,7 +164,15 @@ function Liquidar(props) {
                     status: 'success', 
                     open: true 
                 });
+            }else{
+                setLoading(false);
+                props.setAlert({ 
+                    message: 'Elige un método de pago.', 
+                    status: 'error', 
+                    open: true 
+                });
             }
+
             
         } catch (error) {
           
