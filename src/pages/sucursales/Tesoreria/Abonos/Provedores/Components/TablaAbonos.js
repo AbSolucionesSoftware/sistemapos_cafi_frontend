@@ -17,6 +17,7 @@ import 'moment/locale/es';
 import { TesoreriaCtx } from '../../../../../../context/Tesoreria/tesoreriaCtx';
 
 const columns = [
+	{ id: 'folio', label: 'Folio', minWidth: 100, align: 'center' },
 	{ id: 'fecha', label: 'Fecha Compra', minWidth: 100, align: 'center' },
 	{ id: 'provedor', label: 'Provedor', minWidth: 100, align: 'center' },
 	{ id: 'total', label: 'Total', minWidth: 100, align: 'center' },
@@ -190,6 +191,7 @@ function RowsCuentas (props){
 				onClick={(e) => TwoClickInRowTableBuy(e)}
 				className={(props.cuentaSelect.estatus_credito === 'PAGADA'  ) ? classes.pagada : (props.cuentaSelect.estatus_credito === 'VENCIDA') ?  classes.vencidas : classes.vencer}
 			>
+				<TableCell align="center">{(props.cuentaSelect.folio) ? props.cuentaSelect.folio :'SIN FOLIO'}</TableCell>	
 				<TableCell align="center">{moment(props.cuentaSelect.fecha_registro).format('D MMMM YYYY')}</TableCell>
 				<TableCell align="center">{props.cuentaSelect.proveedor.id_proveedor.nombre_cliente}</TableCell>
 				<TableCell align="center">${formatoMexico(props.cuentaSelect.total)}</TableCell>

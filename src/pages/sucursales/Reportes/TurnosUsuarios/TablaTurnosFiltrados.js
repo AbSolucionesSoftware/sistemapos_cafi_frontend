@@ -8,7 +8,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { Box, Grid, Dialog, DialogContent, Typography, CircularProgress} from '@material-ui/core';
-
+import {formatoFechaCorta,} from "../../../../config/reuserFunctions";
 const columns = [
 	{ id: 'fecha', label: 'Fecha', minWidth: 100 },
 	{ id: 'hora', label: 'Hora', minWidth: 100 },
@@ -97,7 +97,7 @@ function RowsRender({turno}) {
 				tabIndex={-1}
 				key={turno._id}
 			>
-				<TableCell align="center">{turno.fecha_movimiento}</TableCell>
+				<TableCell align="center">{formatoFechaCorta(turno.fecha_movimiento)}</TableCell>
 				<TableCell align="center">
 					{turno.concepto === "ABRIR TURNO" ? (
 						<>

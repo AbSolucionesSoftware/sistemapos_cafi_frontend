@@ -6,7 +6,7 @@ import { makeStyles, useTheme } from "@material-ui/core";
 import Zoom from "@material-ui/core/Zoom";
 import { Done } from "@material-ui/icons";
 import TablaPresentacionesNotOrigen from "./TablePresentacionesNotOrigen";
-
+import BackdropComponent from '../Layouts/BackDrop';
 import CrearColorProducto from "../../pages/sucursales/Catalogos/Producto/TallasColores/crearColor";
 import CrearTallasProducto from "../../pages/sucursales/Catalogos/Producto/TallasColores/crearTalla";
 
@@ -82,9 +82,11 @@ export default function ColoresTallas({
   useEffect(() => {
     obtenerColoresSeleccinados();
   }, [obtenerColoresSeleccinados]);
+  
 
   return (
     <div>
+     
       <Box alignContent="center" m={5} mt={1}>
         <Grid container spacing={4}>
           {/*  {!datos.medidas_registradas ? (

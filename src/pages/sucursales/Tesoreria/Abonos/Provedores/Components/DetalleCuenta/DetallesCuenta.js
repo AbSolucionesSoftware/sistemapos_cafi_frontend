@@ -70,6 +70,10 @@ export default function DetallesCuenta(props) {
                     </Box>
                 </Box>
                 <Box width="100%" p={1}>
+                    <Box width="100%" display="flex"  p={.5}>
+                        <Typography><b>Folio de compra: </b> </Typography>
+                        <Typography style={{paddingLeft: 5}}>{props.cuenta.folio}</Typography>
+                    </Box>
                     <Box width="100%" display="flex" p={.5}>
                         <Typography><b>Fecha compra: </b> </Typography>
                         <Typography style={{paddingLeft: 5}}>{moment(props.cuenta.fecha_registro).format('D MMMM YYYY')}</Typography>

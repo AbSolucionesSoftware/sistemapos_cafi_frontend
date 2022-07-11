@@ -130,6 +130,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
                     status: 'success', 
                     open: true 
                 });
+            }else{
+                setLoading(false);
+                props.setAlert({ 
+                    message: 'Por favor complete los datos.', 
+                    status: 'error', 
+                    open: true 
+                });
             }
         } catch (error) {
             console.log(error);

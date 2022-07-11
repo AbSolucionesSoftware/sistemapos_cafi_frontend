@@ -117,12 +117,12 @@ export default function EnhancedTable({ setDatosVentasActual }) {
                 <TableCell style={{ textAlign: "center" }} padding="checkbox">
                   Cantidad
                 </TableCell>
-                <TableCell>Descripcion</TableCell>
+                <TableCell>Artículo</TableCell>
                 <TableCell style={{ textAlign: "center" }} padding="checkbox">
-                  Existencia
+                  Exist.
                 </TableCell>
                 <TableCell style={{ textAlign: "center" }} padding="checkbox">
-                  <b>Descuento</b>
+                  <b>Desc.</b>
                 </TableCell>
                 <TableCell style={{ textAlign: "center" }} padding="checkbox">
                   Receta
@@ -131,10 +131,10 @@ export default function EnhancedTable({ setDatosVentasActual }) {
                   Unidad
                 </TableCell>
                 <TableCell style={{ width: 140, textAlign: "center" }}>
-                  Precio Unitario
+                  Precio Unit.
                 </TableCell>
                 <TableCell style={{ width: 140, textAlign: "center" }}>
-                  Precio a vender
+                  Total
                 </TableCell>
                 <TableCell padding="checkbox" />
               </TableRow>
@@ -193,11 +193,16 @@ const RenderTableRows = ({
     setTempAmount(producto.cantidad_venta);
   }, [producto.cantidad_venta]);
 
+  const [count, setCount] = useState(false);
+
   useEffect(() => {
-    CalculeDataPricing(value);
+    if (count) {
+      CalculeDataPricing(value);
+    }
   }, [value]);
 
   const calculateNewPricingAmount = (cantidad) => {
+    setCount(true);
     if (producto.concepto === "medidas") {
       if (cantidad > producto.cantidad) return;
     } else {
@@ -242,7 +247,9 @@ const RenderTableRows = ({
           cantidad_venta,
           ...newP
         } = producto_encontrado.producto_found.producto;
-        newP.cantidad_venta = parseInt(new_cant);
+
+
+        newP.cantidad_venta = parseFloat(new_cant);
         const verify_prising = await verifiPrising(newP);
         const newPrising = verify_prising.found
           ? verify_prising.object_prising
@@ -250,15 +257,23 @@ const RenderTableRows = ({
 
         const new_resta = await calculatePrices2({
           newP,
-          cantidad: cantidad_venta,
+          cantidad: newP.granel_producto.granel ? 1 : cantidad_venta,
           precio_boolean: true,
           precio: newP.precio_actual_object,
           granel: newP.granel_producto,
           origen: "Tabla",
         });
+
+        if (newP.granel_producto.granel) {
+          newP.granel_producto = {
+            granel: true,
+            valor: parseFloat(new_cant),
+          };
+        }
+
         const new_suma = await calculatePrices2({
           newP,
-          cantidad: parseInt(new_cant),
+          cantidad: newP.granel_producto.granel ? 1 : parseFloat(new_cant),
           precio_boolean: true,
           precio: newPrising,
           granel: newP.granel_producto,
@@ -313,7 +328,7 @@ const RenderTableRows = ({
               : null,
           };
         } else {
-          newP.cantidad_venta = parseInt(new_cant);
+          newP.cantidad_venta = parseFloat(new_cant);
           newP.precio_anterior = newP.precio_actual_producto;
           newP.precio_a_vender = new_suma.totalCalculo;
         }

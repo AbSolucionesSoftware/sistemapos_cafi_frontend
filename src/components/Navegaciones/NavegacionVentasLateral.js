@@ -19,17 +19,17 @@ export default function NavegacionVentasLateral() {
   return (
     <Fragment>
       <Grid container className={classes.drawerColor}>
-        <Grid item lg={6} md={6} xs={6}>
+        <Grid item lg={12} md={12} xs={12}>
           <CerrarVenta />
+        </Grid>
+        <Grid item lg={6} md={6} xs={6}>
+          <Cotizacion type="GENERAR" />
         </Grid>
         <Grid item lg={6} md={6} xs={6}>
           <CancelarVenta />
         </Grid>
         <Grid item lg={6} md={6} xs={6}>
           <BuscarProducto />
-        </Grid>
-        <Grid item lg={6} md={6} xs={6}>
-          <Cotizacion type="GENERAR" />
         </Grid>
         <Grid item lg={6} md={6} xs={6}>
           <PreciosProductos />
@@ -43,9 +43,9 @@ export default function NavegacionVentasLateral() {
         <Grid item lg={6} md={6} xs={6}>
           <VentasRealizadas />
         </Grid>
-        <Grid item lg={6} md={6} xs={6}>
+        {/* <Grid item lg={6} md={6} xs={6}>
           <ConsultarPrecio />
-        </Grid>
+        </Grid> */}
         <Grid item lg={6} md={6} xs={6}>
           <Abonos />
         </Grid>

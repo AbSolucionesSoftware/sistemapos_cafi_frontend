@@ -141,7 +141,7 @@ function AbonoaRecibir(props) {
             
             if(abono === '' || metodoPago === '' ){
                 setAlert({ 
-                    message: 'Por favor complete los datos', 
+                    message: 'Por favor complete los datos.', 
                     status: 'error', 
                     open: true 
                 });
