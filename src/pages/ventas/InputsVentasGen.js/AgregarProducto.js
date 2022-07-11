@@ -91,21 +91,19 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
         if (data.length > 1) {
           let data_operation = isNaN(data[0]) ? data[1] : data[0];
           let data_key = isNaN(data[0]) ? data[0] : data[1];
-          /* setGranelBase({
-            granel: true,
-            valor: parseFloat(data_operation),
-          }); */
-          granel_base = {
-            granel: true,
-            valor: parseFloat(data_operation),
-          };
-          datosQuery = await obtenerProductos(data_key);
-          setConsultaBase(!consultaBase);
+
+          if (!data_operation) {
+            datosQuery = await obtenerProductos(data_key);
+            setConsultaBase(!consultaBase);
+          } else {
+            granel_base = {
+              granel: true,
+              valor: parseFloat(data_operation),
+            };
+            datosQuery = await obtenerProductos(data_key);
+            setConsultaBase(!consultaBase);
+          }
         } else {
-          /* setGranelBase({
-            granel: false,
-            valor: 0,
-          }); */
           datosQuery = await obtenerProductos(input_value);
           setConsultaBase(!consultaBase);
         }
@@ -132,6 +130,25 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
           if (productosBase !== null) {
             if (productosBase.length === 1) {
               if (productosBase[0].cantidad !== null) {
+                if (!granel_base.granel && productosBase[0].unidad === "Kg") {
+                  granel_base = {
+                    granel: true,
+                    valor: 1,
+                  };
+                } else if (granel_base.granel) {
+                  if (
+                    granel_base.valor >
+                    productosBase[0].inventario_general[0].cantidad_existente
+                  ) {
+                    setAlert({
+                      message: `Esta cantidad es mayor a la que existe en Almacen`,
+                      status: "error",
+                      open: true,
+                    });
+                    setLoading(false);
+                    return;
+                  }
+                }
                 agregarProductos(productosBase[0], granel_base);
               } else {
                 /* setOpen(true); */
@@ -231,7 +248,6 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
         origen: "Ventas1",
         precio_boolean: false,
       });
-
       new_prices.newP.precio_anterior = productoPrecioFinal;
 
       new_prices.newP.iva_total_producto = parseFloat(new_prices.ivaCalculo);
@@ -246,7 +262,6 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
         new_prices.totalCalculo
       );
 
-      // console.log(new_prices.newP);
       //agregar producto al inicio del arreglo
       productosVentasTemp.splice(0, 0, new_prices.newP);
 
@@ -277,17 +292,24 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
         ...newP
       } = producto_encontrado.producto_found.producto;
 
-      newP.cantidad_venta = parseInt(cantidad_venta) + 1;
+      if (granel_base.granel) {
+        granel_base = {
+          granel: true,
+          valor: newP.granel_producto.valor + granel_base.valor,
+        };
+      }
+
+      newP.cantidad_venta = granel_base.granel
+        ? 1
+        : parseInt(cantidad_venta) + 1;
 
       const verify_prising = await verifiPrising(newP);
-
-      // console.log(verify_prising);
 
       //Verificar si el precio fue encontrado
       if (verify_prising.found) {
         const calculo_resta = await calculatePrices2({
           newP,
-          cantidad_venta,
+          cantidad: 1, //cantidad_venta,
           granel: newP.granel_producto,
           origen: "",
           precio_boolean: true,
@@ -296,8 +318,8 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
 
         const calculo_sumar = await calculatePrices2({
           newP,
-          cantidad_venta: newP.cantidad_venta,
-          granel: newP.granel_producto,
+          cantidad_venta: granel_base.granel ? 1 : parseInt(cantidad_venta) + 1, //newP.cantidad_venta,
+          granel: granel_base,
           origen: "",
           precio_boolean: true,
           precio: verify_prising.object_prising,
@@ -306,8 +328,6 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
         newP.precio_a_vender = calculo_sumar.totalCalculo;
         newP.precio_anterior = newP.precio_actual_producto;
         newP.precio_actual_producto = verify_prising.pricing;
-
-        // console.log(calculo_sumar);
 
         newP.iva_total_producto = parseFloat(calculo_sumar.ivaCalculo);
         newP.ieps_total_producto = parseFloat(calculo_sumar.iepsCalculo);
@@ -318,8 +338,6 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
           calculo_sumar.subtotalCalculo
         );
         newP.total_total_producto = parseFloat(calculo_sumar.totalCalculo);
-
-        // console.log(newP);
 
         newP.precio_actual_object = {
           cantidad_unidad: verify_prising.object_prising.cantidad_unidad
@@ -394,23 +412,50 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
             calculo_sumar.monederoCalculo,
         };
       } else {
-        // console.log("Entro");
         const productoPrecioFinal = newP.descuento_activo
           ? newP.descuento.precio_neto
           : newP.precio_unidad.precio_neto;
 
+        const new_resta = await calculatePrices2({
+          newP,
+          cantidad: 1,
+          granel: newP.granel_producto,
+          origen: "Ventas2",
+        });
+
         const new_prices = await calculatePrices2({
           newP,
-          cantidad: 0,
+          cantidad: granel_base.granel ? 1 : parseInt(cantidad_venta) + 1,
           granel: granel_base,
           origen: "Ventas2",
         });
 
+        /* const new_prices = await calculatePrices2({
+          newP,
+          cantidad: newP.cantidad_venta,
+          granel: granel_base,
+          origen: "Ventas2",
+        }); */
+
         new_prices.newP.precio_actual_producto = productoPrecioFinal;
 
-        // console.log(new_prices);
+        new_prices.newP.iva_total_producto = parseFloat(new_prices.ivaCalculo);
+        new_prices.newP.ieps_total_producto = parseFloat(
+          new_prices.iepsCalculo
+        );
+        new_prices.newP.impuestos_total_producto = parseFloat(
+          new_prices.impuestoCalculo
+        );
+        new_prices.newP.subtotal_total_producto = parseFloat(
+          new_prices.subtotalCalculo
+        );
+        new_prices.newP.total_total_producto = parseFloat(
+          new_prices.totalCalculo
+        );
 
-        new_prices.newP.iva_total_producto =
+        /* new_prices.newP.precio_actual_producto = productoPrecioFinal;
+
+       new_prices.newP.iva_total_producto =
           parseFloat(new_prices.ivaCalculo) * parseFloat(newP.cantidad_venta);
         new_prices.newP.ieps_total_producto =
           parseFloat(new_prices.iepsCalculo) * parseFloat(newP.cantidad_venta);
@@ -421,7 +466,7 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
           parseFloat(new_prices.subtotalCalculo) *
           parseFloat(newP.cantidad_venta);
         new_prices.newP.total_total_producto =
-          parseFloat(new_prices.totalCalculo) * parseFloat(newP.cantidad_venta);
+          parseFloat(new_prices.totalCalculo) * parseFloat(newP.cantidad_venta); */
 
         productosVentasTemp.splice(
           producto_encontrado.producto_found.index,
@@ -431,18 +476,44 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
 
         CalculosData = {
           subTotal:
-            parseFloat(venta_existente.subTotal) +
-            parseFloat(new_prices.subtotalCalculo),
-          total: parseFloat(venta_existente.total) + new_prices.totalCalculo,
+            parseFloat(venta_existente.subTotal) -
+            parseFloat(new_resta.subtotalCalculo) +
+            new_prices.subtotalCalculo,
+          total:
+            parseFloat(venta_existente.total) -
+            parseFloat(new_resta.totalCalculo) +
+            new_prices.totalCalculo,
           impuestos:
-            parseFloat(venta_existente.impuestos) + new_prices.impuestoCalculo,
+            parseFloat(venta_existente.impuestos) -
+            parseFloat(new_resta.impuestoCalculo) +
+            new_prices.impuestoCalculo,
+          iva:
+            parseFloat(venta_existente.iva) -
+            parseFloat(new_resta.ivaCalculo) +
+            new_prices.ivaCalculo,
+          ieps:
+            parseFloat(venta_existente.ieps) -
+            parseFloat(new_resta.iepsCalculo) +
+            new_prices.iepsCalculo,
+          descuento:
+            parseFloat(venta_existente.descuento) -
+            parseFloat(new_resta.descuentoCalculo) +
+            new_prices.descuentoCalculo,
+          monedero:
+            parseFloat(venta_existente.monedero) -
+            parseFloat(new_resta.monederoCalculo) +
+            new_prices.monederoCalculo,
+        };
+
+        /* CalculosData = {
+          subTotal: parseFloat(venta_existente.subTotal) + parseFloat(new_prices.subtotalCalculo),
+          total: parseFloat(venta_existente.total) + new_prices.totalCalculo,
+          impuestos: parseFloat(venta_existente.impuestos) + new_prices.impuestoCalculo,
           iva: parseFloat(venta_existente.iva) + new_prices.ivaCalculo,
           ieps: parseFloat(venta_existente.ieps) + new_prices.iepsCalculo,
-          descuento:
-            parseFloat(venta_existente.descuento) + new_prices.descuentoCalculo,
-          monedero:
-            parseFloat(venta_existente.monedero) + new_prices.monederoCalculo,
-        };
+          descuento: parseFloat(venta_existente.descuento) + new_prices.descuentoCalculo,
+          monedero: parseFloat(venta_existente.monedero) + new_prices.monederoCalculo,
+        }; */
       }
     }
 
@@ -468,10 +539,6 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
     setUpdateTablaVentas(!updateTablaVentas);
     setProducto([]);
     setOpenMedidas(false);
-    /* setGranelBase({
-      granel: false,
-      valor: 0,
-    }); */
   };
 
   return (

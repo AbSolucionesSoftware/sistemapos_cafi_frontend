@@ -53,7 +53,7 @@ export const formatoFechaCorta = (fecha) => {
     var newdate = new Date(fecha);
     return newdate.toLocaleDateString("es-MX", {
       year: "numeric",
-      month: "long",
+      month: "short",
       day: "numeric",
     });
   }
@@ -155,7 +155,6 @@ export const calculatePrices = async (
     monederoCalculo = 0;
   // console.log("newPrising",newPrising);
   const cantidadNueva = cantidad > 0 ? cantidad : 1;
-  console.log(newP.id_producto.precios.precios_producto[0].precio_venta);
   // console.log(newP);
   const iva_producto =
     parseFloat(newP.id_producto.precios.precios_producto[0].precio_venta) *
@@ -198,8 +197,6 @@ export const calculatePrices = async (
         cantidadNueva *
         parseFloat(granel.valor)
       : (iva_producto + ieps_producto) * cantidadNueva;
-
-  console.log(cantidadNueva);
 
   ivaCalculo =
     granel.granel === true
@@ -297,7 +294,7 @@ export const calculatePrices2 = async ({
       newP,
     };
     if (origen === "Ventas1") {
-      newP.cantidad_venta = 1;
+      newP.cantidad_venta = valor_granel;//si hay granel pone su valor si no 1
       newP.granel_producto = granel;
       newP.precio_a_vender = ob.totalCalculo;
       newP.precio_actual_producto = parseFloat(
@@ -335,6 +332,9 @@ export const calculatePrices2 = async ({
           : 0,
       };
     } else if (origen === "Ventas2") {
+      if(granel.granel){
+        newP.cantidad_venta = valor_granel;//si hay granel pone su valor si no 1
+      }
       newP.granel_producto = granel;
       newP.precio_a_vender = ob.totalCalculo;
       newP.precio_anterior = newP.precio_actual_producto;

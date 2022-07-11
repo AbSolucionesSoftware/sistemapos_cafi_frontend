@@ -60,9 +60,9 @@ export default function VentasGenerales() {
                         <Typography variant="subtitle1">
                           Cliente:{" "}
                           <b style={{ fontSize: 16 }}>
-                            {clientesVentas
+                            {clientesVentas && clientesVentas.nombre_cliente
                               ? clientesVentas.nombre_cliente
-                              : ""}
+                              : "Público en general"}
                           </b>
                         </Typography>
                       </Box>

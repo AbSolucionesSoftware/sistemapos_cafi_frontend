@@ -109,14 +109,14 @@ export default function ClientesVentas() {
         fullWidth
         options={obtenerClientes}
         getOptionLabel={(option) =>
-          option.nombre_cliente ? option.nombre_cliente : "N/A"
+          option.nombre_cliente ? option.nombre_cliente : "Público general"
         }
         renderInput={(params) => <TextField {...params} variant="outlined" />}
         onChange={(_, value) => ChangeClientAutocomplate(value)}
         getOptionSelected={(option, value) =>
-          option.nombre_cliente === value.nombre_cliente
+          option.nombre_cliente === value.nombre_cliente ? value : "Público en general"
         }
-        value={selectClient ? selectClient : null}
+        value={selectClient ? selectClient : "Público general"}
       />
     </div>
   );

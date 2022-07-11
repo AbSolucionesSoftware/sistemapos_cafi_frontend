@@ -41,8 +41,8 @@ export default function BuscarProducto() {
     updateTablaVentas,
     setUpdateTablaVentas,
     setDatosVentasActual,
-    openBuscarProducto, 
-    setOpenBuscarProducto
+    openBuscarProducto,
+    setOpenBuscarProducto,
   } = useContext(VentasContext);
 
   const [open_message, setOpenMessage] = useState(false);
@@ -87,13 +87,6 @@ export default function BuscarProducto() {
     }
   }
 
-  useEffect(() => {
-    setGranelBase({
-      granel: false,
-      valor: 0,
-    });
-  }, []);
-
   const without_inventary = sesion.empresa.vender_sin_inventario;
 
   const agregarProductos = async (producto) => {
@@ -112,6 +105,17 @@ export default function BuscarProducto() {
         setOpenMessage(true);
         return;
       }
+    }
+
+    let granel_base = {
+      granel: false,
+      valor: 0,
+    };
+    if (producto.unidad === "Kg") {
+      granel_base = {
+        granel: true,
+        valor: 1,
+      };
     }
 
     let venta = JSON.parse(localStorage.getItem("DatosVentas"));
@@ -154,7 +158,7 @@ export default function BuscarProducto() {
       const new_prices = await calculatePrices2({
         newP,
         cantidad: 0,
-        granel: granelBase,
+        granel: granel_base,
         origen: "Ventas1",
         precio_boolean: false,
       });
@@ -173,7 +177,6 @@ export default function BuscarProducto() {
         new_prices.totalCalculo
       );
 
-      //   console.log(new_prices.newP);
       //agregar producto al inicio del arreglo
       productosVentasTemp.splice(0, 0, new_prices.newP);
 
@@ -204,18 +207,28 @@ export default function BuscarProducto() {
         ...newP
       } = producto_encontrado.producto_found.producto;
 
-      newP.cantidad_venta = parseInt(cantidad_venta) + 1;
+      /* newP.cantidad_venta = parseInt(cantidad_venta) + 1; */
+      if (granel_base.granel) {
+        granel_base = {
+          granel: true,
+          valor: newP.granel_producto.valor + granel_base.valor,
+        };
+      }
+      newP.cantidad_venta = granel_base.granel
+        ? 1
+        : parseInt(cantidad_venta) + 1;
+
+      /* newP.cantidad_venta = granel_base.granel
+        ? cantidad_venta
+        : parseInt(cantidad_venta) + 1; */
 
       const verify_prising = await verifiPrising(newP);
-
-      //   console.log(verify_prising);
-
       //Verificar si el precio fue encontrado
       if (verify_prising.found) {
         const calculo_resta = await calculatePrices2({
           newP,
           cantidad_venta,
-          granel: newP.granel_producto,
+          granel: 1, //newP.granel_producto,
           origen: "",
           precio_boolean: true,
           precio: newP.precio_actual_object,
@@ -223,8 +236,8 @@ export default function BuscarProducto() {
 
         const calculo_sumar = await calculatePrices2({
           newP,
-          cantidad_venta: newP.cantidad_venta,
-          granel: newP.granel_producto,
+          cantidad_venta: granel_base.granel ? 1 : parseInt(cantidad_venta) + 1, //newP.cantidad_venta,
+          granel: granel_base, //newP.granel_producto,
           origen: "",
           precio_boolean: true,
           precio: verify_prising.object_prising,
@@ -233,8 +246,6 @@ export default function BuscarProducto() {
         newP.precio_a_vender = calculo_sumar.totalCalculo;
         newP.precio_anterior = newP.precio_actual_producto;
         newP.precio_actual_producto = verify_prising.pricing;
-
-        // console.log(calculo_sumar);
 
         newP.iva_total_producto = parseFloat(calculo_sumar.ivaCalculo);
         newP.ieps_total_producto = parseFloat(calculo_sumar.iepsCalculo);
@@ -245,8 +256,6 @@ export default function BuscarProducto() {
           calculo_sumar.subtotalCalculo
         );
         newP.total_total_producto = parseFloat(calculo_sumar.totalCalculo);
-
-        // console.log(newP);
 
         newP.precio_actual_object = {
           cantidad_unidad: verify_prising.object_prising.cantidad_unidad
@@ -326,14 +335,37 @@ export default function BuscarProducto() {
           ? newP.descuento.precio_neto
           : newP.precio_unidad.precio_neto;
 
+        const new_resta = await calculatePrices2({
+          newP,
+          cantidad: 1,
+          granel: newP.granel_producto,
+          origen: "Ventas2",
+        });
+
         const new_prices = await calculatePrices2({
           newP,
-          cantidad: 0,
-          granel: granelBase,
+          cantidad: granel_base.granel ? 1 : parseInt(cantidad_venta) + 1,//newP.cantidad_venta,
+          granel: granel_base,
           origen: "Ventas2",
         });
 
         new_prices.newP.precio_actual_producto = productoPrecioFinal;
+
+        new_prices.newP.iva_total_producto = parseFloat(new_prices.ivaCalculo);
+        new_prices.newP.ieps_total_producto = parseFloat(
+          new_prices.iepsCalculo
+        );
+        new_prices.newP.impuestos_total_producto = parseFloat(
+          new_prices.impuestoCalculo
+        );
+        new_prices.newP.subtotal_total_producto = parseFloat(
+          new_prices.subtotalCalculo
+        );
+        new_prices.newP.total_total_producto = parseFloat(
+          new_prices.totalCalculo
+        );
+
+        /*  new_prices.newP.precio_actual_producto = productoPrecioFinal;
 
         // console.log(new_prices);
 
@@ -348,7 +380,7 @@ export default function BuscarProducto() {
           parseFloat(new_prices.subtotalCalculo) *
           parseFloat(newP.cantidad_venta);
         new_prices.newP.total_total_producto =
-          parseFloat(new_prices.totalCalculo) * parseFloat(newP.cantidad_venta);
+          parseFloat(new_prices.totalCalculo) * parseFloat(newP.cantidad_venta); */
 
         productosVentasTemp.splice(
           producto_encontrado.producto_found.index,
@@ -357,6 +389,37 @@ export default function BuscarProducto() {
         );
 
         CalculosData = {
+          subTotal:
+            parseFloat(venta_existente.subTotal) -
+            parseFloat(new_resta.subtotalCalculo) +
+            new_prices.subtotalCalculo,
+          total:
+            parseFloat(venta_existente.total) -
+            parseFloat(new_resta.totalCalculo) +
+            new_prices.totalCalculo,
+          impuestos:
+            parseFloat(venta_existente.impuestos) -
+            parseFloat(new_resta.impuestoCalculo) +
+            new_prices.impuestoCalculo,
+          iva:
+            parseFloat(venta_existente.iva) -
+            parseFloat(new_resta.ivaCalculo) +
+            new_prices.ivaCalculo,
+          ieps:
+            parseFloat(venta_existente.ieps) -
+            parseFloat(new_resta.iepsCalculo) +
+            new_prices.iepsCalculo,
+          descuento:
+            parseFloat(venta_existente.descuento) -
+            parseFloat(new_resta.descuentoCalculo) +
+            new_prices.descuentoCalculo,
+          monedero:
+            parseFloat(venta_existente.monedero) -
+            parseFloat(new_resta.monederoCalculo) +
+            new_prices.monederoCalculo,
+        };
+
+        /* CalculosData = {
           subTotal:
             parseFloat(venta_existente.subTotal) +
             parseFloat(new_prices.subtotalCalculo),
@@ -369,7 +432,7 @@ export default function BuscarProducto() {
             parseFloat(venta_existente.descuento) + new_prices.descuentoCalculo,
           monedero:
             parseFloat(venta_existente.monedero) + new_prices.monederoCalculo,
-        };
+        }; */
       }
     }
 
