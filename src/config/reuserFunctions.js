@@ -100,17 +100,13 @@ export const findProductArray = async (producto) => {
     };
 
     for (let i = 0; i < productosVentas.length; i++) {
-      if (typeof productosVentas[i].codigo_barras !== "undefined") {
+      if (productosVentas[i].codigo_barras) {
         if (productosVentas[i].codigo_barras === producto.codigo_barras) {
           producto_found = {
             producto: productosVentas[i],
             index: i,
           };
           found = true;
-          return {
-            producto_found,
-            found,
-          };
         }
       } else {
         if (
@@ -122,14 +118,9 @@ export const findProductArray = async (producto) => {
             index: i,
           };
           found = true;
-          return {
-            producto_found,
-            found,
-          };
         }
       }
     }
-
     return {
       producto_found,
       found,

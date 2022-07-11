@@ -37,6 +37,8 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
   const [openMedidas, setOpenMedidas] = useState(false);
   const [producto, setProducto] = useState([]);
 
+  const inputProductos = React.useRef(null);
+
   const obtenerProductos = async (input) => {
     const response = await client.query({
       query: CONSULTA_PRODUCTO_UNITARIO,
@@ -65,7 +67,10 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
         monedero: parseFloat(venta.monedero),
       });
     }
+    inputProductos.current.focus();
   }, [updateTablaVentas]);
+
+ 
 
   const keyUpEvent = async (event) => {
     if (loading) return;
@@ -539,6 +544,7 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
     setUpdateTablaVentas(!updateTablaVentas);
     setProducto([]);
     setOpenMedidas(false);
+    setClave("");
   };
 
   return (
@@ -579,7 +585,9 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
           size="small"
           onKeyUp={(e) => keyUpEvent(e)}
           onChange={(e) => setClave(e.target.value)}
+          value={clave}
           disabled={loading}
+          inputRef={inputProductos}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">

@@ -48,10 +48,11 @@ export default function BuscarProducto() {
   const [open_message, setOpenMessage] = useState(false);
   const [searchProducto, setSearchProducto] = useState({ producto: "" });
   const [productoSeleccionado, setProductoSeleccionado] = useState([]);
-  const [granelBase, setGranelBase] = useState({
+  /* const [granelBase, setGranelBase] = useState({
     granel: false,
     valor: 0,
-  });
+  }); */
+  const inputProductos = React.useRef(null);
 
   const [value] = useDebounce(searchProducto, 500);
 
@@ -111,7 +112,7 @@ export default function BuscarProducto() {
       granel: false,
       valor: 0,
     };
-    if (producto.unidad === "Kg") {
+    if (producto.unidad === "Kg" || producto.unidad === "Costal") {
       granel_base = {
         granel: true,
         valor: 1,
@@ -457,6 +458,8 @@ export default function BuscarProducto() {
     });
     setUpdateTablaVentas(!updateTablaVentas);
     /* handleClickOpen(); */
+    inputProductos.current.focus();
+    setSearchProducto({ producto: "" })
   };
 
   return (
@@ -523,6 +526,8 @@ export default function BuscarProducto() {
               fullWidth
               value={searchProducto.producto}
               onChange={obtenerDatos}
+              autoFocus
+              inputRef={inputProductos}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
