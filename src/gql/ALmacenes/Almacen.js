@@ -303,13 +303,7 @@ export const OBTENER_TRASPASOS = gql`
           nombre_concepto
         }
         fecha_registro
-      }
-      producto{
-        datos_generales{
-          nombre_comercial
-        }
-      }
-      almacen_origen{
+        almacen_origen{
         _id
         nombre_almacen
       }
@@ -317,6 +311,13 @@ export const OBTENER_TRASPASOS = gql`
         _id
         nombre_almacen
       }
+      }
+      producto{
+        datos_generales{
+          nombre_comercial
+        }
+      }
+    
     }
   }
 `;

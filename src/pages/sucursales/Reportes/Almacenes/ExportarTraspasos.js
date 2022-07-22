@@ -20,8 +20,8 @@ export default function ExportarTraspasos({ data }) {
       cantidad: traspaso.cantidad,
       fecha:	formatoFechaCorta(traspaso.id_traspaso.fecha_registro),
       concepto: traspaso.id_traspaso.concepto_traspaso.nombre_concepto,
-      almacen_origen: (traspaso.almacen_origen !== null) ? traspaso.almacen_origen.nombre_almacen : '',
-      almacen_destino:(traspaso.almacen_destino !== null) ? traspaso.almacen_destino.nombre_almacen : ''
+      almacen_origen: (traspaso.id_traspaso.almacen_origen !== null) ? traspaso.id_traspaso.almacen_origen.nombre_almacen : '',
+      almacen_destino:(traspaso.id_traspaso.almacen_destino !== null) ? traspaso.id_traspaso.almacen_destino.nombre_almacen : ''
     } ;
   
     return trasp;

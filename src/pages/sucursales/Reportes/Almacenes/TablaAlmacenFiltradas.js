@@ -76,14 +76,14 @@ export default function TablaAlmacenFiltradas({ data }) {
                       {data.id_traspaso.concepto_traspaso.nombre_concepto}
                     </TableCell>
                     <TableCell>
-                      {data.almacen_origen !== null
-                        ? data.almacen_origen.nombre_almacen
-                        : ""}
+                      {data.id_traspaso.almacen_origen.nombre_almacen !== null
+                        ? data.id_traspaso.almacen_origen.nombre_almacen
+                        : " - "}
                     </TableCell>
                     <TableCell>
-                      {data.almacen_destino !== null
-                        ? data.almacen_destino.nombre_almacen
-                        : ""}
+                      {data.id_traspaso.almacen_destino.nombre_almacen !== null
+                        ? data.id_traspaso.almacen_destino.nombre_almacen
+                        : " - "}
                     </TableCell>
                   </TableRow>
                 );
