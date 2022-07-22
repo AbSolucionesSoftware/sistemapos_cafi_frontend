@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const numerosRandom = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
@@ -50,12 +52,13 @@ export const formatoFechaCorta = (fecha) => {
   if (!fecha) {
     return null;
   } else {
-    var newdate = new Date(fecha);
-    return newdate.toLocaleDateString("es-MX", {
+    /* var newdate = new Date(fecha); */
+    return moment(fecha).locale("es-mx").format("ll");
+   /*  return newdate.toLocaleDateString("es-mx", {
       year: "numeric",
       month: "short",
       day: "numeric",
-    });
+    }); */
   }
 };
 

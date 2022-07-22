@@ -9,17 +9,20 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import {
   Box,
-  Button, 
+  Button,
   CircularProgress,
   Dialog,
   DialogActions,
+  DialogContent,
   Grid,
   Typography,
 } from "@material-ui/core";
+import ReceiptIcon from "@material-ui/icons/Receipt";
 import { OBTENER_CORTE_CAJA } from "../../../../gql/Cajas/cajas";
 import moment from "moment";
 import { useLazyQuery } from "@apollo/client";
-import {formatoFechaCorta,} from "../../../../config/reuserFunctions";
+import { formatoFechaCorta } from "../../../../config/reuserFunctions";
+import { imprimirTicketCorte } from "./PrintTicketCorte";
 
 const columns = [
   { label: "Fecha Corte", minWidth: 100 },
@@ -69,7 +72,7 @@ export default function TablaCortesFiltradas({ loading, cortes }) {
     );
 
   return (
-    <Box p={2}>
+    <Box>
       <Paper className={classes.root}>
         <TableContainer className={classes.container}>
           <Table stickyHeader size="small" aria-label="a dense table">
@@ -101,6 +104,7 @@ export default function TablaCortesFiltradas({ loading, cortes }) {
 function RowsRender({ corte }) {
   const [open, setOpen] = useState(false);
   const sesion = JSON.parse(localStorage.getItem("sesionCafi"));
+  const [loadingPrint, setLoadingPrint] = useState(false);
 
   const [obtenerCorte, { data, error, loading }] = useLazyQuery(
     OBTENER_CORTE_CAJA,
@@ -130,6 +134,12 @@ function RowsRender({ corte }) {
     obtenerCorte();
   };
 
+  const handlePrintTicket = async () => {
+    setLoadingPrint(true);
+    await imprimirTicketCorte(corte, montos_sistema);
+    setLoadingPrint(false);
+  };
+
   return (
     <>
       <TableRow
@@ -140,7 +150,9 @@ function RowsRender({ corte }) {
         tabIndex={-1}
         key={corte._id}
       >
-        <TableCell align="center">{formatoFechaCorta(corte.fecha_salida.completa)}</TableCell>
+        <TableCell align="center">
+          {formatoFechaCorta(corte.fecha_salida.completa)}
+        </TableCell>
         <TableCell align="center">{corte.hora_salida.completa}</TableCell>
         <TableCell align="center">{corte.usuario_en_turno.nombre}</TableCell>
         <TableCell align="center">{corte.horario_en_turno}</TableCell>
@@ -154,22 +166,30 @@ function RowsRender({ corte }) {
         open={open}
         onClose={handleClickOpen}
       >
-        <InformacionCorteCaja
-          corte={corte}
-          montos_sistema={montos_sistema}
-          loading={loading}
-        />
+        <DialogContent>
+          <InformacionCorteCaja
+            corte={corte}
+            montos_sistema={montos_sistema}
+            loading={loading}
+          />
+        </DialogContent>
         <DialogActions>
-          <Box p={2} display="flex" flexDirection="row-reverse">
-            <Button
-              color="primary"
-              size="large"
-              variant="contained"
-              onClick={handleClickOpen}
-            >
-              Imprimir Ticket
-            </Button>
-          </Box>
+          <Button
+            color="primary"
+            size="small"
+            variant="contained"
+            onClick={() => handlePrintTicket()}
+            disabled={loadingPrint}
+            startIcon={
+              loadingPrint ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : (
+                <ReceiptIcon />
+              )
+            }
+          >
+            Imprimir Ticket
+          </Button>
         </DialogActions>
       </Dialog>
     </>

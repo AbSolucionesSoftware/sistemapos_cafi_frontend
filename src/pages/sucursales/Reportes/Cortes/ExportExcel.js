@@ -1,9 +1,9 @@
 import { Button, makeStyles } from '@material-ui/core'
 import React, { useState } from 'react'
 import ExcelFile from 'react-export-excel/dist/ExcelPlugin/components/ExcelFile'
-import SaveIcon from '@material-ui/icons/Save';
 import ExcelSheet from 'react-export-excel/dist/ExcelPlugin/elements/ExcelSheet';
 import ExcelColumn from 'react-export-excel/dist/ExcelPlugin/elements/ExcelColumn';
+import { RiFileExcel2Line } from "react-icons/ri";
 
 const useStyles = makeStyles((theme) => ({
 	icon: {
@@ -56,13 +56,12 @@ export default function ExportExcel({historialCortes}) {
             <ExcelFile
                 element={
                     <Button
-                        variant="contained"
+                        variant="text"
                         color="primary"
                         aria-label="Guardar"
-                        className={classes.iconSave}
                         onClick={() => agruparDatos()}
+                        startIcon={<RiFileExcel2Line />}
                     >
-                        <SaveIcon className={classes.margin} />
                         Exportar
                     </Button>   
                 }
