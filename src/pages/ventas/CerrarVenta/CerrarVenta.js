@@ -28,6 +28,7 @@ import CreditoVenta from "./Credito";
 import DescuentoVenta from "./Descuento";
 import { Alert } from "@material-ui/lab";
 import SnackBarMessages from "../../../components/SnackBarMessages";
+import { imprimirTicketVenta } from "./PrintTicketVenta";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -53,6 +54,7 @@ const initial_state_totales = {
 export default function CerrarVenta() {
   const classes = useStyles();
   const [cambio, setCambio] = useState(false);
+  const sesionUsuario = JSON.parse(localStorage.getItem("sesionCafi"));
   const turnoEnCurso = JSON.parse(localStorage.getItem("turnoEnCurso"));
   const datosVenta = JSON.parse(localStorage.getItem("DatosVentas"));
   const [open, setOpen] = useState(false);
@@ -293,6 +295,16 @@ export default function CerrarVenta() {
           caja: sesion.id_caja,
         },
       });
+      //print ticket
+      if (ventaFinal.tipo_emision === "TICKET") {
+        let datos = {
+          ventaFinal,
+          monto_pagado: numero_mayor,
+          turno: sesion,
+          sesion: sesionUsuario,
+        };
+        await imprimirTicketVenta(datos);
+      }
       //Quitar loading
       setOpenBackDrop(false);
       setOpen(false);
@@ -410,23 +422,23 @@ export default function CerrarVenta() {
               />
 
               <Box display={venta_credito ? "flex" : "none"}>
-              <CreditoVenta
-                montos={montos}
-                setMontos={setMontos}
-                totales={totales}
-                setTotales={setTotales}
-                venta_credito={venta_credito}
-                venta_base={venta_base}
-                setMontoEnCaja={setMontoEnCaja}
-                datosCliente={datosCliente}
-                setDatosCliente={setDatosCliente}
-                editarCliente={editarCliente}
-                setEditarCliente={setEditarCliente}
-                fechaVencimientoDate={fechaVencimientoDate}
-                setfechaVencimientoDate={setfechaVencimientoDate}
-                setAbonoMinimo={setAbonoMinimo}
-                abono_minimo={abono_minimo}
-              />
+                <CreditoVenta
+                  montos={montos}
+                  setMontos={setMontos}
+                  totales={totales}
+                  setTotales={setTotales}
+                  venta_credito={venta_credito}
+                  venta_base={venta_base}
+                  setMontoEnCaja={setMontoEnCaja}
+                  datosCliente={datosCliente}
+                  setDatosCliente={setDatosCliente}
+                  editarCliente={editarCliente}
+                  setEditarCliente={setEditarCliente}
+                  fechaVencimientoDate={fechaVencimientoDate}
+                  setfechaVencimientoDate={setfechaVencimientoDate}
+                  setAbonoMinimo={setAbonoMinimo}
+                  abono_minimo={abono_minimo}
+                />
               </Box>
             </Grid>
           </Box>

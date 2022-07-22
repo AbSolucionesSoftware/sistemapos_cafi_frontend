@@ -15,6 +15,7 @@ import useStyles from "../Navegaciones/styles";
 import moment from "moment";
 import { AccesosContext } from "../../context/Accesos/accesosCtx";
 import { PowerSettingsNew, Settings } from "@material-ui/icons";
+import TicketPrinterComponent from "../TicketPrinter/TicketPrinter";
 
 export default function LayoutVentas(props) {
   const sesion = localStorage.getItem("sesionCafi");
@@ -148,6 +149,8 @@ const NavDataCajaUsers = ({ props }) => {
             : { display: "flex", justifyContent: "flex-end" }
         }
       >
+        <TicketPrinterComponent turnoEnCurso={turnoEnCurso} />
+        <Box mx={1} />
         <Button
           onClick={() => Administrador()}
           startIcon={<Settings />}
@@ -155,7 +158,7 @@ const NavDataCajaUsers = ({ props }) => {
             !turnoEnCurso ? { color: "white", borderColor: "white" } : null
           }
         >
-          F1 Administrador
+          F1 Admin
         </Button>
         <Box mx={1} />
         <Button

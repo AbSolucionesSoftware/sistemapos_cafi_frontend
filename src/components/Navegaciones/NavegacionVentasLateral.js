@@ -23,13 +23,13 @@ export default function NavegacionVentasLateral() {
           <CerrarVenta />
         </Grid>
         <Grid item lg={6} md={6} xs={6}>
-          <Cotizacion type="GENERAR" />
+          <BuscarProducto />
         </Grid>
         <Grid item lg={6} md={6} xs={6}>
           <CancelarVenta />
         </Grid>
         <Grid item lg={6} md={6} xs={6}>
-          <BuscarProducto />
+          <Cotizacion type="GENERAR" />
         </Grid>
         <Grid item lg={6} md={6} xs={6}>
           <PreciosProductos />

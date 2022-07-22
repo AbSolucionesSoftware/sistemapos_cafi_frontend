@@ -70,8 +70,6 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
     inputProductos.current.focus();
   }, [updateTablaVentas]);
 
- 
-
   const keyUpEvent = async (event) => {
     if (loading) return;
     if (!clave) return;
@@ -168,6 +166,7 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
               setProducto(productosBase);
             } else {
               /* setOpen(true); */
+
               setAlert({
                 message: `Este producto no existe`,
                 status: "error",
@@ -177,6 +176,8 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
           }
         }
         setLoading(false);
+        setClave("");
+        inputProductos.current.focus();
       }
     } catch (error) {
       console.log(error);
@@ -545,6 +546,7 @@ export default function AgregarProductoVenta({ loading, setLoading }) {
     setProducto([]);
     setOpenMedidas(false);
     setClave("");
+    inputProductos.current.focus();
   };
 
   return (

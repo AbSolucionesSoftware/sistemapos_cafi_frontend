@@ -8,7 +8,7 @@ import "moment/locale/es";
 
 import DepositoRetiroCaja from "../../pages/ventas/Operaciones/DepositoRetiros/DepositoRetiroCaja";
 import Turnos from "../../pages/ventas/AbrirCerrarTurno/Turnos";
-import PreCorteCaja from "../../pages/ventas/Operaciones/PreCorteCaja";
+import PreCorteCaja from "../../pages/ventas/Operaciones/Precorte/PreCorteCaja";
 import VentaEnEspera from "../../pages/ventas/Operaciones/VentaEnEspera";
 import ProductoRapidoIndex from "../../pages/ventas/ArticuloRapido/indexArticuloRapido";
 

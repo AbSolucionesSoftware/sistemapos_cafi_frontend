@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -11,12 +12,14 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import moment from "moment";
-import useStyles from "../styles";
+import useStyles from "../../styles";
 import "moment/locale/es";
 import { useQuery } from "@apollo/client";
-import { OBTENER_PRE_CORTE_CAJA } from "../../../gql/Cajas/cajas";
-import { AccesosContext } from "../../../context/Accesos/accesosCtx";
-import { formatoMexico } from "../../../config/reuserFunctions";
+import { OBTENER_PRE_CORTE_CAJA } from "../../../../gql/Cajas/cajas";
+import { AccesosContext } from "../../../../context/Accesos/accesosCtx";
+import { formatoMexico } from "../../../../config/reuserFunctions";
+import { imprimirTicketPrecorte } from "./PrintTicketPrecorte";
+import Receipt from "@material-ui/icons/Receipt";
 moment.locale("es");
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -52,6 +55,7 @@ export default function PreCorteCaja() {
 
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [loadingTicket, setLoadingTicket] = useState(false);
 
   const handleClickOpen = () => {
     if (sesion.accesos.ventas.pre_corte.ver === true) {
@@ -84,6 +88,20 @@ export default function PreCorteCaja() {
       refetch();
     }
   }
+
+  const printTicket = async () => {
+    setLoadingTicket(true);
+    const datos = {
+      turno: turnoEnCurso,
+      sesion,
+      monto: data?.obtenerPreCorteCaja?.monto_efectivo_precorte
+        ? data?.obtenerPreCorteCaja?.monto_efectivo_precorte
+        : 0.0,
+    };
+    await imprimirTicketPrecorte(datos);
+    setLoadingTicket(true);
+    setOpen(!open);
+  };
 
   return (
     <>
@@ -190,7 +208,9 @@ export default function PreCorteCaja() {
                       <b>Fecha y hora al precorte: </b>
                     </Typography>
                     <Typography variant="subtitle1">
-                      {moment().locale("es-mx").format("MMMM D YYYY, h:mm:ss a")}
+                      {moment()
+                        .locale("es-mx")
+                        .format("MMMM D YYYY, h:mm:ss a")}
                     </Typography>
                   </Box>
                   <Box textAlign="center" p={2}>
@@ -199,7 +219,12 @@ export default function PreCorteCaja() {
                     </Typography>
                     <Typography variant="h3" style={{ color: "green" }}>
                       <b>
-                        ${data?.obtenerPreCorteCaja?.monto_efectivo_precorte ? formatoMexico(data?.obtenerPreCorteCaja?.monto_efectivo_precorte) : 0.00}
+                        $
+                        {data?.obtenerPreCorteCaja?.monto_efectivo_precorte
+                          ? formatoMexico(
+                              data?.obtenerPreCorteCaja?.monto_efectivo_precorte
+                            )
+                          : 0.0}
                       </b>
                     </Typography>
                   </Box>
@@ -218,11 +243,19 @@ export default function PreCorteCaja() {
         <DialogActions>
           {sesion.turno_en_caja_activo === true && turnoEnCurso ? (
             <Button
-              onClick={() => setOpen(!open)}
+              onClick={() => printTicket()}
               color="primary"
               variant="contained"
               size="large"
               autoFocus
+              disabled={loadingTicket}
+              startIcon={
+                loadingTicket ? (
+                  <CircularProgress size={20} color="inherit" />
+                ) : (
+                  <Receipt />
+                )
+              }
             >
               Imprimir
             </Button>
