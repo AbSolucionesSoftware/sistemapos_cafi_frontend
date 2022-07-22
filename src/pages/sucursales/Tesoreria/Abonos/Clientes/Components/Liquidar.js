@@ -188,7 +188,7 @@ function Liquidar(props) {
         <Box m={1}>
             {
                 (props.isIcon) ? 
-                <IconButton aria-label="liquidar" onClick={handleClick} disabled={props.estatus_credito === "PAGADA"}  >
+                <IconButton aria-label="liquidar" onClick={handleClick} disabled={props.estatus_credito === "PAGADA"} size="small" >
                     <DoneAll />
                    
                 </IconButton>

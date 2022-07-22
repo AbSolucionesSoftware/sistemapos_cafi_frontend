@@ -109,7 +109,7 @@ const NavDataCajaUsers = ({ props }) => {
 
   return (
     <Grid container alignItems="center">
-      <Grid item md={4} style={{ display: "flex" }}>
+      <Grid item md={6} style={{ display: "flex" }}>
         <Avatar
           alt="Remy Sharp"
           srsc="/static/images/avatar/1.jpg"
@@ -125,24 +125,14 @@ const NavDataCajaUsers = ({ props }) => {
             {turnoEnCurso?.numero_caja}
           </Typography>
         )}
-      </Grid>
-      <Grid item md={4} style={{ display: "flex", justifyContent: "center" }}>
-        <img
-          src="https://cafi-sistema-pos.s3.us-west-2.amazonaws.com/Iconos/ventas/calendario.svg"
-          alt="icono admin"
-          className={classes.avatar}
-        />
-        <Typography color="textSecondary">
-          {moment().locale("es-mx").format("MM/DD/YYYY")}
-        </Typography>
         <Box mx={1} />
         <Typography color="textSecondary">
-          <b>{moment().locale("es-mx").format("h:mm")} hrs.</b>
+          {moment().locale("es-mx").format("ll")}
         </Typography>
       </Grid>
       <Grid
         item
-        md={4}
+        md={6}
         style={
           !turnoEnCurso
             ? { display: "flex", justifyContent: "flex-end", zIndex: 99999 }
